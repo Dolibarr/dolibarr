@@ -71,14 +71,28 @@ class FactureFournisseurRec extends CommonInvoice
 	protected $table_ref_field = 'titre';
 
 	/**
-	 * @var string The label of recurring invoice
+	 * @var string 	The label of recurring invoice
+	 * @deprecated	Use $title
 	 */
 	public $titre;
+	/**
+	 * @var string The label of recurring invoice
+	 */
+	public $title;
+
 	public $ref_supplier;
 	public $socid;
 
-	public $suspended;
+	public $suspended; // status
+
+	/**
+	 * @var string		Label of invoice
+	 * @deprecated		Use $label
+	 */
 	public $libelle;
+	/**
+	 * @var string		Label of invoice
+	 */
 	public $label;
 
 	/**
@@ -111,6 +125,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $fk_multicurrency;
 	public $multicurrency_code;
 	public $multicurrency_tx;
+	public $multicurrency_subprice;
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
@@ -196,7 +211,7 @@ class FactureFournisseurRec extends CommonInvoice
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'isModEnabled("banque")', 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
@@ -478,8 +493,6 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
@@ -641,11 +654,6 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->nb_gen_max               = $obj->nb_gen_max;
 				$this->auto_validate            = $obj->auto_validate;
 				$this->generate_pdf             = $obj->generate_pdf;
-
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -847,29 +855,29 @@ class FactureFournisseurRec extends CommonInvoice
 	}
 
 	/**
-	 *    Add a line to recursive supplier invoice
+	 * Add a line to recursive supplier invoice
 	 *
-	 * @param int $fk_product Product/Service ID predefined
-	 * @param string $ref			Ref
-	 * @param string $label			Label
-	 * @param string $desc 			Description de la ligne
-	 * @param double $pu_ht			Unit price
-	 * @param double $pu_ttc		Unit price with tax
-	 * @param double $qty 			Quantity
-	 * @param int $remise_percent 	Percentage discount of the line
-	 * @param double $txtva 		Taux de tva force, sinon -1
-	 * @param int $txlocaltax1 		Local tax 1 rate (deprecated)
-	 * @param int $txlocaltax2 		Local tax 2 rate (deprecated)
-	 * @param string $price_base_type HT or TTC
-	 * @param int $type 			Type of line (0=product, 1=service)
-	 * @param int $date_start		Date start
-	 * @param int $date_end			Date end
-	 * @param int $info_bits 		VAT npr or not ?
-	 * @param int $special_code 	Special code
-	 * @param int $rang 			Position of line
-	 * @param string $fk_unit 		Unit
-	 * @param int $pu_ht_devise 	Unit price in currency
-	 * @return int                  <0 if KO, Id of line if OK
+	 * @param int 		$fk_product 	Product/Service ID predefined
+	 * @param string 	$ref			Ref
+	 * @param string 	$label			Label
+	 * @param string 	$desc 			Description de la ligne
+	 * @param double 	$pu_ht			Unit price
+	 * @param double 	$pu_ttc			Unit price with tax
+	 * @param double 	$qty 			Quantity
+	 * @param int 		$remise_percent Percentage discount of the line
+	 * @param double 	$txtva 			Taux de tva force, sinon -1
+	 * @param int 		$txlocaltax1 	Local tax 1 rate (deprecated)
+	 * @param int 		$txlocaltax2 	Local tax 2 rate (deprecated)
+	 * @param string 	$price_base_type HT or TTC
+	 * @param int 		$type 			Type of line (0=product, 1=service)
+	 * @param int 		$date_start		Date start
+	 * @param int 		$date_end		Date end
+	 * @param int 		$info_bits 		VAT npr or not ?
+	 * @param int 		$special_code 	Special code
+	 * @param int 		$rang 			Position of line
+	 * @param string 	$fk_unit 		Unit
+	 * @param int 		$pu_ht_devise 	Unit price in currency
+	 * @return int                  	<0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1031,6 +1039,10 @@ class FactureFournisseurRec extends CommonInvoice
 
 				return -1;
 			}
+		} else {
+			$this->error = 'Recurring Invoice is suspended. adding lines not allowed.';
+
+			return -1;
 		}
 	}
 
@@ -1074,7 +1086,7 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->brouillon) {
+		if ($this->status == self::STATUS_SUSPENDED) {
 			// Clean parameters
 			$fk_product = empty($fk_product) ? 0 : $fk_product;
 			$label = empty($label) ? '' : $label;
@@ -1183,6 +1195,19 @@ class FactureFournisseurRec extends CommonInvoice
 		}
 	}
 
+
+	/**
+	 * Return next reference of invoice not already used (or last reference)
+	 *
+	 * @param	 Societe	$soc		Thirdparty object
+	 * @param    string		$mode		'next' for next value or 'last' for last value
+	 * @return   string					free ref or last ref
+	 */
+	public function getNextNumRef($soc, $mode = 'next')
+	{
+		// Not used for recurring invoices
+		return '';
+	}
 
 	/**
 	 * Return the next date of
@@ -1301,8 +1326,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
-					$new_fac_fourn->brouillon = 1;
-					$new_fac_fourn->statut = self::STATUS_DRAFT;
+					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$new_fac_fourn->socid = $facturerec->socid;
@@ -1310,7 +1334,8 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->ref_supplier = $facturerec->ref_supplier;
 					$new_fac_fourn->model_pdf = $facturerec->model_pdf;
 					$new_fac_fourn->fk_project = $facturerec->fk_project;
-					$new_fac_fourn->libelle = $facturerec->libelle;
+					$new_fac_fourn->label = $facturerec->label;
+					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
 					if ($invoiceidgenerated <= 0) {
@@ -1988,23 +2013,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $fk_user_author;
 	public $fk_user_modif;
 	public $fk_multicurrency;
-	public $multicurrency_subprice;
-
-
-	/* Overrides fields in CommonObject
-	public $total_ht;
-	public $total_tva;
-	public $total_localtax1;
-	public $total_localtax2;
-	public $total_ttc;
-
-	public $fk_unit;
-	public $import_key;
-	public $multicurrency_code;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-	*/
 
 
 	/**

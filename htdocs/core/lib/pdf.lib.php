@@ -78,9 +78,9 @@ function pdf_admin_prepare_head()
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
- *  @param		string		$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
- *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		string			$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
+ *  @return     array								Array('width'=>w,'height'=>h,'unit'=>u);
  */
 function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
@@ -241,7 +241,7 @@ function pdf_getEncryption($pathoffile)
 	$content = file_get_contents($pathoffile);
 
 	//ob_start();
-	@($parser = new \TCPDF_PARSER(ltrim($content)));
+	@($parser = new TCPDF_PARSER(ltrim($content)));
 	list($xref, $data) = $parser->getParsedData();
 	unset($parser);
 	//ob_end_clean();
@@ -603,10 +603,12 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			} else {
 				if (is_object($targetcompany)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
 					// Country
 					if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) {
 						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+					} else {
+						$stringaddress .= ($stringaddress ? "\n" : '');
 					}
 
 					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/', $mode)) {
@@ -744,12 +746,13 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
  *	@param	Translate	$outputlangs	Output language
  *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
  *	@param	Object      $object         Object
- *	@param	int         $onlykey       1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *	@param	int         $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *  @param   array      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  *	@return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0)
+function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0, $include = null)
 {
-	$substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object);
+	$substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object, $include);
 	$substitutionarray['__FROM_NAME__'] = '__FROM_NAME__';
 	$substitutionarray['__FROM_EMAIL__'] = '__FROM_EMAIL__';
 	return $substitutionarray;
@@ -1583,7 +1586,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-				$productCustomerPriceStatic = new Productcustomerprice($db);
+				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -1666,7 +1669,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// Show information for lot
 	if (!empty($dbatch)) {
 		// $object is a shipment.
-		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
+		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have several lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
 
 		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -2544,11 +2547,12 @@ function pdf_getSizeForImage($realpath)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	string							Return total of line excl tax
+ * 	@return	float							Return total of line excl tax
  */
 function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
 {
 	global $conf, $hookmanager;
+
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) {
 		$sign = -1;
@@ -2571,8 +2575,12 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 			$action = '';
 
-			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {
-				return $hookmanager->resPrint; // Note that $action and $object may have been modified by some hooks
+			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {	// Note that $action and $object may have been modified by some hooks
+				if (isset($hookmanager->resArray['linetotalremise'])) {
+					return $hookmanager->resArray['linetotalremise'];
+				} else {
+					return (float) $hookmanager->resPrint;	// For backward compatibility
+				}
 			}
 		}
 
@@ -2580,5 +2588,5 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 			return $sign * (($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
 	}
-	return '';
+	return 0;
 }

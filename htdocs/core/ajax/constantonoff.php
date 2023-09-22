@@ -52,6 +52,11 @@ $name = GETPOST('name', 'alpha');
 $entity = GETPOST('entity', 'int');
 $value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
 
+// Security check
+if (empty($user->admin)) {
+	httponly_accessforbidden('This ajax component can be called by admin user only');
+}
+
 
 /*
  * View
@@ -63,12 +68,10 @@ top_httphead();
 
 // Registering the new value of constant
 if (!empty($action) && !empty($name)) {
-	if ($user->admin) {
-		if ($action == 'set') {
-			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
-		} elseif ($action == 'del') {
-			dolibarr_del_const($db, $name, $entity);
-		}
+	if ($action == 'set') {
+		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
+	} elseif ($action == 'del') {
+		dolibarr_del_const($db, $name, $entity);
 	}
 } else {
 	http_response_code(403);

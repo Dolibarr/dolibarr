@@ -60,7 +60,7 @@ class box_services_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !(!empty($user->rights->service->lire) && !empty($user->rights->contrat->lire));
+		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
 	}
 
 	/**
@@ -169,7 +169,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, '');
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}

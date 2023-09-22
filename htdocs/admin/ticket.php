@@ -298,7 +298,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -597,6 +597,21 @@ print '<td class="left">
 	</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+//Allow classification modification even if the ticket is closed
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAllowClassificationModificationIfClosed").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED", $arrval, getDolGlobalString('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAllowClassificationModificationIfClosedHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

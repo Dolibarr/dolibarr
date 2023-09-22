@@ -55,8 +55,8 @@ class Mos extends DolibarrApi
 	 *
 	 * Return an array with MO informations
 	 *
-	 * @param 	int 	$id ID of MO
-	 * @return 	array|mixed data without useless information
+	 * @param 	int 	$id 			ID of MO
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @url	GET {id}
 	 * @throws 	RestException
@@ -119,7 +119,7 @@ class Mos extends DolibarrApi
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -345,10 +345,10 @@ class Mos extends DolibarrApi
 		}
 
 		if (empty($labelmovement)) {
-			throw new RestException(500, "Field inventorylabel not prodivded");
+			throw new RestException(500, "Field inventorylabel not provided");
 		}
 		if (empty($codemovement)) {
-			throw new RestException(500, "Field inventorycode not prodivded");
+			throw new RestException(500, "Field inventorycode not provided");
 		}
 
 		// Code for consume and produce...
@@ -631,9 +631,9 @@ class Mos extends DolibarrApi
 		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		if ($consumptioncomplete && $productioncomplete) {
-			$result = $this->mo->setStatut(self::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+			$result = $this->mo->setStatut(Mo::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		} else {
-			$result = $this->mo->setStatut(self::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
+			$result = $this->mo->setStatut(Mo::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
 		}
 		if ($result <= 0) {
 			throw new RestException(500, $this->mo->error);

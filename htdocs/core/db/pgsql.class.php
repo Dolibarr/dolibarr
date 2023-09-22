@@ -149,7 +149,7 @@ class DoliDBPgsql extends DoliDB
 	 *  @param	bool	$unescapeslashquot	Unescape slash quote with quote quote
 	 *  @return string   					SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
+	public function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
 	{
 		global $conf;
 
@@ -559,7 +559,7 @@ class DoliDBPgsql extends DoliDB
 					$this->lasterror = $this->error();
 					$this->lasterrno = $this->errno();
 
-					if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) {
+					if (getDolGlobalInt('SYSLOG_LEVEL') < LOG_DEBUG) {
 						dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 					}
 					dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
@@ -729,7 +729,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
 	/**
@@ -972,6 +972,34 @@ class DoliDBPgsql extends DoliDB
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
 				$listtables[] = $row[0];
+			}
+		}
+		return $listtables;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		// phpcs:enable
+		$listtables = array();
+
+		$escapedlike = '';
+		if ($table) {
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$escapedlike = " AND table_name LIKE '".$this->escape($tmptable)."'";
+		}
+		$result = pg_query($this->db, "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
+		if ($result) {
+			while ($row = $this->fetch_row($result)) {
+				$listtables[] = $row;
 			}
 		}
 		return $listtables;
@@ -1225,7 +1253,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$table;
-		$sql .= " ALTER COLUMN '".$this->escape($field_name)."' TYPE ".$field_desc['type'];
+		$sql .= " ALTER COLUMN ".$this->escape($field_name)." TYPE ".$field_desc['type'];
 		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
 			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
 				$sql .= "(".$field_desc['value'].")";

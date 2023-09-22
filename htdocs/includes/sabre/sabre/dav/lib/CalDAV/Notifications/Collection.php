@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Notifications;
 
 use Sabre\CalDAV;
@@ -20,49 +22,46 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
-
+class Collection extends DAV\Collection implements ICollection, DAVACL\IACL
+{
     use DAVACL\ACLTrait;
 
     /**
-     * The notification backend
+     * The notification backend.
      *
      * @var CalDAV\Backend\NotificationSupport
      */
     protected $caldavBackend;
 
     /**
-     * Principal uri
+     * Principal uri.
      *
      * @var string
      */
     protected $principalUri;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param CalDAV\Backend\NotificationSupport $caldavBackend
      * @param string $principalUri
      */
-    function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri) {
-
+    public function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri)
+    {
         $this->caldavBackend = $caldavBackend;
         $this->principalUri = $principalUri;
-
     }
 
     /**
-     * Returns all notifications for a principal
+     * Returns all notifications for a principal.
      *
      * @return array
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         $children = [];
         $notifications = $this->caldavBackend->getNotificationsForPrincipal($this->principalUri);
 
         foreach ($notifications as $notification) {
-
             $children[] = new Node(
                 $this->caldavBackend,
                 $this->principalUri,
@@ -71,31 +70,27 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
         }
 
         return $children;
-
     }
 
     /**
-     * Returns the name of this object
+     * Returns the name of this object.
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return 'notifications';
-
     }
 
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
-
 }

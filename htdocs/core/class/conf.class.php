@@ -26,10 +26,10 @@
  *  				Config is stored into file conf.php
  */
 
-
 /**
  *  Class to stock current configuration
  */
+#[AllowDynamicProperties]
 class Conf
 {
 	/**
@@ -44,7 +44,7 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -69,6 +69,8 @@ class Conf
 	//! Used to store current css (from theme)
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+
+	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
@@ -105,9 +107,64 @@ class Conf
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url. 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 
+	public $format_date_short; // Format of day with PHP/C tags (strftime functions)
+	public $format_date_short_java; // Format of day with Java tags
+	public $format_hour_short;
+	public $format_hour_short_duration;
+	public $format_date_text_short;
+	public $format_date_text;
+	public $format_date_hour_short;
+	public $format_date_hour_sec_short;
+	public $format_date_hour_text_short;
+	public $format_date_hour_text;
+
 	public $liste_limit;
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+
+
+	// TODO Remove this part.
+	public $fournisseur;
+	public $product;
+	/**
+	 * @deprecated Use product
+	 */
+	public $produit;
+	public $service;
+	/**
+	 * @deprecated Use contract
+	 */
+	public $contrat;
+	public $contract;
+	public $actions;
+	public $agenda;
+	public $commande;
+	public $propal;
+	public $order;
+	/**
+	 * @deprecated Use invoice
+	 */
+	public $facture;
+	public $invoice;
+	public $user;
+	/**
+	 * @deprecated Use member
+	 */
+	public $adherent;
+	public $member;
+	public $bank;
+	public $notification;
+	public $expensereport;
+	public $productbatch;
+	/**
+	 * @deprecated Use project
+	 */
+	public $projet;
+	public $project;
+	public $supplier_proposal;
+	public $supplier_order;
+	public $supplier_invoice;
+	public $category;
 
 
 	/**
@@ -165,7 +222,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -231,7 +287,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -288,7 +343,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						$this->global->$key = dolDecrypt($value);
+						$this->global->$key = dolDecrypt($value);	// decrypt data excrypted with dolibarr_set_const($db, $name, $value)
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
@@ -321,11 +376,9 @@ class Conf
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
 								} elseif (in_array($partname, array('models', 'theme'))) {
 									$newvalue = '/'.$modulename.'/';
-								} elseif (in_array($partname, array('sms'))) {
-									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
-								} else {
+								} else {	// $partname can be any other value like 'sms', ...
 									$newvalue = $value;
 								}
 
@@ -341,11 +394,12 @@ class Conf
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+								// deprecated in php 8.2
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
 									$this->$modulename = new stdClass();
 								}
 								$this->$modulename->enabled = true;
-								$this->modules[] = $modulename; // Add this module in list of enabled modules
 							}
 						}
 					}
@@ -382,9 +436,8 @@ class Conf
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				if ($ret) {
+				if ($ret && class_exists('ActionsMulticompany')) {
 					$mc = new ActionsMulticompany($db);
-					$this->mc = $mc;
 				}
 			}
 
@@ -504,13 +557,6 @@ class Conf
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Sous module bons d'expedition
-			$this->expedition_bon = new stdClass();
-			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
-			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note = new stdClass();
-			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
-
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
 				$this->fournisseur->commande = new stdClass();
@@ -525,11 +571,11 @@ class Conf
 				$this->fournisseur->facture->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
 				$this->fournisseur->facture->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 
-				$this->supplierproposal = new stdClass();
-				$this->supplierproposal->multidir_output = array($this->entity => $rootfordata."/supplier_proposal");
-				$this->supplierproposal->multidir_temp = array($this->entity => $rootfortemp."/supplier_proposal/temp");
-				$this->supplierproposal->dir_output = $rootfordata."/supplier_proposal"; // For backward compatibility
-				$this->supplierproposal->dir_temp = $rootfortemp."/supplier_proposal/temp"; // For backward compatibility
+				$this->supplier_proposal = new stdClass();
+				$this->supplier_proposal->multidir_output = array($this->entity => $rootfordata."/supplier_proposal");
+				$this->supplier_proposal->multidir_temp = array($this->entity => $rootfortemp."/supplier_proposal/temp");
+				$this->supplier_proposal->dir_output = $rootfordata."/supplier_proposal"; // For backward compatibility
+				$this->supplier_proposal->dir_temp = $rootfortemp."/supplier_proposal/temp"; // For backward compatibility
 
 				$this->fournisseur->payment = new stdClass();
 				$this->fournisseur->payment->multidir_output = array($this->entity => $rootfordata."/fournisseur/payment");
@@ -635,18 +681,19 @@ class Conf
 				unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 			}
 
-			if (!empty($this->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
+				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
-				if (empty($this->reception->enabled)) {
+				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 				}
 			}
 
@@ -667,6 +714,10 @@ class Conf
 			// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
 			if (empty($this->global->ACCOUNTING_MODE)) {
 				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+			}
+
+			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -800,11 +851,6 @@ class Conf
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
-			// By default, option is on. Once set by user, this code is useless
-			if (!isset($this->global->ACCOUNTING_REEXPORT)) {
-				$this->global->ACCOUNTING_REEXPORT = 1;
-			}
-
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -857,9 +903,9 @@ class Conf
 				$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? (int) $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
 			}
 			if (isset($this->projet)) {
-				$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->projet->task = new StdClass();
-				$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? (int) $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
+				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
 
 			if (isset($this->commande)) {
@@ -940,13 +986,17 @@ class Conf
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
 			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
+			}
+
+			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

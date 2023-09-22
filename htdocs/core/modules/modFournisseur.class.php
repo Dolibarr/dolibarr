@@ -21,10 +21,12 @@
  */
 
 /**
- * 		\defgroup   fournisseur     Module suppliers
- *		\file       htdocs/core/modules/modFournisseur.class.php
- *		\ingroup    fournisseur
- *		\brief      Description and activation file for the module Supplier
+ *  \defgroup   fournisseur     Module suppliers
+ *  \brief      Module to manage suppliers relations and activities
+ *
+ *  \file       htdocs/core/modules/modFournisseur.class.php
+ *  \ingroup    fournisseur
+ *  \brief      Description and activation file for the module Supplier
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -41,7 +43,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -83,7 +85,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "muscadet";
+		$this->const[$r][2] = "cornas";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -309,6 +311,8 @@ class modFournisseur extends DolibarrModules
 		//--------
 		$r = 0;
 
+		$langs->loadLangs(array("suppliers", "multicurrency"));
+
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Vendor invoices and lines of invoices';
@@ -464,7 +468,7 @@ class modFournisseur extends DolibarrModules
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'uv.login'=>'UserValidation', 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
 			'fd.total_tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
-			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'SupplierRef', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
 		if (isModEnabled("multicurrency")) {
@@ -590,7 +594,7 @@ class modFournisseur extends DolibarrModules
 		if (empty($conf->multicurrency->enabled)) {
 			$this->import_fieldshidden_array[$r]['f.multicurrency_code'] = 'const-'.$conf->currency;
 		}
-		$this->import_regex_array[$r] = array('f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
+		$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 		$import_sample = array(
 			'f.ref' => '(PROV001)',
 			'f.ref_supplier' => 'Supplier1',
@@ -812,6 +816,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_commande'    => 'PurchaseOrder*',
 			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
+			'cd.ref'     		=> 'SupplierRef',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',

@@ -94,7 +94,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 }
 
 // Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
@@ -173,7 +173,7 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
+$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
@@ -405,7 +405,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -415,7 +415,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('');
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -440,7 +440,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
@@ -457,12 +457,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		print '<td class="center">'.$obj->nb.'</td>';
+		print '<td class="center">'.dol_escape_htmltag($obj->nb).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.dol_escape_htmltag($obj->nbpermissions).'</a>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -471,7 +471,7 @@ while ($i < $imaxinloop) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datem), "dayhour").'</td>';
+		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->tms), "dayhour").'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -513,12 +513,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}*/
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
+	$colspan = $savnbfield;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 

@@ -89,8 +89,8 @@ class modBom extends DolibarrModules
 			'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
 			'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 			'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-			'css' => array('/bom/css/bom.css.php'),	// Set this to relative path of css file if module has its own css file
-			 'js' => array('/bom/js/bom.js.php'),          // Set this to relative path of js file if module must load a js on all pages
+			'css' => array('/bom/css/bom.css.php'),				// Set this to relative path of css file if module has its own css file
+			 'js' => array('/bom/js/bom.js.php'),				// Set this to relative path of js file if module must load a js on all pages
 			'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 			'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
 			*/
@@ -105,9 +105,10 @@ class modBom extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('modProduct'); // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-		$this->requiredby = array('modMrp'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
+		$this->depends = array('modProduct');
+		$this->requiredby = array('modMrp');
+		$this->conflictwith = array();
 		$this->langfiles = array("mrp");
 		//$this->phpmin = array(7, 0));					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(9, 0); // Minimum version of Dolibarr required by module

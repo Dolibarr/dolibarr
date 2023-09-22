@@ -62,6 +62,11 @@ class Mailing extends CommonObject
 	public $body;
 
 	/**
+	 * @var	int		1=Email will be sent even to email that has opt-out
+	 */
+	public $evenunsubscribe;
+
+	/**
 	 * @var int number of email
 	 */
 	public $nbemail;
@@ -166,6 +171,11 @@ class Mailing extends CommonObject
 	public $date_validation;
 
 	/**
+	 * @var int date sending
+	 */
+	public $date_envoi;
+
+	/**
 	 * @var array extraparams
 	 */
 	public $extraparams = array();
@@ -190,7 +200,6 @@ class Mailing extends CommonObject
 	 */
 	public $substitutionarrayfortest;
 
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_SENTPARTIALY = 2;
@@ -204,6 +213,8 @@ class Mailing extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		// List of language codes for status
@@ -212,11 +223,11 @@ class Mailing extends CommonObject
 		$this->statuts[2] = 'MailingStatusSentPartialy';
 		$this->statuts[3] = 'MailingStatusSentCompletely';
 
-		$this->statut_dest[-1] = 'MailingStatusError';
 		$this->statut_dest[0] = 'MailingStatusNotSent';
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe'; // Read but ask to not be contacted anymore
+		$this->statut_dest[-1] = 'MailingStatusError';
 	}
 
 	/**
@@ -231,8 +242,8 @@ class Mailing extends CommonObject
 		global $conf, $langs;
 
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -300,8 +311,8 @@ class Mailing extends CommonObject
 	public function update($user, $notrigger = 0)
 	{
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -317,6 +328,7 @@ class Mailing extends CommonObject
 		$sql .= ", email_errorsto = '".$this->db->escape($this->email_errorsto)."'";
 		$sql .= ", bgcolor = '".($this->bgcolor ? $this->db->escape($this->bgcolor) : null)."'";
 		$sql .= ", bgimage = '".($this->bgimage ? $this->db->escape($this->bgimage) : null)."'";
+		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -351,13 +363,14 @@ class Mailing extends CommonObject
 	 *	Get object from database
 	 *
 	 *	@param	int		$rowid      Id of emailing
+	 *	@param	string	$ref		Title to search from title
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	public function fetch($rowid)
+	public function fetch($rowid, $ref = '')
 	{
 		global $conf;
 
-		$sql = "SELECT m.rowid, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage";
+		$sql = "SELECT m.rowid, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
@@ -366,7 +379,12 @@ class Mailing extends CommonObject
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-		$sql .= " WHERE m.rowid = ".(int) $rowid;
+		$sql .= " WHERE entity IN (".getEntity('mailing').")";
+		if ($ref) {
+			$sql .= " AND m.titre = '".$this->db->escape($ref)."'";
+		} else {
+			$sql .= " AND m.rowid = ".(int) $rowid;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -389,6 +407,7 @@ class Mailing extends CommonObject
 
 				$this->bgcolor = $obj->bgcolor;
 				$this->bgimage = $obj->bgimage;
+				$this->evenunsubscribe = $obj->evenunsubscribe;
 
 				$this->email_from = $obj->email_from;
 				$this->email_replyto = $obj->email_replyto;
@@ -454,6 +473,7 @@ class Mailing extends CommonObject
 			$object->body               = '';
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
+			$object->evenunsubscribe    = 0;
 
 			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';
@@ -773,9 +793,7 @@ class Mailing extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -792,17 +810,18 @@ class Mailing extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/comm/mailing/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -816,8 +835,8 @@ class Mailing extends CommonObject
 				$label = $langs->trans("ShowEMailing");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -828,7 +847,7 @@ class Mailing extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -890,7 +909,7 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *  Return the label of a given status  of a recipient
+	 *  Return the label of a given status of a recipient
 	 *  TODO Add class mailin_target.class.php
 	 *
 	 *  @param	int		$status        	Id status

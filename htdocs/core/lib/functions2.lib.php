@@ -113,8 +113,8 @@ function dolGetModulesDirs($subdir = '')
 /**
  *  Try to guess default paper format according to language into $langs
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
- *	@return		string							Default paper format code
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@return		string								Default paper format code
  */
 function dol_getDefaultFormat(Translate $outputlangs = null)
 {
@@ -1280,7 +1280,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
@@ -1346,7 +1346,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1408,7 +1408,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike)."'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -1936,14 +1936,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
+	$resql_models = $db->query($sql);
+	if ($resql_models) {
+		$num = $db->num_rows($resql_models);
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
-			$obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql_models);
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -2376,6 +2376,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
 		return $totalnb;
 	}
+	return -1;
 }
 
 
@@ -2668,6 +2669,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'accounting') {
+		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
@@ -2906,4 +2909,43 @@ function acceptLocalLinktoMedia()
 
 	//return 1;
 	return $acceptlocallinktomedia;
+}
+
+
+/**
+ * Remove first and last parenthesis but only if first is the opening and last the closing of the same group
+ *
+ * @param 	string	$string		String to sanitize
+ * @return 	string				String without global parenthesis
+ */
+function removeGlobalParenthesis($string)
+{
+	$string = trim($string);
+
+	// If string does not start and end with parenthesis, we return $string as is.
+	if (! preg_match('/^\(.*\)$/', $string)) {
+		return $string;
+	}
+
+	$nbofchars = dol_strlen($string);
+	$i = 0; $g = 0;
+	$countparenthesis = 0;
+	while ($i < $nbofchars) {
+		$char = dol_substr($string, $i, 1);
+		if ($char == '(') {
+			$countparenthesis++;
+		} elseif ($char == ')') {
+			$countparenthesis--;
+			if ($countparenthesis <= 0) {	// We reach the end of an independent group of parenthesis
+				$g++;
+			}
+		}
+		$i++;
+	}
+
+	if ($g <= 1) {
+		return preg_replace('/^\(/', '', preg_replace('/\)$/', '', $string));
+	}
+
+	return $string;
 }

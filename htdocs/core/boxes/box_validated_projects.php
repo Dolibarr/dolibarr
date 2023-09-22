@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/core/boxes/box_validated_projects.php
- *  \ingroup    projet
+ *  \ingroup    project
  *  \brief      Module to show validated projects whose tasks are assigned to the connected person, without any time entered by the connected person
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
@@ -69,7 +69,7 @@ class box_validated_projects extends ModeleBoxes
 
 		$this->hidden = empty($user->rights->projet->lire);
 
-		if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			$this->enabled = 0;
 		}
 	}

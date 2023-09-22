@@ -54,6 +54,10 @@
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
 
 
 -- Requests to clean corrupted data
@@ -569,17 +573,22 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
--- Sequence to fix the content of llx_bank.amount_main_currency
--- Note: amount is amount in currency of bank account
+
+-- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
+-- Note: amount is amount in the currency of the bank account
 -- Note: pamount is always amount into the main currency
--- Note: pmulticurrencyamount is in currency of invoice 
--- Note: amount_main_currency must be amount in main currency
+-- Note: pmulticurrencyamount is in the currency of invoice 
+-- Note: amount_main_currency must be NULL or amount in main currency of company (we set it when the currency of the bank account differs from main currency)
 -- DROP TABLE tmp_bank;
--- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
--- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+-- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount, b.datec FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL AND b.rowid IN (SELECT rowid FROM tmp_bank);
 -- DROP TABLE tmp_bank2;
--- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
--- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+-- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, - p.amount as pamount, - p.multicurrency_amount as pmulticurrencyamount, b.datec FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL AND b.rowid IN (SELECT rowid FROM tmp_bank2);
+
+-- Sequence to fix the content of llx_bank.amount_main_currency (sign was wrong with some version)
+-- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
+
 
 
 -- Delete duplicate entries into llx_c_transport_mode

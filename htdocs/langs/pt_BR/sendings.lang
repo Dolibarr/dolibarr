@@ -29,7 +29,6 @@ DateDeliveryPlanned=Data prevista para o fornecimento
 RefDeliveryReceipt=Recibo de entrega
 StatusReceipt=Recibo de entrega de status
 DateReceived=Data de entrega recebida
-ClassifyReception=Classificar recebimento
 SendShippingByEMail=Envio enviado por e-mail
 SendShippingRef=Submeter para envio %s
 ActionsOnShipping=Eventos no envio

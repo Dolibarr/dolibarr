@@ -79,8 +79,6 @@ class RemiseCheque extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->next_id = 0;
-		$this->previous_id = 0;
 	}
 
 	/**
@@ -812,47 +810,6 @@ class RemiseCheque extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Charge les proprietes ref_previous et ref_next
-	 *
-	 *  @return     int   <0 if KO, 0 if OK
-	 */
-	public function load_previous_next_id()
-	{
-		// phpcs:enable
-		global $conf;
-
-		$this->errno = 0;
-
-		$sql = "SELECT MAX(rowid)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid < ".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
-
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->errno = -1035;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->previous_id = $row[0];
-
-		$sql = "SELECT MIN(rowid)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid > ".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
-
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->errno = -1035;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->next_id = $row[0];
-
-		return $this->errno;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 *      Set the creation date
 	 *
 	 *      @param	User		$user           Object user
@@ -958,7 +915,7 @@ class RemiseCheque extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -995,10 +952,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string				Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -1007,11 +964,11 @@ class RemiseCheque extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return label of a status
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     Id status
-	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @return string      		Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -1052,7 +1009,7 @@ class RemiseCheque extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if (property_exists($this, 'date_bordereau')) {

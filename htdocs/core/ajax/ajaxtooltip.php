@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,6 @@
  *      \brief      This script returns content of tooltip
  */
 
-
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1); // Disables token renewal
 }
@@ -41,9 +40,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 $id = GETPOST('id', 'aZ09');
-$objecttype = GETPOST('objecttype', 'aZ09');	// 'module' or 'myobject@mymodule', 'mymodule_myobject'
+$objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mymodule', 'mymodule_myobject'
 
-$params = array();
+$params = array('fromajaxtooltip' => 1);
 if (GETPOSTISSET('infologin')) {
 	$params['infologin'] = GETPOST('infologin', 'int');
 }
@@ -53,6 +52,9 @@ if (GETPOSTISSET('option')) {
 
 // Load object according to $element
 $object = fetchObjectByElement($id, $objecttype);
+if (empty($object->element)) {
+	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id='.$id.', objecttype='.$objecttype.')');
+}
 
 $module = $object->module;
 $element = $object->element;
@@ -61,6 +63,8 @@ $usesublevelpermission = ($module != $element ? $element : '');
 if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
 // Security check
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
@@ -75,7 +79,8 @@ top_httphead();
 $html = '';
 
 if (is_object($object)) {
-	if ($object->id > 0) {
+	if ($object->id > 0 || !empty($object->ref)) {
+		/** @var CommonObject $object */
 		$html = $object->getTooltipContent($params);
 	} elseif ($res == 0) {
 		$html = $langs->trans('Deleted');

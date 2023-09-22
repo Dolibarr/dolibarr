@@ -137,7 +137,7 @@ if (!defined('NOREQUIRETRAN')) {
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
 		// If we were into a website context
@@ -191,9 +191,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
 	// Just after a login page
-	$conf->entity = GETPOST("entity", 'int');
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
@@ -227,8 +227,21 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
 		$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
 	}
-
-	if ($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) {
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// For FR, the replacement invoice type is not allowed.
+		// From an accounting point of view, this creates holes in the numbering of the invoice.
+		// This is very problematic during a fiscal control.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// The replacement invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+		// The deposit invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
+	}
+	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
 		$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
@@ -250,4 +263,3 @@ if (!defined('NOREQUIRETRAN')) {
 if (!defined('MAIN_LABEL_MENTION_NPR')) {
 	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }
-//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

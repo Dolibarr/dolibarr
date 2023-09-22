@@ -791,6 +791,8 @@ class FormProduct
 	 */
 	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
+		global $langs, $hookmanager;
+
 		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot", LOG_DEBUG);
 
 		$out = '';
@@ -809,8 +811,6 @@ class FormProduct
 
 		$nboflot = $this->loadLotStock($productIdArray);
 
-		$out .= '<datalist id="'.$htmlname.'" >';
-
 		if (!empty($fk_product) && $fk_product > 0) {
 			$productIdArray = array((int) $fk_product); // only show lot stock for product
 		} else {
@@ -819,13 +819,29 @@ class FormProduct
 			}
 		}
 
+		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('productdao'));
+		$parameters = array('productIdArray' => $productIdArray, 'htmlname' => $htmlname);
+		$reshook = $hookmanager->executeHooks('selectLotDataList', $parameters, $this);
+		if ($reshook < 0) {
+			return $hookmanager->error;
+		} elseif ($reshook > 0) {
+			return $hookmanager->resPrint;
+		} else {
+			$out .= $hookmanager->resPrint;
+		}
+
+		$out .= '<datalist id="'.$htmlname.'" >';
 		foreach ($productIdArray as $productId) {
 			if (array_key_exists($productId, $this->cache_lot)) {
 				foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
 					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'">' . $arraytypes['batch'] . '</option>';
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">(' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
 					}
 				}
 			}
@@ -865,6 +881,28 @@ class FormProduct
 			// clear cache
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
+
+			$batch_count = 0;
+			global $hookmanager;
+			if (empty($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+				$hookmanager = new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('productdao'));
+			$parameters = array('productIdList' => $productIdList);
+			$reshook = $hookmanager->executeHooks('loadLotStock', $parameters, $this);
+			if ($reshook < 0) {
+				$this->error = $hookmanager->error;
+				return -1;
+			}
+			if (!empty($hookmanager->resArray['batch_list']) && is_array($hookmanager->resArray['batch_list'])) {
+				$this->cache_lot = $hookmanager->resArray['batch_list'];
+				$batch_count = (int) $hookmanager->resArray['batch_count'];
+			}
+			if ($reshook > 0) {
+				return $batch_count;
+			}
+
 			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
 			$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.rowid = pb.fk_product_stock";
@@ -889,7 +927,7 @@ class FormProduct
 					$i++;
 				}
 
-				return $num;
+				return $batch_count + $num;
 			} else {
 				dol_print_error($this->db);
 				return -1;

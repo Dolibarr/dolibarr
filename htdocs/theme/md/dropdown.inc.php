@@ -21,8 +21,14 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
+#topmenu-global-search-dropdown a.login-dropdown-a, #topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
 	color: #fff;
+}
+
+div#topmenu-global-search-dropdown {
+	position: fixed;
+	<?php echo $right; ?>: 90px;
+	top: 0px;
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
@@ -40,7 +46,7 @@ div#topmenu-bookmark-dropdown {
 	display: none;
 }
 
-#topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
+#topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
 	min-width: 300px;
 	max-width: 360px;
 }
@@ -125,10 +131,10 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, , div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	padding-right: 2px;
 }
-div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
 
@@ -162,8 +168,9 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	/* display: none; */
 }
@@ -400,15 +407,15 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
 /*
-* SEARCH
-*/
+ * SEARCH
+ */
 
 .dropdown-search-input {
 	width: 100%;
@@ -432,6 +439,92 @@ a.dropdown-item {
 	backface-visibility: hidden;
 	transform-style: preserve-3d;
 
+}
+
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+/*
+ * QUICK ADD
+ */
+
+#topmenu-quickadd-dropdown .dropdown-menu {
+	width: 310px !important;
+	color: #444;
+}
+
+.quickadd-body.dropdown-body {
+	padding: unset;
+}
+
+.quickadd-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.quickadd-item:before {
+	content: none;
+}
+
+.quickadd-header {
+	color: #444 !important;
+}
+
+div.quickadd {
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-align-content: center;
+	-ms-flex-line-pack: center;
+	align-content: center;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+div.quickadd a {
+	color: #444;
+}
+
+div.quickadd a:hover, div.quickadd a:active {
+	color: #000000;
+}
+
+div.quickaddblock {
+	width: 95px;
+	height: 80px;
+}
+
+div.quickaddblock:hover,
+div.quickaddblock:active,
+div.quickaddblock:focus {
+	background: <?php print $colorbacklinepair1; ?>;
 }
 
 
@@ -460,9 +553,17 @@ dropdown-holder {
 	background: none;
 	color: #000 !important;
 }
+.dropdown-content a.butAction {
+	display: flex;
+}
 .dropdown-content .butAction:hover {
 	box-shadow: none;
 	text-decoration: underline;
+}
+.dropdown-content .butActionRefused {
+	margin-left: 0;
+	margin-right: 0;
+	border: none;
 }
 
 .dropdown-holder.open .dropdown-content {
@@ -491,6 +592,7 @@ dropdown-holder {
 		width: 230px;
 	}
 
+	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown {
 		position: unset;

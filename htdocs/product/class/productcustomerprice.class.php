@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  * File of class to manage predefined price products or services by customer
  */
-class Productcustomerprice extends CommonObject
+class ProductCustomerPrice extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -66,6 +66,7 @@ class Productcustomerprice extends CommonObject
 	public $price_min;
 	public $price_min_ttc;
 	public $price_base_type;
+	public $default_vat_code;
 	public $tva_tx;
 	public $recuperableonly;
 	public $localtax1_type;
@@ -78,6 +79,9 @@ class Productcustomerprice extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var PriceByCustomerLine[]
+	 */
 	public $lines = array();
 
 
@@ -379,8 +383,6 @@ class Productcustomerprice extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
-		global $langs;
-
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";
 		}
@@ -846,7 +848,7 @@ class Productcustomerprice extends CommonObject
 
 			while (($obj = $this->db->fetch_object($resql)) && (empty($error))) {
 				// find if there is an existing line for the product and the subsidiaries
-				$prodsocprice = new Productcustomerprice($this->db);
+				$prodsocprice = new ProductCustomerPrice($this->db);
 
 				$filter = array(
 					't.fk_product' => $this->fk_product, 't.fk_soc' => $obj->rowid
@@ -861,7 +863,7 @@ class Productcustomerprice extends CommonObject
 					if (count($prodsocprice->lines) > 0) {
 						// If force update => Update
 						if (!empty($forceupdateaffiliate)) {
-							$prodsocpriceupd = new Productcustomerprice($this->db);
+							$prodsocpriceupd = new ProductCustomerPrice($this->db);
 							$prodsocpriceupd->fetch($prodsocprice->lines [0]->id);
 
 							$prodsocpriceupd->price = $this->price;
@@ -871,14 +873,14 @@ class Productcustomerprice extends CommonObject
 							$prodsocpriceupd->recuperableonly = $this->recuperableonly;
 
 							$resultupd = $prodsocpriceupd->update($user, 0, $forceupdateaffiliate);
-							if ($result < 0) {
+							if ($resultupd < 0) {
 								$error++;
 								$this->error = $prodsocpriceupd->error;
 							}
 						}
 					} else {
 						// If line do not exits then create it
-						$prodsocpricenew = new Productcustomerprice($this->db);
+						$prodsocpricenew = new ProductCustomerPrice($this->db);
 						$prodsocpricenew->fk_soc = $obj->rowid;
 						$prodsocpricenew->ref_customer = $obj->ref_customer;
 						$prodsocpricenew->fk_product = $this->fk_product;
@@ -889,7 +891,7 @@ class Productcustomerprice extends CommonObject
 						$prodsocpricenew->recuperableonly = $this->recuperableonly;
 
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
-						if ($result < 0) {
+						if ($resultupd < 0) {
 							$error++;
 							$this->error = $prodsocpricenew->error;
 						}
@@ -923,7 +925,7 @@ class Productcustomerprice extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_DELETE', $user);
 			if ($result < 0) {
 				$error++;
@@ -967,7 +969,7 @@ class Productcustomerprice extends CommonObject
 	{
 		$error = 0;
 
-		$object = new Productcustomerprice($this->db);
+		$object = new ProductCustomerPrice($this->db);
 
 		$this->db->begin();
 

@@ -588,7 +588,7 @@ class EcmFiles extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new EcmfilesLine();
+				$line = new EcmFilesLine();
 
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
@@ -816,7 +816,7 @@ class EcmFiles extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-		$object = new Ecmfiles($this->db);
+		$object = new EcmFiles($this->db);
 
 		$this->db->begin();
 
@@ -918,9 +918,9 @@ class EcmFiles extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -981,7 +981,7 @@ class EcmFiles extends CommonObject
 /**
  * Class of an index line of a document
  */
-class EcmfilesLine
+class EcmFilesLine
 {
 	/**
 	 * @var string ECM files line label

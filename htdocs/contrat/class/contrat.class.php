@@ -113,13 +113,27 @@ class Contrat extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * Client id linked to the contract
+	 * @var int
+	 * @deprecated Use $socid
+	 */
+	public $fk_soc;
+
+
 	public $societe; // Objet societe
 
 	/**
 	 * Status of the contract
 	 * @var int
+	 * @deprecated
 	 */
-	public $statut = 0; // 0=Draft,
+	public $statut = 0;
+	/**
+	 * Status of the contract (0=Draft, 1=Validated)
+	 * @var int
+	 */
+	public $status = 0;
 
 	public $product;
 
@@ -479,7 +493,7 @@ class Contrat extends CommonObject
 	public function validate(User $user, $force_number = '', $notrigger = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		global $langs, $conf;
+		global $conf;
 
 		$now = dol_now();
 
@@ -493,7 +507,7 @@ class Contrat extends CommonObject
 
 		// A contract is validated so we can move thirdparty to status customer
 		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION)) {
-			$result = $this->thirdparty->set_as_client();
+			$result = $this->thirdparty->setAsCustomer();
 		}
 
 		// Define new ref
@@ -569,8 +583,8 @@ class Contrat extends CommonObject
 			// Set new ref and define current statut
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = 1;
-				$this->brouillon = 0;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 			}
 		} else {
@@ -596,7 +610,6 @@ class Contrat extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		global $langs, $conf;
 
 		$now = dol_now();
 
@@ -631,8 +644,8 @@ class Contrat extends CommonObject
 
 		// Set new ref and define current status
 		if (!$error) {
-			$this->statut = 0;
-			$this->brouillon = 1;
+			$this->statut = self::STATUS_DRAFT;
+			$this->status = self::STATUS_DRAFT;
 			$this->date_validation = $now;
 		}
 
@@ -656,7 +669,7 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
-		$sql = "SELECT rowid, statut, ref, fk_soc,";
+		$sql = "SELECT rowid, statut as status, ref, fk_soc as thirdpartyid,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
 		$sql .= " entity,";
@@ -689,6 +702,7 @@ class Contrat extends CommonObject
 				$this->error = 'Fetch found several records.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
+				return 0;
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
@@ -698,7 +712,8 @@ class Contrat extends CommonObject
 					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 					$this->entity = $obj->entity;
-					$this->statut = $obj->statut;
+					$this->statut = $obj->status;
+					$this->status = $obj->status;
 
 					$this->date_contrat = $this->db->jdate($obj->datecontrat);
 					$this->date_creation = $this->db->jdate($obj->datecontrat);
@@ -716,8 +731,8 @@ class Contrat extends CommonObject
 					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
 
-					$this->socid = $obj->fk_soc;
-					$this->fk_soc = $obj->fk_soc;
+					$this->socid = $obj->thirdpartyid;
+					$this->fk_soc = $obj->thirdpartyid;
 					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 
@@ -738,6 +753,10 @@ class Contrat extends CommonObject
 					}
 
 					return $this->id;
+				} else {
+					dol_syslog(get_class($this)."::fetch Contract failed");
+					$this->error = "Fetch contract failed";
+					return -1;
 				}
 			} else {
 				dol_syslog(get_class($this)."::fetch Contract not found");
@@ -763,8 +782,6 @@ class Contrat extends CommonObject
 	public function fetch_lines($only_services = 0, $loadalsotranslation = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->nbofservices = 0;
 		$this->nbofserviceswait = 0;
 		$this->nbofservicesopened = 0;
@@ -782,7 +799,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -829,7 +846,8 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
-				$line->statut = $objp->statut;
+				$line->statut = $objp->status;
+				$line->status = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
 				$line->price_ht			= $objp->price_ht;
 				$line->price = $objp->price_ht; // For backward compatibility
@@ -1084,7 +1102,6 @@ class Contrat extends CommonObject
 								continue; // ignore this, already forced previously
 							}
 
-							//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
 							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 						}
 					} else {
@@ -1296,7 +1313,7 @@ class Contrat extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 
 		// Clean parameters
@@ -1306,8 +1323,8 @@ class Contrat extends CommonObject
 		if (empty($this->fk_commercial_suivi) && $this->commercial_suivi_id > 0) {
 			$this->fk_commercial_suivi = $this->commercial_suivi_id;
 		}
-		if (empty($this->fk_soc) && $this->socid > 0) {
-			$this->fk_soc = (int) $this->socid;
+		if (empty($this->socid) && $this->fk_soc > 0) {
+			$this->socid = (int) $this->fk_soc;
 		}
 		if (empty($this->fk_project) && $this->projet > 0) {
 			$this->fk_project = (int) $this->projet;
@@ -1331,8 +1348,11 @@ class Contrat extends CommonObject
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
 		}
-		if (isset($this->fk_soc)) {
-			$this->fk_soc = (int) $this->fk_soc;
+		if (isset($this->status)) {
+			$this->status = (int) $this->status;
+		}
+		if (isset($this->socid)) {
+			$this->socid = (int) $this->socid;
 		}
 		if (isset($this->fk_commercial_signature)) {
 			$this->fk_commercial_signature = trim($this->fk_commercial_signature);
@@ -1362,8 +1382,8 @@ class Contrat extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".$conf->entity.",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
-		$sql .= " statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " fk_soc=".($this->fk_soc > 0 ? $this->fk_soc : "null").",";
+		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
+		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
 		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
 		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
@@ -1664,7 +1684,7 @@ class Contrat extends CommonObject
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	string		$rang 				Position
-	 *  @return int              				< 0 si erreur, > 0 si ok
+	 *  @return int              				<0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
 	{
@@ -1819,6 +1839,9 @@ class Contrat extends CommonObject
 
 				$this->db->commit();
 				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
 			}
 		} else {
 			$this->db->rollback();
@@ -1931,10 +1954,10 @@ class Contrat extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi label of a given contrat status
+	 *  Return the label of a given contrat status
 	 *
 	 *  @param	int		$status      	Id status
-	 *  @param  int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto, 7=Same than 6 with fixed length
+	 *  @param  int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label (status of services), 5=Short label + Picto, 6=Long label + Picto (status of services), 7=Same than 6 with fixed length (status of services)
 	 *	@return string      			Label
 	 */
 	public function LibStatut($status, $mode)
@@ -2057,9 +2080,9 @@ class Contrat extends CommonObject
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -2075,11 +2098,11 @@ class Contrat extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('contrat', 'lire')) {
@@ -2087,7 +2110,7 @@ class Contrat extends CommonObject
 				$label = $langs->trans("ShowContract");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 		$linkstart = '<a href="'.$url.'"';
@@ -2096,7 +2119,7 @@ class Contrat extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($this->ref ? $this->ref : $this->id);
@@ -2478,6 +2501,21 @@ class Contrat extends CommonObject
 		return $this->fetch_lines();
 	}
 
+	/**
+	 * 	Create an array of associated tickets
+	 *
+	 * 	@return array|int		Array o tickets or <0 if KO
+	 */
+	public function getTicketsArray()
+	{
+		global $user;
+
+		$ticket = new Ticket($this->db);
+		$nbTicket =  $ticket->fetchAll($user,  'ASC', 't.datec',  '', 0, '', array('t.fk_contract' => $this->id));
+
+		return ($nbTicket < 0 ? $nbTicket : $ticket->lines);
+	}
+
 
 	/**
 	 *  Create a document onto disk according to template module.
@@ -2854,19 +2892,19 @@ class Contrat extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'societe')) {
-			$return .= '<br><span class="info-box-label ">'.$this->societe.'</span>';
+		if (!empty($arraydata['thirdparty'])) {
+			$tmpthirdparty = $arraydata['thirdparty'];
+			$return .= '<br><div class="info-box-label inline-block">'.$tmpthirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'date_contrat')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(7).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -3163,11 +3201,13 @@ class ContratLigne extends CommonObjectLine
 				'objecttype' => $this->element,
 			];
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
 		}
-		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat;
-		$link = '"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+
+		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'"';
+		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$link .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		$picto = 'service';

@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Ya transferido en diarios contables y libro mayor
 NotYetInGeneralLedger=Aún no se ha transferido a los diarios contables y al libro mayor
 GroupIsEmptyCheckSetup=El grupo está vacío, compruebe la configuración de grupos contables
 DetailByAccount=Ver detalles por cuenta
+DetailBy=Detalle por
 AccountWithNonZeroValues=Cuentas con valores no cero
 ListOfAccounts=Lista de cuentas
 CountriesInEEC=Países en la CEE
@@ -51,14 +52,19 @@ AccountantFiles=Exportar documentos de origen
 ExportAccountingSourceDocHelp=Con esta herramienta, puede buscar y exportar los eventos de origen que se utilizan para generar su contabilidad. <br> El archivo ZIP exportado contendrá las listas de artículos solicitados en CSV, así como sus archivos adjuntos en su formato original (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Para exportar sus diarios, use la entrada de menú %s - %s.
 ExportAccountingProjectHelp=Especifique un proyecto si necesita un informe contable solo para un proyecto específico. Los informes de gastos y los pagos de préstamos no se incluyen en los informes de proyectos.
+ExportAccountancy=Exportar contabilidad
+WarningDataDisappearsWhenDataIsExported=Advertencia, esta lista contiene solo los asientos contables que aún no se han exportado (la fecha de exportación está vacía). Si desea incluir los asientos contables ya exportados para volver a exportarlos, haga clic en el botón de arriba.
 VueByAccountAccounting=Ver por cuenta contable
 VueBySubAccountAccounting=Ver por subcuenta contable
 
-MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
-MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
-MainAccountForUsersNotDefined=Cuenta contable para usuarios no definida en la configuración
-MainAccountForVatPaymentNotDefined=Cuenta contable para IVA no definida en la configuración
-MainAccountForSubscriptionPaymentNotDefined=Cuenta contable para subscripciones no definida en la configuración
+MainAccountForCustomersNotDefined=Cuenta principal (del Plan Contable) para clientes no definidos en la configuración
+MainAccountForSuppliersNotDefined=Cuenta principal (del Plan Contable) para proveedores no definidos en la configuración
+MainAccountForUsersNotDefined=Cuenta principal (del Plan Contable) para usuarios no definidos en la configuración
+MainAccountForRevenueStampSaleNotDefined=Cuenta (del Plan Contable) para el sello de ingresos (ventas) no definido en la configuración
+MainAccountForRevenueStampPurchaseNotDefined=Cuenta (del Plan Contable) para el sello de ingresos (compras) no definido en la configuración
+MainAccountForVatPaymentNotDefined=Cuenta (del Plan Contable) para el pago del IVA no definida en la configuración
+MainAccountForSubscriptionPaymentNotDefined=Cuenta (del Plan Contable) para pago de membresía no definida en la configuración
+MainAccountForRetainedWarrantyNotDefined=Cuenta (del Plan Contable) para la garantía retenida no definida en la configuración
 UserAccountNotDefined=Cuenta contable para usuarios no definida en la configuración
 
 AccountancyArea=Área contabilidad
@@ -112,6 +118,7 @@ MenuLoanAccounts=Cuentas de préstamos
 MenuProductsAccounts=Cuentas contables de productos
 MenuClosureAccounts=Cerrar cuentas
 MenuAccountancyClosure=Cerrar
+MenuExportAccountancy=Exportar contabilidad
 MenuAccountancyValidationMovements=Validar movimientos
 ProductsBinding=Cuentas de productos
 TransferInAccounting=Transferencia en contabilidad
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Habilite la lista combinada para la cuenta subsidiaria
 ACCOUNTING_DATE_START_BINDING=Defina una fecha para comenzar a vincular y transferir en contabilidad. Por debajo de esta fecha, las transacciones no se transferirán a contabilidad.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En la transferencia de contabilidad, ¿cuál es el período seleccionado por defecto?
 
-ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
-ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
+ACCOUNTING_SELL_JOURNAL=Diario de ventas - ventas y devoluciones
+ACCOUNTING_PURCHASE_JOURNAL=Diario de compras - compras y devoluciones
+ACCOUNTING_BANK_JOURNAL=Libro de caja - recibos y egresos
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario general
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene un nuevo diario
@@ -295,7 +302,7 @@ DescClosure=Consulta aquí el número de movimientos por mes aún no validados y
 OverviewOfMovementsNotValidated=Resumen de movimientos no validados y bloqueados
 AllMovementsWereRecordedAsValidated=Todos los movimientos fueron registrados como validados y bloqueados.
 NotAllMovementsCouldBeRecordedAsValidated=No todos los movimientos se pudieron registrar como validados y bloqueados
-ValidateMovements=Validar y bloquear movimientos...
+ValidateMovements=Validar y bloquear movimientos
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
 
 ValidateHistory=Vincular automáticamente
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Deshabilitar la vinculación y la transferen
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deshabilitar la vinculación y transferencia en contabilidad en compras (las facturas de proveedores no se tendrán en cuenta en la contabilidad)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactive la vinculación y transferencia en contabilidad en informes de gastos (los informes de gastos no se tendrán en cuenta en la contabilidad)
 ACCOUNTING_ENABLE_LETTERING=Habilitar la función de letras en la contabilidad.
+ACCOUNTING_ENABLE_LETTERING_DESC=Cuando esta opción está habilitada, puede definir, en cada asiento contable, un código para que pueda agrupar diferentes movimientos contables. En el pasado, cuando las diferentes revistas se administraban de forma independiente, esta característica era necesaria para agrupar las líneas de movimiento de diferentes revistas. Sin embargo, con la contabilidad de Dolibarr, dicho código de seguimiento, llamado "<b> %s </b>" ya se guarda automáticamente, por lo que ya se realiza una escritura automática, sin riesgo de error, por lo que esta función se ha vuelto inútil para un uso común. La función de letras manuales se proporciona para los usuarios finales que realmente no confían en el motor de la computadora que realiza la transferencia de datos en la contabilidad.
+EnablingThisFeatureIsNotNecessary=Habilitar esta función ya no es necesario para una gestión contable rigurosa.
 ACCOUNTING_ENABLE_AUTOLETTERING=Habilite las letras automáticas al transferir a contabilidad
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=El código para las letras se genera e incrementa automáticamente y el usuario final no lo elige
+OptionsAdvanced=Opciones avanzadas
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar la gestión del cobro revertido del IVA en las compras a proveedores
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Cuando esta opción está habilitada, puede definir que un proveedor o una factura de proveedor determinada se transfiera a la contabilidad de manera diferente: se generará una línea de débito y crédito adicional en la contabilidad en 2 cuentas dadas desde el plan de cuentas definido en el "%s " página de configuración.
 
 ## Export
 NotExportLettering=No exportar las letras al generar el archivo.
-NotifiedExportDate=Marcar las líneas exportadas como Exportadas <span class="warning"> (para modificar una línea, deberá eliminar toda la transacción y volver a transferirla a contabilidad) </span>
-NotifiedValidationDate=Valide y bloquee las entradas exportadas <span class="warning"> (mismo efecto que la función "%s", la modificación y eliminación de las líneas DEFINITIVAMENTE no será posible) </span>
+NotifiedExportDate=Marcar líneas aún no exportadas como Exportadas <span class="warning"> (para modificar una línea marcada como exportada, deberá eliminar toda la transacción y volver a transferirla a contabilidad) </span>
+NotifiedValidationDate=Validar y bloquear las entradas exportadas que aún no están bloqueadas <span class="warning"> (mismo efecto que la función "%s", la modificación y eliminación de las líneas DEFINITIVAMENTE no será posible) </span>
 NotifiedExportFull=¿Exportar documentos?
 DateValidationAndLock=Validación de fecha y bloqueo
 ConfirmExportFile=¿Confirmación de la generación del archivo de exportación contable?
@@ -381,7 +394,7 @@ ChartofaccountsId=Id plan contable
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidad
 InitAccountancyDesc=Puede usar esta página para inicializar el código contable en productos y servicios que no tienen código contable definido para ventas y compras
-DefaultBindingDesc=Esta página puede usarse para establecer una cuenta predeterminada que se utilizará para enlazar registros de salarios, donaciones, impuestos e IVA cuando no tengan establecida una cuenta contable.
+DefaultBindingDesc=Esta página se puede usar para configurar las cuentas predeterminadas (desde el plan de cuentas) para vincular objetos comerciales con una cuenta, como pago de salarios, donaciones, impuestos e IVA, cuando no se haya configurado una cuenta específica.
 DefaultClosureDesc=Esta página se puede usar para configurar los parámetros que se usarán en los cierres contables.
 Options=Opciones
 OptionModeProductSell=Modo ventas
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Confirmación masiva de anulación de conciliación a
 ConfirmMassUnletteringManual=Confirmación de no conciliación manual masiva
 ConfirmMassUnletteringQuestion=¿Está seguro de que desea anular la conciliación de los %sregistros seleccionados?
 ConfirmMassDeleteBookkeepingWriting=Confirmación de borrado en lote
-ConfirmMassDeleteBookkeepingWritingQuestion=Esto eliminará la transacción de la contabilidad (se eliminarán todas las líneas relacionadas con la misma transacción). ¿Está seguro de que desea eliminar los %s registros seleccionados?
+ConfirmMassDeleteBookkeepingWritingQuestion=Esto eliminará la transacción de la contabilidad (se eliminarán todas las entradas de línea relacionadas con la misma transacción). ¿Está seguro de que desea eliminar las entradas seleccionadas %s?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos necesarios de la configuración no están realizados, por favor complételos.
@@ -446,7 +459,7 @@ NoJournalDefined=Sin diario definido
 Binded=Líneas contabilizadas
 ToBind=Líneas a contabilizar
 UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href="%s"> %s </a> para realizar el apunte manualmente
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Lo sentimos, este módulo no es compatible con la función experimental de facturas de situación.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Nota: este módulo o página no es completamente compatible con la función experimental de facturas de situación. Algunos datos pueden estar equivocados.
 AccountancyErrorMismatchLetterCode=Discrepancia en el código de conciliación
 AccountancyErrorMismatchBalanceAmount=El saldo (%s) no es igual a 0
 AccountancyErrorLetteringBookkeeping=Se han producido errores con respecto a las transacciones: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Importe multidivisa (Montantdevise)
 FECFormatMulticurrencyCode=Código multidivisa (Idevise)
 
 DateExport=Fecha de exportación
-WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
+WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene transacciones modificadas manualmente en el Libro mayor. Si su diario está actualizado, la vista de contabilidad es más precisa.
 ExpenseReportJournal=Informe de gastos diario
-DocsAlreadyExportedAreExcluded=Los documentos ya exportados están excluidos
-ClickToHideAlreadyExportedLines=Haga clic para ocultar líneas ya exportadas
+DocsAlreadyExportedAreIncluded=Se incluyen los documentos ya exportados
+ClickToShowAlreadyExportedLines=Haga clic para mostrar las líneas ya exportadas
 
 NAccounts=%s cuentas

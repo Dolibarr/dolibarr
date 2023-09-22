@@ -225,7 +225,7 @@ $(document).ready(function(){
 
         $(this).find("li ul").slideToggle(200);
 
-        target = $(this);
+        var target = $(this);
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);

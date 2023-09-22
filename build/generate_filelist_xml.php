@@ -56,7 +56,7 @@ if (empty($argv[1])) {
 
 
 $i=0;
-$result=array();
+$result = array();
 while ($i < $argc) {
 	if (!empty($argv[$i])) {
 		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...

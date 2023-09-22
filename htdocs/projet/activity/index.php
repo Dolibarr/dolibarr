@@ -37,6 +37,11 @@ if ($search_project_user == $user->id) {
 	$mine = 1;
 }
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('activityindex'));
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
@@ -46,11 +51,6 @@ if ($user->socid > 0) {
 if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
-
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('activityindex'));
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -97,7 +97,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("TasksDesc");
 	} else {
 		$tooltiphelp = $langs->trans("TasksPublicDesc");
@@ -231,7 +231,7 @@ if ($db->type != 'pgsql')
 	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
-	$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+	$sql.= " , ".MAIN_DB_PREFIX."element_time as tt";
 	$sql.= " WHERE t.fk_projet = p.rowid";
 	$sql.= " AND p.entity = ".((int) $conf->entity);
 	$sql.= " AND tt.fk_task = t.rowid";

@@ -295,11 +295,12 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+$filter = '';
 if ($mode == 'customer') {
-	$filter = 's.client IN (1,2,3)';
+	$filter = '(s.client:IN:1,2,3)';
 }
 if ($mode == 'supplier') {
-	$filter = 's.fournisseur = 1';
+	$filter = '(s.fournisseur:=:1)';
 }
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300');
@@ -333,11 +334,11 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
 	$liststatus = array(
-		Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
-		Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-		Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
-		Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-		Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+		Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraft"),
+		Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+		Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSent"),
+		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceled")
 	);
 	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 }

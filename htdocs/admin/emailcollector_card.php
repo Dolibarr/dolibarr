@@ -149,7 +149,7 @@ if (GETPOST('addfilter', 'alpha')) {
 	if ($result > 0) {
 		$object->fetchFilters();
 	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 	}
 }
 
@@ -161,7 +161,7 @@ if ($action == 'deletefilter') {
 		if ($result > 0) {
 			$object->fetchFilters();
 		} else {
-			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+			setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 		}
 	}
 }
@@ -192,7 +192,7 @@ if (GETPOST('addoperation', 'alpha')) {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -216,7 +216,7 @@ if ($action == 'updateoperation') {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -228,7 +228,7 @@ if ($action == 'deleteoperation') {
 		if ($result > 0) {
 			$object->fetchActions();
 		} else {
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -242,7 +242,7 @@ if ($action == 'collecttest') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -257,7 +257,7 @@ if ($action == 'confirm_collect') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -395,9 +395,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringtarget = '';
 
 	// Note: $object->host has been loaded by the fetch
-	$usessl = 1;
-
-	$connectstringserver = $object->getConnectStringIMAP($usessl);
+	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
@@ -575,7 +573,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
-	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml ? $morehtml : '?');
+	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml !== '' ? $morehtml : '?');
 	$morehtml .= '<a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
@@ -603,7 +601,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Filters
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
+	print '<table id="tablelineoffilters" class="noborder nobordertop noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
@@ -615,20 +613,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
 		'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
 		'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
+		'replyto'=>array('label'=>'ReplyTo', 'data-placeholder'=>$langs->trans('SearchString')),
 		'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
 		'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
 		//'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
 		//'X1'=>'---',
-		//'notinsubject'=>array('label'=>'SubjectNotIn', 'data-placeholder'=>'SearchString'),
-		//'notinbody'=>array('label'=>'BodyNotIn', 'data-placeholder'=>'SearchString'),
 		'X2'=>'---',
 		'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
 		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
 		'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
 		'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
-		'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+		'smaller'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+		'larger'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
 		'X3'=>'---',
 		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
 		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
@@ -646,9 +643,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         console.log("We change a filter");
         if (jQuery("#filtertype option:selected").attr("data-noparam")) {
             jQuery("#rulevalue").attr("placeholder", "");
-            jQuery("#rulevalue").text(""); jQuery("#rulevalue").prop("disabled", true);
-        }
-        else { jQuery("#rulevalue").prop("disabled", false); }
+            jQuery("#rulevalue").text("");
+			jQuery("#rulevalue").prop("disabled", true);
+			jQuery("#rulevaluehelp").addClass("unvisible");
+        } else {
+			jQuery("#rulevalue").prop("disabled", false);
+			jQuery("#rulevaluehelp").removeClass("unvisible");
+		}
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
 	/*$noparam = array();
@@ -659,10 +660,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '})';
 	print '</script>'."\n";
 
-	print '</td><td>';
-	print '<input type="text" name="rulevalue" id="rulevalue">';
+	print '</td><td class="nowraponall">';
+	print '<div class="nowraponall">';
+	print '<input type="text" name="rulevalue" id="rulevalue" class="inline-block valignmiddle">';
+	print '<div class="inline-block valignmiddle unvisible" id="rulevaluehelp">';
+	print img_warning($langs->trans("FilterSearchImapHelp"), '', 'pictowarning classfortooltip');
+	print '</div>';
+	print '</div>';
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button small" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List filters
 	foreach ($object->filters as $rulefilter) {
@@ -684,18 +690,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	// Operations
-	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder margintable noshadow">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
+	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td>';
+	print '<td>';
+	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
+	print $form->textwithpicto($langs->trans("Parameters"), $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
+	print '</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	$arrayoftypes = array(
-		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
-		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName").'/'.$langs->transnoentities("AliasNameShort").'/'.$langs->transnoentities("Email").'/'.$langs->transnoentities("ID")),
+		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName").'/'.$langs->transnoentities("AliasNameShort").'/'.$langs->transnoentities("Email").'/'.$langs->transnoentities("ID")),
 		'recordjoinpiece' => 'AttachJoinedDocumentsToObject',
 		'recordevent' => 'RecordEvent'
 	);
@@ -730,13 +742,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth300', 1);
 	print '</td><td>';
-	//print '<input type="text" name="operationparam">';
-	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
-	print $form->textwithpicto('<input type="text" name="operationparam">', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
+	print '<textarea class="centpercent" name="operationparam" rows="3"></textarea>';
 	print '</td>';
 	print '<td>';
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button small" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
 	$nboflines = count($object->actions);
@@ -744,7 +754,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$fk_element = 'position';
 	$i = 0;
 	foreach ($object->actions as $ruleaction) {
-		$ruleactionobj = new EmailcollectorAction($db);
+		$ruleactionobj = new EmailCollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
@@ -766,12 +776,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
-			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
+			//print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
+			print '<textarea class="centpercent" name="operationparam2" rows="3">';
+			print dol_escape_htmltag($ruleaction['actionparam'], 0, 1);
+			print '</textarea>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
 			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
 			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-			print dol_escape_htmltag($ruleaction['actionparam']);
+			print dol_nl2br(dol_escape_htmltag($ruleaction['actionparam'], 0, 1));
 		}
 		print '</td>';
 		// Move up/down

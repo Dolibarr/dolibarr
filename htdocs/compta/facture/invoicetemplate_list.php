@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'admin', 'other'));
+$langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -169,14 +169,6 @@ if ($socid > 0) {
 	}
 }
 
-if ($socid > 0) {
-		$tmpthirdparty = new Societe($db);
-		$res = $tmpthirdparty->fetch($socid);
-	if ($res > 0) {
-		$search_societe = $tmpthirdparty->name;
-	}
-}
-
 $objecttype = 'facture_rec';
 
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
@@ -254,8 +246,8 @@ if (empty($reshook)) {
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permissiontoread = $user->rights->mymodule->read;
-	$permissiontodelete = $user->rights->mymodule->delete;
+	$permissiontoread = $user->hasRight("mymodule", "read");
+	$permissiontodelete = $user->hasRight("mymodule", "delete");
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -317,7 +309,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -386,7 +378,7 @@ if ($search_date_when_end) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -440,7 +432,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($socid > 0) {
 	$param .= '&socid='.urlencode($socid);
@@ -538,7 +530,7 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -626,13 +618,13 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	// Payment term
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre">';
 	print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 	print "</td>";
 }
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	// Payment mode
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre">';
 	print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100', 1);
 	print '</td>';
 }
@@ -735,6 +727,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
@@ -853,8 +846,8 @@ while ($i < $imaxinloop) {
 	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
-		if ($user->rights->facture->creer && empty($invoicerectmp->suspended)) {
+		print '<td class="center tdoverflowmax125">';
+		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
@@ -940,13 +933,22 @@ while ($i < $imaxinloop) {
 		}
 	}
 	if (!empty($arrayfields['f.frequency']['checked'])) {
-		print '<td class="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
+		print '<td class="center">';
+		print ($objp->frequency > 0 ? $objp->frequency : '');
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['f.unit_frequency']['checked'])) {
-		print '<td class="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
+		print '<td class="center">';
+		if ($objp->frequency > 1) {
+			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+		} else {
+			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+		}
+		print ($objp->frequency > 0 ? $dur[$objp->unit_frequency] : '');
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1044,7 +1046,7 @@ while ($i < $imaxinloop) {
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center tdoverflowmax125">';
-		if ($user->rights->facture->creer && empty($invoicerectmp->suspended)) {
+		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,12 @@ class DoliDBTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return DiscountTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -143,7 +145,7 @@ class DoliDBTest extends PHPUnit\Framework\TestCase
 		$savtype = '';
 		$savnull = '';
 		$resql = $db->DDLDescTable($db->prefix().'c_paper_format', 'code');
-		while ($obj = $resql->fetch_object()) {
+		while ($obj = $db->fetch_object($resql)) {
 			if ($obj->Field == 'code') {
 				$savtype = $obj->Type;
 				$savnull = $obj->Null;

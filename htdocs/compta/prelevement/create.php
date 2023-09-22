@@ -96,7 +96,7 @@ if (empty($reshook)) {
 	// Change customer bank information to withdraw
 	if ($action == 'modify') {
 		for ($i = 1; $i < 9; $i++) {
-			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
 	if ($action == 'create') {
@@ -104,13 +104,13 @@ if (empty($reshook)) {
 
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
-		if ($id_bankaccount != $conf->global->$default_account) {
+		if ($id_bankaccount != getDolGlobalInt($default_account)) {
 			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
-		$bank->fetch($conf->global->{$default_account});
+		$bank->fetch(getDolGlobalInt($default_account));
 		// ICS is not mandatory with payment by bank transfer
 		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
@@ -128,6 +128,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type);
+
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -185,8 +186,6 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-llxHeader('', $langs->trans("NewStandingOrder"));
-
 if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
 	$modulenametoshow = "Withdraw";
@@ -197,20 +196,12 @@ if (prelevement_check_config($type) < 0) {
 }
 
 
-/*$h=0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
-$head[$h][1] = $langs->trans("NewStandingOrder");
-$head[$h][2] = 'payment';
-$hselected = 'payment';
-$h++;
-
-print dol_get_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
-*/
-
 $title = $langs->trans("NewStandingOrder");
 if ($type == 'bank-transfer') {
 	$title = $langs->trans("NewPaymentByBankTransfer");
 }
+
+llxHeader('', $title);
 
 print load_fiche_titre($title);
 
@@ -223,12 +214,12 @@ if ($nb < 0) {
 }
 print '<table class="border centpercent tableforfield">';
 
-$title = $langs->trans("NbOfInvoiceToWithdraw");
+$labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
 if ($type == 'bank-transfer') {
-	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
+	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 }
 
-print '<tr><td class="titlefield">'.$title.'</td>';
+print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
 print '<td class="nowraponall">';
 print dol_escape_htmltag($nb);
 print '</td></tr>';
@@ -376,7 +367,7 @@ if ($socid > 0) {
 }
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {
@@ -395,7 +386,7 @@ if ($resql) {
 
 	$param = '';
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid) {
 		$param .= '&socid='.urlencode($socid);
@@ -428,6 +419,12 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		}
+	}
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
 	if ($type == 'bank-transfer') {
 		print '<td>'.$langs->trans("RefSupplier").'</td>';
@@ -437,18 +434,21 @@ if ($resql) {
 	print '<td>'.$langs->trans("RUM").'</td>';
 	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
-	if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		}
 	}
 	print '</tr>';
 
 	if ($num) {
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		$bac = new CompanyBankAccount($db);
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 
+			$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 			$bac->fetch(0, $obj->socid);
 
 			$invoicestatic->id = $obj->rowid;
@@ -456,6 +456,19 @@ if ($resql) {
 			$invoicestatic->ref_supplier = $obj->ref_supplier;
 
 			print '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($obj->request_row_id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
+				}
+			}
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
@@ -514,20 +527,29 @@ if ($resql) {
 			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			// Action column
-			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				print '<td class="nowrap center">';
-				$selected = 0;
-				if (in_array($obj->request_row_id, $arrayofselected)) {
-					$selected = 1;
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($obj->request_row_id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
 				}
-				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
-				print '</td>';
 			}
 			print '</tr>';
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		$colspan = 6;
+		if ($type == 'bank-transfer') {
+			$colspan++;
+		}
+		if ($massactionbutton || $massaction) {
+			$colspan++;
+		}
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print "</div>";

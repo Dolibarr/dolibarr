@@ -136,6 +136,38 @@ class Task extends CommonObjectLine
 	public $comments = array();
 
 	/**
+	 * @var array
+	 */
+	public $statuts;
+
+	/**
+	 * @var array
+	 */
+	public $statuts_short;
+
+	// Properties calculated from sum of llx_element_time linked to task
+	public $tobill;
+	public $billed;
+
+	// Properties to store project informations
+	public $projectref;
+	public $projectstatus;
+	public $projectlabel;
+	public $opp_amount;
+	public $opp_percent;
+	public $fk_opp_status;
+	public $usage_bill_time;
+	public $public;
+	public $array_options_project;
+
+	// Properties to store thirdparty of project information
+	public $socid;
+	public $thirdparty_id;
+	public $thirdparty_name;
+	public $thirdparty_email;
+
+
+	/**
 	 * @var float budget_amount
 	 */
 	public $budget_amount;
@@ -145,7 +177,6 @@ class Task extends CommonObjectLine
 	 */
 	public $project_budget_amount;
 
-	public $oldcopy;
 
 
 	/**
@@ -203,7 +234,7 @@ class Task extends CommonObjectLine
 		$sql .= ", progress";
 		$sql .= ", budget_amount";
 		$sql .= ") VALUES (";
-		$sql .= ((int) $conf->entity);
+		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
 		$sql .= ", ".((int) $this->fk_task_parent);
@@ -279,6 +310,7 @@ class Task extends CommonObjectLine
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.ref,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_projet as fk_project,";
 		$sql .= " t.fk_task_parent,";
 		$sql .= " t.label,";
@@ -323,6 +355,7 @@ class Task extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref;
+				$this->entity = $obj->entity;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_task_parent = $obj->fk_task_parent;
 				$this->label = $obj->label;
@@ -758,15 +791,16 @@ class Task extends CommonObjectLine
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -779,8 +813,8 @@ class Task extends CommonObjectLine
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.' nowraponall"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
 		}
@@ -793,7 +827,7 @@ class Task extends CommonObjectLine
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="paddingright"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -832,24 +866,24 @@ class Task extends CommonObjectLine
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
 	 *
-	 * @param	User	$usert				Object user to limit tasks affected to a particular user
-	 * @param	User	$userp				Object user to limit projects of a particular user and public projects
-	 * @param	int		$projectid			Project id
-	 * @param	int		$socid				Third party id
-	 * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 * @param	string	$filteronproj    	Filter on project ref or label
-	 * @param	string	$filteronprojstatus	Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
-	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
-	 * @param	string	$filterontaskuser	Filter on user assigned to task
-	 * @param	array	$extrafields	    Show additional column from project or task
-	 * @param   int     $includebilltime    Calculate also the time to bill and billed
-	 * @param   array   $search_array_options Array of search
-	 * @param   int     $loadextras         Fetch all Extrafields on each task
-	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * @param	string	$sortfield			Sort field
-	 * @param	string	$sortorder			Sort order
-	 * @return 	array|string				Array of tasks
+	 * @param	User	$usert					Object user to limit tasks affected to a particular user
+	 * @param	User	$userp					Object user to limit projects of a particular user and public projects
+	 * @param	int		$projectid				Project id
+	 * @param	int		$socid					Third party id
+	 * @param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 * @param	string	$filteronproj    		Filter on project ref or label
+	 * @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
+	 * @param	string	$morewherefilter		Add more filter into where SQL request (must start with ' AND ...')
+	 * @param	string	$filteronprojuser		Filter on user that is a contact of project
+	 * @param	string	$filterontaskuser		Filter on user assigned to task
+	 * @param	Extrafields	$extrafields	    Show additional column from project or task
+	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
+	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
+	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
+	 * @param	int		$loadRoleMode			1= will test Roles on task;  0 used in delete project action
+	 * @param	string	$sortfield				Sort field
+	 * @param	string	$sortorder				Sort order
+	 * @return 	array|string					Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
@@ -871,14 +905,11 @@ class Task extends CommonObjectLine
 		$sql .= " t.budget_amount, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount as project_budget_amount";
-		if (!empty($extrafields->attributes['projet']['label'])) {
-			foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
-			}
-		}
-		if (!empty($extrafields->attributes['projet_task']['label'])) {
-			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+		if ($loadextras) {	// TODO Replace this with a fetch_optionnal() on the project after the fetch_object of line.
+			if (!empty($extrafields->attributes['projet']['label'])) {
+				foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
+					$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
+				}
 			}
 		}
 		if ($includebilltime) {
@@ -887,7 +918,9 @@ class Task extends CommonObjectLine
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as efp ON (p.rowid = efp.fk_object)";
+		if ($loadextras) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as efp ON (p.rowid = efp.fk_object)";
+		}
 
 		if ($mode == 0) {
 			if ($filteronprojuser > 0) {
@@ -902,7 +935,6 @@ class Task extends CommonObjectLine
 				$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
 			}
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND t.fk_projet = p.rowid";
 		} elseif ($mode == 1) {
@@ -923,7 +955,6 @@ class Task extends CommonObjectLine
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
 				}
 			}
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		} else {
 			return 'BadValueForParameterMode';
@@ -979,14 +1010,11 @@ class Task extends CommonObjectLine
 			$sql .= " t.budget_amount, ";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
-			if (!empty($extrafields->attributes['projet']['label'])) {
-				foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-					$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
-				}
-			}
-			if (!empty($extrafields->attributes['projet_task']['label'])) {
-				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-					$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+			if ($loadextras) {
+				if (!empty($extrafields->attributes['projet']['label'])) {
+					foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
+						$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
+					}
 				}
 			}
 		}
@@ -1026,11 +1054,12 @@ class Task extends CommonObjectLine
 					$tasks[$i] = new Task($this->db);
 					$tasks[$i]->id = $obj->taskid;
 					$tasks[$i]->ref = $obj->taskref;
-					$tasks[$i]->fk_project		= $obj->projectid;
-					$tasks[$i]->projectref		= $obj->ref;
+					$tasks[$i]->fk_project = $obj->projectid;
+
+					// Data from project
+					$tasks[$i]->projectref = $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
 					$tasks[$i]->projectstatus = $obj->projectstatus;
-
 					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
 					$tasks[$i]->opp_amount = $obj->opp_amount;
 					$tasks[$i]->opp_percent = $obj->opp_percent;
@@ -1040,12 +1069,12 @@ class Task extends CommonObjectLine
 
 					$tasks[$i]->label = $obj->label;
 					$tasks[$i]->description = $obj->description;
-					$tasks[$i]->fk_parent = $obj->fk_task_parent; // deprecated
 					$tasks[$i]->fk_task_parent = $obj->fk_task_parent;
-					$tasks[$i]->duration		= $obj->duration_effective;
+					$tasks[$i]->duration_effective = $obj->duration_effective;
 					$tasks[$i]->planned_workload = $obj->planned_workload;
 
 					if ($includebilltime) {
+						// Data summed from element_time linked to task
 						$tasks[$i]->tobill = $obj->tobill;
 						$tasks[$i]->billed = $obj->billed;
 					}
@@ -1062,23 +1091,27 @@ class Task extends CommonObjectLine
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email = $obj->thirdparty_email;
 
-					if (!empty($extrafields->attributes['projet']['label'])) {
-						foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-							if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
-								$tmpvar = 'options_'.$key;
-								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
+					if ($loadextras) {
+						if (!empty($extrafields->attributes['projet']['label'])) {
+							foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
+								if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
+									$tmpvar = 'options_'.$key;
+									$tasks[$i]->array_options_project['options_'.$key] = $obj->$tmpvar;
+								}
 							}
 						}
 					}
 
+					/* Removed, already included into the $tasks[$i]->fetch_optionals(); just after
 					if (!empty($extrafields->attributes['projet_task']['label'])) {
 						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
 								$tmpvar = 'options_'.$key;
-								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
+								$tasks[$i]->array_options['options_'.$key] = $obj->$tmpvar;
 							}
 						}
 					}
+					*/
 
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
@@ -1248,7 +1281,7 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -1278,10 +1311,11 @@ class Task extends CommonObjectLine
 		$timespent->note = $this->timespent_note;
 		$timespent->datec = $this->db->idate($now);
 
-		if ($timespent->create($user) > 0) {
-			$tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."element_time");
-			$ret = $tasktime_id;
-			$this->timespent_id = $ret;
+		$result = $timespent->create($user);
+
+		if ($result > 0) {
+			$ret = $result;
+			$this->timespent_id = $result;
 
 			if (!$notrigger) {
 				// Call trigger
@@ -1351,6 +1385,7 @@ class Task extends CommonObjectLine
 		$sql .= " s.nom as thirdparty_name,";
 		$sql .= " s.email as thirdparty_email,";
 		$sql .= " ptt.rowid,";
+		$sql .= " ptt.ref_ext,";
 		$sql .= " ptt.fk_element as fk_task,";
 		$sql .= " ptt.element_date as task_date,";
 		$sql .= " ptt.element_datehour as task_datehour,";
@@ -1401,6 +1436,7 @@ class Task extends CommonObjectLine
 				$newobj->task_label = $obj->task_label;
 
 				$newobj->timespent_line_id = $obj->rowid;
+				$newobj->timespent_line_ref_ext = $obj->ref_ext;
 				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
 				$newobj->timespent_line_datehour	= $this->db->jdate($obj->task_datehour);
 				$newobj->timespent_line_withhour = $obj->task_date_withhour;
@@ -2162,6 +2198,7 @@ class Task extends CommonObjectLine
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
+		return "";
 	}
 
 	/**
@@ -2356,30 +2393,27 @@ class Task extends CommonObjectLine
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs, $conf;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box info-box-sm info-box-kanban">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_project') ) {
-			$return .= '<br><span class="info-box-status ">'.$this->fk_project.'</span>';
+		if (!empty($arraydata['projectlink'])) {
+			//$tmpproject = $arraydata['project'];
+			//$return .= '<br><span class="info-box-status ">'.$tmpproject->getNomProject().'</span>';
+			$return .= '<br><span class="info-box-status ">'.$arraydata['projectlink'].'</span>';
 		}
 		if (property_exists($this, 'budget_amount')) {
-			$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
-		}
-		if (property_exists($this, 'fk_statut')) {
-			$return .= '<br><span class="info-box-status ">'.$this->fk_statut.'</span>';
+			//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		if (property_exists($this, 'duration_effective')) {
-			$return .= '<div class="info-box-label opacitymedium">'.getTaskProgressView($this, false, false).'</div>';
+			$return .= '<br><br><div class="info-box-label progressinkanban">'.getTaskProgressView($this, false, true).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

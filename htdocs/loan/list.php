@@ -130,7 +130,7 @@ $sql .= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/'.preg_quote($linktopl, '/').'/', '', $sqlforcount);
@@ -181,7 +181,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_ref) {
 		$param .= "&search_ref=".urlencode($search_ref);
@@ -247,20 +247,31 @@ if ($resql) {
 	}
 	print '</tr>';
 
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+
 	// Fields title label
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "l.rowid", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "l.label", "", $param, '', $sortfield, $sortorder, 'left ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("LoanCapital", $_SERVER["PHP_SELF"], "l.capital", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print "</tr>\n";
 
@@ -269,6 +280,7 @@ if ($resql) {
 	// Loop on record
 	// --------------------------------------------------------------------
 	$i = 0;
+	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
@@ -285,7 +297,7 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
@@ -294,7 +306,7 @@ if ($resql) {
 			$loan_static->capital = $obj->capital;
 			$loan_static->totalpaid = $obj->paid;
 
-			print $loan_static->getKanbanView('');
+			print $loan_static->getKanbanView('', array('selected' => in_array($loan_static->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

@@ -41,6 +41,10 @@ $id = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('id', 'int'
 $ref = GETPOST('ref', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 $canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));

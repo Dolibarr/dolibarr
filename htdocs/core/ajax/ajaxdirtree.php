@@ -103,7 +103,7 @@ if (empty($modulepart)) {
 	$modulepart = $module;
 }
 
-// Check permissions
+// Security check
 if ($modulepart == 'ecm') {
 	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();

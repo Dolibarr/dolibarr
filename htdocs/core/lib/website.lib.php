@@ -35,8 +35,10 @@ function dolStripPhpCode($str, $replacewith = '')
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -74,11 +76,16 @@ function dolStripPhpCode($str, $replacewith = '')
 function dolKeepOnlyPhpCode($str)
 {
 	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?php', '__LTINTPHP__', $str);
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
 
-	//split on each opening tag
-	$parts = explode('<?php', $str);
+	// Split on each opening tag
+	//$parts = explode('<?php', $str);
+	$parts = preg_split('/'.preg_quote('<?php', '/').'/i', $str);
+
 	if (!empty($parts)) {
 		$i = 0;
 		foreach ($parts as $part) {
@@ -118,7 +125,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
-	// Replace php code. Note $content may come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contain body tags.
 	$replacewith = '...php...';
 	if ($removephppart) {
 		$replacewith = '';
@@ -159,12 +166,14 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
 	}*/
 	$content = dolStripPhpCode($content, $replacewith);
-	//var_dump($content);
 
 	// Protect the link styles.css.php to any replacement that we make after.
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+	$content = str_replace('src="javascript.js.php', 'src="!~!~!~javascript.js.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
+	$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
+	$content = str_replace('src="//', 'src="!~!~!~//', $content);
 	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
@@ -297,11 +306,15 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	} elseif (defined('USEDOLIBARRSERVER')) {	// REPLACEMENT OF LINKS When page called from Dolibarr server
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
+		$content = str_replace(' async src="/javascript.js', ' async src="javascript.js', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+		$content = str_replace('src="javascript.css.php', 'src="!~!~!~javascript.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
+		$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
+		$content = str_replace('src="//', 'src="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace(array('href="document.php', 'href="/document.php'), 'href="!~!~!~/document.php', $content);
@@ -350,8 +363,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	} else // REPLACEMENT OF LINKS When page called from virtual host web server
-	{
+	} else { // REPLACEMENT OF LINKS When page called from virtual host web server
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
 			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
@@ -756,7 +768,7 @@ function getStructuredData($type, $data = array())
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		} else {
-			$ret .= '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
+			$ret = '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
 		}
 	} elseif ($type == 'product') {
 		$ret = '<!-- Add structured data for product -->'."\n";

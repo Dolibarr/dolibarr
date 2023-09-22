@@ -47,7 +47,7 @@ class modCategorie extends DolibarrModules
 		$this->numero = 1780;
 
 		$this->family = "technic";
-		$this->module_position = '20';
+		$this->module_position = '25';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des categories (produits, clients, fournisseurs...)";
@@ -130,7 +130,7 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled("product") || isModEnabled("service")) {
 			$typeexample .= ($typeexample ? " / " : "")."0=Product-Service";
 		}
-		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$typeexample .= ($typeexample ? "/" : "")."1=Supplier";
 		}
 		if (isModEnabled("societe")) {
@@ -205,7 +205,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 		$this->export_label[$r] = 'CatSupList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = 'isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")';
+		$this->export_enabled[$r] = 'isModEnabled("supplier_order") || isModEnabled("supplier_invoice")';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("fournisseur", "lire"));
 		$this->export_fields_array[$r] = array(
 			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategoryID", 'pcat.label'=>"ParentCategoryLabel",
@@ -493,7 +493,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 1 Suppliers
-		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 			$this->import_label[$r] = "CatSupLinks"; // Translation key

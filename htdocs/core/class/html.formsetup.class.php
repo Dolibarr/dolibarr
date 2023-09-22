@@ -77,6 +77,10 @@ class FormSetup
 	 */
 	public $formHiddenInputs = array();
 
+	/**
+	 * @var string[] $errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -243,12 +247,12 @@ class FormSetup
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $conf;
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
-			$this->setErrors($hookmanager->errors);
+			$this->errors = $hookmanager->errors;
 			return -1;
 		}
 
@@ -264,6 +268,10 @@ class FormSetup
 		$this->db->begin();
 		$error = 0;
 		foreach ($this->items as $item) {
+			if ($item->getType() == 'yesno' && !empty($conf->use_javascript_ajax)) {
+				continue;
+			}
+
 			$res = $item->setValueFromPost();
 			if ($res > 0) {
 				$item->saveConfValue();
@@ -615,7 +623,7 @@ class FormSetupItem
 	public $setValueFromPostCallBack;
 
 	/**
-	 * @var string $errors
+	 * @var string[] $errors
 	 */
 	public $errors = array();
 
@@ -834,6 +842,8 @@ class FormSetupItem
 			$out.= $this->generateInputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out.= $this->generateInputFieldSelect();
+		} elseif ($this->type == 'selectUser') {
+			$out.= $this->generateInputFieldSelectUser();
 		} elseif ($this->type == 'textarea') {
 			$out.= $this->generateInputFieldTextarea();
 		} elseif ($this->type== 'html') {
@@ -898,7 +908,7 @@ class FormSetupItem
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 		return $doleditor->Create(1);
 	}
 
@@ -994,6 +1004,14 @@ class FormSetupItem
 	}
 
 	/**
+	 * @return string
+	 */
+	public function generateInputFieldSelectUser()
+	{
+		return $this->form->select_dolusers($this->fieldValue, $this->confKey);
+	}
+
+	/**
 	 * get the type : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set or get directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
@@ -1067,6 +1085,8 @@ class FormSetupItem
 			$out.= $this->generateOutputFieldMultiSelect();
 		} elseif ($this->type == 'select') {
 			$out.= $this->generateOutputFieldSelect();
+		} elseif ($this->type == 'selectUser') {
+			$out.= $this->generateOutputFieldSelectUser();
 		} elseif ($this->type== 'html') {
 			$out.=  $this->fieldValue;
 		} elseif ($this->type== 'color') {
@@ -1136,6 +1156,8 @@ class FormSetupItem
 
 
 	/**
+	 * generateOutputFieldMultiSelect
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldMultiSelect()
@@ -1157,6 +1179,8 @@ class FormSetupItem
 	}
 
 	/**
+	 * generateOutputFieldColor
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldColor()
@@ -1165,6 +1189,8 @@ class FormSetupItem
 		return $this->generateInputField();
 	}
 	/**
+	 * generateInputFieldColor
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldColor()
@@ -1174,6 +1200,8 @@ class FormSetupItem
 	}
 
 	/**
+	 * generateOutputFieldSelect
+	 *
 	 * @return string
 	 */
 	public function generateOutputFieldSelect()
@@ -1186,12 +1214,27 @@ class FormSetupItem
 		return $outPut;
 	}
 
+	/**
+	 * generateOutputFieldSelectUser
+	 *
+	 * @return string
+	 */
+	public function generateOutputFieldSelectUser()
+	{
+		$outPut = '';
+		$user = new User($this->db);
+		$user->fetch($this->fieldValue);
+		$outPut = $user->firstname . " "  . $user->lastname;
+		return $outPut;
+	}
+
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
 	 */
 
 	/**
 	 * Set type of input as string
+	 *
 	 * @return self
 	 */
 	public function setAsString()
@@ -1202,6 +1245,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as color
+	 *
 	 * @return self
 	 */
 	public function setAsColor()
@@ -1212,6 +1256,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as textarea
+	 *
 	 * @return self
 	 */
 	public function setAsTextarea()
@@ -1222,6 +1267,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as html editor
+	 *
 	 * @return self
 	 */
 	public function setAsHtml()
@@ -1232,6 +1278,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as emailtemplate selector
+	 *
 	 * @param string $templateType email template type
 	 * @return self
 	 */
@@ -1243,6 +1290,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as thirdparty_type selector
+	 *
 	 * @return self
 	 */
 	public function setAsThirdpartyType()
@@ -1253,6 +1301,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as Yes
+	 *
 	 * @return self
 	 */
 	public function setAsYesNo()
@@ -1263,6 +1312,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as secure key
+	 *
 	 * @return self
 	 */
 	public function setAsSecureKey()
@@ -1273,6 +1323,7 @@ class FormSetupItem
 
 	/**
 	 * Set type of input as product
+	 *
 	 * @return self
 	 */
 	public function setAsProduct()
@@ -1284,6 +1335,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a category selector
 	 * TODO add default value
+	 *
 	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @return self
 	 */
@@ -1294,8 +1346,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @return self
 	 */
 	public function setAsTitle()
@@ -1306,8 +1358,8 @@ class FormSetupItem
 
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @param array $fieldOptions A table of field options
 	 * @return self
 	 */
@@ -1322,8 +1374,8 @@ class FormSetupItem
 	}
 
 	/**
-	 * Set type of input as a simple title
-	 * no data to store
+	 * Set type of input as a simple title. No data to store
+	 *
 	 * @param array $fieldOptions  A table of field options
 	 * @return self
 	 */
@@ -1334,6 +1386,17 @@ class FormSetupItem
 		}
 
 		$this->type = 'select';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title. No data to store
+	 *
+	 * @return self
+	 */
+	public function setAsSelectUser()
+	{
+		$this->type = 'selectUser';
 		return $this;
 	}
 }

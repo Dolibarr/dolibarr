@@ -53,7 +53,7 @@ if ($search_project_user == $user->id) {
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -394,7 +394,7 @@ if ($resql) {
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '<span class="opacitymedium">...</span>';
+		print '<span class="opacitymedium">'.$langs->trans("More").'...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;
@@ -412,10 +412,9 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA)) {
-	// This list can be very long, so we allow to hide it to prefer to use the list page.
-	// Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
-
+if (!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
+	// This list is surely very long and useless when we are using opportunities, so we hide it for this use case, but we allow to show it if
+	// we really want it and to allow interface backward compatibility.
 	print '<br>';
 
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());

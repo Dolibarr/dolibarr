@@ -52,7 +52,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -186,8 +186,9 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	print '<script type="text/javascript">
 	jQuery(document).ready(function() {
-		jQuery("#lnk").click(function() {
-			console.log("We click on link");
+		jQuery("#lnk").click(function(event) {
+			event.preventDefault();
+			console.log("We click on link to show virtual card options");
 			hideoptions(this);
 		});
 	});

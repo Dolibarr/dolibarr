@@ -92,7 +92,7 @@ if ($module == 'ecm') {
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.urlencode($website->ref).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
@@ -205,7 +205,10 @@ if ($action == 'confirmconvertimgwebp') {
 	if ($module == 'medias') {
 		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
 	}
-	print $form->formconfirm($_SERVER["PHP_SELF"], empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp'), 'convertimgwebp', $formquestion, "yes", 1);
+	$param = '';
+	if (!empty($sortfield)) $param .= '&sortfield='.urlencode($sortfield);
+	if (!empty($sortorder)) $param .= '&sortorder='.urlencode($sortorder);
+	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 
@@ -235,10 +238,9 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
-			if (image_format_supported($filepath) == 1) {
-				$filepathnoext = preg_replace("/\.[a-z0-9]+$/i", "", $filepath);
-
-				if (! dol_is_file($filepathnoext.'.webp')) {	// If file does not exists yet
+			if (!empty($file) || !dol_is_file($filepathnoext.'.webp')) { // If file does not exists yet
+				if (image_format_supported($filepath) == 1) {
+					$filepathnoext = preg_replace("/\.[a-z0-9]+$/i", "", $filepath);
 					$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp', 90);
 					if (!dol_is_file($result)) {
 						$error++;

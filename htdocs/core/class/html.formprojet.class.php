@@ -60,23 +60,23 @@ class FormProjets
 	/**
 	 * Output a combo list with projects qualified for a third party / user
 	 *
-	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param int 		$socid 			Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 * @param string|Project $selected Id of preselected project or Project (or ''). Note: If you know the ref, you can also provide it into $selected_input_value to save one request in some cases.
-	 * @param string $htmlname Name of HTML field
-	 * @param int $maxlength Maximum length of label
-	 * @param int $option_only Return only html options lines without the select tag
-	 * @param int $show_empty Add an empty line
-	 * @param int $discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
-	 * @param int $forcefocus Force focus on field (works with javascript only)
-	 * @param int $disabled Disabled
-	 * @param int $mode 0 for HTML mode and 1 for JSON mode
-	 * @param string $filterkey Key to filter on ref or title
-	 * @param int $nooutput No print output. Return it only.
-	 * @param int $forceaddid Force to add project id in list, event if not qualified
-	 * @param string $morecss More css
-	 * @param int $htmlid Html id to use instead of htmlname
-	 * @param string $morefilter More filters (Must be a sql sanitized string)
-	 * @return string                                Return html content
+	 * @param string 	$htmlname 		Name of HTML field
+	 * @param int 		$maxlength 		Maximum length of label
+	 * @param int 		$option_only 	Return only html options lines without the select tag
+	 * @param int|string	$show_empty 	Add an empty line
+	 * @param int 		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
+	 * @param int 		$forcefocus 	Force focus on field (works with javascript only)
+	 * @param int 		$disabled 		Disabled
+	 * @param int 		$mode 			0 for HTML mode and 1 for JSON mode
+	 * @param string 	$filterkey 		Key to filter on ref or title
+	 * @param int 		$nooutput 		No print output. Return it only.
+	 * @param int 		$forceaddid 	Force to add project id in list, event if not qualified
+	 * @param string 	$morecss 		More css
+	 * @param int 		$htmlid 		Html id to use instead of htmlname
+	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
+	 * @return string                   Return html content
 	 */
 	public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
 	{
@@ -129,22 +129,22 @@ class FormProjets
 	/**
 	 * Returns an array with projects qualified for a third party
 	 *
-	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param int $selected Id project preselected
-	 * @param string $htmlname Nom de la zone html
-	 * @param int $maxlength Maximum length of label
-	 * @param int $option_only Return only html options lines without the select tag
-	 * @param int $show_empty Add an empty line
-	 * @param int $discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
-	 * @param int $forcefocus Force focus on field (works with javascript only)
-	 * @param int $disabled Disabled
-	 * @param int $mode 0 for HTML mode and 1 for array return (to be used by json_encode for example)
-	 * @param string $filterkey Key to filter on title or ref
-	 * @param int $nooutput No print output. Return it only.
-	 * @param int $forceaddid Force to add project id in list, event if not qualified
-	 * @param int $htmlid Html id to use instead of htmlname
-	 * @param string $morecss More CSS
-	 * @param string $morefilter More filters (Must be a sql sanitized string)
+	 * @param int 		$socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param int 		$selected Id project preselected
+	 * @param string 	$htmlname Nom de la zone html
+	 * @param int 		$maxlength Maximum length of label
+	 * @param int 		$option_only Return only html options lines without the select tag
+	 * @param int|string	$show_empty Add an empty line
+	 * @param int 		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 * @param int 		$forcefocus Force focus on field (works with javascript only)
+	 * @param int 		$disabled Disabled
+	 * @param int 		$mode 0 for HTML mode and 1 for array return (to be used by json_encode for example)
+	 * @param string 	$filterkey Key to filter on title or ref
+	 * @param int 		$nooutput No print output. Return it only.
+	 * @param int 		$forceaddid Force to add project id in list, event if not qualified
+	 * @param int 		$htmlid Html id to use instead of htmlname
+	 * @param string 	$morecss More CSS
+	 * @param string 	$morefilter More filters (Must be a sql sanitized string)
 	 * @return int|string|array                           HTML string or array of option or <0 if KO
 	 */
 	public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
@@ -206,7 +206,11 @@ class FormProjets
 				$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ' id="' . $htmlid . '" name="' . $htmlname . '">';
 			}
 			if (!empty($show_empty)) {
-				$out .= '<option value="0">&nbsp;</option>';
+				if (is_numeric($show_empty)) {
+					$out .= '<option value="0">&nbsp;</option>';
+				} else {
+					$out .= '<option value="-1">'.$show_empty.'</option>';
+				}
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -380,7 +384,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
 				$out .= $comboenhancement;
-				$morecss .= ' minwidth200 maxwidth500';
+				$morecss .= ' minwidth150imp';
 			}
 
 			if (empty($option_only)) {

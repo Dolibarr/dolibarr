@@ -55,7 +55,7 @@ $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $lang = GETPOST('lang', 'aZ09');
 
 // Security check
-if (!defined("NOLOGIN")) {	// No need for restrictedArea if not logged. Later the select will filter on public articles only if not logged.
+if (!defined("NOLOGIN")) {	// No need of restrictedArea if not logged: Later the select will filter on public articles only if not logged.
 	restrictedArea($user, 'knowledgemanagement', 0, 'knowledgemanagement_knowledgerecord', 'knowledgerecord');
 }
 

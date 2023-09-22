@@ -130,7 +130,7 @@ $sql .= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -240,6 +240,8 @@ if ($resql) {
 	print "</tr>\n";
 
 	if ($num > 0) {
+		$savnbfield = 8;
+
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($resql);
@@ -258,11 +260,11 @@ if ($resql) {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				// Output Kanban
-				print $checkdepositstatic->getKanbanView('');
+				print $checkdepositstatic->getKanbanView('', array('selected' => in_array($checkdepositstatic->id, $arrayofselected)));
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
 					print '</td></tr>';

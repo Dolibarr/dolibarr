@@ -22,7 +22,7 @@
  */
 
 /**
- * Class to manage accounting accounts
+ * Class to manage accounting journals
  */
 class AccountingJournal extends CommonObject
 {
@@ -42,7 +42,7 @@ class AccountingJournal extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does object support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -312,10 +312,10 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode		  0=libelle long, 1=libelle court
-	 *  @return	string 				   Label of type
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibType($mode = 0)
 	{
@@ -327,7 +327,7 @@ class AccountingJournal extends CommonObject
 	 *  Return type of an accounting journal
 	 *
 	 *  @param	int		$nature			Id type
-	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
+	 *  @param  int		$mode		  	0=label long, 1=label short
 	 *  @return string 				   	Label of type
 	 */
 	public function LibType($nature, $mode = 0)
@@ -367,6 +367,7 @@ class AccountingJournal extends CommonObject
 				return $langs->trans('AccountingJournalType1');
 			}
 		}
+		return "";
 	}
 
 

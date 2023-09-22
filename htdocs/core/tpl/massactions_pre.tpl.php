@@ -31,7 +31,6 @@
 // $sendto
 // $withmaindocfilemail
 
-
 if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
@@ -94,7 +93,7 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	}
 }
 
-if ($massaction == 'preupdateprice' && isModEnabled('category')) {
+if ($massaction == 'preupdateprice') {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
@@ -282,7 +281,7 @@ if ($massaction == 'presend') {
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
 	$substitutionarray['__EMAIL__'] = $sendto;
-	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 
@@ -301,6 +300,7 @@ if ($massaction == 'presend') {
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
+		// Note: MAILING_LIMIT_SENDBYWEB may be forced by conf.php file and variable $dolibarr_mailing_limit_sendbyweb
 		$langs->load("errors");
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
@@ -324,6 +324,10 @@ if ($massaction == 'edit_extrafields') {
 	$formquestion = array();
 	if (!empty($extrafields_list)) {
 		$myParamExtra = $object->showOptionals($extrafields, 'create');
+
+		foreach ($extrafields_list as $extraKey => $extraLabel) {
+			$extrafields_list[$extraKey] = $langs->trans($extraLabel);
+		}
 
 		$formquestion[] = array(
 			'type' => 'other',

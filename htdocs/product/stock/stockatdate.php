@@ -39,14 +39,14 @@ require_once './lib/replenishment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockatdate'));
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('stockatdate'));
 
 //checks if a product has been ordered
 
@@ -145,8 +145,9 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= " SUM(ps.reel) AS stock";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
+	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
-	$sql .= " AND w.rowid = ps.fk_entrepot";
+	$sql .= " AND w.rowid = ps.fk_entrepot AND p.rowid = ps.fk_product";
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
@@ -155,6 +156,12 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	}
 	if (! empty($search_fk_warehouse)) {
 		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+	}
+	if ($search_ref) {
+		$sql .= natural_search("p.ref", $search_ref);
+	}
+	if ($search_nom) {
+		$sql .= natural_search("p.label", $search_nom);
 	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
 	//print $sql;
@@ -195,8 +202,9 @@ if ($date && $dateIsValid) {
 	$sql = "SELECT sm.fk_product, sm.fk_entrepot, SUM(sm.value) AS stock, COUNT(sm.rowid) AS nbofmovement";
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as sm";
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
+	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
-	$sql .= " AND w.rowid = sm.fk_entrepot";
+	$sql .= " AND w.rowid = sm.fk_entrepot AND p.rowid = sm.fk_product ";
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
@@ -211,7 +219,14 @@ if ($date && $dateIsValid) {
 	if (!empty($search_fk_warehouse)) {
 		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
 	}
+	if ($search_ref) {
+		$sql .= " AND p.ref LIKE '%".$db->escape($search_ref)."%' ";
+	}
+	if ($search_nom) {
+		$sql .= " AND p.label LIKE '%".$db->escape($search_nom)."%' ";
+	}
 	$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
+
 	$resql = $db->query($sql);
 
 	if ($resql) {
@@ -289,6 +304,12 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 if (!empty($canvas)) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
+if ($search_ref) {
+	$sql .= natural_search('p.ref', $search_ref);
+}
+if ($search_nom) {
+	$sql .= natural_search('p.label', $search_nom);
+}
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.pmp, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms, p.duration, p.tobuy, p.stock';
 // Add where from hooks
@@ -306,7 +327,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = 0;
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -397,7 +418,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 $param .= '&mode='.$mode;
 if (!empty($search_fk_warehouse)) {
