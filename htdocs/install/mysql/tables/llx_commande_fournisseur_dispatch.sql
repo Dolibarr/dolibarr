@@ -26,19 +26,19 @@
 create table llx_commande_fournisseur_dispatch
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_commande    integer,
   fk_product     integer,
+  fk_commande    integer,
   fk_commandefourndet integer,
   fk_projet  	 integer  DEFAULT NULL,
   fk_reception 	 integer  DEFAULT NULL,
-  qty            float,              -- qty
-  fk_entrepot    integer,
-  fk_user        integer,
-  comment		 varchar(255),		  -- comment on movement
-  batch          varchar(128) DEFAULT NULL,
+  qty            float,             			-- qty to move
+  fk_entrepot    integer,						-- ID of warehouse to use for the stock change
+  comment		 varchar(255),					-- comment on movement
+  batch          varchar(128) DEFAULT NULL,		-- serial/lot number
   eatby          date DEFAULT NULL,
   sellby         date DEFAULT NULL,
   status         integer,
+  fk_user        integer,
   datec          datetime,
   tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   cost_price     double(24,8) DEFAULT 0

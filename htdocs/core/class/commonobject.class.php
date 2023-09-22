@@ -2090,7 +2090,8 @@ abstract class CommonObject
 	/**
 	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
-	 *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here.
+	 *      @param	string	$filter		Optional SQL filter. Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here.
+	 *      							Use SQL and not Universal Search Filter. @TODO Replace this with an USF string after changing all ->next_prev_filter
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
 	 *      @return int         		<0 if KO, >0 if OK
@@ -2155,7 +2156,7 @@ abstract class CommonObject
 		}
 		if (!empty($filter)) {
 			if (!preg_match('/^\s*AND/i', $filter)) {
-				$sql .= " AND "; // For backward compatibility
+				$sql .= " AND ";
 			}
 			$sql .= $filter;
 		}
@@ -5585,6 +5586,9 @@ abstract class CommonObject
 		// output format that does not support UTF8.
 		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
+		// update model_pdf in object
+		$this->model_pdf = $modele;
+
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
@@ -6156,6 +6160,11 @@ abstract class CommonObject
 
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
+						if (!empty($extrafields->attributes[$this->table_element]['type'][$key]) && $extrafields->attributes[$this->table_element]['type'][$key] == 'password') {
+							if (preg_match('/^dolcrypt:/', $value)) {
+								$this->array_options["options_".$key] = dolDecrypt($value);
+							}
+						}
 					}
 				}
 
@@ -6348,17 +6357,25 @@ abstract class CommonObject
 									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									} else {
-										// var_dump($algo);
-										$newvalue = dol_hash($this->array_options[$key], $algo);
-										$new_array_options[$key] = $newvalue;
+										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);
+											} else {
+												$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+											}
+										} else {
+											$newvalue = dol_hash($this->array_options[$key], $algo);
+											$new_array_options[$key] = $newvalue;
+										}
 									}
 								} else {
 									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 								}
+							} else {
+								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 							}
-						} else // Common usage
-						{
-							$new_array_options[$key] = $this->array_options[$key];
+						} else { // Common usage
+							$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 						}
 						break;
 					case 'date':
@@ -6650,10 +6667,12 @@ abstract class CommonObject
 
 			$value = $this->array_options["options_".$key];
 
+			$attributeKey      = $key;
 			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$key];
 			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$key];
 
 			// Similar code than into insertExtraFields
@@ -6715,6 +6734,44 @@ abstract class CommonObject
 					 break;*/
 				case 'price':
 					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+					break;
+				case 'password':
+					$new_array_options = array();
+					$algo = '';
+					if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
+						// If there is an encryption choice, we use it to crypt data before insert
+						$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
+						$algo = reset($tmparrays);
+						if ($algo != '') {
+							//global $action;		// $action may be 'create', 'update', 'update_extras'...
+							//var_dump($action);
+							//var_dump($this->oldcopy);exit;
+							if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+								//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
+								if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+								} else {
+									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+										if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+											$new_array_options[$key] = dolEncrypt($this->array_options[$key]);
+										} else {
+											$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+										}
+									} else {
+										$newvalue = dol_hash($this->array_options[$key], $algo);
+										$new_array_options[$key] = $newvalue;
+									}
+								}
+							} else {
+								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+							}
+						} else {
+							$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+						}
+					} else { // Common usage
+						$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+					}
+					$this->array_options["options_".$key] = $new_array_options[$key];
 					break;
 				case 'date':
 				case 'datetime':
@@ -8565,19 +8622,20 @@ abstract class CommonObject
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 *
+	 * @return stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
 		global $user;
 
-		$module = $this->module;
+		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
-			return $user->rights->fournisseur->facture;
+			return empty($user->rights->fournisseur->facture) ? null : $user->rights->fournisseur->facture;
 		} elseif ($module && !empty($user->rights->$module->$element)) {
 			// for modules built with ModuleBuilder
 			return $user->rights->$module->$element;

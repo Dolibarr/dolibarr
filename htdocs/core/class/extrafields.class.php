@@ -64,12 +64,12 @@ class ExtraFields
 	public $errors = array();
 
 	/**
-	 * @var string DB Error number
+	 * @var string 	DB Error number
 	 */
 	public $errno;
 
 	/**
-	 * @var array array of type to label
+	 * @var array 	Array of type to label
 	 */
 	public static $type2label = array(
 		'varchar'=>'String1Line',
@@ -96,7 +96,6 @@ class ExtraFields
 		'link' => 'ExtrafieldLink',
 		'separate' => 'ExtrafieldSeparator',
 	);
-
 
 	/**
 	 *	Constructor
@@ -596,7 +595,7 @@ class ExtraFields
 				$lengthdb = '11';
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
-				$lengthdb = '50';
+				$lengthdb = '128';
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;

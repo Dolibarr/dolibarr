@@ -1866,7 +1866,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					} elseif ($event->type == 'bookcal_calendar') {
 						$numbirthday++;
 						$colorindex = 3;
-						$cssclass = 'family_bookcal_calendar_'.(!empty($bookcalcalendarsarray[$fk_bookcal_availability]) ? $bookcalcalendarsarray[$fk_bookcal_availability][$event->fk_bookcal_availability] : "");
+						$cssclass = 'family_bookcal_calendar_'.(!empty($bookcalcalendarsarray["availabilitieslink"]) ? $bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability] : "");
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					} else {
 						$numother++;

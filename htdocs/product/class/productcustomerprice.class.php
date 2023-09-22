@@ -383,8 +383,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
-		global $langs;
-
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";
 		}

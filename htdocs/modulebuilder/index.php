@@ -3310,22 +3310,22 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = (count($objects) <= 0 ? $langs->trans("Objects") : $langs->trans("Objects")." (".count($objects).")");
+		$head2[$h][1] = ((!is_array($objects) || count($objects) <= 0) ? $langs->trans("Objects") : $langs->trans("Objects").' <span class="badge">'.count($objects)."</span>");
 		$head2[$h][2] = 'objects';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countLangs <= 0 ? $langs->trans("Languages") : $langs->trans("Languages")." (".$countLangs.") ");
+		$head2[$h][1] = ($countLangs <= 0 ? $langs->trans("Languages") : $langs->trans("Languages").' <span class="badge">'.$countLangs."</span>");
 		$head2[$h][2] = 'languages';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries')." (".$countDictionaries.")");
+		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').' <span class="badge">'.$countDictionaries."</span>");
 		$head2[$h][2] = 'dictionaries';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions")." (".$countRights.")");
+		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions").' <span class="badge">'.$countRights."</span>");
 		$head2[$h][2] = 'permissions';
 		$h++;
 
@@ -3335,7 +3335,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countMenus <= 0 ? $langs->trans("Menus") : $langs->trans("Menus")." (".$countMenus.")");
+		$head2[$h][1] = ($countMenus <= 0 ? $langs->trans("Menus") : $langs->trans("Menus").' <span class="badge">'.$countMenus."</span>");
 		$head2[$h][2] = 'menus';
 		$h++;
 
@@ -3345,12 +3345,12 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countTriggers <= 0 ? $langs->trans("Triggers") : $langs->trans("Triggers")." (".$countTriggers.")");
+		$head2[$h][1] = ($countTriggers <= 0 ? $langs->trans("Triggers") : $langs->trans("Triggers").' <span class="badge">'.$countTriggers."</span>");
 		$head2[$h][2] = 'triggers';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets")." (".$countWidgets.")");
+		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets").' <span class="badge">'.$countWidgets."</span>");
 		$head2[$h][2] = 'widgets';
 		$h++;
 
@@ -3365,12 +3365,12 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=js&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countJs <= 0 ? $langs->trans("JS") : $langs->trans("JS")." (".$countJs.")");
+		$head2[$h][1] = ($countJs <= 0 ? $langs->trans("JS") : $langs->trans("JS").' <span class="badge">'.$countJs."</span>");
 		$head2[$h][2] = 'js';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cli&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countCLI <= 0 ? $langs->trans("CLI") : $langs->trans("CLI")." (".$countCLI.")");
+		$head2[$h][1] = ($countCLI <= 0 ? $langs->trans("CLI") : $langs->trans("CLI").' <span class="badge">'.$countCLI."</span>");
 		$head2[$h][2] = 'cli';
 		$h++;
 
@@ -3380,7 +3380,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation")." (".$hasDoc.")");
+		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation").' <span class="badge">'.$hasDoc."</span>");
 		$head2[$h][2] = 'specifications';
 		$h++;
 
@@ -4321,7 +4321,20 @@ if ($module == 'initmodule') {
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
-										print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										$pictoType = '';
+										$matches = array();
+										if (preg_match('/^varchar/', $proptype, $matches)) {
+											$pictoType = 'varchar';
+										} elseif (preg_match('/^integer:/', $proptype, $matches)) {
+											$pictoType = 'link';
+										} elseif (strpos($proptype, 'integer') === 0) {
+											$pictoType = substr($proptype, 0, 3);
+										} elseif (strpos($proptype, 'timestamp') === 0) {
+											$pictoType = 'datetime';
+										} elseif (strpos($proptype, 'real') === 0) {
+											$pictoType = 'double';
+										}
+										print (!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										if ($proparrayofkeyval) {

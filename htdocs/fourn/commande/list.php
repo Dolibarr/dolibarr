@@ -365,6 +365,7 @@ if (empty($reshook)) {
 		$validate_invoices = GETPOST('validate_invoices', 'int');
 
 		$TFact = array();
+		/** @var FactureFournisseur[] $TFactThird */
 		$TFactThird = array();
 
 		$nb_bills_created = 0;
@@ -383,7 +384,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
-				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created supplier invoice.
 			} else {
 				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
 				if (!empty($cmd->socid) > 0) {
@@ -514,7 +515,8 @@ if (empty($reshook)) {
 								false,
 								$lines[$i]->array_options,
 								$lines[$i]->fk_unit,
-								$objecttmp->origin_id,
+								// we use the id of each order, not the id of the first one stored in $objecttmp->origin_id
+								$lines[$i]->fk_commande,
 								$lines[$i]->pa_ht,
 								$lines[$i]->ref_supplier,
 								$lines[$i]->special_code,

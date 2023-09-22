@@ -33,6 +33,7 @@
  *  \ingroup    commande
  *  \brief      class for orders
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -399,8 +400,8 @@ class Commande extends CommonOrder
 	/**
 	 * Shipment on process
 	 */
-	const STATUS_SHIPMENTONPROCESS = 2;
-	const STATUS_ACCEPTED = 2; // For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+	const STATUS_SHIPMENTONPROCESS = 2;		// We set this status when a shipment is validated
+	const STATUS_ACCEPTED = 2; 				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
 
 	/**
 	 * Closed (Sent, billed or not)
@@ -3729,9 +3730,9 @@ class Commande extends CommonOrder
 				$labelTooltip .= ' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->delivery_date, 'day').$billedtext;
 			}
 			$statusType = 'status4';
-		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered');
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort');
+		} elseif ($status == self::STATUS_CLOSED) {
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort').$billedtext;
 			$statusType = 'status6';
 		} else {
 			$labelStatus = $langs->transnoentitiesnoconv('Unknown');
@@ -3853,7 +3854,7 @@ class Commande extends CommonOrder
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

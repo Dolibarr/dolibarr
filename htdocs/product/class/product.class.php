@@ -200,13 +200,9 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	/**
-	 * int	French VAT NPR (0 or 1)
+	 * int	French VAT NPR is used (0 or 1)
 	 */
 	public $tva_npr = 0;
-	/**
-	 * @deprecated
-	 */
-	public $recuperableonly;
 
 	//! Default discount percent
 	public $remise_percent;
@@ -230,12 +226,12 @@ class Product extends CommonObject
 	public $packaging;
 
 
-	public $lifetime;
+	public $lifetime;	// In seconds
 
 	public $qc_frequency;
 
 	/**
-	 * Stock real
+	 * Stock real (denormalized data)
 	 *
 	 * @var int
 	 */
@@ -385,23 +381,17 @@ class Product extends CommonObject
 	public $accountancy_code_buy_export;
 
 	/**
-	 * Main Barcode value
-	 *
-	 * @var string
+	 * @var string	Main Barcode value
 	 */
 	public $barcode;
 
 	/**
-	 * Main Barcode type ID
-	 *
-	 * @var int
+	 * @var int		Main Barcode type ID
 	 */
 	public $barcode_type;
 
 	/**
-	 * Main Barcode type code
-	 *
-	 * @var string
+	 * @var string	Main Barcode type code
 	 */
 	public $barcode_type_code;
 
@@ -444,8 +434,6 @@ class Product extends CommonObject
 
 	//! Contains detail of stock of product into each warehouse
 	public $stock_warehouse = array();
-
-	public $oldcopy;
 
 	/**
 	 * @var int Default warehouse Id
@@ -514,11 +502,11 @@ class Product extends CommonObject
 	 */
 	public $is_object_used;
 
+	public $is_sousproduit_qty;
+	public $is_sousproduit_incdec;
 
-	/**
-	 *
-	 */
-	 public $mandatory_period;
+	public $mandatory_period;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -1904,7 +1892,7 @@ class Product extends CommonObject
 	 */
 	public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
 	{
-		global $conf, $db, $hookmanager, $action;
+		global $conf, $hookmanager, $action;
 
 		// Call hook if any
 		if (is_object($hookmanager)) {
@@ -2261,7 +2249,7 @@ class Product extends CommonObject
 				if (!empty($newdefaultvatcode)) {
 					global $mysoc;
 					// Get record from code
-					$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+					$sql = "SELECT t.rowid, t.code, t.recuperableonly as tva_npr, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 					$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($mysoc->country_code)."'";
 					$sql .= " AND t.taux = ".((float) $newdefaultvatcode)." AND t.active = 1";
@@ -2270,7 +2258,7 @@ class Product extends CommonObject
 					if ($resql) {
 						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
-							$npr = $obj->recuperableonly;
+							$npr = $obj->tva_npr;
 							$localtax1 = $obj->localtax1;
 							$localtax2 = $obj->localtax2;
 							$localtaxtype1 = $obj->localtax1_type;
@@ -2297,18 +2285,18 @@ class Product extends CommonObject
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
-			$sql .= " price_base_type='".$this->db->escape($newpricebase)."',";
-			$sql .= " price=".$price.",";
-			$sql .= " price_ttc=".$price_ttc.",";
-			$sql .= " price_min=".$price_min.",";
-			$sql .= " price_min_ttc=".$price_min_ttc.",";
-			$sql .= " localtax1_tx=".($localtax1 >= 0 ? $localtax1 : 'NULL').",";
-			$sql .= " localtax2_tx=".($localtax2 >= 0 ? $localtax2 : 'NULL').",";
-			$sql .= " localtax1_type=".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
-			$sql .= " localtax2_type=".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
-			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " tva_tx='".price2num($newvat)."',";
-			$sql .= " recuperableonly='".$this->db->escape($newnpr)."'";
+			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
+			$sql .= " price = ".(float) $price.",";
+			$sql .= " price_ttc = ".(float) $price_ttc.",";
+			$sql .= " price_min = ".(float) $price_min.",";
+			$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			$sql .= " localtax1_tx = ".($localtax1 >= 0 ? (float) $localtax1 : 'NULL').",";
+			$sql .= " localtax2_tx = ".($localtax2 >= 0 ? (float) $localtax2 : 'NULL').",";
+			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
+			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
+			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
+			$sql .= " tva_tx = ".(float) price2num($newvat).",";
+			$sql .= " recuperableonly = '".$this->db->escape($newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -2533,7 +2521,6 @@ class Product extends CommonObject
 				$this->tva_tx = $obj->tva_tx;
 				//! French VAT NPR
 				$this->tva_npr = $obj->tva_npr;
-				$this->recuperableonly = $obj->tva_npr; // For backward compatibility
 				//! Local taxes
 				$this->localtax1_tx = $obj->localtax1_tx;
 				$this->localtax2_tx = $obj->localtax2_tx;
@@ -3575,7 +3562,7 @@ class Product extends CommonObject
 	public function load_stats_facture($socid = 0)
 	{
 		// phpcs:enable
-		global $db, $conf, $user, $hookmanager, $action;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
 		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(".$this->db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
@@ -3650,7 +3637,7 @@ class Product extends CommonObject
 	public function load_stats_facturerec($socid = 0)
 	{
 		// phpcs:enable
-		global $db, $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
 		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
@@ -5232,7 +5219,7 @@ class Product extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -6264,7 +6251,7 @@ class Product extends CommonObject
 	 */
 	public function generateMultiprices(User $user, $baseprice, $price_type, $price_vat, $npr, $psq)
 	{
-		global $conf, $db;
+		global $conf;
 
 		$sql = "SELECT rowid, level, fk_level, var_percent, var_min_percent FROM ".$this->db->prefix()."product_pricerules";
 		$query = $this->db->query($sql);
@@ -6280,7 +6267,7 @@ class Product extends CommonObject
 			1 => $baseprice
 		);
 
-		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+		for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
 			$price = $baseprice;
 			$price_min = $baseprice;
 

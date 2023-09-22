@@ -83,20 +83,16 @@ if (isModEnabled("reception")) {
 }
 $permissionnote = $user->rights->reception->creer; // Used by the include of actions_setnotes.inc.php
 
+// TODO Test on reception module on only
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
-	if ($origin == 'reception') {
-		$result = restrictedArea($user, $origin, $object->id);
-	} else {
-		if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-			$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
-		} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
-			accessforbidden();
-		}
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
+	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+		accessforbidden();
 	}
 }
-
 
 
 /*

@@ -2907,7 +2907,7 @@ class Societe extends CommonObject
 		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -3990,6 +3990,20 @@ class Societe extends CommonObject
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{15}$)/', $string)) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+
+		//Verify ID Prof 1 if country is BE (xxxx.xxx.xxx) (https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/actualites/structure-du-numero)
+		//Returns: 1 if ok, -1 if bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'BE') {
+			$string = trim($this->idprof1);
+			$string = preg_replace('/(\s)/', '', $string);
+
+			//Check
+			if (preg_match('/(^[0-9]{4}\.[0-9]{3}\.[0-9]{3}$)/', $string)) {
 				return 1;
 			} else {
 				return -1;

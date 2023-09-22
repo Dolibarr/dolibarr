@@ -549,9 +549,17 @@ dropdown-holder {
 	background: none;
 	color: #000 !important;
 }
+.dropdown-content a.butAction {
+	display: flex;
+}
 .dropdown-content .butAction:hover {
 	box-shadow: none;
 	text-decoration: underline;
+}
+.dropdown-content .butActionRefused {
+	margin-left: 0;
+	margin-right: 0;
+	border: none;
 }
 
 .dropdown-holder.open .dropdown-content {

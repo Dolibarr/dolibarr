@@ -2441,10 +2441,10 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				// Initialize archive object
 				$zip = new ZipArchive();
 				$result = $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-				if (!$result) {
+				if ($result !== true) {
 					global $langs, $errormsg;
 					$langs->load("errors");
-					$errormsg = $langs->trans("ErrorFailedToWriteInFile", $outputfile);
+					$errormsg = $langs->trans("ErrorFailedToBuildArchive", $outputfile);
 					return -4;
 				}
 
