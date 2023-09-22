@@ -3372,7 +3372,7 @@ function GRVAT(a, u, p, myafm) {
 	url: "/societe/checkvat/checkVatGr.php",
 	data: { u, p, myafm, afm }, // Set request parameters
 	success: function(data) {
-		var obj = JSON.parse(data); // Parse response data as JSON
+		var obj = data; // Parse response data as JSON
 
 		// Update form fields based on retrieved data
 		if (obj.RgWsPublicBasicRt_out.afm === null) {
