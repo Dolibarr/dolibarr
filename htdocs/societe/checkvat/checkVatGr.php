@@ -28,7 +28,7 @@ require "../../main.inc.php";
 $username = getDolGlobalString('AADE_WEBSERVICE_USER'); // Get username from request
 $password = getDolGlobalString('AADE_WEBSERVICE_KEY'); // Get password from request
 $myafm = getDolGlobalString('MAIN_INFO_TVAINTRA'); // Get Vat from request
-$afm = (isset($_REQUEST['afm']) ? $_REQUEST['afm'] : ''); // Get client Vat from request
+$afm = GETPOST('afm'); // Get client Vat from request
 
 // Make call to check VAT for Greek client
 $result = checkVATGR($username, $password, $myafm, $afm);
