@@ -33,6 +33,7 @@ $afm = GETPOST('afm'); // Get client Vat from request
 // Make call to check VAT for Greek client
 $result = checkVATGR($username, $password, $myafm, $afm);
 
+top_httphead('application/json');
 echo json_encode($result); // Encode the result as JSON and output
 
 /**
