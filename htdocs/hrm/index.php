@@ -332,7 +332,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				$i++;
 			}
 		} else {
-			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table>';
 		print '</div>';
