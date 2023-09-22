@@ -3215,7 +3215,8 @@ class CommandeFournisseur extends CommonOrder
 			$outputlangs->load("products");
 
 			$modelpath = "core/modules/supplier_order/doc/";
-			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			return $result;
 		}
 	}
 
