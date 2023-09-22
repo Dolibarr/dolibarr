@@ -507,8 +507,8 @@ if (empty($reshook)) {
 								false,
 								$lines[$i]->array_options,
 								$lines[$i]->fk_unit,
-								// we use the id of each orderline, not the id of the first one stored in $objecttmp->origin_id
-								$lines[$i]->id,
+								// we use the id of each order, not the id of the first one stored in $objecttmp->origin_id
+								$lines[$i]->fk_commande,
 								$lines[$i]->pa_ht,
 								$lines[$i]->ref_supplier,
 								$lines[$i]->special_code,
