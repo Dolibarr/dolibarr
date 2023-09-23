@@ -1557,6 +1557,8 @@ if ($id > 0) {
 		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		$obj = new stdClass();
+		$ent = getEntity($tabname[$id]); 
+		if (!empty($ent)) $obj->entity = $ent; // always needed
 		// If data was already input, we define them in obj to populate input fields.
 		if (GETPOST('actionadd')) {
 			foreach ($fieldlist as $key => $val) {
