@@ -1242,7 +1242,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity = ".getEntity('c_ticket_type');
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::load_cache_type_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1334,7 +1335,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity = ".getEntity('c_ticket_severity');
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::loadCacheSeveritiesTickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);

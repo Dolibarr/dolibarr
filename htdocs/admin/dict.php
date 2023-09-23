@@ -304,8 +304,8 @@ $tabfield[8] = "code,libelle,country_id,country".(!empty($conf->global->SOCIETE_
 $tabfield[9] = "code,label,unicode";
 $tabfield[10] = "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11] = "element,source,code,libelle,position";
-$tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
-$tabfield[13] = "code,libelle,type,entity";
+$tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
+$tabfield[13] = "code,libelle,type";
 $tabfield[14] = "code,label,price,organization,country";
 $tabfield[15] = "code,libelle,width,height,unit";
 $tabfield[16] = "code,libelle,sortorder";
@@ -330,7 +330,7 @@ $tabfield[34] = "code,label";
 $tabfield[35] = "label";
 $tabfield[36] = "range_ik,fk_c_exp_tax_cat";
 $tabfield[37] = "code,label,short_label,unit_type,scale,sortorder";
-$tabfield[38] = "code,label,url,icon,entity";
+$tabfield[38] = "code,label,url,icon";
 $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
 $tabfield[41] = "code,label";
@@ -385,7 +385,7 @@ $tabfieldvalue[42] = "code,label";
 $tabfieldvalue[43] = "code,label";
 $tabfieldvalue[44] = "code,label";
 
-// Field names in the table for inserting a record
+// Field names in the table for inserting a record (add field "entity" only here when dictionary is ready to personalized by entity)
 $tabfieldinsert = array();
 $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
@@ -411,7 +411,7 @@ $tabfieldinsert[21] = "code,label,qty,type_duration,position";
 $tabfieldinsert[22] = "code,label";
 $tabfieldinsert[23] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24] = "code,label";
-$tabfieldinsert[25] = "code,label";
+$tabfieldinsert[25] = "code,label,entity";
 //$tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27] = "code,libelle,picto";
 $tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country,block_if_negative,sortorder";
@@ -882,7 +882,7 @@ if (empty($reshook)) {
 			}
 			$i = 0;
 			foreach ($listfieldinsert as $f => $value) {
-				$keycode = $listfieldvalue[$i];
+				$keycode = (isset($listfieldvalue[$i]) ? $listfieldvalue[$i] : '');
 				if (empty($keycode)) {
 					$keycode = $value;
 				}
