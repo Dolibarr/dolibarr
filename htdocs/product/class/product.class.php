@@ -1185,7 +1185,7 @@ class Product extends CommonObject
 							} else {
 								// we also add lot record if not exist
 								$ObjLot = new Productlot($this->db);
-								if ($ObjLot->fetch(0, 0, $valueforundefinedlot) == 0) {
+								if ($ObjLot->fetch(0, $this->id, $valueforundefinedlot) == 0) {
 									$ObjLot->fk_product = $this->id;
 									$ObjLot->entity = $this->entity;
 									$ObjLot->fk_user_creat = $user->id;
