@@ -124,8 +124,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 llxHeader();
 
-$tva = new TVA($db);
-
+$tva = new Tva($db);
 $form = new Form($db);
 
 $h = 0;
@@ -173,26 +172,20 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
 
-// Ref
-/*print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'id','',1,'rowid','id');
-print '</td></tr>';*/
-
 // Date
-print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
-print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Numero
-print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_paiement.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object->num_payment).'</td></tr>';
 
 // Montant
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td class="wordbreak sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
 if (isModEnabled("banque")) {
@@ -202,7 +195,7 @@ if (isModEnabled("banque")) {
 
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $bankline->getNomUrl(1, 0, 'showall');
 		print '</td>';
 		print '</tr>';
@@ -222,11 +215,8 @@ print dol_get_fiche_end();
 
 $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount';
-//$sql .= ', pc.libelle as sc_type';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
-//$sql .= ', '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
-//$sql .= ' AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
 $sql .= ' AND pf.rowid = '.((int) $object->id);
 
@@ -297,8 +287,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
-		if ($user->rights->facture->paiement)
-		{
+		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}

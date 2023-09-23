@@ -29,14 +29,14 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
- * Class to manage the box to show last users
+ * Class to manage the box to show bank accounts
  */
 class box_comptes extends ModeleBoxes
 {
-	public $boxcode = "currentaccounts";
-	public $boximg = "bank_account";
+	public $boxcode  = "currentaccounts";
+	public $boximg   = "bank_account";
 	public $boxlabel = "BoxCurrentAccounts";
-	public $depends = array("banque"); // Box active if module banque active
+	public $depends  = array("banque"); // Box active if module banque active
 
 	/**
 	 * @var DoliDB Database handler.

@@ -44,6 +44,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $action = GETPOST('action', 'aZ09');
 
+// Security check
+// Checks are done later
+
 
 /*
  * View

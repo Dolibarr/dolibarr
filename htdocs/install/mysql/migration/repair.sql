@@ -54,6 +54,10 @@
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
 
 
 -- Requests to clean corrupted data
@@ -217,6 +221,10 @@ DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid 
 --SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
 --SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
 
+-- Fix: delete orphelins in llx_bank
+DELETE FROM llx_bank WHERE fk_account NOT IN (select rowid from llx_bank_account);
+
+
 -- Fix link on parent that were removed
 DROP table tmp_user;
 CREATE TABLE tmp_user as (select * from llx_user);
@@ -315,7 +323,7 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 a
 UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
 
 
-UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
+UPDATE llx_element_time set element_datehour = element_date where element_datehour IS NULL and element_date IS NOT NULL;
 
 UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
 UPDATE llx_projet set fk_opp_status = (SELECT rowid FROM llx_c_lead_status WHERE code='PROSP') where fk_opp_status IS NULL and opp_amount > 0;
@@ -389,8 +397,8 @@ update llx_expedition set date_valid = date_creation where fk_statut = 1 and dat
 update llx_expedition set date_valid = NOW() where fk_statut = 1 and date_valid IS NULL;
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
--- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
-update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid);
+-- select pt.rowid, pt.duration_effective, SUM(ptt.element_duration) as y from llx_projet_task as pt, llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task' group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
+update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.element_duration) as y from llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task') where pt.duration_effective <> (select SUM(ptt.element_duration) as y from llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task');
  
 
 -- Remove duplicate of shipment mode (keep the one with tracking defined)
@@ -422,7 +430,7 @@ UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilati
 UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 
 
--- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
+-- VMYSQL4.1 update llx_element_time set element_datehour = element_date where element_datehour < element_date or element_datehour > DATE_ADD(element_date, interval 1 day);
 
 
 -- Clean product prices
@@ -487,7 +495,7 @@ UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 
 
 -- Backport a change of value into the hourly rate. 
--- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
+-- update llx_element_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 
 
 -- select * from llx_facturedet as fd, llx_product as p where fd.fk_product = p.rowid AND fd.product_type != p.fk_product_type;
@@ -565,17 +573,22 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
--- Sequence to fix the content of llx_bank.amount_main_currency
--- Note: amount is amount in currency of bank account
+
+-- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
+-- Note: amount is amount in the currency of the bank account
 -- Note: pamount is always amount into the main currency
--- Note: pmulticurrencyamount is in currency of invoice 
--- Note: amount_main_currency must be amount in main currency
+-- Note: pmulticurrencyamount is in the currency of invoice 
+-- Note: amount_main_currency must be NULL or amount in main currency of company (we set it when the currency of the bank account differs from main currency)
 -- DROP TABLE tmp_bank;
--- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
--- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+-- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount, b.datec FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL AND b.rowid IN (SELECT rowid FROM tmp_bank);
 -- DROP TABLE tmp_bank2;
--- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
--- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+-- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, - p.amount as pamount, - p.multicurrency_amount as pmulticurrencyamount, b.datec FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL AND b.rowid IN (SELECT rowid FROM tmp_bank2);
+
+-- Sequence to fix the content of llx_bank.amount_main_currency (sign was wrong with some version)
+-- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
+
 
 
 -- Delete duplicate entries into llx_c_transport_mode

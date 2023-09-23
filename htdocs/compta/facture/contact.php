@@ -65,7 +65,7 @@ $usercancreate = $user->hasRight("facture", "creer");
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->facture->creer) {
+if ($action == 'addcontact' && $user->hasRight('facture', 'creer')) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -83,10 +83,10 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->facture->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('facture', 'creer')) {
 	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->facture->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('facture', 'creer')) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
 

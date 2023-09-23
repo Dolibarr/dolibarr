@@ -248,6 +248,9 @@ div.wrapper{
 	text-align: center;
 	box-sizing: border-box;
 	background-color:#fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 div.wrapper2{
@@ -262,10 +265,14 @@ div.wrapper2{
 	text-align: center;
 	box-sizing: border-box;
 	background-color:#fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 img.imgwrapper {
 	max-width: 100%;
+	max-height: 100%;
 }
 
 button:active{
@@ -927,6 +934,7 @@ div#moreinfo, div#infowarehouse {
 		display: inline-flex;
 		align-items: center;
 		padding: 10px;
+		justify-content: normal;
 	}
 
 	.div5 .wrapper2.divempty {
@@ -952,7 +960,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	div.wrapper2{
-		height:10%;
+		height: 40px;
 	}
 }
 

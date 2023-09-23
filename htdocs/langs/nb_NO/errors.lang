@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAP klienten feilet med meldingen '%s'
 ErrorGlobalVariableUpdater5=Ingen global variabel valgt
 ErrorFieldMustBeANumeric=Feltet <b>%s</b> må være en numerisk verdi
 ErrorMandatoryParametersNotProvided=Obligatorisk(e) parametre ikke angitt
+ErrorOppStatusRequiredIfUsage=Du angir at du ønsker å bruke dette prosjektet til å følge en mulighet, så du må også fylle ut den innledende statusen for mulighet.
 ErrorOppStatusRequiredIfAmount=Sett inn et estimert beløp for denne muligheten. Status må også settes
 ErrorFailedToLoadModuleDescriptorForXXX=Kunne ikke laste moduldeskriptorklassen for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
@@ -262,6 +263,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Feil, parameter <b> %s </b> må v�
 ErrorLoginDateValidity=Feil, denne påloggingen er utenfor gyldig datoområde
 ErrorValueLength=Lengden på feltet '<b> %s </b>' må være høyere enn '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et reservert nøkkelord
+ErrorFilenameReserved=Filnavnet <b> %s </b> kan ikke brukes da det er en reservert og beskyttet kommando.
 ErrorNotAvailableWithThisDistribution=Ikke tilgjengelig i denne distribusjonen
 ErrorPublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=Språket til den nye siden må defineres hvis den er angitt som oversettelse av en annen side
@@ -303,7 +305,22 @@ ErrorValueForTooLow=Verdien for <b> %s </b> er for lav
 ErrorValueCantBeNull=Verdien for <b> %s </b> kan ikke være null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Datoen for banktransaksjonen kan ikke være lavere enn datoen for filoverføringen
 ErrorTooMuchFileInForm=For mange filer i skjemaet, maksimalt antall er %s fil(er)
-ErrorSessionInvalidatedAfterPasswordChange=Økten ble ugyldig etter endring av passord, status eller gyldighetsdato. Logg på på nytt.
+ErrorSessionInvalidatedAfterPasswordChange=Økten ble ugyldig etter endring av passord, e-post, status eller gyldighetsdato. Logg inn på nytt.
+ErrorExistingPermission = Tillatelse <b> %s </b> for objekt <b> %s </b> finnes allerede
+ErrorFieldExist=Verdien for <b> %s </b> finnes allerede
+ErrorEqualModule=Modulen er ugyldig i <b> %s </b>
+ErrorFieldValue=Verdien for <b> %s </b> er feil
+ErrorCoherenceMenu=<b>%s</b> er påkrevd når <b>%s</b> er 'venstre'
+ErrorUploadFileDragDrop=Det oppsto en feil under opplastingen av filen(e).
+ErrorUploadFileDragDropPermissionDenied=Det oppsto en feil under opplasting av filen(e): Tillatelse nektet
+ErrorFixThisHere= <a href="%s"> Fiks dette her </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Feil: URL-en til gjeldende forekomst (%s) samsvarer ikke med URL-en som er definert i OAuth2-påloggingsoppsettet (%s). Å gjøre OAuth2-pålogging i en slik konfigurasjon er ikke tillatt.
+ErrorMenuExistValue=Det finnes allerede en meny med denne tittelen eller nettadressen
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG-filer er ikke tillatt som eksterne lenker uten alternativet %s
+ErrorTypeMenu=Umulig å legge til en annen meny for samme modul på navigasjonslinjen, ikke håndtert ennå
+ErrorTableExist=Tabell <b> %s </b> finnes allerede
+ErrorDictionaryNotFound=Ordbok <b> %s </b> ikke funnet
+ErrorFailedToCreateSymLinkToMedias=Kunne ikke opprette symbolkoblingene %s for å peke til %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -342,6 +359,17 @@ WarningPaypalPaymentNotCompatibleWithStrict=Verdien 'Strict' gjør at betalingsf
 WarningThemeForcedTo=Advarsel, tema har blitt tvunget til <b> %s </b> av skjult konstant MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Advarsel, dette vil også slette alle eksisterende sider/beholdere på nettstedet. Du bør eksportere nettstedet ditt før, så du har en sikkerhetskopi for å reimportere den senere.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatisk validering er deaktivert når alternativet for å redusere beholdning er satt på "Fakturavalidering".
+WarningModuleNeedRefrech = Modul <b> %s </b> er deaktivert. Ikke glem å aktivere den
+WarningPermissionAlreadyExist=Eksisterende tillatelser for dette objektet
+WarningGoOnAccountancySetupToAddAccounts=Hvis denne listen er tom, gå inn i menyen %s - %s - %s for å laste eller opprette kontoer for kontoplanen din.
+WarningCorrectedInvoiceNotFound=Finner ikke korrigert faktura
+
+SwissQrOnlyVIR = SwissQR-faktura kan kun legges til på fakturaer som skal betales med kredittoverføring.
+SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og sted angitt? (%s)
+SwissQrCreditorInformationInvalid = Kreditorinformasjon er ugyldig for IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN er ikke implementert ennå
+SwissQrPaymentInformationInvalid = Betalingsinformasjonen var ugyldig for totalt %s : %s
+SwissQrDebitorAddressInvalid = Debitorinformasjonen var ugyldig (%s)
 
 # Validate
 RequireValidValue = Verdien er ikke gyldig
@@ -363,3 +391,4 @@ BadSetupOfField = Feil oppsett av felt
 BadSetupOfFieldClassNotFoundForValidation = Feil oppsett av felt: Klasse ikke funnet for validering
 BadSetupOfFieldFileNotFound = Feil oppsett av felt: Filen ble ikke funnet for inkludering
 BadSetupOfFieldFetchNotCallable = Feil oppsett av felt: Henting kan ikke kalles på klasse
+ErrorTooManyAttempts= For mange forsøk, prøv igjen senere

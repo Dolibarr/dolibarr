@@ -99,8 +99,10 @@ class SMTPs
 
 	/**
 	 * Message Content
+	 *
+	 * @var	array	$_msgContent	Array of messages
 	 */
-	private $_msgContent = null;
+	private $_msgContent = array();
 
 	/**
 	 * Custom X-Headers
@@ -228,10 +230,27 @@ class SMTPs
 
 	// @CHANGE LDR
 	public $log = '';
+	public $lastretval = '';
+
+	/**
+	 * @var resource
+	 */
+	public $socket;
+
+	/**
+	 * @var int
+	 */
+	public $errno;
+
+	/**
+	 * @var string
+	 */
+	public $errstr;
+
 	private $_errorsTo = '';
 	private $_deliveryReceipt = 0;
 	private $_trackId = '';
-	private $_moreInHeader = '';
+	private $_moreinheader = '';
 
 	/**
 	 * An array of options for stream_context_create()
@@ -455,6 +474,7 @@ class SMTPs
 		// phpcs:enable
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
@@ -475,13 +495,17 @@ class SMTPs
 			if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 				$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-			} else {
+			} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 1) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 				// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
 				$hosth = $this->getFrom('addr');
 				$hosth = preg_replace('/^.*</', '', $hosth);
 				$hosth = preg_replace('/>.*$/', '', $hosth);
 				$hosth = preg_replace('/.*@/', '', $hosth);
+			} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 2) {
+				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 2, we use the domain in the $dolibarr_main_url_root.
+				global $dolibarr_main_url_root;
+				$hosth = getDomainFromURL($dolibarr_main_url_root, 1);
 			}
 		}
 
@@ -564,7 +588,7 @@ class SMTPs
 				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (! $_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
-					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections or temporary error. Error after 2nd sending EHLO '.$hosth.' : '.$this->lastretval);
 					return $_retVal;
 				}
 			}
@@ -614,7 +638,7 @@ class SMTPs
 				$this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
 		} else {
-			$this->_setErr(126, '"'.$host.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+			$this->_setErr(126, '"'.$host.'" does not support authenticated connections or temporary error. Error after sending EHLO '.$hosth.' : '.$this->lastretval);
 		}
 
 		return $_retVal;
@@ -629,6 +653,7 @@ class SMTPs
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		/**
 		 * Default return value
 		 */
@@ -660,20 +685,25 @@ class SMTPs
 					if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 						$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-					} else {
+					} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 1) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
-						// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+						// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
 						$hosth = $this->getFrom('addr');
 						$hosth = preg_replace('/^.*</', '', $hosth);
 						$hosth = preg_replace('/>.*$/', '', $hosth);
 						$hosth = preg_replace('/.*@/', '', $hosth);
+					} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 2) {
+						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 2, we use the domain in the $dolibarr_main_url_root.
+						global $dolibarr_main_url_root;
+						$hosth = getDomainFromURL($dolibarr_main_url_root, 1);
 					}
 				}
 
+				// Send the HELO message to the SMTP server
 				$_retVal = $this->socket_send_str('HELO '.$hosth, '250');
 			}
 
-			// Well, did we get to the server?
+			// Well, did we get the server answer with correct code ?
 			if ($_retVal) {
 				// From this point onward most server response codes should be 250
 				// Specify who the mail is from....
@@ -716,8 +746,11 @@ class SMTPs
 
 				// Now tell the server we are done and close the socket...
 				fputs($this->socket, 'QUIT');
-				fclose($this->socket);
+			} else {
+				// We got error code into $this->lastretval
 			}
+
+			fclose($this->socket);
 		}
 
 		return $_retVal;
@@ -1108,10 +1141,8 @@ class SMTPs
 
 	/**
 	 * Inserts given addresses into structured format.
-	 * This method takes a list of given addresses, via an array
-	 * or a COMMA delimted string, and inserts them into a highly
-	 * structured array. This array is designed to remove duplicate
-	 * addresses and to sort them by Domain.
+	 * This method takes a list of given addresses, via an array or a COMMA delimted string, and inserts them into a highly
+	 * structured array. This array is designed to remove duplicate addresses and to sort them by Domain.
 	 *
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
@@ -1213,7 +1244,9 @@ class SMTPs
 		}
 
 		// Pull User Name and Host.tld apart
-		list($_aryEmail['user'], $_aryEmail['host']) = explode('@', $_aryEmail['addr']);
+		$_tmpHost = explode('@', $_aryEmail['addr']);
+		$_aryEmail['user'] = $_tmpHost[0];
+		$_aryEmail['host'] = $_tmpHost[1];
 
 		// Put the brackets back around the address
 		$_aryEmail['addr'] = '<'.$_aryEmail['addr'].'>';
@@ -1267,7 +1300,7 @@ class SMTPs
 				$_RCPT_list = array();
 				// walk down Recipients array and pull just email addresses
 				foreach ($this->_msgRecipients as $_host => $_list) {
-					if ($this->_msgRecipients[$_host][$_which]) {
+					if (!empty($this->_msgRecipients[$_host][$_which])) {
 						foreach ($this->_msgRecipients[$_host][$_which] as $_addr => $_realName) {
 							if ($_realName) {	// @CHANGE LDR
 								$_realName = '"'.$_realName.'"';
@@ -1828,7 +1861,7 @@ class SMTPs
 	/**
 	 * Retrieves the Message X-Header Content
 	 *
-	 * @return string[] $_msgContent Message X-Header Content
+	 * @return array	$_msgContent 	Message X-Header Content
 	 */
 	public function getXheader()
 	{
@@ -1862,6 +1895,7 @@ class SMTPs
 		} elseif ($type == 'alternative') {
 			return $this->_smtpsAlternativeBoundary;
 		}
+		return '';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1870,7 +1904,9 @@ class SMTPs
 	 * using SMTP Extensions
 	 *
 	 * @param	resource    $socket			Socket handler
-	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
+	 * @param	string		$response		Expected response ('250', ...). Example of response we can get:
+	 * 										"421 4.7.0 Try again later, closing connection. (EHLO) nb21-20020a1709071c9500b0093d0d964affsm869534ejc.73 - gsmtp"
+	 * 										"550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	public function server_parse($socket, $response)
@@ -1897,8 +1933,10 @@ class SMTPs
 			$limit++;
 		}
 
+		$this->lastretval = substr($server_response, 0, 3);
+
 		if (!(substr($server_response, 0, 3) == $response)) {
-			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse:".$server_response);
+			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: ".$server_response);
 			$_retVal = false;
 		}
 
@@ -1910,9 +1948,9 @@ class SMTPs
 	 * Send str
 	 *
 	 * @param	string		$_strSend		String to send
-	 * @param 	string		$_returnCode	Return code
+	 * @param 	string		$_returnCode	Expected return code
 	 * @param 	string		$CRLF			CRLF
-	 * @return 	boolean|null						True or false
+	 * @return 	boolean|null				True or false
 	 */
 	public function socket_send_str($_strSend, $_returnCode = null, $CRLF = "\r\n")
 	{
@@ -1928,6 +1966,8 @@ class SMTPs
 		if ($_returnCode) {
 			return $this->server_parse($this->socket, $_returnCode);
 		}
+
+		return null;
 	}
 
 	// =============================================================
@@ -1949,7 +1989,7 @@ class SMTPs
 	}
 
 	/**
-	 * Returns errors codes and messages for Class
+	 * Returns applicative errors codes and messages for Class (not the SMTP error code)
 	 *
 	 * @return string $_errMsg  Error Message
 	 */

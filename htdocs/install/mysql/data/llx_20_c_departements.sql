@@ -12,7 +12,7 @@
 -- Copyright (C) 2012 	    Sebastian Neuwert      <sebastian.neuwert@modula71.de>
 -- Copyright (C) 2012	    Ricardo Schluter       <info@ripasch.nl>
 -- Copyright (C) 2015	    Ferran Marcet          <fmarcet@2byte.es>
--- Copyright (C) 2020-2021  Udo Tamm               <dev@dolibit.de>
+-- Copyright (C) 2020-2023  Udo Tamm               <dev@dolibit.de>
 -- Copyright (C) 2022       Miro Sertić            <miro.sertic0606@gmail.com>
 -- Copyright (C) 2022       ButterflyOfFire        <butterflyoffire+dolibarr@protonmail.com>
 --
@@ -63,15 +63,16 @@
 -- Honduras
 -- Hungary
 -- Italy
+-- Japan
 -- Luxembourg
--- Netherlands
 -- Morocco
+-- Netherlands
 -- Panama
 -- Peru
 -- Portugal
 -- Romania
 -- San Salvador -> El Salvador 
--- Slovenia (need to check code SI-Id)
+-- Slovenia   (need to check code SI-Id)
 -- Switzerland / Suisse
 -- Taiwan
 -- Tunisia
@@ -301,6 +302,9 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'SK', '', 1, '', 'Saskatchewan');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'AB', '', 1, '', 'Alberta');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'NL', '', 1, '', 'Newfoundland and Labrador');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'YT', '', 1, '', 'Yukon');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'NT', '', 1, '', 'Northwest Territories');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'NU', '', 1, '', 'Nunavut');
 
 
 -- Chile Provinces (id country=67)
@@ -421,11 +425,11 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- France Departements (id country=1)
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 1, '971','97105',3,'GUADELOUPE','Guadeloupe');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 2, '972','97209',3,'MARTINIQUE','Martinique');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 3, '973','97302',3,'GUYANE','Guyane');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 4, '974','97411',3,'REUNION','Réunion');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 6, '976','97601',3,'MAYOTTE','Mayotte');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 1, '971','97105',3, 'GUADELOUPE','Guadeloupe');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 2, '972','97209',3, 'MARTINIQUE','Martinique');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 3, '973','97302',3, 'GUYANE','Guyane');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 4, '974','97411',3, 'REUNION','Réunion');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 6, '976','97601',3, 'MAYOTTE','Mayotte');
 
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (84, '01', '01053',5, 'AIN', 'Ain');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (32, '02', '02408',5, 'AISNE', 'Aisne');
@@ -770,6 +774,56 @@ insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (303, 'VV', NULL, NULL, NULL, 'VIBO VALENTIA');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (320, 'VI', NULL, NULL, NULL, 'VICENZA');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (307, 'VT', NULL, NULL, NULL, 'VITERBO');
+
+
+-- Japan 都道府県 (id country=123)
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '01', '', 0, '北海', '北海道', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '02', '', 0, '青森', '青森県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '03', '', 0, '岩手', '岩手県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '04', '', 0, '宮城', '宮城県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '05', '', 0, '秋田', '秋田県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '06', '', 0, '山形', '山形県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '07', '', 0, '福島', '福島県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '08', '', 0, '茨城', '茨城県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '09', '', 0, '栃木', '栃木県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '10', '', 0, '群馬', '群馬県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '11', '', 0, '埼玉', '埼玉県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '12', '', 0, '千葉', '千葉県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '13', '', 0, '東京', '東京都', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '14', '', 0, '神奈川', '神奈川県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '15', '', 0, '新潟', '新潟県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '16', '', 0, '富山', '富山県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '17', '', 0, '石川', '石川県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '18', '', 0, '福井', '福井県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '19', '', 0, '山梨', '山梨県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '20', '', 0, '長野', '長野県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '21', '', 0, '岐阜', '岐阜県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '22', '', 0, '静岡', '静岡県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '23', '', 0, '愛知', '愛知県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '24', '', 0, '三重', '三重県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '25', '', 0, '滋賀', '滋賀県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '26', '', 0, '京都', '京都府', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '27', '', 0, '大阪', '大阪府', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '28', '', 0, '兵庫', '兵庫県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '29', '', 0, '奈良', '奈良県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '30', '', 0, '和歌山', '和歌山県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '31', '', 0, '鳥取', '鳥取県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '32', '', 0, '島根', '島根県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '33', '', 0, '岡山', '岡山県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '34', '', 0, '広島', '広島県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '35', '', 0, '山口', '山口県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '36', '', 0, '徳島', '徳島県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '37', '', 0, '香川', '香川県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '38', '', 0, '愛媛', '愛媛県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '39', '', 0, '高知', '高知県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '40', '', 0, '福岡', '福岡県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '41', '', 0, '佐賀', '佐賀県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '42', '', 0, '長崎', '長崎県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '43', '', 0, '熊本', '熊本県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '44', '', 0, '大分', '大分県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '45', '', 0, '宮崎', '宮崎県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '46', '', 0, '鹿児島', '鹿児島県', 1);
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '47', '', 0, '沖縄', '沖縄県', 1);
 
 
 -- Luxembourg Cantons (id country=140)
@@ -1228,7 +1282,7 @@ INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (6
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZH','ZURICH','Zürich');
 
 
--- Taiwan Divisions / Provinces / Counties (rowid country=886)
+-- Taiwan Divisions / Provinces / Counties (id country=213)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-KLU', 'KLU', NULL, '基隆市');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-TPE', 'TPE', NULL, '臺北市');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-TPH', 'TPH', NULL, '新北市');
@@ -1637,42 +1691,42 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 
 
 -- Provinces India (id country=117)
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AN', 11701, NULL, 0, 'AN', 'Andaman & Nicobar', 1);    
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AP', 11701, NULL, 0, 'AP', 'Andhra Pradesh', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AR', 11701, NULL, 0, 'AR', 'Arunachal Pradesh', 1);     
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AS', 11701, NULL, 0, 'AS', 'Assam', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('BR', 11701, NULL, 0, 'BR', 'Bihar', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CG', 11701, NULL, 0, 'CG', 'Chattisgarh', 1);     
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CH', 11701, NULL, 0, 'CH', 'Chandigarh', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('DD', 11701, NULL, 0, 'DD', 'Daman & Diu', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('DL', 11701, NULL, 0, 'DL', 'Delhi', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('DN', 11701, NULL, 0, 'DN', 'Dadra and Nagar Haveli', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('GA', 11701, NULL, 0, 'GA', 'Goa', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('GJ', 11701, NULL, 0, 'GJ', 'Gujarat', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('HP', 11701, NULL, 0, 'HP', 'Himachal Pradesh', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('HR', 11701, NULL, 0, 'HR', 'Haryana', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('JH', 11701, NULL, 0, 'JH', 'Jharkhand', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('JK', 11701, NULL, 0, 'JK', 'Jammu & Kashmir', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('KA', 11701, NULL, 0, 'KA', 'Karnataka', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('KL', 11701, NULL, 0, 'KL', 'Kerala', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LD', 11701, NULL, 0, 'LD', 'Lakshadweep', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MH', 11701, NULL, 0, 'MH', 'Maharashtra', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ML', 11701, NULL, 0, 'ML', 'Meghalaya', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MN', 11701, NULL, 0, 'MN', 'Manipur', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MP', 11701, NULL, 0, 'MP', 'Madhya Pradesh', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MZ', 11701, NULL, 0, 'MZ', 'Mizoram', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('NL', 11701, NULL, 0, 'NL', 'Nagaland', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('OR', 11701, NULL, 0, 'OR', 'Orissa', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PB', 11701, NULL, 0, 'PB', 'Punjab', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PY', 11701, NULL, 0, 'PY', 'Puducherry', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('RJ', 11701, NULL, 0, 'RJ', 'Rajasthan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SK', 11701, NULL, 0, 'SK', 'Sikkim', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('TE', 11701, NULL, 0, 'TE', 'Telangana', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('TN', 11701, NULL, 0, 'TN', 'Tamil Nadu', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('TR', 11701, NULL, 0, 'TR', 'Tripura', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('UL', 11701, NULL, 0, 'UL', 'Uttarakhand', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('UP', 11701, NULL, 0, 'UP', 'Uttar Pradesh', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('WB', 11701, NULL, 0, 'WB', 'West Bengal', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AN', 11701, NULL, 0, 'AN', 'Andaman & Nicobar');    
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AP', 11701, NULL, 0, 'AP', 'Andhra Pradesh');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AR', 11701, NULL, 0, 'AR', 'Arunachal Pradesh');     
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AS', 11701, NULL, 0, 'AS', 'Assam');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('BR', 11701, NULL, 0, 'BR', 'Bihar');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('CG', 11701, NULL, 0, 'CG', 'Chattisgarh');     
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('CH', 11701, NULL, 0, 'CH', 'Chandigarh');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('DD', 11701, NULL, 0, 'DD', 'Daman & Diu');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('DL', 11701, NULL, 0, 'DL', 'Delhi');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('DN', 11701, NULL, 0, 'DN', 'Dadra and Nagar Haveli');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('GA', 11701, NULL, 0, 'GA', 'Goa');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('GJ', 11701, NULL, 0, 'GJ', 'Gujarat');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HP', 11701, NULL, 0, 'HP', 'Himachal Pradesh');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HR', 11701, NULL, 0, 'HR', 'Haryana');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('JH', 11701, NULL, 0, 'JH', 'Jharkhand');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('JK', 11701, NULL, 0, 'JK', 'Jammu & Kashmir');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('KA', 11701, NULL, 0, 'KA', 'Karnataka');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('KL', 11701, NULL, 0, 'KL', 'Kerala');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('LD', 11701, NULL, 0, 'LD', 'Lakshadweep');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('MH', 11701, NULL, 0, 'MH', 'Maharashtra');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('ML', 11701, NULL, 0, 'ML', 'Meghalaya');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('MN', 11701, NULL, 0, 'MN', 'Manipur');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('MP', 11701, NULL, 0, 'MP', 'Madhya Pradesh');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('MZ', 11701, NULL, 0, 'MZ', 'Mizoram');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('NL', 11701, NULL, 0, 'NL', 'Nagaland');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('OR', 11701, NULL, 0, 'OR', 'Orissa');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PB', 11701, NULL, 0, 'PB', 'Punjab');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PY', 11701, NULL, 0, 'PY', 'Puducherry');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('RJ', 11701, NULL, 0, 'RJ', 'Rajasthan');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('SK', 11701, NULL, 0, 'SK', 'Sikkim');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('TE', 11701, NULL, 0, 'TE', 'Telangana');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('TN', 11701, NULL, 0, 'TN', 'Tamil Nadu');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('TR', 11701, NULL, 0, 'TR', 'Tripura');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('UL', 11701, NULL, 0, 'UL', 'Uttarakhand');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('UP', 11701, NULL, 0, 'UP', 'Uttar Pradesh');
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('WB', 11701, NULL, 0, 'WB', 'West Bengal');
 
 -- Provinces Indonesia (id country=118)
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('BA', 11801, NULL, 0, 'BA', 'Bali', 1);    
@@ -1745,7 +1799,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ZAC', 15401, '', 0, 'ZAC', 'Zacatecas', 1);
 
 
--- Provinces Venezuela (id country=232)
+-- Venezuela Provinces (id country=232)
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('VE-L', 23201, '', 0, 'VE-L', 'Mérida', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('VE-T', 23201, '', 0, 'VE-T', 'Trujillo', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('VE-E', 23201, '', 0, 'VE-E', 'Barinas', 1);
@@ -1894,6 +1948,7 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (6118, 'BI0118', '', 0, '', 'Nyabitsinda');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (6118, 'BI0119', '', 0, '', 'Ruyigi');
 
+
 -- Provinces United Arab Emirates (id country=227)
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AE-1', 22701, '', 0, '', 'Abu Dhabi');
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AE-2', 22701, '', 0, '', 'Dubai');
@@ -1903,51 +1958,86 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AE-6', 22701, '', 0, '', 'Sharjah');
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('AE-7', 22701, '', 0, '', 'Umm al-Quwain');
 
--- Japan 都道府県 (id country=123)
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '01', '', 0, '北海', '北海道', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '02', '', 0, '青森', '青森県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '03', '', 0, '岩手', '岩手県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '04', '', 0, '宮城', '宮城県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '05', '', 0, '秋田', '秋田県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '06', '', 0, '山形', '山形県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '07', '', 0, '福島', '福島県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '08', '', 0, '茨城', '茨城県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '09', '', 0, '栃木', '栃木県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '10', '', 0, '群馬', '群馬県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '11', '', 0, '埼玉', '埼玉県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '12', '', 0, '千葉', '千葉県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '13', '', 0, '東京', '東京都', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '14', '', 0, '神奈川', '神奈川県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '15', '', 0, '新潟', '新潟県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '16', '', 0, '富山', '富山県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '17', '', 0, '石川', '石川県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '18', '', 0, '福井', '福井県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '19', '', 0, '山梨', '山梨県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '20', '', 0, '長野', '長野県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '21', '', 0, '岐阜', '岐阜県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '22', '', 0, '静岡', '静岡県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '23', '', 0, '愛知', '愛知県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '24', '', 0, '三重', '三重県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '25', '', 0, '滋賀', '滋賀県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '26', '', 0, '京都', '京都府', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '27', '', 0, '大阪', '大阪府', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '28', '', 0, '兵庫', '兵庫県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '29', '', 0, '奈良', '奈良県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '30', '', 0, '和歌山', '和歌山県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '31', '', 0, '鳥取', '鳥取県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '32', '', 0, '島根', '島根県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '33', '', 0, '岡山', '岡山県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '34', '', 0, '広島', '広島県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '35', '', 0, '山口', '山口県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '36', '', 0, '徳島', '徳島県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '37', '', 0, '香川', '香川県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '38', '', 0, '愛媛', '愛媛県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '39', '', 0, '高知', '高知県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '40', '', 0, '福岡', '福岡県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '41', '', 0, '佐賀', '佐賀県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '42', '', 0, '長崎', '長崎県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '43', '', 0, '熊本', '熊本県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '44', '', 0, '大分', '大分県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '45', '', 0, '宮崎', '宮崎県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '46', '', 0, '鹿児島', '鹿児島県', 1);
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom, active) values (12301, '47', '', 0, '沖縄', '沖縄県', 1);
+
+-- Turkiye (Turkey)  (id country=221)
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-01',22104,'Adana');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-02',22107,'Adıyaman');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-03',22103,'Afyon');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-04',22107,'Ağrı');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-05',22106,'Amasya');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-06',22102,'Ankara');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-07',22104,'Antalya');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-08',22106,'Artvin');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-09',22103,'Aydın');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-10',22101,'Balıkesir');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-11',22101,'Bilecik');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-12',22107,'Bingöl');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-13',22107,'Bitlis');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-14',22106,'Bolu');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-15',22104,'Burdur');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-16',22101,'Bursa');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-17',22101,'Çanakkale');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-18',22102,'Çankırı');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-19',22106,'Çorum');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-20',22104,'Denizli');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-21',22105,'Diyarbakır');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-22',22101,'Edirne');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-23',22107,'Elazığ');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-24',22107,'Erzincan');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-25',22107,'Erzurum');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-26',22102,'Eskişehir');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-27',22105,'Gaziantep');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-28',22106,'Giresun');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-29',22106,'Gümüşhane');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-30',22107,'Hakkari');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-31',22104,'Hatay');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-32',22104,'Isparta');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-33',22104,'İçel');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-34',22101,'İstanbul');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-35',22103,'İzmir');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-36',22107,'Kars');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-37',22106,'Kastamonu');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-38',22102,'Kayseri');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-39',22101,'Kırklareli');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-40',22102,'Kırşehir');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-41',22101,'Kocaeli');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-42',22102,'Konya');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-43',22103,'Kütahya');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-44',22107,'Malatya');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-45',22103,'Manisa');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-46',22104,'Kahramanmaraş');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-47',22105,'Mardin');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-48',22103,'Muğla');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-49',22107,'Muş');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-50',22102,'Nevşehir');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-51',22102,'Niğde');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-52',22106,'Ordu');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-53',22106,'Rize');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-54',22101,'Sakarya');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-55',22106,'Samsun');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-56',22105,'Siirt');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-57',22106,'Sinop');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-58',22102,'Sivas');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-59',22101,'Tekirdağ');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-60',22106,'Tokat');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-61',22106,'Trabzon');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-62',22107,'Tunceli');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-63',22105,'Şanlıurfa');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-63',22103,'Uşak');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-65',22107,'Van');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-66',22102,'Yozgat');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-67',22106,'Zonguldak');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-68',22102,'Aksaray');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-69',22106,'Bayburt');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-70',22102,'Karaman');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-71',22102,'Kırıkkale');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-72',22105,'Batman');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-73',22105,'Şırnak');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-74',22106,'Bartın');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-75',22107,'Ardahan');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-76',22107,'Iğdır');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-77',22101,'Yalova');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-78',22106,'Karabük');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-79',22105,'Kilis');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-80',22104,'Osmaniye');
+INSERT INTO llx_c_departements (code_departement, fk_region, nom) VALUES ('TR-81',22106,'Düzce');

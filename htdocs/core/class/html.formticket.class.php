@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ class FormTicket
 	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
 	 * @param	string			$mode					Mode ('create' or 'edit')
 	 * @param	int				$public					1=If we show the form for the public interface
-	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
+	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if it exists
 	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
@@ -188,6 +189,7 @@ class FormTicket
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
+		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -248,7 +250,7 @@ class FormTicket
 
 				// search contact form email
 				$langs->load('errors');
-				print '<script type="text/javascript">
+				print '<script nonce="'.getNonce().'" type="text/javascript">
                     jQuery(document).ready(function() {
                         var contact = jQuery.parseJSON("'.dol_escape_js(json_encode($with_contact), 2).'");
                         jQuery("#contact_search_line").hide();
@@ -340,7 +342,8 @@ class FormTicket
 		if ($public) {
 			$filter = 'public=1';
 		}
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
+		$selected = (GETPOST('category_code') ? GETPOST('category_code') : $this->category_code);
+		$this->selectGroupTickets($selected, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity => Priority
@@ -348,28 +351,11 @@ class FormTicket
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
-		// Subject
-		if ($this->withtitletopic) {
-			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-			// Answer to a ticket : display of the thread title in readonly
-			if ($this->withtopicreadonly) {
-				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
-			} else {
-				if (isset($this->withreadid) && $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
-				} else {
-					$subject = GETPOST('subject', 'alpha');
-				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
-			}
-			print '</td></tr>';
-		}
-
 		if (!empty($conf->knowledgemanagement->enabled)) {
 			// KM Articles
-			print '<tr id="KWwithajax"></tr>';
+			print '<tr id="KWwithajax" class="hidden"><td></td></tr>';
 			print '<!-- Script to manage change of ticket group -->
-			<script>
+			<script nonce="'.getNonce().'">
 			jQuery(document).ready(function() {
 				function groupticketchange() {
 					console.log("We called groupticketchange, so we try to load list KM linked to event");
@@ -380,12 +366,17 @@ class FormTicket
 
 					if (idgroupticket != "") {
 						$.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/fetchKnowledgeRecord.php\',
-							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\'},
+							 data: { action: \'getKnowledgeRecord\', idticketgroup: idgroupticket, token: \''.newToken().'\', lang:\''.$langs->defaultlang.'\', public:'.($public).' },
 							 type: \'GET\',
 							 success: function(response) {
 								var urllist = \'\';
 								console.log("We received response "+response);
-								response = JSON.parse(response)
+								if (typeof response == "object") {
+									console.log("response is already type object, no need to parse it");
+								} else {
+									console.log("response is type "+(typeof response));
+									response = JSON.parse(response);
+								}
 								for (key in response) {
 									answer = response[key].answer;
 									urllist += \'<li><a href="#" title="\'+response[key].title+\'" class="button_KMpopup" data-html="\'+answer+\'">\' +response[key].title+\'</a></li>\';
@@ -422,6 +413,23 @@ class FormTicket
 			</script>'."\n";
 		}
 
+		// Subject
+		if ($this->withtitletopic) {
+			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
+			// Answer to a ticket : display of the thread title in readonly
+			if ($this->withtopicreadonly) {
+				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
+			} else {
+				if (isset($this->withreadid) && $this->withreadid > 0) {
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
+				} else {
+					$subject = GETPOST('subject', 'alpha');
+				}
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail)?' autofocus':'').' />';
+			}
+			print '</td></tr>';
+		}
+
 		// MESSAGE
 		$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
@@ -430,7 +438,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
+			print '<div class="warning hideonsmartphone">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
@@ -458,8 +466,8 @@ class FormTicket
 
 			if (count($cate_arbo)) {
 				// Categories
-				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print '<tr><td class="wordbreak">'.$langs->trans("Categories").'</td><td>';
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 		}
@@ -487,7 +495,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript">';
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -549,7 +557,7 @@ class FormTicket
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
 					$htmlname = 'socid';
-					print '<script type="text/javascript">
+					print '<script nonce="'.getNonce().'" type="text/javascript">
                     $(document).ready(function () {
                         jQuery("#'.$htmlname.'").change(function () {
                             var obj = '.json_encode($events).';
@@ -644,6 +652,16 @@ class FormTicket
 			}
 		}
 
+		if ($subelement != 'contract') {
+			if (isModEnabled('contract') && !$this->ispublic) {
+				$formcontract = new FormContract($this->db);
+				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
+				print img_picto('', 'contract');
+				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
+				print '</td></tr>';
+			}
+		}
+
 		// Other attributes
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
@@ -695,7 +713,7 @@ class FormTicket
 	{
 		global $langs, $user;
 
-		$selected = is_array($selected) ? $selected : (!empty($selected) ? array($selected) : array());
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? explode(',', $selected) : array());
 		$ticketstat = new Ticket($this->db);
 
 		dol_syslog(get_class($this) . "::select_types_tickets " . implode(';', $selected) . ", " . $htmlname . ", " . $filtertype . ", " . $format . ", " . $multiselect, LOG_DEBUG);
@@ -801,8 +819,10 @@ class FormTicket
 		}
 		$outputlangs->load("ticket");
 
+		$publicgroups = ($filtertype == 'public=1' || $filtertype == '(public:=:1)');
+
 		$ticketstat = new Ticket($this->db);
-		$ticketstat->loadCacheCategoriesTickets();
+		$ticketstat->loadCacheCategoriesTickets($publicgroups ? 1 : -1);	// get list of active ticket groups
 
 		if ($use_multilevel <= 0) {
 			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -813,7 +833,7 @@ class FormTicket
 			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
 				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
 					// Exclude some record
-					if ($filtertype == 'public=1') {
+					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
 							continue;
 						}
@@ -848,11 +868,13 @@ class FormTicket
 					}
 
 					// If selected is text, we compare with code, otherwise with id
-					if (preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
+					if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
 						print ' selected="selected"';
-					} elseif ($selected == $id) {
+					} elseif (isset($selected) && $selected == $id) {
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
+						print ' selected="selected"';
+					} elseif (count($ticketstat->cache_category_tickets) == 1) {
 						print ' selected="selected"';
 					}
 
@@ -892,7 +914,8 @@ class FormTicket
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
-				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
+				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -1046,7 +1069,7 @@ class FormTicket
 				}
 				$stringtoprint .='</select>';
 
-				$stringtoprint .='<script>';
+				$stringtoprint .='<script nonce="'.getNonce().'">';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
 				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
@@ -1107,7 +1130,7 @@ class FormTicket
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}
-			$stringtoprint .='<script>';
+			$stringtoprint .='<script nonce="'.getNonce().'">';
 			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
 				$("#ticketcategory_select").val($(this).val());
 				$("#ticketcategory_select_child_id").val($(this).attr("child_id"));
@@ -1183,9 +1206,9 @@ class FormTicket
 				}
 
 				// If text is selected, we compare with code, otherwise with id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
+				if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
 					print ' selected="selected"';
-				} elseif ($selected == $id) {
+				} elseif (isset($selected) && $selected == $id) {
 					print ' selected="selected"';
 				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
@@ -1269,10 +1292,10 @@ class FormTicket
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('other', 'mails'));
+		$langs->loadLangs(array('other', 'mails', 'ticket'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			$this->clear_attached_files();
 		}
 
@@ -1310,8 +1333,8 @@ class FormTicket
 			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 		}
 		//var_dump($keytoavoidconflict);
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
-			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
 					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
@@ -1346,7 +1369,7 @@ class FormTicket
 		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
 		// Example 1 : Adding jquery code
-		print '<script type="text/javascript">
+		print '<script nonce="'.getNonce().'" type="text/javascript">
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
@@ -1360,31 +1383,39 @@ class FormTicket
 				}
 				jQuery(".email_line").hide();
 			}
+		';
 
-			jQuery("#send_msg_email").click(function() {
-				if(jQuery(this).is(":checked")) {
-					if (jQuery("#private_message").is(":checked")) {
-						jQuery("#private_message").prop("checked", false).trigger("change");
+		// If constant set, allow to send private messages as email
+		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+			print 'jQuery("#send_msg_email").click(function() {
+					console.log("Click send_msg_email");
+					if(jQuery(this).is(":checked")) {
+						if (jQuery("#private_message").is(":checked")) {
+							jQuery("#private_message").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").show();
 					}
-					jQuery(".email_line").show();
-				}
-				else {
-					jQuery(".email_line").hide();
-				}
-            });
+					else {
+						jQuery(".email_line").hide();
+					}
+				});
 
-            jQuery("#private_message").click(function() {
-				if (jQuery(this).is(":checked")) {
-					if (jQuery("#send_msg_email").is(":checked")) {
-						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+				jQuery("#private_message").click(function() {
+					console.log("Click private_message");
+					if (jQuery(this).is(":checked")) {
+						if (jQuery("#send_msg_email").is(":checked")) {
+							jQuery("#send_msg_email").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").hide();
 					}
-					jQuery(".email_line").hide();
-				}
-			});';
+				});';
+		}
+
 		print '});
 		</script>';
 
-		print '<form method="post" name="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
+
+		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
@@ -1423,10 +1454,15 @@ class FormTicket
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
-			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
+			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
+			if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2b");
+			} else {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2a", '{s1}');
+			}
 			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
 			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
 			print '</td></tr>';
@@ -1452,18 +1488,30 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
-
-			// Subject
+			// Subject/topic
+			$topic = "";
+			foreach ($formmail->lines_model as $line) {
+				if ($this->param['models_id'] == $line->id) {
+					$topic = $line->topic;
+					break;
+				}
+			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			if (empty($topic)) {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			} else {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+			}
 			print '</td></tr>';
 
 			// Recipients / adressed-to
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
+			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
+			print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+			print '</td><td>';
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
-				$contacts = $ticketstat->getInfosTicketInternalContact();
-				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+				$contacts = $ticketstat->getInfosTicketInternalContact(1);
+				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
 
 				$sendto = array();
 
@@ -1489,8 +1537,8 @@ class FormTicket
 					}
 				}
 
-				if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-					$sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO.' <small class="opacitymedium">(generic email)</small>';
+				if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
+					$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
 				}
 
 				// Print recipient list
@@ -1532,8 +1580,16 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript">';
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
+			$out .= '    jQuery("#'.$addfileaction.'").prop("disabled", true);';
+			$out .= '    jQuery("#addedfile").on("change", function() {';
+			$out .= '        if (jQuery(this).val().length) {';
+			$out .= '            jQuery("#'.$addfileaction.'").prop("disabled", false);';
+			$out .= '        } else {';
+			$out .= '            jQuery("#'.$addfileaction.'").prop("disabled", true);';
+			$out .= '        }';
+			$out .= '    });';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
 			$out .= '    });';
@@ -1627,8 +1683,13 @@ class FormTicket
 		print '</table>';
 
 		print '<center><br>';
-		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'" />';
-		if ($this->withcancel) {
+		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
+		// Add a javascript test to avoid to forget to submit file before sending email
+		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
+			print ' onClick="if (document.ticket.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
+		}
+		print ' />';
+		if (!empty($this->withcancel)) {
 			print " &nbsp; &nbsp; ";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
@@ -1637,6 +1698,23 @@ class FormTicket
 		print '<input type="hidden" name="page_y">'."\n";
 
 		print "</form>\n";
+
+		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
+		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
+			print '<script type="text/javascript">';
+			print 'jQuery(document).ready(function () {';
+			print '		$(document).on("keypress", \'#ticket\', function (e) {		/* Note this is called at every key pressed ! */
+	    					var code = e.keyCode || e.which;
+	    					if (code == 13) {
+								console.log("Enter was intercepted and blocked");
+	        					e.preventDefault();
+	        					return false;
+	    					}
+						});';
+			print '})';
+			print '</script>';
+		}
+
 		print "<!-- End form TICKET -->\n";
 	}
 }

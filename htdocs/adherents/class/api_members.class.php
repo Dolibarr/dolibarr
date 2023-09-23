@@ -55,10 +55,10 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $id ID of member
-	 * @return    array|mixed data without useless information
+	 * @param   int     $id 			ID of member
+	 * @return  Object              	Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
@@ -222,7 +222,7 @@ class Members extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent AS t LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
 		}
@@ -238,11 +238,10 @@ class Members extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

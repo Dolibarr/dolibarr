@@ -220,7 +220,8 @@ OPTIMIZE_OUTPUT_VHDL = NO
 # (default is Fortran), use: inc=Fortran f=C. Note that for custom extensions
 # you also need to set FILE_PATTERNS otherwise the files are not read by doxygen.
 
-EXTENSION_MAPPING = 
+#EXTENSION_MAPPING = example=PHP
+EXTENSION_MAPPING =
 
 # If you use STL classes (i.e. std::string, std::vector, etc.) but do not want
 # to include (a tag file for) the STL sources as input, then you should
@@ -602,6 +603,7 @@ INPUT_ENCODING = UTF-8
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
+#FILE_PATTERNS = *.php *.pl *.sql *.example
 FILE_PATTERNS = *.php *.pl
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories

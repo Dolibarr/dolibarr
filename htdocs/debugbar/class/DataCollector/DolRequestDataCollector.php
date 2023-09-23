@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\RequestDataCollector;
+use DebugBar\DataCollector\RequestDataCollector;
 
 /**
  * DolRequestDataCollector class
@@ -51,7 +51,13 @@ class DolRequestDataCollector extends RequestDataCollector
 					}
 					//var_dump($arrayofvalues);
 				}
-
+				if ($var == '_SERVER') {
+					foreach ($arrayofvalues as $key => $val) {
+						if (preg_match('/^PHP_AUTH_PW/', $key)) {
+							$arrayofvalues[$key] = '*****hidden*****';
+						}
+					}
+				}
 				$data["$".$var] = $this->getDataFormatter()->formatVar($arrayofvalues);
 			}
 		}
@@ -62,7 +68,7 @@ class DolRequestDataCollector extends RequestDataCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return void
+	 *  @return array
 	 */
 	public function getWidgets()
 	{

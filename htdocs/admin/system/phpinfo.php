@@ -252,11 +252,16 @@ foreach ($phparray as $key => $value) {
 		if (!is_array($keyvalue)) {
 			$keytoshow = $keyparam;
 			$valtoshow = $keyvalue;
+
 			// Hide value of session cookies
 			if (in_array($keyparam, array('HTTP_COOKIE', 'Cookie', "\$_SERVER['HTTP_COOKIE']", 'Authorization'))) {
 				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 			}
 			if (preg_match('/'.preg_quote('$_COOKIE[\'DOLSESSID_', '/').'/i', $keyparam)) {
+				$keytoshow = $keyparam;
+				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+			if (preg_match('/'.preg_quote('$_SERVER[\'PHP_AUTH_PW', '/').'/i', $keyparam)) {
 				$keytoshow = $keyparam;
 				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 			}

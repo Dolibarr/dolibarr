@@ -39,6 +39,7 @@ KnowledgeManagementAboutPage = Knowledge Management about page
 
 KnowledgeManagementArea = Knowledge Management
 MenuKnowledgeRecord = Knowledge base
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = List of articles
 NewKnowledgeRecord = New article
 ValidateReply = Validate solution
@@ -52,3 +53,9 @@ SuggestedForTicketsInGroup=Suggested on ticket creation
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

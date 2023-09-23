@@ -79,7 +79,7 @@ class modCommande extends DolibarrModules
 
 		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "einstein";
+		$this->const[$r][2] = "eratosthene";
 		$this->const[$r][3] = 'Name of PDF model of order';
 		$this->const[$r][4] = 0;
 

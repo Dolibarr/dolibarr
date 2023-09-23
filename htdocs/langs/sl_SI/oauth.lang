@@ -31,8 +31,9 @@ OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_URL_FOR_CREDENTIAL=Pojdite na <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> to stran <span class="fas fa-external-link-alt paddingleft"> </span> </a>, da ustvarite ali pridobite svoj ID in skrivnost OAuth
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
-OAUTH_ID=OAuth ID
+OAUTH_ID=OAuth Client ID
 OAUTH_SECRET=Skrivnost OAuth
+OAUTH_TENANT=OAuth tenant
 OAuthProviderAdded=Dodan ponudnik OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Vnos OAuth za tega ponudnika in oznako že obstaja
 URLOfServiceForAuthorization=URL, ki ga zagotavlja storitev OAuth za preverjanje pristnosti

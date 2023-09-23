@@ -85,17 +85,17 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
+if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
 	print 'Bad security key value.';
 	exit;
 }
 
-if (!empty($tag)) {
+if (!empty($tag) && $tag != 'undefined') {
 	dol_syslog("public/emailing/mailing-read.php : Update status of email target and thirdparty for tag ".$tag, LOG_DEBUG);
 
 	$sql = "SELECT mc.rowid, mc.email, mc.statut, mc.source_type, mc.source_id, m.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
-	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
+	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag = '".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
 	if (!$resql) dol_print_error($db);

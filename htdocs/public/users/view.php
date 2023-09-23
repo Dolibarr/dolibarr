@@ -62,8 +62,8 @@ $object->fetch($id, '', '', 1);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-global $dolibarr_main_instance_unique_id;
-$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+global $conf;
+$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
 if ($encodedsecurekey != $securekey) {
 	httponly_accessforbidden('Bad value for securitykey or public profile not enabled');
 }
@@ -205,17 +205,27 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("UserProfile").' '.$object->getFullName($langs), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
+llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
+
+print '
+<style>
+@media (prefers-color-scheme: dark) {
+	form {
+		background-color: #CCC !important;
+	}
+}
+</style>
+';
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
+
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
-print '<!-- Form to view job -->'."\n";
 
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
@@ -262,19 +272,14 @@ if ($showbarcode) {
 	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
 
 	print '<br>';
-	print '<div class="floatleft inline-block valignmiddle divphotoref">';
-	print '<img src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
+	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
 	print '</div>';
 	print '<br>';
 }
 
 
-// Me
-// Show photo
-if ($urllogo) {
-	print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
-}
-
+// Me section
 
 $usersection = '';
 
@@ -325,6 +330,11 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && coun
 }
 
 if ($usersection) {
+	// Show photo
+	if ($urllogo) {
+		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	}
+
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 	// Output payment summary form
@@ -340,6 +350,11 @@ if ($usersection) {
 	print '</td></tr>'."\n";
 
 	print '</table>'."\n";
+} else {
+	// Show photo
+	if ($urllogo) {
+		print '<br><center><img class="userphotopublicvcard" style="position: unset !important;" id="dolpaymentlogo" src="'.$urllogofull.'"></center>';
+	}
 }
 
 
@@ -451,8 +466,6 @@ print '</div>'."\n";
 print '<br>';
 
 
-//htmlPrintOnlinePaymentFooter($mysoc, $langs);
-
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
@@ -464,6 +477,19 @@ print '</div>';
 //print '<div>';
 //print '</div>';
 print '</div>';
+
+$fullexternaleurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'external');
+$fullinternalurltovirtualcard = $object->getOnlineVirtualCardUrl('', 'internal');
+
+print '<script>';
+print 'jQuery(document).ready(function() {
+ 	jQuery(".virtualcardpreview").click(function(event) {
+ 		event.preventDefault();
+		console.log("We click on the card");
+		window.open("'.$fullexternaleurltovirtualcard.'");
+ 	});
+});';
+print '</script>';
 
 llxFooter('', 'public');
 
