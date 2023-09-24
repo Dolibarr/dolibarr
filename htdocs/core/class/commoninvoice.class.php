@@ -369,9 +369,10 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return list of payments
 	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
 	 *  @return     array					Array with list of payments
 	 */
-	public function getListOfPayments($filtertype = '')
+	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
 		$retarray = array();
 
