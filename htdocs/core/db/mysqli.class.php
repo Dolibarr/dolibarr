@@ -120,7 +120,7 @@ class DoliDBMysqli extends DoliDB
 				if ($this->db->character_set_name() != $clientmustbe) {
 					$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation
 
-					$collation = $conf->db->dolibarr_main_db_collation;
+					$collation = (empty($conf) ? 'utf8_unicode_ci' : $conf->db->dolibarr_main_db_collation);
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}

@@ -47,7 +47,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($object->statut ==  Expedition::STATUS_DRAFT) {
+	if ($object->statut == Expedition::STATUS_DRAFT) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("ShipmentDistribution");
 		$head[$h][2] = 'dispatch';
@@ -242,7 +242,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
-	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
+	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status,";
 	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
@@ -302,11 +302,18 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
+				$expedition->id = $objp->expedition_id;
+				$expedition->ref = $objp->exp_ref;
+				$expedition->billed = $objp->billed;
+				$expedition->statut = $objp->status;
+				$expedition->status = $objp->status;
+
 				print '<tr class="oddeven">';
 
 				// Sending id
 				print '<td class="nowrap left">';
-				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
+				print $expedition->getNomUrl(1);
+				//print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
 
 				// Description
@@ -346,6 +353,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$product_static->id = $objp->fk_product;
 					$product_static->ref = $objp->ref;
 					$product_static->status_batch = $objp->product_tobatch;
+
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
@@ -436,7 +444,6 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Informations on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-					$expedition->id = $objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
 					//var_dump($expedition->linkedObjects);
 

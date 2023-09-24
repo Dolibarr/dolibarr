@@ -1758,13 +1758,13 @@ if (!empty($arrayfields['c.import_key']['checked'])) {
 if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array(
-		Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
-		Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-		Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
-		-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
-		-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-		Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-		Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
+		Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraftShort"),
+		Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+		Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSentShort"),
+		-2 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+		-3 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceledShort")
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';

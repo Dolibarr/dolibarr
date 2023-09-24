@@ -464,7 +464,7 @@ if ($action == 'edit') {
 	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
-	print '<td>';
+	print '<td class="tdoverflowmax300">';
 	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
 		$urltoshow = '';
 		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
@@ -476,10 +476,17 @@ if ($action == 'edit') {
 		} else {
 			$urltoshow = $object->conf->MAIN_LANDING_PAGE;
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
-		print img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
+		print '<a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
+		$s = '';
+		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'])) {
+			$s = img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
+		}
+		if (empty($s)) {
+			print img_picto($urltoshow, 'globe', 'class="pictofixedwidth"');
+		} else {
+			print $s;
+		}
 		print $urltoshow;
-		print img_picto($urltoshow, 'globe', 'class="paddingleft"');
 		print '</a>';
 	}
 	print '</td></tr>';
