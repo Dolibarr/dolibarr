@@ -389,7 +389,7 @@ EditCompany=Edit company
 ThisUserIsNot=This user is not a prospect, customer or vendor
 VATIntraCheck=Check
 VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
-VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckURL=https://ec.europa.eu/taxation_customs/vies/#/vat-validation
 VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
 VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
