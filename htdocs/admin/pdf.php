@@ -70,7 +70,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_PDF_MARGIN_BOTTOM')) {
 		dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", GETPOST("MAIN_PDF_MARGIN_BOTTOM"), 'chaine', 0, '', $conf->entity);
 	}
-
+	if (GETPOSTISSET('MAIN_PDF_ADDALSOTARGETDETAILS')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADDALSOTARGETDETAILS", GETPOST("MAIN_PDF_ADDALSOTARGETDETAILS"), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('MAIN_PROFID1_IN_ADDRESS')) {
 		dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", GETPOST("MAIN_PROFID1_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	}
@@ -336,6 +338,13 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 */
+
+print '<tr class="oddeven"><td>'.$langs->trans("ShowDestDetailsInAddress").' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_ADDALSOTARGETDETAILS');
+} else {
+	print $form->selectyesno('MAIN_PDF_ADDALSOTARGETDETAILS', (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS)) ? $conf->global->MAIN_PDF_ADDALSOTARGETDETAILS : 0, 1);
+}
 
 // Hide VAT Intra on address
 

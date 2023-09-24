@@ -1323,6 +1323,7 @@ SimpleNumRefModelDesc=Returns the reference number in the format %syymm-nnnn whe
 SimpleRefNumRefModelDesc=Returns the reference number in the format n where n is a sequential auto-incrementing number with no reset
 AdvancedNumRefModelDesc=Returns the reference number in the format %syymm-nnnn where yy is the year, mm is the month and nnnn is a sequential auto-incrementing number with no reset
 SimpleNumRefNoDateModelDesc=Returns the reference number in the format %s-nnnn where nnnn is a sequential auto-incrementing number with no reset
+ShowDestDetailsInAddress=Show detail (Phone, Fax, EMail, Web) with addresses
 ShowProfIdInAddress=Show professional ID with addresses
 ShowVATIntaInAddress=Hide intra-Community VAT number
 TranslationUncomplete=Partial translation
