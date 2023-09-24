@@ -1021,7 +1021,7 @@ while ($i < min($num, $limit)) {
 		}
 		// Date delivery planed
 		if (!empty($arrayfields['e.date_delivery']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			print "</td>\n";
 			if (!$i) {

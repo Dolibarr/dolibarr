@@ -153,6 +153,10 @@ $hookmanager->initHooks(array('imports'));
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
 
+if (empty($updatekeys) && !empty($objimport->array_import_preselected_updatekeys[0])) {
+	$updatekeys = array_keys($objimport->array_import_preselected_updatekeys[0]);
+}
+
 $objmodelimport = new ModeleImports();
 
 $form = new Form($db);
@@ -2328,6 +2332,13 @@ if ($step == 6 && $datatoimport) {
 				if (!count($obj->errors) && !count($obj->warnings)) {
 					$nbok++;
 				}
+			}
+
+			$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
+			if ($reshook < 0) {
+				$arrayoferrors[$sourcelinenb][] = [
+					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+				];
 			}
 		}
 		// Close file

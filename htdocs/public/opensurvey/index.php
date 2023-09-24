@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *       \file       htdocs/public/recruitment/index.php
- *       \ingroup    recruitment
- *       \brief      Public file to show on job
+ *       \file       htdocs/public/opensurvey/index.php
+ *       \ingroup    opensurvey
+ *       \brief      Public file to show onpen surveys
  */
 
 if (!defined('NOLOGIN')) {
@@ -36,14 +36,13 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "recruitment"));
+$langs->loadLangs(array("companies", "other", "opensurveys"));
 
 // Get parameters
 $action   = GETPOST('action', 'aZ09');
@@ -72,7 +71,7 @@ if (isset($_SESSION['email_customer'])) {
 	$email = $_SESSION['email_customer'];
 }
 
-$object = new RecruitmentJobPosition($db);
+$object = new Opensurveysondage($db);
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -97,14 +96,14 @@ if (empty($conf->recruitment->enabled)) {
  */
 
 $head = '';
-if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('MAIN_OPENSURVEY_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="'.getDolGlobalString('MAIN_OPENSURVEY_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-if (!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
+if (!getDolGlobalString('OPENSURVEY_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
@@ -115,7 +114,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
+llxHeader($head, $langs->trans("Surveys"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -134,11 +133,11 @@ print '<!-- Form to view jobs -->'."\n";
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
-$paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
+$paramlogo = 'ONLINE_OPENSURVEY_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
 	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+} elseif (!empty($conf->global->ONLINE_OPENSURVEY_LOGO)) {
+	$logosmall = $conf->global->ONLINE_OPENSURVEY_LOGO_;
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -163,9 +162,9 @@ if ($urllogo) {
 	print '</div>';
 }
 
-if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
+if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 
@@ -176,101 +175,48 @@ $now = dol_now();
 if (is_array($results)) {
 	if (empty($results)) {
 		print '<br>';
-		print $langs->trans("NoPositionOpen");
+		print $langs->trans("NoSurvey");
 	} else {
 		print '<br><br><br>';
-		print '<span class="opacitymedium">'.$langs->trans("WeAreRecruiting").'</span>';
+		print '<span class="opacitymedium">'.$langs->trans("ListOfOpenSurveys").'</span>';
 		print '<br><br><br>';
 		print '<br class="hideonsmartphone">';
 
-		foreach ($results as $job) {
-			$object = $job;
+		foreach ($results as $survey) {
+			$object = $survey;
 
-			print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
-
-			// Output introduction text
-			$text = '';
-			if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
-				$reg = array();
-				if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
-					$text .= $langs->trans($reg[1])."<br>\n";
-				} else {
-					$text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
-				}
-				$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
-			}
-			if (empty($text)) {
-				$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
-				$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
-				$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
-				$text .= '</td></tr>'."\n";
-				$text .= '<tr><td class="textpublicpayment"><h1 class="paddingleft paddingright">'.$object->label.'</h1></td></tr>'."\n";
-			}
-			print $text;
+			print '<table id="dolpaymenttable" summary="Job position offer" class="center centpercent">'."\n";
 
 			// Output payment summary form
 			print '<tr><td class="left">';
 
 			print '<div class="centpercent" id="tablepublicpayment">';
-			print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 			$error = 0;
 			$found = true;
 
-			print '<br>';
-
 			// Label
 			print $langs->trans("Label").' : ';
-			print '<b>'.dol_escape_htmltag($object->label).'</b><br>';
+			print '<b>'.dol_escape_htmltag($object->titre).'</b><br>';
 
 			// Date
 			print  $langs->trans("DateExpected").' : ';
 			print '<b>';
-			if ($object->date_planned > $now) {
-				print dol_print_date($object->date_planned, 'day');
+			if ($object->date_fin > $now) {
+				print dol_print_date($object->date_fin, 'day');
 			} else {
 				print $langs->trans("ASAP");
 			}
 			print '</b><br>';
 
-			// Remuneration
-			print  $langs->trans("Remuneration").' : ';
-			print '<b>';
-			print dol_escape_htmltag($object->remuneration_suggested);
-			print '</b><br>';
-
-			// Contact
-			$tmpuser = new User($db);
-			$tmpuser->fetch($object->fk_user_recruiter);
-
-			print  $langs->trans("ContactForRecruitment").' : ';
-			$emailforcontact = $object->email_recruiter;
-			if (empty($emailforcontact)) {
-				$emailforcontact = $tmpuser->email;
-				if (empty($emailforcontact)) {
-					$emailforcontact = $mysoc->email;
-				}
-			}
-			print '<b class="wordbreak">';
-			print $tmpuser->getFullName($langs);
-			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
-			print '</b>';
-			print '</b><br>';
-
-			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
-			}
-			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
-			}
-
-			print '<br>';
-
 			// Description
-
-			$text = $object->description;
-			print $text;
-			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
+			//print  $langs->trans("Desription").' : ';
+			print '<br>';
+			print '<div class="opensurveydescription centpercent">';
+			print dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->commentaires), 1, 1, 1));
+			//print dol_escape_htmltag($object->commentaires);
+			print '</div>';
+			print '<br>';
 
 			print '</div>'."\n";
 			print "\n";

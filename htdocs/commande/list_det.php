@@ -1202,13 +1202,13 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
 		$liststatus = array(
-			Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
-			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
-			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
-			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
+			Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraftShort"),
+			Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+			Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSentShort"),
+			-2 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+			-3 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
+			Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+			Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceledShort")
 		);
 		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125', 1);
 		print '</td>';
