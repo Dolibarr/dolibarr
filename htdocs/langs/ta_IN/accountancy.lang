@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=கணக்கு கணக்கு மூலம் பார்க்கவும்
 VueBySubAccountAccounting=கணக்கியல் துணைக் கணக்கு மூலம் பார்க்கவும்
 
-MainAccountForCustomersNotDefined=வாடிக்கையாளர்களுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForSuppliersNotDefined=விற்பனையாளர்களுக்கான பிரதான கணக்கியல் கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForUsersNotDefined=பயனர்களுக்கான பிரதான கணக்கியல் கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForVatPaymentNotDefined=VAT செலுத்துதலுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
-MainAccountForSubscriptionPaymentNotDefined=சந்தா செலுத்துதலுக்கான முதன்மை கணக்கு கணக்கு அமைப்பில் வரையறுக்கப்படவில்லை
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=கணக்கியல் பகுதி

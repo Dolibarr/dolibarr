@@ -116,8 +116,21 @@ class Propal extends CommonObject
 	/**
 	 * Ref from thirdparty
 	 * @var string
+	 * @deprecated
+	 * @see $ref_customer
 	 */
 	public $ref_client;
+
+	/**
+	 * Ref from thirdparty
+	 * @var string
+	 */
+	public $ref_customer;
+
+	/**
+	 * @var Propal oldcopy with propal properties
+	 */
+	public $oldcopy;
 
 	/**
 	 * Status of the quote
@@ -240,7 +253,21 @@ class Propal extends CommonObject
 	public $address_type;
 	public $address;
 
+	/**
+	 * @var int availabilty ID
+	 */
 	public $availability_id;
+
+	/**
+	 * @var int availabilty ID
+	 * @deprecated
+	 * @see $availability_id
+	 */
+	public $fk_availability;
+
+	/**
+	 * @var string availabilty code
+	 */
 	public $availability_code;
 
 	public $duree_validite;
@@ -256,6 +283,10 @@ class Propal extends CommonObject
 	 * @var PropaleLigne[]
 	 */
 	public $lines = array();
+
+	/**
+	 * @var PropaleLigne
+	 */
 	public $line;
 
 	public $labelStatus = array();
@@ -970,8 +1001,9 @@ class Propal extends CommonObject
 
 				$this->update_price(1, 'auto');
 
-				$this->fk_propal = $this->id;
-				$this->rowid = $rowid;
+				// $this is Propal
+				// $this->fk_propal = $this->id;
+				// $this->rowid = $rowid;
 
 				$this->db->commit();
 				return $result;
@@ -1448,7 +1480,7 @@ class Propal extends CommonObject
 										}
 									}
 								} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-									$prodcustprice = new Productcustomerprice($this->db);
+									$prodcustprice = new ProductCustomerPrice($this->db);
 									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
 									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 									if ($result) {
@@ -1834,15 +1866,12 @@ class Propal extends CommonObject
 	 *
 	 *	@param		int			$only_product			Return only physical products
 	 *	@param		int			$loadalsotranslation	Return translation for products
-	 *	@param		string		$filters				Filter on other fields
-	 *
+	 *	@param		string		$sqlforgedfilters		Filter on other fields
 	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $filters = '')
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlforgedfilters = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->lines = array();
 
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
@@ -1858,8 +1887,8 @@ class Propal extends CommonObject
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
-		if ($filters) {
-			$sql .= $filters;
+		if ($sqlforgedfilters) {
+			$sql .= $sqlforgedfilters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -2702,7 +2731,7 @@ class Propal extends CommonObject
 				// The connected company is classified as a client
 				$soc=new Societe($this->db);
 				$soc->id = $this->socid;
-				$result = $soc->set_as_client();
+				$result = $soc->setAsCustomer();
 
 				if ($result < 0) {
 					$this->error=$this->db->lasterror();
@@ -3825,7 +3854,7 @@ class Propal extends CommonObject
 			if ($option != 'nolink') {
 				// Add param to save lastsearch_values or not
 				$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-				if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 					$add_save_lastsearch_values = 1;
 				}
 				if ($add_save_lastsearch_values) {
@@ -3850,7 +3879,7 @@ class Propal extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -3913,13 +3942,13 @@ class Propal extends CommonObject
 
 	/**
 	 * 	Retrieve an array of proposal lines
-	 *	@param  string              $filters        Filter on other fields
 	 *
-	 * 	@return int		>0 if OK, <0 if KO
+	 *	@param  string	$sqlforgedfilters       Filter on other fields
+	 * 	@return int								>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($filters = '')
+	public function getLinesArray($sqlforgedfilters = '')
 	{
-		return $this->fetch_lines(0, 0, $filters);
+		return $this->fetch_lines(0, 0, $sqlforgedfilters);
 	}
 
 	/**

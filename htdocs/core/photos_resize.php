@@ -554,7 +554,7 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	print '<!-- Form to crop -->'."\n";
 	print '<fieldset id="redim_file">';
-	print '<legend>'.$langs->trans("Recenter").'</legend>';
+	print '<legend>'.$langs->trans("Crop").'</legend>';
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 
@@ -589,7 +589,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 		      <br>
-		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
+		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Crop")).'" />
 		      &nbsp;
 		      <input type="submit" id="cancelcrop" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />
 		   </form>'."\n";

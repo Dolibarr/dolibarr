@@ -293,8 +293,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -723,8 +721,12 @@ class StockTransferLine extends CommonObjectLine
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -867,28 +869,6 @@ class StockTransferLine extends CommonObjectLine
 	}
 
 	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new StockTransferLineLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_stocktransferline = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
-
-	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -966,8 +946,8 @@ class StockTransferLine extends CommonObjectLine
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_stocktransferline';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFERLINE_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFERLINE_ADDON_PDF;
 			}
@@ -991,8 +971,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
-
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		$error = 0;
@@ -1010,29 +988,5 @@ class StockTransferLine extends CommonObjectLine
 		$this->db->commit();
 
 		return $error;
-	}
-}
-
-/**
- * Class StockTransferLineLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class StockTransferLineLine
-{
-	// To complete with content of an object StockTransferLineLine
-	// We should have a field rowid, fk_stocktransferline and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
 	}
 }

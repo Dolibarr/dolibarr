@@ -994,8 +994,8 @@ while ($i < $imaxinloop) {
 	$object->lastname = $obj->lastname;
 	$object->employee = $obj->employee;
 	$object->photo = $obj->photo;
-	$object->datestartvalidity = $obj->datestartvalidity;
-	$object->dateendvalidity = $obj->dateendvalidity;
+	$object->datestartvalidity = $db->jdate($obj->datestartvalidity);
+	$object->dateendvalidity = $db->jdate($obj->dateendvalidity);
 
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
@@ -1046,9 +1046,9 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall tdoverflowmax150">';
 			print $li;
 			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
 			} elseif ($obj->admin) {
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
 			}
 			print '</td>';
 			if (!$i) {
@@ -1117,9 +1117,9 @@ while ($i < $imaxinloop) {
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
-					print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingright"');
+					print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
 				} elseif ($obj->admin2) {
-					print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingright"');
+					print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
 				}
 				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 			}

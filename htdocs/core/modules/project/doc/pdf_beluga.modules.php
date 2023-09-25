@@ -88,10 +88,10 @@ class pdf_beluga extends ModelePDFProjects
 
 	public $posxref;
 	public $posxdate;
-	public $posxsociete;
+	public $posxsociety;
 	public $posxamountht;
 	public $posxamountttc;
-	public $posstatut;
+	public $posxstatut;
 
 
 	/**
@@ -156,10 +156,10 @@ class pdf_beluga extends ModelePDFProjects
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxref -= 20;
 			$this->posxdate -= 20;
-			$this->posxsociete -= 20;
+			$this->posxsociety -= 20;
 			$this->posxamountht -= 20;
 			$this->posxamountttc -= 20;
-			$this->posstatut -= 20;
+			$this->posxstatut -= 20;
 		}
 	}
 

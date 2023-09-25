@@ -465,9 +465,9 @@ if ($result) {
 
 			print $userstatic->getLoginUrl(1);
 			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($userstatic->admin) {
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingleft"');
 			}
 		} else {
 			print '&nbsp;';

@@ -1598,7 +1598,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => true,
+			'status' => false,
 			'title' => array(
 				'textkey' => 'TotalHT'
 			),

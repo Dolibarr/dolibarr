@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Elenco movimenti per conto contabile
 VueBySubAccountAccounting=Visualizza per conto secondario contabile
 
-MainAccountForCustomersNotDefined=Account principale di contabilità per i clienti non definito nel setup
-MainAccountForSuppliersNotDefined=Account principale di contabilità per fornitori non definito nel setup
-MainAccountForUsersNotDefined=Account principale di contabilità per gli utenti non definito nel setup
-MainAccountForVatPaymentNotDefined=Account principale di contabilità per il pagamento dell'IVA non definito nel setup
-MainAccountForSubscriptionPaymentNotDefined=Account principale di contabilità per il pagamento degli abbonamenti non definito nel setup
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Conto Contabile per l'utente non definito nella configurazione
 
 AccountancyArea=Area di contabilità
