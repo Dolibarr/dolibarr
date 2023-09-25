@@ -502,7 +502,8 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								$lines[$i]->rang,
+								// we dont use the rank from orderline because we may have lines from several orders
+								-1,
 								false,
 								$lines[$i]->array_options,
 								$lines[$i]->fk_unit,
