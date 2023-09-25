@@ -155,7 +155,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte .= $odtPath;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -409,6 +409,13 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
+
+				include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+				$companybankaccount = new CompanyBankAccount($this->db);
+				$companybankaccount->fetch(0, $object->thirdparty->id);
+				$array_objet['company_default_bank_iban']=$companybankaccount->iban;
+				$array_objet['company_default_bank_bic']=$companybankaccount->bic;
+
 				// retrieve contact information for use in object as contact_xxx tags
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) {

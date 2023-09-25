@@ -35,6 +35,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
 	/**
+	 * @var int tab_top
+	 */
+	public $tab_top;
+
+	/**
+	 * @var int tab_height
+	 */
+	public $tab_height;
+
+	/**
+	 * @var int line_height
+	 */
+	public $line_height;
+
+	/**
+	 * @var int line per page
+	 */
+	public $line_per_page;
+
+	/**
+	 * @var Account bank account
+	 */
+	public $account;
+
+	/**
+	 * @var array lines
+	 */
+	public $lines;
+
+	/**
 	 *	Constructor
 	 *
 	 *	@param	DoliDB	$db		Database handler

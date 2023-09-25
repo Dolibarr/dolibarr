@@ -297,7 +297,7 @@ class modBookCal extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
-		$this->menu[$r++] = array(
+		/*$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleBookCalName',
@@ -311,18 +311,33 @@ class modBookCal extends DolibarrModules
 			'perms'=>'$user->rights->bookcal->availabilities->read', // Use 'perms'=>'$user->rights->bookcal->availabilities->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-		);
+		);*/
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU CALENDAR */
+		$this->menu[$r++] = array(
+			'fk_menu'=>'fk_mainmenu=agenda',
+			'type'=>'left',
+			'titre'=> 'MenuBookcalIndex',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
+			'mainmenu'=>'agenda',
+			'leftmenu'=> 'bookcal',
+			'url'=> '/bookcal/bookcalindex.php',
+			'langs'=> 'bookcal',
+			'position'=> 1100+$r,
+			'enabled'=> '1',
+			'perms'=> '$user->rights->bookcal->calendar->read',
+			'user'=> 0
+		);
+
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=bookcal',
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Calendar',
-			'mainmenu'=>'bookcal',
-			'leftmenu'=>'bookcal_calendar',
+			'titre'=>'Calendar',
+			'mainmenu'=>'agenda',
+			'leftmenu'=>'bookcal_calendar_list',
 			'url'=>'/bookcal/calendar_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs'=>'bookcal',
@@ -337,12 +352,12 @@ class modBookCal extends DolibarrModules
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=bookcal,fk_leftmenu=bookcal_calendar',
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal_calendar_list',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Calendar',
-			'mainmenu'=>'bookcal',
-			'leftmenu'=>'bookcal_calendar',
+			'titre'=>'NewCalendar',
+			'mainmenu'=>'agenda',
+			'leftmenu'=>'bookcal_new',
 			'url'=>'/bookcal/calendar_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs'=>'bookcal',
@@ -405,11 +420,11 @@ class modBookCal extends DolibarrModules
 
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=bookcal',
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Availabilities',
-			'mainmenu'=>'bookcal',
+			'titre'=>'Availabilities',
+			'mainmenu'=>'agenda',
 			'leftmenu'=>'bookcal_availabilities',
 			'url'=>'/bookcal/availabilities_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -425,11 +440,11 @@ class modBookCal extends DolibarrModules
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=bookcal,fk_leftmenu=bookcal_availabilities',
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=bookcal_availabilities',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Availabilities',
-			'mainmenu'=>'bookcal',
+			'titre'=>'NewAvailabilities',
+			'mainmenu'=>'agenda',
 			'leftmenu'=>'bookcal_availabilities',
 			'url'=>'/bookcal/availabilities_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

@@ -77,6 +77,10 @@ class FormSetup
 	 */
 	public $formHiddenInputs = array();
 
+	/**
+	 * @var string[] $errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -248,7 +252,7 @@ class FormSetup
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
-			$this->setErrors($hookmanager->errors);
+			$this->errors = $hookmanager->errors;
 			return -1;
 		}
 
@@ -619,7 +623,7 @@ class FormSetupItem
 	public $setValueFromPostCallBack;
 
 	/**
-	 * @var string $errors
+	 * @var string[] $errors
 	 */
 	public $errors = array();
 

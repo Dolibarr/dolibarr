@@ -18,3 +18,4 @@ DirNotSynchronizedSyncFirst=Esta carpeta parece haberse creado o modificado por 
 ReSyncListOfDir=Re-sincronizar lista de carpetas
 HashOfFileContent=Hash del contenido del archivo
 FileNotYetIndexedInDatabase=El archivo no se ha indizado todavía en la base de datos (intenta volver a cargarlo)
+ConfirmGenerateChosenImgWebp=Si usted confirma, va a generar una imagen en. web format for the image %s

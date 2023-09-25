@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2022	Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2023	Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
@@ -424,6 +424,8 @@ if (!empty($socid)) {
 	$url .= '&socid='.urlencode($socid);
 }
 
+// List of mass actions available
+$arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

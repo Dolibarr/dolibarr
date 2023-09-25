@@ -818,6 +818,27 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 			writeApiUrlsInDoc($apiFile, $destfile);
 		}
 
+		// add ChangeLog in Doc
+		if (file_exists($dirins.'/'.strtolower($module).'/ChangeLog.md')) {
+			$changeLog = $dirins.'/'.strtolower($module).'/ChangeLog.md';
+			$string = file_get_contents($changeLog);
+
+			$replace = explode("\n", $string);
+			$strreplace = array();
+			foreach ($replace as $line) {
+				if ($line === '') {
+					continue;
+				}
+				if (strpos($line, '##') !== false) {
+					$strreplace[$line] = str_replace('##', '', $line);
+				} else {
+					$strreplace[$line] = $line;
+				}
+			}
+			$stringLog = implode("\n", $strreplace);
+			dolReplaceInFile($destfile, array('//include::ChangeLog.md[]' => '','__CHANGELOG__' => $stringLog));
+		}
+
 		// Delete old documentation files
 		$FILENAMEDOC = $modulelowercase.'.html';
 		$FILENAMEDOCPDF = $modulelowercase.'.pdf';
@@ -1290,10 +1311,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 			$rights = $moduleobj->rights;
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-
-			$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
-			if ($generatePerms < 0) {
-				setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
+			$checkComment=checkExistComment($moduledescriptorfile, 1);
+			if ($checkComment < 0) {
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+			} else {
+				$generatePerms = reWriteAllPermissions($moduledescriptorfile, $rights, null, null, $objectname, $module, -2);
+				if ($generatePerms < 0) {
+					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
+				}
 			}
 		}
 
@@ -1459,7 +1484,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 		}
 		if (!$counter) {
-			dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+			$checkComment = checkExistComment($moduledescriptorfile, 0);
+			if ($checkComment < 0) {
+				$error++;
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+			} else {
+				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+			}
 		}
 			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
 			$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
@@ -1558,11 +1589,19 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 }
 
 // Add a dictionary
-if ($dirins && $action == 'initdic' && $module && $dicname) {
+if ($dirins && $action == 'initdic' && $module && empty($cancel)) {
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$destdir = $dirins.'/'.strtolower($module);
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
+	if (!GETPOST('dicname')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Table")), null, 'errors');
+	}
+	if (!GETPOST('label')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lable")), null, 'errors');
+	}
 	if (!$error) {
 		$newdicname = $dicname;
 		if (!preg_match('/^c_/', $newdicname)) {
@@ -1585,13 +1624,18 @@ if ($dirins && $action == 'initdic' && $module && $dicname) {
 			exit;
 		}
 		$dictionaries = $moduleobj->dictionaries;
-		createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
+		$checkComment = checkExistComment($moduledescriptorfile, 2);
+		if ($checkComment < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			clearstatcache(true);
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+			exit;
 		}
-		clearstatcache(true);
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
-		exit;
 	}
 }
 
@@ -1895,33 +1939,45 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 
 		// delete menus linked to the object
 		$menus = $moduleobj->menu;
-		reWriteAllMenus($moduledescriptorfile, $menus, $objectname, null, -1);
+		$rewriteMenu = checkExistComment($moduledescriptorfile, 0);
+
+		if ($rewriteMenu < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllMenus($moduledescriptorfile, $menus, $objectname, null, -1);
+		}
 
 		// regenerate permissions and delete them
 		$permissions = $moduleobj->rights;
-		reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
-
-		// check if documentation has been generated
-		$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
-		deletePropsFromDoc($file_doc, $objectname);
-
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
-		}
-		$resultko = 0;
-		foreach ($filetodelete as $tmpfiletodelete) {
-			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
-			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
-			if (!$resulttmp) {
-				$resultko++;
-			}
-		}
-
-		if ($resultko == 0) {
-			setEventMessages($langs->trans("FilesDeleted"), null);
+		$rewritePerms = checkExistComment($moduledescriptorfile, 1);
+		if ($rewritePerms < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			setEventMessages($langs->trans("ErrorSomeFilesCouldNotBeDeleted"), null, 'warnings');
+			reWriteAllPermissions($moduledescriptorfile, $permissions, null, null, $objectname, '', -1);
+		}
+		if ($rewritePerms && $rewriteMenu) {
+			// check if documentation has been generated
+			$file_doc = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
+			deletePropsAndPermsFromDoc($file_doc, $objectname);
+
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			$resultko = 0;
+			foreach ($filetodelete as $tmpfiletodelete) {
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
+				$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
+				if (!$resulttmp) {
+					$resultko++;
+				}
+			}
+
+			if ($resultko == 0) {
+				setEventMessages($langs->trans("FilesDeleted"), null);
+			} else {
+				setEventMessages($langs->trans("ErrorSomeFilesCouldNotBeDeleted"), null, 'warnings');
+			}
 		}
 	}
 
@@ -1976,6 +2032,11 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	$dicts = $moduleobj->dictionaries;
+	$checkComment = checkExistComment($moduledescriptorfile, 2);
+	if ($checkComment < 0) {
+		$error++;
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+	}
 
 	if (!empty(GETPOST('dictionnarykey'))) {
 		$newdicname = $dicts['tabname'][GETPOST('dictionnarykey')-1];
@@ -2054,16 +2115,21 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
 	$dicts = $moduleobj->dictionaries;
 	if (!empty(GETPOST('tablib')) && GETPOST('tablib') !== $dicts['tablib'][$keydict]) {
 		$dicts['tablib'][$keydict] = ucfirst(strtolower(GETPOST('tablib')));
-		$updateDict = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
-		if ($updateDict > 0) {
-			setEventMessages($langs->trans("DictionaryNameUpdated", ucfirst(GETPOST('tablib'))), null);
+		$checkComment = checkExistComment($moduledescriptorfile, 2);
+		if ($checkComment < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			$updateDict = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
+			if ($updateDict > 0) {
+				setEventMessages($langs->trans("DictionaryNameUpdated", ucfirst(GETPOST('tablib'))), null);
+			}
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			clearstatcache(true);
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
+			exit;
 		}
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
-		}
-		clearstatcache(true);
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : ''));
-		exit;
 	}
 	//var_dump(GETPOST('tablib'));exit;
 }
@@ -2213,11 +2279,6 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			5=>$crud
 		];
 
-		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-		//rewriting all permissions after add a right
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
-		setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
-
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
@@ -2227,14 +2288,22 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
 		}
 	}
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		//rewriting all permissions after add a right
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+	if ($rewrite < 0) {
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+	} else {
+		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
+		setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
-	clearstatcache(true);
-	if (function_exists('opcache_invalidate')) {
-		opcache_reset();	// remove the include cache hell !
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+		exit;
 	}
-
-	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-	exit;
 }
 
 
@@ -2328,17 +2397,19 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		// rewriting all permissions after update permission needed
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
-
-		setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
-
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+		if ($rewrite < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightUpdated, '', '', 2);
+			setEventMessages($langs->trans('PermissionUpdatedSuccesfuly'), null);
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			exit;
 		}
-
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-		exit;
 	}
 }
 // Delete permission
@@ -2361,11 +2432,6 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 	$key = (int) GETPOST('permskey', 'int')-1;
 
 	if (!$error) {
-		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-
-		// rewriting all permissions
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
-
 		// check if module is enabled
 		if (isModEnabled(strtolower($module))) {
 			$result = unActivateModule(strtolower($module));
@@ -2373,12 +2439,18 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			exit;
+		}
+
+		// rewriting all permissions
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+		if ($rewrite < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
+			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, null, '', '', 0);
 			setEventMessages($langs->trans('PermissionDeletedSuccesfuly'), null);
 
 			clearstatcache(true);
@@ -2536,24 +2608,29 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 	$key = (int) GETPOST('menukey', 'int');
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
-	if ($menus[$key]['fk_menu'] === 'fk_mainmenu='.strtolower($module)) {
-		if (in_array(strtolower($menus[$key]['leftmenu']), $result)) {
-			reWriteAllMenus($moduledescriptorfile, $menus, $menus[$key]['leftmenu'], $key, -1);
+	$checkcomment = checkExistComment($moduledescriptorfile, 0);
+	if ($checkcomment < 0) {
+		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+	} else {
+		if ($menus[$key]['fk_menu'] === 'fk_mainmenu='.strtolower($module)) {
+			if (in_array(strtolower($menus[$key]['leftmenu']), $result)) {
+				reWriteAllMenus($moduledescriptorfile, $menus, $menus[$key]['leftmenu'], $key, -1);
+			} else {
+				reWriteAllMenus($moduledescriptorfile, $menus, null, $key, 0);
+			}
 		} else {
 			reWriteAllMenus($moduledescriptorfile, $menus, null, $key, 0);
 		}
-	} else {
-		reWriteAllMenus($moduledescriptorfile, $menus, null, $key, 0);
-	}
 
-	clearstatcache(true);
-	if (function_exists('opcache_invalidate')) {
-		opcache_reset();	// remove the include cache hell !
-	}
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
 
-	setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
-	header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-	exit;
+		setEventMessages($langs->trans('MenuDeletedSuccessfuly'), null);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
+	}
 }
 
 // Add menu in module without initial object
@@ -2682,15 +2759,19 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			$menuToAdd['perms'] = '1';
 		}
 
-		$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
-
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();
+		$checkcomment = checkExistComment($moduledescriptorfile, 0);
+		if ($checkcomment < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+			setEventMessages($langs->trans('MenuAddedSuccesfuly'), null);
+			exit;
 		}
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-		setEventMessages($langs->trans('MenuAddedSuccesfuly'), null);
-		exit;
 	}
 }
 
@@ -2769,20 +2850,25 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			}
 			if (!$error) {
 				//update menu
-				$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
+				$checkComment = checkExistComment($moduledescriptorfile, 0);
+				if ($checkComment < 0) {
+					setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+				} else {
+					$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
 
-				clearstatcache(true);
-				if (function_exists('opcache_invalidate')) {
-					opcache_reset();
-				}
-				if ($result < 0) {
-					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
-					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
+					clearstatcache(true);
+					if (function_exists('opcache_invalidate')) {
+						opcache_reset();
+					}
+					if ($result < 0) {
+						setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
+						header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
+						exit;
+					}
+					setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
+					header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 					exit;
 				}
-				setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
-				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-				exit;
 			}
 	} else {
 		$_POST['type'] = '';
@@ -3201,7 +3287,20 @@ if ($module == 'initmodule') {
 	// Tabs for module
 	if (!$error) {
 		$dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
-
+		$destdir = $dirread.'/'.strtolower($module);
+		$objects = dolGetListOfObjectClasses($destdir);
+		$diroflang = dol_buildpath($modulelowercase, 0)."/langs";
+		$countLangs = countItemsInDirectory($diroflang, 2);
+		$countDictionaries = (!empty($moduleobj->dictionaries) ? count($moduleobj->dictionaries['tabname']) : 0);
+		$countRights = count($moduleobj->rights);
+		$countMenus = count($moduleobj->menu);
+		$countTriggers = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/triggers");
+		$countWidgets = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/boxes");
+		$countCss = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/css");
+		$countJs = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/js");
+		$countCLI = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/scripts");
+		$hasDoc = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/doc");
+		//var_dump($moduleobj->dictionaries);exit;
 		$head2 = array();
 		$h = 0;
 
@@ -3211,22 +3310,22 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Objects");
+		$head2[$h][1] = ((!is_array($objects) || count($objects) <= 0) ? $langs->trans("Objects") : $langs->trans("Objects").' <span class="badge">'.count($objects)."</span>");
 		$head2[$h][2] = 'objects';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Languages");
+		$head2[$h][1] = ($countLangs <= 0 ? $langs->trans("Languages") : $langs->trans("Languages").' <span class="badge">'.$countLangs."</span>");
 		$head2[$h][2] = 'languages';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Dictionaries");
+		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').' <span class="badge">'.$countDictionaries."</span>");
 		$head2[$h][2] = 'dictionaries';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Permissions");
+		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions").' <span class="badge">'.$countRights."</span>");
 		$head2[$h][2] = 'permissions';
 		$h++;
 
@@ -3236,7 +3335,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Menus");
+		$head2[$h][1] = ($countMenus <= 0 ? $langs->trans("Menus") : $langs->trans("Menus").' <span class="badge">'.$countMenus."</span>");
 		$head2[$h][2] = 'menus';
 		$h++;
 
@@ -3246,12 +3345,12 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Triggers");
+		$head2[$h][1] = ($countTriggers <= 0 ? $langs->trans("Triggers") : $langs->trans("Triggers").' <span class="badge">'.$countTriggers."</span>");
 		$head2[$h][2] = 'triggers';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Widgets");
+		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets").' <span class="badge">'.$countWidgets."</span>");
 		$head2[$h][2] = 'widgets';
 		$h++;
 
@@ -3261,17 +3360,17 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=css&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("CSS");
+		$head2[$h][1] = ($countCss <= 0 ? $langs->trans("CSS") : $langs->trans("CSS")." (".$countCss.")");
 		$head2[$h][2] = 'css';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=js&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("JS");
+		$head2[$h][1] = ($countJs <= 0 ? $langs->trans("JS") : $langs->trans("JS").' <span class="badge">'.$countJs."</span>");
 		$head2[$h][2] = 'js';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cli&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("CLI");
+		$head2[$h][1] = ($countCLI <= 0 ? $langs->trans("CLI") : $langs->trans("CLI").' <span class="badge">'.$countCLI."</span>");
 		$head2[$h][2] = 'cli';
 		$h++;
 
@@ -3281,7 +3380,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Documentation");
+		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation").' <span class="badge">'.$hasDoc."</span>");
 		$head2[$h][2] = 'specifications';
 		$h++;
 
@@ -3886,6 +3985,7 @@ if ($module == 'initmodule') {
 								print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 								print ' ';
 								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
 								if (empty($conf->global->$const_name)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
@@ -4221,7 +4321,20 @@ if ($module == 'initmodule') {
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
-										print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										$pictoType = '';
+										$matches = array();
+										if (preg_match('/^varchar/', $proptype, $matches)) {
+											$pictoType = 'varchar';
+										} elseif (preg_match('/^integer:/', $proptype, $matches)) {
+											$pictoType = 'link';
+										} elseif (strpos($proptype, 'integer') === 0) {
+											$pictoType = substr($proptype, 0, 3);
+										} elseif (strpos($proptype, 'timestamp') === 0) {
+											$pictoType = 'datetime';
+										} elseif (strpos($proptype, 'real') === 0) {
+											$pictoType = 'double';
+										}
+										print (!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										if ($proparrayofkeyval) {
@@ -4446,191 +4559,193 @@ if ($module == 'initmodule') {
 				//$listofobject = dol_dir_list($dir, 'files', 0, '\.class\.php$');
 
 				$firstdicname = '';
-				if (!empty($dicts['tabname'])) {
-					foreach ($dicts['tabname'] as $key => $dic) {
-						$dicname = $dic;
-						$diclabel = $dicts['tablib'][$key];
+				// if (!empty($dicts['tabname'])) {
+				// 	foreach ($dicts['tabname'] as $key => $dic) {
+				// 		$dicname = $dic;
+				// 		$diclabel = $dicts['tablib'][$key];
 
-						if (empty($firstdicname)) {
-							$firstdicname = $dicname;
-						}
+				// 		if (empty($firstdicname)) {
+				// 			$firstdicname = $dicname;
+				// 		}
 
-						$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabdic='.$dicname;
-						$head3[$h][1] = $diclabel;
-						$head3[$h][2] = $dicname;
-						$h++;
-					}
-				}
+				// 		$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabdic='.$dicname;
+				// 		$head3[$h][1] = $diclabel;
+				// 		$head3[$h][2] = $dicname;
+				// 		$h++;
+				// 	}
+				// }
 
-				if ($h > 1) {
-					$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabdic=deletedictionary';
-					$head3[$h][1] = $langs->trans("DangerZone");
-					$head3[$h][2] = 'deletedictionary';
-					$h++;
-				}
+				// if ($h > 1) {
+				// 	$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabdic=deletedictionary';
+				// 	$head3[$h][1] = $langs->trans("DangerZone");
+				// 	$head3[$h][2] = 'deletedictionary';
+				// 	$h++;
+				// }
 
 				// If tabobj was not defined, then we check if there is one obj. If yes, we force on it, if no, we will show tab to create new objects.
-				if ($tabdic == 'newdicifnodic') {
-					if ($firstdicname) {
-						$tabdic = $firstdicname;
-					} else {
-						$tabdic = 'newdictionary';
-					}
-				}
+				// if ($tabdic == 'newdicifnodic') {
+				// 	if ($firstdicname) {
+				// 		$tabdic = $firstdicname;
+				// 	} else {
+				// 		$tabdic = 'newdictionary';
+				// 	}
+				// }
+				//print dol_get_fiche_head($head3, $tabdic, '', -1, ''); // Level 3
+
 
 				$newdict = dolGetButtonTitle($langs->trans('NewDictionary'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.urlencode($module).'&tabdic=newdictionary');
 				print_barre_liste($langs->trans("ListOfDictionariesEntries"), '', $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 0, $newdict, '', '', 0, 0, 1);
 
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="addproperty">';
-				print '<input type="hidden" name="tab" value="dictionaries">';
-				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-				print '<input type="hidden" name="tabdic" value="'.dol_escape_htmltag($tabdic).'">';
+				if ($tabdic != 'newdictionary') {
+					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+					print '<input type="hidden" name="action" value="addDictionary">';
+					print '<input type="hidden" name="tab" value="dictionaries">';
+					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+					print '<input type="hidden" name="tabdic" value="'.dol_escape_htmltag($tabdic).'">';
 
-				print '<div class="div-table-responsive">';
-				print '<table class="noborder">';
+					print '<div class="div-table-responsive">';
+					print '<table class="noborder">';
 
-				print '<tr class="liste_titre">';
-				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'thsticky thstickygrey ');
-				print_liste_field_titre("Table", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("SQL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("SQLSort", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("FieldsView", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("FieldsEdit", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("FieldsInsert", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Rowid", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print '<tr class="liste_titre">';
+					print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'thsticky thstickygrey ');
+					print_liste_field_titre("Table", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("SQL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("SQLSort", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("FieldsView", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("FieldsEdit", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("FieldsInsert", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("Rowid", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+					print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 
-				print "</tr>\n";
+					print "</tr>\n";
 
-				if (!empty($dicts) && is_array($dicts) && !empty($dicts['tabname']) && is_array($dicts['tabname'])) {
-					$i = 0;
-					$maxi = count($dicts['tabname']);
-					while ($i < $maxi) {
-						if ($action == 'editdict' && $i == (int) GETPOST('dictionnarykey', 'int')-1) {
-							print '<tr class="oddeven">';
-							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-							print '<input type="hidden" name="token" value="'.newToken().'">';
-							print '<input type="hidden" name="tab" value="dictionaries">';
-							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-							print '<input type="hidden" name="action" value="updatedictionary">';
-							print '<input type="hidden" name="dictionnarykey" value="'.($i+1).'">';
+					if (!empty($dicts) && is_array($dicts) && !empty($dicts['tabname']) && is_array($dicts['tabname'])) {
+						$i = 0;
+						$maxi = count($dicts['tabname']);
+						while ($i < $maxi) {
+							if ($action == 'editdict' && $i == (int) GETPOST('dictionnarykey', 'int')-1) {
+								print '<tr class="oddeven">';
+								print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+								print '<input type="hidden" name="token" value="'.newToken().'">';
+								print '<input type="hidden" name="tab" value="dictionaries">';
+								print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+								print '<input type="hidden" name="action" value="updatedictionary">';
+								print '<input type="hidden" name="dictionnarykey" value="'.($i+1).'">';
 
-							print '<td class="tdsticky tdstickygray">';
-							print ($i + 1);
-							print '</td>';
+								print '<td class="tdsticky tdstickygray">';
+								print ($i + 1);
+								print '</td>';
 
-							print '<td>';
-							print '<input type="text" name="tabname" value="'.$dicts['tabname'][$i].'" readonly class="tdstickygray">';
-							print '</td>';
+								print '<td>';
+								print '<input type="text" name="tabname" value="'.$dicts['tabname'][$i].'" readonly class="tdstickygray">';
+								print '</td>';
 
-							print '<td>';
-							print '<input type="text" name="tablib" value="'.$dicts['tablib'][$i].'">';
-							print '</td>';
+								print '<td>';
+								print '<input type="text" name="tablib" value="'.$dicts['tablib'][$i].'">';
+								print '</td>';
 
-							print '<td>';
-							print '<input type="text" name="tabsql" value="'.$dicts['tabsql'][$i].'" readonly class="tdstickygray">';
-							print '</td>';
+								print '<td>';
+								print '<input type="text" name="tabsql" value="'.$dicts['tabsql'][$i].'" readonly class="tdstickygray">';
+								print '</td>';
 
-							print '<td>';
-							print '<select name="tabsqlsort">';
-							print '<option value="'.dol_escape_htmltag($dicts['tabsqlsort'][$i]).'">'.$dicts['tabsqlsort'][$i].'</option>';
-							print '</select>';
-							print '</td>';
+								print '<td>';
+								print '<select name="tabsqlsort">';
+								print '<option value="'.dol_escape_htmltag($dicts['tabsqlsort'][$i]).'">'.$dicts['tabsqlsort'][$i].'</option>';
+								print '</select>';
+								print '</td>';
 
-							print '<td><select  name="tabfield" >';
-							print '<option value="'.dol_escape_htmltag($dicts['tabfield'][$i]).'">'.$dicts['tabfield'][$i].'</option>';
-							print '</select></td>';
+								print '<td><select  name="tabfield" >';
+								print '<option value="'.dol_escape_htmltag($dicts['tabfield'][$i]).'">'.$dicts['tabfield'][$i].'</option>';
+								print '</select></td>';
 
-							print '<td><select  name="tabfieldvalue" >';
-							print '<option value="'.dol_escape_htmltag($dicts['tabfieldvalue'][$i]).'">'.$dicts['tabfieldvalue'][$i].'</option>';
-							print '</select></td>';
+								print '<td><select  name="tabfieldvalue" >';
+								print '<option value="'.dol_escape_htmltag($dicts['tabfieldvalue'][$i]).'">'.$dicts['tabfieldvalue'][$i].'</option>';
+								print '</select></td>';
 
-							print '<td><select  name="tabfieldinsert" >';
-							print '<option value="'.dol_escape_htmltag($dicts['tabfieldinsert'][$i]).'">'.$dicts['tabfieldinsert'][$i].'</option>';
-							print '</select></td>';
+								print '<td><select  name="tabfieldinsert" >';
+								print '<option value="'.dol_escape_htmltag($dicts['tabfieldinsert'][$i]).'">'.$dicts['tabfieldinsert'][$i].'</option>';
+								print '</select></td>';
 
-							print '<td>';
-							print '<input type="text" name="tabrowid"  value="'.dol_escape_htmltag($dicts['tabrowid'][$i]).'" readonly class="tdstickygray">';
-							print '</td>';
+								print '<td>';
+								print '<input type="text" name="tabrowid"  value="'.dol_escape_htmltag($dicts['tabrowid'][$i]).'" readonly class="tdstickygray">';
+								print '</td>';
 
-							print '<td>';
-							print '<input type="text" name="tabcond"  value="'.dol_escape_htmltag((empty($dicts['tabcond'][$i]) ? 'disabled' : 'enabled')).'" readonly class="tdstickygray">';
-							print '</td>';
+								print '<td>';
+								print '<input type="text" name="tabcond"  value="'.dol_escape_htmltag((empty($dicts['tabcond'][$i]) ? 'disabled' : 'enabled')).'" readonly class="tdstickygray">';
+								print '</td>';
 
-							print '<td class="center tdstickyright tdstickyghostwhite">';
-							print '<input id ="updatedict" class="reposition button smallpaddingimp" type="submit" name="updatedict" value="'.$langs->trans("Modify").'"/>';
-							print '<br>';
-							print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
-							print '</td>';
+								print '<td class="center tdstickyright tdstickyghostwhite">';
+								print '<input id ="updatedict" class="reposition button smallpaddingimp" type="submit" name="updatedict" value="'.$langs->trans("Modify").'"/>';
+								print '<br>';
+								print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+								print '</td>';
 
-							print '</form>';
-							print '</tr>';
-						} else {
-							print '<tr class="oddeven">';
+								print '</form>';
+								print '</tr>';
+							} else {
+								print '<tr class="oddeven">';
 
-							print '<td class="tdsticky tdstickygray">';
-							print ($i + 1);
-							print '</td>';
+								print '<td class="tdsticky tdstickygray">';
+								print ($i + 1);
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tabname'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tabname'][$i];
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tablib'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tablib'][$i];
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tabsql'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tabsql'][$i];
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tabsqlsort'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tabsqlsort'][$i];
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tabfield'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tabfield'][$i];
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tabfieldvalue'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tabfieldvalue'][$i];
+								print '</td>';
 
-							print '<td>';
-							print $dicts['tabfieldinsert'][$i];
-							print '</td>';
+								print '<td>';
+								print $dicts['tabfieldinsert'][$i];
+								print '</td>';
 
-							print '<td >';
-							print $dicts['tabrowid'][$i];
-							print '</td>';
+								print '<td >';
+								print $dicts['tabrowid'][$i];
+								print '</td>';
 
-							print '<td >';
-							print $dicts['tabcond'][$i];
-							print '</td>';
+								print '<td >';
+								print $dicts['tabcond'][$i];
+								print '</td>';
 
-							print '<td class="center tdstickyright tdstickyghostwhite">';
-							print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_edit().'</a>';
-							print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletedict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_delete().'</a>';
-							print '</td>';
+								print '<td class="center tdstickyright tdstickyghostwhite">';
+								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_edit().'</a>';
+								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletedict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_delete().'</a>';
+								print '</td>';
 
-							print '</tr>';
+								print '</tr>';
+							}
+							$i++;
 						}
-						$i++;
+					} else {
+						print '<tr><td colspan="10"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 					}
-				} else {
-					print '<tr><td colspan="10"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+
+					print '</table>';
+					print '</div>';
+
+					print '</form>';
 				}
-
-				print '</table>';
-				print '</div>';
-
-				print '</form>';
-
-				print dol_get_fiche_head($head3, $tabdic, '', -1, ''); // Level 3
 
 				if ($tabdic == 'newdictionary') {
 					// New dic tab
@@ -4638,14 +4753,56 @@ if ($module == 'initmodule') {
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="initdic">';
 					print '<input type="hidden" name="tab" value="dictionaries">';
+					print '<input type="hidden" name="tabdic" value="'.$tabdic.'">';
+
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 
 					print '<span class="opacitymedium">'.$langs->trans("EnterNameOfDictionaryDesc").'</span><br><br>';
 
-					print '<input type="text" name="dicname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('dicname', 'alpha') ? GETPOST('dicname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'" autofocus><br>';
-					// print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
-					// print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
-					print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+					print dol_get_fiche_head('');
+					print '<table class="border centpercent">';
+					print '<tbody>';
+					print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Table").'</td><td><input type="text" name="dicname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('dicname', 'alpha') ? GETPOST('dicname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'" autofocus></td>';
+					print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'"></td></tr>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("SQL").'</td><td><input type="text" style="width:50%;" name="sql" value="'.dol_escape_htmltag(GETPOST('sql', 'alpha')).'"></td></tr>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("SQLSort").'</td><td><input type="text" name="sqlsort" value="'.dol_escape_htmltag(GETPOST('sqlsort', 'alpha')).'" readonly></td></tr>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("FieldsView").'</td><td><input type="text" name="field" value="'.dol_escape_htmltag(GETPOST('field', 'alpha')).'"></td></tr>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("FieldsEdit").'</td><td><input type="text" name="fieldvalue" value="'.dol_escape_htmltag(GETPOST('fieldvalue', 'alpha')).'"></td></tr>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("FieldsInsert").'</td><td><input type="text" name="fieldinsert" value="'.dol_escape_htmltag(GETPOST('fieldinsert', 'alpha')).'"></td></tr>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("Rowid").'</td><td><input type="text" name="rowid" value="'.dol_escape_htmltag(GETPOST('rowid', 'alpha')).'"></td></tr>';
+					print '<tr></tr>';
+					print '</tbody></table>';
+					print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+					print '<input id="cancel" type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+					print dol_get_fiche_end();
+					print '</form>';
+					print '<script>
+					$(document).ready(function() {
+						$("input[name=\'dicname\']").on("blur", function() {
+							if ($(this).val().length > 0) {
+								$("input[name=\'label\']").val($(this).val());
+								$("input[name=\'sql\']").val("SELECT f.rowid as rowid, f.code, f.label, f.active FROM llx_c_" + $(this).val() + " as f");
+								$("input[name=\'sqlsort\']").val("label ASC");
+								$("input[name=\'field\']").val("code,label");
+								$("input[name=\'fieldvalue\']").val("code,label");
+								$("input[name=\'fieldinsert\']").val("code,label");
+								$("input[name=\'rowid\']").val("rowid");
+							} else {
+								$("input[name=\'label\']").val("");
+								$("input[name=\'sql\']").val("");
+								$("input[name=\'sqlsort\']").val("");
+								$("input[name=\'field\']").val("");
+								$("input[name=\'fieldvalue\']").val("");
+								$("input[name=\'fieldinsert\']").val("");
+								$("input[name=\'rowid\']").val("");
+							}
+						});
+						$("input[id=\'cancel\']").click(function() {
+							window.history.back();
+						});
+					});
+					</script>';
+
 					/*print '<br>';
 					print '<br>';
 					print '<br>';
@@ -4658,7 +4815,6 @@ if ($module == 'initmodule') {
 					print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					print '<br>';
 					*/
-					print '</form>';
 				} elseif ($tabdic == 'deletedictionary') {
 					// Delete dic tab
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -4672,8 +4828,6 @@ if ($module == 'initmodule') {
 					print '<input type="text" name="dicname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'">';
 					print '<input type="submit" class="button smallpaddingimp" name="delete" value="'.dol_escape_htmltag($langs->trans("Delete")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					print '</form>';
-				} else {
-					print $langs->trans("FeatureNotYetAvailable");
 				}
 
 				print dol_get_fiche_end();
@@ -5036,14 +5190,14 @@ if ($module == 'initmodule') {
 					var groupedRights = ' . $groupedRights_json . ';
 					var objectsSelect = $("select[id=\'objects\']");
 					var permsSelect = $("select[id=\'perms\']");
-				
+
 					objectsSelect.change(function() {
 						var selectedObject = $(this).val();
-				
+
 						permsSelect.empty();
-				
+
 						var rights = groupedRights[selectedObject];
-				
+
 						if (rights) {
 							for (var i = 0; i < rights.length; i++) {
 								var right = rights[i];
@@ -5054,7 +5208,7 @@ if ($module == 'initmodule') {
 							var option = $("<option></option>").attr("value", "read").text("read");
 								permsSelect.append(option);
 						}
-						
+
 						if (selectedObject !== "" && selectedObject !== null && rights) {
 							permsSelect.show();
 						} else {
@@ -5065,7 +5219,7 @@ if ($module == 'initmodule') {
 						}
 					});
 				});
-				</script>';
+				</scrip>';
 
 				// display permissions for each object
 			} else {

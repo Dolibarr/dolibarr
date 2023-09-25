@@ -350,25 +350,23 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
+	$error = 0;
 
-	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-		// This is properties of a date
-		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
-	}
-
-	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	} else {
+	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	if ($ret < 0) {
 		$error++;
-		setEventMessages($object->error, $object->errors, 'errors');
+		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
+	} else {
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		}
 	}
 }
 
@@ -444,7 +442,13 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	$result = $object->validate($user);
+	if ($object->element == 'inventory' && !empty($include_sub_warehouse)) {
+		// Can happen when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set
+		$result = $object->validate($user, false, $include_sub_warehouse);
+	} else {
+		$result = $object->validate($user);
+	}
+
 	if ($result >= 0) {
 		// Define output language
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {

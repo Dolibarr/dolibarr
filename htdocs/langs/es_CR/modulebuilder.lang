@@ -28,5 +28,4 @@ UseDocFolder=Desactivar la carpeta de documentación.
 UseSpecificReadme=Use un archivo Léame específico
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
 ForeignKey=Clave extranjera
-GeneratePermissionsHelp=Generar derechos predeterminados para este objeto
 CRUDRead=Leer

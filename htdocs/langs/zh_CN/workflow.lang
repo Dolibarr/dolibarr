@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=工作流模块设置
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
+WorkflowDesc=该模块提供了一些自动操作。默认情况下，工作流是打开的（您可以按想要的顺序执行操作），但在这里您可以激活一些自动操作。
 ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
 # Autocreate
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=签署报价单后自动创建销售订单（新订单的金额与报价金额相同）
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=签署报价单后自动创建客户发票（新发票的金额与报价金额相同）
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=在合同确认后自动创建客户发票
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=创建服务工单时，自动创建介入措施。
+descWORKFLOW_TICKET_CREATE_INTERVENTION=创建服务工单时，自动创建现场服务。
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=当发货单被验证时，将链接的源销售订单归类为已发货（并且如果所有发货单的发货数量之和与要更新的订单中的数量相同）
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=当发货单被关闭时，将链接的源销售订单归类为已发货（并且如果所有发货单的发货数量之和与要更新的订单中的数量相同）
 # Autoclassify purchase proposal
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
 # Autoclassify purchase order
@@ -27,10 +27,10 @@ descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=当链接的采购发票经过�
 descWORKFLOW_TICKET_LINK_CONTRACT=创建服务工单时，链接其匹配的合作方的可用合同
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=关闭服务工单后，关闭与服务工单关联的所有介入措施
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=关闭服务工单后，关闭与服务工单关联的所有现场服务
 AutomaticCreation=自动创建
 AutomaticClassification=自动分类
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=当客户发票被验证时，将链接的源发货单归类为已关闭（并且发票金额与链接的发货单的总金额相同）
 AutomaticClosing=Automatic closing
 AutomaticLinking=Automatic linking
