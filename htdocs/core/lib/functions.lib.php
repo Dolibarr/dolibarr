@@ -11190,7 +11190,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    	$label      	Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    	$label      	Label or tooltip of button if $tet is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'danger', 'email', 'clone', 'cancel', 'delete', ...
  * @param string|array 	$url        	Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
@@ -11229,7 +11229,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (is_array($url)) {
 		if (count($url) > 1) {
 			$out = '<div class="dropdown inline-block dropdown-holder">';
-			$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
+			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction'.($userRight ? '' : 'Refused').'" title="'.dol_escape_htmltag($label).'" data-toggle="dropdown">'.($text ? $text : $label).'</a>';
 			$out .= '<div class="dropdown-content">';
 			foreach ($url as $subbutton) {
 				if (!empty($subbutton['lang'])) {

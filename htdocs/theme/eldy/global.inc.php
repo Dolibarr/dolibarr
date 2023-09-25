@@ -425,8 +425,11 @@ a.butStatus {
 	margin: 0 0.45em !important;
 }
 
-span.userimg.notfirst {
+span.userimg.notfirst, div.userimg.notfirst {
 	margin-left: -5px;
+}
+div.userimg.notfirst {
+	display: block-inline;
 }
 
 /* Used by timesheets */
@@ -3146,6 +3149,13 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.4em;
 	background-size: contain;
 	vertical-align: middle;
+}
+span.userimg div.userphoto {
+	background-color: #eee;
+	border-radius: 0.72em;
+	width: 1.4em;
+	height: 1.4em;
+	padding-top: 1px;
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;
