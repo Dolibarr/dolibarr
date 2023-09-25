@@ -847,16 +847,15 @@ if ($type === "") {
 if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
-if ($type === "") {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
-	$type = Product::TYPE_SERVICE;
-}
-	$label = 'NewProduct';
-if ($type == Product::TYPE_SERVICE) {
-	$label = 'NewService';
-}
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', $perm, $params);
 
+if ($type === "" || $type == Product::TYPE_PRODUCT) {
+	$label = 'NewProduct';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
+}
+if ($type === "" || $type == Product::TYPE_SERVICE) {
+	$label = 'NewService';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', $perm, $params);
+}
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 if ($optioncss != '') {
