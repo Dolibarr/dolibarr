@@ -48,6 +48,8 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $socid;
 
+	public $paye;
+
 	/**
 	 * Invoice date (date)
 	 *
@@ -74,6 +76,18 @@ abstract class CommonInvoice extends CommonObject
 	public $sumcreditnote;
 	public $sumcreditnote_multicurrency;
 	public $remaintopay;
+
+	// Multicurrency
+	/**
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
@@ -369,9 +383,10 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return list of payments
 	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
 	 *  @return     array					Array with list of payments
 	 */
-	public function getListOfPayments($filtertype = '')
+	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
 		$retarray = array();
 

@@ -64,6 +64,16 @@ class pdf_baleine extends ModelePDFProjects
 	public $type;
 
 	/**
+	 * @var int posxdatestart
+	 */
+	public $posxdatestart;
+
+	/**
+	 * @var int posxdateend
+	 */
+	public $posxdateend;
+
+	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
