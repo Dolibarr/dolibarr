@@ -466,12 +466,13 @@ if ($mode == 'future') {
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 }
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
+print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 print "</tr>\n";
 
@@ -590,13 +591,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td class="right">'.($currentstock ? $currentstock : '<span class="opacitymedium">0</span>').'</td>';
 		}
 
-		// Action
-		print '<td class="right"></td>';
-
 		// Fields from hook
-		$parameters = array('objp'=>$objp);
+		$parameters = array('
+		'=>$objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
+		// Action
+		print '<td class="right"></td>';
 
 		print '</tr>';
 	}
