@@ -211,7 +211,7 @@ class modExpenseReport extends DolibarrModules
 			'user_rib.owner_address' => 'user'
 
 		);
-		$this->export_alias_array[$r] = array('d.rowid'=>"idtrip", 'd.type'=>"type", 'd.note_private'=>'note_private', 'd.note_public'=>'note_public', 'u.lastname'=>'name', 'u.firstname'=>'firstname', 'u.login'=>'login');
+		//$this->export_alias_array[$r] = array('d.rowid'=>"idtrip", 'd.type'=>"type", 'd.note_private'=>'note_private', 'd.note_public'=>'note_public', 'u.lastname'=>'name', 'u.firstname'=>'firstname', 'u.login'=>'login');
 		$this->export_dependencies_array[$r] = array('expensereport_line'=>'ed.rowid', 'type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$keyforselect = 'expensereport';
@@ -244,6 +244,11 @@ class modExpenseReport extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf;
+
+		$result = $this->_load_tables('/install/mysql/', 'expensereport');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Remove permissions and default values
 		$this->remove($options);

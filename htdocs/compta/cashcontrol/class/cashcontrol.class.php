@@ -106,6 +106,7 @@ class CashControl extends CommonObject
 	 * @var int Object Id
 	 */
 	public $id;
+	public $label;
 	public $opening;
 	public $status;
 	public $year_close;
@@ -127,6 +128,11 @@ class CashControl extends CommonObject
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer|string $date_modification
+	 * @deprecated
+	 */
+	public $tms;
 
 	/**
 	 * @var integer|string $date_valid
@@ -423,7 +429,7 @@ class CashControl extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

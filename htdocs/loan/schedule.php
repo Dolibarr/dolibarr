@@ -57,6 +57,8 @@ $echeances->fetchAll($object->id);
 
 if ($object->paid > 0 && count($echeances->lines) == 0) {
 	$pay_without_schedule = 1;
+} else {
+	$pay_without_schedule = 0;
 }
 
 /*

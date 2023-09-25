@@ -106,7 +106,6 @@ ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Toutes les réceptions enreg
 ErrorGlobalVariableUpdater0=La demande HTTP a échoué avec l'erreur '%s'
 ErrorGlobalVariableUpdater3=Les données demandées n'ont pas été trouvées en résultat
 ErrorGlobalVariableUpdater5=Aucune variable globale sélectionnée
-ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être une valeur numérique
 ErrorMandatoryParametersNotProvided=Paramètre (s) obligatoire (s) non fourni
 ErrorFailedToLoadModuleDescriptorForXXX=Impossible de charger la classe descripteur du module pour %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Définition incorrecte de la matrice de menus dans le descripteur de module (mauvaise valeur pour la clé fk_menu)

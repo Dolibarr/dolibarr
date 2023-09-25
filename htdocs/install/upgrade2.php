@@ -144,7 +144,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if (!$db->connected) {
 		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
@@ -1951,7 +1951,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
-				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpsoc);
+				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $mysoc);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -2056,7 +2056,7 @@ function migrate_modeles($db, $langs, $conf)
 
 	if (isModEnabled("expedition")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-		$modellist = ModelePDFExpedition::liste_modeles($db);
+		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
 			// Aucun model par defaut.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
@@ -4100,6 +4100,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	// List of files to delete
 	$filetodeletearray = array(
+		'/core/ajax/ajaxcompanies.php',
 		'/core/triggers/interface_demo.class.php',
 		'/core/menus/barre_left/default.php',
 		'/core/menus/barre_top/default.php',
@@ -4107,8 +4108,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/modCommercial.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
-		'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
@@ -4122,6 +4121,12 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/standard/auguria_frontoffice.php',
 		'/core/menus/standard/eldy_backoffice.php',
 		'/core/menus/standard/eldy_frontoffice.php',
+		'/core/modules/export/export_excel.modules.php',
+		'/core/modules/export/export_csv.modules.php',
+		'/core/modules/export/exportcsv.modules.php',
+		'/core/modules/export/export_excel2007new.modules.php',
+		'/core/modules/facture/pdf_crabe.modules.php',
+		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -4130,11 +4135,12 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/peche.modules.php',
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
-		'/core/modules/facture/pdf_crabe.modules.php',
-		'/core/modules/facture/pdf_oursin.modules.php',
-		'/core/modules/export/export_excel.modules.php',
-		'/core/modules/export/export_excel2007new.modules.php',
 		'/core/boxes/box_members.php',
+		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
+
+		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
+		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
+		'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
 
 		'/api/class/api_generic.class.php',
 		'/asterisk/cidlookup.php',
@@ -4411,11 +4417,14 @@ function migrate_user_photospath()
 		$user = $fuser; // To avoid error during migration
 	}
 
-	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$sql = "SELECT rowid as uid, entity from ".MAIN_DB_PREFIX."user"; // Get list of all users
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$fuser->fetch($obj->uid);
+			//$fuser->fetch($obj->uid);
+			$fuser->id = $obj->uid;
+			$fuser->entity = $obj->entity;
+
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {
@@ -4485,7 +4494,7 @@ function migrate_user_photospath()
  */
 function migrate_user_photospath2()
 {
-	global $conf, $db, $langs, $user;
+	global $db, $langs, $user;
 
 	print '<tr><td colspan="4">';
 
@@ -4497,11 +4506,15 @@ function migrate_user_photospath2()
 		$user = $fuser; // To avoid error during migration
 	}
 
-	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$sql = "SELECT rowid as uid, entity, photo from ".MAIN_DB_PREFIX."user"; // Get list of all users
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$fuser->fetch($obj->uid);
+			//$fuser->fetch($obj->uid);
+			$fuser->id = $obj->uid;
+			$fuser->entity = $obj->entity;
+			$fuser->photo = $obj->photo;
+
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {

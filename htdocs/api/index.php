@@ -48,7 +48,9 @@ if (!defined("NOLOGIN")) {
 if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
-
+if (!defined("NODEFAULTVALUES")) {
+	define("NODEFAULTVALUES", '1');
+}
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
 if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {

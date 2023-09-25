@@ -106,6 +106,8 @@ $search_country = GETPOST("search_country", 'intcomma');
 $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", 'array');
 $search_stcomm = GETPOST('search_stcomm', 'int');
+$search_birthday_start = dol_mktime(0, 0, 0, GETPOST('search_birthday_startmonth', 'int'), GETPOST('search_birthday_startday', 'int'), GETPOST('search_birthday_startyear', 'int'));
+$search_birthday_end = dol_mktime(23, 59, 59, GETPOST('search_birthday_endmonth', 'int'), GETPOST('search_birthday_endday', 'int'), GETPOST('search_birthday_endyear', 'int'));
 
 if ($search_status === '') {
 	$search_status = 1; // always display active customer first
@@ -334,6 +336,8 @@ if (empty($reshook)) {
 		$toselect = array();
 		$search_array_options = array();
 		$search_roles = array();
+		$search_birthday_start = '';
+		$search_birthday_end = '';
 	}
 
 	// Mass actions
@@ -406,7 +410,7 @@ if ($resql) {
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
-$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email,";
+$sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel,";
@@ -674,6 +678,12 @@ if ($type == "o") {        // filter on type
 if (!empty($socid)) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+if ($search_birthday_start) {
+	$sql .= " AND p.birthday >= '".$db->idate($search_birthday_start)."'";
+}
+if ($search_birthday_end) {
+	$sql .= " AND p.birthday <= '".$db->idate($search_birthday_end)."'";
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -834,7 +844,12 @@ if ($optioncss != '') {
 if (count($search_roles) > 0) {
 	$param .= implode('&search_roles[]=', $search_roles);
 }
-
+if ($search_birthday_start)	{
+	$param .= '&search_birthday_start='.urlencode(dol_print_date($search_birthday_start, '%d')).'&search_birthday_startmonth='.urlencode(dol_print_date($search_birthday_start, '%m')).'&search_birthday_startyear='.urlencode(dol_print_date($search_birthday_start, '%Y'));
+}
+if ($search_birthday_end) {
+	$param .= '&search_birthday_end='.urlencode(dol_print_date($search_birthday_end, '%d')).'&search_birthday_endmonth='.urlencode(dol_print_date($search_birthday_end, '%m')).'&search_birthday_endyear='.urlencode(dol_print_date($search_birthday_end, '%Y'));
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -899,7 +914,7 @@ if ($search_firstlast_only) {
 }
 
 $moreforfilter = '';
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ContactCategoriesShort');
@@ -1093,6 +1108,17 @@ if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) {
 	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', 'nowrap ');
 	print '</td>';
 }
+if (!empty($arrayfields['p.birthday']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_birthday_start ? $search_birthday_start : -1, 'search_birthday_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_birthday_end ? $search_birthday_end : -1, 'search_birthday_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -1230,6 +1256,10 @@ if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'], $_SERVER["PHP_SELF"], "p.fk_stcommcontact", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.birthday']['checked'])) {
+	print_liste_field_titre($arrayfields['p.birthday']['label'], $_SERVER["PHP_SELF"], "p.birthday", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1295,7 +1325,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1347,7 +1377,7 @@ while ($i < $imaxinloop) {
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
 			print '<td class="middle tdoverflowmax150">';
-			print $contactstatic->getNomUrl(1);
+			print $contactstatic->getNomUrl(-1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1492,7 +1522,11 @@ while ($i < $imaxinloop) {
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);
-				print $objsoc->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				$option_link = 'customer';
+				if ($objsoc->client == 0 && $objsoc->fournisseur > 0) {
+					$option_link = 'supplier';
+				}
+				print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			} else {
 				print '&nbsp;';
 			}
@@ -1545,6 +1579,16 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '</div></div></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Birthday
+		if (!empty($arrayfields['p.birthday']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_date($db->jdate($obj->birthday), 'day', 'tzuser');
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -28,6 +28,39 @@
 trait CommonPeople
 {
 	/**
+	 * @var string Address
+	 */
+	public $address;
+
+	/**
+	 * @var string zip code
+	 */
+	public $zip;
+
+	/**
+	 * @var string town
+	 */
+	public $town;
+
+	/**
+	 * @var int		$state_id
+	 */
+	public $state_id; // The state/department
+	public $state_code;
+	public $state;
+
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var string url
+	 */
+	public $url;
+
+
+	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
@@ -249,12 +282,16 @@ trait CommonPeople
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
-			$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
+			}
 		}
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
-			$this->name_alias = dol_strtoupper($this->name_alias);
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = dol_strtoupper($this->name_alias);
+			}
 		}
 		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
 			$this->address = dol_strtoupper($this->address);

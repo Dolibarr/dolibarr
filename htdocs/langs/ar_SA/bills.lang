@@ -164,6 +164,7 @@ BillFrom=من:
 BillTo=فاتورة الى:
 ShippingTo=شحن الي 
 ActionsOnBill=الإجراءات على الفاتورة
+ActionsOnBillRec=Actions on recurring invoice
 RecurringInvoiceTemplate=نموذج او فاتورة متكررة
 NoQualifiedRecurringInvoiceTemplateFound=لا يوجد نموذج فاتورة متكرر مؤهل للإنشاء.
 FoundXQualifiedRecurringInvoiceTemplate=تم العثور على %s نموذج فاتورة (فواتير) متكررة  مؤهلة للإنشاء.
@@ -196,7 +197,9 @@ ConfirmClassifyPaidPartiallyReasonDiscount=المتبقي الغير مدفوع 
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=المتبقي الغير مدفوع <b> (%s %s) </b> هو خصم ممنوح لأن السداد تم قبل الأجل. أنا أقبل خسارة ضريبة القيمة المضافة على هذا الخصم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=المتبقي الغير مدفوع <b> (%s %s) </b> هو خصم ممنوح لأن السداد تم قبل الأجل. أسترد ضريبة القيمة المضافة على هذا الخصم بدون إشعار دائن.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=عميل سيء
-ConfirmClassifyPaidPartiallyReasonBankCharge=الخصم من قبل البنك (رسوم البنك الوسيط)
+ConfirmClassifyPaidPartiallyReasonBadSupplier=Bad vendor
+ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fee)
+ConfirmClassifyPaidPartiallyReasonWithholdingTax=Withholding tax
 ConfirmClassifyPaidPartiallyReasonProductReturned=تم إرجاع بعض المنتجات
 ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=هذا الاختيار ممكن إذا تم تزويد فاتورتك بالتعليقات المناسبة. (مثال «فقط الضريبة المقابلة للسعر الذي تم دفعه هي التي تعطي الحق في الخصم»)
@@ -205,7 +208,9 @@ ConfirmClassifyPaidPartiallyReasonAvoirDesc=استخدم هذا الاختيار
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=العميل السيئ <b> </b> هو العميل الذي يرفض سداد ديونه.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=يستخدم هذا الاختيار عندما لا يكتمل السداد بسبب إرجاع بعض المنتجات
 ConfirmClassifyPaidPartiallyReasonBankChargeDesc=المبلغ غير المدفوع هو <b> رسوم البنك الوسيط </b> ، يتم خصمها مباشرة من المبلغ الصحيح <b> وهو </b> الذي يدفعه العميل.
+ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=The unpaid amount will never be paid as it is a withholding tax
 ConfirmClassifyPaidPartiallyReasonOtherDesc=استخدم هذا الخيار إذا لم يكن هناك خيار مناسب ، على سبيل المثال في الحالة التالية: <br> - الدفع غير مكتمل لأن بعض المنتجات تم شحنها مرة أخرى <br> - المبلغ المطالب به مهم جدًا لأنه تم نسيان الخصم <br> في جميع الحالات ، يجب تصحيح المبلغ المطالب به في نظام المحاسبة عن طريق إنشاء إشعار دائن.
+ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=A <b>bad supplier</b> is a supplier we refuse to pay.
 ConfirmClassifyAbandonReasonOther=أخرى
 ConfirmClassifyAbandonReasonOtherDesc=سيتم استخدام هذا الاختيار في جميع الحالات الأخرى. على سبيل المثال ، لأنك تخطط لإنشاء فاتورة بديلة.
 ConfirmCustomerPayment=هل تؤكد إدخال المبلغ هذا لـ <b> %s </b> %s؟
@@ -285,6 +290,7 @@ SetRevenuStamp=حدد ختم الإيرادات
 Billed=فواتير
 RecurringInvoices=الفواتير المتكررة
 RecurringInvoice=فاتورة متكررة
+RecurringInvoiceSource=Source recurring invoice
 RepeatableInvoice=قالب الفاتورة
 RepeatableInvoices=قالب الفواتير
 RecurringInvoicesJob=إصدار الفواتير المتكررة (فواتير المبيعات)
@@ -327,6 +333,8 @@ DiscountFromExcessPaid=فوائض مسددة عن الفاتورة %s
 AbsoluteDiscountUse=هذا النوع من الائتمان يمكن استخدامه على الفاتورة قبل اعتمادها
 CreditNoteDepositUse=يجب اعتماد الفاتورة لاستخدام هذا النوع من الاعتمادات
 NewGlobalDiscount=خصم مطلق جديد
+NewSupplierGlobalDiscount=New absolute supplier discount
+NewClientGlobalDiscount=New absolute client discount
 NewRelativeDiscount=خصم نسبي جديد
 DiscountType=نوع الخصم
 NoteReason=ملاحظة / السبب
@@ -396,7 +404,7 @@ DateLastGenerationShort=تاريخ أحدث اصدار
 MaxPeriodNumber=العدد الأعلى لإصدار الفاتورة
 NbOfGenerationDone=عدد الفواتير المنجزة بالفعل
 NbOfGenerationOfRecordDone=عدد إنشاء السجل الذي تم إنجازه بالفعل
-NbOfGenerationDoneShort=عدد الفواتير المنجزة بالفعل
+NbOfGenerationDoneShort=Number of generations done
 MaxGenerationReached=تم بلوغ الحد الأقصى لعدد الاصدار
 InvoiceAutoValidate=اعتماد الفواتير تلقائيًا
 GeneratedFromRecurringInvoice=تم إنشاؤه من نموذج الفاتورة المتكررة %s
@@ -450,7 +458,7 @@ ErrorPaymentConditionsNotEligibleToDepositCreation=شروط الدفع المخ�
 PaymentTypeVIR=حوالة مصرفية
 PaymentTypeShortVIR=حوالة مصرفية
 PaymentTypePRE=أمر دفع الخصم المباشر
-PaymentTypePREdetails=علي الحساب
+PaymentTypePREdetails=(on account %s...)
 PaymentTypeShortPRE=أمر دفع المدين
 PaymentTypeLIQ=نقدا
 PaymentTypeShortLIQ=نقدا
@@ -509,13 +517,14 @@ UseLine=تطبيق
 UseDiscount=استخدام الخصم
 UseCredit=استخدم الرصيد
 UseCreditNoteInInvoicePayment=تخفيض المبلغ لدفع هذه القروض
-MenuChequeDeposits=إيداع الشيكات
+MenuChequeDeposits=Deposits slips
 MenuCheques=الشيكات
-MenuChequesReceipts=استلام الشيكات
-NewChequeDeposit=ايداع جديدة
-ChequesReceipts=استلام الشيكات
-ChequesArea=منطقة ايداع الشيكات
-ChequeDeposits=إيداع الشيكات
+MenuChequesReceipts=Deposit slips
+NewChequeDeposit=New deposit slip
+ChequesReceipts=Cheque deposit slips
+DocumentsDepositArea=Deposit slip area
+ChequesArea=Deposit slips area
+ChequeDeposits=Deposit slips
 Cheques=الشيكات
 DepositId=معرف الايداع
 NbCheque=عدد الشيكات
@@ -621,9 +630,10 @@ SituationTotalRayToRest=ما تبقى للدفع بدون ضريبة
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=إجمالي التقدم %d %%
 SearchUnpaidInvoicesWithDueDate=البحث في الفواتير غير المسددة بتاريخ استحقاق = %s
+SearchValidatedInvoicesWithDate=Search unpaid invoices with a validation date = %s
 NoPaymentAvailable=لا توجد مدفوعات متاحة مقابل %s
 PaymentRegisteredAndInvoiceSetToPaid=تم تسجيل الدفعة وتم تعيين الفاتورة %s على الدفع
-SendEmailsRemindersOnInvoiceDueDate=إرسال تذكير عن طريق البريد الإلكتروني للفواتير غير المسددة
+SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for validated and unpaid invoices
 MakePaymentAndClassifyPayed=دفع قياسي
 BulkPaymentNotPossibleForInvoice=الدفع بالجملة غير ممكن للفاتورة %s (نوع أو حالة سيئة)
 MentionVATDebitOptionIsOn=Option to pay tax based on debits

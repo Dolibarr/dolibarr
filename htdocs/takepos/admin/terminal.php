@@ -159,7 +159,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td>';
-$filter = '((s.client:IN:1,3) AND (s.status:=:1))';
+$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0);
 print '</td></tr>';
 
@@ -226,7 +226,7 @@ if (isModEnabled("banque")) {
 		foreach ($readers as $tmpreader) {
 			$reader[$tmpreader->id] = $tmpreader->label.' ('.$tmpreader->status.')';
 		}
-		print $form->selectarray('CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse, $reader, $conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse});
+		print $form->selectarray('CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse, $reader, getDolGlobalString('CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse));
 		print '</td></tr>';
 	}
 
@@ -281,14 +281,14 @@ if (isModEnabled('stock')) {
 	print '<td class="minwidth300">';
 	if (!$disabled) {
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
+		print $formproduct->selectWarehouses(getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal), 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?&terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
 
-	if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK) && !$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
+	if (isModEnabled('productbatch') && getDolGlobalString('CASHDESK_FORCE_DECREASE_STOCK') && !getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
 		print '<tr class="oddeven"><td>'.$langs->trans('CashDeskForceDecreaseStockLabel').'</td>';
 		print '<td>';
 		print '<span class="opacitymedium">'.$langs->trans('CashDeskForceDecreaseStockDesc').'</span>';
@@ -399,7 +399,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 			}
 		}
 	}
-	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, (empty($conf->global->{'TAKEPOS_ADDON'.$terminaltouse}) ? '0' : $conf->global->{'TAKEPOS_ADDON'.$terminaltouse}), 0);
+	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, getDolGlobalString('TAKEPOS_ADDON'.$terminaltouse, '0'), 0);
 	print "</td></tr>\n";
 	print '</table>';
 	print '</div>';
@@ -434,7 +434,7 @@ print '</td>';
 print '<td>';
 $variablename = 'TAKEPOS_HEADER'.$terminaltouse;
 if (!getDolGlobalInt('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->{$variablename}.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
@@ -450,7 +450,7 @@ print '</td>';
 print '<td>';
 $variablename = 'TAKEPOS_FOOTER'.$terminaltouse;
 if (!getDolGlobalInt('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->{$variablename}.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');

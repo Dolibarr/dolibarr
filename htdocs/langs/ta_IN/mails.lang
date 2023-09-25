@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=பயனரின் மின்னஞ்ச�
 MailingModuleDescDolibarrUsers=மின்னஞ்சல்களைக் கொண்ட பயனர்கள்
 MailingModuleDescThirdPartiesByCategories=Third parties
 SendingFromWebInterfaceIsNotAllowed=இணைய இடைமுகத்திலிருந்து அனுப்ப அனுமதி இல்லை.
-EmailCollectorFilterDesc=மின்னஞ்சலைச் சேகரிக்க அனைத்து வடிப்பான்களும் பொருந்த வேண்டும்
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=கோப்பில் %s வரி
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=புதிய தொடர்பை உருவ
 DefaultStatusEmptyMandatory=காலி ஆனால் கட்டாயம்
 WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)
