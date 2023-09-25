@@ -592,8 +592,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Fields from hook
-		$parameters = array('
-		'=>$objp);
+		$parameters = array('objp'=>$objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
