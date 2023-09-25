@@ -22,7 +22,7 @@
 create table llx_return
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref					varchar(30)        NOT NULL,
   label					varchar(255),
   entity				integer  DEFAULT 1 NOT NULL,	-- multi company id
