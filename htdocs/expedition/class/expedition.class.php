@@ -697,14 +697,14 @@ class Expedition extends CommonObject
 	 */
 	public function valid($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid");
 
 		// Protection
-		if ($this->statut) {
+		if ($this->status) {
 			dol_syslog(get_class($this)."::valid not in draft status", LOG_WARNING);
 			return 0;
 		}
@@ -754,7 +754,7 @@ class Expedition extends CommonObject
 
 		// If stock increment is done on sending (recommanded choice)
 		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
-			$result = $this->manageStockMvtOnEvt($user);
+			$result = $this->manageStockMvtOnEvt($user, "ShipmentValidatedInDolibarr");
 			if ($result < 0) {
 				return -2;
 			}
@@ -1088,14 +1088,11 @@ class Expedition extends CommonObject
 			$this->model_pdf = trim($this->model_pdf);
 		}
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
@@ -1121,7 +1118,6 @@ class Expedition extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " entity=".$conf->entity;
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -1593,11 +1589,12 @@ class Expedition extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
+
 				if ($originline > 0 && $originline == $obj->fk_origin_line) {
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
-					$line = new ExpeditionLigne($this->db);
+					$line = new ExpeditionLigne($this->db);		// new group to start
 					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
 					$line->qty_shipped    	= $obj->qty_shipped;	// this is a property of a shipment line
 				}
@@ -1855,7 +1852,7 @@ class Expedition extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -2192,12 +2189,14 @@ class Expedition extends CommonObject
 
 	/**
 	 * Manage Stock MVt onb Close or valid Shipment
-	 * @param      User 	$user        		Object user that modify
-	 * @return     int     <0 if ko, >0 if ok
+	 *
+	 * @param      	User 	$user        		Object user that modify
+	 * @param		string	$labelmovement		Label of movement
+	 * @return     	int     					<0 if KO, >0 if OK
 	 * @throws Exception
 	 *
 	 */
-	private function manageStockMvtOnEvt($user)
+	private function manageStockMvtOnEvt($user, $labelmovement = 'ShipmentClassifyClosedInDolibarr')
 	{
 		global $langs;
 
@@ -2244,7 +2243,7 @@ class Expedition extends CommonObject
 					// line without batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref));
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans($labelmovement, $obj->ref));
 					if ($result < 0) {
 						$this->error = $mouvS->error;
 						$this->errors = $mouvS->errors;
@@ -2255,7 +2254,7 @@ class Expedition extends CommonObject
 					// line with batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans($labelmovement, $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 					if ($result < 0) {
 						$this->error = $mouvS->error;
 						$this->errors = $mouvS->errors;
@@ -2829,8 +2828,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function delete($user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -2894,8 +2891,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");

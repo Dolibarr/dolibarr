@@ -326,3 +326,6 @@ IncludeSubWarehouse=Include sub-warehouse ?
 IncludeSubWarehouseExplanation=Check this box if you want to include all sub-warehouses of the associated warehouse in the inventory
 DeleteBatch=Delete lot/serial
 ConfirmDeleteBatch=Are you sure you want to delete lot/serial ?
+WarehouseUsage=Warehouse usage
+InternalWarehouse=Internal warehouse
+ExternalWarehouse=External warehouse

@@ -1866,15 +1866,12 @@ class Propal extends CommonObject
 	 *
 	 *	@param		int			$only_product			Return only physical products
 	 *	@param		int			$loadalsotranslation	Return translation for products
-	 *	@param		string		$filters				Filter on other fields
-	 *
+	 *	@param		string		$sqlforgedfilters		Filter on other fields
 	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $filters = '')
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlforgedfilters = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->lines = array();
 
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
@@ -1890,8 +1887,8 @@ class Propal extends CommonObject
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
-		if ($filters) {
-			$sql .= $filters;
+		if ($sqlforgedfilters) {
+			$sql .= $sqlforgedfilters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -3882,7 +3879,7 @@ class Propal extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -3945,13 +3942,13 @@ class Propal extends CommonObject
 
 	/**
 	 * 	Retrieve an array of proposal lines
-	 *	@param  string              $filters        Filter on other fields
 	 *
-	 * 	@return int		>0 if OK, <0 if KO
+	 *	@param  string	$sqlforgedfilters       Filter on other fields
+	 * 	@return int								>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($filters = '')
+	public function getLinesArray($sqlforgedfilters = '')
 	{
-		return $this->fetch_lines(0, 0, $filters);
+		return $this->fetch_lines(0, 0, $sqlforgedfilters);
 	}
 
 	/**

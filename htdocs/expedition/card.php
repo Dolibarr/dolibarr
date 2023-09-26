@@ -2420,7 +2420,7 @@ if ($action == 'create') {
 
 				// Warehouse source
 				if (isModEnabled('stock')) {
-					print '<td class="linecolwarehousesource left">';
+					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
@@ -2540,6 +2540,10 @@ if ($action == 'create') {
 	}
 
 	// TODO Show also lines ordered but not delivered
+
+	if (empty($num_prod)) {
+		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")).'</span></td></tr>';
+	}
 
 	print "</table>\n";
 	print '</tbody>';

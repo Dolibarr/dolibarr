@@ -74,7 +74,7 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
-if (empty($id)) {
+if (empty($id) && $action != 'create') {
 	$id = $user->id;
 }
 
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 				if (GETPOST('password', 'none')) {
 					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
-				if ($resPass < 0) {
+				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -664,7 +664,7 @@ if (empty($reshook)) {
 					$object->oldcopy = clone $object;
 
 					$ret = $object->setPassword($user, GETPOST("password", "none"));
-					if ($ret < 0) {
+					if (is_int($ret) && $ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
@@ -679,7 +679,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		$newpassword = $object->setPassword($user, '');	// This will generate a new password
-		if ($newpassword < 0) {
+		if (is_int($newpassword) && $newpassword < 0) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
@@ -962,7 +962,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Administrator
 	if (!empty($user->admin)) {
-		print '<tr><td>'.$langs->trans("Administrator").'</td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc"), 1, 'star').'</td>';
 		print '<td>';
 		print $form->selectyesno('admin', GETPOST('admin'), 1, false, 0, 1);
 
@@ -1497,7 +1497,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * View mode
 		 */
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
@@ -2149,7 +2149,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Card in edit mode
+		 * Edit mode
 		 */
 		if ($action == 'edit' && ($canedituser || $caneditpasswordandsee)) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
@@ -2216,7 +2216,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Administrator
-			print '<tr><td>'.$langs->trans("Administrator").'</td>';
+			print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc")).'</td>';
 			if ($object->socid > 0) {
 				$langs->load("admin");
 				print '<td>';
