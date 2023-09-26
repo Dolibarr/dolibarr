@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
- * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
+/* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2021		Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023		Solution Libre SAS		<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,9 @@
  */
 
 /**
- *      \file       htdocs/core/class/notify.class.php
- *      \ingroup    notification
- *      \brief      File of class to manage notifications
+ *	\file		htdocs/core/class/notify.class.php
+ *	\ingroup	notification
+ *	\brief		File of class to manage notifications
  */
 
 /**

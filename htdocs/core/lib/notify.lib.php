@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023        Solution Libre SAS        <contact@qolution-libre.fr>
+/* Copyright (C) 2023	Solution Libre SAS	<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,21 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
 /**
- *	Send the notification email
+ * Send the notification email
  *
- *  @param	string			$notifCode		Notification code
- *  @param	string			$targetType		Target type (tocontactid or touserid)
- *  @param	string			$to				Recipients
- *  @param	string			$from			Sender
- *  @param	CommonObject	$object			Related object
- *  @param	string			$newRef			Related object new reference
- *  @param	string			$companyName	Company name
- *  @param	string			$urlWithRoot	URL with root
- *  @param	Translate		$outputLangs	Object langs for output
- *  @param	int				$actionId		Action Trigger ID
- *  @param	?int			$contactId		Contact ID
- *  @param	string			$type			Type
- *  @param	string			$email			Email
+ * @param	string			$notifCode		Notification code
+ * @param	string			$targetType		Target type (tocontactid or touserid)
+ * @param	string			$to				Recipients
+ * @param	string			$from			Sender
+ * @param	CommonObject	$object			Related object
+ * @param	string			$newRef			Related object new reference
+ * @param	string			$companyName	Company name
+ * @param	string			$urlWithRoot	URL with root
+ * @param	Translate		$outputLangs	Object langs for output
+ * @param	int				$actionId		Action Trigger ID
+ * @param	?int			$contactId		Contact ID
+ * @param	string			$type			Type
+ * @param	string			$email			Email
  *
  * @return string The error message
  */
@@ -107,20 +107,21 @@ function notify_sendMail(
 			$objectType = 'ficheinter';
 			$mesg = $outputLangs->transnoentitiesnoconv('EMailTextIntervention' . $bodyKeys[$notifCode], $link);
 			break;
-			break;
-		case 'ORDER_SUPPLIER_VALIDATE':
 		case 'ORDER_SUPPLIER_APPROVE':
 		case 'ORDER_SUPPLIER_REFUSE':
+		case 'ORDER_SUPPLIER_SUBMIT':
+		case 'ORDER_SUPPLIER_VALIDATE':
 			$bodyKeys = [
-				'ORDER_SUPPLIER_VALIDATE' => 'Validated',
-				'ORDER_SUPPLIER_APPROVE'  => 'Approved',
-				'ORDER_SUPPLIER_REFUSE'   => 'Refused'
+				'ORDER_SUPPLIER_APPROVE'  => 'EMailTextOrderApproved',
+				'ORDER_SUPPLIER_REFUSE'   => 'EMailTextOrderRefused',
+				'ORDER_SUPPLIER_SUBMIT'   => 'EMailTextSupplierOrderSubmit',
+				'ORDER_SUPPLIER_VALIDATE' => 'EMailTextOrderValidated',
 			];
 			$link = '<a href="'.$urlWithRoot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 			$objectType = 'order_supplier';
 			$mesg = $outputLangs->transnoentitiesnoconv("Hello").",\n\n";
-			$mesg .= $outputLangs->transnoentitiesnoconv('EMailTextOrder' . $bodyKeys[$notifCode] . 'By', $link, $user->getFullName($outputLangs));
+			$mesg .= $outputLangs->transnoentitiesnoconv($bodyKeys[$notifCode] . 'By', $link, $user->getFullName($outputLangs));
 			$mesg .= "\n\n".$outputLangs->transnoentitiesnoconv("Sincerely").".\n\n";
 			break;
 		case 'SHIPPING_VALIDATE':
