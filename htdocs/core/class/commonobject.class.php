@@ -1170,6 +1170,11 @@ abstract class CommonObject
 		// phpcs:enable
 		global $user;
 
+		$result = $this->call_trigger(strtoupper($this->element).'_BEFORE_DELETE_CONTACT', $user);
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
+		}
 
 		$this->db->begin();
 
