@@ -2214,6 +2214,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->origin = $this->origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
+			//var_dump($this->line->origin);
+			//var_dump($this->line->origin_id);
 
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
