@@ -126,9 +126,10 @@ class Thirdparties extends DolibarrApi
 	 *								Set to 4 to show only suppliers
 	 * @param  	int    	$category   Use this param to filter list by category
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
+  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of thirdparty objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		$obj_ret = array();
 
@@ -233,7 +234,7 @@ class Thirdparties extends DolibarrApi
 					if (isModEnabled('mailing')) {
 						$soc_static->getNoEmail();
 					}
-					$obj_ret[] = $this->_cleanObjectDatas($soc_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($soc_static), $properties);
 				}
 				$i++;
 			}

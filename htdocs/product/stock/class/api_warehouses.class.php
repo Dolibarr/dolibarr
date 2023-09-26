@@ -89,11 +89,12 @@ class Warehouses extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
+  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -142,7 +143,7 @@ class Warehouses extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$warehouse_static = new Entrepot($this->db);
 				if ($warehouse_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($warehouse_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($warehouse_static), $properties);
 				}
 				$i++;
 			}

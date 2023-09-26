@@ -207,11 +207,12 @@ class Members extends DolibarrApi
 	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -263,7 +264,7 @@ class Members extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$member = new Adherent($this->db);
 				if ($member->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($member);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($member), $properties);
 				}
 				$i++;
 			}

@@ -66,9 +66,10 @@ class Users extends DolibarrApi
 	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param int       $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -126,7 +127,7 @@ class Users extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$user_static = new User($this->db);
 				if ($user_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($user_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($user_static), $properties);
 				}
 				$i++;
 			}
@@ -515,12 +516,13 @@ class Users extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string   	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 *
 	 * @throws RestException 404 User not found
 	 * @throws RestException 503 Error
 	 */
-	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '')
+	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -569,7 +571,7 @@ class Users extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$group_static = new UserGroup($this->db);
 				if ($group_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($group_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($group_static), $properties);
 				}
 				$i++;
 			}

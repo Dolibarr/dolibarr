@@ -47,11 +47,12 @@ class MultiCurrencies extends DolibarrApi
 	 * @param string	$sortorder		Sort order
 	 * @param int		$limit		    Limit for list
 	 * @param string    $sqlfilters 	Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+  	 * @param string    $properties		Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                	Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $sqlfilters = '', $properties = '')
 	{
 		global $db;
 
@@ -89,7 +90,7 @@ class MultiCurrencies extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$multicurrency_static = new MultiCurrency($this->db);
 				if ($multicurrency_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($multicurrency_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($multicurrency_static), $properties);
 				}
 				$i++;
 			}

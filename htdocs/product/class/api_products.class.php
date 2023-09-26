@@ -173,9 +173,10 @@ class Products extends DolibarrApi
 	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
 	 * @param  bool   $pagination_data   	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param  int    $includestockdata		Load also information about stock (slower)
+  	 * @param string  $properties	        Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
 		global $db, $conf;
 
@@ -266,7 +267,7 @@ class Products extends DolibarrApi
 						}
 
 
-						$obj_ret[] = $this->_cleanObjectDatas($product_static);
+						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($product_static), $properties);
 					}
 				} else {
 					$obj_ret[] = $obj->rowid;
@@ -1010,6 +1011,7 @@ class Products extends DolibarrApi
 	 * @param  int    $limit      Limit for list
 	 * @param  int    $page       Page number
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:color)"
+  	 * @param string  $properties Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array
 	 *
 	 * @throws RestException 401
@@ -1018,7 +1020,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url GET attributes
 	 */
-	public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
@@ -1063,7 +1065,7 @@ class Products extends DolibarrApi
 			$tmp->position = $obj->position;
 			$tmp->entity = $obj->entity;
 
-			$return[] = $this->_cleanObjectDatas($tmp);
+			$return[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp), $properties);
 		}
 
 		if (!count($return)) {

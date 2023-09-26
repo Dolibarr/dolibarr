@@ -194,11 +194,12 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
+  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 *
 	 * @return array Array of ticket objects
 	 *
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -277,7 +278,7 @@ class Tickets extends DolibarrApi
 						$userStatic->fetch($ticket_static->fk_user_assign);
 						$ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
 					}
-					$obj_ret[] = $this->_cleanObjectDatas($ticket_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($ticket_static), $properties);
 				}
 				$i++;
 			}
