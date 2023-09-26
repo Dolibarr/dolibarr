@@ -222,6 +222,16 @@ class Project extends CommonObject
 	public $weekWorkLoadPerTask; // Used to store workload details of tasks of a projet
 
 	/**
+	 * @var array Used to store workload details of a projet
+	 */
+	public $monthWorkLoad;
+
+	/**
+	 * @var array Used to store workload details of tasks of a projet
+	 */
+	public $monthWorkLoadPerTask;
+
+	/**
 	 * @var int Creation date
 	 * @deprecated
 	 * @see $date_c
