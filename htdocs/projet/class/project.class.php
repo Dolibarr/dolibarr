@@ -256,6 +256,11 @@ class Project extends CommonObject
 	public $date_m;
 
 	/**
+	 * @var string Ip address
+	 */
+	public $ip;
+
+	/**
 	 * @var Task[]
 	 */
 	public $lines;
