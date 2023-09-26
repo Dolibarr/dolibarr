@@ -45,10 +45,10 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param string	$sortfield		Sort field
 	 * @param string	$sortorder		Sort order
-	 * @param int		$limit		    Limit for list
-	 * @param string    $sqlfilters 	Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
-  	 * @param string    $properties		Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                	Array of warehouse objects
+	 * @param int		$limit			Limit for list
+	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $properties		Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @return array					Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
@@ -109,7 +109,7 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * Return an array with Currency informations
 	 *
-	 * @param 	int 		$id 	ID of Currency
+	 * @param	int			$id		ID of Currency
 	 * @return  Object              Object with cleaned properties
 	 *
 	 * @throws RestException
@@ -134,8 +134,8 @@ class MultiCurrencies extends DolibarrApi
 	 * Return an array with Currency informations
 	 * @url GET /bycode/{code}
 	 *
-	 * @param 	string 		$code 	Code of Currency (ex: EUR)
-	 * @return 	array|mixed 		Data without useless information
+	 * @param	string		$code	Code of Currency (ex: EUR)
+	 * @return	array|mixed			Data without useless information
 	 *
 	 * @throws RestException
 	 */
@@ -159,8 +159,8 @@ class MultiCurrencies extends DolibarrApi
 	 * Get a list of Currency rates
 	 *
 	 * @url GET {id}/rates
-	 * @param	int 	$id		ID of Currency
-	 * @return 	array|mixed 	Data without useless information
+	 * @param	int		$id		ID of Currency
+	 * @return	array|mixed		Data without useless information
 	 *
 	 * @throws RestException
 	 */
@@ -191,7 +191,7 @@ class MultiCurrencies extends DolibarrApi
 	 * Create Currency object
 	 *
 	 * @param array $request_data	Request data
-	 * @return int  				ID of Currency
+	 * @return int					ID of Currency
 	 *
 	 * @throws RestException
 	 */
@@ -235,7 +235,7 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param int   $id             Id of Currency to update
 	 * @param array $request_data   Datas
-	 * @return array 				The updated Currency
+	 * @return array				The updated Currency
 	 *
 	 * @throws RestException
 	 */
@@ -302,7 +302,7 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param	int		$id				Currency ID
 	 * @param	array	$request_data	Request data
-	 * @return	Object|false		  	Object with cleaned properties
+	 * @return	Object|false			Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -335,7 +335,7 @@ class MultiCurrencies extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   MultiCurrency	$object		Object to clean
-	 * @return  Object                     	Object with cleaned properties
+	 * @return  Object						Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -361,7 +361,7 @@ class MultiCurrencies extends DolibarrApi
 	 * Clean sensible MultiCurrencyRate object datas
 	 *
 	 * @param   MultiCurrency	$object     Object to clean
-	 * @return  Object          			Object with cleaned properties
+	 * @return  Object						Object with cleaned properties
 	 */
 	protected function _cleanObjectDatasRate($object)
 	{

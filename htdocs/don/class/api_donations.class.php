@@ -57,9 +57,9 @@ class Donations extends DolibarrApi
 	 * Return an array with donation informations
 	 *
 	 * @param   int         $id         ID of order
-	 * @return  Object              	Object with cleaned properties
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -95,7 +95,7 @@ class Donations extends DolibarrApi
 	 * @param int       $page               Page number
 	 * @param string    $thirdparty_ids     Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-  	 * @param string    $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                       Array of order objects
 	 *
 	 * @throws RestException

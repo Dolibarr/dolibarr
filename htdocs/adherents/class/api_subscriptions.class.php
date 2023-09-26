@@ -51,8 +51,8 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * Return an array with subscription informations
 	 *
-	 * @param   int     $id 			ID of subscription
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int     $id				ID of subscription
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @throws  RestException
 	 */

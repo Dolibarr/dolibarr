@@ -55,8 +55,8 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param   int     $id 			ID of member
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int     $id				ID of member
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @throws  RestException
 	 */
@@ -88,9 +88,9 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $thirdparty 	ID of third party
+	 * @param     int     $thirdparty	ID of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/{thirdparty}
 	 *
@@ -123,7 +123,7 @@ class Members extends DolibarrApi
 	 *
 	 * @param  string $email            Email of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/email/{email}
 	 *
@@ -160,9 +160,9 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param  string $barcode      	Barcode of third party
+	 * @param  string $barcode			Barcode of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/barcode/{barcode}
 	 *
@@ -204,7 +204,7 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param int    	$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
 	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
@@ -484,11 +484,11 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int 		$id             ID of member
-	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
-	 * @param string 	$end_date       End date {@from body} {@type timestamp}
-	 * @param float 	$amount         Amount (may be 0) {@from body}
-	 * @param string 	$label         	Label {@from body}
+	 * @param int		$id             ID of member
+	 * @param string	$start_date     Start date {@from body} {@type timestamp}
+	 * @param string	$end_date       End date {@from body} {@type timestamp}
+	 * @param float		$amount         Amount (may be 0) {@from body}
+	 * @param string	$label			Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions

@@ -48,8 +48,8 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * Return an array with member type informations
 	 *
-	 * @param   int     $id 			ID of member type
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int     $id				ID of member type
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @throws  RestException
 	 */

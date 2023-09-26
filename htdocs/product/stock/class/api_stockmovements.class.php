@@ -57,10 +57,10 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement informations
 	 *
-	 * @param 	int 	$id 			ID of movement
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of movement
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	/*
 	public function get($id)
@@ -89,7 +89,7 @@ class StockMovements extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
-  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException

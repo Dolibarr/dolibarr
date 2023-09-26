@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020     	Frédéric France		<frederic.france@netlogic.fr>
- * Copyright (C) 2022     	Christian Humpel		<christian.humpel@live.com>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,11 @@ class Boms extends DolibarrApi
 	 *
 	 * Return an array with bom informations
 	 *
-	 * @param 	int 	$id 			ID of bom
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of bom
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET {id}
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -87,10 +87,10 @@ class Boms extends DolibarrApi
 	 *
 	 * Get a list of boms
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects

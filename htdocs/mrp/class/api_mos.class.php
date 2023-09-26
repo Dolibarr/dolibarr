@@ -55,11 +55,11 @@ class Mos extends DolibarrApi
 	 *
 	 * Return an array with MO informations
 	 *
-	 * @param 	int 	$id 			ID of MO
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of MO
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET {id}
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -85,10 +85,10 @@ class Mos extends DolibarrApi
 	 *
 	 * Get a list of MOs
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
@@ -296,8 +296,8 @@ class Mos extends DolibarrApi
 	 *   "arraytoproduce": []
 	 * }
 	 *
-	 * @param int       $id        		ID of state
-	 * @param array 	$request_data   Request datas
+	 * @param int       $id				ID of state
+	 * @param array		$request_data   Request datas
 	 *
 	 * @url     POST {id}/produceandconsume
 	 *

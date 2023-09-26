@@ -66,8 +66,8 @@ class Zapier extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id 	ID of hook
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int             $id		ID of hook
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException
@@ -135,7 +135,7 @@ class Zapier extends DolibarrApi
 	 * @param int              $limit               Limit for list
 	 * @param int              $page                Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-  	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException

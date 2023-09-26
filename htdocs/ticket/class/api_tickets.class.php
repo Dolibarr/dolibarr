@@ -65,8 +65,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	int 			$id 		ID of ticket
-	 * @return  Object              		Object with cleaned properties
+	 * @param	int				$id			ID of ticket
+	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
@@ -82,14 +82,14 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	string  		$track_id 	Tracking ID of ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	string			$track_id	Tracking ID of ticket
+	 * @return	array|mixed					Data without useless information
 	 *
 	 * @url GET track_id/{track_id}
 	 *
-	 * @throws RestException 	401
-	 * @throws RestException 	403
-	 * @throws RestException 	404
+	 * @throws RestException	401
+	 * @throws RestException	403
+	 * @throws RestException	404
 	 */
 	public function getByTrackId($track_id)
 	{
@@ -101,8 +101,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	string  		$ref    	Reference for ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	string			$ref		Reference for ticket
+	 * @return	array|mixed					Data without useless information
 	 *
 	 * @url GET ref/{ref}
 	 *
@@ -119,10 +119,10 @@ class Tickets extends DolibarrApi
 	 * Get properties of a Ticket object
 	 * Return an array with ticket informations
 	 *
-	 * @param	int 			$id 		ID of ticket
-	 * @param	string  		$track_id 	Tracking ID of ticket
-	 * @param	string  		$ref    	Reference for ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	int				$id			ID of ticket
+	 * @param	string			$track_id	Tracking ID of ticket
+	 * @param	string			$ref		Reference for ticket
+	 * @return	array|mixed					Data without useless information
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '')
 	{
@@ -194,7 +194,7 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
-  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 *
 	 * @return array Array of ticket objects
 	 *

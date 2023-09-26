@@ -55,10 +55,10 @@ class Warehouses extends DolibarrApi
 	 *
 	 * Return an array with warehouse informations
 	 *
-	 * @param 	int 	$id 			ID of warehouse
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of warehouse
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -89,7 +89,7 @@ class Warehouses extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
-  	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException

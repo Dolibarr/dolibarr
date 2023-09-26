@@ -60,8 +60,8 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Return an array with knowledgerecord informations
 	 *
-	 * @param 	int 	$id 			ID of knowledgerecord
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of knowledgerecord
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET knowledgerecords/{id}
 	 *
@@ -125,13 +125,13 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Get a list of knowledgerecords
 	 *
-	 * @param string	       	$sortfield	        Sort field
-	 * @param string	       	$sortorder	        Sort order
-	 * @param int		       	$limit		        Limit for list
-	 * @param int		       	$page		        Page number
-	 * @param int				$category   		Use this param to filter list by category
-	 * @param string           	$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-  	 * @param string			$properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string			$sortfield			Sort field
+	 * @param string			$sortorder			Sort order
+	 * @param int				$limit				Limit for list
+	 * @param int				$page				Page number
+	 * @param int				$category			Use this param to filter list by category
+	 * @param string			$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string			$properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
