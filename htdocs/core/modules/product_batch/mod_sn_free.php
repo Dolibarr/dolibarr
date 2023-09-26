@@ -89,6 +89,15 @@ class mod_sn_free extends ModeleNumRefBatch
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		return $this->getNextValue(null, null);
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
@@ -99,7 +108,6 @@ class mod_sn_free extends ModeleNumRefBatch
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $langs;
 		return '';
 	}
 }

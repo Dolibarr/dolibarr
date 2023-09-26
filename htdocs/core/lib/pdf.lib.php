@@ -1586,7 +1586,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-				$productCustomerPriceStatic = new Productcustomerprice($db);
+				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);

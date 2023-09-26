@@ -61,7 +61,7 @@ function facturefourn_prepare_head(FactureFournisseur $object)
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $object->id);
-		$sql .= " AND pfd.ext_payment_id IS NULL";
+		$sql .= " AND type = 'ban'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -71,6 +71,7 @@ function facturefourn_prepare_head(FactureFournisseur $object)
 		} else {
 			dol_print_error($db);
 		}
+		$langs->load("banks");
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer';
 		$head[$h][1] = $langs->trans('BankTransfer');
 		if ($nbStandingOrders > 0) {

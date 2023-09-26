@@ -128,6 +128,8 @@ class Calendar extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2, 'csslist'=>'tdoverflowmax150',),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;', '9'=>'Annul&eacute;'), 'validate'=>'1',),
+		'type' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'Client', '1'=>'Supplier', '3'=>'Autre'),),
+		'visibility' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Visibility', 'enabled'=>'1', 'position'=>41, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
 	public $ref;
@@ -143,6 +145,8 @@ class Calendar extends CommonObject
 	public $fk_user_modif;
 	public $import_key;
 	public $status;
+	public $type;
+	public $visibility;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -755,7 +759,7 @@ class Calendar extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -1016,11 +1020,11 @@ class Calendar extends CommonObject
 		global $langs, $conf;
 		$langs->load("bookcal@bookcal");
 
-		if (empty(getDolGlobalString('BOOKCAL_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
 			$conf->global->BOOKCAL_MYOBJECT_ADDON = 'mod_calendar_standard';
 		}
 
-		if (!empty(getDolGlobalString('BOOKCAL_MYOBJECT_ADDON'))) {
+		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('BOOKCAL_MYOBJECT_ADDON').".php";

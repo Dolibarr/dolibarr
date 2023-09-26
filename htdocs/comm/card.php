@@ -166,6 +166,7 @@ if (empty($reshook)) {
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editcustomeraccountancycode';
 		}
 	}
 
@@ -1293,7 +1294,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = getMultidirOutput($fichinter_static).'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/fichinter/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
 				print '</td>'."\n";
@@ -1589,6 +1590,7 @@ if ($object->id > 0) {
 
 			if (isModEnabled('facture') && $object->status == 1) {
 				if (empty($user->rights->facture->creer)) {
+					$langs->load("bills");
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 				} else {
 					$langs->loadLangs(array("orders", "bills"));
@@ -1601,7 +1603,7 @@ if ($object->id > 0) {
 								print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 							}
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 						}
 					}
 

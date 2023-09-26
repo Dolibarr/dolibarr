@@ -604,7 +604,7 @@ if ($projectid > 0 || $project_ref) {
 		// Define a complementary filter for search of next/prev ref.
 		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-			$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -680,6 +680,9 @@ if ($search_societe) {
 }
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
+}
+if ($contractid > 0) {
+	$param .= '&contractid='.urlencode($contractid);
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);

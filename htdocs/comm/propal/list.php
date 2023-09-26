@@ -1185,7 +1185,7 @@ if ($resql) {
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 
@@ -2130,7 +2130,7 @@ if ($resql) {
 
 			if (!empty($arrayfields['sale_representative']['checked'])) {
 				// Sales representatives
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid > 0) {
 					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 					if ($listsalesrepresentatives < 0) {

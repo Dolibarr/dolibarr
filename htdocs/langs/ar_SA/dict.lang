@@ -137,7 +137,7 @@ CountryLV=لاتفيا
 CountryLB=لبنان
 CountryLS=ليسوتو
 CountryLR=ليبيريا
-CountryLY=الجماهيرية
+CountryLY=Libya
 CountryLI=ليختنشتاين
 CountryLT=Lithuania
 CountryLU=لوكسمبورج
@@ -247,6 +247,7 @@ CountryJE=جيرسي
 CountryME=الجبل الأسود
 CountryBL=سانت بارتيليمي
 CountryMF=سانت مارتين
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=السيدة

@@ -282,7 +282,7 @@ class BookKeeping extends CommonObject
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
 			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
-				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
+				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.($this->numero_compte != -1 ? $this->numero_compte : $langs->trans("Unknown"));
 				if ($this->subledger_account && $this->subledger_account != $this->numero_compte) {
 					$mesg .= ', '.$langs->trans("SubledgerAccount").': '.$this->subledger_account;
 				}
@@ -488,7 +488,7 @@ class BookKeeping extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

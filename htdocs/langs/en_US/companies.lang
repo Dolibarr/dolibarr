@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - companies
+newSocieteAdded=Your contact details have been recorded. We will get back to you soon...
+ContactUsDesc=This form allows you to send us a message for a first contact.
 ErrorCompanyNameAlreadyExists=Company name %s already exists. Choose another one.
 ErrorSetACountryFirst=Set the country first
 SelectThirdParty=Select a third party
@@ -46,7 +48,7 @@ ParentCompany=Parent company
 Subsidiaries=Subsidiaries
 ReportByMonth=Report per month
 ReportByCustomers=Report per customer
-ReportByThirdparties=Report per thirdparty
+ReportByThirdparties=Report per third party
 ReportByQuarter=Report per rate
 CivilityCode=Civility code
 RegisteredOffice=Registered office
@@ -387,7 +389,7 @@ EditCompany=Edit company
 ThisUserIsNot=This user is not a prospect, customer or vendor
 VATIntraCheck=Check
 VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
-VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckURL=https://ec.europa.eu/taxation_customs/vies/#/vat-validation
 VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
 VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
@@ -500,7 +502,7 @@ InEEC=Europe (EEC)
 RestOfEurope=Rest of Europe (EEC)
 OutOfEurope=Out of Europe (EEC)
 CurrentOutstandingBillLate=Current outstanding bill late
-BecarefullChangeThirdpartyBeforeAddProductToInvoice=Be carefull, depending on your product price settings, you should change thirdparty before adding product to POS.
+BecarefullChangeThirdpartyBeforeAddProductToInvoice=Be carefull, depending on your product price settings, you should change the third party before adding product to POS.
 EmailAlreadyExistsPleaseRewriteYourCompanyName=email already exists please rewrite your company name
 TwoRecordsOfCompanyName=more than one record exists for this company, please contact us to complete your partnership request
 CompanySection=Company section

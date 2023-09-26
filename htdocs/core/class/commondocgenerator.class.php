@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
@@ -109,6 +109,26 @@ abstract class CommonDocGenerator
 	public $option_escompte;
 	public $option_credit_note;
 
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
+	/**
+	 * @var int Tab Title Height
+	 */
+	public $tabTitleHeight;
+
+	/**
+	 * @var array default title fields style
+	 */
+	public $defaultTitlesFieldsStyle;
+
+	/**
+	 * @var array default content fields style
+	 */
+	public $defaultContentsFieldsStyle;
+
 	/**
 	 * @var Societe		Issuer of document
 	 */
@@ -130,12 +150,24 @@ abstract class CommonDocGenerator
 	 */
 	public $result;
 
+	public $posxlabel;
+	public $posxup;
 	public $posxref;
 	public $posxpicture;	// For picture
 	public $posxdesc;		// For description
 	public $posxqty;
 	public $posxpuht;
-
+	public $posxtva;
+	public $posxtotalht;
+	public $postotalht;
+	public $posxunit;
+	public $posxdiscount;
+	public $posxworkload;
+	public $posxtimespent;
+	public $posxprogress;
+	public $atleastonephoto;
+	public $atleastoneratenotnull;
+	public $atleastonediscount;
 
 	/**
 	 *	Constructor
@@ -491,12 +523,6 @@ abstract class CommonDocGenerator
 			$sumdeposit = $object->getSumDepositsUsed();
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
-
-			if ($object->fk_account > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-				$bank_account = new Account($this->db);
-				$bank_account->fetch($object->fk_account);
-			}
 		}
 
 		$date = (isset($object->element) && $object->element == 'contrat' && isset($object->date_contrat)) ? $object->date_contrat : (isset($object->date) ? $object->date : null);
@@ -535,12 +561,6 @@ abstract class CommonDocGenerator
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
-			$array_key.'_bank_iban' => (!empty($bank_account) ? $bank_account->iban : ''),
-			$array_key.'_bank_bic' => (!empty($bank_account) ? $bank_account->bic : ''),
-			$array_key.'_bank_label' => (!empty($bank_account) ? $bank_account->label : ''),
-			$array_key.'_bank_number' => (!empty($bank_account) ? $bank_account->number : ''),
-			$array_key.'_bank_proprio' => (!empty($bank_account) ? $bank_account->proprio : ''),
-
 			$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 			$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
 			$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
@@ -562,7 +582,7 @@ abstract class CommonDocGenerator
 			$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
 			$array_key.'_multicurrency_total_ttc_locale' => price($object->multicurrency_total_ttc, 0, $outputlangs),
 
-			$array_key.'_note_private'=>$object->note,
+			$array_key.'_note_private'=>$object->note_private,
 			$array_key.'_note_public'=>$object->note_public,
 			$array_key.'_note'=>$object->note_public, // For backward compatibility
 
@@ -581,6 +601,22 @@ abstract class CommonDocGenerator
 			$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $already_payed_all, 'MT'), 0, $outputlangs),
 			$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
+
+		if (in_array($object->element, array('facture', 'invoice', 'supplier_invoice', 'facture_fournisseur'))) {
+			$bank_account = null;
+
+			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+				$bank_account = new Account($this->db);
+				$bank_account->fetch($object->fk_account);
+			}
+
+			$resarray[$array_key.'_bank_iban'] = (empty($bank_account) ? '' : $bank_account->iban);
+			$resarray[$array_key.'_bank_bic'] = (empty($bank_account) ? '' : $bank_account->bic);
+			$resarray[$array_key.'_bank_label'] = (empty($bank_account) ? '' : $bank_account->label);
+			$resarray[$array_key.'_bank_number'] = (empty($bank_account) ? '' : $bank_account->number);
+			$resarray[$array_key.'_bank_proprio'] =(empty($bank_account) ? '' : $bank_account->proprio);
+		}
 
 		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
@@ -846,63 +882,6 @@ abstract class CommonDocGenerator
 		}
 
 		return $array_shipment;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Define array with couple substitution key => substitution value
-	 *  Note that vars into substitutions array are formatted.
-	 *
-	 *	@param  ExpeditionLigne	$line				Object line
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array								Substitution array
-	 */
-	public function get_substitutionarray_shipment_lines($line, $outputlangs)
-	{
-		// phpcs:enable
-		dol_include_once('/core/lib/product.lib.php');
-
-		$resarray = array(
-			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
-			'line_product_ref'=>$line->product_ref,
-			'line_product_label'=>$line->product_label,
-			'line_desc'=>$line->desc,
-			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
-			'line_up'=>price($line->subprice),
-			'line_total_up'=>price($line->subprice * $line->qty),
-			'line_qty'=>$line->qty,
-			'line_qty_shipped'=>$line->qty_shipped,
-			'line_qty_asked'=>$line->qty_asked,
-			'line_discount_percent'=>($line->remise_percent ? $line->remise_percent.'%' : ''),
-			'line_price_ht'=>price($line->total_ht),
-			'line_price_ttc'=>price($line->total_ttc),
-			'line_price_vat'=>price($line->total_tva),
-			'line_weight'=>empty($line->weight) ? '' : $line->weight * $line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
-			'line_length'=>empty($line->length) ? '' : $line->length * $line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
-			'line_surface'=>empty($line->surface) ? '' : $line->surface * $line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
-			'line_volume'=>empty($line->volume) ? '' : $line->volume * $line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
-		);
-
-		// Retrieve extrafields
-		$extrafieldkey = $line->element;
-		$array_key = "line";
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
-		$line->fetch_optionals();
-
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
-
-		// Load product data optional fields to the line -> enables to use "line_product_options_{extrafield}"
-		if (isset($line->fk_product) && $line->fk_product > 0) {
-			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($line->fk_product);
-			foreach ($tmpproduct->array_options as $key=>$label)
-				$resarray["line_product_".$key] = $label;
-		}
-
-		return $resarray;
 	}
 
 
@@ -1758,5 +1737,52 @@ abstract class CommonDocGenerator
 		}
 
 		return 1;
+	}
+
+	/**
+	 *   Define Array Column Field into $this->cols
+	 *   This method must be implemented by the module that generate the document with its own columns.
+	 *
+	 *   @param		Object			$object    		Common object
+	 *   @param		Translate		$outputlangs    Langs
+	 *   @param		int			   	$hidedetails	Do not show line details
+	 *   @param		int			   	$hidedesc		Do not show desc
+	 *   @param		int			   	$hideref		Do not show ref
+	 *   @return	void
+	 */
+	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		// Default field style for content
+		$this->defaultContentsFieldsStyle = array(
+			'align' => 'R', // R,C,L
+			'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		);
+
+		// Default field style for content
+		$this->defaultTitlesFieldsStyle = array(
+			'align' => 'C', // R,C,L
+			'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		);
+
+		// Example
+		/*
+		$rank = 0; // do not use negative rank
+		$this->cols['desc'] = array(
+			'rank' => $rank,
+			'width' => false, // only for desc
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'align' => 'L',
+				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+				// 'label' => ' ', // the final label
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+			'content' => array(
+				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+		);
+		*/
 	}
 }

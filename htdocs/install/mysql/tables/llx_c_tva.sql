@@ -21,6 +21,7 @@
 create table llx_c_tva
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity                integer DEFAULT 1 NOT NULL,
   fk_pays               integer NOT NULL,
   type_vat              smallint NOT NULL DEFAULT '0',              -- 0: all, 1: sell, 2: purchase
   code                  varchar(10) DEFAULT '',                     -- a key to describe vat entry, for example FR20

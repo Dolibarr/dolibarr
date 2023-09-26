@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Advertencia, esta lista contiene solo lo
 VueByAccountAccounting=Ver por cuenta contable
 VueBySubAccountAccounting=Ver por subcuenta contable
 
-MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
-MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
-MainAccountForUsersNotDefined=Cuenta contable para usuarios no definida en la configuración
-MainAccountForVatPaymentNotDefined=Cuenta contable para IVA no definida en la configuración
-MainAccountForSubscriptionPaymentNotDefined=Cuenta contable para subscripciones no definida en la configuración
+MainAccountForCustomersNotDefined=Cuenta principal (del Plan Contable) para clientes no definidos en la configuración
+MainAccountForSuppliersNotDefined=Cuenta principal (del Plan Contable) para proveedores no definidos en la configuración
+MainAccountForUsersNotDefined=Cuenta principal (del Plan Contable) para usuarios no definidos en la configuración
+MainAccountForRevenueStampSaleNotDefined=Cuenta (del Plan Contable) para el sello de ingresos (ventas) no definido en la configuración
+MainAccountForRevenueStampPurchaseNotDefined=Cuenta (del Plan Contable) para el sello de ingresos (compras) no definido en la configuración
+MainAccountForVatPaymentNotDefined=Cuenta (del Plan Contable) para el pago del IVA no definida en la configuración
+MainAccountForSubscriptionPaymentNotDefined=Cuenta (del Plan Contable) para pago de membresía no definida en la configuración
+MainAccountForRetainedWarrantyNotDefined=Cuenta (del Plan Contable) para la garantía retenida no definida en la configuración
 UserAccountNotDefined=Cuenta contable para usuarios no definida en la configuración
 
 AccountancyArea=Área contabilidad

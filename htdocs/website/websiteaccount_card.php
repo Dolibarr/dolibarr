@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
-*
+ * Copyright (C) 2023 Lionel Vessiller	   <lvessiller@open-dsi.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -70,15 +71,62 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
-if (!$user->hasRight('website', 'read')) {
+$permissiontoaccess = (isModEnabled('website') && $user->hasRight('website', 'read')) || isModEnabled('webportal');
+if (!$permissiontoaccess) {
 	accessforbidden('NotAllowed');
 }
 
 // Permissions
-$permissionnote    = $user->hasRight('website', 'write');   //  Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->hasRight('website', 'write');   //  Used by the include of actions_dellink.inc.php
-$permissiontoadd   = $user->hasRight('website', 'write');   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('website', 'delete');
+$permissiontocreate = 0;
+$permissiontodelete = 0;
+// permissions from object type of site
+if ($object->id > 0) {
+	if ($object->site == 'dolibarr_website') {
+		$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write');
+		$permissiontodelete = isModEnabled('website') && $user->hasRight('website', 'delete');
+	} elseif ($object->site == 'dolibarr_portal') {
+		$permissiontocreate = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+	}
+} else {
+	$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write') || isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+}
+$permissionnote    = $permissiontocreate;   //  Used by the include of actions_setnotes.inc.php
+$permissiondellink = $permissiontocreate;   //  Used by the include of actions_dellink.inc.php
+$permissiontoadd   = $permissiontocreate;   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+// check access from type of site on create, edit, delete (other than view)
+$site_type_js = '';
+if (!empty($action) && $action != 'view') {
+	if (!empty($object->fields['site']['arrayofkeyval'])) {
+		if (isset($object->fields['site']['arrayofkeyval']['dolibarr_website'])) {
+			if ($action == 'delete' || $action == 'confirm_delete') {
+				if (!$user->hasRight('website', 'delete')) {
+					unset($object->fields['site']['arrayofkeyval']['dolibarr_website']);
+				}
+			} else {
+				if (!$user->hasRight('website', 'write')) {
+					unset($object->fields['site']['arrayofkeyval']['dolibarr_website']);
+				}
+			}
+		}
+
+		if (isset($object->fields['site']['arrayofkeyval']['dolibarr_portal'])) {
+			if (!$user->hasRight('webportal', 'write')) {
+				unset($object->fields['site']['arrayofkeyval']['dolibarr_portal']);
+			}
+		}
+	}
+	if (empty($object->fields['site']['arrayofkeyval'])) {
+		accessforbidden('NotAllowed');
+	}
+
+	if ($object->id > 0) { // update or delete or other than create
+		// check user has the right to modify this type of website
+		if (!key_exists($object->site, $object->fields['site']['arrayofkeyval'])) {
+			accessforbidden('NotAllowed');
+		}
+	}
+}
 
 
 /*
@@ -94,9 +142,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$permissiontoadd = $user->hasRight('website', 'write');
-	$permissiontodelete = $user->hasRight('website', 'delete');
-	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php', 1);
+	$backurlforlist = dol_buildpath('/societe/website.php', 1).'?id='.$object->fk_soc;
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -120,6 +166,31 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader('', 'WebsiteAccount', '');
+
+// prepare output js
+$out_js = '';
+if ($action == 'create' || $action == 'edit') {
+	if (!empty($object->fields['site']['visible']) && !empty($object->fields['fk_website']['visible'])) {
+		$site_type_js = 'function siteTypeChange(site_type) {';
+		$site_type_js .= '		if (site_type == "dolibarr_website") {';
+		$site_type_js .= '			jQuery("tr.field_fk_website").show();';
+		$site_type_js .= '		} else {';
+		$site_type_js .= '			jQuery("select#fk_website").val("-1").change();';
+		$site_type_js .= '			jQuery("tr.field_fk_website").hide();';
+		$site_type_js .= '		}';
+		$site_type_js .= '}';
+		$site_type_js .= 'jQuery(document).ready(function(){';
+		$site_type_js .= '	siteTypeChange(jQuery("#site").val());';
+		$site_type_js .= '	jQuery("#site").change(function(){';
+		$site_type_js .= '		siteTypeChange(this.value);';
+		$site_type_js .= '	});';
+		$site_type_js .= '});';
+
+		$out_js .= '<script type"text/javascript">';
+		$out_js .= $site_type_js;
+		$out_js .= '</script>';
+	}
+}
 
 // Part to create
 if ($action == 'create') {
@@ -147,6 +218,8 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
+
+	print $out_js;
 }
 
 // Part to edit record
@@ -175,6 +248,8 @@ if (($id || $ref) && $action == 'edit') {
 	print $form->buttonsSaveCancel();
 
 	print '</form>';
+
+	print $out_js;
 }
 
 // Part to show record
@@ -196,7 +271,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -214,9 +289,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($socid) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
 	}
-	if ($fk_website) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
-	}
+	//if ($fk_website) {
+	//	$linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	//}
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -305,7 +380,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 			}
 
-			if ($user->hasRight('website', 'write')) {
+			if ($permissiontoadd) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 

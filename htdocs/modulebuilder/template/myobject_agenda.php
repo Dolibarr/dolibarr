@@ -189,6 +189,7 @@ if ($object->id > 0) {
 	$title = $langs->trans("MyObject")." - ".$langs->trans('Agenda');
 	//$title = $object->ref." - ".$langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
+
 	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {

@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
 
 // TODO Only the last method emailElementlist is a hook method. Other must be moved into standard ticket.class.php
 
@@ -300,7 +301,7 @@ class ActionsTicket extends CommonHookActions
 					//print '<tr>';
 					print '<tr class="oddeven">';
 					print '<td><strong>';
-					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datec'], 'dayhour');
+					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
 					if ($show_user) {
 						print '<td>';

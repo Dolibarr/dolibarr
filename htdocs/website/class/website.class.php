@@ -257,7 +257,7 @@ class Website extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			// Create subdirectory per language
+			// Create a subdirectory for each language (except main language)
 			$tmplangarray = explode(',', $this->otherlang);
 			if (is_array($tmplangarray)) {
 				dol_mkdir($conf->website->dir_output.'/'.$this->ref);
@@ -265,9 +265,13 @@ class Website extends CommonObject
 					if (trim($val) == $this->lang) {
 						continue;
 					}
-					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val));
+					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val), DOL_DATA_ROOT);
 				}
 			}
+
+			// Create subdirectory for images and js
+			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
+			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
 			// Uncomment this and change WEBSITE to your own tag if you
 			// want this action to call a trigger.
@@ -398,18 +402,19 @@ class Website extends CommonObject
 	/**
 	 * Load all object in memory ($this->records) from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 		$sortorder 		Sort Order
+	 * @param 	string 		$sortfield 		Sort field
+	 * @param 	int    		$limit     		offset limit
+	 * @param 	int    		$offset    		offset limit
+	 * @param 	array  		$filter    		filter array
+	 * @param 	string 		$filtermode 	filter mode (AND or OR)
+	 * @return 	array|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -444,35 +449,34 @@ class Website extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new self($this->db);
+				$record = new self($this->db);
 
-				$line->id = $obj->rowid;
+				$record->id = $obj->rowid;
 
-				$line->entity = $obj->entity;
-				$line->ref = $obj->ref;
-				$line->description = $obj->description;
-				$line->lang = $obj->lang;
-				$line->otherlang = $obj->otherlang;
-				$line->status = $obj->status;
-				$line->fk_default_home = $obj->fk_default_home;
-				$line->virtualhost = $obj->virtualhost;
-				$this->fk_user_creat = $obj->fk_user_creat;
-				$this->fk_user_modif = $obj->fk_user_modif;
-				$line->date_creation = $this->db->jdate($obj->date_creation);
-				$line->date_modification = $this->db->jdate($obj->date_modification);
+				$record->entity = $obj->entity;
+				$record->ref = $obj->ref;
+				$record->description = $obj->description;
+				$record->lang = $obj->lang;
+				$record->otherlang = $obj->otherlang;
+				$record->status = $obj->status;
+				$record->fk_default_home = $obj->fk_default_home;
+				$record->virtualhost = $obj->virtualhost;
+				$record->fk_user_creat = $obj->fk_user_creat;
+				$record->fk_user_modif = $obj->fk_user_modif;
+				$record->date_creation = $this->db->jdate($obj->date_creation);
+				$record->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->lines[$line->id] = $line;
+				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);
 
-			return $num;
+			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
