@@ -113,3 +113,9 @@ UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AN
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
+
+-- Drop the composite unique index that exists on llx_links to rebuild a new one with objecttype included.
+-- The old design did not allow same label on different object with same id.
+-- VMYSQL4.1 DROP INDEX uk_links on llx_links;
+-- VPGSQL8.2 DROP INDEX uk_links;
+ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
