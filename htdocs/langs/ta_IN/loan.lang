@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = நீங்கள் அட்டவணையைப் பயன்படுத்தினால் ஆர்வத்தை மாற்ற முடியாது
 # Admin
 ConfigLoan=தொகுதி கடன் கட்டமைப்பு
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=கணக்கியல் கணக்கு மூலதனம் இயல்பாக
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=கணக்கியல் கணக்கு வட்டி இயல்பாக
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=முன்னிருப்பாக கணக்கியல் கணக்கு காப்பீடு
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=நிதி உறுதியைத் திருத்தவும்

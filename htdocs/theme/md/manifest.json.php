@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,17 +28,11 @@
 if (!defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
 }
-if (!defined('NOREQUIREDB')) {
-	define('NOREQUIREDB', '1');
-}
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
 }
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
@@ -61,11 +55,6 @@ if (!defined('NOSESSION')) {
 
 require_once __DIR__.'/../../main.inc.php';
 
-$appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
-}
-
 top_httphead('text/json');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) {
@@ -76,17 +65,89 @@ if (empty($dolibarr_nocache)) {
 	header('Cache-Control: no-cache');
 }
 
-?>
-{
-	"name": "<?php echo $appli; ?>",
-	"icons": [
-		{
-			"src": "<?php echo DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png'; ?>",
-			"sizes": "256x256",
-			"type": "image/png"
-		}
-	],
-	"theme_color": "#ffffff",
-	"background_color": "#ffffff",
-	"display": "standalone"
+
+$manifest = new stdClass();
+
+
+$manifest->name = constant('DOL_APPLICATION_TITLE');
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$manifest->name = $conf->global->MAIN_APPLICATION_TITLE;
 }
+$manifest->short_name = $manifest->name;
+
+$manifest->theme_color = empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40') : $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR;
+$manifest->background_color = empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? "#ffffff" : $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR;
+$manifest->display = "standalone";
+$manifest->splash_pages = null;
+$manifest->icons = array();
+$manifest->start_url = constant('DOL_MAIN_URL_ROOT');
+$manifest->id = constant('DOL_MAIN_URL_ROOT');
+
+if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
+	$icon = new stdClass();
+	$icon->src = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL;
+	if ($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE) {
+		$icon->sizes = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE."x".$conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE;
+	} else {
+		$icon->sizes = "512x512";
+	}
+	$icon->type = "image/png";
+	$manifest->icons[] = $icon;
+} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
+	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)) {
+		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
+		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
+		if (is_readable($iconPath)) {
+			$imgSize = getimagesize($iconPath);
+			if (!empty($imgSize)) {
+				$icon = new stdClass();
+				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
+				$icon->sizes = $imgSize[0]."x".$imgSize[1];
+				$icon->type = "image/png";
+				$manifest->icons[] = $icon;
+			}
+		}
+	}
+
+	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL)) {
+		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
+		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
+		if (is_readable($iconPath)) {
+			$imgSize = getimagesize($iconPath);
+			if ($imgSize) {
+				$icon = new stdClass();
+				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
+				$icon->sizes = $imgSize[0]."x".$imgSize[1];
+				$icon->type = "image/png";
+				$manifest->icons[] = $icon;
+			}
+		}
+	}
+
+	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
+		$iconRelativePath = 'logos/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
+		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
+		if (is_readable($iconPath)) {
+			$imgSize = getimagesize($iconPath);
+			if ($imgSize) {
+				$icon = new stdClass();
+				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
+				$icon->sizes = $imgSize[0]."x".$imgSize[1];
+				$icon->type = "image/png";
+				$manifest->icons[] = $icon;
+			}
+		}
+	}
+}
+
+// Add Dolibarr std icon
+if (empty($manifest->icons)) {
+	$icon = new stdClass();
+	$icon->src = DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png';
+	$icon->sizes = "256x256";
+	$icon->type = "image/png";
+	$manifest->icons[] = $icon;
+}
+
+
+print json_encode($manifest);

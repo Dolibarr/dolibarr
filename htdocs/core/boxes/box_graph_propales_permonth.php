@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last propals
+ * Class to manage the box to show proposals per month graph
  */
 class box_graph_propales_permonth extends ModeleBoxes
 {
-	public $boxcode = "propalpermonth";
-	public $boximg = "object_propal";
+	public $boxcode  = "propalpermonth";
+	public $boximg   = "object_propal";
 	public $boxlabel = "BoxProposalsPerMonth";
-	public $depends = array("propal");
+	public $depends  = array("propal");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -56,7 +56,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->propale->lire);
+		$this->hidden = empty($user->rights->propal->lire);
 	}
 
 	/**
@@ -105,7 +105,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->propale->lire) {
+		if ($user->hasRight('propal', 'lire')) {
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
@@ -231,7 +231,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

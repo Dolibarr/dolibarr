@@ -22,6 +22,7 @@
  *    \brief      Page des stats expeditions par mois
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
@@ -46,11 +47,12 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
+$mode = '';
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings").' '.$year, $mesg);
 
-$stats = new ExpeditionStats($db);
-$data = $stats->getNbExpeditionByMonth($year);
+$stats = new ExpeditionStats($db, $socid, $mode);
+$data = $stats->getNbByMonth($year);
 
 dol_mkdir($conf->expedition->dir_temp);
 

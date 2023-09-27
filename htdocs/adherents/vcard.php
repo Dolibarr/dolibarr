@@ -25,6 +25,7 @@
  *		\brief      Vcard tab of a member
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
-$object = new adherent($db);
+$object = new Adherent($db);
 
 // Fetch object
 if ($id > 0 || !empty($ref)) {
@@ -41,22 +42,22 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->rights->adherent->creer;
+$canaddmember = $user->hasRight('adherent', 'creer');
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
-	$caneditfieldmember = $user->rights->adherent->creer;
+	$caneditfieldmember = $user->hasRight('adherent', 'creer');
 }
 
 // Security check
@@ -121,18 +122,23 @@ if ($company->id) {
 	} elseif (empty(trim($object->email))) {
 		// when adherent e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
-	} elseif (strtolower(end(explode("@", $object->email))) == strtolower(end(explode("@", $company->email)))) {
-		// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
-		$v->setEmail($object->email);
-
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($company->email, 'INTERNET');
 	} else {
-		// when e-mail of adherent and company complete different use company e-mail at first (and adherent e-mail at second)
-		$v->setEmail($company->email);
+		$tmpobject = explode("@", trim($object->email));
+		$tmpcompany = explode("@", trim($company->email));
 
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($object->email, 'INTERNET');
+		if (strtolower(end($tmpobject)) == strtolower(end($tmpcompany))) {
+			// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
+			$v->setEmail($object->email);
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($company->email, 'INTERNET');
+		} else {
+			// when e-mail of adherent and company complete different use company e-mail at first (and adherent e-mail at second)
+			$v->setEmail($company->email);
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($object->email, 'INTERNET');
+		}
 	}
 
 	// Si adherent lie a un tiers non de type "particulier"

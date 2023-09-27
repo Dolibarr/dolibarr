@@ -35,6 +35,8 @@
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 // This file may have been already required by main.inc.php. But may not by scripts. So, here the require_once must be kept.
 require_once 'filefunc.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 if (!function_exists('is_countable')) {
@@ -53,15 +55,13 @@ if (!function_exists('is_countable')) {
  * Create $conf object
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
-
 $conf = new Conf();
 
 // Set properties specific to database
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
+$conf->db->host = empty($dolibarr_main_db_host) ? '' : $dolibarr_main_db_host;
+$conf->db->port = empty($dolibarr_main_db_port) ? '' : $dolibarr_main_db_port;
+$conf->db->name = empty($dolibarr_main_db_name) ? '' : $dolibarr_main_db_name;
+$conf->db->user = empty($dolibarr_main_db_user) ? '' : $dolibarr_main_db_user;
 $conf->db->pass = empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
 $conf->db->type = $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
@@ -78,7 +78,7 @@ $conf->file->main_limit_users = $dolibarr_main_limit_users;
 $conf->file->mailing_limit_sendbyweb = empty($dolibarr_mailing_limit_sendbyweb) ? 0 : $dolibarr_mailing_limit_sendbyweb;
 $conf->file->mailing_limit_sendbycli = empty($dolibarr_mailing_limit_sendbycli) ? 0 : $dolibarr_mailing_limit_sendbycli;
 $conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) ? 0 : $dolibarr_mailing_limit_sendbyday;
-$conf->file->main_authentication = empty($dolibarr_main_authentication) ? '' : $dolibarr_main_authentication; // Identification mode
+$conf->file->main_authentication = empty($dolibarr_main_authentication) ? 'dolibarr' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
@@ -137,7 +137,7 @@ if (!defined('NOREQUIRETRAN')) {
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
 		// If we were into a website context
@@ -174,6 +174,11 @@ if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
+/*
+ * Create the global $hookmanager object
+ */
+$hookmanager = new HookManager($db);
+
 
 /*
  * Load object $conf
@@ -186,9 +191,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
 	// Just after a login page
-	$conf->entity = GETPOST("entity", 'int');
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
@@ -208,9 +213,38 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 	$mysoc = new Societe($db);
 	$mysoc->setMysoc($conf);
 
-	// For some countries, we need to invert our address with customer address
+	// We set some specific default values according to country
+
 	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+		// For DE, we need to invert our address with customer address
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)) {
+		// For FR, default value of option to show profid SIRET is on by default. Decret n°2099-1299 2022-10-07
+		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
+		// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
+		$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// For FR, the replacement invoice type is not allowed.
+		// From an accounting point of view, this creates holes in the numbering of the invoice.
+		// This is very problematic during a fiscal control.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+		// The replacement invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+		// The deposit invoice type is not allowed in Greece.
+		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
+	}
+	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
+		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
+		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
+		$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 	}
 }
 
@@ -225,12 +259,7 @@ if (!defined('NOREQUIRETRAN')) {
 }
 
 
-// Create the global $hookmanager object
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager = new HookManager($db);
-
 
 if (!defined('MAIN_LABEL_MENTION_NPR')) {
 	define('MAIN_LABEL_MENTION_NPR', 'NPR');
 }
-//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

@@ -66,7 +66,7 @@ abstract class ActionsContactCardCommon
 
 		if (is_object($this->object) && method_exists($this->object,'fetch'))
 		{
-			if (! empty($id)) $this->object->fetch($id);
+			if (!empty($id)) $this->object->fetch($id);
 		}
 		else
 		{*/
@@ -74,8 +74,10 @@ abstract class ActionsContactCardCommon
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -84,7 +86,7 @@ abstract class ActionsContactCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{
@@ -180,7 +182,7 @@ abstract class ActionsContactCardCommon
 
 		if ($action == 'view' || $action == 'edit' || $action == 'delete') {
 			// Emailing
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}
@@ -191,17 +193,17 @@ abstract class ActionsContactCardCommon
 
 			$this->object->load_ref_elements();
 
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;
 			}
-			if (!empty($conf->propal->enabled)) {
+			if (isModEnabled("propal")) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForProposals");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
 				$i++;
 			}
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
 				$i++;
@@ -251,7 +253,7 @@ abstract class ActionsContactCardCommon
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {
@@ -276,7 +278,7 @@ abstract class ActionsContactCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{

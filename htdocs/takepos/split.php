@@ -25,9 +25,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -41,6 +38,7 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -52,6 +50,11 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0);
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
+
+
+/*
+ * Actions
+ */
 
 if ($action=="split") {
 	$line = GETPOST('line', 'int');
@@ -122,7 +125,7 @@ if ($action=="split") {
  */
 
 $invoice = new Facture($db);
-if ($invoiceid > 0) {
+if (isset($invoiceid) && $invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
@@ -131,7 +134,7 @@ if ($invoiceid > 0) {
 	if ($obj) {
 		$invoiceid = $obj->rowid;
 	}
-	if (!$invoiceid) {
+	if (!isset($invoiceid)) {
 		$invoiceid = 0; // Invoice does not exist yet
 	} else {
 		$invoice->fetch($invoiceid);
@@ -139,6 +142,9 @@ if ($invoiceid > 0) {
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$arrayofcss[] = '/takepos/css/colorful.css';
+}
 $arrayofjs = array();
 
 $head = '';
@@ -152,21 +158,13 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 $arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
-
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
 <body class="takepossplitphp">
 
 <script>
 function Split(selectedline, split) {
 	$.ajax({
-		url: "split.php?action=split&line="+selectedline+"&split="+split+"&place=<?php echo $place;?>",
+		url: "split.php?action=split&token=<?php echo newToken(); ?>&line="+selectedline+"&split="+split+"&place=<?php echo $place;?>",
 		context: document.body
 	}).done(function() {
 		$("#currentplace").load("invoice.php?place="+parent.place+"&invoiceid="+parent.invoiceid, function() {

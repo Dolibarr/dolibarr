@@ -23,6 +23,7 @@
  *	\brief      Page to preview votes of a survey
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
@@ -36,7 +37,7 @@ if (empty($user->rights->opensurvey->read)) {
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
-$numsondage = GETPOST("id");
+$numsondage = GETPOST("id", 'alphanohtml');
 
 $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
@@ -52,8 +53,8 @@ $nblines = $object->fetch_lines();
  */
 
 // Return to the results
-if (GETPOST('retoursondage')) {
-	header('Location: results.php?id='.(GETPOSTISSET('id_sondage') ? GETPOST('id_sondage', 'aZ09') : GETPOST('id', 'int')));
+if (GETPOST('cancel')) {
+	header('Location: results.php?id='.(GETPOSTISSET('id_sondage') ? GETPOST('id_sondage', 'aZ09') : GETPOST('id', 'alphanohtml')));
 	exit;
 }
 
@@ -330,7 +331,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 	if ((GETPOST("effacecolonne".$i) || GETPOST("effacecolonne".$i."_x") || GETPOST("effacecolonne".$i.".x"))
 		&& $nbcolonnes > 1) {	// effacecolonnei for chrome, effacecolonnei_x for firefox
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -426,6 +427,7 @@ $title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
+
 llxHeader('', $title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
 
 
@@ -434,7 +436,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -442,6 +444,7 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 print '<form name="formulaire4" action="#" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
 
 $head = opensurvey_prepare_head($object);
 
@@ -478,7 +481,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
@@ -507,7 +510,6 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border tableforfield centpercent">';
 
-
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td>';
 if ($action == 'edit') {
@@ -524,7 +526,7 @@ print '</td></tr>';
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
 if ($object->fk_user_creat) {
-	print $userstatic->getLoginUrl(1);
+	print $userstatic->getLoginUrl(-1);
 } else {
 	print dol_htmlentities($object->nom_admin);
 }
@@ -574,9 +576,11 @@ if (GETPOST('ajoutsujet')) {
 		accessforbidden();
 	}
 
-	print '<form name="formulaire" action="" method="POST">'."\n";
+	print '<form name="formulaire" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage', 'alpha').'">';
+	print '<input type="hidden" name="id" value="'.GETPOST('id', 'alpha').'">';
+	print '<input type="hidden" name="ajoutsujet" value="1">';
 
 	print '<div class="center">'."\n";
 	print "<br><br>\n";
@@ -590,7 +594,7 @@ if (GETPOST('ajoutsujet')) {
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print '<input type="hidden" name="id_sondage" value="'.dol_escape_htmltag($object->id_sondage).'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '<br><br>'."\n";
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -643,7 +647,7 @@ if (GETPOST('ajoutsujet')) {
 		print '<br><br>';
 		print' <input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">'."\n";
 		print '&nbsp; &nbsp;';
-		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	}
 
 	print '</form>'."\n";
@@ -669,7 +673,7 @@ print '<input type="hidden" name="page_y" value="">';
 print '<div class="cadre div-table-responsive-no-min"> '."\n";
 
 // Start to show survey result
-print '<table class="resultats">'."\n";
+print '<table class="resultats margintoponly">'."\n";
 
 //reformatage des données des sujets du sondage
 $toutsujet = explode(",", $object->sujet);
@@ -680,9 +684,9 @@ print '<td></td>'."\n";
 print '<td></td>'."\n";
 
 // loop to show the delete link
-if ($user->rights->opensurvey->write) {
+if ($user->hasRight('opensurvey', 'write')) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
-		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', false, 1).'"></td>'."\n";
+		print '<td class=somme><input type="image" class="buttonwebsite" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', false, 1).'"></td>'."\n";
 	}
 }
 
@@ -700,34 +704,10 @@ if ($object->format == "D") {
 	$colspan = 1;
 	$nbofsujet = count($toutsujet);
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$current = $toutsujet[$i];
-
-		if (strpos($toutsujet[$i], '@') !== false) {
-			$current = substr($toutsujet[$i], 0, strpos($toutsujet[$i], '@'));
-		}
-
-		if (isset($toutsujet[$i + 1]) && strpos($toutsujet[$i + 1], '@') !== false) {
-			$next = substr($toutsujet[$i + 1], 0, strpos($toutsujet[$i + 1], '@'));
-		} elseif (isset($toutsujet[$i + 1])) {
-			$next = $toutsujet[$i + 1];
-		}
-
-		$currenty = 0;
-		if ($current) {
-			$currenty = strftime("%Y", $current);
-		}
-		$next = 0;
-		if ($next) {
-			$nexty = strftime("%Y", $next);
-		}
-		if (isset($toutsujet[$i + 1]) && ($currenty == $nexty)) {
+		if (isset($toutsujet[$i + 1]) && date('Y', intval($toutsujet[$i])) == date('Y', intval($toutsujet[$i + 1]))) {
 			$colspan++;
 		} else {
-			print '<td colspan='.$colspan.' class="annee">';
-			if ($current) {
-				print strftime("%Y", $current);
-			}
-			print '</td>'."\n";
+			print '<td colspan='.$colspan.' class="annee">'.date('Y', intval($toutsujet[$i])).'</td>'."\n";
 			$colspan = 1;
 		}
 	}
@@ -780,10 +760,10 @@ if ($object->format == "D") {
 		} else {
 			$next = intval($toutsujet[$i + 1]);
 		}
-		if ($next && dol_print_date($cur, "%a %e") == dol_print_date($next, "%a %e") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
+		if ($next && dol_print_date($cur, "%a %d") == dol_print_date($next, "%a %d") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
 			$colspan++;
 		} else {
-			print '<td colspan='.$colspan.' class="jour">'.dol_print_date($cur, "%a %e").'</td>'."\n";
+			print '<td colspan='.$colspan.' class="jour">'.dol_print_date($cur, "%a %d").'</td>'."\n";
 
 			$colspan = 1;
 		}

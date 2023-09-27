@@ -38,20 +38,8 @@ class ImportCsv extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int ID
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -86,6 +74,8 @@ class ImportCsv extends ModeleImports
 
 	public $nbupdate = 0; // # of update done during the import
 
+	public $charset = '';
+
 
 	/**
 	 *	Constructor
@@ -96,6 +86,8 @@ class ImportCsv extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
@@ -115,7 +107,7 @@ class ImportCsv extends ModeleImports
 
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
-			$this->thirpartyobject = new Societe($this->db);
+			$this->thirdpartyobject = new Societe($this->db);
 		}
 	}
 
@@ -238,7 +230,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
@@ -359,7 +351,7 @@ class ImportCsv extends ModeleImports
 						if ($obj) {
 							$tablewithentity_cache[$tablename] = 1; // table contains entity field
 						} else {
-							$tablewithentity_cache[$tablename] = 0; // table does not contains entity field
+							$tablewithentity_cache[$tablename] = 0; // table does not contain entity field
 						}
 					} else {
 						dol_print_error($this->db);
@@ -446,9 +438,9 @@ class ImportCsv extends ModeleImports
 												//var_dump($arrayrecord[0]['val']);
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												 $tmpchartofaccount = new AccountancySystem($this->db);
-												 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
+												 $tmpchartofaccount->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 												 //var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
-												 if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
+												 if ((! (getDolGlobalInt('CHARTOFACCOUNTS') > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												 {
 												 $this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
 												 $this->errors[$error]['type']='RESTRICTONCURRENCTCHART';
@@ -570,8 +562,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codeclient(0, 0);
-										$newval = $this->thirpartyobject->code_client;
+										$this->thirdpartyobject->get_codeclient(0, 0);
+										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
 									if (empty($newval)) {
@@ -579,8 +571,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
-										$newval = $this->thirpartyobject->code_fournisseur;
+										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
 									if (empty($newval)) {
@@ -588,8 +580,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('customer');
-										$newval = $this->thirpartyobject->code_compta;
+										$this->thirdpartyobject->get_codecompta('customer');
+										$newval = $this->thirdpartyobject->code_compta;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -597,8 +589,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('supplier');
-										$newval = $this->thirpartyobject->code_compta_fournisseur;
+										$this->thirdpartyobject->get_codecompta('supplier');
+										$newval = $this->thirdpartyobject->code_compta_fournisseur;
 										if (empty($newval)) {
 											$arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
 										}
@@ -649,7 +641,7 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -736,7 +728,7 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
 								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array
@@ -778,26 +770,26 @@ class ImportCsv extends ModeleImports
 				// Previously we processed the ->import_fields_array.
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
-					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
-						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $key)) {
+					foreach ($objimport->array_import_fieldshidden[0] as $tmpkey => $tmpval) {
+						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $tmpkey)) {
 							continue; // Not a field of current table
 						}
-						if ($val == 'user->id') {
-							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+						if ($tmpval == 'user->id') {
+							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
 							$listvalues[] = ((int) $user->id);
-						} elseif (preg_match('/^lastrowid-/', $val)) {
-							$tmp = explode('-', $val);
+						} elseif (preg_match('/^lastrowid-/', $tmpval)) {
+							$tmp = explode('-', $tmpval);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
 							$listfields[] = $keyfield;
 							$listvalues[] = $lastinsertid;
-							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
-						} elseif (preg_match('/^const-/', $val)) {
-							$tmp = explode('-', $val, 2);
-							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+							//print $tmpkey."-".$tmpval."-".$listfields."-".$listvalues."<br>";exit;
+						} elseif (preg_match('/^const-/', $tmpval)) {
+							$tmp = explode('-', $tmpval, 2);
+							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
-						} elseif (preg_match('/^rule-/', $val)) {
-							$fieldname = $key;
+						} elseif (preg_match('/^rule-/', $tmpval)) {
+							$fieldname = $tmpkey;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
 								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
 									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
@@ -809,7 +801,7 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
@@ -819,7 +811,7 @@ class ImportCsv extends ModeleImports
 								}
 							}
 						} else {
-							$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
+							$this->errors[$error]['lib'] = 'Bad value of profile setup '.$tmpval.' for array_import_fieldshidden';
 							$this->errors[$error]['type'] = 'Import profile setup';
 							$error++;
 						}
@@ -853,7 +845,7 @@ class ImportCsv extends ModeleImports
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									if ($conf->socialnetworks->enabled && strpos($key, "socialnetworks") !== false) {
+									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
 										$tmp = explode("_", $key);
 										$key = $tmp[0];
 										$socialnetwork = $tmp[1];
@@ -869,6 +861,10 @@ class ImportCsv extends ModeleImports
 										$where[] = $key.' = '.$data[$key];
 										$filters[] = $col.' = '.$data[$key];
 									}
+								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
 								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
@@ -905,6 +901,10 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -951,6 +951,10 @@ class ImportCsv extends ModeleImports
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
+
 								$sql = $sqlstart.$sqlend;
 
 								// Run update request
@@ -994,7 +998,9 @@ class ImportCsv extends ModeleImports
 							if ($sql) {
 								$resql = $this->db->query($sql);
 								if ($resql) {
-									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									if (!$is_table_category_link) {
+										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									}
 									$insertdone = true;
 								} else {
 									//print 'E';
@@ -1037,4 +1043,4 @@ class ImportCsv extends ModeleImports
 function cleansep($value)
 {
 	return str_replace(array(',', ';'), '/', $value);
-};
+}

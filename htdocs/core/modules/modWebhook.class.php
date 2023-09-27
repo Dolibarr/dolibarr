@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022 SuperAdmin <test@dolibarr.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,12 +66,8 @@ class modWebhook extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "WebhookDescription";
 
-		// Author
-		$this->editor_name = 'Editor name';
-		$this->editor_url = 'https://www.example.com';
-
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -135,16 +130,16 @@ class modWebhook extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("webhook");
+		$this->langfiles = array();
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -188,7 +183,7 @@ class modWebhook extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -203,7 +198,7 @@ class modWebhook extends DolibarrModules
 		$this->dictionaries = array();
 		/* Example:
 		$this->dictionaries=array(
-			'langs'=>'webhook@webhook',
+			'langs'=>'',
 			// List of tables we want to see into dictonnary editor
 			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
 			// Label of tables
@@ -265,17 +260,17 @@ class modWebhook extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of Webhook'; // Permission label
+		$this->rights[$r][1] = 'Read Webhooks'; // Permission label
 		$this->rights[$r][4] = 'webhook_target';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->read)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of Webhook'; // Permission label
+		$this->rights[$r][1] = 'Create/Update Webhooks'; // Permission label
 		$this->rights[$r][4] = 'webhook_target';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->write)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of Webhook'; // Permission label
+		$this->rights[$r][1] = 'Delete Webhooks'; // Permission label
 		$this->rights[$r][4] = 'webhook_target';
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->delete)
 		$r++;
@@ -294,7 +289,7 @@ class modWebhook extends DolibarrModules
 			'mainmenu'=>'webhook',
 			'leftmenu'=>'',
 			'url'=>'/webhook/webhookindex.php',
-			'langs'=>'webhook@webhook', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->webhook->enabled', // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled.
 			'perms'=>'1', // Use 'perms'=>'$user->rights->webhook->webhook_target->read' if you want your menu with a permission rules
@@ -311,7 +306,7 @@ class modWebhook extends DolibarrModules
 			'mainmenu'=>'webhook',
 			'leftmenu'=>'webhook_target',
 			'url'=>'/webhook/webhookindex.php',
-			'langs'=>'webhook@webhook',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->webhook->enabled',  // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled.
 			'perms'=>'$user->rights->webhook->webhook_target->read',			                // Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
@@ -325,7 +320,7 @@ class modWebhook extends DolibarrModules
 			'mainmenu'=>'webhook',
 			'leftmenu'=>'webhook_webhook_target_list',
 			'url'=>'/webhook/webhook_target_list.php',
-			'langs'=>'webhook@webhook',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->webhook->enabled',  // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->rights->webhook->webhook_target->read',			                // Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
@@ -339,7 +334,7 @@ class modWebhook extends DolibarrModules
 			'mainmenu'=>'webhook',
 			'leftmenu'=>'webhook_webhook_target_new',
 			'url'=>'/webhook/webhook_target_card.php?action=create',
-			'langs'=>'webhook@webhook',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->webhook->enabled',  // Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->rights->webhook->webhook_target->write',			                // Use 'perms'=>'$user->rights->webhook->level1->level2' if you want your menu with a permission rules
@@ -358,7 +353,7 @@ class modWebhook extends DolibarrModules
 			'leftmenu'=>'webhook_webhook_target',
 			'url'=>'/webhook/webhook_target_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'webhook@webhook',
+			'langs'=>'',
 			'position'=>1100+$r,
 			// Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->webhook->enabled',
@@ -378,7 +373,7 @@ class modWebhook extends DolibarrModules
 			'leftmenu'=>'webhook_webhook_target',
 			'url'=>'/webhook/webhook_target_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'webhook@webhook',
+			'langs'=>'',
 			'position'=>1100+$r,
 			// Define condition to show or hide menu entry. Use '$conf->webhook->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->webhook->enabled',
@@ -394,7 +389,6 @@ class modWebhook extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT WEBHOOK_TARGET */
 		/*
-		$langs->load("webhook@webhook");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Webhook_targetLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='webhook_target@webhook';
@@ -425,7 +419,6 @@ class modWebhook extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT WEBHOOK_TARGET */
 		/*
-		$langs->load("webhook@webhook");
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]='Webhook_targetLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->import_icon[$r]='webhook_target@webhook';
@@ -475,53 +468,10 @@ class modWebhook extends DolibarrModules
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
 
-		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('webhook_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'webhook@webhook', '$conf->webhook->enabled');
-		//$result2=$extrafields->addExtraField('webhook_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'webhook@webhook', '$conf->webhook->enabled');
-		//$result3=$extrafields->addExtraField('webhook_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'webhook@webhook', '$conf->webhook->enabled');
-		//$result4=$extrafields->addExtraField('webhook_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'webhook@webhook', '$conf->webhook->enabled');
-		//$result5=$extrafields->addExtraField('webhook_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'webhook@webhook', '$conf->webhook->enabled');
-
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
-
-		// Document templates
-		$moduledir = dol_sanitizeFileName('webhook');
-		$myTmpObjects = array();
-		$myTmpObjects['Webhook_target'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
-
-		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Webhook_target') {
-				continue;
-			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_webhook_targets.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
-				$dest = $dirodt.'/template_webhook_targets.odt';
-
-				if (file_exists($src) && !file_exists($dest)) {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
-					if ($result < 0) {
-						$langs->load("errors");
-						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-						return 0;
-					}
-				}
-
-				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
-				));
-			}
-		}
 
 		return $this->_init($sql, $options);
 	}

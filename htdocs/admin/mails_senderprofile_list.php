@@ -22,6 +22,7 @@
  *		\brief      Page to adminsiter email sender profiles
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -225,19 +226,17 @@ print "<br>\n";
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
-foreach ($object->fields as $key => $val) {
-	$sql .= "t.".$key.", ";
-}
+$sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -285,7 +284,7 @@ foreach($object->fields as $key => $val)
 	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 }
 // Add where from hooks
@@ -299,7 +298,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -335,7 +334,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -380,14 +379,17 @@ if ($action != 'create') {
 
 	if ($action == 'edit') {
 		print '<table class="border centpercent tableforfield">';
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $object->label).'"></td></tr>';
-		print '<tr><td>'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" class="width300" value="'.(GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $object->label).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Email").'</td><td>';
+		print img_picto('', 'email', 'class="pictofixedwidth"');
+		print '<input type="text" name="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email).'"></td></tr>';
 		print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('signature', (GETPOSTISSET('signature') ? GETPOST('signature', 'restricthtml') : $object->signature), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("User").'</td><td>';
+		print img_picto('', 'user', 'class="pictofixedwidth"');
 		print $form->select_dolusers((GETPOSTISSET('private') ? GETPOST('private', 'int') : $object->private), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.(GETPOSTISSET('position') ? GETPOST('position', 'int') : $object->position).'"></td></tr>';
@@ -409,14 +411,17 @@ if ($action != 'create') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	*/
 	print '<table class="border centpercent tableforfield">';
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.GETPOST('label', 'alphanohtml').'" autofocus></td></tr>';
-	print '<tr><td class="fieldrequired">'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" class="width300" value="'.GETPOST('label', 'alphanohtml').'" autofocus></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Email").'</td><td>';
+	print img_picto('', 'email', 'class="pictofixedwidth"');
+	print '<input type="text" name="email" class="width300" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('signature', GETPOST('signature'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("User").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers((GETPOSTISSET('private') ? GETPOST('private', 'int') : -1), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.GETPOST('position', 'int').'"></td></tr>';
@@ -546,7 +551,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -557,6 +562,7 @@ if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_a
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -621,7 +627,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<td class="nowrap center">';
 	$url = $_SERVER["PHP_SELF"].'?id='.$obj->rowid;
 	if ($limit) {
-		$url .= '&limit='.urlencode($limit);
+		$url .= '&limit='.((int) $limit);
 	}
 	if ($page) {
 		$url .= '&page='.urlencode($page);
@@ -664,7 +670,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 

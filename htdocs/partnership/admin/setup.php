@@ -31,16 +31,15 @@ require_once '../lib/partnership.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "partnership"));
 
+$action = GETPOST('action', 'aZ09');
+$value 	= GETPOST('value', 'alpha');
+
+$error = 0;
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$action = GETPOST('action', 'aZ09');
-$value 	= GETPOST('value', 'alpha');
-
-
-$error = 0;
 
 
 /*

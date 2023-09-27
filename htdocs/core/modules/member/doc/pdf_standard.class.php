@@ -179,8 +179,8 @@ class pdf_standard extends CommonStickerGenerator
 				$widthtouse = $maxwidthtouse;
 				$heighttouse = round($widthtouse / $imgratio);
 			} else {
-				$heightouse = $maxheighttouse;
-				$widthtouse = round($heightouse * $imgratio);
+				$heighttouse = $maxheighttouse;
+				$widthtouse = round($heighttouse * $imgratio);
 			}
 		}
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
@@ -291,25 +291,26 @@ class pdf_standard extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->id,
-				'__LOGIN__'=>$object->login,
-				'__FIRSTNAME__'=>$object->firstname,
-				'__LASTNAME__'=>$object->lastname,
-				'__FULLNAME__'=>$object->getFullName($langs),
-				'__COMPANY__'=>$object->company,
-				'__ADDRESS__'=>$object->address,
-				'__ZIP__'=>$object->zip,
-				'__TOWN__'=>$object->town,
-				'__COUNTRY__'=>$object->country,
-				'__COUNTRY_CODE__'=>$object->country_code,
-				'__EMAIL__'=>$object->email,
-				'__BIRTH__'=>dol_print_date($object->birth, 'day'),
-				'__TYPE__'=>$object->type,
-				'__YEAR__'=>$year,
-				'__MONTH__'=>$month,
-				'__DAY__'=>$day,
-				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__SERVER__'=>"https://".$_SERVER["SERVER_NAME"]."/"
+				'__ID__' => $object->rowid,
+				'__REF__' => $object->ref,
+				'__LOGIN__' => empty($object->login) ? '' : $object->login,
+				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
+				'__LASTNAME__' => empty($object->lastname) ? '' : $object->lastname,
+				'__FULLNAME__' => $object->getFullName($langs),
+				'__COMPANY__' => empty($object->company) ? '' : $object->company,
+				'__ADDRESS__' => empty($object->address) ? '' : $object->address,
+				'__ZIP__' => empty($object->zip) ? '' : $object->zip,
+				'__TOWN__' => empty($object->town) ? '' : $object->town,
+				'__COUNTRY__' => empty($object->country) ? '' : $object->country,
+				'__COUNTRY_CODE__' => empty($object->country_code) ? '' : $object->country_code,
+				'__EMAIL__' => empty($object->email) ? '' : $object->email,
+				'__BIRTH__' => dol_print_date($object->birth, 'day'),
+				'__TYPE__' => empty($object->type) ? '' : $object->type,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 
@@ -337,10 +338,9 @@ class pdf_standard extends CommonStickerGenerator
 
 			$arrayofrecords = $arrayofmembers;
 		} else {
+			// Old usage
 			$arrayofrecords = $object;
 		}
-
-		//var_dump($arrayofrecords);exit;
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
@@ -412,7 +412,7 @@ class pdf_standard extends CommonStickerGenerator
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -455,10 +455,7 @@ class pdf_standard extends CommonStickerGenerator
 		// Output to file
 		$pdf->Output($file, 'F');
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
-
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 

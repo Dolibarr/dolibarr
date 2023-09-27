@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
  *       \brief      Page to setup limits
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -33,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $currencycode = GETPOST('currencycode', 'alpha');
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
 	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
 }
@@ -127,12 +129,12 @@ print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array($conf->currency); // Default currency always first position
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
-	$sql = "SELECT rowid, code FROM ".MAIN_DB_PREFIX."multicurrency";
-	$sql .= " WHERE entity = ".((int) $conf->entity);
-	$sql .= " AND code <> '".$db->escape($conf->currency)."'"; // Default currency always first position
+	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
+	$sql .= " WHERE entity = " . ((int) $conf->entity);
+	$sql .= " AND code <> '" . $db->escape($conf->currency) . "'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -151,11 +153,11 @@ print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n"
 print "<br>\n";
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
-	if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-		print '<input type="hidden" name="currencycode" value="'.$currencycode.'">';
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+		print '<input type="hidden" name="currencycode" value="' . $currencycode . '">';
 	}
 
 	clearstatcache();
@@ -217,7 +219,7 @@ if ($action == 'edit') {
 	print '</div>';
 }
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		print dol_get_fiche_end();
 	}
@@ -237,22 +239,22 @@ if (empty($mysoc->country_code)) {
 	$s = 2 / 3; $qty = 1; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-	print " x ".$langs->trans("Quantity").": ".$qty;
-	print " - ".$langs->trans("VAT").": ".$vat.'%';
+	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 	print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	$s = 10 / 3; $qty = 1; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-	print " x ".$langs->trans("Quantity").": ".$qty;
-	print " - ".$langs->trans("VAT").": ".$vat.'%';
+	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 	print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	$s = 10 / 3; $qty = 2; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-	print " x ".$langs->trans("Quantity").": ".$qty;
-	print " - ".$langs->trans("VAT").": ".$vat.'%';
+	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 	print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	// Add vat rates examples specific to country
@@ -261,6 +263,7 @@ if (empty($mysoc->country_code)) {
 	$sql = "SELECT taux as vat_rate, t.code as vat_code, t.localtax1 as localtax_rate1, t.localtax2 as localtax_rate2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($mysoc->country_code)."' AND (t.taux <> 0 OR t.localtax1 <> '0' OR t.localtax2 <> '0')";
+	$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 	$sql .= " ORDER BY t.taux ASC";
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -286,8 +289,8 @@ if (empty($mysoc->country_code)) {
 				$s = 10 / 3;
 				$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-				print " x ".$langs->trans("Quantity").": ".$qty;
-				print " - ".$langs->trans("VAT").": ".$vat.'%';
+				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
 				print ($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
 				print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ";
 				print $tmparray[0].' / '.$tmparray[1].($tmparray[9] ? '+'.$tmparray[9] : '').($tmparray[10] ? '+'.$tmparray[10] : '').' / '.$tmparray[2];
@@ -304,15 +307,15 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3; $qty = 1; $vat = 10;
 		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-		print " x ".$langs->trans("Quantity").": ".$qty;
-		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 		print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 		$s = 10 / 3; $qty = 2; $vat = 10;
 		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
-		print " x ".$langs->trans("Quantity").": ".$qty;
-		print " - ".$langs->trans("VAT").": ".$vat.'%';
+		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
 		print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 	}
 }

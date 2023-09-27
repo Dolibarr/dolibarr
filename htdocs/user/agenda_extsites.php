@@ -22,6 +22,7 @@
  *      \brief      Page to setup external calendars for agenda module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -51,6 +52,11 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
 
 // Security check
 $id = GETPOST('id', 'int');
+
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->getrights();
@@ -60,7 +66,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -148,7 +154,11 @@ $formother = new FormOther($db);
 $arrayofjs = array();
 $arrayofcss = array();
 
-llxHeader('', $langs->trans("UserSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('ExtSites');
+$help_url = '';
+
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -165,14 +175,47 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
+$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+
 dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
+print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
+print '<table class="border tableforfield centpercent">';
+
+// Login
+print '<tr><td id="anchorforperms" class="titlefield">'.$langs->trans("Login").'</td>';
+if (!empty($object->ldap_sid) && $object->statut == 0) {
+	print '<td class="error">';
+	print $langs->trans("LoginAccountDisableInDolibarr");
+	print '</td>';
+} else {
+	print '<td>';
+	$addadmin = '';
+	if (property_exists($object, 'admin')) {
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+		}
+	}
+	print showValueWithClipboardCPButton($object->login).$addadmin;
+	print '</td>';
+}
+print '</tr>'."\n";
+
+print '</table>';
+
+print '</div>';
+
+print dol_get_fiche_end();
+
 
 print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
@@ -219,9 +262,8 @@ while ($i <= $MAXAGENDA) {
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'.$offsettz_value.'" size="1"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
-	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ?GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
-	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, 'extsitesconfig', 1, '', 'hideifnotset');
+	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ? GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
+	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, '', 1, '', 'hideifnotset');
 	print '</td>';
 	print "</tr>";
 	$i++;

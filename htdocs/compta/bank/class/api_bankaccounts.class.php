@@ -56,13 +56,14 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
-	 * @param  int    	$category   Use this param to filter list by category
+	 * @param  int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		$list = array();
 
@@ -70,7 +71,7 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."bank_account AS t LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
 		}
@@ -82,11 +83,10 @@ class BankAccounts extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -109,7 +109,7 @@ class BankAccounts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$account = new Account($this->db);
 				if ($account->fetch($obj->rowid) > 0) {
-					$list[] = $this->_cleanObjectDatas($account);
+					$list[] = $this->_filterObjectProperties($this->_cleanObjectDatas($account), $properties);
 				}
 			}
 		} else {
@@ -122,8 +122,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param int    $id    ID of account
-	 * @return array Account object
+	 * @param	int			$id				ID of account
+	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -145,8 +145,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Create account object
 	 *
-	 * @param array $request_data    Request data
-	 * @return int ID of account
+	 * @param	array $request_data		Request data
+	 * @return	int						ID of account
 	 */
 	public function post($request_data = null)
 	{
@@ -313,9 +313,9 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param int    $id              ID of account
-	 * @param array  $request_data    data
-	 * @return int
+	 * @param	int    $id              ID of account
+	 * @param	array  $request_data    data
+	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -440,11 +440,10 @@ class BankAccounts extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= " ORDER BY rowid";
@@ -482,7 +481,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string $accountancycode  Accountancy code {@from body}
 	 * @param string $datev            Payment date value (timestamp) {@from body} {@type timestamp}
 	 * @param string $num_releve       Bank statement numero {@from body}
-	 * @return int  				   ID of line
+	 * @return int					   ID of line
 	 *
 	 * @url POST {id}/lines
 	 */
@@ -529,7 +528,7 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Add a link to an account line
 	 *
-	 * @param int    $id    		ID of account
+	 * @param int    $id			ID of account
 	 * @param int    $line_id       ID of account line
 	 * @param int    $url_id        ID to set in the URL {@from body}
 	 * @param string $url           URL of the link {@from body}

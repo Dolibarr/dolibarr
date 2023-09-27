@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +20,8 @@
  */
 
 /**
- *  \file		htdocs/core/lib/agenda.lib.php
- *  \brief		Set of function for the agenda module
+ * \file		htdocs/core/lib/agenda.lib.php
+ * \brief		Set of function for the agenda module
  */
 
 
@@ -69,17 +70,17 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	}
 	print '<input type="hidden" name="search_showbirthday" value="'.((int) $showbirthday).'">';
 
-	if ($canedit) {
-		print '<div class="divsearchfield">';
-		// Type
-		$multiselect = 0;
-		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
-		}
-		print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
-		print '</div>';
+	print '<div class="divsearchfield">';
+	// Type
+	$multiselect = 0;
+	if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	}
+	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print '</div>';
 
+	if ($canedit) {
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
@@ -104,7 +105,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		}
 	}
 
-	if (isModEnabled('societe') && !empty($user->rights->societe->lire)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
@@ -134,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	$object = null;
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 
@@ -313,7 +314,7 @@ function show_array_last_actions_done($max = 5)
 			print '<tr class="oddeven">';
 
 			$staticaction->type_code = $obj->code;
-			$staticaction->libelle = $obj->label;
+			$staticaction->label = $obj->label;
 			$staticaction->id = $obj->id;
 			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
@@ -362,7 +363,11 @@ function show_array_last_actions_done($max = 5)
  */
 function agenda_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('actioncomm');
+
 	$h = 0;
 	$head = array();
 
@@ -395,6 +400,10 @@ function agenda_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -425,7 +434,7 @@ function actions_prepare_head($object)
 	// Tab to link resources
 	if (isModEnabled('resource')) {
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-		$resource = new DolResource($db);
+		$resource = new Dolresource($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
 		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);
@@ -498,7 +507,7 @@ function calendars_prepare_head($param)
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");

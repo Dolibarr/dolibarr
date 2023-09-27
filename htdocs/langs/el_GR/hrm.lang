@@ -2,7 +2,7 @@
 
 
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=E-mail για αποτροπή εξωτερικών υπηρεσιών στο HRM
+HRM_EMAIL_EXTERNAL_SERVICE=Email για την αποτροπή εξωτερικής υπηρεσίας HRM
 Establishments=Επιχειρήσεις
 Establishment=Επιχείρηση
 NewEstablishment=Νέα επιχείρηση
@@ -26,8 +26,8 @@ HRM_DEFAULT_SKILL_DESCRIPTION=Προεπιλεγμένη περιγραφή τω
 deplacement=Ωράριο
 DateEval=Ημερομηνία αξιολόγησης
 JobCard=Καρτέλα θέσεων εργασίας
-JobPosition=Θέση εργασίας
-JobsPosition=Θέσεις εργασίας
+JobProfile=Περιγραφή εργασίας
+JobsProfiles=Περιγραφές εργασιών
 NewSkill=Νέα Δεξιότητα
 SkillType=Τύπος δεξιότητας
 Skilldets=Λίστα βαθμών για αυτήν την δεξιότητα
@@ -53,7 +53,7 @@ EmployeePositions=Θέσεις υπαλλήλων
 EmployeesInThisPosition=Υπάλληλοι σε αυτή τη θέση
 group1ToCompare=Ομάδα χρηστών για ανάλυση
 group2ToCompare=Δεύτερη ομάδα χρηστών για σύγκριση
-OrJobToCompare=Σύγκριση βάση των απαραίτητων εργασιακών δεξιοτήτων
+OrJobToCompare=Συγκρίνετε με τις απαιτήσεις δεξιοτήτων ενός προφίλ εργασίας
 difference=Διαφορά
 CompetenceAcquiredByOneOrMore=Ικανότητα που αποκτήθηκε από έναν ή περισσότερους χρήστες αλλά δεν ζητήθηκε από τον δεύτερο αξιολογητή
 MaxlevelGreaterThan=Μέγιστο επίπεδο μεγαλύτερο από το ζητούμενο
@@ -86,7 +86,7 @@ SaveAddSkill = Προσθήκη δεξιότητας(ων)
 SaveLevelSkill = Το επίπεδο δεξιοτήτων αποθηκεύτηκε
 DeleteSkill = Η δεξιότητα αφαιρέθηκε
 SkillsExtraFields=Συμπληρωματικά χαρακτηριστικά (Δεξιότητες)
-JobsExtraFields=Συμπληρωματικά χαρακτηριστικά (Υπάλληλοι)
+JobsExtraFields=Συμπληρωματικά χαρακτηριστικά (Προφίλ θέσης εργασίας)
 EvaluationsExtraFields=Συμπληρωματικά χαρακτηριστικά (Αξιολογήσεις)
 NeedBusinessTravels=Ανάγκη επαγγελματικών ταξιδιών
 NoDescription=Χωρίς περιγραφή

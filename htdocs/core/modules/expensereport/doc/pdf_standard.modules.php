@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2021  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
@@ -70,28 +70,18 @@ class pdf_standard extends ModeleExpenseReport
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
 
 	public $posxpiece;
 	public $posxcomment;
 	public $posxtva;
 	public $posxup;
 	public $posxqty;
+	public $posxtype;
+	public $posxprojet;
 	public $postotalht;
 	public $postotalttc;
 
@@ -119,10 +109,10 @@ class pdf_standard extends ModeleExpenseReport
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
@@ -152,7 +142,7 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxqty = 150;
 		$this->postotalht = 160;
 		$this->postotalttc = 180;
-		// if (empty($conf->project->enabled)) {
+		// if (!isModEnabled('project')) {
 		//     $this->posxtva-=20;
 		//     $this->posxup-=20;
 		//     $this->posxqty-=20;
@@ -268,7 +258,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Trips"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -286,7 +276,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 95;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 65 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 65 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -361,7 +351,7 @@ class pdf_standard extends ModeleExpenseReport
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								 $this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setPage($pageposafter + 1);
@@ -390,7 +380,7 @@ class pdf_standard extends ModeleExpenseReport
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
@@ -447,7 +437,7 @@ class pdf_standard extends ModeleExpenseReport
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -467,7 +457,7 @@ class pdf_standard extends ModeleExpenseReport
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -537,9 +527,7 @@ class pdf_standard extends ModeleExpenseReport
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -584,7 +572,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
 			$nextColumnPosX = $this->posxtva;
 		}
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$nextColumnPosX = $this->posxprojet;
 		}
 
@@ -600,7 +588,7 @@ class pdf_standard extends ModeleExpenseReport
 		//$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
 		// Project
-		//if (! empty($conf->project->enabled))
+		//if (isModEnabled('project'))
 		//{
 		//    $pdf->SetFont('','', $default_font_size - 1);
 		//    $pdf->SetXY($this->posxprojet, $curY);
@@ -958,7 +946,7 @@ class pdf_standard extends ModeleExpenseReport
 		//	$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		//}
 
-		//if (!empty($conf->project->enabled))
+		//if (isModEnabled('project'))
 		//{
 		//    // Project
 		//    $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
@@ -1043,7 +1031,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', 0);
 		$pdf->SetXY($tab3_posx + 35, $tab3_top + 1);
 		$pdf->MultiCell(30, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			$pdf->SetXY($tab3_posx + 65, $tab3_top + 1);
 			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
 		}
@@ -1083,7 +1071,7 @@ class pdf_standard extends ModeleExpenseReport
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->p_code);
 
 				$pdf->MultiCell(40, 3, $oper, 0, 'L', 0);
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$pdf->SetXY($tab3_posx + 65, $tab3_top + $y + 1);
 					$pdf->MultiCell(30, 3, $row->baref, 0, 'L', 0);
 				}
@@ -1115,6 +1103,7 @@ class pdf_standard extends ModeleExpenseReport
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1129,8 +1118,7 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'EXPENSEREPORT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

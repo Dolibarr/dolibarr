@@ -16,9 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+/**
+ *       \file       htdocs/fichinter/class/api_interventions.class.php
+ *       \ingroup    fichinter
+ *       \brief      File of API to manage intervention
+ */
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+
 
 /**
  * API class for Interventions
@@ -64,13 +70,12 @@ class Interventions extends DolibarrApi
 
 	/**
 	 * Get properties of a Expense Report object
-	 *
 	 * Return an array with Expense Report information
 	 *
 	 * @param       int         $id         ID of Expense Report
-	 * @return 	    array|mixed             Data without useless information
+	 * @return		Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -93,20 +98,20 @@ class Interventions extends DolibarrApi
 
 	/**
 	 * List of interventions
-	 *
 	 * Return a list of interventions
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int	       $limit		        Limit for list
-	 * @param int	       $page		        Page number
-	 * @param string   	       $thirdparty_ids	        Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int		   $limit				Limit for list
+	 * @param int		   $page				Page number
+	 * @param string		   $thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters              Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                                   Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -129,7 +134,7 @@ class Interventions extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -152,11 +157,10 @@ class Interventions extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -180,7 +184,7 @@ class Interventions extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$fichinter_static = new Fichinter($this->db);
 				if ($fichinter_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($fichinter_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($fichinter_static), $properties);
 				}
 				$i++;
 			}
@@ -254,7 +258,7 @@ class Interventions extends DolibarrApi
 	/**
 	 * Add a line to given intervention
 	 *
-	 * @param 	int   	$id             Id of intervention to update
+	 * @param	int		$id             Id of intervention to update
 	 * @param   array   $request_data   Request data
 	 *
 	 * @url     POST {id}/lines
@@ -336,12 +340,12 @@ class Interventions extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int $id             Intervention ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int		$id             Intervention ID
+	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -373,11 +377,11 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @param   int 	$id             Intervention ID
+	 * @param		int		$id             Intervention ID
 	 *
 	 * @url POST    {id}/close
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function closeFichinter($id)
 	{

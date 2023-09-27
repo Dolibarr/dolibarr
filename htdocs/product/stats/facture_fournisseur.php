@@ -25,6 +25,7 @@
  * \brief 		Page of supplier invoice statistics for a product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -131,12 +132,12 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
 
-		if ($user->rights->fournisseur->facture->lire) {
+		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as line_total_ht,";
 			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle as label, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
 			if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -172,7 +173,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
@@ -186,7 +187,7 @@ if ($id > 0 || !empty($ref)) {
 				$option .= '&id='.$product->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
-					$option .= '&limit='.urlencode($limit);
+					$option .= '&limit='.((int) $limit);
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);
@@ -245,7 +246,7 @@ if ($id > 0 || !empty($ref)) {
 						$supplierinvoicestatic->id = $objp->facid;
 						$supplierinvoicestatic->ref = $objp->ref;
 						$supplierinvoicestatic->ref_supplier = $objp->ref_supplier;
-						$supplierinvoicestatic->libelle = $objp->label;
+						$supplierinvoicestatic->libelle = $objp->label;	// deprecated
 						$supplierinvoicestatic->label = $objp->label;
 						$supplierinvoicestatic->total_ht = $objp->total_ht;
 						$supplierinvoicestatic->total_ttc = $objp->total_ttc;

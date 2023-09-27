@@ -77,7 +77,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 	$securekeyseed = '';
 
 	if ($type == 'proposal') {
-		$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
@@ -90,7 +90,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $object->entity), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
 		}
 		/*
 		if ($mode == 1) {
@@ -116,11 +116,56 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 				$out .= '&hashp='.$hashp;
 			}
 		}*/
+	} elseif ($type == 'contract') {
+		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=contract&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= 'contract_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + contract_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
+		}
+	} elseif ($type == 'fichinter') {
+		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= 'fichinter_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
+		}
+	} else {
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= $type.'_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
+		}
 	}
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) {
-		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+	if (!empty($out) && isModEnabled('multicompany')) {
+		$out .= "&entity=".(is_null($object) ? '' : $object->entity); // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;

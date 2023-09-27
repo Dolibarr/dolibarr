@@ -28,6 +28,7 @@
  *       \brief      Page des documents joints sur les resources
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -69,7 +70,7 @@ if (!$sortfield) {
 }
 
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.

@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/saveinplace.php
- *       \brief      File to save field value
+ *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -33,6 +33,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -40,6 +41,7 @@ $field = GETPOST('field', 'alpha', 2);
 $element = GETPOST('element', 'alpha', 2);
 $table_element = GETPOST('table_element', 'alpha', 2);
 $fk_element = GETPOST('fk_element', 'alpha', 2);
+$id = $fk_element;
 
 /* Example:
 field:editval_ref_customer (8 first chars will removed to know name of property)
@@ -52,6 +54,28 @@ loadmethod:
 savemethod:
 savemethodname:
 */
+
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
 
 
 /*
@@ -126,8 +150,8 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
 	//var_dump($user->rights);
 	/*
-	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
-		|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
+	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
+		|| (isset($subelement) && (!empty($user->rights->$newelement->$subelement->creer) || !empty($user->rights->$newelement->$subelement->write)))
 		|| ($element == 'payment' && $user->rights->facture->paiement)
 		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	*/

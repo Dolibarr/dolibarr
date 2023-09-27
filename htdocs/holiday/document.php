@@ -28,6 +28,7 @@
  *       \brief      Page des documents joints sur les contrats
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -239,7 +240,7 @@ if ($object->id) {
 	print '<table class="border tableforfield centpercent">'."\n";
 	print '<tbody>';
 
-	if (! empty($object->fk_user_create)) {
+	if (!empty($object->fk_user_create)) {
 		$userCreate=new User($db);
 		$userCreate->fetch($object->fk_user_create);
 		print '<tr>';

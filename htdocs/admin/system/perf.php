@@ -20,6 +20,7 @@
  *  \brief      Page to show Performance information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -49,8 +50,13 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
-
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span>';
+print ' &nbsp; &nbsp; ';
+print '<a href="'.$_SERVER["PHP_SELF"].'">';
+print img_picto($langs->trans("Reload"), 'refresh').' ';
+print $langs->trans("Reload");
+print '</a>';
+print '<br>';
 print '<br>';
 print '<hr>';
 
@@ -76,14 +82,14 @@ print '<br>';
 // Module log
 print '<br>';
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
-$test = empty($conf->syslog->enabled);
+$test = !isModEnabled('syslog');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").'  <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
-	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+	if (getDolGlobalInt('SYSLOG_LEVEL') > LOG_NOTICE) {
 		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
 	} else {
-		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), getDolGlobalInt('SYSLOG_LEVEL'));
 	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
@@ -92,7 +98,7 @@ print '<br>';
 // Module debugbar
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
+$test = !isModEnabled('debugbar');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
@@ -104,7 +110,7 @@ print '<br>';
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
-$test = !empty($conf->memcached->enabled);
+$test = isModEnabled('memcached');
 if ($test) {
 	if (!empty($conf->global->MEMCACHED_SERVER)) {
 		print $langs->trans("MemcachedAvailableAndSetup");
@@ -197,7 +203,7 @@ jQuery(document).ready(function() {
       	compphpstring=getphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compphpstring);*/
-      	if (compphpstring == null || (compphpstring.indexOf("gzip") == -1 && compphpstring.indexOf("deflate") == -1))
+      	if (compphpstring == null || (compphpstring.indexOf("gzip") == -1 && compphpstring.indexOf("deflate") == -1  && compphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompphpok").hide();
       		jQuery("#httpcompphpko").show();
@@ -237,7 +243,7 @@ jQuery(document).ready(function() {
       	compcssstring=getcssurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getcssurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compcssstring);*/
-      	if (compcssstring == null || (compcssstring.indexOf("gzip") == -1 && compcssstring.indexOf("deflate") == -1))
+      	if (compcssstring == null || (compcssstring.indexOf("gzip") == -1 && compcssstring.indexOf("deflate") == -1 && compcssstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompcssok").hide();
       		jQuery("#httpcompcssko").show();
@@ -277,7 +283,7 @@ jQuery(document).ready(function() {
       	compcssphpstring=getcssphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getcssphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compcssphpstring);*/
-      	if (compcssphpstring == null || (compcssphpstring.indexOf("gzip") == -1 && compcssphpstring.indexOf("deflate") == -1))
+      	if (compcssphpstring == null || (compcssphpstring.indexOf("gzip") == -1 && compcssphpstring.indexOf("deflate") == -1 && compcssphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompcssphpok").hide();
       		jQuery("#httpcompcssphpko").show();
@@ -317,7 +323,7 @@ jQuery(document).ready(function() {
       	compimgstring=getimgurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getimgurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compimgstring);*/
-      	if (compimgstring == null || (compimgstring.indexOf("gzip") == -1 && compimgstring.indexOf("deflate") == -1))
+      	if (compimgstring == null || (compimgstring.indexOf("gzip") == -1 && compimgstring.indexOf("deflate") == -1 && compimgstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompimgok").hide();
       		jQuery("#httpcompimgko").show();
@@ -357,7 +363,7 @@ jQuery(document).ready(function() {
       	compjsstring=getjsurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'js:\'+getjsurl.getAllResponseHeaders()); */
       	/*alert(\'js:\'+compjsstring);*/
-      	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1))
+      	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1 && compjsstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompjsok").hide();
       		jQuery("#httpcompjsko").show();
@@ -397,7 +403,7 @@ jQuery(document).ready(function() {
       	compjsphpstring=getjsphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getjsphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compjsphpstring);*/
-      	if (compjsphpstring == null || (compjsphpstring.indexOf("gzip") == -1 && compjsphpstring.indexOf("deflate") == -1))
+      	if (compjsphpstring == null || (compjsphpstring.indexOf("gzip") == -1 && compjsphpstring.indexOf("deflate") == -1 && compjsphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompjsphpok").hide();
       		jQuery("#httpcompjsphpko").show();
@@ -418,7 +424,7 @@ print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
 print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
 print ':</strong><br>';
-// No cahce on PHP
+// No cache on PHP
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 //print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
 // Cache on rest
@@ -618,6 +624,25 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
 } else {
 	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
+}
+print '<br>';
+
+// Options
+print '<br>';
+print '<strong>'.$langs->trans("Options").'</strong>:<br>';
+if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+	print 'MAIN_ACTIVATE_FILECACHE = '.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_ACTIVATE_FILECACHE = '.getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
+if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP', 0);
+	//.' '.img_picto('', 'warning.png');
 }
 print '<br>';
 

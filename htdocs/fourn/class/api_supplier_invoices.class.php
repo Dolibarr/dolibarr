@@ -58,14 +58,14 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Return an array with supplier invoice information
 	 *
-	 * @param 	int 	$id ID of supplier invoice
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id				ID of supplier invoice
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(401);
 		}
 
@@ -87,22 +87,23 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Get a list of supplier invoices
 	 *
-	 * @param string	$sortfield	      Sort field
-	 * @param string	$sortorder	      Sort order
-	 * @param int		$limit		      Limit for list
-	 * @param int		$page		      Page number
-	 * @param string   	$thirdparty_ids	  Thirdparty ids to filter invoices of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
+	 * @param string	$sortfield		  Sort field
+	 * @param string	$sortorder		  Sort order
+	 * @param int		$limit			  Limit for list
+	 * @param int		$page			  Page number
+	 * @param string	$thirdparty_ids	  Thirdparty ids to filter invoices of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of invoice objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '')
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(401);
 		}
 
@@ -113,24 +114,24 @@ class SupplierInvoices extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir) {
+		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
 		// We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) {
+		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn AS t LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		// We need this table joined to the select in order to filter by sale
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) {
+		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')';
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir || $search_sale > 0) {
+		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") || $search_sale > 0) {
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
@@ -160,11 +161,10 @@ class SupplierInvoices extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -186,7 +186,7 @@ class SupplierInvoices extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$invoice_static = new FactureFournisseur($this->db);
 				if ($invoice_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($invoice_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($invoice_static), $properties);
 				}
 				$i++;
 			}
@@ -215,7 +215,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -247,7 +247,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401);
 		}
 
@@ -287,7 +287,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "supprimer")) {
 			throw new RestException(401);
 		}
 		$result = $this->invoice->fetch($id);
@@ -330,7 +330,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401);
 		}
 		$result = $this->invoice->fetch($id);
@@ -373,7 +373,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function getPayments($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
@@ -422,7 +422,7 @@ class SupplierInvoices extends DolibarrApi
 	{
 		global $conf;
 
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -433,7 +433,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Bank account ID is mandatory');
 			}
@@ -482,7 +482,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Payment error : '.$paiement->error);
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
@@ -506,7 +506,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401);
 		}
 
@@ -542,7 +542,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401);
 		}
 
@@ -609,7 +609,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401);
 		}
 
@@ -663,7 +663,7 @@ class SupplierInvoices extends DolibarrApi
 	 * Deletes a line of a given supplier invoice
 	 *
 	 * @param int   $id             Id of supplier invoice
-	 * @param int   $lineid 		Id of the line to delete
+	 * @param int   $lineid			Id of the line to delete
 	 *
 	 * @url     DELETE {id}/lines/{lineid}
 	 *
@@ -676,7 +676,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(401);
 		}
 

@@ -22,6 +22,7 @@
  *	\brief      Page des marges par client
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -30,18 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
-
-// Security check
-$socid = GETPOST('socid', 'int');
-$TSelectedProducts = GETPOST('products', 'array');
-$TSelectedCats = GETPOST('categories', 'array');
-
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-$result = restrictedArea($user, 'margins');
-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,6 +62,17 @@ if (GETPOST('enddatemonth')) {
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
 
+// Security check
+$socid = GETPOST('socid', 'int');
+$TSelectedProducts = GETPOST('products', 'array');
+$TSelectedCats = GETPOST('categories', 'array');
+
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', '', '');
+$result = restrictedArea($user, 'margins');
+
 
 /*
  * View
@@ -89,7 +89,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 
@@ -109,7 +110,8 @@ if ($socid > 0) {
 	if ($soc->client) {
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td class="maxwidthonsmartphone" colspan="4">';
-		print img_picto('', 'company').$form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+		$filter = '(client:IN:1,3)';
+		print img_picto('', 'company').$form->select_company($socid, 'socid', $filter, 1, 0, 0);
 		print '</td></tr>';
 
 		$client = true;
@@ -123,7 +125,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print img_picto('', 'company').$form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+	print img_picto('', 'company').$form->select_company(null, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -156,12 +158,12 @@ print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
+print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
 print '</tr>';
 
@@ -214,12 +216,14 @@ $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABAND
 $sql = "SELECT";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 if ($client) {
-	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
+	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut as statut,";
 }
 $sql .= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not, your database may be corrupted, you can update this)
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -261,7 +265,7 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($client) {
-	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut";
+	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut";
 } else {
 	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
 }
@@ -352,9 +356,12 @@ if ($result) {
 
 			print '<tr class="oddeven">';
 			if ($client) {
-				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
+				$invoicestatic->statut = $objp->statut;
+				$invoicestatic->type = $objp->type;
+
+				print '<td>';
 				print $invoicestatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="center">';
@@ -363,6 +370,7 @@ if ($result) {
 				$companystatic->id = $objp->socid;
 				$companystatic->name = $objp->name;
 				$companystatic->client = $objp->client;
+
 				print '<td>'.$companystatic->getNomUrl(1, 'margin').'</td>';
 			}
 
@@ -399,7 +407,7 @@ if ($result) {
 
 	print '<tr class="liste_total">';
 	if ($client) {
-		print '<td colspan=2>';
+		print '<td colspan="2">';
 	} else {
 		print '<td>';
 	}

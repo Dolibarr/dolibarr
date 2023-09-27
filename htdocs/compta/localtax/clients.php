@@ -23,6 +23,7 @@
  *		\brief      Third parties localtax report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -38,7 +39,7 @@ $local = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -90,7 +91,7 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -109,7 +110,7 @@ if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
 	exit;
 }
-
+$hookmanager->initHooks(['customerlocaltaxlist']);
 
 $calc = 0;
 /*
@@ -139,8 +140,9 @@ $fsearch .= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
 $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
-$calc = $conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
+$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
 // Affiche en-tete du rapport
+$description='';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
 	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
@@ -177,14 +179,17 @@ if ($calc == 2) { 	// Invoice for goods, payment for services
 	$productsup = $langs->trans("Description");
 	$amountsup = $langs->trans("AmountHT");
 }
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
+$periodlink = '';
+$exportlink = '';
+
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 $vatcust = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
 $vatsup = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
 
 print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
+print '<table class="liste noborder centpercent">';
 
 // IRPF that the customer has retained me
 if ($calc == 0 || $calc == 2) {

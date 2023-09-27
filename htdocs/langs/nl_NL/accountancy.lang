@@ -14,8 +14,8 @@ ACCOUNTING_EXPORT_ENDLINE=Selecteer het nieuwe regel type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specificeer de prefix voor de bestandsnaam
 ThisService=Deze dienst
 ThisProduct=Dit product
-DefaultForService=Standaard bij dienst
-DefaultForProduct=Standaard bij product
+DefaultForService=Standaard voor services
+DefaultForProduct=Standaard voor producten
 ProductForThisThirdparty=Product voor deze relatie
 ServiceForThisThirdparty=Service voor deze relatie
 CantSuggest=Geen suggestie
@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Reeds overgezet naar boekhoudkundige dagboeken en grootbo
 NotYetInGeneralLedger=Nog niet overgezet naar boekhoudkundige dagboeken en grootboek
 GroupIsEmptyCheckSetup=Groep is leeg. Controleer instellingen bij gepersonaliseerde rekeninggroep
 DetailByAccount=Details grootboekrekening
+DetailBy=Gedetailleerd door
 AccountWithNonZeroValues=Grootboekrekeningen met niet-nulwaarden
 ListOfAccounts=Overzicht grootboekrekeningen
 CountriesInEEC=Landen binnen de EU
@@ -50,15 +51,21 @@ CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
 ExportAccountingSourceDocHelp=Met deze tool kunt u de brongebeurtenissen zoeken en exporteren die worden gebruikt om uw boekhouding te genereren. <br>Het geëxporteerde ZIP-bestand bevat de lijsten met gevraagde items in CSV, evenals de bijgevoegde bestanden in hun oorspronkelijke formaat (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
-ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountingProjectHelp=Specificeer een project als u alleen een boekhoudkundig rapport nodig heeft voor een specifiek project. Onkostendeclaraties en afbetalingen van leningen zijn niet opgenomen in projectrapporten.
+ExportAccountancy=Boekhouding exporteren
+WarningDataDisappearsWhenDataIsExported=Let op, deze lijst bevat alleen de boekingen die nog niet zijn geëxporteerd (exportdatum is leeg). Als u de reeds geëxporteerde boekingen wilt opnemen om ze opnieuw te exporteren, klikt u op de bovenstaande knop.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
-MainAccountForCustomersNotDefined=De standaard grootboekrekening voor klanten is niet vastgelegd bij de instellingen
-MainAccountForSuppliersNotDefined=Hoofdrekening voor leveranciers die niet zijn gedefinieerd in de configuratie
-MainAccountForUsersNotDefined=De standaard grootboekrekening voor gebruikers is niet vastgelegd bij de instellingen
-MainAccountForVatPaymentNotDefined=Standaard grootboekrekening voor betaalde BTW is niet vastgelegd bij instellingen
-MainAccountForSubscriptionPaymentNotDefined=Hoofdrekening voor abonnementsbetaling is niet gedefinieerd in de configuratie
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
+UserAccountNotDefined=Grootboekrekening voor gebruiker niet gedefinieerd in setup
 
 AccountancyArea=Boekhouding
 AccountancyAreaDescIntro=Het gebruiken van de boekhoudmodule gaat met verschillende stappen
@@ -100,7 +107,8 @@ ShowAccountingAccount=Toon grootboekrekening
 ShowAccountingJournal=Toon dagboek
 ShowAccountingAccountInLedger=Grootboekrekening in grootboek
 ShowAccountingAccountInJournals=Laat grootboekrekening zien in journaals
-AccountAccountingSuggest=Voorgestelde rekening
+DataUsedToSuggestAccount=Gegevens die worden gebruikt om een account voor te stellen
+AccountAccountingSuggest=Rekening voorgesteld
 MenuDefaultAccounts=Standaard GB-rekeningen
 MenuBankAccounts=Bankrekeningen
 MenuVatAccounts=BTW rekeningen
@@ -110,6 +118,7 @@ MenuLoanAccounts=Grootboekrekeningen lonen
 MenuProductsAccounts=Grootboekrekeningen producten
 MenuClosureAccounts=Sluitingsaccounts
 MenuAccountancyClosure=Sluiting
+MenuExportAccountancy=Boekhouding exporteren
 MenuAccountancyValidationMovements=Valideer wijzigingen
 ProductsBinding=Grootboekrekeningen producten
 TransferInAccounting=Boeken in de boekhouding
@@ -125,6 +134,7 @@ WriteBookKeeping=Boek transacties in de boekhouding
 Bookkeeping=Grootboek
 BookkeepingSubAccount=Sub-grootboek
 AccountBalance=Balans
+AccountBalanceSubAccount=Saldo subrekeningen
 ObjectsRef=Ref. bron-object 
 CAHTF=Totaal inkoop leverancier excl. BTW
 TotalExpenseReport=Totaal resultaatrekening kosten
@@ -162,44 +172,47 @@ BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzett
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Schakel concept export van het journaal in
 ACCOUNTANCY_COMBO_FOR_AUX=Schakel combolijst in voor dochteronderneming-account (kan traag zijn als je veel derden hebt, verbreek de mogelijkheid om op een deel van de waarde te zoeken)
 ACCOUNTING_DATE_START_BINDING=Definieer een startdatum voor het koppelen en doorboeken naar de boekhouding. Transacties voor deze datum worden niet doorgeboekt naar de boekhouding.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Wat is de standaard geselecteerde periode bij overdracht van boekhouding?
 
-ACCOUNTING_SELL_JOURNAL=Verkoopboek
-ACCOUNTING_PURCHASE_JOURNAL=Inkoopboek
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SELL_JOURNAL=Verkoopjournaal - verkoop en retouren
+ACCOUNTING_PURCHASE_JOURNAL=Aankoopjournaal - aankoop en retouren
+ACCOUNTING_BANK_JOURNAL=Kasjournaal - ontvangsten en uitbetalingen
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Algemeen journaal
+ACCOUNTING_HAS_NEW_JOURNAL=Heeft nieuw Journaal
+ACCOUNTING_INVENTORY_JOURNAL=Voorraad journaal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-ACCOUNTING_HAS_NEW_JOURNAL=Nieuw Has Journaal
 
 ACCOUNTING_RESULT_PROFIT=Resultaat grootboekrekening (winst)
 ACCOUNTING_RESULT_LOSS=Resultaat grootboekrekening (Verlies)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Afsluiten journaal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Kruispostrekening voor bank naar bank transactie
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Rekening (uit het rekeningschema) die moet worden gebruikt als rekening voor tijdelijke bankoverschrijvingen
 TransitionalAccount=Overgangsrekening
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Grootboekrekening kruisposten (dagboeken)
-DONATION_ACCOUNTINGACCOUNT=Grootboeknummer voor donaties
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grootboekrekening om abonnementen te registreren
+ACCOUNTING_ACCOUNT_SUSPENSE=Rekening (uit het rekeningschema) die moet worden gebruikt als de rekening voor ontvangen of betaalde niet-toegewezen fondsen, d.w.z. fondsen in "wachten"
+DONATION_ACCOUNTINGACCOUNT=Rekening (uit het Rekeningschema) voor het registreren van donaties (Donatiemodule)
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Rekening (uit het Rekeningschema) te gebruiken om abonnementen op lidmaatschappen te registreren (Lidmaatschapsmodule - indien lidmaatschap geregistreerd zonder factuur)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standaard grootboekrekening voor storting door klant
-UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Accounting account by default to register supplier deposit
-UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Rekening (uit het Rekeningschema) die moet worden gebruikt als de standaardrekening om deposito's van klanten te registreren
+UseAuxiliaryAccountOnCustomerDeposit=Klantrekening opslaan als individuele rekening in subgrootboek voor vooruitbetalingsregels (indien uitgeschakeld, blijft individuele rekening voor vooruitbetalingsregels leeg)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Rekening (uit het Rekeningschema) als standaard te gebruiken
+UseAuxiliaryAccountOnSupplierDeposit=Leveranciersrekening opslaan als individuele rekening in subgrootboek voor vooruitbetalingsregels (indien uitgeschakeld, blijft individuele rekening voor vooruitbetalingsregels leeg)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Boekhoudingsaccount standaard om de door de klant behouden garantie te registreren
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standaard grootboekrekening voor de gekochte producten (gebruikt indien niet gedefinieerd in de productfiche)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte producten binnen de EU (gebruikt indien niet gedefinieerd in het productblad)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Grootboekrekening standaard voor de gekochte producten en geïmporteerd buiten de EU (gebruikt indien niet gedefinieerd in het productblad)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standaard grootboekrekening omzet producten (indien niet opgegeven bij productgegevens)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standaard grootboekrekening voor binnen de EU verkochte producten (gebruikt indien niet gedefinieerd bij de productgegevens)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standaard boekhoudrekening voor de producten die worden verkocht en uitgevoerd naar buiten de EU (gebruikt indien niet gedefinieerd bij de productgegevens)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de producten die in hetzelfde land zijn gekocht (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de producten die van de EEG naar een ander EEG-land worden gekocht (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de producten die zijn gekocht en geïmporteerd uit een ander buitenland (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Rekening (uit het Rekeningschema) te gebruiken als de standaardrekening voor de verkochte producten (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de producten die vanuit de EEG naar een ander EEG-land worden verkocht (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Rekening (uit het Rekeningschema) te gebruiken als de standaardrekening voor de producten die worden verkocht en geëxporteerd naar een ander buitenland (gebruikt indien niet gedefinieerd in het productblad)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Standaard grootboekrekening inkoop diensten (indien niet opgegeven bij dienstgegevens)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte services binnen de EU (gebruikt indien niet gedefinieerd in het serviceblad)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standaard grootboekrekening voor de gekochte services en geïmporteerd van buiten de EU (gebruikt indien niet gedefinieerd in het serviceblad)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standaard grootboekrekening omzet diensten (indien niet opgegeven bij dienstgegevens)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Standaard grootboekrekening voor binnen de EU verkochte diensten (gebruikt indien niet gedefinieerd bij de servicegegevens)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Standaard grootboekrekening voor de diensten die worden verkocht en geëxporteerd naar buiten de EU (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de diensten die in hetzelfde land zijn gekocht (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de diensten die van de EEG naar een ander EEG-land worden gekocht (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de diensten die zijn gekocht en geïmporteerd uit een ander buitenland (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Rekening (uit het Rekeningschema) te gebruiken als de standaardrekening voor de verkochte diensten (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Rekening (uit het rekeningschema) te gebruiken als de standaardrekening voor de diensten die vanuit de EEG naar een ander EEG-land worden verkocht (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Rekening (van het Rekeningschema) te gebruiken als de standaardrekening voor de diensten die worden verkocht en geëxporteerd naar een ander buitenland (gebruikt indien niet gedefinieerd in het serviceblad)
 
 Doctype=Type of document
 Docdate=Date
@@ -214,12 +227,13 @@ Codejournal=Journaal
 JournalLabel=Journaal label
 NumPiece=Boekingstuk
 TransactionNumShort=Transactienummer
-AccountingCategory=Aangepaste groep
+AccountingCategory=Aangepaste groep accounts
+AccountingCategories=Aangepaste groepen accounts
 GroupByAccountAccounting=Groeperen op grootboekrekening
 GroupBySubAccountAccounting=Groepeer op subgrootboekrekening
 AccountingAccountGroupsDesc=Hier kunt u enkele grootboekrekening-groepen definiëren. Deze worden gebruikt voor gepersonaliseerde boekhoudrapporten.
 ByAccounts=Op grootboekrekening
-ByPredefinedAccountGroups=Op voorgedefinieerde groepen
+ByPredefinedAccountGroups=Op vooraf gedefinieerde accountgroepen
 ByPersonalizedAccountGroups=Op gepersonaliseerde groepen
 ByYear=Per jaar
 NotMatch=Niet ingesteld
@@ -231,6 +245,7 @@ ConfirmDeleteMvt=Hiermee worden alle boekingen van de boekhouding voor het jaar 
 ConfirmDeleteMvtPartial=Hiermee wordt de boeking uit de boekhouding verwijderd (alle regels die betrekking hebben op dezelfde boeking worden verwijderd)
 FinanceJournal=Kas/Bank journaal
 ExpenseReportsJournal=Overzicht resultaatrekening
+InventoryJournal=Voorraad journaal
 DescFinanceJournal=Financieel journaal inclusief alle soorten betalingen per kas/bankrekening
 DescJournalOnlyBindedVisible=Deze boeking is gekoppeld aan een tegenrekening en kan worden opgenomen in de dagboeken en het grootboek.
 VATAccountNotDefined=BTW rekeningen niet gedefinieerd
@@ -262,19 +277,20 @@ ShowSubtotalByGroup=Toon subtotaal op niveau
 
 Pcgtype=Rekening hoofdgroep
 PcgtypeDesc=Cluster grootboekrekeningen welke gebruikt worden als vooraf gedefinieerde 'filter'- en' groepeer'-criteria voor sommige boekhoudrapporten. 'INKOMEN' of 'UITGAVEN' worden bijvoorbeeld gebruikt als groepen voor boekhoudrekeningen van producten om het kosten- / inkomstenrapport samen te stellen.
+AccountingCategoriesDesc=Aangepaste groep rekeningen kan worden gebruikt om boekhoudrekeningen onder één naam te groeperen om het gebruik van filters of het maken van aangepaste rapporten te vergemakkelijken.
 
 Reconcilable=Samentrekken
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 
-DescVentilCustomer=Raadpleeg hier de lijst met klant factuurregels die (al dan niet) zijn gekoppeld aan een grootboekrekening vaneen product
-DescVentilMore=In de meeste gevallen, als u vooraf gedefinieerde producten of diensten gebruikt en u het rekeningnummer instelt op de product- / servicekaart, kan de toepassing alle koppelingen tussen uw factuurregels en de boekhoudrekening van uw rekeningschema maken, met één druk op de knop <strong>"%s"</strong>. Als er geen rekenig is ingesteld op de product- / servicekaarten of als u nog enkele regels hebt die niet aan een rekening zijn gekoppeld, moet u een handmatige koppeling maken via het menu "<strong>%s</strong>".
-DescVentilDoneCustomer=Bekijk hier de lijst met factuurregels en hun grootboekrekening
-DescVentilTodoCustomer=Koppel factuurregels welke nog niet verbonden zijn met een product grootboekrekening
-ChangeAccount=Wijzig de product/dienst grootboekrekening voor geselecteerde regels met de volgende grootboekrekening:
+DescVentilCustomer=Raadpleeg hier de lijst met klantfactuurregels die al dan niet gebonden zijn aan een productrekening uit het rekeningschema
+DescVentilMore=In de meeste gevallen, als u vooraf gedefinieerde producten of diensten gebruikt en u de rekening (vanuit het rekeningschema) instelt op de product-/dienstkaart, kan de applicatie alle binding tussen uw factuurregels en de boekhoudrekening van uw grafiek maken van accounts, met slechts één klik met de knop <strong> "%s" </strong> . Als er geen account is ingesteld op product-/servicekaarten of als u nog steeds enkele regels hebt die niet aan een account zijn gebonden, moet u een handmatige binding maken vanuit het menu " <strong> %s </strong> ".
+DescVentilDoneCustomer=Raadpleeg hier de lijst met factuurregels van klanten en hun productrekening uit het rekeningschema
+DescVentilTodoCustomer=Bind factuurregels die nog niet zijn gebonden met een productrekening vanuit het rekeningschema
+ChangeAccount=Wijzig de product-/dienstrekening (uit rekeningschema) voor de geselecteerde regels met de volgende rekening:
 Vide=-
-DescVentilSupplier=Raadpleeg hier de lijst met leverancier factuurregels die al dan niet zijn gekoppeld aan een productgrootboekrekening (alleen mutaties die nog niet zijn doorgeboekt in de boekhouding zijn zichtbaar) 
+DescVentilSupplier=Raadpleeg hier de lijst met leveranciersfactuurregels die al dan niet gebonden zijn aan een productrekening uit het rekeningschema (alleen records die nog niet in de boekhouding zijn overgezet zijn zichtbaar)
 DescVentilDoneSupplier=Raadpleeg hier de regels van de leveranciers facturen en hun tegenrekening
 DescVentilTodoExpenseReport=Koppel kosten-boekregels aan grootboekrekeningen welke nog niet zijn vastgelegd
 DescVentilExpenseReport=Hier kunt u de lijst raadplegen van kostenregels om te koppelen aan een grootboekrekening (of niet).
@@ -282,24 +298,25 @@ DescVentilExpenseReportMore=Als u een account instelt op het type onkostendeclar
 DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met hun tegenrekening
 
 Closure=Jaarafsluiting
-DescClosure=Consult here the number of movements by month not yet validated & locked
+DescClosure=Raadpleeg hier het aantal bewegingen per maand nog niet gevalideerd & vergrendeld
 OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
 AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
 NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd
-ValidateMovements=Valideer wijzigingen
+ValidateMovements=Valideer en vergrendel wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 
-ValidateHistory=Automatisch boeken
+ValidateHistory=Automatisch afstemmen
 AutomaticBindingDone=Automatische bindings uitgevoerd (%s) - Automatische binding was niet mogelijk voor record (%s)
+DoManualBindingForFailedRecord=U moet een handmatige koppeling maken voor de %s rij(en) die niet automatisch zijn gekoppeld.
 
-ErrorAccountancyCodeIsAlreadyUse=Fout. U kunt geen grootboekrekening verwijderen welke in gebruik is.
+ErrorAccountancyCodeIsAlreadyUse=Fout, u kunt deze rekening of rekeningschema niet verwijderen of uitschakelen omdat deze wordt gebruikt
 MvtNotCorrectlyBalanced=Beweging niet correct gebalanceerd. Debet = %s & Credit = %s
 Balancing=Balansen
 FicheVentilation=Koppelen card
 GeneralLedgerIsWritten=Grootboek transacties
 GeneralLedgerSomeRecordWasNotRecorded=Sommige transacties konden niet worden doorgeboekt. Als er geen andere foutmelding is, komt dit waarschijnlijk omdat ze reeds zijn doorgeboekt.
 NoNewRecordSaved=Geen record meer om over te zetten
-ListOfProductsWithoutAccountingAccount=Overzicht van producten welke nog niet zijn gekoppeld aan een grootboekrekening
+ListOfProductsWithoutAccountingAccount=Lijst van producten die niet gebonden zijn aan enige rekening of rekeningschema
 ChangeBinding=Wijzig koppeling
 Accounted=Geboekt in grootboek
 NotYetAccounted=Nog niet overgezet naar boekhouding
@@ -322,9 +339,10 @@ AccountingJournalType1=Overige bewerkingen
 AccountingJournalType2=Verkopen
 AccountingJournalType3=Aankopen
 AccountingJournalType4=Bank
-AccountingJournalType5=Kostenoverzicht
+AccountingJournalType5=Declaraties
 AccountingJournalType8=Voorraad
 AccountingJournalType9=HAS-nieuw
+GenerationOfAccountingEntries=Genereren van boekhoudkundige boekingen
 ErrorAccountingJournalIsAlreadyUse=Dit dagboek is al in gebruik
 AccountingAccountForSalesTaxAreDefinedInto=Opmerking: Grootboekrekeningen voor BTW worden vastgelegd in menukeuze <b>%s</b>-<b>%s</b>
 NumberOfAccountancyEntries=Aantal boekingen
@@ -332,10 +350,20 @@ NumberOfAccountancyMovements=Aantal veranderingen
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Schakel het koppelen en doorboeken naar de boekhouding van verkopen uit (facturen van klanten worden niet opgenomen in de boekhouding)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar de  boekhouding van inkopen uit (facturen van leveranciers worden niet doorgeboekt in de boekhouding)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
+ACCOUNTING_ENABLE_LETTERING=Schakel de afletteren functie in de boekhouding in
+ACCOUNTING_ENABLE_LETTERING_DESC=Als deze optie is ingeschakeld, kunt u op elke boeking een code definiëren, zodat u verschillende boekingen kunt groeperen. In het verleden, toen verschillende dagboeken onafhankelijk van elkaar werden beheerd, was deze functie nodig om bewegingslijnen van verschillende dagboeken samen te groeperen. Met Dolibarr accountancy wordt een dergelijke trackingcode, genaamd " <b> %s </b> " echter al automatisch opgeslagen, dus een automatische belettering is al gedaan, zonder risico op fouten, dus deze functie is nutteloos geworden voor algemeen gebruik. Handmatige letterfunctie is beschikbaar voor eindgebruikers die de computermotor die de gegevensoverdracht in de boekhouding uitvoert echt niet vertrouwen.
+EnablingThisFeatureIsNotNecessary=Het inschakelen van deze functie is niet meer nodig voor een rigoureus boekhoudkundig beheer.
+ACCOUNTING_ENABLE_AUTOLETTERING=Schakel de automatische belettering in bij het overstappen naar de boekhouding
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=De code voor de belettering wordt automatisch gegenereerd en opgehoogd en niet gekozen door de eindgebruiker
+OptionsAdvanced=Geavanceerde mogelijkheden
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activeer het beheer van btw-verlegging op leveranciersaankopen
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wanneer deze optie is ingeschakeld, kunt u definiëren dat een leveranciersfactuur of een bepaalde leveranciersfactuur op een andere manier naar de boekhouding moet worden overgeboekt: Er wordt een extra debet- en een kredietlijn gegenereerd in de boekhouding op 2 bepaalde rekeningen vanuit het rekeningschema dat is gedefinieerd in de "%s " instellingenpagina.
 
 ## Export
-NotifiedExportDate=Geëxporteerde regels markeren als geëxporteerd <span class="warning">(om een regel te wijzigen, moet u de hele transactie verwijderen en opnieuw in de boekhouding opnemen)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotExportLettering=Exporteer het afletteren niet bij het genereren van het bestand
+NotifiedExportDate=Markeer nog niet geëxporteerde regels als geëxporteerd <span class="warning"> (om een regel te wijzigen die is gemarkeerd als geëxporteerd, moet u de hele transactie verwijderen en opnieuw overboeken naar de boekhouding) </span>
+NotifiedValidationDate=Valideer en vergrendel de geëxporteerde ingangen die nog niet vergrendeld zijn <span class="warning"> (hetzelfde effect als de functie "%s", wijziging en verwijdering van de regels zal ZEKER niet mogelijk zijn) </span>
+NotifiedExportFull=Documenten exporteren?
 DateValidationAndLock=Datum validatie en vergrendelen
 ConfirmExportFile=Bevestiging van het genereren van het boekhoudkundige exportbestand ?
 ExportDraftJournal=Journaal exporteren
@@ -366,7 +394,7 @@ ChartofaccountsId=Rekeningschema Id
 ## Tools - Init accounting account on product / service
 InitAccountancy=Instellen boekhouding
 InitAccountancyDesc=Deze pagina kan worden gebruikt om een ​​grootboekrekening toe te wijzen aan producten en services waarvoor geen grootboekrekening is gedefinieerd voor verkopen en aankopen.
-DefaultBindingDesc=Hier kunt u een standaard grootboekrekening koppelen aan salaris betalingen, donaties, belastingen en BTW, wanneer deze nog niet apart zijn ingesteld.
+DefaultBindingDesc=Deze pagina kan worden gebruikt om de standaardrekeningen (uit het rekeningschema) in te stellen om bedrijfsobjecten aan een rekening te koppelen, zoals betaling salarissen, donaties, belastingen en btw, wanneer er nog geen specifieke rekening was ingesteld.
 DefaultClosureDesc=Deze pagina kan worden gebruikt voor instellingen die worden gebruikt voor boekhoudkundige sluitingen.
 Options=Opties
 OptionModeProductSell=Instellingen verkopen
@@ -392,7 +420,7 @@ SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
 SaleEECWithVAT=Verkoop binnen de EU met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
-SaleEECWithoutVATNumber=Verkoop binnen de EU zonder btw, maar het btw-nummer van een derde partij is niet gedefinieerd. Voor standaardverkoop vallen we terug op het product-grootboekrekening. U kunt indien nodig het btw-nummer van een derde partij of het productaccount aanpassen.
+SaleEECWithoutVATNumber=Verkoop in de EEG zonder btw, maar het btw-nummer van de derde partij is niet gedefinieerd. Voor standaardverkopen vallen we terug op de rekening. U kunt indien nodig het btw-nummer van de derde partij corrigeren of het productaccount wijzigen dat wordt voorgesteld om te binden.
 ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
 ForbiddenTransactionAlreadyValidated=Niet toegestaan: De transactie is gevalideerd.
 ## Dictionary
@@ -401,7 +429,11 @@ Calculated=Berekend
 Formula=Formule
 
 ## Reconcile
+LetteringAuto=Automatisch afstemmen
+LetteringManual=Handboek afstemmen
 Unlettering=niet afstemmen
+UnletteringAuto=Auto niet afstemmen
+UnletteringManual=niet-afstemmen handleiding
 AccountancyNoLetteringModified=Geen afstemming gewijzigd
 AccountancyOneLetteringModifiedSuccessfully=Eén afstemming succesvol gewijzigd
 AccountancyLetteringModifiedSuccessfully=%s afstemming succesvol gewijzigd
@@ -410,10 +442,11 @@ AccountancyOneUnletteringModifiedSuccessfully=Eén onafstemming succesvol gewijz
 AccountancyUnletteringModifiedSuccessfully=%s afstemmen succesvol gewijzigd
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk verwijderen afstemming bevestiging
-ConfirmMassUnletteringQuestion=Weet u zeker dat u de %s geselecteerde record(s) ongedaan wilt maken?
+ConfirmMassUnletteringAuto=Bulk automatische afstemming ongedaan maken bevestiging
+ConfirmMassUnletteringManual=Bulk handmatige afstemming ongedaan maken bevestiging
+ConfirmMassUnletteringQuestion=Weet u zeker dat u de %s geselecteerde record(s) wilt ontkoppelen?
 ConfirmMassDeleteBookkeepingWriting=Bevestiging bulk verwijdering
-ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regels die betrekking hebben op dezelfde transactie worden verwijderd) Weet u zeker dat u de geselecteerde record(en) van %s wilt verwijderen?
+ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regelitems die betrekking hebben op dezelfde transactie worden verwijderd). Weet u zeker dat u de %s geselecteerde vermeldingen wilt verwijderen?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.
@@ -423,14 +456,15 @@ ErrorInvoiceContainsLinesNotYetBoundedShort=Sommige regels op de factuur zijn ni
 ExportNotSupported=Het ingestelde exportformaat wordt niet ondersteund op deze pagina
 BookeppingLineAlreayExists=Reeds doorgeboekte regels
 NoJournalDefined=Geen dagboek ingesteld
-Binded=Geboekte regels
-ToBind=Te boeken regels
-UseMenuToSetBindindManualy=Regels die nog niet zijn gebonden, gebruik het menu <a href="%s"> %s </a> om de binding handmatig te maken
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry, deze module is niet compatibel met de experimentele functie van situatiefacturen
-AccountancyErrorMismatchLetterCode=Komt niet overeen in afstemmingscode
+Binded=Gekoppelde regels
+ToBind=Te koppelen regels
+UseMenuToSetBindindManualy=Regels die nog niet zijn gekoppeld, gebruik het menu <a href="%s"> %s </a> om de koppeling handmatig te maken
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Let op: deze module of pagina is niet volledig compatibel met de experimentele functie van situatiefacturen. Sommige gegevens kunnen onjuist zijn.
+AccountancyErrorMismatchLetterCode=Mismatch in afstemmingscode
 AccountancyErrorMismatchBalanceAmount=Het saldo (%s) is niet gelijk aan 0
 AccountancyErrorLetteringBookkeeping=Er zijn fouten opgetreden met betrekking tot de transacties: %s
-ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorAccountNumberAlreadyExists=Het boekhoudnummer %s bestaat al
+ErrorArchiveAddFile=Kan het bestand "%s" niet in het archief plaatsen
 
 ## Import
 ImportAccountingEntries=Boekingen
@@ -457,6 +491,7 @@ FECFormatMulticurrencyCode=Multivalutacode (Idevise)
 DateExport=Exportdatum
 WarningReportNotReliable=Waarschuwing, dit rapport is niet gebaseerd op het grootboek, dus bevat het niet de transactie die handmatig in het grootboek is gewijzigd. Als uw journalisatie up-to-date is, is de weergave van de boekhouding nauwkeuriger.
 ExpenseReportJournal=Kostenoverzicht
-InventoryJournal=Inventarisatie
+DocsAlreadyExportedAreIncluded=Reeds geëxporteerde documenten zijn inbegrepen
+ClickToShowAlreadyExportedLines=Klik om reeds geëxporteerde regels weer te geven
 
 NAccounts=%s accounts

@@ -26,6 +26,7 @@
  *		\brief      Page of sales taxes
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -52,7 +53,7 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = (empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE);
+$modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOSTINT("modetax");
 }
@@ -121,6 +122,7 @@ $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToMod
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $date_start_year;
+$q=0;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -138,16 +140,16 @@ if ($nextquarter < 4) {
 }
 $builddate = dol_now();
 
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
-	$description .= $langs->trans("RulesVATDueProducts");
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
+	$description = $langs->trans("RulesVATDueProducts");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 	$description .= $langs->trans("RulesVATInProducts");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -179,14 +181,17 @@ $productcust = $langs->trans("Description");
 $namerate = $langs->trans("VATRate");
 $amountcust = $langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
-	$vatcust .= ' ('.$langs->trans("StatusToPay").')';
+	$vatcust = ' ('.$langs->trans("StatusToPay").')';
 }
 $elementsup = $langs->trans("SuppliersInvoices");
 $productsup = $langs->trans("Description");
 $amountsup = $langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
-	$vatsup .= ' ('.$langs->trans("ToGetBack").')';
+	$vatsup = ' ('.$langs->trans("ToGetBack").')';
 }
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 $vatcust = $langs->trans("VATReceived");
@@ -239,7 +244,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
-			$company_static->tva_intra = $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id];
+			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id])?$x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]:0;
 			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
@@ -253,13 +258,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
 
 				'pid'       =>$x_coll[$my_coll_thirdpartyid]['pid'][$id],
-				'pref'      =>$x_coll[$my_coll_thirdpartyid]['pref'][$id],
+				'pref'      =>isset($x_coll[$my_coll_thirdpartyid]['pref'][$id])?$x_coll[$my_coll_thirdpartyid]['pref'][$id]:'',
 				'ptype'     =>$x_coll[$my_coll_thirdpartyid]['ptype'][$id],
-				'pstatus'   =>$x_paye[$my_coll_thirdpartyid]['pstatus'][$id],
-				'pstatusbuy'=>$x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id],
+				'pstatus'   =>isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id])?$x_paye[$my_coll_thirdpartyid]['pstatus'][$id]:'',
+				'pstatusbuy'=>isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id])?$x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]:'',
 
 				'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
-				'payment_ref'=>$x_coll[$my_coll_thirdpartyid]['payment_ref'][$id],
+				'payment_ref'=>isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id])?$x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]:'',
 				'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
 				'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
 				'dtotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
@@ -385,12 +390,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$elementcust.'</td>';
 	print '<td class="left">'.$langs->trans("DateInvoice").'</td>';
-	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 		print '<td class="left">'.$langs->trans("DatePayment").'</td>';
 	} else {
 		print '<td></td>';
 	}
-	print '<td class="right">'.$namerate.'</td>';
+	print '<td class="right"></td>';
 	print '<td class="left">'.$productcust.'</td>';
 	if ($modetax != 1) {
 		print '<td class="right">'.$amountcust.'</td>';
@@ -453,7 +458,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="left">'.dol_print_date($fields['datef'], 'day').'</td>';
 
 					// Payment date
-					if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+					if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 						print '<td class="left">'.dol_print_date($fields['datep'], 'day').'</td>';
 					} else {
 						print '<td></td>';
@@ -519,8 +524,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							$payment_static->ref = $fields['payment_ref'];
 							print $payment_static->getNomUrl(2, '', '', 0).' ';
 						}
-						if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-							|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+						if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+							|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 								print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -588,12 +593,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td class="left">'.$elementsup.'</td>';
 	print '<td class="left">'.$langs->trans("DateInvoice").'</td>';
-	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 		print '<td class="left">'.$langs->trans("DatePayment").'</td>';
 	} else {
 		print '<td></td>';
 	}
-	print '<td class="left">'.$namesup.'</td>';
+	print '<td class="left"></td>';
 	print '<td class="left">'.$productsup.'</td>';
 	if ($modetax != 1) {
 		print '<td class="right">'.$amountsup.'</td>';
@@ -645,7 +650,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="left">'.dol_print_date($fields['datef'], 'day').'</td>';
 
 					// Payment date
-					if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+					if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 						print '<td class="left">'.dol_print_date($fields['datep'], 'day').'</td>';
 					} else {
 						print '<td></td>';
@@ -710,8 +715,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							print $paymentfourn_static->getNomUrl(2, '', '', 0);
 						}
 
-						if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
-							|| ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+						if (($type == 0 && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice')
+							|| ($type == 1 && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 							print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {

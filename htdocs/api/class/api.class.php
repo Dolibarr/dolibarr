@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class DolibarrApi
 {
-
 	/**
 	 * @var DoliDb        $db Database object
 	 */
@@ -80,7 +79,7 @@ class DolibarrApi
 	 *
 	 * @param	string		$field		Field name
 	 * @param	string		$value		Value to check/clean
-	 * @param	stdClass	$object		Object
+	 * @param	Object		$object		Object
 	 * @return 	string					Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
@@ -96,10 +95,33 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
+	 * Filter properties that will be returned on object
+	 *
+	 * @param   Object  $object			Object to clean
+	 * @param   String  $properties		Comma separated list of properties names
+	 * @return	Object					Object with cleaned properties
+	 */
+	protected function _filterObjectProperties($object, $properties)
+	{
+		// If properties is empty, we return all properties
+		if (empty($properties)) {
+			return $object;
+		}
+		// Else we filter properties
+		foreach (get_object_vars($object) as $key => $value) {
+			if (!in_array($key, explode(',', $properties))) {
+				unset($object->$key);
+			}
+		}
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object	Object to clean
-	 * @return	Object			Object with cleaned properties
+	 * @param   Object  $object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -113,8 +135,9 @@ class DolibarrApi
 		unset($object->pass);
 		unset($object->pass_indatabase);
 
-		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
+		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
+		//unset($object->lines[$i]->linked_objects);		// This is the array to create linked object during create
 
 		unset($object->fields);
 		unset($object->oldline);
@@ -125,7 +148,6 @@ class DolibarrApi
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
-		unset($object->ref_int);
 		unset($object->imgWidth);
 		unset($object->imgHeight);
 		unset($object->barcode_type_code);
@@ -139,6 +161,7 @@ class DolibarrApi
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
+		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
 		unset($object->timespent_old_duration);
 		unset($object->timespent_id);
@@ -160,10 +183,9 @@ class DolibarrApi
 		unset($object->statuts_short);
 		unset($object->statuts_logo);
 		unset($object->statuts_long);
-		unset($object->statutshorts);
-		unset($object->statutshort);
-		unset($object->labelStatus);
-		unset($object->labelStatusShort);
+
+		//unset($object->labelStatus);
+		//unset($object->labelStatusShort);
 
 		unset($object->stats_propale);
 		unset($object->stats_commande);
@@ -278,7 +300,6 @@ class DolibarrApi
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
 	 * @return bool
-	 * @throws RestException
 	 */
 	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
 	{
@@ -302,6 +323,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  	string   		$sqlfilters     sqlfilter string
 	 * @param	string			$error			Error message
@@ -317,7 +339,8 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria from a Generic filter string
+	 * Function to forge a SQL criteria from a Generic filter string.
+	 * Function no more used. Kept for backward compatibility with old APIs of modules
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.

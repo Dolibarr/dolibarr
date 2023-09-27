@@ -67,7 +67,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs, $conf;
-		$langs->load("boxes");
+		$langs->loadLangs(array("boxes", "members"));
 
 		$this->max = $max;
 
@@ -90,7 +90,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersSubscriptionsByYear", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$num = 0;
 			$line = 0;
 			// List of subscription by year
@@ -191,8 +191,8 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedMembers"),
+						'td' => 'colspan="4" class="center"',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(

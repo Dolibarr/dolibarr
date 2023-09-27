@@ -22,6 +22,7 @@
  *  \brief      Card with disposal info on Asset
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
@@ -50,14 +51,14 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->asset->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('asset', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!isset($object->disposal_date) || $object->disposal_date === "") accessforbidden();
 
 
@@ -65,7 +66,8 @@ if (!isset($object->disposal_date) || $object->disposal_date === "") accessforbi
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
