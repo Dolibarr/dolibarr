@@ -1895,6 +1895,7 @@ if ($action == 'create') {
 
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
+	$object->fetch_thirdparty();
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
