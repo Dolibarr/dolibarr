@@ -3895,7 +3895,7 @@ if ($module == 'initmodule') {
 				print '</div>';
 				print '</form>';
 				// javascript
-				print '<script> 
+				print '<script>
 				function goBack() {
 					var url = "'.$_SERVER["PHP_SELF"].'?tab=objects&module='.urlencode($module).'";
 					window.location.href = url;
@@ -3903,15 +3903,15 @@ if ($module == 'initmodule') {
 				$(document).ready(function() {
 					// Tableau de suggestions statiques
 					var suggestions = ["VARCHAR", "DOUBLE", "REAL", "TEXT", "HTML", "DATETIME", "TIMESTAMP", "INTEGER", "INTEGER:CLASSNAME:RELATIVEPATH/TO/CLASSFILE.CLASS.PHP[:1[:FILTER]]"];
-					
+
 					function showSuggestions() {
 						var inputText = $("#proptype").val().toLowerCase();
 						var suggestionsDiv = $("#suggestions");
-					
+
 						var filteredSuggestions = suggestions.filter(function(suggestion) {
 						  return suggestion.toLowerCase().indexOf(inputText) !== -1;
 						});
-						
+
 						//get suggestion on div
 						suggestionsDiv.empty();
 						for (var i = 0; i < filteredSuggestions.length; i++) {
@@ -3919,17 +3919,17 @@ if ($module == 'initmodule') {
 						  var suggestionItem = $("<div>").text(suggestion).css({ cursor: "pointer", padding: "5px" });
 						  suggestionsDiv.append(suggestionItem);
 						}
-						
-						
+
+
 						if (inputText === "" || filteredSuggestions.length === 0) {
 						  suggestionsDiv.hide();
 						} else {
 						  suggestionsDiv.show();
 						}
 					  }
-					
+
 					  $("#proptype").on("input", showSuggestions);
-					
+
 					  $("#suggestions").on("click", "div", function() {
 						var selectedValue = $(this).text();
 						$("#proptype").val(selectedValue);
@@ -3951,7 +3951,7 @@ if ($module == 'initmodule') {
 					$("#suggestions").on("mouseenter", "div", function() {
 						$(this).css("background-color", "#e0e0e0");
 					  });
-					
+
 					  $("#suggestions").on("mouseleave", "div", function() {
 						$(this).css("background-color", "#fff");
 					  });
@@ -4307,7 +4307,6 @@ if ($module == 'initmodule') {
 							//$properties = dol_sort_array($tmpobject->fields, 'position');
 							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
 							if (!empty($properties)) {
-
 								// List of existing properties
 								foreach ($properties as $propkey => $propval) {
 									/* If from Reflection
