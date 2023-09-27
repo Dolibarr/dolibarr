@@ -9,8 +9,9 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023  		  Lenin Rivas	            <lenin.rivas777@gmail.com>
+ * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
+ * Copyright (C) 2022-2023  Easya Solutions	        <support@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ $formquestion = array();
 $usercanissuepayment = $user->hasRight('facture', 'paiement');
 
 $fieldid = 'rowid';
-$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$isdraft = (($object->status == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 
@@ -459,12 +460,54 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '	});'."\n";
 
-			//Add js for AutoFill
+			// Add js for AutoFill
 			print ' $(document).ready(function () {';
 			print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
 							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
 						});';
 			print '	});'."\n";
+
+			if ($action == 'add_paiement' && !empty($conf->use_javascript_ajax)) {
+				print ' $(document).ready(function () {
+				var payment_form = $("#payment_form");
+				var submit_button = $("#submit_button");
+				var please_wait = $("#please_wait");
+
+				payment_form.submit(function (e) {
+					e.preventDefault();
+					submit_button.hide();
+					please_wait.show();
+					var redirection = false;
+					$(\'input[name="token"]\').val("' . currentToken(). '");
+
+					$.ajax({
+						type: "POST",
+						url: "' . DOL_URL_ROOT . '/compta/ajax/addpayment.php",
+						data: payment_form.serialize(),
+						dataType: "json"
+					}).done(function(data, textStatus, jqXHR) {
+						if (typeof data.error !== "undefined") {
+							$.jnotify(data.error, "error", true, { remove: function(){} });
+        				} else if (typeof data.invoice_id !== "undefined") {
+        					window.location = "' . DOL_URL_ROOT . '/compta/facture/card.php?facid=" + data.invoice_id;
+        					redirection = true;
+        				} else if (typeof data.payment_id !== "undefined") {
+        					window.location = "' . DOL_URL_ROOT . '/compta/paiement/card.php?id=" + data.payment_id;
+        					redirection = true;
+						}
+						//console.log("done", data);
+					}).fail(function(jqXHR, textStatus, errorThrown) {
+						$.jnotify(textStatus + " - " + error, "error", true, { remove: function(){} });
+						//console.log("fail", jqXHR);
+					}).always(function(data, textStatus, jqXHR) { // function(data|jqXHR, textStatus, jqXHR|errorThrown)
+						if (!redirection) {
+							submit_button.show();
+							please_wait.hide();
+						}
+					});
+				});
+			});' . "\n";
+			}
 
 			print '	</script>'."\n";
 		}
@@ -848,7 +891,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					print '</b></td>';
 					print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 					print '<td class="right" id="result" style="font-weight: bold;"></td>'; // Autofilled
-					print '<td align="center">&nbsp;</td>';
+					print '<td class="center">&nbsp;</td>';
 					print "</tr>\n";
 				}
 				print "</table>";
@@ -897,7 +940,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 				print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 			}
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+			$formconfirm = '<div id="submit_button">';
+			$formconfirm .= $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+			$formconfirm .= '</div>';
+			$formconfirm .= '<div id="please_wait" style="display: none;">'. info_admin('<span class="fa fa-spinner fa-spin"></span> ' . $langs->trans('PleaseBePatient'), 0, 0, 'warning') . '</div>';
 		}
 
 		// Call Hook formConfirm
