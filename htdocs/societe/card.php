@@ -3370,7 +3370,7 @@ function GRVAT(a, u, p, myafm) {
   $.ajax({
 	type: "GET",
 	url: "/societe/checkvat/checkVatGr.php",
-	data: { u, p, myafm, afm }, // Set request parameters
+	data: { afm }, // Set request parameters
 	success: function(data) {
 		var obj = data; // Parse response data as JSON
 
