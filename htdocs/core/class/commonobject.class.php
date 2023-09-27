@@ -1172,6 +1172,8 @@ abstract class CommonObject
 
 		$error = 0;
 
+		$this->context['contact_id'] = ((int) $rowid);
+
 		$this->db->begin();
 
 		if (!$error && empty($notrigger)) {
@@ -1184,6 +1186,8 @@ abstract class CommonObject
 		}
 
 		if (!$error) {
+			dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
