@@ -260,6 +260,7 @@ function getCustomerProposalPieChart($socid = 0)
 		}
 		$db->free($resql);
 
+		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$result = '<div class="div-table-responsive-no-min">';

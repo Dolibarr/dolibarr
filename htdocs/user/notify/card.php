@@ -328,7 +328,7 @@ if ($result > 0) {
 		if ($num) {
 			$i = 0;
 
-			$userstatic = new user($db);
+			$userstatic = new User($db);
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);

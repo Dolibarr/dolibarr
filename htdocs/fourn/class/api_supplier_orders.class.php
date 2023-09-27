@@ -56,10 +56,10 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with supplier order information
 	 *
-	 * @param 	int 	$id ID of supplier order
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id ID of supplier order
+	 * @return	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -85,19 +85,20 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Get a list of supplier orders
 	 *
-	 * @param string	$sortfield	      Sort field
-	 * @param string	$sortorder	      Sort order
-	 * @param int		$limit		      Limit for list
-	 * @param int		$page		      Page number
-	 * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string   	$product_ids	  Product ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$status		      Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
+	 * @param string	$sortfield		  Sort field
+	 * @param string	$sortorder		  Sort order
+	 * @param int		$limit			  Limit for list
+	 * @param int		$page			  Page number
+	 * @param string	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$product_ids	  Product ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$status			  Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -201,7 +202,7 @@ class SupplierOrders extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$order_static = new CommandeFournisseur($this->db);
 				if ($order_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($order_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($order_static), $properties);
 				}
 				$i++;
 			}
@@ -292,14 +293,14 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
-	 * @param 	int    	$id   		ID of supplier order
-	 * @param 	string 	$source 	Source of the contact (internal, external, all).
-	 * @param 	string 	$type 		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @param	int		$id			ID of supplier order
+	 * @param	string	$source		Source of the contact (internal, external, all).
+	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
 	 * @return	Object				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function getContacts($id, $source, $type = '')
 	{
@@ -333,10 +334,10 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Add a contact type of given supplier order
 	 *
-	 * @param int    	$id				Id of supplier order to update
-	 * @param int    	$contactid		Id of contact/user to add
-	 * @param string 	$type			Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
-	 * @param string 	$source			Source of the contact (external, internal)
+	 * @param int		$id				Id of supplier order to update
+	 * @param int		$contactid		Id of contact/user to add
+	 * @param string	$type			Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @param string	$source			Source of the contact (external, internal)
 	 * @return array
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
@@ -380,10 +381,10 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Unlink a contact type of given supplier order
 	 *
-	 * @param 	int    	$id             Id of supplier order to update
-	 * @param 	int    	$contactid      Id of contact/user to add
-	 * @param 	string 	$type           Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...).
-	 * @param 	string 	$source 		Source of the contact (internal, external).
+	 * @param	int		$id             Id of supplier order to update
+	 * @param	int		$contactid      Id of contact/user to add
+	 * @param	string	$type           Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...).
+	 * @param	string	$source			Source of the contact (internal, external).
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}/{source}
 	 *
@@ -439,7 +440,7 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Delete supplier order
 	 *
-	 * @param int   	$id 	Supplier order ID
+	 * @param int		$id		Supplier order ID
 	 * @return array			Array of result
 	 */
 	public function delete($id)

@@ -438,7 +438,7 @@ class Fichinter extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut,";
+		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
@@ -462,7 +462,8 @@ class Fichinter extends CommonObject
 				$this->ref_client   = $obj->ref_client;
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
-				$this->statut       = $obj->fk_statut;
+				$this->status       = $obj->status;
+				$this->statut       = $obj->status;	// deprecated
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->dateo        = $this->db->jdate($obj->dateo);
@@ -483,10 +484,6 @@ class Fichinter extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->last_main_doc = $obj->last_main_doc;
-
-				if ($this->statut == 0) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve extrafields
 				$this->fetch_optionals();
@@ -573,7 +570,7 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut != 1) {
+		if ($this->status != self::STATUS_VALIDATED) {
 			$this->db->begin();
 
 			$now = dol_now();
@@ -653,8 +650,8 @@ class Fichinter extends CommonObject
 			// Set new ref and define current statut
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = 1;
-				$this->brouillon = 0;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 				$this->db->commit();
 				return 1;
@@ -832,7 +829,7 @@ class Fichinter extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1240,7 +1237,8 @@ class Fichinter extends CommonObject
 
 		$this->id = 0;
 		$this->ref = '';
-		$this->statut = 0;
+		$this->status = self::STATUS_DRAFT;
+		$this->statut = self::STATUS_DRAFT;	//  deprecated
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
@@ -1302,7 +1300,7 @@ class Fichinter extends CommonObject
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Insertion ligne
@@ -1846,49 +1844,44 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public function deleteline($user, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
-		if ($this->statut == 0) {
-			dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
-			$this->db->begin();
+		dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
 
-						$result = $this->deleteExtraFields();
-			if ($result < 0) {
-				$error++;
-				$this->db->rollback();
-				return -1;
-			}
+		$this->db->begin();
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".((int) $this->id);
-			$resql = $this->db->query($sql);
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
+			$error++;
+			$this->db->rollback();
+			return -1;
+		}
 
-			if ($resql) {
-				$result = $this->update_total();
-				if ($result > 0) {
-					if (!$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('LINEFICHINTER_DELETE', $user);
-						if ($result < 0) {
-							$error++; $this->db->rollback(); return -1;
-						}
-						// End call triggers
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$result = $this->update_total();
+			if ($result > 0) {
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('LINEFICHINTER_DELETE', $user);
+					if ($result < 0) {
+						$error++; $this->db->rollback(); return -1;
 					}
-
-					$this->db->commit();
-					return $result;
-				} else {
-					$this->db->rollback();
-					return -1;
+					// End call triggers
 				}
+
+				$this->db->commit();
+				return $result;
 			} else {
-				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -1;
 			}
 		} else {
-			return -2;
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -1;
 		}
 	}
 }

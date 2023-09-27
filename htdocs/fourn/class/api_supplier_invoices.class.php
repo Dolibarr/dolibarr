@@ -58,10 +58,10 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Return an array with supplier invoice information
 	 *
-	 * @param 	int 	$id 			ID of supplier invoice
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of supplier invoice
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -87,18 +87,19 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Get a list of supplier invoices
 	 *
-	 * @param string	$sortfield	      Sort field
-	 * @param string	$sortorder	      Sort order
-	 * @param int		$limit		      Limit for list
-	 * @param int		$page		      Page number
-	 * @param string   	$thirdparty_ids	  Thirdparty ids to filter invoices of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
+	 * @param string	$sortfield		  Sort field
+	 * @param string	$sortorder		  Sort order
+	 * @param int		$limit			  Limit for list
+	 * @param int		$page			  Page number
+	 * @param string	$thirdparty_ids	  Thirdparty ids to filter invoices of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of invoice objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '')
 	{
 		global $db;
 
@@ -185,7 +186,7 @@ class SupplierInvoices extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$invoice_static = new FactureFournisseur($this->db);
 				if ($invoice_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($invoice_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($invoice_static), $properties);
 				}
 				$i++;
 			}
@@ -662,7 +663,7 @@ class SupplierInvoices extends DolibarrApi
 	 * Deletes a line of a given supplier invoice
 	 *
 	 * @param int   $id             Id of supplier invoice
-	 * @param int   $lineid 		Id of the line to delete
+	 * @param int   $lineid			Id of the line to delete
 	 *
 	 * @url     DELETE {id}/lines/{lineid}
 	 *

@@ -497,7 +497,7 @@ if ($resql) {
 print '<br>';
 
 // Not activated services
-$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
+$sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
@@ -534,7 +534,7 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		$staticcompany->id = $obj->fk_soc;
+		$staticcompany->id = $obj->thirdpartyid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
 		$staticcompany->photo = 1;
@@ -590,7 +590,7 @@ if ($resql) {
 print '<br>';
 
 // Expired services
-$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
+$sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
@@ -628,7 +628,7 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		$staticcompany->id = $obj->fk_soc;
+		$staticcompany->id = $obj->thirdpartyid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
 		$staticcompany->photo = 1;

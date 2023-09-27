@@ -341,5 +341,6 @@ class CActionComm
 		if ($transcode != "Action".$this->code) {
 			return $transcode;
 		}
+		return -1;
 	}
 }

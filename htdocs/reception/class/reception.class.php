@@ -77,7 +77,6 @@ class Reception extends CommonObject
 	public $socid;
 	public $ref_supplier;
 
-	public $brouillon;
 	public $entrepot_id;
 	public $tracking_number;
 	public $tracking_url;
@@ -94,6 +93,7 @@ class Reception extends CommonObject
 	public $depth_units;
 	// A denormalized value
 	public $trueSize;
+	public $size_units;
 
 	public $date_delivery; // Date delivery planed
 
@@ -121,6 +121,11 @@ class Reception extends CommonObject
 
 	public $meths;
 	public $listmeths; // List of carriers
+
+	/**
+	 * @var CommandeFournisseur
+	 */
+	public $commandeFournisseur;
 
 	/**
 	 * @var CommandeFournisseurDispatch[]
@@ -206,7 +211,7 @@ class Reception extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager;
+		global $conf;
 
 		$now = dol_now();
 
@@ -214,7 +219,6 @@ class Reception extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
@@ -366,7 +370,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -395,11 +399,13 @@ class Reception extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                   = $obj->rowid;
+				$this->entity               = $obj->entity;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
 				$this->ref_supplier = $obj->ref_supplier;
 				$this->ref_ext = $obj->ref_ext;
-				$this->statut               = $obj->fk_statut;
+				$this->statut               = $obj->status;
+				$this->status               = $obj->status;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
@@ -437,10 +443,6 @@ class Reception extends CommonObject
 
 				$this->db->free($result);
 
-				if ($this->statut == 0) {
-					$this->brouillon = 1;
-				}
-
 				//$file = $conf->reception->dir_output."/".get_exdir(0, 0, 0, 1, $this, 'reception')."/".$this->id.".pdf";
 				//$this->pdf_filename = $file;
 
@@ -471,7 +473,7 @@ class Reception extends CommonObject
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::Fetch no reception found', LOG_ERR);
-				$this->error = 'Delivery with id '.$id.' not found';
+				$this->error = 'Reception with id '.$id.' not found';
 				return 0;
 			}
 		} else {
@@ -1529,9 +1531,14 @@ class Reception extends CommonObject
 
 		$error = 0;
 
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_CLOSED) {
+			return 0;
+		}
+
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut='.self::STATUS_CLOSED;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut = '.self::STATUS_CLOSED;
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
@@ -1561,7 +1568,7 @@ class Reception extends CommonObject
 			}
 
 			$this->statut = self::STATUS_CLOSED;
-
+			$this->status = self::STATUS_CLOSED;
 
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
@@ -1652,7 +1659,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *	Classify the reception as invoiced (used when WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is on)
+	 *	Classify the reception as invoiced (used for exemple by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
@@ -1665,17 +1672,17 @@ class Reception extends CommonObject
 
 		$this->setClosed();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET  billed=1';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET billed=1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->statut = 2;
 			$this->billed = 1;
 
 			// Call trigger
 			$result = $this->call_trigger('RECEPTION_BILLED', $user);
 			if ($result < 0) {
+				$this->billed = 0;
 				$error++;
 			}
 		} else {

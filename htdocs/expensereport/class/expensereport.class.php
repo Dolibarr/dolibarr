@@ -1062,7 +1062,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.fk_ecm_files,';
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
-		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
+		$sql .= ' ctf.code as code_type_fees, ctf.label as label_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
@@ -1105,7 +1105,7 @@ class ExpenseReport extends CommonObject
 				$deplig->total_localtax2  = $objp->total_localtax2;
 
 				$deplig->type_fees_code     = empty($objp->code_type_fees) ? 'TF_OTHER' : $objp->code_type_fees;
-				$deplig->type_fees_libelle  = $objp->libelle_type_fees;
+				$deplig->type_fees_libelle  = $objp->label_type_fees;
 				$deplig->type_fees_accountancy_code = $objp->accountancy_code_type_fees;
 
 				$deplig->tva_tx             = $objp->tva_tx;
@@ -1298,8 +1298,8 @@ class ExpenseReport extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
-		$sql .= " date_valid='".$this->db->idate($this->date_valid)."',";
-		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
+		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -1322,7 +1322,7 @@ class ExpenseReport extends CommonObject
 
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' AND entity = ".((int) $this->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
@@ -1331,15 +1331,15 @@ class ExpenseReport extends CommonObject
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
-					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
-					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
+					$dirsource = $conf->expensereport->multidir_output[$this->entity].'/'.$oldref;
+					$dirdest = $conf->expensereport->multidir_output[$this->entity].'/'.$newref;
 					if (!$error && file_exists($dirsource)) {
 						dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest)) {
 							dol_syslog("Rename ok");
 							// Rename docs starting with $oldref with $newref
-							$listoffiles = dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+							$listoffiles = dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref, '/'));
 							foreach ($listoffiles as $fileentry) {
 								$dirsource = $fileentry['name'];
 								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -1778,7 +1778,7 @@ class ExpenseReport extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1807,7 +1807,7 @@ class ExpenseReport extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($max ? dol_trunc($ref, $max) : $ref);
@@ -2226,14 +2226,14 @@ class ExpenseReport extends CommonObject
 			$this->line->id = ((int) $rowid);
 
 			// Select des infos sur le type fees
-			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
+			$sql = "SELECT c.code as code_type_fees, c.label as label_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 			$sql .= " WHERE c.id = ".((int) $type_fees_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objp_fees = $this->db->fetch_object($resql);
 				$this->line->type_fees_code      = $objp_fees->code_type_fees;
-				$this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+				$this->line->type_fees_libelle   = $objp_fees->label_type_fees;
 				$this->db->free($resql);
 			}
 

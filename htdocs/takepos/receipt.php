@@ -111,12 +111,12 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-$constFreeText = 'TAKEPOS_HEADER'.$_SESSION['takeposterminal'];
-if (!empty($conf->global->TAKEPOS_HEADER) || getDolGlobalString($constFreeText)) {
+$constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_HEADER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	if (getDolGlobalString('TAKEPOS_HEADER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
 	}
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
@@ -136,7 +136,7 @@ if ($object->statut == Facture::STATUS_DRAFT) {
 } else {
 	print $object->ref;
 }
-if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
+if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
@@ -146,6 +146,9 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 		}
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
+}
+if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
 </p>
@@ -256,14 +259,14 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 
 // Now show local taxes if company uses them
 
-if ($mysoc->useLocalTax(1) || price2num($object->total_localtax1, 'MU')) { ?>
+if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
 <?php } ?>
-<?php if ($mysoc->useLocalTax(2) || price2num($object->total_localtax2, 'MU')) { ?>
+<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
@@ -276,7 +279,7 @@ if ($mysoc->useLocalTax(1) || price2num($object->total_localtax1, 'MU')) { ?>
 					  } ?></td>
 </tr>
 <?php
-if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
@@ -315,6 +318,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_object($resql);
+
 				echo '<tr>';
 				echo '<td class="right">';
 				echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
@@ -349,15 +353,15 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 <br>
 <br>
 <?php
-$constFreeText = 'TAKEPOS_FOOTER'.$_SESSION['takeposterminal'];
-if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText})) {
+$constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->{$constFreeText})) {
-		$newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
-	if (!empty($conf->global->TAKEPOS_FOOTER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	if (getDolGlobalString('TAKEPOS_FOOTER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_FOOTER'), $substitutionarray);
 	}
 	print $newfreetext;
 }

@@ -143,9 +143,9 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($db);
+		$localobject = new Account($db);
 		$localobject->initAsSpecimen();
-		$localobject->date_solde=dol_now();
+		$localobject->date_solde = dol_now();
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";

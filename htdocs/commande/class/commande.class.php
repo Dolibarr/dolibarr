@@ -33,6 +33,7 @@
  *  \ingroup    commande
  *  \brief      class for orders
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -83,6 +84,11 @@ class Commande extends CommonOrder
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -125,14 +131,14 @@ class Commande extends CommonOrder
 	public $billed;
 
 	/**
-	 * @var int Draft Status of the order
-	 */
-	public $brouillon;
-
-	/**
 	 * @var string Condition payment code
 	 */
 	public $cond_reglement_code;
+
+	/**
+	 * @var string Condition payment label
+	 */
+	public $cond_reglement_doc;
 
 	/**
 	 * @var double Deposit % for payment terms
@@ -323,9 +329,9 @@ class Commande extends CommonOrder
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
-		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
-		'date_cloture' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'csslist'=>'nowraponall'),
+		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62, 'csslist'=>'nowraponall'),
+		'date_cloture' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'csslist'=>'nowraponall'),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'source' =>array('type'=>'smallint(6)', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
@@ -347,7 +353,7 @@ class Commande extends CommonOrder
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>181),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>190, 'csslist'=>'nowraponall'),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
 		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'isModEnabled("stock")', 'visible'=>-1, 'position'=>200),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
@@ -367,7 +373,7 @@ class Commande extends CommonOrder
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>280),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>302),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>304),
+		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>304, 'csslist'=>'nowraponall'),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>306),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>400),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
@@ -394,8 +400,8 @@ class Commande extends CommonOrder
 	/**
 	 * Shipment on process
 	 */
-	const STATUS_SHIPMENTONPROCESS = 2;
-	const STATUS_ACCEPTED = 2; // For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+	const STATUS_SHIPMENTONPROCESS = 2;		// We set this status when a shipment is validated
+	const STATUS_ACCEPTED = 2; 				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
 
 	/**
 	 * Closed (Sent, billed or not)
@@ -500,7 +506,7 @@ class Commande extends CommonOrder
 		$soc->fetch($this->socid);
 
 		// Class of company linked to order
-		$result = $soc->set_as_client();
+		$result = $soc->setAsCustomer();
 
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
@@ -603,8 +609,8 @@ class Commande extends CommonOrder
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $num;
-			$this->statut = self::STATUS_VALIDATED;
-			$this->brouillon = 0;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -904,7 +910,6 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Clean parameters
-		$this->brouillon = 1; // set command as draft
 
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
@@ -1325,8 +1330,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-
 		$this->date_commande = dol_now();
+		$this->date = dol_now();
 		$this->source = 0;
 
 		$num = count($object->lines);
@@ -1353,7 +1358,7 @@ class Commande extends CommonOrder
 			$line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
 			$line->fk_unit = $object->lines[$i]->fk_unit;
 
-			$line->date_start = $object->lines[$i]->date_start;
+			$line->date_start 		= $object->lines[$i]->date_start;
 			$line->date_end    		= $object->lines[$i]->date_end;
 
 			$line->fk_fournprice	= $object->lines[$i]->fk_fournprice;
@@ -1806,8 +1811,9 @@ class Commande extends CommonOrder
 			$line->tva_tx = $tva_tx;
 			$line->localtax1_tx = $localtax1_tx;
 			$line->localtax2_tx = $localtax2_tx;
-			$line->ref = $prod->ref;
-			$line->libelle = $prod->label;
+
+			$line->product_ref = $prod->ref;
+			$line->product_label = $prod->label;
 			$line->product_desc = $prod->description;
 			$line->fk_unit = $prod->fk_unit;
 
@@ -1983,10 +1989,6 @@ class Commande extends CommonOrder
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->lines = array();
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -3571,9 +3573,10 @@ class Commande extends CommonOrder
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param		User	$user   Object user
+	 *	@param		string	$mode   Mode ('toship', 'tobill', 'shippedtobill')
 	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-	public function load_board($user)
+	public function load_board($user, $mode)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -3589,18 +3592,48 @@ class Commande extends CommonOrder
 		}
 		$sql .= $clause." c.entity IN (".getEntity('commande').")";
 		//$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
-		$sql .= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_SHIPMENTONPROCESS.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
+		if ($mode == 'toship') {
+			// An order to ship is an open order (validated or in progress)
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_VALIDATED . "," . self::STATUS_SHIPMENTONPROCESS . ")";
+		}
+		if ($mode == 'tobill') {
+			// An order to bill is an order not already billed
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_VALIDATED . "," . self::STATUS_SHIPMENTONPROCESS . ", " . self::STATUS_CLOSED . ") AND c.facture = 0";
+		}
+		if ($mode == 'shippedtobill') {
+			// An order shipped and to bill is a delivered order not already billed
+			$sql .= " AND c.fk_statut IN (" . self::STATUS_CLOSED . ") AND c.facture = 0";
+		}
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$delay_warning = 0;
+			$label = $labelShort = $url = '';
+			if ($mode == 'toship') {
+				$delay_warning = $conf->commande->client->warning_delay / 60 / 60 / 24;
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-2&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->transnoentitiesnoconv("OrdersToProcess");
+				$labelShort = $langs->transnoentitiesnoconv("Opened");
+			}
+			if ($mode == 'tobill') {
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&search_billed=0&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("ToBill");
+			}
+			if ($mode == 'shippedtobill') {
+				$url = DOL_URL_ROOT.'/commande/list.php?search_status=3&search_billed=0&mainmenu=commercial&leftmenu=orders';
+				$label = $langs->trans("OrdersToBill"); // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("StatusOrderDelivered").' '.$langs->trans("and").' '.$langs->trans("ToBill");
+			}
+
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->commande->client->warning_delay / 60 / 60 / 24;
-			$response->label = $langs->trans("OrdersToProcess");
-			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
+			$response->warning_delay = $delay_warning;
+			$response->label = $label;
+			$response->labelShort = $labelShort;
+			$response->url = $url;
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
@@ -3615,7 +3648,7 @@ class Commande extends CommonOrder
 				$generic_commande->date_livraison = $this->db->jdate($obj->delivery_date);
 				$generic_commande->delivery_date = $this->db->jdate($obj->delivery_date);
 
-				if ($generic_commande->hasDelay()) {
+				if ($mode == 'toship' && $generic_commande->hasDelay()) {
 					$response->nbtodolate++;
 				}
 			}
@@ -3697,17 +3730,9 @@ class Commande extends CommonOrder
 				$labelTooltip .= ' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->delivery_date, 'day').$billedtext;
 			}
 			$statusType = 'status4';
-		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill'); // translated into Delivered
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderToBillShort'); // translated into Delivered
-			$statusType = 'status4';
-		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderProcessed').$billedtext;
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderProcessedShort').$billedtext;
-			$statusType = 'status6';
-		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered');
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort');
+		} elseif ($status == self::STATUS_CLOSED) {
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort').$billedtext;
 			$statusType = 'status6';
 		} else {
 			$labelStatus = $langs->transnoentitiesnoconv('Unknown');
@@ -3734,8 +3759,8 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array $params params to construct tooltip data
-	 * @since v18
 	 * @return array
 	 */
 	public function getTooltipContentArray($params)
@@ -3829,7 +3854,7 @@ class Commande extends CommonOrder
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

@@ -80,10 +80,10 @@ if ($action == 'add' && !empty($user->rights->banque->transfer)) {
 	while ($i < $MAXLINES) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOST($i.'_month', 'int'), GETPOST($i.'_day', 'int'), GETPOST($i.'_year', 'int'));
 		$label[$i] = GETPOST($i.'_label', 'alpha');
-		$amount[$i] = intval(price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2));
+		$amount[$i] = price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2);
 		$amountto[$i] = price2num(GETPOST($i.'_amountto', 'alpha'), 'MT', 2);
-		$accountfrom[$i] = intval(GETPOST($i.'_account_from', 'int'));
-		$accountto[$i] = intval(GETPOST($i.'_account_to', 'int'));
+		$accountfrom[$i] = GETPOST($i.'_account_from', 'int');
+		$accountto[$i] = GETPOST($i.'_account_to', 'int');
 		$type[$i] = GETPOST($i.'_type', 'int');
 
 		$tabnum[$i] = 0;

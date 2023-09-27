@@ -22,17 +22,17 @@
 /**
  *  \file       htdocs/core/boxes/box_project_opportunities.php
  *  \ingroup    project
- *  \brief      Module to show Projet activity of the current Year
+ *  \brief      Module to show Project opportunities of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show project opportunities
  */
 class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
-	public $boximg = "object_projectpub";
+	public $boximg  = "object_projectpub";
 	public $boxlabel;
 	//var $depends = array("projet");
 

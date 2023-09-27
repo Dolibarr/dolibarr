@@ -282,7 +282,7 @@ class BookKeeping extends CommonObject
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
 			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
-				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
+				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.($this->numero_compte != -1 ? $this->numero_compte : $langs->trans("Unknown"));
 				if ($this->subledger_account && $this->subledger_account != $this->numero_compte) {
 					$mesg .= ', '.$langs->trans("SubledgerAccount").': '.$this->subledger_account;
 				}
@@ -488,7 +488,7 @@ class BookKeeping extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -716,11 +716,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int 	$id 	Id object
+	 * @param 	string 	$ref 	Ref (Not used. Does not exists on this table, same as rowid)
+	 * @param 	string 	$mode 	Mode
+	 * @return 	int 			Int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -761,7 +760,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
-			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.rowid = ".((int) $ref);
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id);
 		}
@@ -1480,15 +1479,16 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
+	 * @param string $mode Mode
 	 * @return int Result
 	 */
-	public function deleteByImportkey($importkey)
+	public function deleteByImportkey($importkey, $mode = '')
 	{
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE import_key = '".$this->db->escape($importkey)."'";
 
 		$resql = $this->db->query($sql);
@@ -1562,9 +1562,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @param string $mode Mode
 	 * @return 	int 				Result
 	 */
-	public function deleteMvtNum($piecenum)
+	public function deleteMvtNum($piecenum, $mode = '')
 	{
 		global $conf;
 
@@ -1572,7 +1573,7 @@ class BookKeeping extends CommonObject
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
 		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
