@@ -1318,7 +1318,7 @@ class Ticket extends CommonObject
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
-		$sql .= " WHERE active > 0";
+		$sql .= " AND active > 0";
 		if ($publicgroup > -1) {
 			$sql .= " AND public = ".((int) $publicgroup);
 		}
