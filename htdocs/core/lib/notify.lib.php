@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023	Solution Libre SAS	<contact@solution-libre.fr>
+/* Copyright (C) 2023 Solution Libre SAS <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
  * @param	int				$actionId		Action Trigger ID
  * @param	?int			$contactId		Contact ID
  * @param	string			$type			Type
- * @param	string			$email			Email
+ * @param	string			$email			Raw e-mail address(es)
  *
  * @return string The error message
  */
@@ -61,11 +61,6 @@ function notify_sendMail(
 	global $hookmanager;
 
 	$result = '';
-	$projectTitle = '';
-	if (!empty($object->fk_project) && !is_object($object->project)) {
-		$object->fetch_projet();
-		$projectTitle = '('.$object->project->title.')';
-	}
 
 	switch ($notifCode) {
 		case 'BILL_VALIDATE':
@@ -181,8 +176,12 @@ function notify_sendMail(
 		$subject = make_substitutions($defaultMessage->topic, $substitutionarray, $outputLangs);
 		$message = make_substitutions($defaultMessage->content, $substitutionarray, $outputLangs);
 	} else {
-		$subject = '['.$companyName.'] '.$outputLangs->transnoentitiesnoconv("DolibarrNotification");
-		$subject .= ($projectTitle ? ' '.$projectTitle : '');
+		$projectTitle = '';
+		if (!empty($object->fk_project) && !is_object($object->project)) {
+			$object->fetch_projet();
+			$projectTitle = ' ('.$object->project->title.')';
+		}
+		$subject = '['.$companyName.'] '.$outputLangs->transnoentitiesnoconv("DolibarrNotification").$projectTitle;
 		$message = $outputLangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $companyName)."\n";
 		$message .= $outputLangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $companyName)."\n";
 		$message .= "\n";
@@ -201,7 +200,16 @@ function notify_sendMail(
 		$mimefilename_list[] = $ref.".pdf";
 	}
 
-	$parameters = array('notifCode'=>$notifCode, 'to'=>$to, 'from'=>$from, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputLangs'=>$outputLangs, 'labelToUse'=>$labelToUse);
+	$parameters = [
+		'notifCode' 	=> $notifCode,
+		'to' 			=> $to,
+		'from'			=> $from,
+		'file'			=> $filename_list,
+		'mimefile' 		=> $mimetype_list,
+		'filename' 		=> $mimefilename_list,
+		'outputLangs'	=> $outputLangs,
+		'labelToUse'	=> $labelToUse
+	];
 	if (!isset($action)) {
 		$action = '';
 	}
@@ -251,8 +259,27 @@ function notify_sendMail(
 	);
 
 	if ($mailfile->sendfile()) {
-		$sql = "INSERT INTO ".$db->prefix()."notify (daten, fk_action, fk_soc, ".$fkContact."type, objet_type, type_target, objet_id, email)";
-		$sql .= " VALUES ('".$db->idate(dol_now())."', ".(int) $actionId.", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".(($contactId) ? (int) $contactId.', ' : '')."'".$db->escape($type)."', '".$db->escape($objectType)."', '".$db->escape($targetType)."', ".((int) $object->id).", '".$db->escape($email)."')";
+		$sql = 'INSERT INTO '.$db->prefix().'notify (';
+		$sql .= 'daten, ';
+		$sql .= 'fk_action, ';
+		$sql .= 'fk_soc, ';
+		$sql .= $fkContact;
+		$sql .= 'type, ';
+		$sql .= 'objet_type, ';
+		$sql .= 'type_target, ';
+		$sql .= 'objet_id, ';
+		$sql .= 'email';
+		$sql .= ') VALUES (';
+		$sql .= "'".$db->idate(dol_now())."', ";
+		$sql .= (int) $actionId.', ';
+		$sql .= ($object->socid > 0 ? (int) $object->socid : 'null').', ';
+		$sql .= $contactId ? (int) $contactId.', ' : '';
+		$sql .= "'".$db->escape($type)."', ";
+		$sql .= "'".$db->escape($objectType)."', ";
+		$sql .= "'".$db->escape($targetType)."', ";
+		$sql .= (int) $object->id.", ";
+		$sql .= "'".$db->escape($email)."'";
+		$sql .= ');';
 
 		if (!$db->query($sql)) {
 			dol_print_error($db);
