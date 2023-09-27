@@ -221,6 +221,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
+		require_once dirname(__FILE__).'/AssetModelTest.php';
+		$suite->addTestSuite('AssetModelTest');
 
 		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
