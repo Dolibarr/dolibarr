@@ -1172,12 +1172,11 @@ abstract class CommonObject
 
 		$error = 0;
 
-		$this->context['contact_id'] = ((int) $rowid);
-
 		$this->db->begin();
 
 		if (!$error && empty($notrigger)) {
 			// Call trigger
+			$this->context['contact_id'] = ((int) $rowid);
 			$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
 			if ($result < 0) {
 				$error++;
