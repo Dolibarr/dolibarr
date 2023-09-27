@@ -19,33 +19,43 @@
  */
 
 /**
- *	\file       htdocs/fourn/paiement/card.php
- *	\ingroup    facture, fournisseur
- *	\brief      Tab to show a payment of a supplier invoice
- *	\remarks	Fichier presque identique a compta/paiement/card.php
+ *    \file       htdocs/fourn/paiement/card.php
+ *    \ingroup    facture, fournisseur
+ *    \brief      Tab to show a payment of a supplier invoice
+ *    \remarks    Fichier presque identique a compta/paiement/card.php
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
 
-$id = GETPOST('id', 'int');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
+
+
+// Get Parameters
+$id 		= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
 
+$socid = 0;
+
+// Initialize objects
 $object = new PaiementFourn($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
+$result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');	// This also test permission on read invoice
 
 // Security check
 if ($user->socid) {
@@ -62,7 +72,7 @@ if ($socid && $socid != $object->thirdparty->id) {
  * Actions
  */
 
-if ($action == 'setnote' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
+if ($action == 'setnote' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 	$db->begin();
 
 	$object->fetch($id);
@@ -76,7 +86,7 @@ if ($action == 'setnote' && ($user->rights->fournisseur->facture->creer || $user
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight("fournisseur", "facture", "supprimer")) {
 	$db->begin();
 
 	$object->fetch($id);
@@ -92,8 +102,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 }
 
 if ($action == 'confirm_validate' && $confirm == 'yes' &&
-	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->facture->creer) || !empty($user->rights->supplier_invoice->creer)))
-	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")))
+	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")))
 ) {
 	$db->begin();
 
@@ -189,9 +199,9 @@ if ($result > 0) {
 	print '</td></tr>';*/
 
 	// Date of payment
-	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)).'</td>';
+	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
 	print '<td>';
-	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment mode
@@ -203,16 +213,17 @@ if ($result > 0) {
 
 	// Payment numero
 	/* TODO Add field num_payment into payment table and save it
-	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
 	print '<td>';
-	print $form->editfieldval("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+	print $form->editfieldval("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"),'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
 	*/
 
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
-	print '<td>'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+	print '<td><span class="amount">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
 
+	// Status of validation of payment
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		print '<tr><td>'.$langs->trans('Status').'</td>';
 		print '<td>'.$object->getLibStatut(4).'</td></tr>';
@@ -220,7 +231,7 @@ if ($result > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
@@ -248,9 +259,9 @@ if ($result > 0) {
 	}
 
 	// Note
-	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
 	print '<td>';
-	print $form->editfieldval("Note", 'note', $object->note, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), 'textarea');
+	print $form->editfieldval("Note", 'note', $object->note_private, $object, ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'textarea');
 	print '</td></tr>';
 
 	print '</table>';
@@ -343,8 +354,8 @@ if ($result > 0) {
 	print '<div class="tabsAction">';
 
 	// Send by mail
-	if ($user->socid == 0 && $action == '') {
-		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->send)));
+	if ($user->socid == 0 && $action != 'presend') {
+		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 		} else {
@@ -355,53 +366,54 @@ if ($result > 0) {
 	// Payment validation
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		if ($user->socid == 0 && $object->statut == 0 && $action == '') {
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->facture->creer) || !empty($user->rights->supplier_invoice->creer)))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate))) {
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate"))) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Valid').'</a>';
 			}
 		}
 	}
 
 	// Delete payment
-	if ($user->socid == 0 && $action == '') {
-		if ($user->rights->fournisseur->facture->supprimer) {
+	if ($user->socid == 0 && $action != 'presend') {
+		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+				print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 			}
 		}
 	}
 	print '</div>';
 
+	if ($action != 'presend') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	print '<div class="fichecenter"><div class="fichehalfleft">';
+		// Generated documents
+		include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+		$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
+		if (is_array($modellist)) {
+			$ref = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
+			$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
+			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-	// Generated documents
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
-	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
-	if (is_array($modellist)) {
-		$ref = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-		$genallowed = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
-		$delallowed = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
-		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
+			$somethingshown = $formfile->numoffiles;
+		}
 
-		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-		$somethingshown = $formfile->numoffiles;
+		print '</div><div class="fichehalfright">';
+		//print '<br>';
+
+		// List of actions on element
+		/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions=new FormActions($db);
+		$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
+		*/
+
+		print '</div></div>';
 	}
-
-	print '</div><div class="fichehalfright">';
-	//print '<br>';
-
-	// List of actions on element
-	/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	$formactions=new FormActions($db);
-	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
-	*/
-
-	print '</div></div>';
 
 	// Presend form
 	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models

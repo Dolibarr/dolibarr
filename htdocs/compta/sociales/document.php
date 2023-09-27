@@ -27,6 +27,7 @@
  *       \brief      Page with attached files on social contributions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -123,13 +124,13 @@ if ($object->id) {
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 		if (!empty($object->fk_project)) {
+			$morehtmlref .= '<br>';
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
-				$morehtmlref .= ' - '.$proj->title;
+				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 			}
 		} else {
 			$morehtmlref .= '';

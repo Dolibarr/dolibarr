@@ -265,7 +265,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_tva,";
@@ -275,7 +274,7 @@ class PaymentVAT extends CommonObject
 		$sql .= " t.amount,";
 		$sql .= " t.fk_typepaiement,";
 		$sql .= " t.num_paiement as num_payment,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -303,7 +302,8 @@ class PaymentVAT extends CommonObject
 				$this->fk_typepaiement = $obj->fk_typepaiement;
 				$this->num_paiement = $obj->num_payment;
 				$this->num_payment = $obj->num_payment;
-				$this->note = $obj->note;
+				$this->note = $obj->note_private;
+				$this->note_private = $obj->note_private;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -366,27 +366,22 @@ class PaymentVAT extends CommonObject
 			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET";
-
-		$sql .= " fk_tva=".(isset($this->fk_tva) ? $this->fk_tva : "null").",";
+		$sql .= " fk_tva=".(isset($this->fk_tva) ? ((int) $this->fk_tva) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
-		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? $this->fk_typepaiement : "null").",";
-		$sql .= " num_paiement=".(isset($this->num_paiement) ? "'".$this->db->escape($this->num_paiement)."'" : "null").",";
+		$sql .= " amount=".(isset($this->amount) ? (float) price2num($this->amount) : "null").",";
+		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";
+		$sql .= " num_paiement=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
-
-
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -560,7 +555,7 @@ class PaymentVAT extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -668,16 +663,16 @@ class PaymentVAT extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
-		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs;
 
 		$langs->load('compta');
 		/*if ($mode == 0)

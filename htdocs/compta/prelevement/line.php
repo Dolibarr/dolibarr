@@ -25,6 +25,7 @@
  *	\brief      card of withdraw line
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
+$langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
@@ -68,12 +69,20 @@ if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
+if ($type == 'bank-transfer') {
+	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'create');
+} else {
+	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'creer');
+}
+
+$error = 0;
+
 
 /*
  * Actions
  */
 
-if ($action == 'confirm_rejet') {
+if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
 		if (GETPOST('remonth', 'int')) {
 			$daterej = mktime(2, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -118,7 +127,15 @@ if ($action == 'confirm_rejet') {
  * View
  */
 
-$invoicestatic = new Facture($db);
+$form = new Form($db);
+
+if ($type == 'bank-transfer') {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	$invoicestatic = new FactureFournisseur($db);
+} else {
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$invoicestatic = new Facture($db);
+}
 
 $title = $langs->trans("WithdrawalsLine");
 if ($type == 'bank-transfer') {
@@ -130,7 +147,7 @@ llxHeader('', $title);
 $head = array();
 
 $h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id.'&type='.$type;
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.((int) $id).'&type='.urlencode($type);
 $head[$h][1] = $title;
 $hselected = $h;
 $h++;
@@ -142,7 +159,7 @@ if ($id) {
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
-		print dol_get_fiche_head($head, $hselected, $title);
+		print dol_get_fiche_head($head, $hselected, $title, -1, 'payment');
 
 		print '<table class="border centpercent tableforfield">';
 
@@ -186,8 +203,6 @@ if ($id) {
 	}
 
 	if ($action == 'rejet' && $user->rights->prelevement->bons->credit) {
-		$form = new Form($db);
-
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
 
@@ -223,7 +238,7 @@ if ($id) {
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
-		print $form->selectarray("facturer", $rej->facturer, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '');
+		print $form->selectarray("facturer", $rej->labelsofinvoicing, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '');
 		print '</td></tr>';
 		print '</table><br>';
 
@@ -261,7 +276,7 @@ if ($id) {
 	$sql .= " , s.rowid as socid, s.nom as name";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 	if ($type == 'bank-transfer') {
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 	} else {
@@ -297,7 +312,9 @@ if ($id) {
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
+		print '<td>'.$langs->trans("Invoice").'</td>';
+		print '<td>'.$langs->trans("ThirdParty").'</td>';
+		print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
 		$total = 0;
@@ -311,9 +328,17 @@ if ($id) {
 			print img_object($langs->trans("ShowBill"), "bill");
 			print '</a>&nbsp;';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			if ($type == 'bank-transfer') {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			}
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+			if ($type == 'bank-transfer') {
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">';
+			} else {
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
+			}
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";

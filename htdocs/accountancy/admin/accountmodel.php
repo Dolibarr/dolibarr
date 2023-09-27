@@ -32,6 +32,7 @@
  *		\brief      Page to administer model of chart of accounts
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -44,7 +45,7 @@ if (isModEnabled('accounting')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "compta", "accountancy", "hrm"));
+$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
 
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -78,7 +79,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -295,11 +296,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
-
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
@@ -503,8 +499,8 @@ if ($id) {
 		print '<td>';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
+		print '<td></td>';
+		print '<td></td>';
 		print '</tr>';
 
 		// Line to enter new values
@@ -639,7 +635,8 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($value == 'type_template') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							}

@@ -51,7 +51,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
-		$this->module_position = '15';
+		$this->module_position = '16';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
@@ -73,7 +73,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Module parts
 		$this->module_parts = array();
@@ -107,13 +107,16 @@ class modAgenda extends DolibarrModules
 
 		// Boxes
 		//------
-		$this->boxes = array(0=>array('file'=>'box_actions.php', 'enabledbydefaulton'=>'Home'));
+		$this->boxes = array(
+			0=>array('file'=>'box_actions.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_actions_future.php', 'enabledbydefaulton'=>'Home')
+		);
 
 		// Cronjobs
 		//------------
 		$datestart = dol_now();
 		$this->cronjobs = array(
-			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>5, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'$conf->agenda->enabled', 'datestart'=>$datestart),
+			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>5, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'isModEnabled("agenda")', 'datestart'=>$datestart),
 		);
 
 		// Permissions
@@ -211,8 +214,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php',
 			'langs'=>'agenda',
 			'position'=>86,
-			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
-			'enabled'=>'$conf->agenda->enabled || $conf->resource->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read") || $user->hasRight("resource", "read")',
+			'enabled'=>'isModEnabled("agenda") || isModEnabled("resource")',
 			'target'=>'',
 			'user'=>2,
 		);
@@ -227,8 +230,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>100,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2,
 		);
@@ -241,8 +244,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
 			'langs'=>'commercial',
 			'position'=>101,
-			'perms'=>'($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create)',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'($user->hasRight("agenda", "myactions", "create") || $user->hasRight("agenda", "allactions", "create"))',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -256,8 +259,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>140,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -270,8 +273,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>141,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -284,8 +287,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>142,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -298,8 +301,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>143,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -312,8 +315,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>144,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -328,8 +331,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>110,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -342,8 +345,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>111,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -356,8 +359,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>112,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "myactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -370,8 +373,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>113,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -384,8 +387,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>114,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$user->rights->agenda->allactions->read',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -399,8 +402,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/rapport/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>160,
-			'perms'=>'$user->rights->agenda->allactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->hasRight("agenda", "allactions", "read")',
+			'enabled'=>'isModEnabled("agenda")',
 			'target'=>'',
 			'user'=>2
 		);
@@ -414,8 +417,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/categories/index.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
 			'langs' => 'agenda',
 			'position' => 170,
-			'perms' => '$user->rights->agenda->allactions->read',
-			'enabled' => '$conf->categorie->enabled',
+			'perms' => '$user->hasRight("agenda", "allactions", "read")',
+			'enabled' => 'isModEnabled("categorie")',
 			'target' => '',
 			'user' => 2
 		);
@@ -463,12 +466,12 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra ON ac.id = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
-		if (!empty($user) && empty($user->rights->agenda->allactions->read)) {
+		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources acr on ac.id = acr.fk_actioncomm';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
-		if (!empty($user) && empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
@@ -477,7 +480,7 @@ class modAgenda extends DolibarrModules
 		if (empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
 		}
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';

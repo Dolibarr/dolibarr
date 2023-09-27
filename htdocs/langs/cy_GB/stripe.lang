@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook allwedd byw
 ONLINE_PAYMENT_WAREHOUSE=Stoc i'w ddefnyddio ar gyfer gostyngiad stoc pan wneir taliad ar-lein <br> (TODO Pan fydd opsiwn i leihau stoc yn cael ei wneud ar weithred ar anfoneb a'r taliad ar-lein yn cynhyrchu'r anfoneb ei hun ?)
 StripeLiveEnabled=Stripe live wedi'i alluogi (modd prawf / blwch tywod fel arall)
 StripeImportPayment=Mewnforio taliadau Stripe
-ExampleOfTestCreditCard=Enghraifft o gerdyn credyd ar gyfer prawf: %s => dilys, %s => gwall CVC, %s => wedi dod i ben, %s => tâl yn methu
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Pyrth streipen
 OAUTH_STRIPE_TEST_ID=ID Cleient Stripe Connect (ca_...)
 OAUTH_STRIPE_LIVE_ID=ID Cleient Stripe Connect (ca_...)
@@ -61,6 +62,7 @@ DeleteACard=Dileu Cerdyn
 ConfirmDeleteCard=Ydych chi'n siŵr eich bod am ddileu'r cerdyn Credyd neu Ddebyd hwn?
 CreateCustomerOnStripe=Creu cwsmer ar Stripe
 CreateCardOnStripe=Creu cerdyn ar Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Dangos yn Stripe
 StripeUserAccountForActions=Cyfrif defnyddiwr i'w ddefnyddio ar gyfer hysbysiad e-bost o rai digwyddiadau Stripe (taliadau Stripe)
 StripePayoutList=Rhestr o daliadau Stripe
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=Dolen i'r gosodiad Stripe WebHook i ffonio'r IPN (mod
 PaymentWillBeRecordedForNextPeriod=Bydd taliad yn cael ei gofnodi ar gyfer y cyfnod nesaf.
 ClickHereToTryAgain= <a href="%s"> Cliciwch yma i geisio eto... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Oherwydd rheolau Dilysu Cwsmeriaid Cryf, rhaid creu cerdyn o swyddfa gefn Stripe. Gallwch glicio yma i droi cofnod cwsmer Stripe ymlaen: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

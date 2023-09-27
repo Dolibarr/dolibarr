@@ -86,6 +86,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $qty_asked;
 
 	public $libelle;
+	public $label;
 	public $desc;
 	public $tva_tx;
 	public $vat_src_code;
@@ -131,9 +132,9 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$this->statuts[0] = 'Received';
 		$this->statuts[1] = 'Verified';
 		$this->statuts[2] = 'Denied';
-		$this->statutshort[0] = 'Received';
-		$this->statutshort[1] = 'Verified';
-		$this->statutshort[2] = 'Denied';
+		$this->statuts_short[0] = 'Received';
+		$this->statuts_short[1] = 'Verified';
+		$this->statuts_short[2] = 'Denied';
 	}
 
 
@@ -218,7 +219,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
 		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'").",";
-		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'")."";
+		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -396,7 +397,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
+		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -513,7 +514,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	{
 		$error = 0;
 
-		$object = new Commandefournisseurdispatch($this->db);
+		$object = new CommandeFournisseurDispatch($this->db);
 
 		$this->db->begin();
 
@@ -580,7 +581,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		if ($mode == 0) {
 			return $langs->trans($this->statuts[$status]);
 		} elseif ($mode == 1) {
-			return $langs->trans($this->statutshort[$status]);
+			return $langs->trans($this->statuts_short[$status]);
 		} elseif ($mode == 2) {
 			return $langs->trans($this->statuts[$status]);
 		} elseif ($mode == 3) {
@@ -601,13 +602,14 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 			}
 		} elseif ($mode == 5) {
 			if ($status == 0) {
-				return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut0');
+				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut0');
 			} elseif ($status == 1) {
-				return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut4');
+				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut4');
 			} elseif ($status == 2) {
-				return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
+				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
 			}
 		}
+		return "";
 	}
 
 

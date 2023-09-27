@@ -27,6 +27,7 @@
  *		\brief      Page to setup the module MailmanSpip (Mailman)
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
@@ -158,7 +159,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
 	$link .= '</a>';
 	// Edition des varibales globales
 	$constantes = array(
-		'ADHERENT_MAILMAN_ADMINPW',
+		'ADHERENT_MAILMAN_ADMIN_PASSWORD',
 		'ADHERENT_MAILMAN_URL',
 		'ADHERENT_MAILMAN_UNSUB_URL',
 		'ADHERENT_MAILMAN_LISTS'

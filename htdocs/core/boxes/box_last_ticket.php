@@ -26,13 +26,13 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show last created tickets
  */
 class box_last_ticket extends ModeleBoxes
 {
 
 	public $boxcode = "box_last_ticket";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -84,7 +84,7 @@ class box_last_ticket extends ModeleBoxes
 			'text' => $langs->trans("BoxLastTicketContent"),
 		);
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email,";
 			$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label,";
 			$sql .= " s.nom as company_name, s.email as socemail, s.client, s.fournisseur";

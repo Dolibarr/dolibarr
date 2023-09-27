@@ -91,14 +91,15 @@ if ($id > 0 || $ref) {
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-$permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->creer);
+$permissionnote = ($user->hasRight('projet', 'creer') || $user->hasRight('projet', 'all', 'creer'));
 
 
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -110,13 +111,18 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $userstatic = new User($db);
 
 $now = dol_now();
+
+$title = $object->ref . ' - ' . $langs->trans("Notes");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
@@ -127,7 +133,7 @@ if ($object->id > 0) {
 		$head = project_prepare_head($projectstatic);
 		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-		$param = ($mode == 'mine' ? '&mode=mine' : '');
+		$param = (isset($mode) && $mode == 'mine' ? '&mode=mine' : '');
 		// Project card
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -136,15 +142,15 @@ if ($object->id > 0) {
 		// Title
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
-		if ($projectstatic->thirdparty->id > 0) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+		if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
+			$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
 		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -156,7 +162,7 @@ if ($object->id > 0) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Usage
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
 			print $langs->trans("Usage");
 			print '</td>';
@@ -179,7 +185,7 @@ if ($object->id > 0) {
 				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 				print '<br>';
 			}
-			if (!empty($conf->eventorganization->enabled)) {
+			if (isModEnabled('eventorganization')) {
 				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -198,8 +204,15 @@ if ($object->id > 0) {
 		}
 		print '</td></tr>';
 
-		// Date start - end
-		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($projectstatic->budget_amount, '')) {
+			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		}
+		print '</td></tr>';
+
+		// Date start - end project
+		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 		$start = dol_print_date($projectstatic->date_start, 'day');
 		print ($start ? $start : '?');
 		$end = dol_print_date($projectstatic->date_end, 'day');
@@ -207,13 +220,6 @@ if ($object->id > 0) {
 		print ($end ? $end : '?');
 		if ($projectstatic->hasDelay()) {
 			print img_warning("Late");
-		}
-		print '</td></tr>';
-
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) {
-			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 		}
 		print '</td></tr>';
 
@@ -264,7 +270,7 @@ if ($object->id > 0) {
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
 	} else {
-		$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+		$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
 	}
 
 	$morehtmlref = '';

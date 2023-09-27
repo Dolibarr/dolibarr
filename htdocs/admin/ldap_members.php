@@ -26,6 +26,7 @@
  *		\brief      Page d'administration/configuration du module Ldap adherent
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -92,9 +93,6 @@ if ($action == 'setvalue' && $user->admin) {
 		$error++;
 	}
 	if (!dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
 	if (!dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) {
@@ -187,7 +185,7 @@ if (!function_exists("ldap_connect")) {
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print dol_get_fiche_head($head, 'members', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'members', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembers").'</span><br>';
@@ -310,13 +308,6 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_MEMBER_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
-print '<td class="right">&nbsp;</td>';
-print '</tr>';
-
-// Skype
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
-print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_MEMBER_FIELD_SKYPE.'">';
-print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 

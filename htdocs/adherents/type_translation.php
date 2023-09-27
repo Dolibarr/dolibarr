@@ -25,6 +25,7 @@
  *	\brief      Member translation page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -70,7 +71,7 @@ if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
 }
 
 // Add translation
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -98,7 +99,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 }
 
 // Edit translation
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -124,7 +125,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 }
 
 // Delete translation
-if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
+if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$langtodelete = GETPOST('langdel', 'alpha');
@@ -189,7 +190,7 @@ print dol_get_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-	if ($user->rights->produit->creer || $user->rights->service->creer) {
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
@@ -225,7 +226,7 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 			print '</td></tr>';
@@ -270,7 +271,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'create' && $user->rights->adherent->configurer) {
+if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -288,7 +289,7 @@ if ($action == 'create' && $user->rights->adherent->configurer) {
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" class="minwidth300" value="'.dol_escape_htmltag(GETPOST("libelle", 'alphanohtml')).'"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

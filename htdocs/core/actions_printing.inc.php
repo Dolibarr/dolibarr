@@ -50,7 +50,7 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 			$langs->load($printer::LANGFILE);
 			//print '<pre>'.print_r($printer, true).'</pre>';
 
-			if (!empty($conf->global->{$printer->active})) {
+			if (getDolGlobalString($printer->active)) {
 				$printerfound++;
 
 				$subdir = '';

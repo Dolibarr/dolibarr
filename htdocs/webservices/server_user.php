@@ -20,11 +20,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require_once '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -398,7 +416,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  */
 function getListOfGroups($authentication)
 {
-	global $db, $conf;
+	global $db, $conf, $user;
 
 	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
 
@@ -418,7 +436,7 @@ function getListOfGroups($authentication)
 		$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($fuser->admin && !$fuser->entity))) {
+		if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 			$sql .= " WHERE g.entity IS NOT NULL";
 		} else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -691,13 +709,13 @@ function setUserPassword($authentication, $shortuser)
 			$res = $userstat->fetch('', $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
-				if ($res) {
+				if (is_int($res) && $res < 0) {
+					$error++;
+					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
+				} else {
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
 					);
-				} else {
-					$error++;
-					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				}
 			} else {
 				$error++;

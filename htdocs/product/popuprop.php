@@ -26,6 +26,7 @@
  * \brief      List of products or services by popularity
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -213,7 +214,7 @@ print "</tr>\n";
 if ($mode && $mode != '-1') {
 	foreach ($infoprod as $prodid => $vals) {
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+		if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $prodid);

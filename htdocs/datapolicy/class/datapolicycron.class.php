@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,16 @@
  */
 class DataPolicyCron
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $error;
+
+	public $output;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -56,7 +66,7 @@ class DataPolicyCron
 
 		// FIXME Exclude data from the selection if there is at least 1 invoice.
 		$arrayofparameters = array(
-			'DATAPOLICIES_TIERS_CLIENT' => array(
+			'DATAPOLICY_TIERS_CLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -90,7 +100,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_PROSPECT' => array(
+			'DATAPOLICY_TIERS_PROSPECT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -124,7 +134,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_PROSPECT_CLIENT' => array(
+			'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -158,7 +168,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT' => array(
+			'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -192,7 +202,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_TIERS_FOURNISSEUR' => array(
+			'DATAPOLICY_TIERS_FOURNISSEUR' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
@@ -225,7 +235,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_CLIENT' => array(
+			'DATAPOLICY_CONTACT_CLIENT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -263,7 +273,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_PROSPECT' => array(
+			'DATAPOLICY_CONTACT_PROSPECT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -301,7 +311,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_PROSPECT_CLIENT' => array(
+			'DATAPOLICY_CONTACT_PROSPECT_CLIENT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -339,7 +349,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_NIPROSPECT_NICLIENT' => array(
+			'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -377,7 +387,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_CONTACT_FOURNISSEUR' => array(
+			'DATAPOLICY_CONTACT_FOURNISSEUR' => array(
 				'sql' => "
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
@@ -414,7 +424,7 @@ class DataPolicyCron
 					'country_id' => '',
 				)
 			),
-			'DATAPOLICIES_ADHERENT' => array(
+			'DATAPOLICY_ADHERENT' => array(
 				'sql' => "
                     SELECT a.rowid FROM ".MAIN_DB_PREFIX."adherent as a
                     WHERE a.entity = %d

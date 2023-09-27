@@ -67,7 +67,7 @@ class box_members_last_modified extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -90,7 +90,7 @@ class box_members_last_modified extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms as datem, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';

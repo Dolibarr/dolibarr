@@ -5,6 +5,7 @@ define("NOCSRFCHECK", 1); // We accept to go on this page from external web site
 	define('NOSESSION', '1');
 }*/
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -41,7 +42,7 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
 $offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 $offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
-print " (dol_tz=".$offsettz." dol_dst=".$dol_dst.")<br>\n";
+print " (dol_tz=".$offsettz." dol_dst=".$offsetdst.")<br>\n";
 print $form->selectDate(dol_now(), 'test1a', 1, 1, 0);
 
 print '<br><br>'."\n";
@@ -103,6 +104,75 @@ print "Test 5c: a multiselect<br>\n";
 $array = array(1=>'Value 1', 2=>'Value 2', 3=>'Value 3');
 $arrayselected = array(1, 3);
 print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, 'minwidth100');
+
+print '<br><br>'."\n";
+
+// Test6a: Upload of big files
+print "Test 6a: Upload of big files<br>\n";
+print "The file will be uploaded in the directory: documents/test/temp/<br>\n";
+
+if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
+	print '<button id="buttonbigupload" type="button">Browse...</button>';
+	print '&nbsp;<span id="filespan">No file selected.</span>';
+	print '<br><div class="progress-bar filepgbar taligncenter" role="progressbar" style="width:1%;display:none"><span class="small valigntop">0%</span></div>';
+	print '<br><button type="button" style="display:none;" data-fileidentifier="" class="btn green-haze btn-circle cancelfileinput" id="filecancel">Cancel</button>';
+	print '<script src="'.DOL_URL_ROOT.'/includes/flowjs/flow.js"></script>';
+	print '<script>
+	jQuery(document).ready(function() {
+		var flow = new Flow({
+			target:"'.DOL_URL_ROOT.'/core/ajax/flowjs-server.php", 
+			query:{module:"test", token:"'.newToken().'"},
+			testChunks:false
+		});
+		';
+		print 'if(flow.support){
+			flow.assignBrowse(document.getElementById("buttonbigupload"));
+			flow.on("fileAdded", function(file, event){
+				console.log("Trigger event file added", file, event);
+				$("#filespan").text(file.name);
+				$("#filecancel").data("fileidentifier", file.uniqueIdentifier)
+				$("#filecancel").show()
+				$(".filepgbar").show();
+				$(".filepgbar").attr("id",file.uniqueIdentifier+"pgbar")
+			});
+			flow.on("filesSubmitted", function(array,message){
+				console.log("Trigger event file submitted");
+				flow.upload()
+			});
+			flow.on("progress", function(){
+				console.log("progress",flow.files);
+				flow.files.forEach(function(element){
+					console.log(element.progress());
+					width = Math.round(element.progress()*100)
+					width = width.toString()
+					$("#"+element.uniqueIdentifier+"pgbar").width(width+"%")
+					$("#"+element.uniqueIdentifier+"pgbar").children("span").text(width+"%")
+				});
+			});
+			flow.on("fileSuccess", function(file,message){
+				console.log("The file has been uploaded successfully",file,message);
+			});
+			$(".cancelfileinput").on("click", function(){
+				filename = $(this).data("fileidentifier");
+				file = flow.getFromUniqueIdentifier(filename);
+				file.cancel();
+				$("#"+file.uniqueIdentifier+"pgbar").hide();
+				console.log("We remove file "+filename);
+				$("#filespan").text("No file selected.");
+				$(this).hide();
+			})
+			flow.on("fileError", function(file, message){
+				console.log("Error on file upload",file, message);
+				$("#"+file.uniqueIdentifier+"pgbar").width(20+"%");
+				$("#"+file.uniqueIdentifier+"pgbar").children("span").text("ERROR UPLOAD");
+			});
+		}
+	})
+	';
+	print '</script>';
+} else {
+	print "If this message displays, please add flow.js and flow.min.js files which can be found here: https://github.com/flowjs/flow.js and place the js lib in htdocs/includes/flowjs/<br>\n";
+}
 
 print '</div>';
 

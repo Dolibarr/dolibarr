@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Functions for module members
+ * \file       htdocs/core/lib/member.lib.php
+ * \brief      Functions for module members
  */
 
 /**
@@ -66,9 +66,23 @@ function member_prepare_head(Adherent $object)
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if (!empty($user->rights->partnership->read)) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = DOL_URL_ROOT.'/adherents/partnership.php?rowid='.$object->id;
-			$head[$h][1] = $langs->trans("Partnership");
-			$head[$h][2] = 'partnership';
+			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?rowid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnerships");
+			$nbNote = 0;
+			$sql = "SELECT COUNT(n.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."partnership as n";
+			$sql .= " WHERE fk_member = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbNote = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			if ($nbNote > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			}
+			$head[$h][2] = 'partnerships';
 			if ($nbPartnership > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
 			}
@@ -80,7 +94,7 @@ function member_prepare_head(Adherent $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'add', 'core');
 
 	$nbNote = 0;
 	if (!empty($object->note_private)) {
@@ -112,16 +126,40 @@ function member_prepare_head(Adherent $object)
 	$h++;
 
 	// Show agenda tab
-	if (isModEnabled('agenda')) {
-		$head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("Events");
-		if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-			$head[$h][1] .= '/';
-			$head[$h][1] .= $langs->trans("Agenda");
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_member_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE elementtype = 'member' AND fk_element = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][2] = 'agenda';
-		$h++;
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
+	$head[$h][2] = 'agenda';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'remove');
 
@@ -147,7 +185,7 @@ function member_type_prepare_head(AdherentType $object)
 	$h++;
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/adherents/type_translation.php?rowid=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
@@ -182,7 +220,11 @@ function member_type_prepare_head(AdherentType $object)
  */
 function member_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('adherent');
+	$extrafields->fetch_name_optionals_label('adherent_type');
 
 	$h = 0;
 	$head = array();
@@ -205,11 +247,19 @@ function member_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
+	$nbExtrafields = $extrafields->attributes['adherent']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_type_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
+	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_type';
 	$h++;
 

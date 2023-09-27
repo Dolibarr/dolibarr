@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+$now = dol_now();
+
 $refresh = GETPOSTISSET('submit') ? true : false;
 $year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : dol_print_date($now, '%Y', 'tzserver');
 $year_start = $year_current;
@@ -49,7 +51,7 @@ include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -196,16 +198,16 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 
 $description .= $langs->trans("VATSummary").'<br>';
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description .= $langs->trans("RulesVATDueProducts");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 	$description .= $langs->trans("RulesVATInProducts");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -229,6 +231,9 @@ llxHeader('', $name);
 //$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 //print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'bill');
 
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
 
@@ -242,7 +247,7 @@ if ($refresh === true) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td width="30%">' . $langs->trans("Year") . " " . $y . '</td>';
+	print '<td width="30%">' . $langs->trans("Year") . '</td>';
 	print '<td class="right">' . $langs->trans("VATToPay") . '</td>';
 	print '<td class="right">' . $langs->trans("VATToCollect") . '</td>';
 	print '<td class="right">' . $langs->trans("Balance") . '</td>';
@@ -389,16 +394,6 @@ if ($refresh === true) {
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-		if (!is_array($x_coll) && $coll_listbuy == -1) {
-			$langs->load("errors");
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-			break;
-		}
-		if (!is_array($x_paye) && $coll_listbuy == -2) {
-			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			break;
-		}
-
 
 		print '<tr class="oddeven">';
 		print '<td class="nowrap"><a href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?leftmenu=tax_vat&month=' . $m . '&year=' . $y . '">' . dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y") . '</a></td>';
@@ -424,8 +419,8 @@ if ($refresh === true) {
 						$type = 1;
 					}
 
-					if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-						|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+					if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+						|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 						//print $langs->trans("NA");
 					} else {
 						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -464,8 +459,8 @@ if ($refresh === true) {
 						$type = 1;
 					}
 
-					if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-						|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+					if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+						|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 						//print $langs->trans("NA");
 					} else {
 						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {

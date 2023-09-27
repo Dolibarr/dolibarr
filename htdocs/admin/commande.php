@@ -31,6 +31,7 @@
  *	\brief      Setup page of module Order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -60,10 +61,10 @@ $type = 'order';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
+	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
 	$maskorder = GETPOST('maskorder', 'alpha');
 
-	if ($maskconstorder) {
+	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -116,7 +117,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->COMMANDE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('COMMANDE_ADDON_PDF') == $value) {
 			dolibarr_del_const($db, 'COMMANDE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -181,7 +182,39 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER') {
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+}
+/*elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER') {
 	// Activate ask for payment bank
 	$res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
@@ -207,7 +240,8 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
+} */
+
 
 
 /*
@@ -269,7 +303,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -427,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->COMMANDE_ADDON_PDF == $name) {
+								if (getDolGlobalString('COMMANDE_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -497,7 +531,7 @@ print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
 print '<td align="right">';
-if (empty($conf->facture->enabled)) {
+if (!isModEnabled('facture')) {
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 }
 print '</td>';
@@ -506,8 +540,8 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (empty($conf->facture->enabled)) {
-	if (!empty($conf->banque->enabled)) {
+if (!isModEnabled('facture')) {
+	if (isModEnabled("banque")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -545,7 +579,7 @@ print "</td></tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-if (empty($conf->facture->enabled)) {
+if (!isModEnabled('facture')) {
 	print '<select class="flat" name="chq" id="chq">';
 	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
@@ -635,16 +669,24 @@ print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMAR
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="center" colspan="2">';
+print ajax_constantonoff('ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 print '</form>';
 
 /*
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
+// TODO Must be implemented by PDF templates
 // Ask for payment bank during order
-if ($conf->banque->enabled) {
+if (isModEnabled("banque")) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
 	} else {
 		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER)) {
@@ -664,7 +706,7 @@ if ($conf->banque->enabled) {
 if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
 	} else {
 		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {

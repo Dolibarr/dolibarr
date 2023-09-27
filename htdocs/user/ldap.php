@@ -22,6 +22,7 @@
  *      \brief      Page fiche LDAP utilisateur
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
@@ -39,7 +40,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -89,7 +90,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader();
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('LDAP');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 

@@ -31,13 +31,24 @@
 // $sendto
 // $withmaindocfilemail
 
-
 if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
 if ($massaction == 'predelete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
+}
+
+if ($massaction == 'preclonetasks') {
+	$selected = '';
+	foreach (GETPOST('toselect') as $tmpselected) {
+		$selected .= '&selected[]=' . $tmpselected;
+	}
+
+	$formquestion = array(
+		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects('', 'projectid', '', '', '', '', '', '', '', 1, 1)),
+	);
+	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
 }
 
 if ($massaction == 'preaffecttag' && isModEnabled('category')) {
@@ -62,20 +73,98 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	$formquestion = array();
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
-			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
-			$formquestion[] = array('type' => 'other',
-					'name' => 'affecttag_'.$categ_type['code'],
-					'label' => $langs->trans("Tag").' '.$categ_type['label'],
-					'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $cate_arbo, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, null, null, '60%'));
-		}
-		$formquestion[] = array('type' => 'other',
-				'name' => 'affecttag_type',
+			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 2);
+			$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'affecttag_'.$categ_type['code'],
 				'label' => '',
-				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
+				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, '', 0, '60%', '', '', $langs->trans("SelectTheTagsToAssign"))
+			);
+		}
+		$formquestion[] = array(
+			'type' => 'other',
+			'name' => 'affecttag_type',
+			'label' => '',
+			'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>'
+		);
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAffectTag"), $langs->trans("ConfirmAffectTagQuestion", count($toselect)), "affecttag", $formquestion, 1, 0, 200, 500, 1);
 	} else {
 		setEventMessage('CategTypeNotFound');
 	}
+}
+
+if ($massaction == 'preupdateprice') {
+	$formquestion = array();
+
+	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefield .= '<input type="number" name="pricerate" id="pricerate" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
+	$valuefield .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'pricerate',
+				'label' => $langs->trans("Rate"),
+				'value' => $valuefield
+			);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $langs->trans("ConfirmUpdatePriceQuestion", count($toselect)), "updateprice", $formquestion, 1, 0, 200, 500, 1);
+}
+
+if ($massaction == 'presetsupervisor') {
+	$formquestion = array();
+
+	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefield .= img_picto('', 'user').' ';
+	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefield .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'supervisortoset',
+				'label' => $langs->trans("Supervisor"),
+				'value' => $valuefield
+			);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmSetSupervisor"), $langs->trans("ConfirmSetSupervisorQuestion", count($toselect)), "setsupervisor", $formquestion, 1, 0, 200, 500, 1);
+}
+
+if ($massaction == 'preaffectuser') {
+	$formquestion = array();
+
+	$valuefielduser = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 165px; padding-bottom: 6px; gap: 5px">';
+	$valuefielduser .= img_picto('', 'user').' ';
+	$valuefielduser .= $form->select_dolusers('', 'usertoaffect', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefielduser .= '</div>';
+
+	$valuefieldprojrole = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px; padding-bottom: 6px">';
+	$valuefieldprojrole .= $formcompany->selectTypeContact($object, '', 'projectrole', 'internal', 'position', 0, 'widthcentpercentminusx maxwidth300', 0);
+	$valuefieldprojrole .= '</div>';
+
+	$valuefieldtasksrole = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefieldtasksrole .= $formcompany->selectTypeContact($taskstatic, '', 'tasksrole', 'internal', 'position', 0, 'widthcentpercentminusx maxwidth300', 0);
+	$valuefieldtasksrole .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'usertoaffect',
+				'label' => $langs->trans("User"),
+				'value' => $valuefielduser
+			);
+	$formquestion[] = array(
+		'type' => 'other',
+		'name' => 'projectrole',
+		'label' => $langs->trans("ProjectRole"),
+		'value' => $valuefieldprojrole
+	);
+
+	$formquestion[] = array(
+		'type' => 'other',
+		'name' => 'tasksrole',
+		'label' => $langs->trans("TasksRole"),
+		'value' => $valuefieldtasksrole
+	);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAffectUser"), $langs->trans("ConfirmAffectUserQuestion", count($toselect)), "affectuser", $formquestion, 1, 0, 200, 500, 1);
 }
 
 if ($massaction == 'presend') {
@@ -93,8 +182,9 @@ if ($massaction == 'presend') {
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);	// For proposal, order, invoice, conferenceorbooth, ...
 				if (in_array($objecttmp->element, array('societe', 'conferenceorboothattendee'))) {
 					$thirdpartyid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$thirdpartyid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
 				if (empty($thirdpartyid)) {
@@ -131,6 +221,10 @@ if ($massaction == 'presend') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		} elseif ($objecttmp->element == 'contact') {
+			$fcontact = new Contact($db);
+			$fcontact->fetch($thirdpartyid);
+			$liste['contact'] = $fcontact->getFullName($langs)." &lt;".$fcontact->email."&gt;";
 		} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$fadherent = new Adherent($db);
 			$fadherent->fetch($objecttmp->fk_member);
@@ -162,17 +256,23 @@ if ($massaction == 'presend') {
 	} else {
 		$formmail->withtopic = 1;
 	}
-	$formmail->withfile = 1;	// $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
-	// Add a checkbox "Attach also main document"
-	if (isset($withmaindocfilemail)) {
-		$formmail->withmaindocfile = $withmaindocfilemail;
-	} else {	// Do an automatic definition of $formmail->withmaindocfile
-		$formmail->withmaindocfile = 1;
-		if ($objecttmp->element != 'societe') {
-			$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
-			$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+	if ($objecttmp->element == 'contact') {
+		$formmail->withfile = 0;
+		$formmail->withmaindocfile = 0; // Add a checkbox "Attach also main document"
+	} else {
+		$formmail->withfile = 1;    // $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
+		// Add a checkbox "Attach also main document"
+		if (isset($withmaindocfilemail)) {
+			$formmail->withmaindocfile = $withmaindocfilemail;
+		} else {    // Do an automatic definition of $formmail->withmaindocfile
+			$formmail->withmaindocfile = 1;
+			if ($objecttmp->element != 'societe') {
+				$formmail->withfile = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("OnlyPDFattachmentSupported") . '</span>';
+				$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+			}
 		}
 	}
+
 	$formmail->withbody = 1;
 	$formmail->withdeliveryreceipt = 1;
 	$formmail->withcancel = 1;
@@ -181,7 +281,7 @@ if ($massaction == 'presend') {
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
 	$substitutionarray['__EMAIL__'] = $sendto;
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 
@@ -200,6 +300,7 @@ if ($massaction == 'presend') {
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
+		// Note: MAILING_LIMIT_SENDBYWEB may be forced by conf.php file and variable $dolibarr_mailing_limit_sendbyweb
 		$langs->load("errors");
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
@@ -223,6 +324,10 @@ if ($massaction == 'edit_extrafields') {
 	$formquestion = array();
 	if (!empty($extrafields_list)) {
 		$myParamExtra = $object->showOptionals($extrafields, 'create');
+
+		foreach ($extrafields_list as $extraKey => $extraLabel) {
+			$extrafields_list[$extraKey] = $langs->trans($extraLabel);
+		}
 
 		$formquestion[] = array(
 			'type' => 'other',
@@ -285,8 +390,9 @@ if ($massaction == 'preapproveleave') {
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
-	'toselect' => $toselect,
-	'uploaddir' => isset($uploaddir) ? $uploaddir : null
+	'toselect' => isset($toselect) ? $toselect : array(),
+	'uploaddir' => isset($uploaddir) ? $uploaddir : null,
+	'massaction' => $massaction
 );
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);

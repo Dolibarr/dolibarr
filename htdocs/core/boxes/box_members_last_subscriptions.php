@@ -21,21 +21,21 @@
 /**
  *	\file       htdocs/core/boxes/box_members_last_subscriptions.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of last members subscriptions
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show last members subscriptions
  */
 class box_members_last_subscriptions extends ModeleBoxes
 {
-	public $boxcode = "box_members_last_subscriptions";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_last_subscriptions";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxLastMembersSubscriptions";
-	public $depends = array("adherent");
+	public $depends  = array("adherent");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -67,7 +67,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -92,7 +92,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("LastSubscriptionsModified", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.gender, a.email, a.photo, a.morphy,";
 			$sql .= " a.datefin as date_end_subscription,";
@@ -146,9 +146,10 @@ class box_members_last_subscriptions extends ModeleBoxes
 						'asis' => 1,
 					);
 
+					$daterange = get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end));
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end)),
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($daterange).'"',
+						'text' => $daterange,
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -157,7 +158,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($obj->datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel'),
 					);
 
@@ -167,7 +168,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedCustomers"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
 					);
 				}
 

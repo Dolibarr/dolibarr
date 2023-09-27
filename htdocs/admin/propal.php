@@ -28,6 +28,7 @@
  *		\brief      Setup page for commercial proposal module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -57,9 +58,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $error = 0;
 if ($action == 'updateMask') {
-	$maskconstpropal = GETPOST('maskconstpropal', 'alpha');
+	$maskconstpropal = GETPOST('maskconstpropal', 'aZ09');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
-	if ($maskconstpropal) {
+	if ($maskconstpropal && preg_match('/_MASK$/', $maskconstpropal)) {
 		$res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -291,7 +292,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -515,7 +516,7 @@ print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
 print '<td align="right">';
-if (empty($conf->facture->enabled)) {
+if (!isModEnabled('facture')) {
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 }
 print '</td>';
@@ -524,8 +525,8 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (empty($conf->facture->enabled)) {
-	if (!empty($conf->banque->enabled)) {
+if (!isModEnabled('facture')) {
+	if (isModEnabled("banque")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -563,7 +564,7 @@ print "</td></tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-if (empty($conf->facture->enabled)) {
+if (!isModEnabled('facture')) {
 	print '<select class="flat" name="chq" id="chq">';
 	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
@@ -623,6 +624,20 @@ print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"
 print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="center" colspan="2">';
+print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
+// Allow OnLine Sign
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
+print '<td class="center" colspan="2">';
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 
 // default update prices on cloning a proposal
 /*
@@ -700,12 +715,12 @@ print "</td></tr>\n";
 print '</form>';
 
 /* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-if ($conf->banque->enabled)
+if (isModEnabled('facture'))
 {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
-	if (! empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax))
 	{
 		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
 	}

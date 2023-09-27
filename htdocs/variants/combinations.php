@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -70,9 +71,9 @@ if ($id > 0 || $ref) {
 }
 
 $selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
-
+$selected = "";
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
@@ -89,8 +90,8 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
@@ -139,7 +140,7 @@ $productCombination2ValuePairs1 = array();
 
 if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
 	//$features = GETPOST('features', 'array');
-	$features = $_SESSION['addvariant_'.$object->id];
+	$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
 
 	if (!$features) {
 		if ($action == 'create') {
@@ -154,7 +155,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
-		if ($conf->global->PRODUIT_MULTIPRICES) {
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
@@ -279,7 +280,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		$level_price_impact = array_map('price2num', $level_price_impact);
 
 		$prodcomb->variation_price = $level_price_impact[1];
@@ -292,7 +293,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		$prodcomb->combination_price_levels = array();
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
@@ -304,12 +305,37 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		}
 	}
 
-	if ($prodcomb->update($user) > 0) {
+	$error = 0;
+	$db->begin();
+
+	// Update product variant ref
+	$product_child = new Product($db);
+	$product_child->fetch($prodcomb->fk_product_child);
+	$product_child->oldcopy = clone $product_child;
+	$product_child->ref = $reference;
+
+	$result = $product_child->update($product_child->id, $user);
+	if ($result < 0) {
+		setEventMessages($product_child->error, $product_child->errors, 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		// Update product variant infos
+		$result = $prodcomb->update($user);
+		if ($result < 0) {
+			setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+		header('Location: ' . dol_buildpath('/variants/combinations.php?id=' . $id, 2));
 		exit();
 	} else {
-		setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+		$db->rollback();
 	}
 }
 
@@ -338,6 +364,9 @@ if ($action === 'confirm_deletecombination') {
 		exit();
 	}
 
+	$product_child = new Product($db);
+	$product_child->fetch($prodcomb->fk_product_child);
+	$reference = $product_child->ref;
 	$weight_impact = $prodcomb->variation_weight;
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
@@ -370,10 +399,13 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-if (!empty($id) || !empty($ref)) {
-	llxHeader("", "", $langs->trans("CardProduct".$object->type));
+$title = $langs->trans("Variant");
 
-	$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+llxHeader("", $title);
+
+
+if (!empty($id) || !empty($ref)) {
+	$showbarcode = isModEnabled('barcode');
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 		$showbarcode = 0;
 	}
@@ -384,8 +416,8 @@ if (!empty($id) || !empty($ref)) {
 
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = " fk_product_type = ".$object->type;
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.((int) $object->type).'">'.$langs->trans("BackToList").'</a>';
+	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 
@@ -395,7 +427,7 @@ if (!empty($id) || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Type
-	if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
 		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
@@ -459,7 +491,7 @@ if (!empty($id) || !empty($ref)) {
 	print "</table>\n";
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -470,7 +502,7 @@ if (!empty($id) || !empty($ref)) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
 			// print dol_get_fiche_head();
-			$features = $_SESSION['addvariant_'.$object->id];
+			$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
 			if (!empty($features)) {
@@ -492,7 +524,7 @@ if (!empty($id) || !empty($ref)) {
 		}
 
 		if ($action == 'add') {
-			$prodattr_all = $prodattr->fetchAll(1);
+			$prodattr_all = $prodattr->fetchAll();
 
 			if (!$selected) {
 				$selected = $prodattr_all[key($prodattr_all)]->id;
@@ -507,7 +539,7 @@ if (!empty($id) || !empty($ref)) {
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
 			variants_selected = {
 				index: [],
 				info: []
@@ -847,15 +879,15 @@ if (!empty($id) || !empty($ref)) {
 
 		$aaa = '';
 		if (count($productCombinations)) {
-			$aaa = '<label for="massaction">'.$langs->trans('BulkActions').'</label>';
-			$aaa .= '<select id="bulk_action" name="massaction" class="flat">';
+			$aaa = '<select id="bulk_action" name="massaction" class="flat">';
 			$aaa .= '	<option value="nothing">&nbsp;</option>';
-			$aaa .= '	<option value="not_buy">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
-			$aaa .= '	<option value="not_sell">'.$langs->trans('ProductStatusNotOnSell').'</option>';
-			$aaa .= '	<option value="on_buy">'.$langs->trans('ProductStatusOnBuy').'</option>';
-			$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
-			$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
+			$aaa .= '	<option value="not_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnBuy'))).'">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
+			$aaa .= '	<option value="not_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnSell'))).'">'.$langs->trans('ProductStatusNotOnSell').'</option>';
+			$aaa .= '	<option value="on_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusOnBuy'))).'">'.$langs->trans('ProductStatusOnBuy').'</option>';
+			$aaa .= '	<option value="on_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusOnSell'))).'">'.$langs->trans('ProductStatusOnSell').'</option>';
+			$aaa .= '	<option value="delete" data-html="'.dol_escape_htmltag(img_picto($langs->trans("Delete"), 'delete', 'class="pictofixedwidth"').$langs->trans('Delete')).'">'.$langs->trans('Delete').'</option>';
 			$aaa .= '</select>';
+			$aaa .= ajax_combobox("bulk_action");
 			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button small">';
 		}
 		$massactionbutton = $aaa;
@@ -868,6 +900,15 @@ if (!empty($id) || !empty($ref)) {
 		?>
 		<table class="liste">
 			<tr class="liste_titre">
+				<?php
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center">';
+					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
+					print $searchpicto;
+					print '</td>';
+				}
+				?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
@@ -878,10 +919,13 @@ if (!empty($id) || !empty($ref)) {
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
 				<?php
-				print '<td class="liste_titre center">';
-				$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
-				print $searchpicto;
-				print '</td>';
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center">';
+					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
+					print $searchpicto;
+					print '</td>';
+				}
 				?>
 			</tr>
 		<?php
@@ -890,9 +934,22 @@ if (!empty($id) || !empty($ref)) {
 			foreach ($productCombinations as $currcomb) {
 				$prodstatic->fetch($currcomb->fk_product_child);
 				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($prodstatic->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+				}
+
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-
 				$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
 				$iMax = count($productCombination2ValuePairs);
 
@@ -909,19 +966,25 @@ if (!empty($id) || !empty($ref)) {
 				}
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
+
 				print '<td class="right">';
 				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
-				print '<td class="nowrap center">';
-				if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($prodstatic->id, $arrayofselected)) {
-						$selected = 1;
+
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($prodstatic->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
-					print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
 				}
-				print '</td>';
+
 				print '</tr>';
 			}
 		} else {
@@ -931,9 +994,6 @@ if (!empty($id) || !empty($ref)) {
 		print '</div>';
 		print '</form>';
 	}
-} else {
-	llxHeader();
-	// not found
 }
 
 // End of page

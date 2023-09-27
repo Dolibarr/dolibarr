@@ -42,12 +42,17 @@ $hookmanager->initHooks(array('index'));
  * Actions
  */
 
+$nbmodulesnotautoenabled = count($conf->modules);
+if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+
 // Check if company name is defined (first install)
 if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM)) {
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
-if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only user module enabled
+if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only user module enabled
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
@@ -106,28 +111,34 @@ if (!empty($conf->global->MAIN_MOTD)) {
  * Show security warnings
  */
 
-// Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
+// Security warning if install.lock file is missing or if conf file is writable
+if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	$message = '';
 
 	// Check if install lock file is present
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {
+	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
 		$langs->load("errors");
 		//$langs->load("other");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
+	$object = new stdClass();
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('infoadmin', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		$message .= $hookmanager->resPrint;
+	}
 	if ($message) {
-		print $message;
+		print $message.'<br>';
 		//$message.='<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}
@@ -176,7 +187,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of commercial customer proposals open (expired)
-	if (isModEnabled('propal')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propal', 'lire')) {
+	if (isModEnabled('propal') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propal', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		$board = new Propal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -194,11 +205,18 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		$dashboardlines[$board->element.'_signed'] = $board->load_board($user, "signed");
 	}
 
-	// Number of customer orders a deal
+	// Number of sales orders a deal
 	if (isModEnabled('commande')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
-		$dashboardlines[$board->element] = $board->load_board($user);
+		// Number of customer orders to be shipped (validated and in progress)
+		$dashboardlines[$board->element.'_toship'] = $board->load_board($user, 'toship');
+		// Number of customer orders to be billed (not visible by default, does not match a lot of organization).
+		if (getDolGlobalInt('ORDER_BILL_AFTER_VALIDATION')) {
+			$dashboardlines[$board->element.'_tobill'] = $board->load_board($user, 'tobill');
+		}
+		// Number of customer orders to be billed (delivered but not billed)
+		$dashboardlines[$board->element.'_shippedtobill'] = $board->load_board($user, 'shippedtobill');
 	}
 
 	// Number of suppliers orders a deal
@@ -235,7 +253,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier invoices (paid)
-	if (isModEnabled('supplier_invoice')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
+	if (isModEnabled('supplier_invoice') && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -255,19 +273,19 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	// Number of cheque to send
 	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_direct_debit'] = $board->load_board($user, 'direct_debit');
+			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
 		}
-		if (!empty($conf->paymentbybanktransfer->enabled)) {
+		if (isModEnabled('paymentbybanktransfer')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
 		}
 	}
 
@@ -338,7 +356,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				'groupName' => 'Orders',
 				'globalStatsKey' => 'orders',
 				'stats' =>
-					array('commande'),
+					array('commande_toship', 'commande_tobill', 'commande_shippedtobill'),
 			),
 		'facture' =>
 			array(
@@ -437,7 +455,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 	// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 	foreach ($valid_dashboardlines as $board) {
-		if ($board->nbtodolate > 0) {
+		if (is_numeric($board->nbtodo) && is_numeric($board->nbtodolate) && $board->nbtodolate > 0) {
 			$totaltodo += $board->nbtodo;
 			$totallate += $board->nbtodolate;
 		}
@@ -490,7 +508,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
 
-			// Scan $groupElement and save the one with 'stats' that lust be used for Open object dashboard
+			// Scan $groupElement and save the one with 'stats' that must be used for the open objects dashboard
 			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
@@ -512,23 +530,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				if (!empty($groupElement['globalStatsKey']) && empty($groupElement['globalStats'])) { // can be filled by hook
 					$globalStatsKey = $groupElement['globalStatsKey'];
 					$groupElement['globalStats'] = array();
-
-					if (isset($keys) && is_array($keys) && in_array($globalStatsKey, $keys)) {
-						// get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
-						$keyIndex = array_search($globalStatsKey, $keys);
-
-						$classe = (!empty($classes[$keyIndex]) ? $classes[$keyIndex] : '');
-						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe])) {
-							$groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
-							$nbTotal = floatval($groupElement['globalStats']['total']);
-							if ($nbTotal >= 10000) {
-								$nbTotal = round($nbTotal / 1000, 2).'k';
-							}
-							$groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
-							$groupElement['globalStats']['total'] = $nbTotal;
-							//$groupElement['globalStats']['link'] = $links[$keyIndex];
-						}
-					}
 				}
 
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
@@ -536,10 +537,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				$openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
 				$openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
-				// Show the span for the total of record
+				// Show the span for the total of record. TODO This seems not used.
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
-					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>';
+					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
 				}
 
 				$openedDashBoard .= '</span>'."\n";
@@ -549,7 +550,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
-					$openedDashBoard .= '<div class="info-box-line">';
+					$openedDashBoard .= '<div class="info-box-line spanoverflow nowrap">';
 
 					if (!empty($board->labelShort)) {
 						$infoName = '<span class="marginrightonly" title="'.$board->label.'">'.$board->labelShort.'</span>';
@@ -558,7 +559,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';
@@ -700,12 +701,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			if ($board->nbtodolate > 0) {
 				$boxwork .= '<div class="dashboardlinelatecoin nowrap">';
 				$boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late).'">';
-				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"');
 				$boxwork .= img_picto(
 					$textlate,
 					"warning_white",
 					'class="inline-block hideonsmartphone valigntextbottom"'
-				).'';
+				);
 				$boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'">';
 				$boxwork .= $board->nbtodolate;
 				$boxwork .= '</span>';
@@ -823,23 +824,15 @@ function getWeatherStatus($totallate)
 
 	$used_conf = empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
 
-	$level0 = $offset;
 	$weather->level = 0;
-	if (!empty($conf->global->{$used_conf.'0'})) {
-		$level0 = $conf->global->{$used_conf.'0'};
-	}
-	$level1 = $offset + 1 * $factor;
-	if (!empty($conf->global->{$used_conf.'1'})) {
-		$level1 = $conf->global->{$used_conf.'1'};
-	}
+	$level0 = $offset;
+	$level0 = getDolGlobalString($used_conf.'0', $level0);
+	$level1 = $offset + $factor;
+	$level1 = getDolGlobalString($used_conf.'1', $level1);
 	$level2 = $offset + 2 * $factor;
-	if (!empty($conf->global->{$used_conf.'2'})) {
-		$level2 = $conf->global->{$used_conf.'2'};
-	}
+	$level2 = getDolGlobalString($used_conf.'2', $level2);
 	$level3 = $offset + 3 * $factor;
-	if (!empty($conf->global->{$used_conf.'3'})) {
-		$level3 = $conf->global->{$used_conf.'3'};
-	}
+	$level3 = getDolGlobalString($used_conf.'3', $level3);
 
 	if ($totallate <= $level0) {
 		$weather->picto = 'weather-clear.png';

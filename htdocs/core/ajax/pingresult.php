@@ -40,6 +40,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -49,14 +50,15 @@ $hash_algo = GETPOST('hash_algo', 'alpha');
 
 
 // Security check
-// None.
+// None. Beeing connected is enough.
 
-$now = dol_now();
 
 
 /*
  * View
  */
+
+$now = dol_now();
 
 top_httphead();
 

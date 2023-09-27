@@ -22,6 +22,7 @@
  *		\brief      Page with log information for emailing
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -57,6 +58,12 @@ if ($object->fetch($id) >= 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlref = '<div class="refidno">';
+	// Ref customer
+	$morehtmlref .= $form->editfieldkey("", 'title', $object->title, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= '</div>';
+
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
 	if ($object->statut == 2 || $object->statut == 3) {
@@ -70,7 +77,7 @@ if ($object->fetch($id) >= 0) {
 		$morehtmlright .= ') &nbsp; ';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="underbanner clearboth"></div><br>';
 

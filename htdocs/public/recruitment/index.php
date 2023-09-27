@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/public/recruitment/view.php
+ *       \file       htdocs/public/recruitment/index.php
  *       \ingroup    recruitment
  *       \brief      Public file to show on job
  */
@@ -34,6 +34,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -47,7 +48,10 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 // Get parameters
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
+$SECUREKEY = GETPOST("securekey");
+$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
 $backtopage = '';
+$suffix = "";
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -77,7 +81,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 
 // Security check
 if (empty($conf->recruitment->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
 
@@ -100,7 +104,7 @@ if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
+if (!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
@@ -167,6 +171,7 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 
 
 $results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$now = dol_now();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -206,7 +211,7 @@ if (is_array($results)) {
 			// Output payment summary form
 			print '<tr><td class="left">';
 
-			print '<div with="100%" id="tablepublicpayment">';
+			print '<div class="centpercent" id="tablepublicpayment">';
 			print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 			$error = 0;
@@ -247,7 +252,7 @@ if (is_array($results)) {
 				}
 			}
 			print '<b class="wordbreak">';
-			print $tmpuser->getFullName(-1);
+			print $tmpuser->getFullName($langs);
 			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 			print '</b>';
 			print '</b><br>';
@@ -297,7 +302,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs);
+htmlPrintOnlineFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

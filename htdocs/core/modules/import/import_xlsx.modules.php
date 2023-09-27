@@ -42,20 +42,8 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int ID
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -106,6 +94,8 @@ class ImportXlsx extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
@@ -133,7 +123,7 @@ class ImportXlsx extends ModeleImports
 
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
-			$this->thirpartyobject = new Societe($this->db);
+			$this->thirdpartyobject = new Societe($this->db);
 		}
 	}
 
@@ -304,7 +294,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
@@ -339,6 +329,7 @@ class ImportXlsx extends ModeleImports
 		// phpcs:enable
 		$this->workbook->disconnectWorksheets();
 		unset($this->workbook);
+		return 0;
 	}
 
 
@@ -405,7 +396,7 @@ class ImportXlsx extends ModeleImports
 						if ($obj) {
 							$tablewithentity_cache[$tablename] = 1; // table contains entity field
 						} else {
-							$tablewithentity_cache[$tablename] = 0; // table does not contains entity field
+							$tablewithentity_cache[$tablename] = 0; // table does not contain entity field
 						}
 					} else {
 						dol_print_error($this->db);
@@ -491,9 +482,9 @@ class ImportXlsx extends ModeleImports
 												//var_dump($arrayrecord[0]['val']);
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												$tmpchartofaccount = new AccountancySystem($this->db);
-												$tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
+												$tmpchartofaccount->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 												//var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
-												if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
+												if ((! (getDolGlobalInt('CHARTOFACCOUNTS') > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												{
 													$this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
 													$this->errors[$error]['type']='RESTRICTONCURRENCTCHART';
@@ -615,8 +606,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codeclient(0, 0);
-										$newval = $this->thirpartyobject->code_client;
+										$this->thirdpartyobject->get_codeclient(0, 0);
+										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
 									if (empty($newval)) {
@@ -624,8 +615,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
-										$newval = $this->thirpartyobject->code_fournisseur;
+										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
 									if (empty($newval)) {
@@ -633,8 +624,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('customer');
-										$newval = $this->thirpartyobject->code_compta;
+										$this->thirdpartyobject->get_codecompta('customer');
+										$newval = $this->thirdpartyobject->code_compta;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -642,8 +633,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('supplier');
-										$newval = $this->thirpartyobject->code_compta_fournisseur;
+										$this->thirdpartyobject->get_codecompta('supplier');
+										$newval = $this->thirdpartyobject->code_compta_fournisseur;
 										if (empty($newval)) {
 											$arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 										}
@@ -694,7 +685,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -853,7 +844,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
@@ -916,6 +907,10 @@ class ImportXlsx extends ModeleImports
 										$filters[] = $col.' = '.$data[$key];
 									}
 								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 								$sqlSelect .= " WHERE " . implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -947,10 +942,15 @@ class ImportXlsx extends ModeleImports
 								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
 
+
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -997,6 +997,10 @@ class ImportXlsx extends ModeleImports
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
+
 								$sql = $sqlstart . $sqlend;
 
 								// Run update request
@@ -1040,7 +1044,9 @@ class ImportXlsx extends ModeleImports
 							if ($sql) {
 								$resql = $this->db->query($sql);
 								if ($resql) {
-									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									if (!$is_table_category_link) {
+										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									}
 									$insertdone = true;
 								} else {
 									//print 'E';

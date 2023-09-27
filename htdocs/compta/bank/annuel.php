@@ -24,6 +24,7 @@
  *		\brief       Page to report input-output of a bank account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -37,6 +38,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 
 $id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankannualreport', 'globalcard'));
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -61,10 +65,6 @@ if (!$year_start) {
  * View
  */
 
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 
 // Get account informations
@@ -81,6 +81,10 @@ if (!empty($ref)) {
 $annee = '';
 $totentrees = array();
 $totsorties = array();
+
+$title = $object->ref.' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 // Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 // plutot que sur llx_paiement + llx_paiementfourn
@@ -188,9 +192,15 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 }
 print '</tr>';
 
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
+	$totsorties[$annee] = 0;
+	$totentrees[$annee] = 0;
+}
+
 for ($mois = 1; $mois < 13; $mois++) {
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
+
 	for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
@@ -456,7 +466,7 @@ if ($result < 0) {
 	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
 	print '</div></div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 

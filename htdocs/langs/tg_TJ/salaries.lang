@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Ҳисоби баҳисобгирӣ барои корбарони сеюм истифода мешавад
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Ҳисоби баҳисобгирии муҳосибӣ, ки дар корти корбар муайян шудааст, танҳо барои баҳисобгирии зерпардохт истифода мешавад. Ин барои китоби умумӣ ва ҳамчун арзиши пешфарзии баҳисобгирии Subledger истифода мешавад, агар ҳисоби махсуси баҳисобгирии корбар дар корбар муайян карда нашуда бошад.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои пардохти музди меҳнат
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Бо нобаёнӣ, ҳангоми эҷод кардани маош опсияи "Ба таври худкор пардохти умумӣ" -ро холӣ гузоред
 Salary=Музди меҳнат
@@ -24,3 +24,4 @@ SalariesStatistics=Омори музди меҳнат
 SalariesAndPayments=Музди меҳнат ва пардохтҳо
 ConfirmDeleteSalaryPayment=Оё шумо ин пардохти музди меҳнатро нест кардан мехоҳед?
 FillFieldFirst=Fill employee field first
+UpdateAmountWithLastSalary=Set amount with last salary

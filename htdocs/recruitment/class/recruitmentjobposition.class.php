@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020       Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +63,24 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public $picto = 'recruitmentjobposition';
 
-
+	/**
+	 * Draft status
+	 */
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated
+	 */
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Recruited
+	 */
 	const STATUS_RECRUITED = 3;
+
+	/**
+	 * Canceled
+	 */
 	const STATUS_CANCELED = 9;
 
 
@@ -105,11 +120,11 @@ class RecruitmentJobPosition extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'csslist'=>'tdoverflowmax300', 'showoncombobox'=>'2', 'autofocusoncreate'=>1),
 		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'css'=>'maxwidth500', 'picto'=>'project'),
-		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
+		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php:1:(statut:=:1)', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
 		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail', 'picto'=>'email'),
-		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
+		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php:1:(statut:=:1)', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
 		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'$conf->societe->enabled', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'css'=>'maxwidth500', 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner", 'picto'=>'company'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'WorkPlace', 'enabled'=>'isModEnabled("societe")', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'css'=>'maxwidth500', 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner", 'picto'=>'company'),
 		'date_planned' => array('type'=>'date', 'label'=>'DateExpected', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
 		'remuneration_suggested' => array('type'=>'varchar(255)', 'label'=>'Remuneration', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>1,),
 		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>3,),
@@ -182,12 +197,12 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->recruitment->recruitmentjobposition->read) {
+		/*if ($user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -254,7 +269,7 @@ class RecruitmentJobPosition extends CommonObject
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
-		unset($object->import_key);
+		$object->import_key = null;
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -366,8 +381,6 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -376,7 +389,7 @@ class RecruitmentJobPosition extends CommonObject
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -486,7 +499,7 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -498,8 +511,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitmentjobposition->create))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->create))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -616,8 +629,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -640,8 +653,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -651,7 +664,7 @@ class RecruitmentJobPosition extends CommonObject
 	}
 
 	/**
-	 *	Close the commercial proposal
+	 *	Close the recruitment
 	 *
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$status		Statut
@@ -683,18 +696,12 @@ class RecruitmentJobPosition extends CommonObject
 			if ($status == self::STATUS_RECRUITED) {
 				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
 				$modelpdf = $this->model_pdf;
-
-				if ($result < 0) {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -2;
-				}
 			}
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
@@ -757,8 +764,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -800,7 +807,7 @@ class RecruitmentJobPosition extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -842,7 +849,7 @@ class RecruitmentJobPosition extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1078,7 +1085,7 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
+		//global $conf, $langs;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
@@ -1097,5 +1104,47 @@ class RecruitmentJobPosition extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if (property_exists($this, 'date_planned')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_planned), 'day').'</span>';
+		}
+		if (property_exists($this, 'qty')) {
+			$return .= '<br><span class="opacitymedium" title="'.$langs->trans("NbOfEmployeesExpected").'">'.$langs->trans("NbOfEmployeesExpected", '', '', '', '', 2).'</span> : <span class="info-box-label">'.$this->qty.'</span>';
+		}
+		if (property_exists($this, 'remuneration_suggested')) {
+			$return .= ' | <span class="opacitymedium">'.$langs->trans("Remuneration").'</span> : <span class="info-box-label">'.$this->remuneration_suggested.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).' | <span class="opacitymedium" title="'.$langs->trans("RecruitmentCandidatures").'">'.$langs->trans("RecruitmentCandidatures", '', '', '', '', 5).'</span> : <span>';
+			$return .= $arraydata['nbapplications'];
+			$return .= '</span></div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

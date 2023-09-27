@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	if (!empty($conf->project->enabled) && $user->hasRight('project', 'lire')) {
+	if (isModEnabled('project') && $user->hasRight('project', 'lire')) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -70,9 +70,10 @@ function contact_prepare_head(Contact $object)
 			$sql = 'SELECT COUNT(n.rowid) as nb';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
-			$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-			$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
-			$sql .= ' AND n.entity IN ('.getEntity('project').')';
+			$sql .= " WHERE cc.fk_socpeople = ".((int) $object->id);
+			$sql .= " AND cc.fk_c_type_contact IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE element='project' AND source='external')";
+			$sql .= " AND n.entity IN (".getEntity('project').")";
+
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -92,7 +93,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -103,7 +104,7 @@ function contact_prepare_head(Contact $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'core');
 
 	// Notes
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -133,7 +134,7 @@ function contact_prepare_head(Contact $object)
 	// Agenda / Events
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$tab][1] .= '/';
 		$head[$tab][1] .= $langs->trans("Agenda");
 	}
@@ -146,6 +147,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;*/
+
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
 
@@ -170,11 +173,11 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (!empty($conf->project->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->project->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -184,15 +187,15 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print "\n".'<table class="noborder" width=100%>';
 
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
-		$sql .= ', cls.code as opp_status_code, ctc.libelle';
+		$sql .= ', cls.code as opp_status_code, ctc.libelle as type_label';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid = cc.fk_c_type_contact)';
-		$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-		$sql .= ' AND ctc.element="project" AND ctc.source="external"';
-		$sql .= ' AND p.entity IN ('.getEntity('project').')';
-		$sql .= ' ORDER BY p.dateo DESC';
+		$sql .= " WHERE cc.fk_socpeople = ".((int) $object->id);
+		$sql .= " AND ctc.element='project' AND ctc.source='external'";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= " ORDER BY p.dateo DESC";
 
 		$result = $db->query($sql);
 		if ($result) {
@@ -233,8 +236,8 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
-						print '<td>'.$obj->libelle.'</td>';
+						print '<td>'.dol_escape_htmltag($obj->title).'</td>';
+						print '<td>'.dol_escape_htmltag($obj->type_label).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end

@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Clé live des Webhooks
 ONLINE_PAYMENT_WAREHOUSE=Stock à utiliser pour diminuer le stock lorsque le paiement en ligne est effectué <br> (TODO Quand l'option de réduction de stock est effectuée sur une action sur facture et que le paiement en ligne génère lui-même la facture?)
 StripeLiveEnabled=Mode live activé (sinon mode test/bac a sable)
 StripeImportPayment=Importer paiements Stripe
-ExampleOfTestCreditCard=Exemple de carte de crédit pour le test: %s => valide, %s => erreur CVC, %s => expiré, %s => paiement en échec
+ExampleOfTestCreditCard=Exemple de carte de crédit pour un paiement test: %s => valide, %s => erreur CVC, %s => expiré, %s => paiement en échec
+ExampleOfTestBankAcountForSEPA=Example de numéro de compte en banque (BAN) pour le test de débit direct : %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect ID client (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect ID client (ca _...)
@@ -50,6 +51,7 @@ StripeAccount=Compte Stripe
 StripeChargeList=Liste des encaissements par Stripe
 StripeTransactionList=Liste des transactions Stripe
 StripeCustomerId=Identifiant client Stripe
+StripePaymentId=Identifiant de paiement Stripe
 StripePaymentModes=Modes de paiement Stripe
 LocalID=ID local
 StripeID=Stripe ID
@@ -61,6 +63,7 @@ DeleteACard=Supprimer carte
 ConfirmDeleteCard=Êtes-vous sûr de vouloir supprimer cette carte de crédit ou de débit?
 CreateCustomerOnStripe=Créer client sur Stripe
 CreateCardOnStripe=Créer carte sur Stripe
+CreateBANOnStripe=Créer une banque sur Stripe
 ShowInStripe=Afficher dans Stripe
 StripeUserAccountForActions=Compte d'utilisateur à utiliser pour certains e-mails de notification d'événements Stripe (Stripe payouts)
 StripePayoutList=Liste des versements par Stripe
@@ -69,4 +72,8 @@ ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour app
 PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe: %s
-TERMINAL_LOCATION=Emplacement (adresse) des terminaux
+STRIPE_CARD_PRESENT=Carte présente pour les terminaux Stripe
+TERMINAL_LOCATION=Localisation (adresse) pour les terminaux Stripe
+RequestDirectDebitWithStripe=Demander un prélèvement automatique avec Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Activer les paiements par débit direct avec Stripe
+

@@ -26,6 +26,7 @@
  *	\brief      Page to list stock movements
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -37,14 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -106,9 +107,9 @@ $arrayfields = array(
 	'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
 	'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
 	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
-	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
+	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(isModEnabled('productbatch'))),
+	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
+	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
 	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
 	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
 	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
@@ -273,7 +274,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		$action = 'transfert';
 	}
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$product = new Product($db);
 		$result = $product->fetch($product_id);
 
@@ -417,7 +418,7 @@ if (empty($reshook) && $action != 'remove_file') {
  * View
  */
 
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $productstatic = new Product($db);
 $warehousestatic = new Entrepot($db);
 $movement = new MouvementStock($db);
@@ -425,7 +426,7 @@ $userstatic = new User($db);
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -509,7 +510,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -684,7 +685,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($id > 0) {
 		$param .= '&id='.urlencode($id);

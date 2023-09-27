@@ -26,6 +26,7 @@
  *		\brief      Page to setup extra fields of bank
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -64,30 +65,25 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Bank");
+$help_url = '';
+$page_name = "BankSetupModule";
 
 llxHeader('', $langs->trans("BankSetupModule"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 
 $head = bank_admin_prepare_head(null);
 
-print dol_get_fiche_head($head, 'attributes', $langs->trans("BankSetupModule"), -1, 'account');
+print dol_get_fiche_head($head, 'attributes', $langs->trans($page_name), -1, 'account');
+
+$textobject = $langs->transnoentitiesnoconv("Bank");
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

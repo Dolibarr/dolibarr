@@ -5,6 +5,8 @@
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
+ * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +28,10 @@
  *  \brief      Page of salaries payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -108,13 +112,16 @@ $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
+$upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
-/**
+
+/*
  * Actions
  */
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -122,14 +129,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/salaries/list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/salaries/list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/salaries/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/salaries/card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -146,6 +153,17 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
+
+	// Actions to send emails
+	$triggersendname = 'COMPANY_SENTBYMAIL';
+	$paramname = 'id';
+	$mode = 'emailfromthirdparty';
+	$trackid = 'sal'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	//var_dump($upload_dir);var_dump($permissiontoadd);var_dump($action);exit;
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 // Link to a project
@@ -260,7 +278,7 @@ if ($action == 'add' && empty($cancel)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
-	if (isModEnabled('banque') && !empty($auto_create_paiement) && !$object->accountid > 0) {
+	if (isModEnabled("banque") && !empty($auto_create_paiement) && !$object->accountid > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
@@ -306,7 +324,7 @@ if ($action == 'add' && empty($cancel)) {
 			$db->commit();
 
 			if (GETPOST('saveandnew', 'alpha')) {
-				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
 				exit;
 			} else {
@@ -366,7 +384,9 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write)
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+if ($action == 'confirm_clone' && $confirm != 'yes') {
+	$action = '';
+}
 
 if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
 	$db->begin();
@@ -378,6 +398,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 	if ($object->id > 0) {
 		$object->paye = 0;
 		$object->id = $object->ref = null;
+
+		if (GETPOST('amount', 'alphanohtml')) {
+			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+		}
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
@@ -443,9 +467,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 if (isModEnabled('project')) $formproject = new FormProjets($db);
 
-$title = $langs->trans('Salary')." - ".$langs->trans('Card');
+$title = $langs->trans('Salary')." - ".$object->ref;
 $help_url = "";
-llxHeader("", $title, $help_url);
+llxHeader('', $title, $help_url);
 
 
 if ($id > 0) {
@@ -457,8 +481,8 @@ if ($id > 0) {
 }
 
 // Create
-if ($action == 'create') {
-	$year_current = strftime("%Y", dol_now());
+if ($action == 'create' && $permissiontoadd) {
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
@@ -479,7 +503,7 @@ if ($action == 'create') {
 		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
-	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -521,7 +545,7 @@ if ($action == 'create') {
 		print '</script>'."\n";
 	}
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -583,7 +607,7 @@ if ($action == 'create') {
 	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
 
 	// Bank
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		print '<tr><td id="label_fk_account">';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="paddingrighonly"');
@@ -610,7 +634,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Number
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		// Number
 		print '<tr class="hide_if_no_auto_create_payment"><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -655,18 +679,26 @@ if ($action == 'create') {
 	print '<script>';
 	print '$( document ).ready(function() {';
 		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
-					console.log("We click on link to autofill salary amount");
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					console.log("We click on link to autofill salary amount url="+url);
+
 					if (fk_user != -1) {
 						$.get(
 							url,
 							function( data ) {
-								if(data!=null) {
-									console.log("Data returned: "+data);
-									item = JSON.parse(data);
-									if(item[0].key == "Amount") {
+								console.log("Data returned: "+data);
+								if (data != null) {
+									if (typeof data == "object") {
+										console.log("data is already type object, no need to parse it");
+										item = data;
+									} else {
+										console.log("data is type "+(typeof data));
+										item = JSON.parse(data);
+									}
+									if (item[0].key == "Amount") {
 										value = item[0].value;
+										console.log("amount returned = "+value);
 										if (value != null) {
 											$("#amount").val(item[0].value);
 										} else {
@@ -682,7 +714,7 @@ if ($action == 'create') {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->trans("FillFieldFirst")).'");
+						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
 					}
 		});
 
@@ -690,14 +722,8 @@ if ($action == 'create') {
 	print '</script>';
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* View mode                                                                  */
-/*                                                                            */
-/* ************************************************************************** */
-
-if ($id) {
+// View mode
+if ($id > 0) {
 	$head = salaries_prepare_head($object);
 	$formconfirm = '';
 
@@ -709,8 +735,9 @@ if ($id) {
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
+		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	if ($action == 'paid') {
@@ -741,7 +768,7 @@ if ($id) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -793,34 +820,26 @@ if ($id) {
 		$morehtmlref .= '</form>';
 	}
 
+	$usercancreate = $permissiontoadd;
+
 	// Project
 	if (isModEnabled('project')) {
-		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->salaries->write) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>';
+		if ($usercancreate) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, null, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-			} else {
-				$morehtmlref .= '';
 			}
 		}
 	}
@@ -893,7 +912,7 @@ if ($id) {
 	print '</td></tr>';
 
 	// Default Bank Account
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('DefaultBankAccount');
@@ -922,7 +941,7 @@ if ($id) {
 	print '<div class="fichehalfright">';
 
 	$nbcols = 3;
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		$nbcols++;
 	}
 
@@ -956,7 +975,7 @@ if ($id) {
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 		}
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
@@ -969,10 +988,10 @@ if ($id) {
 
 				print '<tr class="oddeven"><td>';
 				print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
+				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-				if (isModEnabled('banque')) {
+				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;
 					$bankaccountstatic->ref = $objp->baref;
 					$bankaccountstatic->label = $objp->baref;
@@ -1003,8 +1022,8 @@ if ($id) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right nowrap amountcard\">".price($totalpaid)."</td></tr>\n";
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right nowrap amountcard\">".price($object->amount)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
 		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -1041,6 +1060,17 @@ if ($id) {
 
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
+		// Dynamic send mail button
+		$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			if (empty($user->socid)) {
+				$canSendMail = true;
+
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', $canSendMail);
+			}
+		}
+
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
@@ -1132,6 +1162,10 @@ if ($id) {
 	$trackid = 'salary'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
+	// Hook to add more things on page
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('salaryCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // End of page

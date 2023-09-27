@@ -24,6 +24,7 @@
  *					Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -33,11 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
+global $conf, $db, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
+$lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -45,7 +49,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'my
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object = new ProductLot($db);
+$object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -67,9 +71,9 @@ if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
-$batch  	= GETPOST('batch', 'alpha');
-$productid  = GETPOST('productid', 'int');
-$ref        = GETPOST('ref', 'alpha'); // ref is productid_batch
+$batch = GETPOST('batch', 'alpha');
+$productid = GETPOST('productid', 'int');
+$ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
 $search_entity = GETPOST('search_entity', 'int');
 $search_fk_product = GETPOST('search_fk_product', 'int');
@@ -104,22 +108,22 @@ if ($id || $ref) {
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
 
-$permissionnote = $user->rights->stock->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->stock->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->stock->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('stock', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('stock', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('stock', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
-$usercanread = $user->rights->produit->lire;
-$usercancreate = $user->rights->produit->creer;
-$usercandelete = $user->rights->produit->supprimer;
+$usercanread = $user->hasRight('produit', 'lire');
+$usercancreate = $user->hasRight('produit', 'creer');
+$usercandelete = $user->hasRight('produit', 'supprimer');
 
 $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
-//$permissiontodelete = $usercandelete;
+$permissiontodelete = $usercandelete;
 
 // Security check
-if (empty($conf->productbatch->enabled)) {
+if (!isModEnabled('productbatch')) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;
@@ -128,7 +132,9 @@ if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'productbatch');
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -146,62 +152,62 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/product/stock/productlot_list.php', 1);
 
-	if ($action == 'seteatby' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	if ($action == 'seteatby' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editeatby';
+			$action = 'editeatby';
 		} else {
 			$action = 'view';
 		}
 	}
 
-	if ($action == 'setsellby' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	if ($action == 'setsellby' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editsellby';
+			$action = 'editsellby';
 		} else {
 			$action = 'view';
 		}
 	}
 
-	if ($action == 'seteol_date' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	if ($action == 'seteol_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('eol_datemonth', 'int'), GETPOST('eol_dateday', 'int'), GETPOST('eol_dateyear', 'int'));
 		$result = $object->setValueFrom('eol_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editeol_date';
+			$action = 'editeol_date';
 		} else {
 			$action = 'view';
 		}
 	}
 
-	if ($action == 'setmanufacturing_date' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	if ($action == 'setmanufacturing_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('manufacturing_datemonth', 'int'), GETPOST('manufacturing_dateday', 'int'), GETPOST('manufacturing_dateyear', 'int'));
 		$result = $object->setValueFrom('manufacturing_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editmanufacturing_date';
+			$action = 'editmanufacturing_date';
 		} else {
 			$action = 'view';
 		}
 	}
 
-	if ($action == 'setscrapping_date' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	if ($action == 'setscrapping_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('scrapping_datemonth', 'int'), GETPOST('scrapping_dateday', 'int'), GETPOST('scrapping_dateyear', 'int'));
 		$result = $object->setValueFrom('scrapping_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editscrapping_date';
+			$action = 'editscrapping_date';
 		} else {
 			$action = 'view';
 		}
 	}
 
-	/* if ($action == 'setcommissionning_date' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	/* if ($action == 'setcommissionning_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('commissionning_datemonth', 'int'), GETPOST('commissionning_dateday', 'int'), GETPOST('commissionning_dateyear', 'int'));
 		$result = $object->setValueFrom('commissionning_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
@@ -212,11 +218,11 @@ if (empty($reshook)) {
 		}
 	} */
 
-	if ($action == 'setqc_frequency' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	if ($action == 'setqc_frequency' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
 		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
 		if ($result < 0) { // Prévoir un test de format de durée
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editqc_frequency';
+			$action = 'editqc_frequency';
 		} else {
 			$action = 'view';
 		}
@@ -227,20 +233,17 @@ if (empty($reshook)) {
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 	/*
-	if ($action == 'update_extras')
-	{
+	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Actions on extra fields
 			$result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
@@ -252,10 +255,8 @@ if (empty($reshook)) {
 	}
 
 	// Action to add record
-	if ($action == 'add')
-	{
-		if (GETPOST('cancel', 'alpha'))
-		{
+	if ($action == 'add') {
+		if (GETPOST('cancel', 'alpha')) {
 			$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
@@ -270,17 +271,14 @@ if (empty($reshook)) {
 		$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
 		$object->import_key = GETPOST('import_key', 'int');
 
-		if (empty($object->ref))
-		{
+		if (empty($object->ref)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$result = $object->create($user);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				// Creation OK
 				$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
 				header("Location: ".$urltogo);
@@ -301,8 +299,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && GETPOST('cancel', 'alpha')) $action = 'view';
 
 	// Action to update record
-	if ($action == 'update' && !GETPOST('cancel', 'alpha'))
-	{
+	if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
 		$object->entity = GETPOST('entity', 'int');
@@ -312,17 +309,14 @@ if (empty($reshook)) {
 		$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
 		$object->import_key = GETPOST('import_key', 'int');
 
-		if (empty($object->ref))
-		{
+		if (empty($object->ref)) {
 			$error++;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$result = $object->update($user);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$action = 'view';
 			} else {
 				// Creation KO
@@ -336,11 +330,9 @@ if (empty($reshook)) {
 	}
 
 	// Action to delete
-	if ($action == 'confirm_delete')
-	{
+	if ($action == 'confirm_delete') {
 		$result = $object->delete($user);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			header("Location: ".dol_buildpath('/stock/list.php', 1));
@@ -373,8 +365,8 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans("ProductLot");
 $help_url = '';
-llxHeader('', $title, $help_url);
 
+llxHeader('', $title, $help_url);
 
 
 // Part to create
@@ -466,9 +458,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Sell by
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->hasRight('stock', 'creer'), 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->hasRight('stock', 'creer'), 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
 		print '</tr>';
 	}
@@ -476,32 +468,35 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Eat by
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->hasRight('stock', 'creer'), 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->hasRight('stock', 'creer'), 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABOLITY)) {
-		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer')).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';
-		// print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer).'</td>';
-		// print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		// print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->hasRight('stock', 'creer')).'</td>';
+		// print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		// print '</tr>';
-		print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->hasRight('stock', 'creer')).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';
 	}
 
 	// Quality control
 	if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
-		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer')).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';
-		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'numeric').'</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->hasRight('stock', 'creer')).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->hasRight('stock', 'creer'), 'string').'</td>';
+		print '</tr>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->hasRight('stock', 'creer')).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->hasRight('stock', 'creer'), 'string').'</td>';
 		print '</tr>';
 	}
 
@@ -517,9 +512,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 	// Link to other lists
-	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowCurrentStockOfLot").'</a><br>';
+	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.img_object('', 'stock', 'class="pictofixedwidth"').$langs->trans("ShowCurrentStockOfLot").'</a><br>';
 	print '<br>';
-	print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
+	print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.img_object('', 'movement', 'class="pictofixedwidth"').$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
 
 	print '<br>';
 
@@ -534,16 +529,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (empty($reshook)) {
-			/*TODO      if ($user->rights->stock->lire)
-			{
+			/*TODO
+			if ($user->hasRight('stock', 'lire')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
-
-			if ($user->rights->stock->supprimer)
-			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
-			}
 			*/
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 		}
 
 		print '</div>'."\n";
@@ -570,7 +561,7 @@ if ($action != 'presend') {
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content
 		$delallowed = $usercancreate; // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->default_lang, '', $object);
+		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', (empty($object->default_lang) ? '' : $object->default_lang), '', $object);
 	}
 
 	print '</div><div class="fichehalfright">';

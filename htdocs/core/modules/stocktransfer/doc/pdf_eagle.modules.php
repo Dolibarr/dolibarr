@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 /**
  *	Class to build sending documents with model Eagle
  */
-class pdf_eagle extends ModelePdfStockTransfer
+class pdf_eagle extends ModelePDFStockTransfer
 {
 	/**
 	 * @var DoliDb Database handler
@@ -60,58 +60,23 @@ class pdf_eagle extends ModelePdfStockTransfer
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
-	 */
-	public $phpmin = array(5, 5);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
+	 * @var int posx lot
 	 */
-	public $page_largeur;
+	public $posxlot;
 
 	/**
-	 * @var int page_hauteur
+	 * @var int posx weightvol
 	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe    object that emits
-	 */
-	public $emetteur;
-
+	public $posxweightvol;
+	public $posxwarehousesource;
+	public $posxwarehousedestination;
+	public $atLeastOneBatch;
 
 	/**
 	 *	Constructor
@@ -131,10 +96,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 
@@ -183,13 +148,13 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Object		$object			Object StockTransfer to generate (or id if old method)
-	 *	@param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *	@param		StockTransfer	$object				Object StockTransfer to generate (or id if old method)
+	 *	@param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int				$hidedetails		Do not show line details
+	 *  @param		int				$hidedesc			Do not show desc
+	 *  @param		int				$hideref			Do not show ref
+	 *  @return     int         	    				1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -207,7 +172,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
@@ -219,7 +184,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
-				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				} else {
@@ -230,7 +195,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 				$realpath = '';
 
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-					if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {
+					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {
 						// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
@@ -287,7 +252,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
-				$nblines = count($object->lines);
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -319,7 +284,9 @@ class pdf_eagle extends ModelePdfStockTransfer
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
@@ -333,7 +300,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -438,7 +405,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
 						$pdf->AddPage('', '', true);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->setPage($pageposbefore + 1);
 
 						$curY = $tab_top_newpage;
@@ -465,14 +432,14 @@ class pdf_eagle extends ModelePdfStockTransfer
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
-						$object->lines[$i]->weight         	= $object->lines[$i]->product->weight;
-						$object->lines[$i]->weight_units   	= $object->lines[$i]->product->weight_units;
-						$object->lines[$i]->length         	= $object->lines[$i]->product->length;
-						$object->lines[$i]->length_units   	= $object->lines[$i]->product->length_units;
-						$object->lines[$i]->surface        	= $object->lines[$i]->product->surface;
+						$object->lines[$i]->weight = $object->lines[$i]->product->weight;
+						$object->lines[$i]->weight_units = $object->lines[$i]->product->weight_units;
+						$object->lines[$i]->length = $object->lines[$i]->product->length;
+						$object->lines[$i]->length_units = $object->lines[$i]->product->length_units;
+						$object->lines[$i]->surface = $object->lines[$i]->product->surface;
 						$object->lines[$i]->surface_units = $object->lines[$i]->product->surface_units;
-						$object->lines[$i]->volume         	= $object->lines[$i]->product->volume;
-						$object->lines[$i]->volume_units   	= $object->lines[$i]->product->volume_units;
+						$object->lines[$i]->volume = $object->lines[$i]->product->volume;
+						$object->lines[$i]->volume_units = $object->lines[$i]->product->volume_units;
 						$object->lines[$i]->fk_unit = $object->lines[$i]->product->fk_unit;
 						//var_dump($object->lines[$i]);exit;
 					}
@@ -494,7 +461,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 							if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
 								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter + 1);
 							}
 						} else {
@@ -531,7 +498,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
 					// Lot / série
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
 					}
@@ -610,7 +577,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == 1) {
@@ -623,7 +590,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 						$pdf->AddPage();
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
 
@@ -657,8 +624,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -678,12 +644,12 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
+	 *	@param	PDF				$pdf            Object PDF
+	 *	@param  StockTransfer	$object         Object invoice
+	 *	@param  int				$deja_regle     Montant deja regle
+	 *	@param	int				$posy			Position depart
+	 *	@param	Translate		$outputlangs	Objet langs
+	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -776,7 +742,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -813,7 +779,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 			$pdf->MultiCell($this->posxlot - $this->posxdesc, 2, $outputlangs->transnoentities("Description"), '', 'L');
 		}
 
-		if (!empty($conf->productbatch->enabled) && $this->atLeastOneBatch) {
+		if (isModEnabled('productbatch') && $this->atLeastOneBatch) {
 			$pdf->line($this->posxlot - 1, $tab_top, $this->posxlot - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxlot, $tab_top + 1);
@@ -866,10 +832,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 	}
 
 	/**
-￼	 * Used to know if at least one line of Stock Transfer object has a batch set
-￼	 *
-	 * @param	Object	$object	Stock Transfer object
-	 * @return	boolean	true if at least one line has batch set, false if not
+	 * Used to know if at least one line of Stock Transfer object has a batch set
+	 *
+	 * @param	StockTransfer	$object	Stock Transfer object
+	 * @return	boolean			true if at least one line has batch set, false if not
 ￼	 */
 	public function atLeastOneBatch($object)
 	{
@@ -878,7 +844,9 @@ class pdf_eagle extends ModelePdfStockTransfer
 
 		$atLeastOneBatch = false;
 
-		if (empty($conf->productbatch->enabled)) return false;
+		if (!isModEnabled('productbatch')) {
+			return false;
+		}
 
 		foreach ($object->lines as $line) {
 			if (!empty($line->batch)) {
@@ -893,10 +861,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  StockTransfer	$object     	Object to show
+	 *  @param  int	    		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
 	 *  @return	void
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
@@ -944,20 +912,20 @@ class pdf_eagle extends ModelePdfStockTransfer
 		}
 
 		// Show barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$posx = 105;
 		} else {
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
@@ -970,16 +938,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("StockTransferSheet");
+		$title = $outputlangs->transnoentities("StockTransferSheet").' '.$object->ref;
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', '', $default_font_size + 1);
-
-		$posy += 5;
-
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Ref")." : ".$object->ref, '', 'R');
 
 		// Date prévue depart
 		if (!empty($object->date_prevue_depart)) {
@@ -1158,17 +1120,16 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	PDF			$pdf     			PDF
-	 *  @param	Object		$object				Object to show
-	 *  @param	Translate	$outputlangs		Object lang for output
-	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	int								Return height of bottom margin including footer text
+	 *  @param	PDF				$pdf     			PDF
+	 *  @param	StockTransfer	$object				Object to show
+	 *  @param	Translate		$outputlangs		Object lang for output
+	 *  @param	int				$hidefreetext		1=Hide free text
+	 *  @return	int									Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		// phpcs:enable
-		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'SHIPPING_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

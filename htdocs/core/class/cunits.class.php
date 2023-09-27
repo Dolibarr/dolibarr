@@ -21,44 +21,31 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_units dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary type of thirdparty (used by imports)
  */
-class CUnits // extends CommonObject
+class CUnits extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
 	public $records = array();
 
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
 	/**
-	 * @var int ID
+	 * @var string label
+	 * @deprecated
+	 * @see $label
 	 */
-	public $id;
+	public $libelle;
 
-	public $code;
-	public $label;
+	public $sortorder;
 	public $short_label;
 	public $unit_type;
 	public $scale;
-	public $active;
-
-
 
 
 	/**
@@ -81,7 +68,6 @@ class CUnits // extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -167,8 +153,6 @@ class CUnits // extends CommonObject
 	 */
 	public function fetch($id, $code = '', $short_label = '', $unit_type = '')
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
@@ -233,8 +217,6 @@ class CUnits // extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
@@ -289,6 +271,7 @@ class CUnits // extends CommonObject
 					$record->unit_type = $obj->unit_type;
 					$record->scale = $obj->scale;
 					$record->active = $obj->active;
+
 					$this->records[$record->id] = $record;
 				}
 			}
@@ -313,7 +296,6 @@ class CUnits // extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -386,7 +368,6 @@ class CUnits // extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_units";

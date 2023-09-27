@@ -24,6 +24,7 @@
  *	\brief      Setup page for TakePos module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -99,9 +100,9 @@ if ($action == 'set') {
 		$db->rollback();
 	}
 } elseif ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
@@ -180,7 +181,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -264,7 +265,7 @@ print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (emp
 print "</td></tr>\n";
 
 // Services
-if (isModEnabled('service')) {
+if (isModEnabled("service")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
 	print '<td colspan="2">';

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Entrega
 DeliveryRef=Ref. d'entrega
-DeliveryCard=Fitxa de recepció
+DeliveryCard=Recepció d'estoc
 DeliveryOrder=Rebut d'entrega
 DeliveryDate=Data d'entrega
 CreateDeliveryOrder=Genera el rebut d'entrega

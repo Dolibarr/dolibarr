@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 /**
  *      \file       htdocs/core/ajax/selectsearchbox.php
  *      \ingroup    core
- *      \brief      This script returns content of possible search
+ *      \brief      This script returns json array of possible searches or just set the array if called by an include
  */
-
 
 // This script is called with a POST method or as an include.
 
@@ -38,10 +37,17 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 		define('NOREQUIREAJAX', '1');
 	}
 	if (!defined('NOREDIRECTBYMAINTOLOGIN')) {
+		// Disable redirect to main login because the selectsearch must not ask a login
 		define('NOREDIRECTBYMAINTOLOGIN', '1');
 	}
 
 	$res = @include '../../main.inc.php';
+
+	// Security check
+	// None. Beeing connected is enough.
+
+	top_httphead('application/json');
+
 	if ($res == 'ERROR_NOT_LOGGED') {
 		$langs->load("other");
 		$arrayresult['jumptologin'] = array('img'=>'object_generic', 'label'=>$langs->trans("JumpToLogin"), 'text'=>'<span class="fa fa-sign-in"></span> '.$langs->trans("JumpToLogin"), 'url'=>DOL_URL_ROOT.'/index.php');
@@ -55,7 +61,6 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
-//global $hookmanager;
 $hookmanager->initHooks(array('searchform'));
 
 $search_boxvalue = GETPOST('q', 'restricthtml');
@@ -65,22 +70,22 @@ $arrayresult = array();
 // Define $searchform
 
 if (isModEnabled('adherent') && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->hasRight('adherent', 'lire')) {
-	$arrayresult['searchintomember'] = array('position'=>8, 'shortcut'=>'M', 'img'=>'object_member', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintomember'] = array('position'=>8, 'shortcut'=>'M', 'img'=>'object_member', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
-if (((isModEnabled('societe') && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->hasRight('societe', 'lire')) {
-	$arrayresult['searchintothirdparty'] = array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('', 'object_company', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+if (((isModEnabled('societe') && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice') || isModEnabled('supplier_proposal')) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->hasRight('societe', 'lire')) {
+	$arrayresult['searchintothirdparty'] = array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('', 'object_company', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
 if (isModEnabled('societe') && empty($conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED) && $user->hasRight('societe', 'lire')) {
-	$arrayresult['searchintocontact'] = array('position'=>15, 'shortcut'=>'A', 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('', 'object_contact', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintocontact'] = array('position'=>15, 'shortcut'=>'A', 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('', 'object_contact', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
-if (((isModEnabled('product') && $user->hasRight('produit', 'lire')) || (isModEnabled('service') && $user->hasRight('service', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
-	$arrayresult['searchintoproduct'] = array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'text'=>img_picto('', 'object_product', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+if (((isModEnabled('product') && $user->hasRight('product', 'read')) || (isModEnabled('service') && $user->hasRight('service', 'read'))) && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
+	$arrayresult['searchintoproduct'] = array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'text'=>img_picto('', 'object_product', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 	// search on lot/serial numbers
 	if (isModEnabled('productbatch')) {
-		$arrayresult['searchintobatch'] = array('position'=>32, 'shortcut'=>'B', 'img'=>'object_lot', 'label'=>$langs->trans("SearchIntoBatch", $search_boxvalue), 'text'=>img_picto('', 'object_lot', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoBatch", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/stock/productlot_list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+		$arrayresult['searchintobatch'] = array('position'=>32, 'shortcut'=>'B', 'img'=>'object_lot', 'label'=>$langs->trans("SearchIntoBatch", $search_boxvalue), 'text'=>img_picto('', 'object_lot', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoBatch", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/stock/productlot_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 	}
 }
 
@@ -95,26 +100,26 @@ if (isModEnabled('project') && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLE
 }
 
 if (isModEnabled('propal') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_PROPAL_DISABLED) && $user->hasRight('propal', 'lire')) {
-	$arrayresult['searchintopropal'] = array('position'=>60, 'img'=>'object_propal', 'label'=>$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'text'=>img_picto('', 'object_propal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/comm/propal/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintopropal'] = array('position'=>60, 'img'=>'object_propal', 'label'=>$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'text'=>img_picto('', 'object_propal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/comm/propal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('commande') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_ORDER_DISABLED) && $user->hasRight('commande', 'lire')) {
-	$arrayresult['searchintoorder'] = array('position'=>70, 'img'=>'object_order', 'label'=>$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'text'=>img_picto('', 'object_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/commande/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoorder'] = array('position'=>70, 'img'=>'object_order', 'label'=>$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'text'=>img_picto('', 'object_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('expedition') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED) && $user->hasRight('expedition', 'lire')) {
-	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_shipment', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_shipment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_shipment', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_shipment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->hasRight('facture', 'lire')) {
-	$arrayresult['searchintoinvoice'] = array('position'=>90, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoinvoice'] = array('position'=>90, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
 if (isModEnabled('supplier_proposal') && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->hasRight('supplier_proposal', 'lire')) {
-	$arrayresult['searchintosupplierpropal'] = array('position'=>100, 'img'=>'object_supplier_proposal', 'label'=>$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintosupplierpropal'] = array('position'=>100, 'img'=>'object_supplier_proposal', 'label'=>$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled('supplier_order') &&  $user->hasRight('supplier_order', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED)) {
 	$arrayresult['searchintosupplierorder'] = array('position'=>110, 'img'=>'object_supplier_order', 'label'=>$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED)) {
-	$arrayresult['searchintosupplierinvoice'] = array('position'=>120, 'img'=>'object_supplier_invoice', 'label'=>$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_invoice', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintosupplierinvoice'] = array('position'=>120, 'img'=>'object_supplier_invoice', 'label'=>$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_invoice', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
 // Customer payments
@@ -124,7 +129,7 @@ if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INV
 		'img'=>'object_payment',
 		'label'=>$langs->trans("SearchIntoCustomerPayments", $search_boxvalue),
 		'text'=>img_picto('', 'object_payment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerPayments", $search_boxvalue),
-		'url'=>DOL_URL_ROOT.'/compta/paiement/list.php?leftmenu=customers_bills_payment'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+		'url'=>DOL_URL_ROOT.'/compta/paiement/list.php?leftmenu=customers_bills_payment'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 
 // Vendor payments
@@ -134,7 +139,7 @@ if (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 		'img'=>'object_payment',
 		'label'=>$langs->trans("SearchIntoVendorPayments", $search_boxvalue),
 		'text'=>img_picto('', 'object_payment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoVendorPayments", $search_boxvalue),
-		'url'=>DOL_URL_ROOT.'/fourn/paiement/list.php?leftmenu=suppliers_bills_payment'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+		'url'=>DOL_URL_ROOT.'/fourn/paiement/list.php?leftmenu=suppliers_bills_payment'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 
 // Miscellaneous payments
@@ -144,28 +149,31 @@ if (isModEnabled('banque') && empty($conf->global->MAIN_SEARCHFORM_MISC_PAYMENTS
 		'img'=>'object_payment',
 		'label'=>$langs->trans("SearchIntoMiscPayments", $search_boxvalue),
 		'text'=>img_picto('', 'object_payment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMiscPayments", $search_boxvalue),
-		'url'=>DOL_URL_ROOT.'/compta/bank/various_payment/list.php?leftmenu=tax_various'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+		'url'=>DOL_URL_ROOT.'/compta/bank/various_payment/list.php?leftmenu=tax_various'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 
 if (isModEnabled('contrat') && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->hasRight('contrat', 'lire')) {
-	$arrayresult['searchintocontract'] = array('position'=>130, 'img'=>'object_contract', 'label'=>$langs->trans("SearchIntoContracts", $search_boxvalue), 'text'=>img_picto('', 'object_contract', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintocontract'] = array('position'=>130, 'img'=>'object_contract', 'label'=>$langs->trans("SearchIntoContracts", $search_boxvalue), 'text'=>img_picto('', 'object_contract', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('ficheinter') && empty($conf->global->MAIN_SEARCHFORM_FICHINTER_DISABLED) && $user->hasRight('ficheinter', 'lire')) {
-	$arrayresult['searchintointervention'] = array('position'=>140, 'img'=>'object_intervention', 'label'=>$langs->trans("SearchIntoInterventions", $search_boxvalue), 'text'=>img_picto('', 'object_intervention', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintointervention'] = array('position'=>140, 'img'=>'object_intervention', 'label'=>$langs->trans("SearchIntoInterventions", $search_boxvalue), 'text'=>img_picto('', 'object_intervention', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+}
+if (isModEnabled('knowledgemanagement') && empty($conf->global->MAIN_SEARCHFORM_KNOWLEDGEMANAGEMENT_DISABLED) && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
+	$arrayresult['searchintoknowledgemanagement'] = array('position'=>145, 'img'=>'object_knowledgemanagement', 'label'=>$langs->trans("SearchIntoKM", $search_boxvalue), 'text'=>img_picto('', 'object_knowledgemanagement', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoKM", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('ticket') && empty($conf->global->MAIN_SEARCHFORM_TICKET_DISABLED) && $user->hasRight('ticket', 'read')) {
-	$arrayresult['searchintotickets'] = array('position'=>145, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintotickets'] = array('position'=>146, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 
 // HR
 if (isModEnabled('user') && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && $user->hasRight('user', 'user', 'lire')) {
-	$arrayresult['searchintouser'] = array('position'=>200, 'shortcut'=>'U', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoUsers", $search_boxvalue), 'text'=>img_picto('', 'object_user', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintouser'] = array('position'=>200, 'shortcut'=>'U', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoUsers", $search_boxvalue), 'text'=>img_picto('', 'object_user', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('expensereport') && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->hasRight('expensereport', 'lire')) {
-	$arrayresult['searchintoexpensereport'] = array('position'=>210, 'img'=>'object_trip', 'label'=>$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'text'=>img_picto('', 'object_trip', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoexpensereport'] = array('position'=>210, 'img'=>'object_trip', 'label'=>$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'text'=>img_picto('', 'object_trip', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('holiday') && empty($conf->global->MAIN_SEARCHFORM_HOLIDAY_DISABLED) && $user->hasRight('holiday', 'read')) {
-	$arrayresult['searchintoleaves'] = array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoleaves'] = array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
 }
 
 // Execute hook addSearchEntry

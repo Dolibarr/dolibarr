@@ -24,12 +24,13 @@
  *      \brief      Onglet de gestion des contacts des contrats
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -53,12 +54,14 @@ $object = new Contrat($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
 
 /*
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->contrat->creer) {
+if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -83,7 +86,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->contrat->creer) {
+if ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
@@ -92,7 +95,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer) {
 }
 
 // Delete contact
-if ($action == 'deletecontact' && $user->rights->contrat->creer) {
+if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
@@ -107,7 +110,10 @@ if ($action == 'deletecontact' && $user->rights->contrat->creer) {
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -136,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$morehtmlref = '';
-		//if (! empty($modCodeContract->code_auto)) {
+		//if (!empty($modCodeContract->code_auto)) {
 			$morehtmlref .= $object->ref;
 		/*} else {
 			$morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
@@ -152,37 +158,25 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->contrat->creer) {
+			$morehtmlref .= '<br>';
+			if (0) {
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					$morehtmlref .= ' : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
-						$morehtmlref .= ' - '.$proj->title;
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
-				} else {
-					$morehtmlref .= '';
 				}
 			}
 		}

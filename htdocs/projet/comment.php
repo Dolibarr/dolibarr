@@ -18,11 +18,12 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
+ *	\file       htdocs/projet/comment.php
  *	\ingroup    project
- *	\brief      Page of a project task
+ *	\brief      Page of a project
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -97,21 +98,27 @@ $param = ($mode == 'mine' ? '&mode=mine' : '');
 
 // Project card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+	$tmpurl = $_SESSION['pageforbacktolist']['project'];
+	$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+	$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+} else {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+}
 
 $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
 if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -133,19 +140,19 @@ if ($object->public) {
 }
 print '</td></tr>';
 
-// Date start - end
-print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+// Budget
+print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
+	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+}
+print '</td></tr>';
+
+// Date start - end project
+print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 print dol_print_date($object->date_start, 'day');
 $end = dol_print_date($object->date_end, 'day');
 if ($end) {
 	print ' - '.$end;
-}
-print '</td></tr>';
-
-// Budget
-print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) {
-	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 }
 print '</td></tr>';
 

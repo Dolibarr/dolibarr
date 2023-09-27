@@ -78,16 +78,16 @@ class UserBankAccount extends Account
 
 		$this->userid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 	}
 
 
 	/**
 	 * Create bank information record
 	 *
-	 * @param	User	$user		User
-	 * @param	int		$notrigger	1=Disable triggers
-	 * @return	int					<0 if KO, >= 0 if OK
+	 * @param	User|null	$user		User
+	 * @param	int			$notrigger	1=Disable triggers
+	 * @return	int						<0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -101,24 +101,24 @@ class UserBankAccount extends Account
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
 				return $this->update($user);
+			} else {
+				return 0;
 			}
 		} else {
 			print $this->db->error();
-			return 0;
+			return -1;
 		}
 	}
 
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	User	$user		Object user
-	 *	@param	int		$notrigger	1=Disable triggers
-	 *	@return	int					<=0 if KO, >0 if OK
+	 *	@param	User|null	$user		Object user
+	 *	@param	int			$notrigger	1=Disable triggers
+	 *	@return	int						<=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		if (!$this->id) {
 			$this->create();
 		}
@@ -134,6 +134,9 @@ class UserBankAccount extends Account
 		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
+		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ",fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 
 		if (trim($this->label) != '') {
 			$sql .= ",label = '".$this->db->escape($this->label)."'";
@@ -165,17 +168,23 @@ class UserBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, label, datec, tms as datem";
-		$sql .= " FROM ".$this->db->prefix()."user_rib";
+		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation, ur.proprio";
+		$sql .= ", ur.owner_address, ur.label, ur.datec, ur.tms as datem";
+		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
+		$sql .= ', c.code as country_code, c.label as country';
+		$sql .= ', d.code_departement as state_code, d.nom as state';
+		$sql .= " FROM ".$this->db->prefix()."user_rib as ur";
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_country as c ON ur.fk_country=c.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_departements as d ON ur.state_id=d.rowid';
+
 		if ($id) {
-			$sql .= " WHERE rowid = ".((int) $id);
+			$sql .= " WHERE ur.rowid = ".((int) $id);
 		}
 		if ($ref) {
-			$sql .= " WHERE label = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE ur.label = '".$this->db->escape($ref)."'";
 		}
 		if ($userid) {
-			$sql .= " WHERE fk_user = ".((int) $userid);
+			$sql .= " WHERE ur.fk_user = ".((int) $userid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -184,7 +193,7 @@ class UserBankAccount extends Account
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				$this->userid = $obj->fk_soc;
+				$this->userid = $obj->fk_user;
 				$this->bank = $obj->bank;
 				$this->code_banque = $obj->code_banque;
 				$this->code_guichet = $obj->code_guichet;
@@ -198,12 +207,78 @@ class UserBankAccount extends Account
 				$this->label = $obj->label;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
+				$this->currency_code = $obj->currency_code;
+
+				$this->state_id = $obj->state_id;
+				$this->state_code = $obj->state_code;
+				$this->state = $obj->state;
+
+				$this->country_id = $obj->country_id;
+				$this->country_code = $obj->country_code;
+				$this->country = $obj->country;
 			}
 			$this->db->free($resql);
 
 			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *  Delete user bank account from database
+	 *
+	 *  @param	User|null	$user	User deleting
+	 *  @return int             	<0 if KO, >0 if OK
+	 */
+	public function delete(User $user = null)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		// Delete link between tag and bank account
+		/*
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
+			$sql .= " WHERE fk_account = ".((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = "Error ".$this->db->lasterror();
+			}
+		}
+		*/
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result) {
+				// Remove extrafields
+				/*
+				if (!$error) {
+					$result = $this->deleteExtraFields();
+					if ($result < 0) {
+						$error++;
+						dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+					}
+				}*/
+			} else {
+				$error++;
+				$this->error = "Error ".$this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -223,7 +298,7 @@ class UserBankAccount extends Account
 				$rib = $this->label." : ";
 			}
 
-			$rib .= (string) $this;
+			$rib .= $this->iban;
 		}
 
 		return $rib;

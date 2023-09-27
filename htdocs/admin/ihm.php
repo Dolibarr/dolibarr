@@ -6,6 +6,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
  *       \brief      Page to setup GUI display options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -103,6 +105,16 @@ if ($action == 'update') {
 
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
+
+		if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
+			$val = GETPOST('THEME_DARKMODEENABLED');
+			if (!$val) {
+				dolibarr_del_const($db, "THEME_DARKMODEENABLED", $conf->entity);
+			}
+			if ($val) {
+				dolibarr_set_const($db, "THEME_DARKMODEENABLED", $val, 'chaine', 0, '', $conf->entity);
+			}
+		}
 
 		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
 			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
@@ -234,6 +246,7 @@ if ($action == 'update') {
 
 		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOST("MAIN_CHECKBOX_LEFT_COLUMN", 'int'), 'chaine', 0, '', $conf->entity);
 
 		//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -286,13 +299,19 @@ if ($action == 'update') {
 		}
 	}
 
+	if ($mode == 'css') {
+		//file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
+		//dol_chmod(DOL_DATA_ROOT.'/admin/customcss.css');
+		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	}
+
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
 
 	if (GETPOST('dol_resetcache')) {
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	}
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".'&mode='.$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup&mode=".$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));
 	exit;
 }
 
@@ -302,7 +321,13 @@ if ($action == 'update') {
  */
 
 $wikihelp = 'EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0,
+	array(
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	), array());
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -395,6 +420,12 @@ if ($mode == 'other') {
 
 	// Max size of short lists on customer card
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
+	print '</tr>';
+
+	// Max size of lists
+	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
+	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
 	print '</tr>';
 
 	// show input border
@@ -661,8 +692,27 @@ if ($mode == 'login') {
 	print '</div>';
 }
 
+if ($mode == 'css') {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">';
+
+	//$customcssValue = file_get_contents(DOL_DATA_ROOT.'/admin/customcss.css');
+	$customcssValue = getDolGlobalString('MAIN_IHM_CUSTOM_CSS');
+
+	$doleditor = new DolEditor('MAIN_IHM_CUSTOM_CSS', $customcssValue, '80%', 400, 'Basic', 'In', true, false, 'ace', 10, '90%');
+	$doleditor->Create(0, '', true, 'css', 'css');
+	print '</td></tr>'."\n";
+
+	print '</table>'."\n";
+	print '</div>';
+}
+
+
 print '<div class="center">';
-print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
 print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 print '</div>';
 

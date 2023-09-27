@@ -45,10 +45,10 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -60,7 +60,12 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 			$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 			$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-			$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			//see #21072: Update a public note with a "document model not found" is not really a problem : the PDF is not created/updated
+			//but the note is saved, so just add a notification will be enought
+			$resultGenDoc = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($resultGenDoc < 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
 
 			if ($result < 0) {
 				dol_print_error($db, $result);

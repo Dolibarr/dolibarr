@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -24,6 +24,7 @@
  *       \brief      Main project home page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -52,7 +53,7 @@ if ($search_project_user == $user->id) {
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -118,10 +119,11 @@ $morehtml = '';
 $morehtml .= '<form name="projectform" method="POST">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
-$morehtml .= '<SELECT name="search_project_user">';
+$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
+$morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
 $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml .= '</form>';
 
@@ -187,14 +189,12 @@ if ($resql) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+
+// Statistics
 include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
-
 // List of draft projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'), $max);
 
 
 print '</div><div class="fichetwothirdright">';
@@ -258,7 +258,7 @@ if ($resql) {
 			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
+			print '<td width="96" class="nobordernopadding nowraponall">';
 			print $projectstatic->getNomUrl(1);
 			print '</td>';
 
@@ -309,7 +309,7 @@ if ($resql) {
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
-
+// List of open projects per thirdparty
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
@@ -394,7 +394,7 @@ if ($resql) {
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '<span class="opacitymedium">...</span>';
+		print '<span class="opacitymedium">'.$langs->trans("More").'...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;
@@ -412,10 +412,9 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA)) {
-	// This list can be very long, so we allow to hide it to prefer to use the list page.
-	// Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
-
+if (!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
+	// This list is surely very long and useless when we are using opportunities, so we hide it for this use case, but we allow to show it if
+	// we really want it and to allow interface backward compatibility.
 	print '<br>';
 
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());

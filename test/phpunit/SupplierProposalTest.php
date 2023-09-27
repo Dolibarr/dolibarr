@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +59,12 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return PropalTest
+	 * @param 	string	$name		Name
+	 * @return SupplierProposalTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -81,7 +83,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -98,7 +100,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -111,7 +113,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -132,7 +134,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -150,7 +152,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
+		$localobject=new SupplierProposal($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -176,7 +178,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
+		$localobject=new SupplierProposal($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -286,7 +288,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new SupplierProposal($this->savdb);
+		$localobject=new SupplierProposal($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

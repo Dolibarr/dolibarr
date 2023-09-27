@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
+ *	\file       htdocs/projet/tasks/comment.php
  *	\ingroup    project
- *	\brief      Page of a project task
+ *	\brief      Page of a project task comment
  */
 
 require "../../main.inc.php";
@@ -132,14 +132,14 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
 			if ($projectstatic->thirdparty->id > 0) {
-				$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
 			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -151,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table class="border centpercent">';
 
 			// Usage
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 				print '<tr><td class="tdtop">';
 				print $langs->trans("Usage");
 				print '</td>';
@@ -174,7 +174,7 @@ if ($id > 0 || !empty($ref)) {
 					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 					print '<br>';
 				}
-				if (!empty($conf->eventorganization->enabled)) {
+				if (isModEnabled('eventorganization')) {
 					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 					print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -221,8 +221,15 @@ if ($id > 0 || !empty($ref)) {
 				print '</td></tr>';
 			}
 
-			// Date start - end
-			print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+			// Budget
+			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+			if (strcmp($projectstatic->budget_amount, '')) {
+				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+			}
+			print '</td></tr>';
+
+			// Date start - end project
+			print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 			$start = dol_print_date($projectstatic->date_start, 'day');
 			print ($start ? $start : '?');
 			$end = dol_print_date($projectstatic->date_end, 'day');
@@ -230,13 +237,6 @@ if ($id > 0 || !empty($ref)) {
 			print ($end ? $end : '?');
 			if ($projectstatic->hasDelay()) {
 				print img_warning("Late");
-			}
-			print '</td></tr>';
-
-			// Budget
-			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-			if (strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td></tr>';
 
@@ -292,9 +292,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
