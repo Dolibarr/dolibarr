@@ -28,17 +28,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
  *
  * @param	string			$notifCode		Notification code
  * @param	string			$targetType		Target type (tocontactid or touserid)
- * @param	string			$to				Recipients
- * @param	string			$from			Sender
+ * @param	string			$to				Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
+ * @param	string			$from			Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
  * @param	CommonObject	$object			Related object
  * @param	string			$newRef			Related object new reference
  * @param	string			$companyName	Company name
  * @param	string			$urlWithRoot	URL with root
  * @param	Translate		$outputLangs	Object langs for output
  * @param	int				$actionId		Action Trigger ID
- * @param	?int			$contactId		Contact ID
  * @param	string			$type			Type
  * @param	string			$email			Raw e-mail address(es)
+ * @param	?int			$contactId		Contact ID
+ * @param 	string			$addr_cc		Email cc (Example: 'abc@def.com, ghk@lmn.com')
+ * @param 	string			$addr_bcc		Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
  *
  * @return string The error message
  */
@@ -53,9 +55,11 @@ function notify_sendMail(
 	string			$urlWithRoot,
 	Translate		$outputLangs,
 	int				$actionId,
-	?int			$contactId,
 	string			$type,
-	string			$email
+	string			$email,
+	?int			$contactId = null,
+	string			$addr_cc = '',
+	string			$addr_bcc = ''
 ): string {
 	global $conf, $db, $user;
 	global $hookmanager;
@@ -247,8 +251,8 @@ function notify_sendMail(
 		$filename_list,
 		$mimetype_list,
 		$mimefilename_list,
-		'',
-		'',
+		$addr_cc,
+		$addr_bcc,
 		0,
 		-1,
 		'',
