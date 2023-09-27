@@ -8058,7 +8058,7 @@ table.jPicker {
 	}
 }
 
-
+ 
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8099,7 +8099,5 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+
 }
-
-
-
