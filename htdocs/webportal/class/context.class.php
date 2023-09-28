@@ -115,7 +115,7 @@ class Context
 
 		$this->topMenu = new stdClass();
 
-		$this->tplPath = realpath(__DIR__ . '/../tpl');
+		$this->tplPath = realpath(__DIR__ . '/../public/tpl');
 
 		$this->controller = GETPOST('controller', 'aZ09'); // for security, limited to 'aZ09'
 		$this->action = GETPOST('action', 'aZ09');// for security, limited to 'aZ09'
@@ -163,14 +163,14 @@ class Context
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
 		// define controllers definition
-		$this->addControllerDefinition('login', $defaultControllersPath . 'login.controller.php', 'LoginController');
-		$this->addControllerDefinition('default', $defaultControllersPath . 'default.controller.php', 'DefaultController');
-		$this->addControllerDefinition('document', $defaultControllersPath . 'document.controller.php', 'DocumentController');
-		$this->addControllerDefinition('propallist', $defaultControllersPath . 'propallist.controller.php', 'PropalListController');
-		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.php', 'OrderListController');
-		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.php', 'InvoiceListController');
-		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.php', 'MemberCardController');
-		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.php', 'PartnershipCardController');
+		$this->addControllerDefinition('login', $defaultControllersPath . 'login.controller.class.php', 'LoginController');
+		$this->addControllerDefinition('default', $defaultControllersPath . 'default.controller.class.php', 'DefaultController');
+		$this->addControllerDefinition('document', $defaultControllersPath . 'document.controller.class.php', 'DocumentController');
+		$this->addControllerDefinition('propallist', $defaultControllersPath . 'propallist.controller.class.php', 'PropalListController');
+		$this->addControllerDefinition('orderlist', $defaultControllersPath . 'orderlist.controller.class.php', 'OrderListController');
+		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
+		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
+		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
 
 		// call triggers
 		//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -200,7 +200,7 @@ class Context
 	public function addControllerDefinition($controller, $path, $className)
 	{
 		$fileName = basename($path);
-		$needle = '.controller.php';
+		$needle = '.controller.class.php';
 		$length = strlen($needle);
 		$isControllerFile = $length > 0 ? substr($fileName, -$length) === $needle : true;
 		if (!$isControllerFile) {

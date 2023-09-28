@@ -48,8 +48,8 @@ function getNavItem($item, $deep = 0)
 		$item['active'] = true;
 	}
 
-	if(!isset($item['class'])){
-		$item['class'] = '--item-' .  preg_replace( '/[^a-z0-9 ]/i','-', $item['id']);
+	if (!isset($item['class'])) {
+		$item['class'] = '--item-' . preg_replace('/[^a-z0-9 ]/i', '-', $item['id']);
 	}
 
 

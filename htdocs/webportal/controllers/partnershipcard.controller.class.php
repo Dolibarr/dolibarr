@@ -17,20 +17,22 @@
  */
 
 /**
- * \file        public/controllers/invoicelist.controller.php
+ * \file        htdocs/webportal/controllers/partnershipcard.controller.class.php
  * \ingroup     webportal
- * \brief       This file is a controller for invoice list
+ * \brief       This file is a controller for partnership card
  */
 
+dol_include_once('/webportal/class/html.formcardwebportal.class.php');
+
 /**
- * Class for InvoiceListController
+ * Class for PartnershipCardController
  */
-class InvoiceListController extends Controller
+class PartnershipCardController extends Controller
 {
 	/**
-	 * @var FormListWebPortal Form for list
+	 * @var FormCardWebPortal Form for card
 	 */
-	protected $formList;
+	protected $formCard;
 
 
 	/**
@@ -40,8 +42,9 @@ class InvoiceListController extends Controller
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS');
-
+		$context = Context::getInstance();
+		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
+		$this->accessRight = isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_partnership && $context->logged_partnership->id > 0;
 		return parent::checkAccess();
 	}
 
@@ -60,26 +63,30 @@ class InvoiceListController extends Controller
 			return;
 		}
 
-		dol_include_once('/webportal/public/class/html.formlistwebportal.class.php');
-
 		// Load translation files required by the page
-		$langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
+		$langs->loadLangs(array('partnership'));
 
-		$context->title = $langs->trans('WebPortalInvoiceListTitle');
-		$context->desc = $langs->trans('WebPortalInvoiceListDesc');
-		$context->menu_active[] = 'invoice_list';
+		$context->title = $langs->trans('WebPortalPartnershipCardTitle');
+		$context->desc = $langs->trans('WebPortalPartnershipCardDesc');
+		$context->menu_active[] = 'partnership_card';
 
-		// set form list
-		$formListWebPortal = new FormListWebPortal($db);
-		$formListWebPortal->init('invoice');
+		// set form card
+		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
+		$permissiontoread = (int) isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit'));
+		$permissiontoadd = (int) isModEnabled('partnership') && in_array($cardAccess, array('edit'));
+		$permissiontodelete = 0;
+		$permissionnote = 0;
+		$permissiondellink = 0;
+		$formCardWebPortal = new FormCardWebPortal($db);
+		$formCardWebPortal->init('partnership', $context->logged_partnership->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
 
 		// hook for action
 		$hookRes = $this->hookDoAction();
 		if (empty($hookRes)) {
-			$formListWebPortal->doActions();
+			$formCardWebPortal->doActions();
 		}
 
-		$this->formList = $formListWebPortal;
+		$this->formCard = $formCardWebPortal;
 	}
 
 	/**
@@ -102,9 +109,7 @@ class InvoiceListController extends Controller
 		$hookRes = $this->hookPrintPageView();
 		if (empty($hookRes)) {
 			print '<main class="container">';
-			//print '<figure>';
-			print $this->formList->elementList($context);
-			//print '</figure>';
+			print $this->formCard->elementCard($context);
 			print '</main>';
 		}
 

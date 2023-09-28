@@ -103,7 +103,7 @@ $formSetup = new FormSetup($db);
 $item = $formSetup->newItem('WEBPORTAL_ROOT_URL')->setAsString();
 $item->fieldAttr = array('placeholder' => 'https://');
 $item->helpText = $langs->transnoentities('WebPortalRootUrlHelp');
-require_once __DIR__ . '/../public/class/context.class.php';
+require_once __DIR__ . '/../class/context.class.php';
 $context = Context::getInstance();
 $item->fieldOutputOverride = '<a target="_blank" href="'.$context->getControllerUrl().'" ><i class="fa fa-arrow-right" ></i>  '.$context->getControllerUrl().'</a>';
 

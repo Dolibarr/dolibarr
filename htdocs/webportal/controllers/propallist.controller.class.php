@@ -17,12 +17,12 @@
  */
 
 /**
- * \file        public/controllers/propallist.controller.php
+ * \file        htdocs/webportal/controllers/propallist.controller.class.php
  * \ingroup     webportal
  * \brief       This file is a controller for propal list
  */
 
-dol_include_once('/webportal/public/class/html.formlistwebportal.class.php');
+dol_include_once('/webportal/class/html.formlistwebportal.class.php');
 
 /**
  * Class for PropalListController

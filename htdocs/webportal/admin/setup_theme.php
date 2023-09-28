@@ -100,7 +100,7 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 
-require_once __DIR__ . '/../public/class/webPortalTheme.class.php';
+require_once __DIR__ . '/../class/webPortalTheme.class.php';
 $webPortalTheme = new WebPortalTheme();
 
 // Setup conf for secondary color

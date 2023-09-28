@@ -19,16 +19,18 @@
 
 
 /**
- * \file       htdocs/webportal/public/class/webPortalTheme.class.php
+ * \file       htdocs/webportal/class/webPortalTheme.class.php
  * \ingroup    webportal
  * \brief      File of class with theme definition for WebPortal
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php'; // used for color functions
 
-class WebPortalTheme{
-
-
+/**
+ * Class WebPortalTheme
+ */
+class WebPortalTheme
+{
 	public $primaryColorHex = '#263c5c';
 	public $primaryColorHsl = array(
 		'h' => 216, // Hue
@@ -43,15 +45,18 @@ class WebPortalTheme{
 	public $loginBackground;
 
 
-	public function __construct() {
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
 		$this->loadPrimaryColor();
 
-		$this->loginLogoUrl 	= getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL');
-		$this->menuLogoUrl 		= getDolGlobalString('WEBPORTAL_MENU_LOGO_URL',$this->loginLogoUrl);
-		$this->loginBackground 	= getDolGlobalString('WEBPORTAL_LOGIN_BACKGROUND');
+		$this->loginLogoUrl = getDolGlobalString('WEBPORTAL_LOGIN_LOGO_URL');
+		$this->menuLogoUrl = getDolGlobalString('WEBPORTAL_MENU_LOGO_URL', $this->loginLogoUrl);
+		$this->loginBackground = getDolGlobalString('WEBPORTAL_LOGIN_BACKGROUND');
 		$this->bannerBackground = getDolGlobalString('WEBPORTAL_BANNER_BACKGROUND');
-		$this->bannerUseDarkTheme =   getDolGlobalInt('WEBPORTAL_BANNER_BACKGROUND_IS_DARK');
-
+		$this->bannerUseDarkTheme = getDolGlobalInt('WEBPORTAL_BANNER_BACKGROUND_IS_DARK');
 	}
 
 	/**
@@ -59,18 +64,19 @@ class WebPortalTheme{
 	 *
 	 * @return string
 	 */
-	public function loadPrimaryColor(){
+	public function loadPrimaryColor()
+	{
 		global $conf;
 
 		$outColor = '';
 
-		if(!empty($conf->global->WEBPORTAL_PRIMARY_COLOR)){
-			$outColor =  $conf->global->WEBPORTAL_PRIMARY_COLOR;
-		}elseif(!empty($conf->global->THEME_ELDY_TOPMENU_BACK1)){
-			$outColor = '#'.colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1));
+		if (!empty($conf->global->WEBPORTAL_PRIMARY_COLOR)) {
+			$outColor = $conf->global->WEBPORTAL_PRIMARY_COLOR;
+		} elseif (!empty($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
+			$outColor = '#' . colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1));
 		}
 
-		if(empty($outColor) || !colorValidateHex($outColor)){
+		if (empty($outColor) || !colorValidateHex($outColor)) {
 			$outColor = '#263c5c';
 		}
 
@@ -78,23 +84,17 @@ class WebPortalTheme{
 		$this->primaryColorHsl = $this->colorHexToHsl($outColor, true, true);
 	}
 
-
-
-
-
 	/**
 	 * @param string 	$hex 			color in hex
 	 * @param float|false 	$alpha 			0 to 1 to add alpha channel
 	 * @param bool 		$returnArray	true=return an array instead, false=return string
 	 * @return string|array				String or array
 	 */
-	function colorHexToHsl($hex, $alpha = false, $returnArray = false)
+	public function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 	{
-
-		if(function_exists('colorHexToHsl')){
+		if (function_exists('colorHexToHsl')) {
 			return colorHexToHsl($hex, $alpha, $returnArray);
 		}
-
 
 		// For retro compatibility
 		// TODO : Remove this when webportal is included in DOLIBARR standard
@@ -138,13 +138,10 @@ class WebPortalTheme{
 				's' => $saturation,
 				'a' => $alpha === false ? 1 : $alpha
 			);
-		}
-		else if($alpha){
-			return 'hsla('.$hue.', '.$saturation.', '.$lightness.' / '.$alpha.')';
-		}
-		else {
-			return 'hsl('.$hue.', '.$saturation.', '.$lightness.')';
+		} elseif ($alpha) {
+			return 'hsla(' . $hue . ', ' . $saturation . ', ' . $lightness . ' / ' . $alpha . ')';
+		} else {
+			return 'hsl(' . $hue . ', ' . $saturation . ', ' . $lightness . ')';
 		}
 	}
-
 }

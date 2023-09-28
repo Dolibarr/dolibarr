@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        class/webportalpropal.class.php
+ * \file        htdocs/webportal/class/webportalpropal.class.php
  * \ingroup     webportal
  * \brief       This file is a CRUD class file for WebPortalPropal (Create/Read/Update/Delete)
  */

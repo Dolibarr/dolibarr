@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        class/webportalorder.class.php
+ * \file        htdocs/webportal/class/webportalorder.class.php
  * \ingroup     webportal
  * \brief       This file is a CRUD class file for WebPortalOrder (Create/Read/Update/Delete)
  */

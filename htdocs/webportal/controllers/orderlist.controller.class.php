@@ -17,22 +17,23 @@
  */
 
 /**
- * \file        public/controllers/membercard.controller.php
+ * \file        htdocs/webportal/controllers/orderlist.controller.class.php
  * \ingroup     webportal
- * \brief       This file is a controller for member card
+ * \brief       This file is a controller for order list
  */
 
-dol_include_once('/webportal/public/class/html.formcardwebportal.class.php');
+dol_include_once('/webportal/class/html.formlistwebportal.class.php');
 
 /**
- * Class for MemberCardController
+ * Class for OrderListController
  */
-class MemberCardController extends Controller
+class OrderListController extends Controller
 {
 	/**
-	 * @var FormCardWebPortal Form for card
+	 * @var FormListWebPortal Form for list
 	 */
-	protected $formCard;
+	protected $formList;
+
 
 	/**
 	 * Check current access to controller
@@ -41,9 +42,7 @@ class MemberCardController extends Controller
 	 */
 	public function checkAccess()
 	{
-		$context = Context::getInstance();
-		$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
-		$this->accessRight = isModEnabled('adherent') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_member && $context->logged_member->id > 0;
+		$this->accessRight = isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}
@@ -64,29 +63,23 @@ class MemberCardController extends Controller
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('companies', 'bills', 'members', 'users', 'other', 'paypal'));
+		$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
-		$context->title = $langs->trans('WebPortalMemberCardTitle');
-		$context->desc = $langs->trans('WebPortalMemberCardDesc');
-		$context->menu_active[] = 'member_card';
+		$context->title = $langs->trans('WebPortalOrderListTitle');
+		$context->desc = $langs->trans('WebPortalOrderListDesc');
+		$context->menu_active[] = 'order_list';
 
-		// set form card
-		$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
-		$permissiontoread = (int) isModEnabled('adherent') && in_array($cardAccess, array('visible', 'edit'));
-		$permissiontoadd = (int) isModEnabled('adherent') && in_array($cardAccess, array('edit'));
-		$permissiontodelete = 0;
-		$permissionnote = 0;
-		$permissiondellink = 0;
-		$formCardWebPortal = new FormCardWebPortal($db);
-		$formCardWebPortal->init('member', $context->logged_member->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
+		// set form list
+		$formListWebPortal = new FormListWebPortal($db);
+		$formListWebPortal->init('order');
 
 		// hook for action
 		$hookRes = $this->hookDoAction();
 		if (empty($hookRes)) {
-			$formCardWebPortal->doActions();
+			$formListWebPortal->doActions();
 		}
 
-		$this->formCard = $formCardWebPortal;
+		$this->formList = $formListWebPortal;
 	}
 
 	/**
@@ -109,7 +102,9 @@ class MemberCardController extends Controller
 		$hookRes = $this->hookPrintPageView();
 		if (empty($hookRes)) {
 			print '<main class="container">';
-			print $this->formCard->elementCard($context);
+			//print '<figure>';
+			print $this->formList->elementList($context);
+			//print '</figure>';
 			print '</main>';
 		}
 

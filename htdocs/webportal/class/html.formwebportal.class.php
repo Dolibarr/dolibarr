@@ -18,7 +18,7 @@
 
 
 /**
- * \file       htdocs/webportal/public/class/html.formwebportal.class.php
+ * \file       htdocs/webportal/class/html.formwebportal.class.php
  * \ingroup    webportal
  * \brief      File of class with all html predefined components for WebPortal
  */

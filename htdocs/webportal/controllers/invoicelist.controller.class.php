@@ -17,17 +17,15 @@
  */
 
 /**
- * \file        public/controllers/orderlist.controller.php
+ * \file        htdocs/webportal/controllers/invoicelist.controller.class.php
  * \ingroup     webportal
- * \brief       This file is a controller for order list
+ * \brief       This file is a controller for invoice list
  */
-
-dol_include_once('/webportal/public/class/html.formlistwebportal.class.php');
 
 /**
- * Class for OrderListController
+ * Class for InvoiceListController
  */
-class OrderListController extends Controller
+class InvoiceListController extends Controller
 {
 	/**
 	 * @var FormListWebPortal Form for list
@@ -42,7 +40,7 @@ class OrderListController extends Controller
 	 */
 	public function checkAccess()
 	{
-		$this->accessRight = isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS');
+		$this->accessRight = isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS');
 
 		return parent::checkAccess();
 	}
@@ -62,16 +60,18 @@ class OrderListController extends Controller
 			return;
 		}
 
-		// Load translation files required by the page
-		$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+		dol_include_once('/webportal/class/html.formlistwebportal.class.php');
 
-		$context->title = $langs->trans('WebPortalOrderListTitle');
-		$context->desc = $langs->trans('WebPortalOrderListDesc');
-		$context->menu_active[] = 'order_list';
+		// Load translation files required by the page
+		$langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
+
+		$context->title = $langs->trans('WebPortalInvoiceListTitle');
+		$context->desc = $langs->trans('WebPortalInvoiceListDesc');
+		$context->menu_active[] = 'invoice_list';
 
 		// set form list
 		$formListWebPortal = new FormListWebPortal($db);
-		$formListWebPortal->init('order');
+		$formListWebPortal->init('invoice');
 
 		// hook for action
 		$hookRes = $this->hookDoAction();

@@ -18,12 +18,12 @@
 
 
 /**
- * \file       htdocs/webportal/public/class/html.formlistwebportal.class.php
+ * \file       htdocs/webportal/class/html.formlistwebportal.class.php
  * \ingroup    webportal
  * \brief      File of class with all html predefined components for WebPortal
  */
 
-dol_include_once('/webportal/public/class/html.formwebportal.class.php');
+dol_include_once('/webportal/class/html.formwebportal.class.php');
 
 /**
  *    Class to manage generation of HTML components
@@ -159,7 +159,6 @@ class FormCardWebPortal
 
 		// load module libraries
 		dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php');
-		dol_include_once('/webportal/public/lib/webportal_webportal' . $elementEn . '.lib.php');
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('webportal@webportal', 'other'));

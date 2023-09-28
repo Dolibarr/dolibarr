@@ -17,23 +17,22 @@
  */
 
 /**
- * \file        public/controllers/partnershipcard.controller.php
+ * \file        htdocs/webportal/controllers/membercard.controller.class.php
  * \ingroup     webportal
- * \brief       This file is a controller for partnership card
+ * \brief       This file is a controller for member card
  */
 
-dol_include_once('/webportal/public/class/html.formcardwebportal.class.php');
+dol_include_once('/webportal/class/html.formcardwebportal.class.php');
 
 /**
- * Class for PartnershipCardController
+ * Class for MemberCardController
  */
-class PartnershipCardController extends Controller
+class MemberCardController extends Controller
 {
 	/**
 	 * @var FormCardWebPortal Form for card
 	 */
 	protected $formCard;
-
 
 	/**
 	 * Check current access to controller
@@ -43,8 +42,9 @@ class PartnershipCardController extends Controller
 	public function checkAccess()
 	{
 		$context = Context::getInstance();
-		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
-		$this->accessRight = isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_partnership && $context->logged_partnership->id > 0;
+		$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
+		$this->accessRight = isModEnabled('adherent') && in_array($cardAccess, array('visible', 'edit')) && $context->logged_member && $context->logged_member->id > 0;
+
 		return parent::checkAccess();
 	}
 
@@ -64,21 +64,21 @@ class PartnershipCardController extends Controller
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('partnership'));
+		$langs->loadLangs(array('companies', 'bills', 'members', 'users', 'other', 'paypal'));
 
-		$context->title = $langs->trans('WebPortalPartnershipCardTitle');
-		$context->desc = $langs->trans('WebPortalPartnershipCardDesc');
-		$context->menu_active[] = 'partnership_card';
+		$context->title = $langs->trans('WebPortalMemberCardTitle');
+		$context->desc = $langs->trans('WebPortalMemberCardDesc');
+		$context->menu_active[] = 'member_card';
 
 		// set form card
-		$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
-		$permissiontoread = (int) isModEnabled('partnership') && in_array($cardAccess, array('visible', 'edit'));
-		$permissiontoadd = (int) isModEnabled('partnership') && in_array($cardAccess, array('edit'));
+		$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
+		$permissiontoread = (int) isModEnabled('adherent') && in_array($cardAccess, array('visible', 'edit'));
+		$permissiontoadd = (int) isModEnabled('adherent') && in_array($cardAccess, array('edit'));
 		$permissiontodelete = 0;
 		$permissionnote = 0;
 		$permissiondellink = 0;
 		$formCardWebPortal = new FormCardWebPortal($db);
-		$formCardWebPortal->init('partnership', $context->logged_partnership->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
+		$formCardWebPortal->init('member', $context->logged_member->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
 
 		// hook for action
 		$hookRes = $this->hookDoAction();

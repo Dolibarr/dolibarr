@@ -18,14 +18,14 @@
 
 
 /**
- * \file       htdocs/webportal/public/class/html.formlistwebportal.class.php
+ * \file       htdocs/webportal/class/html.formlistwebportal.class.php
  * \ingroup    webportal
  * \brief      File of class with all html predefined components for WebPortal
  */
 
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-dol_include_once('/webportal/public/class/html.formwebportal.class.php');
+dol_include_once('/webportal/class/html.formwebportal.class.php');
 
 /**
  *    Class to manage generation of HTML components

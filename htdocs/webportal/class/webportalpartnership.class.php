@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        class/webportalpartnership.class.php
+ * \file        htdocs/webportal/class/webportalpartnership.class.php
  * \ingroup     webportal
  * \brief       This file is a CRUD class file for WebPortalPartnership (Create/Read/Update/Delete)
  */

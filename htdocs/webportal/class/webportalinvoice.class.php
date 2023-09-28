@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        class/webportalinvoice.class.php
+ * \file        htdocs/webportal/class/webportalinvoice.class.php
  * \ingroup     webportal
  * \brief       This file is a CRUD class file for WebPortalInvoice (Create/Read/Update/Delete)
  */
