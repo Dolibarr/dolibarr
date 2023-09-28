@@ -1464,7 +1464,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ") ";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
+		$sql .= ", ".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", ".setEntity($this);
@@ -1759,7 +1759,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->user_valid         = 0;
 		$this->date_creation      = '';
 		$this->date_validation    = '';
-		$this->ref_supplier       = '';
+		$this->ref_supplier       = null;
 		$this->user_approve_id    = '';
 		$this->user_approve_id2   = '';
 		$this->date_approve       = '';

@@ -387,6 +387,10 @@ $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
 
 
+// Set $appli for emails title
+$appli = $mysoc->name;
+
+
 // Make complementary actions
 $ispostactionok = 0;
 $postactionmessages = array();
@@ -1322,7 +1326,7 @@ if ($ispaymentok) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
 							} else {
-								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration");
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
 
@@ -1716,10 +1720,6 @@ if ($ispaymentok) {
 }
 
 
-// Set $appli for emails title
-$appli = $mysoc->name;
-
-
 if ($ispaymentok) {
 	// Get on url call
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
@@ -1764,7 +1764,7 @@ if ($ispaymentok) {
 
 	dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
 
-	// Send an email to admins
+	// Send an email to the admins
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);
