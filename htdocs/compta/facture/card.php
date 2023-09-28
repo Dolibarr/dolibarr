@@ -1657,7 +1657,7 @@ if (empty($reshook)) {
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
+									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 									if ($object->situation_counter == 1) {
 										$lines[$i]->situation_percent = 0;
 									}
@@ -3165,6 +3165,7 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" id="formtocreateaction" value="add">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	if ($soc->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
@@ -3234,6 +3235,7 @@ if ($action == 'create') {
 
    					// For company change, we must submit page with action=create instead of action=add
 					console.log("We have changed the company - Resubmit page");
+					jQuery("input[name=changecompany]").val("1");
 					jQuery("#formtocreateaction").val("create");
 					jQuery("#formtocreate").submit();
 				});
@@ -3827,7 +3829,7 @@ if ($action == 'create') {
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
 		print img_picto('', 'currency', 'class="pictofixedwidth"');
-		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code');
 		print '</td></tr>';
 	}
 

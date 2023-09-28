@@ -1467,19 +1467,20 @@ while ($i < $imaxinloop) {
 						$c = new Contact($db);
 					}
 					$c->fetch($contactproject['id']);
-					if (!empty($c->photo)) {
-						if (get_class($c) == 'User') {
-							$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						} else {
-							$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						}
+					//var_dump($c->photo);
+					//if (!empty($c->photo)) {
+					if (get_class($c) == 'User') {
+						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
+						$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
+					}
+					/*} else {
 						if (get_class($c) == 'User') {
 							$stringassignedusers .= $c->getNomUrl(2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 						} else {
 							$stringassignedusers .= $c->getNomUrl(2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 						}
-					}
+					}*/
 					$ifisrt = 0;
 				}
 			}

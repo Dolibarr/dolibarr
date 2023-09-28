@@ -1,5 +1,4 @@
--- ========================================================================
--- Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2023 Alice Adminson <aadminson@example.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,11 +11,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <https://www.gnu.org/licenses/>.
---
---
--- Linked files
--- ========================================================================
+-- along with this program. If not, see https://www.gnu.org/licenses/.
 
-ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype, label);
+create table llx_bookcal_availabilities_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
 

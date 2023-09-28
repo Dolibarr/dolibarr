@@ -222,6 +222,16 @@ class Project extends CommonObject
 	public $weekWorkLoadPerTask; // Used to store workload details of tasks of a projet
 
 	/**
+	 * @var array Used to store workload details of a projet
+	 */
+	public $monthWorkLoad;
+
+	/**
+	 * @var array Used to store workload details of tasks of a projet
+	 */
+	public $monthWorkLoadPerTask;
+
+	/**
 	 * @var int Creation date
 	 * @deprecated
 	 * @see $date_c
@@ -244,6 +254,11 @@ class Project extends CommonObject
 	 * @var int Modification date
 	 */
 	public $date_m;
+
+	/**
+	 * @var string Ip address
+	 */
+	public $ip;
 
 	/**
 	 * @var Task[]
@@ -1440,7 +1455,7 @@ class Project extends CommonObject
 		$this->date_start = $now;
 		$this->date_end = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->fk_ele = 20000;
+		$this->fk_element = 20000;
 		$this->opp_amount = 20000;
 		$this->budget_amount = 10000;
 

@@ -1134,7 +1134,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Visibility
 			print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
-			print $form->selectarray('priv', $selectarray, $object->priv, 0, 0, 0,'', 0, 0, 0, '', 'maxwidth150');
+			print $form->selectarray('priv', $selectarray, $object->priv, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150');
 			print '</td></tr>';
 
 			// Default language

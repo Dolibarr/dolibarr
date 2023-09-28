@@ -67,10 +67,10 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param 	int 	$id 			Id of third party to load
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				Id of third party to load
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -124,11 +124,12 @@ class Thirdparties extends DolibarrApi
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
 	 *								Set to 4 to show only suppliers
-	 * @param  	int    	$category   Use this param to filter list by category
+	 * @param	int		$category   Use this param to filter list by category
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of thirdparty objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		$obj_ret = array();
 
@@ -233,7 +234,7 @@ class Thirdparties extends DolibarrApi
 					if (isModEnabled('mailing')) {
 						$soc_static->getNoEmail();
 					}
-					$obj_ret[] = $this->_cleanObjectDatas($soc_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($soc_static), $properties);
 				}
 				$i++;
 			}
@@ -845,12 +846,12 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get outstanding proposals of thirdparty
 	 *
-	 * @param 	int 	$id			ID of the thirdparty
-	 * @param 	string 	$mode		'customer' or 'supplier'
+	 * @param	int		$id			ID of the thirdparty
+	 * @param	string	$mode		'customer' or 'supplier'
 	 *
 	 * @url     GET {id}/outstandingproposals
 	 *
-	 * @return array  				List of outstandings proposals of thirdparty
+	 * @return array				List of outstandings proposals of thirdparty
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -887,12 +888,12 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get outstanding orders of thirdparty
 	 *
-	 * @param 	int 	$id			ID of the thirdparty
-	 * @param 	string 	$mode		'customer' or 'supplier'
+	 * @param	int		$id			ID of the thirdparty
+	 * @param	string	$mode		'customer' or 'supplier'
 	 *
 	 * @url     GET {id}/outstandingorders
 	 *
-	 * @return array  				List of outstandings orders of thirdparty
+	 * @return array				List of outstandings orders of thirdparty
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -928,12 +929,12 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get outstanding invoices of thirdparty
 	 *
-	 * @param 	int 	$id			ID of the thirdparty
-	 * @param 	string 	$mode		'customer' or 'supplier'
+	 * @param	int		$id			ID of the thirdparty
+	 * @param	string	$mode		'customer' or 'supplier'
 	 *
 	 * @url     GET {id}/outstandinginvoices
 	 *
-	 * @return array  				List of outstandings invoices of thirdparty
+	 * @return array				List of outstandings invoices of thirdparty
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -969,12 +970,12 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get representatives of thirdparty
 	 *
-	 * @param 	int 	$id			ID of the thirdparty
-	 * @param 	string 	$mode		0=Array with properties, 1=Array of id.
+	 * @param	int		$id			ID of the thirdparty
+	 * @param	string	$mode		0=Array with properties, 1=Array of id.
 	 *
 	 * @url     GET {id}/representatives
 	 *
-	 * @return array  				List of representatives of thirdparty
+	 * @return array				List of representatives of thirdparty
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -1007,10 +1008,10 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
 	 *
-	 * @param 	int 	$id             ID of the thirdparty
-	 * @param 	string 	$filter    	Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
-	 * @param   string  $sortfield  	Sort field
-	 * @param   string  $sortorder  	Sort order
+	 * @param	int		$id             ID of the thirdparty
+	 * @param	string	$filter		Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
+	 * @param   string  $sortfield		Sort field
+	 * @param   string  $sortorder		Sort order
 	 *
 	 * @url     GET {id}/fixedamountdiscounts
 	 *
@@ -1347,9 +1348,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Generate a Document from a bank account record (like SEPA mandate)
 	 *
-	 * @param int 		$id 			Thirdparty id
-	 * @param int 		$companybankid 	Companybank id
-	 * @param string 	$model 			Model of document to generate
+	 * @param int		$id				Thirdparty id
+	 * @param int		$companybankid	Companybank id
+	 * @param string	$model			Model of document to generate
 	 * @return array
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
@@ -1650,9 +1651,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Update specified values of a specific gateway attached to a thirdparty
 	 *
-	 * @param int 		$id 			Id of thirdparty
-	 * @param string  	$site 			Site key
-	 * @param array 	$request_data 	Request data
+	 * @param int		$id				Id of thirdparty
+	 * @param string	$site			Site key
+	 * @param array		$request_data	Request data
 	 *
 	 * @return array|mixed
 	 *
@@ -1860,7 +1861,7 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
 	 * @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
 	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
-	 * @param    string	$email   		Email of third party (Warning, this can return several records)
+	 * @param    string	$email			Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
 	 * @return array|mixed cleaned Societe object
 	 *
