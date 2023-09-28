@@ -22,7 +22,8 @@ if (!defined('NOREQUIREAJAX')) {
 
 session_cache_limiter('public');
 
-require_once __DIR__.'/../../../webportal.main.inc.php';
+require_once __DIR__.'/../../webportal.main.inc.php';
+dol_include_once('/webportal/class/webPortalTheme.class.php');
 
 // Define css type
 // top_httphead('text/css');
@@ -37,8 +38,6 @@ header("X-Frame-Options: SAMEORIGIN");
 	header('Cache-Control: no-cache');
 } */
 
-
-require_once __DIR__ . '/../../../class/webPortalTheme.class.php';
 $webPortalTheme = new WebPortalTheme();
 
 ?>
