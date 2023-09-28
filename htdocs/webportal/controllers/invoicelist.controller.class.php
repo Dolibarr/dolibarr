@@ -53,7 +53,7 @@ class InvoiceListController extends Controller
 	 */
 	public function action()
 	{
-		global $db, $langs;
+		global $langs;
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
@@ -70,7 +70,7 @@ class InvoiceListController extends Controller
 		$context->menu_active[] = 'invoice_list';
 
 		// set form list
-		$formListWebPortal = new FormListWebPortal($db);
+		$formListWebPortal = new FormListWebPortal($this->db);
 		$formListWebPortal->init('invoice');
 
 		// hook for action

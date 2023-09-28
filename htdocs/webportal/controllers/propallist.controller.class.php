@@ -55,7 +55,7 @@ class PropalListController extends Controller
 	 */
 	public function action()
 	{
-		global $db, $langs;
+		global $langs;
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
@@ -73,7 +73,7 @@ class PropalListController extends Controller
 		$context->menu_active[] = 'propal_list';
 
 		// set form list
-		$formListWebPortal = new FormListWebPortal($db);
+		$formListWebPortal = new FormListWebPortal($this->db);
 		$formListWebPortal->init('propal');
 
 		// hook for action

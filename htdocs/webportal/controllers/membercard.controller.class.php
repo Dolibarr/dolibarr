@@ -56,7 +56,7 @@ class MemberCardController extends Controller
 	 */
 	public function action()
 	{
-		global $db, $langs;
+		global $langs;
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
@@ -77,7 +77,7 @@ class MemberCardController extends Controller
 		$permissiontodelete = 0;
 		$permissionnote = 0;
 		$permissiondellink = 0;
-		$formCardWebPortal = new FormCardWebPortal($db);
+		$formCardWebPortal = new FormCardWebPortal($this->db);
 		$formCardWebPortal->init('member', $context->logged_member->id, $permissiontoread, $permissiontoadd, $permissiontodelete, $permissionnote, $permissiondellink);
 
 		// hook for action

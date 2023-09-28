@@ -264,7 +264,6 @@ class DocumentController extends Controller
 	 */
 	public function display()
 	{
-		global $db;
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
 			$this->display404();
@@ -295,10 +294,6 @@ class DocumentController extends Controller
 		}
 		header('Cache-Control: Public, must-revalidate');
 		header('Pragma: public');
-
-		if (is_object($db)) {
-			$db->close();
-		}
 
 		// Send file now
 		header('Content-Length: ' . dol_filesize($fullpath_original_file));

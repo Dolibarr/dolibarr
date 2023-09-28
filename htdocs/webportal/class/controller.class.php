@@ -25,6 +25,11 @@ class Controller
 	public $controllerStatus = true;
 
 	/**
+	 * @var $db Database handler
+	 */
+	public $db;
+
+	/**
 	 * @var string Tpl path will use default context->tplPath if empty
 	 */
 	public $tplPath;
@@ -37,7 +42,9 @@ class Controller
 	 */
 	public function __construct()
 	{
-		global $hookmanager;
+		global $db, $hookmanager;
+
+		$this->db = $db;
 
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('webportalpage', 'webportal'));

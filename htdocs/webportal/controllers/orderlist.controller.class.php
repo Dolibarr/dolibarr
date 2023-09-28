@@ -55,7 +55,7 @@ class OrderListController extends Controller
 	 */
 	public function action()
 	{
-		global $db, $langs;
+		global $langs;
 
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
@@ -70,7 +70,7 @@ class OrderListController extends Controller
 		$context->menu_active[] = 'order_list';
 
 		// set form list
-		$formListWebPortal = new FormListWebPortal($db);
+		$formListWebPortal = new FormListWebPortal($this->db);
 		$formListWebPortal->init('order');
 
 		// hook for action
