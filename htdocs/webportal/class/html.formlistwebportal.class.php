@@ -733,42 +733,38 @@ class FormListWebPortal
 	 * @param int $currentPage number of current page
 	 * @return string
 	 */
-	public static function generatePageListNav(string $url, int $nbPages, int $currentPage){
-
+	public static function generatePageListNav(string $url, int $nbPages, int $currentPage)
+	{
 		global $langs;
-
 
 		$pSep = strpos($url, '?') === false ? '?' : '&amp;';
 
 		$html = '<ul class="pages-nav-list">';
 
-
-		if($currentPage > 1){
-			$html .= '<li><a class="pages-nav-list__icon --prev" aria-label="'.dol_escape_htmltag($langs->trans('AriaPrevPage')).'" href="' . $url . $pSep . 'page=' . ($currentPage - 1) . '" ' . ($currentPage <= 1 ? ' disabled' : '') . '></a></li>';
+		if ($currentPage > 1) {
+			$html .= '<li><a class="pages-nav-list__icon --prev" aria-label="' . dol_escape_htmltag($langs->trans('AriaPrevPage')) . '" href="' . $url . $pSep . 'page=' . ($currentPage - 1) . '" ' . ($currentPage <= 1 ? ' disabled' : '') . '></a></li>';
 		}
 
 		$maxPaginItem = min($nbPages, 5);
-		$minPageNum = max(1, $currentPage-3);
-		$maxPageNum = min($nbPages, $currentPage+3);
+		$minPageNum = max(1, $currentPage - 3);
+		$maxPageNum = min($nbPages, $currentPage + 3);
 
-
-		if($minPageNum > 1){
-			$html .= '<li><a class="pages-nav-list__link '.($currentPage==1?'--active':'').'" aria-label="'.dol_escape_htmltag($langs->trans('AriaPageX', 1)).'" href="' . $url . $pSep . 'page=1" >1</a></li>';
+		if ($minPageNum > 1) {
+			$html .= '<li><a class="pages-nav-list__link ' . ($currentPage == 1 ? '--active' : '') . '" aria-label="' . dol_escape_htmltag($langs->trans('AriaPageX', 1)) . '" href="' . $url . $pSep . 'page=1" >1</a></li>';
 			$html .= '<li>&hellip;</li>';
 		}
 
-		for($p=$minPageNum; $p <= $maxPageNum; $p++){
-			$html .= '<li><a class="pages-nav-list__link '.($currentPage===$p?'--active':'').'" aria-label="'.dol_escape_htmltag($langs->trans('AriaPageX', $p)).'"  href="' . $url . $pSep . 'page=' . $p . '">' . $p . '</a></li>';
+		for ($p = $minPageNum; $p <= $maxPageNum; $p++) {
+			$html .= '<li><a class="pages-nav-list__link ' . ($currentPage === $p ? '--active' : '') . '" aria-label="' . dol_escape_htmltag($langs->trans('AriaPageX', $p)) . '"  href="' . $url . $pSep . 'page=' . $p . '">' . $p . '</a></li>';
 		}
 
-		if($maxPaginItem<$nbPages){
+		if ($maxPaginItem < $nbPages) {
 			$html .= '<li>&hellip;</li>';
-			$html .= '<li><a class="pages-nav-list__link '.($currentPage==$nbPages?'--active':'').'" aria-label="'.dol_escape_htmltag($langs->trans('AriaPageX', $nbPages)).'" href="' . $url . $pSep . 'page=' . $nbPages . '">' . $nbPages . '</a></li>';
+			$html .= '<li><a class="pages-nav-list__link ' . ($currentPage == $nbPages ? '--active' : '') . '" aria-label="' . dol_escape_htmltag($langs->trans('AriaPageX', $nbPages)) . '" href="' . $url . $pSep . 'page=' . $nbPages . '">' . $nbPages . '</a></li>';
 		}
 
-
-		if($currentPage < $nbPages) {
-			$html .= '<li><a class="pages-nav-list__icon --next" aria-label="'.dol_escape_htmltag($langs->trans('AriaNextPage')).'" href="' . $url . $pSep . 'page='.($currentPage + 1).'" '.($currentPage >= $nbPages ? ' disabled' : '').'></a></li>';
+		if ($currentPage < $nbPages) {
+			$html .= '<li><a class="pages-nav-list__icon --next" aria-label="' . dol_escape_htmltag($langs->trans('AriaNextPage')) . '" href="' . $url . $pSep . 'page=' . ($currentPage + 1) . '" ' . ($currentPage >= $nbPages ? ' disabled' : '') . '></a></li>';
 		}
 
 		$html .= '</ul>';

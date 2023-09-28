@@ -166,34 +166,33 @@ if (empty($reshook)) {
 <nav class="primary-top-nav container-fluid">
 	<ul>
 		<li class="brand">
-<?php
-
-			$brandTitle = !empty($conf->global->WEBPORTAL_TITLE) ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-			print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
-			if(!empty($context->theme->menuLogoUrl)){
-				print '<img class="brand__logo-img" src="'.dol_escape_htmltag($context->theme->menuLogoUrl).'" alt="'.dol_escape_htmltag($brandTitle).'" >';
-			}else{
-				print '<span class="brand__name">'.$brandTitle.'</span>';
-			}
-			print '</a>';
-?>
+		<?php
+		$brandTitle = !empty($conf->global->WEBPORTAL_TITLE) ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
+		if (!empty($context->theme->menuLogoUrl)) {
+			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '" >';
+		} else {
+			print '<span class="brand__name">' . $brandTitle . '</span>';
+		}
+		print '</a>';
+		?>
 		</li>
 	</ul>
 	<ul>
-<?php
-		if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navMenu)) {
-			// show menu
-			print getNav($navMenu);
-		}
-?>
+	<?php
+	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navMenu)) {
+		// show menu
+		print getNav($navMenu);
+	}
+	?>
 	</ul>
 	<ul>
-<?php
-		if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {
-			// show menu
-			uasort($navUserMenu, 'menuSortInv');
-			print getNav($navUserMenu);
-		}
-?>
+	<?php
+	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {
+		// show menu
+		uasort($navUserMenu, 'menuSortInv');
+		print getNav($navUserMenu);
+	}
+	?>
 	</ul>
 </nav>
