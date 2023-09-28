@@ -410,7 +410,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @param string  $comment            {@from body}  Note (optional)
 	 * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if payment_mode_id corresponds to 'CHQ'-payment type)
 	 * @param string  $chqbank            {@from body}  Issuer bank name (optional)
-	 * @param float   $amount			  Amount of payment if we don't want to use the remain to pay
+	 * @param float   $amount			  {@from body}  Amount of payment if we don't want to use the remain to pay
 	 *
 	 * @url     POST {id}/payments
 	 *
