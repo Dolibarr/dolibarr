@@ -113,3 +113,11 @@ UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AN
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
+
+-- Fichinter det
+ALTER TABLE llx_fichinterdet ADD COLUMN fk_product integer NULL AFTER fk_parent_line;
+ALTER TABLE llx_fichinterdet ADD COLUMN product_type integer DEFAULT 1 AFTER fk_product; -- type is service by default (keep compatibility : create invoice from intervention)
+ALTER TABLE llx_fichinterdet ADD COLUMN qty real AFTER rang;
+ALTER TABLE llx_fichinterdet ADD COLUMN fk_unit integer AFTER qty;
+ALTER TABLE llx_fichinterdet ADD INDEX idx_fichinterdet_fk_product (fk_product);
+ALTER TABLE llx_fichinterdet ADD CONSTRAINT fk_fichinterdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);

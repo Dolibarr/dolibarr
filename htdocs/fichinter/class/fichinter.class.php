@@ -1294,9 +1294,13 @@ class Fichinter extends CommonObject
 	 *	@param      integer	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *  @param		array	$array_options			Array option
+	 *	@param    	int		$fk_product      		[=0] Product/Service ID predefined
+	 *	@param    	int		$product_type      		[=0] Product type (0 for product, 1 for service)
+	 *	@param		float	$qty					[=0] Quantity
+	 *  @param 		string	$fk_unit 				[=null] Code of the unit to use. Null to use the default one
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = '')
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = '', $fk_product = 0, $product_type = 0, $qty = 0, $fk_unit = null)
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -1307,10 +1311,15 @@ class Fichinter extends CommonObject
 			$line = new FichinterLigne($this->db);
 
 			$line->fk_fichinter = $fichinterid;
+			$line->fk_product   = $fk_product;
+			$line->product_type = $product_type;
 			$line->desc         = $desc;
 			$line->date         = $date_intervention;
 			$line->datei        = $date_intervention;	// For backward compatibility
 			$line->duration     = $duration;
+			$line->rang         = -1; // auto-determine rank on insert
+			$line->qty          = $qty;
+			$line->fk_unit      = $fk_unit;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$line->array_options = $array_options;
@@ -1322,7 +1331,8 @@ class Fichinter extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->error = $this->db->error();
+				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -1;
 			}
@@ -1371,6 +1381,27 @@ class Fichinter extends CommonObject
 		}
 	}
 
+	/**
+	 * Create an array of lines
+	 *
+	 * @return	array|int	Array of lines if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+		$this->lines = array();
+
+		$objectline = new FichinterLigne($this->db);
+		$result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_fichinter = '.((int) $this->id)));
+
+		if (is_numeric($result)) {
+			$this->setErrorsFromObject($objectline);
+			return $result;
+		} else {
+			$this->lines = $result;
+			return $this->lines;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load array lines ->lines
@@ -1382,12 +1413,12 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang";
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql = "SELECT rowid, fk_fichinter, fk_product, product_type, description, duree, date, rang, qty, fk_unit";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
 		$sql .= " ORDER BY rang ASC, date ASC";
 
-		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1399,14 +1430,19 @@ class Fichinter extends CommonObject
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
 				$line->fk_fichinter = $objp->fk_fichinter;
+				$line->fk_product = $objp->fk_product;
 				$line->desc = $objp->description;
 				$line->duration = $objp->duree;
-				//For invoicing we calculing hours
-				$line->qty = round($objp->duree / 3600, 2);
+				if (empty($objp->qty)) {
+					//For invoicing we calculing hours
+					$line->qty = round($objp->duree / 3600, 2);
+				} else {
+					$line->qty = $objp->qty;
+				}
 				$line->date	= $this->db->jdate($objp->date);
 				$line->datei = $this->db->jdate($objp->date);	// For backward compatibility
 				$line->rang	= $objp->rang;
-				$line->product_type = 1;
+				$line->product_type = $objp->product_type;
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
@@ -1554,6 +1590,14 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $fk_fichinter;
 
+	/**
+	 * @var int Id of parent line
+	 */
+	public $fk_parent_line;
+
+	/**
+	 * @var string Description
+	 */
 	public $desc; 		// Description ligne
 
 	/**
@@ -1566,10 +1610,15 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $datei; 		// Date intervention
 
+	/**
+	 * @var int Duration
+	 */
 	public $duration; 	// Duration of intervention
+
+	/**
+	 * @var int Rank number
+	 */
 	public $rang = 0;
-	public $tva_tx;
-	public $subprice;
 
 	/**
 	 * @var string ID to identify managed object
@@ -1586,6 +1635,23 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $fk_element = 'fk_fichinter';
 
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'fk_fichinter' => array('type'=>'integer:Fichinter:fichinter/class/fichinter.class.php', 'label'=>'Intervention', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20),
+		'fk_parent_line' => array('type'=>'integer', 'label'=>'ParentLine', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>'(isModEnabled("product") || isModEnabled("service"))', 'visible'=>1, 'position'=>40),
+		'product_type' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>'(isModEnabled("product") || isModEnabled("service"))', 'visible'=>1, 'position'=>45),
+		'date' => array('type'=>'datetime', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>50),
+		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>60),
+		'duree' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>1, 'visible'=>1, 'position'=>70),
+		//'duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>1, 'visible'=>1, 'position'=>70),
+		'rang' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>1, 'position'=>80),
+		'qty' => array('type'=>'float', 'label'=>'Qty', 'enabled'=>'(isModEnabled("product") || isModEnabled("service"))', 'visible'=>1, 'position'=>90),
+		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>'(isModEnabled("product") || isModEnabled("service"))', 'visible'=>1, 'position'=>100),
+	);
 
 
 	/**
@@ -1602,35 +1668,132 @@ class FichinterLigne extends CommonObjectLine
 	 *	Retrieve the line of intervention
 	 *
 	 *	@param  int		$rowid		Line id
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					<0 if KO, >0 if OK and 0 if not found
 	 */
 	public function fetch($rowid)
 	{
-		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
+		$sql  = "SELECT ft.rowid, ft.fk_fichinter, ft.fk_product, ft.product_type, ft.description, ft.duree, ft.rang, ft.date, ft.qty, ft.fk_unit";
+		$sql .= ", p.ref as product_ref, p.label as product_label, p.description as product_desc";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as ft";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = ft.fk_product";
+		$sql .= " WHERE ft.rowid = ".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$objp = $this->db->fetch_object($resql);
-			$this->rowid          	= $objp->rowid;
-			$this->id               = $objp->rowid;
-			$this->fk_fichinter   	= $objp->fk_fichinter;
-			$this->date = $this->db->jdate($objp->date);
-			$this->datei = $this->db->jdate($objp->date);	// For backward compatibility
-			$this->desc           	= $objp->description;
-			$this->duration       	= $objp->duree;
-			$this->rang           	= $objp->rang;
 
+			if ($objp) {
+				$this->rowid = $objp->rowid;
+				$this->id = $objp->rowid;
+				$this->fk_fichinter = $objp->fk_fichinter;
+				$this->fk_product = $objp->fk_product;
+				$this->date = $this->db->jdate($objp->date);
+				$this->datei = $this->db->jdate($objp->date);    // For backward compatibility
+				$this->desc = $objp->description;
+				$this->duration = $objp->duree;
+				$this->rang = $objp->rang;
+				$this->qty = $objp->qty;
+				$this->fk_unit = $objp->fk_unit;
+
+				// product information
+				$this->product_type = $objp->product_type;
+				$this->product_ref = $objp->product_ref;
+				$this->product_label = $objp->product_label;
+				$this->product_desc = $objp->product_desc;
+
+				$this->fetch_optionals();
+				$this->db->free($resql);
+
+				return 1;
+			} else {
+				$this->db->free($resql);
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->lasterror().' sql='.$sql;
+			return -1;
+		}
+	}
+
+	/**
+	 * Load list of objects in memory from the database. Using a fetchAll is a bad practice, instead try to forge you optimized and limited SQL request.
+	 *
+	 * @param  string      $sortorder    Sort Order
+	 * @param  string      $sortfield    Sort field
+	 * @param  int         $limit        limit
+	 * @param  int         $offset       Offset
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string      $filtermode   Filter mode (AND or OR)
+	 * @return array|int                 int <0 if KO, array of pages if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+
+		$sql = "SELECT ";
+		$sql .= $this->getFieldList('t');
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON tf.fk_object = t.rowid";
+		}
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
+		} else {
+			$sql .= " WHERE 1 = 1";
+		}
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid') {
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+				} elseif ($key == 'customsql') {
+					$sqlwhere[] = $value;	// For this case, $value never come from a user input but is a hard coded value in code
+				} elseif (strpos($value, '%') === false) {
+					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
+				} else {
+					$sqlwhere[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($value))."%'";
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		}
+
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < ($limit ? min($limit, $num) : $num)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
 			$this->db->free($resql);
 
-			$this->fetch_optionals();
-
-			return 1;
+			return $records;
 		} else {
-			$this->error = $this->db->error().' sql='.$sql;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
 			return -1;
 		}
 	}
@@ -1646,7 +1809,7 @@ class FichinterLigne extends CommonObjectLine
 	{
 		$error = 0;
 
-		dol_syslog("FichinterLigne::insert rang=".$this->rang);
+		dol_syslog(__METHOD__.' rang='.$this->rang);
 
 		if (empty($this->date) && !empty($this->datei)) {	// For backward compatibility
 			$this->date = $this->datei;
@@ -1657,8 +1820,8 @@ class FichinterLigne extends CommonObjectLine
 		$rangToUse = $this->rang;
 		if ($rangToUse == -1) {
 			// Recupere rang max de la ligne d'intervention dans $rangmax
-			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
-			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
+			$sql = "SELECT max(rang) as max FROM ".$this->db->prefix().$this->table_element;
+			$sql .= " WHERE fk_fichinter = ".((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -1671,19 +1834,23 @@ class FichinterLigne extends CommonObjectLine
 		}
 
 		// Insertion dans base de la ligne
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' (fk_fichinter, description, date, duree, rang)';
-		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
-		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " '".$this->db->idate($this->date)."',";
-		$sql .= " ".((int) $this->duration).",";
-		$sql .= ' '.((int) $rangToUse);
-		$sql .= ')';
+		$sql  = "INSERT INTO ".$this->db->prefix().$this->table_element;
+		$sql .= " (fk_fichinter, fk_product, product_type, description, date, duree, rang, qty, fk_unit) VALUES (";
+		$sql .= ((int) $this->fk_fichinter);
+		$sql .= ", ".((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null");
+		$sql .= ", ".((int) $this->product_type);
+		$sql .= ", '".$this->db->escape($this->desc)."'";
+		$sql .= ", '".$this->db->idate($this->date)."'";
+		$sql .= ", ".((int) $this->duration);
+		$sql .= ", ".((int) $rangToUse);
+		$sql .= ", '".price2num($this->qty)."'";
+		$sql .= ", ".(!$this->fk_unit ? "null" : ((int) $this->fk_unit));
+		$sql .= ")";
 
-		dol_syslog("FichinterLigne::insert", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 			$this->rowid = $this->id;
 
 			if (!$error) {
@@ -1693,9 +1860,7 @@ class FichinterLigne extends CommonObjectLine
 				}
 			}
 
-
 			$result = $this->update_total();
-
 			if ($result > 0) {
 				$this->rang = $rangToUse;
 
@@ -1717,12 +1882,11 @@ class FichinterLigne extends CommonObjectLine
 				return -1;
 			}
 		} else {
-			$this->error = $this->db->error()." sql=".$sql;
+			$this->error = $this->db->lasterror().' sql='.$sql;
 			$this->db->rollback();
 			return -1;
 		}
 	}
-
 
 	/**
 	 *	Update intervention into database
@@ -1738,18 +1902,24 @@ class FichinterLigne extends CommonObjectLine
 		if (empty($this->date) && !empty($this->datei)) {	// For backward compatibility
 			$this->date = $this->datei;
 		}
+		if (empty($this->qty)) {
+			$this->qty = 0;
+		}
 
 		$this->db->begin();
 
 		// Mise a jour ligne en base
-		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
-		$sql .= " description = '".$this->db->escape($this->desc)."',";
-		$sql .= " date = '".$this->db->idate($this->date)."',";
-		$sql .= " duree = ".((int) $this->duration).",";
-		$sql .= " rang = ".((int) $this->rang);
+		$sql  = "UPDATE ".$this->db->prefix().$this->table_element." SET";
+		$sql .= " product_type=".((int) $this->product_type);
+		$sql .= ", description = '".$this->db->escape($this->desc)."'";
+		$sql .= ", date = '".$this->db->idate($this->date)."'";
+		$sql .= ", duree = ".((int) $this->duration);
+		$sql .= ", rang = ".((int) $this->rang);
+		$sql .= ", qty=".price2num($this->qty);
+		$sql .= ", fk_unit=".(!$this->fk_unit ? "null" : $this->fk_unit);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog("FichinterLigne::update", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!$error) {
@@ -1795,15 +1965,13 @@ class FichinterLigne extends CommonObjectLine
 	public function update_total()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->db->begin();
 
-		$sql = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql  = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_fichinter=".((int) $this->fk_fichinter);
 
-		dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1812,24 +1980,24 @@ class FichinterLigne extends CommonObjectLine
 				$total_duration = $obj->total_duration;
 			}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql  = "UPDATE ".$this->db->prefix()."fichinter";
 			$sql .= " SET duree = ".((int) $total_duration);
 			$sql .= " , dateo = ".(!empty($obj->dateo) ? "'".$this->db->escape($obj->dateo)."'" : "null");
 			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->escape($obj->datee)."'" : "null");
 			$sql .= " WHERE rowid = ".((int) $this->fk_fichinter);
 
-			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->error = $this->db->error();
+				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -1846,7 +2014,7 @@ class FichinterLigne extends CommonObjectLine
 	{
 		$error = 0;
 
-		dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
+		dol_syslog(__METHOD__.' lineid='.$this->id);
 
 		$this->db->begin();
 
@@ -1857,7 +2025,7 @@ class FichinterLigne extends CommonObjectLine
 			return -1;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element." WHERE rowid = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -1867,7 +2035,9 @@ class FichinterLigne extends CommonObjectLine
 					// Call trigger
 					$result = $this->call_trigger('LINEFICHINTER_DELETE', $user);
 					if ($result < 0) {
-						$error++; $this->db->rollback(); return -1;
+						$error++;
+						$this->db->rollback();
+						return -1;
 					}
 					// End call triggers
 				}
@@ -1879,7 +2049,7 @@ class FichinterLigne extends CommonObjectLine
 				return -1;
 			}
 		} else {
-			$this->error = $this->db->error()." sql=".$sql;
+			$this->error = $this->db->lasterror().' sql='.$sql;
 			$this->db->rollback();
 			return -1;
 		}

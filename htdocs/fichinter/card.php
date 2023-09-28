@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -51,6 +52,8 @@ if (!empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/c
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+global $db, $hookmanager, $langs, $mysoc, $user;
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
@@ -67,10 +70,10 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
 $note_private = GETPOST('note_private', 'restricthtml');
-$lineid = GETPOST('line_id', 'int');
+$lineid = GETPOST('lineid', 'int');
 
 $error = 0;
 
@@ -105,8 +108,12 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
-$permissionnote = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_dellink.inc.php
+$usercancreate = $user->hasRight('fichinter', 'creer');
+
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->rights->ficheinter->supprimer);
 
 $usercancreate = $user->hasRight('ficheinter', 'creer');
@@ -149,6 +156,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
@@ -488,28 +497,70 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == "addline" && $user->hasRight('ficheinter', 'creer')) {
 		// Add line
-		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description"));
+		if (!GETPOST('np_desc', 'restricthtml') && !getDolGlobalInt('FICHINTER_EMPTY_LINE_DESC')) {
 			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 		}
-		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration"));
+		if (!getDolGlobalInt('FICHINTER_WITHOUT_DURATION') && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
 			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Duration')), null, 'errors');
 		}
-		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
-			$mesg = $langs->trans("ErrorValueTooHigh");
+		if (!getDolGlobalInt('FICHINTER_WITHOUT_DURATION') && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
 			$error++;
+			setEventMessages($langs->trans('ErrorValueTooHigh'), null, 'errors');
 		}
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
+		if ($prod_entry_mode == 'free') {
+			$idprod = 0;
+		} else {
+			$idprod = GETPOST('idprod', 'int');
+
+			if (getDolGlobalInt('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('ProductOrService')), null, 'errors');
+			}
+		}
+
+		$type = GETPOST('type', 'int');
+		$desc = GETPOST('np_desc', 'restricthtml');
+		$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
+		$duration = !getDolGlobalInt('FICHINTER_WITHOUT_DURATION') ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
+		$qty = price2num(GETPOST('qty', 'alphanohtml'), 'MS', 2);
+		$fk_unit = GETPOST('units', 'int');
+		// force type and fk_unit with product values
+		if (!empty($idprod) && $idprod > 0) {
+			$prod = new Product($db);
+			$prod->fetch($idprod);
+
+			$type = $prod->type;
+			$fk_unit = $prod->fk_unit;
+		}
+
+		// Extrafields
+		$extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
+
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
+		}
+
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				//Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
+
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+				} else {
+					$error++;
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
+				}
+			}
+		}
+
 		if (!$error) {
 			$db->begin();
-
-			$desc = GETPOST('np_desc', 'restricthtml');
-			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
-
-			// Extrafields
-			$extrafields->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
 			$result = $object->addline(
 				$user,
@@ -517,34 +568,64 @@ if (empty($reshook)) {
 				$desc,
 				$date_intervention,
 				$duration,
-				$array_options
+				$array_options,
+				$idprod,
+				$type,
+				$qty,
+				$fk_unit
 			);
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-				$newlang = GETPOST('lang_id', 'aZ09');
-			}
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-				$newlang = $object->thirdparty->default_lang;
-			}
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-
-			if ($result >= 0) {
+			if ($result < 0) {
+				$error++;
+				$db->rollback();
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
 				$db->commit();
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					fichinter_create($db, $object, $object->model_pdf, $outputlangs);
+				// Define output language
+				if (!getDolGlobalInt('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+					if (!is_object($object->thirdparty)) {
+						$object->fetch_thirdparty();
+					}
+
+					$outputlangs = $langs;
+					$newlang = '';
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result = fichinter_create($db, $object, $object->model_pdf, $outputlangs);
+					if ($result <= 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'warnings');
+					}
 				}
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+
+				unset($_POST['prod_entry_mode']);
+				unset($_POST['idprod']);
+				unset($_POST['type']);
+				unset($_POST['np_desc']);
+				unset($_POST['dihour']);
+				unset($_POST['dimin']);
+				unset($_POST['disec']);
+				unset($_POST['diday']);
+				unset($_POST['dimonth']);
+				unset($_POST['diyear']);
+				unset($_POST['durationhour']);
+				unset($_POST['durationmin']);
+				unset($_POST['qty']);
+				unset($_POST['units']);
+
+				header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 				exit;
-			} else {
-				$mesg = $object->error;
-				$db->rollback();
 			}
 		}
 	} elseif ($action == 'classifybilled' && $user->hasRight('ficheinter', 'creer')) {
@@ -584,57 +665,118 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'updateline' && $user->hasRight('ficheinter', 'creer') && GETPOST('save', 'alpha')) {
-		// Mise a jour d'une ligne d'intervention
+		// update intervention line
 		$objectline = new FichinterLigne($db);
-		if ($objectline->fetch($lineid) <= 0) {
-			dol_print_error($db);
-			exit;
+		$res = $objectline->fetch($lineid);
+		if ($res <= 0) {
+			$error++;
+			setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		}
 
-		if ($object->fetch($objectline->fk_fichinter) <= 0) {
-			dol_print_error($db);
-			exit;
+		if (!GETPOST('np_desc', 'restricthtml') && !getDolGlobalInt('FICHINTER_EMPTY_LINE_DESC')) {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 		}
-		$object->fetch_thirdparty();
+		if (!getDolGlobalInt('FICHINTER_WITHOUT_DURATION') && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Duration')), null, 'errors');
+		}
+		if (!getDolGlobalInt('FICHINTER_WITHOUT_DURATION') && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
+			$error++;
+			setEventMessages($langs->trans('ErrorValueTooHigh'), null, 'errors');
+		}
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
+		if ($prod_entry_mode == 'free') {
+			$idprod = 0;
+		} else {
+			$idprod = GETPOST('idprod', 'int');
+
+			if (getDolGlobalInt('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('ProductOrService')), null, 'errors');
+			}
+		}
 
 		$desc = GETPOST('np_desc', 'restricthtml');
 		$date_inter = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-		$duration = convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int'));
+		$duration = !getDolGlobalInt('FICHINTER_WITHOUT_DURATION') ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
+		$qty = price2num(GETPOST('qty', 'alphanohtml'), 'MS', 2);
+		$fk_unit = GETPOST('units', 'int');
 
 		$objectline->date = $date_inter;
 		$objectline->desc = $desc;
 		$objectline->duration = $duration;
+		$objectline->qty = $qty;
+		$objectline->fk_unit = $fk_unit;
 
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
-		$objectline->array_options = array_merge($objectline->array_options, $array_options);
-
-		$result = $objectline->update($user);
-		if ($result < 0) {
-			dol_print_error($db);
-			exit;
+		if (!empty($array_options)) {
+			$objectline->array_options = array_merge($objectline->array_options, $array_options);
 		}
 
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-			$newlang = GETPOST('lang_id', 'aZ09');
-		}
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-			$newlang = $object->thirdparty->default_lang;
-		}
-		if (!empty($newlang)) {
-			$outputlangs = new Translate("", $conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 		}
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
+		if (!$error) {
+			$db->begin();
+
+			$result = $objectline->update($user);
+			if ($result < 0) {
+				$error++;
+				$db->rollback();
+				setEventMessages($objectline->error, $objectline->errors, 'errors');
+			} else {
+				$db->commit();
+
+				// Define output language
+				if (!getDolGlobalInt('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+					if (!is_object($object->thirdparty)) {
+						$object->fetch_thirdparty();
+					}
+
+					$outputlangs = $langs;
+					$newlang = '';
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$result = fichinter_create($db, $object, $object->model_pdf, $outputlangs);
+					if ($result <= 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'warnings');
+					}
+				}
+
+				unset($_POST['prod_entry_mode']);
+				unset($_POST['idprod']);
+				unset($_POST['type']);
+				unset($_POST['np_desc']);
+				unset($_POST['dihour']);
+				unset($_POST['dimin']);
+				unset($_POST['disec']);
+				unset($_POST['diday']);
+				unset($_POST['dimonth']);
+				unset($_POST['diyear']);
+				unset($_POST['durationhour']);
+				unset($_POST['durationmin']);
+				unset($_POST['qty']);
+				unset($_POST['units']);
+
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			}
+		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
 		// Supprime une ligne d'intervention AVEC confirmation
 		$objectline = new FichinterLigne($db);
@@ -1127,7 +1269,7 @@ if ($action == 'create') {
 
 	// Confirm deletion of line
 	if ($action == 'ask_deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Clone confirmation
@@ -1303,286 +1445,171 @@ if ($action == 'create') {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
-	// Line of interventions
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		if ($action == 'editline') {
-			print '<input type="hidden" name="action" value="updateline">';
-			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id', 'int').'">';
-		} else {
-			print '<input type="hidden" name="action" value="addline">';
+	print dol_get_fiche_end();
+
+	/*
+	 * Lines
+	 */
+
+	if (!empty($object->table_element_line)) {
+		// Show object lines
+		$result = $object->getLinesArray();
+
+		// laod extra fields for line
+		$extrafields->fetch_name_optionals_label($object->table_element_line);
+
+		$forcetoshowtitlelines = 0;
+		$nbLines = count($object->lines);
+		$nolinesbefore = ($nbLines == 0);
+		$seller = $mysoc;
+		$buyer = $object->thirdparty;
+
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		<input type="hidden" name="token" value="' . newToken().'">
+		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
+		<input type="hidden" name="mode" value="">
+		<input type="hidden" name="page_y" value="">
+		<input type="hidden" name="id" value="' . $object->id.'">
+		';
+
+		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-		// Intervention lines
-		$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
-		$sql .= ' ft.date as date_intervention';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-		$sql .= ' WHERE ft.fk_fichinter = '.((int) $object->id);
-		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
-			$sql .= ' AND ft.duree <> 0';
+		print '<div class="div-table-responsive-no-min">';
+		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
+			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		}
-		$sql .= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
 
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
+		if (!empty($object->lines)) {
+			$num = $nbLines;
+			$dateSelector = 1;
+			$selected = GETPOST('lineid', 'int');
+			$parameters = array(
+				'num' => $num,
+				'dateSelector' => $dateSelector,
+				'seller' => $seller,
+				'buyer' => $buyer,
+				'selected' => $selected,
+				'table_element_line' => $object->table_element_line
+			);
+			$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-			if ($num) {
-				print '<br>';
-				print '<table class="noborder centpercent">';
-				print '<tr class="liste_titre">';
-
-				// No.
-				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-					print '<td width="5" class="center linecolnum"></td>';
+			if (empty($reshook)) {
+				// Output template part (modules that overwrite templates must declare this into descriptor)
+				$tpl = DOL_DOCUMENT_ROOT.'/fichinter/tpl/objectline_title.tpl.php';
+				if (empty($conf->file->strict_mode)) {
+					$res = @include $tpl;
+				} else {
+					$res = include $tpl; // for debug
 				}
-
-				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
-				print '<td class="liste_titre center">'.$langs->trans('Date').'</td>';
-				print '<td class="liste_titre right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
-				print '<td class="liste_titre">&nbsp;</td>';
-				print '<td class="liste_titre">&nbsp;</td>';
-				print "</tr>\n";
 			}
-			while ($i < $num) {
-				$objp = $db->fetch_object($resql);
 
-				// Ligne en mode visu
-				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid) {
-					print '<tr class="oddeven">';
-
-					// No.
-					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-						print '<td class="center linecolnum">'.($i + 1).'</td>';
-					}
-
-					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					print dol_htmlentitiesbr($objp->description);
-
-					$objectline = new FichinterLigne($db);
-					$objectline->fetch($objp->rowid);
-					$objectline->fetch_optionals();
-
-					$extrafields->fetch_name_optionals_label($objectline->table_element);
-
-					if (!empty($extrafields)) {
-						$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
-						if (!empty($temps)) {
-							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
-							print $temps;
-							print '</div>';
-						}
-					}
-
-					print '</td>';
-
-					// Date
-					print '<td class="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR) ?dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
-
-					// Duration
-					print '<td class="right" width="150">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ?convertSecondToTime($objp->duree) : '').'</td>';
-
-					print "</td>\n";
-
-					// Icon to edit and delete
-					if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer')) {
-						print '<td class="center">';
-						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&line_id='.$objp->rowid.'#'.$objp->rowid.'">';
-						print img_edit();
-						print '</a>';
-						print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteline&token='.newToken().'&line_id='.$objp->rowid.'">';
-						print img_delete();
-						print '</a></td>';
-						print '<td class="center">';
-						if ($num > 1) {
-							if ($i > 0) {
-								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&line_id='.$objp->rowid.'">';
-								print img_up();
-								print '</a>';
-							}
-							if ($i < $num - 1) {
-								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&line_id='.$objp->rowid.'">';
-								print img_down();
-								print '</a>';
-							}
-						}
-						print '</td>';
-					} else {
-						print '<td colspan="2">&nbsp;</td>';
-					}
-
-					print '</tr>';
+			$i = 0;
+			print "<!-- begin printObjectLines() --><tbody>\n";
+			foreach ($object->lines as $line) {
+				//Line extrafield
+				$line->fetch_optionals();
+				if ($line->fk_product > 0 && !is_object($line->product)) {
+					$line->fetch_product();
 				}
 
-				// Line in update mode
-				if ($object->statut == 0 && $action == 'editline' && $user->hasRight('ficheinter', 'creer') && GETPOST('line_id', 'int') == $objp->rowid) {
-					print '<tr class="oddeven nohover">';
-
-					// No.
-					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-						print '<td class="center linecolnum">'.($i + 1).'</td>';
-					}
-
-					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-					// Editeur wysiwyg
-					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_2, '90%');
-					$doleditor->Create();
-
-					$objectline = new FichinterLigne($db);
-					$objectline->fetch($objp->rowid);
-					$objectline->fetch_optionals();
-
-					$extrafields->fetch_name_optionals_label($objectline->table_element);
-
-					if (!empty($extrafields)) {
-						$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
-						if (!empty($temps)) {
-							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
-							print $temps;
-							print '</div>';
-						}
-					}
-
-					print '</td>';
-
-					// Date d'intervention
-					print '<td class="center nowrap">';
-					if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
-						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 0, 0, 0, "date_intervention");
+				if (is_object($hookmanager)) {
+					if (empty($line->fk_parent_line)) {
+						$parameters = array(
+							'num' => $num,
+							'dateSelector' => $dateSelector,
+							'seller' => $seller,
+							'buyer' => $buyer,
+							'selected' => $selected,
+							'table_element_line' => $object->table_element_line
+						);
+						$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					} else {
-						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 1, 1, 0, "date_intervention");
+						$parameters = array(
+							'line' => $line,
+							'num' => $num,
+							'i' => $i,
+							'dateSelector' => $dateSelector,
+							'seller' => $seller,
+							'buyer' => $buyer,
+							'selected' => $selected,
+							'table_element_line' => $line->table_element,
+							'fk_parent_line' => $line->fk_parent_line
+						);
+						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					}
-					print '</td>';
+				}
+				if (empty($reshook)) {
+					//$object->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields);
 
-					// Duration
-					print '<td class="right">';
-					if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
-						$selectmode = 'select';
-						if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
-							$selectmode = 'text';
+					// Line in view mode
+					if ($action != 'editline' || $selected != $line->id) {
+						$text = '';
+						$description = '';
+
+						// Product
+						if (!empty($line->fk_product) && $line->fk_product > 0) {
+							$product_static = new Product($db);
+							$product_static->fetch($line->fk_product);
+							$text = $product_static->getNomUrl(1);
+							$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 						}
-						$form->select_duration('duration', $objp->duree, 0, $selectmode);
-					}
-					print '</td>';
 
-					print '<td class="center" colspan="5" valign="center">';
-					print '<input type="submit" class="button buttongen marginbottomonly button-save" name="save" value="'.$langs->trans("Save").'">';
-					print '<input type="submit" class="button buttongen marginbottomonly button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
-					print '</tr>'."\n";
+						// Output template part (modules that overwrite templates must declare this into descriptor)
+						$tpl = DOL_DOCUMENT_ROOT.'/fichinter/tpl/objectline_view.tpl.php';
+						if (empty($conf->file->strict_mode)) {
+							$res = @include $tpl;
+						} else {
+							$res = include $tpl; // for debug
+						}
+					}
+
+					// Line in update mode
+					if ($object->statut == 0 && $action == 'editline' && $selected == $line->id) {
+						$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
+
+						// Output template part (modules that overwrite templates must declare this into descriptor)
+						$tpl = DOL_DOCUMENT_ROOT.'/fichinter/tpl/objectline_edit.tpl.php';
+						if (empty($conf->file->strict_mode)) {
+							$res = @include $tpl;
+						} else {
+							$res = include $tpl; // for debug
+						}
+					}
 				}
 
 				$i++;
 			}
-
-			$db->free($resql);
-
-			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-				if (!$num) {
-					print '<br>';
-					print '<table class="noborder centpercent">';
-					print '<tr class="liste_titre">';
-
-					// No.
-					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-						print '<td width="5" class="center linecolnum"></td>';
-					}
-
-					print '<td>';
-					print '<a name="add"></a>'; // ancre
-					print $langs->trans('Description').'</td>';
-					print '<td class="center">'.$langs->trans('Date').'</td>';
-					print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
-					print '<td colspan="3">&nbsp;</td>';
-					print "</tr>\n";
-				}
-
-				print '<tr class="oddeven nohover">'."\n";
-
-				// No.
-				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-					print '<td class="center linecolnum">'.($i + 1).'</td>';
-				}
-
-				print '<td>';
-				// editeur wysiwyg
-				if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
-					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, !empty($conf->global->FCKEDITOR_ENABLE_DETAILS), ROWS_2, '90%');
-					$doleditor->Create();
-				}
-
-				$objectline = new FichinterLigne($db);
-				$extrafields->fetch_name_optionals_label($objectline->table_element);
-
-				if (is_object($objectline)) {
-					$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
-
-					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
-						print $temps;
-						print '</div>';
-					}
-				}
-
-				print '</td>';
-
-				// Date intervention
-				print '<td class="center nowrap">';
-				$now = dol_now();
-				$timearray = dol_getdate($now);
-				if (!GETPOST('diday', 'int')) {
-					$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
-				} else {
-					$timewithnohour = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-				}
-				if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
-					print $form->selectDate($timewithnohour, 'di', 0, 0, 0, "addinter");
-				} else {
-					print $form->selectDate($timewithnohour, 'di', 1, 1, 0, "addinter");
-				}
-				print '</td>';
-
-				// Duration
-				print '<td class="right">';
-				if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
-					$selectmode = 'select';
-					if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
-						$selectmode = 'text';
-					}
-					$form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
-				}
-				print '</td>';
-
-				print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button button-add" value="'.$langs->trans('Add').'" name="addline"></td>';
-				print '</tr>';
-
-				if (!$num) {
-					print '</table>';
-				}
-			}
-
-			if ($num) {
-				print '</table>';
-			}
-		} else {
-			dol_print_error($db);
+			print "</tbody><!-- end printObjectLines() -->\n";
 		}
 
-		print '</form>'."\n";
+		// Form to add new line
+		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
+			if ($action != 'editline') {
+				// Add products/services form
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook)) {
+					// Output template part (modules that overwrite templates must declare this into descriptor)
+					$tpl = DOL_DOCUMENT_ROOT.'/fichinter/tpl/objectline_create.tpl.php';
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl; // for debug
+					}
+				}
+			}
+		}
+
+		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
+			print '</table>';
+		}
+		print '</div>';
+
+		print '</form>';
 	}
-
-	print dol_get_fiche_end();
-
-	print "\n";
 
 
 	/*
