@@ -139,19 +139,19 @@ if ($object->statut == 0 && $user->hasRight('fichinter', 'creer') && $action != 
 	if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
-		if ($i > 0) { ?>
-            <a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=up&token=' . newToken() . '&rowid=' . $line->id; ?>">
-				<?php print img_up('default', 0, 'imgupforline'); ?>
-            </a>
-		<?php }
-		if ($i < $num - 1) { ?>
-            <a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$line->id; ?>">
-                <?php print img_down('default', 0, 'imgdownforline'); ?>
-            </a>
-		<?php }
+		if ($i > 0) {
+			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=up&token=' . newToken() . '&rowid=' . $line->id . '">';
+			print img_up('default', 0, 'imgupforline');
+			print '</a>';
+		}
+		if ($i < $num - 1) {
+			print '<a class="lineupdown" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=down&token=' . newToken() . '&rowid=' . $line->id . '">';
+			print img_down('default', 0, 'imgdownforline');
+			print '</a>';
+		}
 		print '</td>';
 	} else {
-        print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
+		print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
 		$coldisplay++;
 	}
 } else {
