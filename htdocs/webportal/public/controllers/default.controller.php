@@ -54,6 +54,7 @@ class DefaultController extends Controller
 
 		$this->loadTemplate('header');
 		$this->loadTemplate('menu');
+		$this->loadTemplate('hero-header-banner');
 
 		$hookRes = $this->hookPrintPageView();
 

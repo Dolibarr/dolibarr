@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/controller.class.php';
+require_once __DIR__ . '/webPortalTheme.class.php';
 
 /**
  * Class Context
@@ -62,7 +63,7 @@ class Context
 
 	public $eventMessages = array();
 
-	public $tokenKey = 'ctoken';
+	public $tokenKey = 'token';
 
 	/**
 	 * Curent object of page
@@ -89,6 +90,12 @@ class Context
 	 * @var CommonObject Logged partnership
 	 */
 	public $logged_partnership = null;
+
+
+	/**
+	 * @var WebPortalTheme Theme data
+	 */
+	public $theme;
 
 
 	/**
@@ -125,6 +132,9 @@ class Context
 
 		// Init de l'url de base
 		$this->rootUrl = self::getRootConfigUrl();
+
+
+		$this->theme = new WebPortalTheme();
 	}
 
 	/**

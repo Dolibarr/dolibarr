@@ -103,6 +103,16 @@ $formSetup = new FormSetup($db);
 $item = $formSetup->newItem('WEBPORTAL_ROOT_URL')->setAsString();
 $item->fieldAttr = array('placeholder' => 'https://');
 $item->helpText = $langs->transnoentities('WebPortalRootUrlHelp');
+require_once __DIR__ . '/../public/class/context.class.php';
+$context = Context::getInstance();
+$item->fieldOutputOverride = '<a target="_blank" href="'.$context->getControllerUrl().'" ><i class="fa fa-arrow-right" ></i>  '.$context->getControllerUrl().'</a>';
+
+
+$formSetup->newItem('WEBPORTAL_TITLE')->defaultFieldValue = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+
+
+
+
 
 // Enable access for the membership record
 $access_list = array(
@@ -342,8 +352,7 @@ $head = webportalAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webportal@webportal");
 
 // Setup page goes here
-echo '<span class="opacitymedium">' . $langs->trans("WebPortalSetupPage") . '</span><br><br>';
-
+echo '<span class="opacitymedium">' . $langs->trans("WebPortalSetupPage") . ' : ' . $langs->trans('UserAccountForWebPortalAreInThirdPartyTabHelp') .'</span>.<br><br>';
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
@@ -617,10 +626,6 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 		print '</table>';
 	}
-}
-
-if (empty($setupnotempty)) {
-	print '<br>' . $langs->trans("NothingToSetup");
 }
 
 // Page end

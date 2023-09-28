@@ -7,14 +7,14 @@ if (empty($context) || !is_object($context)) {
 
 global $conf, $hookmanager, $langs;
 
-$Tmenu = $TGroupMenu = array();
+$navMenu = $navGroupMenu = $navUserMenu = array();
 
 $maxTopMenu = 0;
 
 if ($context->userIsLog()) {
 	// menu propal
 	if (isModEnabled('propal') && getDolGlobalInt('WEBPORTAL_PROPAL_LIST_ACCESS')) {
-		$Tmenu['propal_list'] = array(
+		$navMenu['propal_list'] = array(
 			'id' => 'propal_list',
 			'rank' => 10,
 			'url' => $context->getControllerUrl('propallist'),
@@ -25,7 +25,7 @@ if ($context->userIsLog()) {
 
 	// menu orders
 	if (isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
-		$Tmenu['order_list'] = array(
+		$navMenu['order_list'] = array(
 			'id' => 'order_list',
 			'rank' => 20,
 			'url' => $context->getControllerUrl('orderlist'),
@@ -36,7 +36,7 @@ if ($context->userIsLog()) {
 
 	// menu invoices
 	if (isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
-		$Tmenu['invoice_list'] = array(
+		$navMenu['invoice_list'] = array(
 			'id' => 'invoice_list',
 			'rank' => 30,
 			'url' => $context->getControllerUrl('invoicelist'),
@@ -52,7 +52,7 @@ if ($context->userIsLog()) {
 		&& $context->logged_member
 		&& $context->logged_member->id > 0
 	) {
-		$Tmenu['member_card'] = array(
+		$navMenu['member_card'] = array(
 			'id' => 'member_card',
 			'rank' => 110,
 			'url' => $context->getControllerUrl('membercard'),
@@ -68,7 +68,7 @@ if ($context->userIsLog()) {
 		&& $context->logged_partnership
 		&& $context->logged_partnership->id > 0
 	) {
-		$Tmenu['partnership_card'] = array(
+		$navMenu['partnership_card'] = array(
 			'id' => 'partnership_card',
 			'rank' => 120,
 			'url' => $context->getControllerUrl('partnershipcard'),
@@ -78,16 +78,16 @@ if ($context->userIsLog()) {
 	}
 
 	// menu user with logout
-	$Tmenu['user_logout'] = array(
+	$navUserMenu['user_logout'] = array(
 		'id' => 'user_logout',
-		'rank' => 200,
+		'rank' => 99999,
 		'url' => $context->getControllerUrl() . 'logout.php',
 		'name' => $langs->trans('Logout'),
 	);
 }
 
 // GROUP MENU
-$TGroupMenu = array(
+$navGroupMenu = array(
 	'administrative' => array(
 		'id' => 'administrative',
 		'rank' => -1, // negative value for undefined, it will be set by the min item rank for this group
@@ -106,8 +106,8 @@ $TGroupMenu = array(
 
 $parameters = array(
 	'controller' => $context->controller,
-	'Tmenu' => & $Tmenu,
-	'TGroupMenu' => & $TGroupMenu,
+	'Tmenu' => & $navMenu,
+	'TGroupMenu' => & $navGroupMenu,
 	'maxTopMenu' => & $maxTopMenu
 );
 
@@ -116,74 +116,84 @@ if ($reshook < 0) $context->setEventMessages($hookmanager->error, $hookmanager->
 
 if (empty($reshook)) {
 	if (!empty($hookmanager->resArray)) {
-		$Tmenu = array_replace($Tmenu, $hookmanager->resArray);
+		$navMenu = array_replace($navMenu, $hookmanager->resArray);
 	}
 
-	if (!empty($Tmenu)) {
+	if (!empty($navMenu)) {
 		// Sorting
-		uasort($Tmenu, 'menuSortInv');
+		uasort($navMenu, 'menuSortInv');
 
-		if (!empty($maxTopMenu) && $maxTopMenu < count($Tmenu)) {
+		if (!empty($maxTopMenu) && $maxTopMenu < count($navMenu)) {
 			// AFFECT MENU ITEMS TO GROUPS
-			foreach ($Tmenu as $menuId => $menuItem) {
+			foreach ($navMenu as $menuId => $menuItem) {
 				// affectation des items de menu au groupement
-				if (!empty($menuItem['group']) && !empty($TGroupMenu[$menuItem['group']])) {
+				if (!empty($menuItem['group']) && !empty($navGroupMenu[$menuItem['group']])) {
 					$goupId = $menuItem['group'];
 
 					// Affectation de l'item au groupe
-					$TGroupMenu[$goupId]['children'][$menuId] = $menuItem;
+					$navGroupMenu[$goupId]['children'][$menuId] = $menuItem;
 
 					// Application du rang
-					if (!empty($TGroupMenu[$goupId]['rank']) && $TGroupMenu[$goupId]['rank'] > 0) {
+					if (!empty($navGroupMenu[$goupId]['rank']) && $navGroupMenu[$goupId]['rank'] > 0) {
 						// le rang mini des items du groupe défini le rang du groupe
-						$TGroupMenu[$goupId]['rank'] = min(abs($TGroupMenu[$goupId]['rank']), abs($menuItem['rank']));
+						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank']));
 					}
 				}
 			}
 
 			// INSERTION DES GROUPES DANS LE MENU
-			foreach ($TGroupMenu as $groupId => $groupItem) {
+			foreach ($navGroupMenu as $groupId => $groupItem) {
 				// If group have more than 1 item, group is valid
 				if (!empty($groupItem['children']) && count($groupItem['children']) > 1) {
 					// ajout du group au menu
-					$Tmenu[$groupId] = $groupItem;
+					$navMenu[$groupId] = $groupItem;
 
 					// suppression des items enfant du group du menu
 					foreach ($groupItem['children'] as $menuId => $menuItem) {
-						if (isset($Tmenu[$menuId])) {
-							unset($Tmenu[$menuId]);
+						if (isset($navMenu[$menuId])) {
+							unset($navMenu[$menuId]);
 						}
 					}
 				}
 			}
 
 			// final sorting
-			uasort($Tmenu, 'menuSortInv');
+			uasort($navMenu, 'menuSortInv');
 		}
 	}
 }
 ?>
-<nav class="container-fluid">
+<nav class="primary-top-nav container-fluid">
 	<ul>
 		<li class="brand">
-			<img src="./tpl/dolibarr_logo.svg">
-		</li>
-		<li>
-			<strong>
-				<?php
-				if (!empty($context->title)) {
-					print $context->title;
-				}
-				?>
-			</strong>
+<?php
+
+			$brandTitle = !empty($conf->global->WEBPORTAL_TITLE) ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+			print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
+			if(!empty($context->theme->menuLogoUrl)){
+				print '<img class="brand__logo-img" src="'.dol_escape_htmltag($context->theme->menuLogoUrl).'" alt="'.dol_escape_htmltag($brandTitle).'" >';
+			}else{
+				print '<span class="brand__name">'.$brandTitle.'</span>';
+			}
+			print '</a>';
+?>
 		</li>
 	</ul>
 	<ul>
-		<?php
-		if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($Tmenu)) {
+<?php
+		if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navMenu)) {
 			// show menu
-			print getNav($Tmenu);
+			print getNav($navMenu);
 		}
-		?>
+?>
+	</ul>
+	<ul>
+<?php
+		if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {
+			// show menu
+			uasort($navUserMenu, 'menuSortInv');
+			print getNav($navUserMenu);
+		}
+?>
 	</ul>
 </nav>

@@ -26,6 +26,7 @@ function getNav($Tmenu)
 /**
  * Get nav item
  *
+ * TODO : Dropdown is actually not css implemented
  * @param	array	$item	Item of menu
  * @param	int		$deep	Level of deep
  * @return  string
@@ -46,6 +47,11 @@ function getNavItem($item, $deep = 0)
 	if ($context->menuIsActive($item['id'])) {
 		$item['active'] = true;
 	}
+
+	if(!isset($item['class'])){
+		$item['class'] = '--item-' .  preg_replace( '/[^a-z0-9 ]/i','-', $item['id']);
+	}
+
 
 	if (!empty($item['overrride'])) {
 		$menu .= $item['overrride'];
@@ -70,7 +76,7 @@ function getNavItem($item, $deep = 0)
 				$menuChildren .= getNavItem($child, $deep + 1);
 				$menuChildren .= "\n\r" . '<!-- print sub menu -->' . "\n\r";
 			} else {
-				$menuChildren .= '<li class="dropdown-item" data-deep="' . $deep . '" ><a href="' . $child['url'] . '" class="' . (!empty($child['active']) ? 'active' : '') . '" ">' . $child['name'] . '</a></li>';
+				$menuChildren .= '<li class="dropdown-item '.$item['class'].'" data-deep="' . $deep . '" ><a href="' . $child['url'] . '" class="' . (!empty($child['active']) ? 'active' : '') . '" ">' . $child['name'] . '</a></li>';
 			}
 		}
 
@@ -79,12 +85,12 @@ function getNavItem($item, $deep = 0)
 			$active = 'active';
 		}
 
-		$menu .= '<li data-deep="' . $deep . '" class="dropdown ' . ($deep > 0 ? 'dropdown-item dropdown-submenu' : 'nav-item') . '  ' . $active . '">';
+		$menu .= '<li data-deep="' . $deep . '" class="'.$item['class'].' dropdown ' . ($deep > 0 ? 'dropdown-item dropdown-submenu' : 'nav-item') . '  ' . $active . '">';
 		$menu .= '<a href="#" class="' . ($deep > 0 ? '' : 'nav-link') . ' dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' . $item['name'] . ' <span class="caret"></span></a>';
 		$menu .= '<ul class="dropdown-menu ">' . $menuChildren . '</ul>';
 		$menu .= '</li>';
 	} else {
-		$menu .= '<li data-deep="' . $deep . '" class="' . ($deep > 0 ? 'dropdown-item' : 'nav-item ') . ' ' . ($item['active'] ? 'active' : '') . '"><a  href="' . $item['url'] . '" class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</a></li>';
+		$menu .= '<li data-deep="' . $deep . '" class="'.$item['class'].' ' . ($deep > 0 ? 'dropdown-item' : 'nav-item ') . ' ' . ($item['active'] ? 'active' : '') . '"><a  href="' . $item['url'] . '" class="' . ($deep > 0 ? '' : 'nav-link') . '" >' . $item['name'] . '</a></li>';
 	}
 
 	return $menu;

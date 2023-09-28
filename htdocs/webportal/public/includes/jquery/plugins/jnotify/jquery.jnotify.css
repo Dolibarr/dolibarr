@@ -1,8 +1,9 @@
 .jnotify-container {
     position: fixed; 
     top: 0; 
-    left: 0; 
-    width: 100%; 
+    right: 0;
+    width: min(100%, 640px);
+    max-height: min(0.9vh, 480px) ;
     z-index: 100000;
 }
 
@@ -34,7 +35,7 @@
     padding: 0 5px;
     font: bold 1.4em Arial,Helvetica,sans-serif;
     line-height: 1em;
-    color: #567b1b;
+    color: #497900;
     text-decoration: none;
     z-index: 3;
     cursor: pointer;
@@ -45,8 +46,8 @@
     z-index: 2; 
     padding: 20px;
     text-align: center;
-    color: #567b1b;
-    font: bold 1.4em Arial,Helvetica,sans-serif;
+    color: #649a00;
+    font: bold 1em Arial,Helvetica,sans-serif;
     line-height: 1.2em; 
 }
 
@@ -56,12 +57,13 @@
 
 /* notification type == "error" */
 .jnotify-container .jnotify-notification-error .jnotify-background {
-    background-color: #d79eac; 
+    background-color: rgba(192, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
 }
 
 .jnotify-container .jnotify-notification-error .jnotify-close,
 .jnotify-container .jnotify-notification-error .jnotify-message {
-    color: #a72947 !important;
+    color: #ffffff !important;
 }
 
 /* notification type == "warning" */

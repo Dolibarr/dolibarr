@@ -94,7 +94,9 @@ if ($jsOut) {
 	$js .= '</script>';
 	print $js;
 }
+
+print '<script src="'.$context->getControllerUrl().'/js/theme.js"></script>';
 ?>
-<script src="../js/theme.js"></script>
+
 </body>
 </html>

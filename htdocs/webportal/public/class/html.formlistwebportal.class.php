@@ -433,17 +433,14 @@ class FormListWebPortal
 		$html .= '<ul>';
 		$html .= '<li><strong>' . $langs->trans($titleKey) . '</strong> (' . $nbtotalofrecords . ')</li>';
 		$html .= '</ul>';
-		$html .= '<ul>';
-		//$html .= '<li>'.$limit.'</li>';
-		$html .= '<li>';
-		$html .= '<a href="' . $url_file . $pagination_param . '&page=' . ($page - 1) . '" role="button"' . ($page <= 1 ? ' disabled' : '') . '> < </a>';
-		$html .= ' <a href="#"><strong>' . $page . '</strong></a> <a href="#">/</a> <a href="' . $url_file . $pagination_param . '&page=' . $nbpages . '">' . $nbpages . '</a> ';
-		$html .= '<a href="' . $url_file . $pagination_param . '&page=' . ($page + 1) . '" role="button"' . ($page >= $nbpages ? ' disabled' : '') . '> > </a>';
-		$html .= '</ul>';
+
+		/* Generate pagination list */
+		$html .= static::generatePageListNav($url_file . $pagination_param, $nbpages, $page);
+
 		$html .= '</nav>';
 
 		// table with search filters and column titles
-		$html .= '<table id="webportal-' . $elementEn . '-list" role="grid">';
+		$html .= '<table id="webportal-' . $elementEn . '-list" responsive="scroll" role="grid">';
 		// title and desc for table
 		//if ($titleKey != '') {
 		//    $html .= '<caption id="table-collapse-responsive">';
@@ -461,14 +458,14 @@ class FormListWebPortal
 		$html .= '<tr role="search-row">';
 		// Action column
 		// if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		$html .= '<td>';
-		$html .= '<button type="submit" class="contrast" name="button_search_x" value="x"><span>?</span></button>';
-		$html .= '<button type="submit" class="contrast" name="button_removefilter_x" value="x"><span>X</span></button>';
+		$html .= '<td data-col="row-checkbox" >';
+		$html .= '	<button class="btn-filter-icon btn-search-filters-icon" type="submit" name="button_search_x" value="x" aria-label="'.dol_escape_htmltag($langs->trans('Search')).'" ></button>';
+		$html .= '	<button class="btn-filter-icon btn-remove-search-filters-icon" type="submit" name="button_removefilter_x" value="x" aria-label="'.dol_escape_htmltag($langs->trans('RemoveSearchFilters')).'"></button>';
 		$html .= '</td>';
 		// }
 		foreach ($object->fields as $key => $val) {
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
-				$html .= '<td data-label="' . $arrayfields['t.' . $key]['label'] . '">';
+				$html .= '<td data-label="' . $arrayfields['t.' . $key]['label'] . '" data-col="'.dol_escape_htmltag($key).'" >';
 				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
 				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -512,7 +509,7 @@ class FormListWebPortal
 		$html .= '<tr>';
 		// Action column
 		// if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		$html .= '<th></th>';
+		$html .= '<th  data-col="row-checkbox"  ></th>';
 		$totalarray['nbfield']++;
 		// }
 		foreach ($object->fields as $key => $val) {
@@ -523,7 +520,7 @@ class FormListWebPortal
 					$tableOrder = strtolower($sortList[$tableKey]);
 				}
 				$url_param = $url_file . '&sortfield=' . $tableKey . '&sortorder=' . ($tableOrder == 'desc' ? 'asc' : 'desc') . $param;
-				$html .= '<th scope="col"' . ($tableOrder != '' ? ' table-order="' . $tableOrder . '"' : '') . '>';
+				$html .= '<th data-col="'.dol_escape_htmltag($key).'"  scope="col"' . ($tableOrder != '' ? ' table-order="' . $tableOrder . '"' : '') . '>';
 				$html .= '<a href="' . $url_param . '">';
 				$html .= $langs->trans($arrayfields['t.' . $key]['label']);
 				$html .= '</a>';
@@ -726,6 +723,55 @@ class FormListWebPortal
 		$html .= '</table>';
 
 		$html .= '</form>';
+
+		return $html;
+	}
+
+	/**
+	 * @param string $url url of curent page
+	 * @param int $nbPages total of pages results
+	 * @param int $currentPage number of current page
+	 * @return string
+	 */
+	public static function generatePageListNav(string $url, int $nbPages, int $currentPage){
+
+		global $langs;
+
+
+		$pSep = strpos($url, '?') === false ? '?' : '&amp;';
+
+		$html = '<ul class="pages-nav-list">';
+
+
+		if($currentPage > 1){
+			$html .= '<li><a class="pages-nav-list__icon --prev" aria-label="'.dol_escape_htmltag($langs->trans('AriaPrevPage')).'" href="' . $url . $pSep . 'page=' . ($currentPage - 1) . '" ' . ($currentPage <= 1 ? ' disabled' : '') . '></a></li>';
+		}
+
+		$maxPaginItem = min($nbPages, 5);
+		$minPageNum = max(1, $currentPage-3);
+		$maxPageNum = min($nbPages, $currentPage+3);
+
+
+		if($minPageNum > 1){
+			$html .= '<li><a class="pages-nav-list__link '.($currentPage==1?'--active':'').'" aria-label="'.dol_escape_htmltag($langs->trans('AriaPageX', 1)).'" href="' . $url . $pSep . 'page=1" >1</a></li>';
+			$html .= '<li>&hellip;</li>';
+		}
+
+		for($p=$minPageNum; $p <= $maxPageNum; $p++){
+			$html .= '<li><a class="pages-nav-list__link '.($currentPage===$p?'--active':'').'" aria-label="'.dol_escape_htmltag($langs->trans('AriaPageX', $p)).'"  href="' . $url . $pSep . 'page=' . $p . '">' . $p . '</a></li>';
+		}
+
+		if($maxPaginItem<$nbPages){
+			$html .= '<li>&hellip;</li>';
+			$html .= '<li><a class="pages-nav-list__link '.($currentPage==$nbPages?'--active':'').'" aria-label="'.dol_escape_htmltag($langs->trans('AriaPageX', $nbPages)).'" href="' . $url . $pSep . 'page=' . $nbPages . '">' . $nbPages . '</a></li>';
+		}
+
+
+		if($currentPage < $nbPages) {
+			$html .= '<li><a class="pages-nav-list__icon --next" aria-label="'.dol_escape_htmltag($langs->trans('AriaNextPage')).'" href="' . $url . $pSep . 'page='.($currentPage + 1).'" '.($currentPage >= $nbPages ? ' disabled' : '').'></a></li>';
+		}
+
+		$html .= '</ul>';
 
 		return $html;
 	}

@@ -31,6 +31,7 @@ Settings = Settings
 WebPortalSetupPage = WebPortal setup page
 WEBPORTAL_ROOT_URL = Public access url
 WebPortalRootUrlHelp = Public access url (http or https) if you have a virtual host or keep empty
+UserAccountForWebPortalAreInThirdPartyTabHelp = Users accounts for WebPortal can be set on each third party card in Website accounts tab
 WebPortalAccessHidden = Hidden
 WebPortalAccessVisible = Visible
 WebPortalAccessEdit = Editable
@@ -67,6 +68,18 @@ WebPortalMemberCardDesc = Member card
 WebPortalPartnershipCardMenu = Partnership
 WebPortalPartnershipCardTitle = Partnership card
 WebPortalPartnershipCardDesc = Partnership card
+loginWebportalUserName = User name / email
+loginWebportalPassword = Password
+LoginNow = Login now
+RemoveSearchFilters = Remove search filters
+
+
+#
+# Aria accessibility
+#
+AriaPrevPage = Previous page
+AriaNextPage = Next page
+AriaPageX = Page %s
 
 #
 # Errors
@@ -80,3 +93,16 @@ WebPortalErrorFetchLoggedUser = Error when loading user (Id : %s)
 WebPortalErrorFetchLoggedThirdParty = Error when loading third-party (Id : %s)
 WebPortalErrorFetchLoggedMember = Error when loading member (Id : %s)
 WebPortalErrorFetchLoggedPartnership = Error when loading partnership (Third-party Id : %s, Member Id : %s)
+
+#
+# Color theme settings
+#
+
+WEBPORTAL_PRIMARY_COLOR = Primary color
+WEBPORTAL_SECONDARY_COLOR = Secondary color
+WEBPORTAL_LOGIN_LOGO_URL = Login logo image URL
+WEBPORTAL_MENU_LOGO_URL = Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip = Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND = Background login image URL
+WEBPORTAL_BANNER_BACKGROUND = Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK = Use dark theme for banner

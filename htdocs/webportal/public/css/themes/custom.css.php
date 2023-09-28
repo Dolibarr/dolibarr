@@ -22,8 +22,7 @@ if (!defined('NOREQUIREAJAX')) {
 
 session_cache_limiter('public');
 
-// require_once __DIR__.'/../main.inc.php';
-// require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once __DIR__.'/../../../webportal.main.inc.php';
 
 // Define css type
 // top_httphead('text/css');
@@ -38,6 +37,31 @@ header("X-Frame-Options: SAMEORIGIN");
 	header('Cache-Control: no-cache');
 } */
 
+
+require_once __DIR__ . '/../../class/webPortalTheme.class.php';
+$webPortalTheme = new WebPortalTheme();
+
+?>
+[data-theme="custom"], :root{
+    --primary-color-hue : <?php print $webPortalTheme->primaryColorHsl['h']; ?>;
+    --primary-color-saturation : <?php print $webPortalTheme->primaryColorHsl['s']; ?>%;
+    --primary-color-lightness : <?php print $webPortalTheme->primaryColorHsl['l']; ?>%;
+    --banner-background : url(<?php print !empty($webPortalTheme->bannerBackground) ? $webPortalTheme->bannerBackground : '../img/banner.svg' ?>);
+}
+
+.login-page {
+    <?php
+    if(!empty($webPortalTheme->loginBackground)){
+        print '--login-background: rgba(0, 0, 0, 0.4) url("'.$webPortalTheme->loginBackground.'");'."\n";
+    }
+
+    if(!empty($webPortalTheme->loginLogoUrl)){
+        print '--login-logo: url("'.$webPortalTheme->loginLogoUrl.'"); /* for relative path, must be relative od the css file or use full url starting by http:// */'."\n";
+    }
+    ?>
+}
+
+<?php
 
 print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS'."*/\n";
 print getDolGlobalString('WEBPORTAL_CUSTOM_CSS');

@@ -104,6 +104,7 @@ class MemberCardController extends Controller
 
 		$this->loadTemplate('header');
 		$this->loadTemplate('menu');
+		$this->loadTemplate('hero-header-banner');
 
 		$hookRes = $this->hookPrintPageView();
 		if (empty($hookRes)) {

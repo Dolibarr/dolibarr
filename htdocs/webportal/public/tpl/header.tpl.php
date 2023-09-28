@@ -39,4 +39,7 @@ global $langs;
 	print '<script src="' . $context->rootUrl . 'includes/jquery/plugins/jnotify/jquery.jnotify.js"></script>';
 	?>
 </head>
-<body>
+<body
+		data-theme="custom"
+		data-controller="<?php print dol_escape_htmltag($context->controller); ?>"
+>

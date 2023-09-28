@@ -186,6 +186,8 @@ class Controller
 			return false;
 		}
 
+		$controller = $this; // transmit controller to tpl
+
 		include $tplPath;
 
 		return true;
