@@ -233,7 +233,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			'mymodule'=>strtolower($modulename),
 			'MyModule'=>$modulename
 		);
-
 		$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
@@ -379,6 +378,11 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			dol_delete_file($destdir.'/README.md');
 			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
 		}
+		// for create file to add properties
+		// file_put_contents($destdir.'/'.strtolower($modulename).'propertycard.php','');
+		// $srcFileCard = DOL_DOCUMENT_ROOT.'/modulebuilder/card.php';
+		// $destFileCard = $dirins.'/'.strtolower($modulename).'/template/card.php';
+		// dol_copy($srcFileCard, $destdir.'/'.strtolower($modulename).'propertycard.php', 0,1, $arrayreplacement);
 	}
 
 	if (!$error) {
@@ -1677,10 +1681,10 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
-if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && !empty($tabobj)) {
+if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && !empty(GETPOST('obj')) && $tabobj == "createproperty") {
 	$error = 0;
 
-	$objectname = $tabobj;
+	$objectname = GETPOST('obj');
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
@@ -1689,6 +1693,11 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 	$destdir = $dirins.'/'.strtolower($module);
 	dol_mkdir($destdir);
 
+	$objects = dolGetListOfObjectClasses($destdir);
+	if (!in_array($objectname, array_values($objects))) {
+		$error++;
+		setEventMessages($langs->trans("ErrorObjectNotFound", $langs->transnoentities($objectname)), null, 'errors');
+	}
 	// We click on add property
 	if (!GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
 		if (!GETPOST('propname', 'aZ09')) {
@@ -1708,7 +1717,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			$addfieldentry = array(
 				'name'=>GETPOST('propname', 'aZ09'),
 				'label'=>GETPOST('proplabel', 'alpha'),
-				'type'=>GETPOST('proptype', 'alpha'),
+				'type'=>strtolower(GETPOST('proptype', 'alpha')),
 				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'int'),
 				'enabled'=>GETPOST('propenabled', 'int'),
@@ -1727,8 +1736,6 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
 			);
-
-
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 			}
@@ -3766,6 +3773,7 @@ if ($module == 'initmodule') {
 
 			print dol_get_fiche_head($head3, $tabobj, '', -1, '', 0, '', '', 0, 'forobjectsuffix'); // Level 3
 
+
 			if ($tabobj == 'newobject') {
 				// New object tab
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -3821,6 +3829,134 @@ if ($module == 'initmodule') {
 				*/
 
 				print '</form>';
+			} elseif ($tabobj == 'createproperty') {
+				$attributesUnique = array (
+					'propname' => $form->textwithpicto($langs->trans("Code"), $langs->trans("PropertyDesc"), 1, 'help', 'extracss', 0, 3, 'propertyhelp'),
+					'proplabel' => $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey")),
+					'proptype' => $form->textwithpicto($langs->trans("Type"), $langs->trans("TypeOfFieldsHelpIntro").'<br><br>'.$langs->trans("TypeOfFieldsHelp"), 1, 'help', 'extracss', 0, 3, 'typehelp'),
+					'proparrayofkeyval' => $form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")),
+					'propnotnull' => $form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")),
+					'propdefault' => $langs->trans("DefaultValue"),
+					'propindex' => $langs->trans("DatabaseIndex"),
+					'propforeignkey' => $form->textwithpicto($langs->trans("ForeignKey"), $langs->trans("ForeignKeyDesc"), 1, 'help', 'extracss', 0, 3, 'foreignkeyhelp'),
+					'propposition' => $langs->trans("Position"),
+					'propenabled' => $form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp'),
+					'propvisible' => $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp'),
+					'propnoteditable' => $langs->trans("NotEditable"),
+					'propalwayseditable' => $langs->trans("AlwaysEditable"),
+					'propsearchall' => $form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")),
+					'propisameasure' => $form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")),
+					'propcss' => $langs->trans("CSSClass"),
+					'propcssview' => $langs->trans("CSSViewClass"),
+					'propcsslist' => $langs->trans("CSSListClass"),
+					'prophelp' => $langs->trans("KeyForTooltip"),
+					'propshowoncombobox' => $langs->trans("ShowOnCombobox"),
+					'propvalidate' => $form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")),
+					'propcomment' => $langs->trans("Comment"),
+				);
+				print '<form action="'.$_SERVER["PHP_SELF"].'?tab=objects&module='.urlencode($module).'&tabobj=createproperty&obj='.urlencode(GETPOST('obj')).'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="addproperty">';
+				print '<input type="hidden" name="tab" value="objects">';
+				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+				print '<input type="hidden" name="obj" value="'.dol_escape_htmltag(GETPOST('obj')).'">';
+
+				print '<table class="border centpercent tableforfieldcreate">'."\n";
+				$counter = 0;
+				foreach ($attributesUnique as $key => $attribute) {
+					if ($counter % 2 === 0) {
+						print '<tr>';
+					}
+					if ($key == 'propname' || $key == 'proplabel') {
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+					} elseif ($key == 'proptype') {
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
+					} elseif ($key == 'propvalidate') {
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+					} else {
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+					}
+					$counter++;
+					if ($counter % 2 === 0) {
+						print '</tr>';
+					}
+				}
+				if ($counter % 2 !== 0) {
+					while ($counter % 2 !== 0) {
+						print '<td></td>';
+						$counter++;
+					}
+					print '</tr>';
+				}
+				print '</table><br>'."\n";
+				print '<div class="center">';
+				print '<input type="submit" class="button button-save" name="add" value="' . dol_escape_htmltag($langs->trans('Create')) . '">';
+				print '<input type="button" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans('Cancel')) . '" onclick="goBack()">';
+				print '</div>';
+				print '</form>';
+				// javascript
+				print '<script>
+				function goBack() {
+					var url = "'.$_SERVER["PHP_SELF"].'?tab=objects&module='.urlencode($module).'";
+					window.location.href = url;
+				}
+				$(document).ready(function() {
+					// Tableau de suggestions statiques
+					var suggestions = ["VARCHAR", "DOUBLE", "REAL", "TEXT", "HTML", "DATETIME", "TIMESTAMP", "INTEGER", "INTEGER:CLASSNAME:RELATIVEPATH/TO/CLASSFILE.CLASS.PHP[:1[:FILTER]]"];
+
+					function showSuggestions() {
+						var inputText = $("#proptype").val().toLowerCase();
+						var suggestionsDiv = $("#suggestions");
+
+						var filteredSuggestions = suggestions.filter(function(suggestion) {
+						  return suggestion.toLowerCase().indexOf(inputText) !== -1;
+						});
+
+						//get suggestion on div
+						suggestionsDiv.empty();
+						for (var i = 0; i < filteredSuggestions.length; i++) {
+						  var suggestion = filteredSuggestions[i];
+						  var suggestionItem = $("<div>").text(suggestion).css({ cursor: "pointer", padding: "5px" });
+						  suggestionsDiv.append(suggestionItem);
+						}
+
+
+						if (inputText === "" || filteredSuggestions.length === 0) {
+						  suggestionsDiv.hide();
+						} else {
+						  suggestionsDiv.show();
+						}
+					  }
+
+					  $("#proptype").on("input", showSuggestions);
+
+					  $("#suggestions").on("click", "div", function() {
+						var selectedValue = $(this).text();
+						$("#proptype").val(selectedValue);
+						$("#suggestions").hide();
+					  });
+					// when we click outside the input
+					  $(document).on("click", function(event) {
+						if (!$(event.target).closest("#proptype, #suggestions").length) {
+						  $("#suggestions").hide();
+						}
+					  });
+					 // when we delete the content input
+					  $("#proptype").on("keyup", function() {
+						if ($(this).val() === "") {
+						  $("#suggestions").hide();
+						}
+					  });
+					// when hover in suggestion
+					$("#suggestions").on("mouseenter", "div", function() {
+						$(this).css("background-color", "#e0e0e0");
+					  });
+
+					  $("#suggestions").on("mouseleave", "div", function() {
+						$(this).css("background-color", "#fff");
+					  });
+				  });';
+				print '</script>';
 			} elseif ($tabobj == 'deleteobject') {
 				// Delete object tab
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -3850,8 +3986,7 @@ if ($module == 'initmodule') {
 					// Print form confirm
 					print $formconfirm;
 				}
-
-				if ($action != 'editfile' || empty($file)) {
+				if ($action != 'editfile' || empty($file) ) {
 					try {
 						//$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
@@ -4123,8 +4258,13 @@ if ($module == 'initmodule') {
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
 							print '<br><br>';
 
-							print load_fiche_titre($langs->trans("ObjectProperties"), '', '');
+							$mod = strtolower($module);
+							$obj = strtolower($tabobj);
+							$newproperty = dolGetButtonTitle($langs->trans('NewProperty'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module).'&tabobj=createproperty&obj='.urlencode($tabobj));
 
+							print_barre_liste($langs->trans("ObjectProperties"), $page, $_SERVER["PHP_SELF"], '', '', '', '', '', 0, '', 0, $newproperty, '', '', 0, 0, 1);
+
+							//var_dump($reflectorpropdefault);exit;
 							print '<!-- Table with properties of object -->'."\n";
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
@@ -4166,37 +4306,7 @@ if ($module == 'initmodule') {
 							// modified during the constructor and we want value into head of class before constructor is called.
 							//$properties = dol_sort_array($tmpobject->fields, 'position');
 							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
-
 							if (!empty($properties)) {
-								// Line to add a property
-								print '<tr>';
-								print '<td class="none"><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
-								print '<td><input type="text" class="maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
-								print '<td><input type="text" class="maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
-								print '<td><input type="text" class="maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'restricthtml')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull', 'alpha')).'"></td>';
-								print '<td><input type="text" class="center maxwidth50" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="maxwidth100" name="propforeignkey" value="'.dol_escape_htmltag(GETPOST('propforeignkey', 'alpha')).'"></td>';
-								print '<td class="right"><input type="text" class="right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propnoteditable" value="'.dol_escape_htmltag(GETPOST('propnoteditable', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propalwayseditable" value="'.dol_escape_htmltag(GETPOST('propalwayseditable', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="maxwidth50" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="maxwidth50" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="maxwidth50" name="propcsslist" value="'.dol_escape_htmltag(GETPOST('propcsslist', 'alpha')).'"></td>';
-								print '<td><input type="text" class="maxwidth50" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
-								print '<td class="center"><input type="text" class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
-								//print '<td class="center"><input type="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
-								print '<td><input type="number" step="1" min="0" max="1" class="text maxwidth50" name="propvalidate" value="'.dol_escape_htmltag(GETPOST('propvalidate', 'alpha')).'"></td>';
-								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
-								print '<td class="center tdstickyright tdstickyghostwhite">';
-								print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-								print '</td></tr>';
-
 								// List of existing properties
 								foreach ($properties as $propkey => $propval) {
 									/* If from Reflection
@@ -4321,7 +4431,20 @@ if ($module == 'initmodule') {
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
-										print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										$pictoType = '';
+										$matches = array();
+										if (preg_match('/^varchar/', $proptype, $matches)) {
+											$pictoType = 'varchar';
+										} elseif (preg_match('/^integer:/', $proptype, $matches)) {
+											$pictoType = 'link';
+										} elseif (strpos($proptype, 'integer') === 0) {
+											$pictoType = substr($proptype, 0, 3);
+										} elseif (strpos($proptype, 'timestamp') === 0) {
+											$pictoType = 'datetime';
+										} elseif (strpos($proptype, 'real') === 0) {
+											$pictoType = 'double';
+										}
+										print (!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										if ($proparrayofkeyval) {

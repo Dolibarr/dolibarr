@@ -1521,7 +1521,7 @@ class Contact extends CommonObject
 
 		if ($withpicto) {
 			if ($withpicto < 0) {
-				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				$result .= '<!-- picto photo contact --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 				if ($withpicto != 2 && $withpicto != -2) {
 					$result .= ' ';
 				}
@@ -1709,6 +1709,7 @@ class Contact extends CommonObject
 		// Desactive utilisateur
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 

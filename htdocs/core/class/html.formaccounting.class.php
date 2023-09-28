@@ -48,6 +48,10 @@ class FormAccounting extends Form
 	 * @var int Nb of accounts found
 	 */
 	public $nbaccounts;
+	/**
+	 * @var int Nb of accounts category found
+	 */
+	public $nbaccounts_category;
 
 
 	/**
@@ -235,7 +239,7 @@ class FormAccounting extends Form
 	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
-		global $db, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
@@ -263,11 +267,15 @@ class FormAccounting extends Form
 			$sql .= " ORDER BY c.label ASC";
 		}
 
+		$this->nbaccounts_category = 0;
+
 		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num) {
+				$this->nbaccounts_category = $num;
+
 				$out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
 				$i = 0;
 

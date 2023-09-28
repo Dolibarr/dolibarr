@@ -6267,7 +6267,8 @@ class Product extends CommonObject
 			1 => $baseprice
 		);
 
-		for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+		$nbofproducts = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+		for ($i = 1; $i <= $nbofproducts; $i++) {
 			$price = $baseprice;
 			$price_min = $baseprice;
 

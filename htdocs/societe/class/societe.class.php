@@ -3996,6 +3996,20 @@ class Societe extends CommonObject
 			}
 		}
 
+		//Verify ID Prof 1 if country is BE (xxxx.xxx.xxx) (https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/actualites/structure-du-numero)
+		//Returns: 1 if ok, -1 if bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'BE') {
+			$string = trim($this->idprof1);
+			$string = preg_replace('/(\s)/', '', $string);
+
+			//Check
+			if (preg_match('/(^[0-9]{4}\.[0-9]{3}\.[0-9]{3}$)/', $string)) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+
 		return $ok;
 	}
 
@@ -5335,7 +5349,7 @@ class Societe extends CommonObject
 		if ($code) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
-		$sql .= " AND sc.entity = ".getEntity($this->element);
+		$sql .= " AND sc.entity IN (".getEntity($this->element).")";
 		$sql .= " AND tc.source = 'external'";
 		$sql .= " AND tc.active=1";
 

@@ -493,7 +493,7 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
-					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
 					$action = "create";
 					$error++;
 			}
@@ -1369,7 +1369,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($modCodeProduct->code_auto)) {
 				$tmpcode = $modCodeProduct->getNextValue($object, $type);
 			}
-			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
 			if ($refalreadyexists) {
 				print $langs->trans("RefAlreadyExists");
 			}
@@ -2353,7 +2353,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = " fk_product_type = ".$object->type;
+			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {

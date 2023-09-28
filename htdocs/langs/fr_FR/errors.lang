@@ -318,9 +318,11 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Erreur : L'URL de vot
 ErrorMenuExistValue=Un menu existe déjà avec ce titre ou cette URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Les fichiers SVG ne sont pas autorisés en tant que liens externes sans l'option %s
 ErrorTypeMenu=Impossible d'ajouter un autre menu pour le même module sur la barre de navigation, pas encore géré
+ErrorObjectNotFound=L'objet <b>%s</b> est introuvable verifier votre url 
 ErrorTableExist=La table <b>%s</b> existe déja
 ErrorDictionaryNotFound=Le dictionnaire <b>%s</b> introuvable
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s
+
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

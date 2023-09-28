@@ -88,6 +88,11 @@ class PaymentSalary extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int ID of bank_line
+	 */
+	public $bank_line;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;

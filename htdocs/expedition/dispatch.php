@@ -148,6 +148,7 @@ if ($action == 'updatelines' && $usercancreate) {
 			$ent = "entrepot_".$reg[1].'_'.$reg[2];
 			$fk_commandedet = "fk_commandedet_".$reg[1].'_'.$reg[2];
 			$idline = GETPOST("idline_".$reg[1].'_'.$reg[2]);
+			$warehouse_id = GETPOSTINT($ent);
 			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 			$lot = '';
 			$dDLUO = '';
@@ -159,11 +160,12 @@ if ($action == 'updatelines' && $usercancreate) {
 			}
 
 			$newqty = price2num(GETPOST($qty, 'alpha'), 'MS');
+			//var_dump("modebatch=".$modebatch." newqty=".$newqty." ent=".$ent." idline=".$idline);
 
 			// We ask to move a qty
 			if (($modebatch == "batch" && $newqty >= 0) || ($modebatch == "barcode" && $newqty != 0)) {
 				if ($newqty > 0) {	// If we want a qty, we make test on input data
-					if (!(GETPOST($ent, 'int') > 0)) {
+					if (!($warehouse_id > 0)) {
 						dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 						$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
 						setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
@@ -200,7 +202,7 @@ if ($action == 'updatelines' && $usercancreate) {
 					$qtystart = 0;
 
 					if ($idline > 0) {
-						$result = $expeditiondispatch->fetch($idline);
+						$result = $expeditiondispatch->fetch($idline);	// get line from llx_expeditiondet
 						if ($result < 0) {
 							setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 							$error++;
@@ -225,13 +227,30 @@ if ($action == 'updatelines' && $usercancreate) {
 									$sellby = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffixkeyfordate.'month'), GETPOST('dlc'.$suffixkeyfordate.'day'), GETPOST('dlc'.$suffixkeyfordate.'year'), '');
 									$eatby = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffixkeyfordate.'month'), GETPOST('dluo'.$suffixkeyfordate.'day'), GETPOST('dluo'.$suffixkeyfordate.'year'));
 
-									$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
-									$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
-									$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
-									$sql .= " , qty = ".((float) $newqty);
-									// TODO Add a column fk_warehouse
-									$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
-									$sql .= " AND batch = '".$db->escape($lot)."'";
+									$sqlsearchdet = "SELECT rowid FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
+									$sqlsearchdet .= " AND batch = '".$db->escape($lot)."'";
+									$resqlsearchdet = $db->query($sqlsearchdet);
+
+									if ($resqlsearchdet) {
+										$objsearchdet = $db->fetch_object($resqlsearchdet);
+									} else {
+										dol_print_error($db);
+									}
+
+									if ($objsearchdet) {
+										$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
+										$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
+										$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
+										$sql .= " , qty = ".((float) $newqty);
+										$sql .= " , fk_warehouse = ".((int) $warehouse_id);
+										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
+									} else {
+										$sql = "INSERT INTO ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." (";
+										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
+										$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
+										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
+									}
 								} else {
 									$sql = " DELETE FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
 									$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
@@ -239,7 +258,7 @@ if ($action == 'updatelines' && $usercancreate) {
 								}
 
 								$resql = $db->query($sql);
-								if (!$db->query($sql)) {
+								if (!$resql) {
 									dol_print_error($db);
 									$error++;
 								}
@@ -317,6 +336,7 @@ if ($action == 'updatelines' && $usercancreate) {
 			}
 		}
 	}
+
 	if ($error > 0) {
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
@@ -446,7 +466,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
@@ -605,11 +625,11 @@ if ($object->id > 0 || !empty($object->ref)) {
 				}
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				if ($object->status == Expedition::STATUS_DRAFT) {
-					print '<td class="right">'.$langs->trans("QtyToDispatchShort");	// Qty to dispatch (sum for all lines of batch detail if there is)
+					print '<td class="right">'.$langs->trans("QtyToShip");	// Qty to dispatch (sum for all lines of batch detail if there is)
 				} else {
 					print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
 				}
-				print '<td class="right">'.$langs->trans("QtyToDispatchShort");
+				print '<td class="right">'.$langs->trans("Details");
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -745,7 +765,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '</td>'; // Dispatch column
 						print '<td></td>'; // Warehouse column
 
-						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+						/*$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
+						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
+
+						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product";
+						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
 						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
 						$sql .= " WHERE ed.fk_origin_line =".(int) $objp->rowid;
@@ -761,7 +786,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
 
-								if (isModEnabled('productbatch') && !empty($objd->batch)) {
+								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
 									$type = 'batch';
 
 									// Enable hooks to append additional columns
@@ -798,7 +823,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '</td>';
 
 									print '<td>';
-									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 									//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 									print '</td>';
 									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
@@ -852,7 +877,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '</td>';
 								}
 								// Qty to dispatch
-								print '<td class="right">';
+								print '<td class="right nowraponall">';
 								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
 								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty);
 								//var_dump($suggestedvalue);exit;

@@ -2035,8 +2035,6 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function fetch($rowid, $ref = '', $num = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($rowid) && empty($ref) && empty($num)) {
 			return -1;
@@ -2052,9 +2050,9 @@ class AccountLine extends CommonObjectLine
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) {
-			$sql .= " AND b.num_chq='".$this->db->escape($num)."'";
+			$sql .= " AND b.num_chq = '".$this->db->escape($num)."'";
 		} elseif ($ref) {
-			$sql .= " AND b.rowid='".$this->db->escape($ref)."'";
+			$sql .= " AND b.rowid = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " AND b.rowid = ".((int) $rowid);
 		}
@@ -2070,9 +2068,9 @@ class AccountLine extends CommonObjectLine
 				$this->rowid = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->datec = $obj->datec;
-				$this->datev = $obj->datev;
-				$this->dateo = $obj->dateo;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datev = $this->db->jdate($obj->datev);
+				$this->dateo = $this->db->jdate($obj->dateo);
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
 				$this->note = $obj->note;

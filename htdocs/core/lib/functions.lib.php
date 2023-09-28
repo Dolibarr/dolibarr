@@ -1595,9 +1595,9 @@ function dol_escape_json($stringtoescape)
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *  When we output string on pages, we use
- *  - dol_string_onlythesehtmltags(dol_htmlentitiesbr()) for notes,
- *  - dol_escape_htmltag() for simple labels.
- *  - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
+ *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
+ *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
@@ -4124,6 +4124,48 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 }
 
 /**
+ * Return the picto for a data type
+ *
+ * @param 	string		$key		Key
+ * @return 	string					Pïcto for the key
+ */
+function getPictoForType($key)
+{
+	// Set array with type -> picto
+	$type2picto = array(
+		'varchar'=>'font',
+		'text'=>'font',
+		'html'=>'code',
+		'int'=>'sort-numeric-down',
+		'double'=>'sort-numeric-down',
+		'price'=>'currency',
+		'pricecy'=>'multicurrency',
+		'password' => 'key',
+		'boolean'=>'check-square',
+		'date'=>'calendar',
+		'datetime'=>'calendar',
+		'phone'=> 'phone',
+		'mail'=> 'email',
+		'url'=> 'url',
+		'ip'=> 'country',
+		'select' => 'list',
+		'sellist' => 'list',
+		'radio' => 'check-circle',
+		'checkbox' => 'check-square',
+		'chkbxlst' => 'check-square',
+		'link' => 'link',
+		'separate'=> 'minus'
+	);
+
+	if (!empty($type2picto[$key])) {
+		return img_picto('', $type2picto[$key], 'class="pictofixedwidth"');
+	}
+
+	return img_picto('', 'generic', 'class="pictofixedwidth"');
+}
+
+
+/**
  *	Show picto whatever it's its name (generic function)
  *
  *	@param      string		$titlealt         		Text on title tag for tooltip. Not used if param notitle is set to 1.
@@ -4219,30 +4261,30 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
-				'currency', 'multicurrency',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
+				'check-circle', 'check-square', 'currency', 'multicurrency',
+				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
-				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
+				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
 				'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
-				'knowledgemanagement',
+				'key', 'knowledgemanagement',
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
-				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
+				'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
-				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'pictoconfirm', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-				'shapes', 'skill', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
@@ -4251,7 +4293,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
-			$fa = 'fas';
+			$fa = getDolGlobalString('MAIN_FONTAWESOME_ICON_STYLE', 'fas');
 			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
@@ -4282,10 +4324,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',  'switch_on_warning'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'filter'=>'filter',
 				'list-alt'=>'list-alt', 'calendarlist'=>'bars', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
-				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'currency'=>'dollar-sign', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
+				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
-				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature', 'proposal'=>'file-signature',
+				'playdisabled'=>'play', 'pdf'=>'file-pdf', 'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature', 'proposal'=>'file-signature',
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'pictoconfirm'=>'check-square', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
 				'recent' => 'check-square', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
@@ -4300,6 +4342,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'website'=>'globe-americas', 'workstation'=>'pallet', 'webhook'=>'bullseye', 'world'=>'globe', 'private'=>'user-lock',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
+			if ($conf->currency == 'EUR') {
+				$arrayconvpictotofa['currency'] = 'euro-sign';
+				$arrayconvpictotofa['multicurrency'] = 'dollar-sign';
+			} else {
+				$arrayconvpictotofa['currency'] = 'dollar-sign';
+				$arrayconvpictotofa['multicurrency'] = 'euro-sign';
+			}
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';
 				$fasize = '1.3em';
@@ -7474,7 +7523,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *              Because writeHTMLCell convert also \n into <br>, if function
  *              is used to build PDF, nl2brmode must be 1.
  *  Note: When we output string on pages, we should use
- *        - dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)) for notes,
+ *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
  *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
  *
  *	@param	string	$stringtoencode		String to encode
@@ -7482,7 +7531,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *  @param  string	$pagecodefrom       Pagecode stringtoencode is encoded
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
- *  @see dol_escape_htmltag(), dolGetFirstLineOfText()
+ *  @see dol_escape_htmltag(), dolGetFirstLineOfText(), dol_string_onlythesehtmltags()
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
@@ -9377,6 +9426,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
  *
  * @param   string      $element    Variable to check
  * @return  boolean                 Return true of variable is not empty
+ * @see getElementProperties()
  */
 function dol_validElement($element)
 {
@@ -11140,12 +11190,17 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
- * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    	$actionType 'default', 'delete', 'danger', 'email', ...
- * @param string|array 	$url        Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
- * @param string    	$id         Attribute id of button
- * @param int|boolean	$userRight  User action right
+ * @param string    	$label      	Label or tooltip of button if $tet is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
+ * @param string 		$actionType 	'default', 'danger', 'email', 'clone', 'cancel', 'delete', ...
+ * @param string|array 	$url        	Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
+ * 										Example when an array is used: $arrayforbutaction = array(
+ *                                      10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                      20 => array('lang'=>'orders', 'enabled'=>isModEnabled("commande"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                      30 => array('lang'=>'bills', 'enabled'=>isModEnabled("facture"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *										);
+ * @param string    	$id         	Attribute id of button
+ * @param int|boolean	$userRight  	User action right
  * // phpcs:disable
  * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
  *                              'attr' => [ // to add or override button attributes
@@ -11174,7 +11229,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (is_array($url)) {
 		if (count($url) > 1) {
 			$out = '<div class="dropdown inline-block dropdown-holder">';
-			$out .= '<a style="margin-right: auto;" class="dropdown-toggle butAction" data-toggle="dropdown">'.$label.'</a>';
+			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction'.($userRight ? '' : 'Refused').'" title="'.dol_escape_htmltag($label).'" data-toggle="dropdown">'.($text ? $text : $label).'</a>';
 			$out .= '<div class="dropdown-content">';
 			foreach ($url as $subbutton) {
 				if (!empty($subbutton['lang'])) {
@@ -11477,6 +11532,7 @@ function getElementProperties($element_type)
 	$module = $element_type;
 	$element = $element_type;
 	$subelement = $element_type;
+	$table_element = $element_type;
 
 	// If we ask a resource form external module (instead of default path)
 	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
@@ -11496,15 +11552,18 @@ function getElementProperties($element_type)
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
+		$table_element = 'actioncomm';
 	} elseif ($element_type == 'cronjob') {
 		$classpath = 'cron/class';
 		$module = 'cron';
+		$table_element = 'cron';
 	} elseif ($element_type == 'adherent_type') {
 		$classpath = 'adherents/class';
 		$classfile = 'adherent_type';
 		$module = 'adherent';
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
+		$table_element = 'adherent_type';
 	} elseif ($element_type == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
@@ -11514,37 +11573,46 @@ function getElementProperties($element_type)
 		$classpath = 'categories/class';
 		$module = 'categorie';
 		$subelement = 'categorie';
+		$table_element = 'categorie';
 	} elseif ($element_type == 'contact') {
 		$classpath = 'contact/class';
 		$classfile = 'contact';
 		$module = 'societe';
 		$subelement = 'contact';
+		$table_element = 'socpeople';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
+		$table_element = 'entrepot';
 	} elseif ($element_type == 'project') {
 		$classpath = 'projet/class';
 		$module = 'projet';
+		$table_element = 'projet';
 	} elseif ($element_type == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$subelement = 'task';
+		$table_element = 'projet_task';
 	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$subelement = 'facture';
+		$table_element = 'facture';
 	} elseif ($element_type == 'commande' || $element_type == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
+		$table_element = 'commande';
 	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
+		$table_element = 'propal';
 	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
 		$module = 'expedition';
+		$table_element = 'expedition';
 	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -11563,6 +11631,7 @@ function getElementProperties($element_type)
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
+		$table_element = 'contract';
 	} elseif ($element_type == 'mailing') {
 		$classpath = 'comm/mailing/class';
 		$module = 'mailing';
@@ -11573,6 +11642,7 @@ function getElementProperties($element_type)
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
+		$table_element = 'adherent';
 	} elseif ($element_type == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
@@ -11582,18 +11652,22 @@ function getElementProperties($element_type)
 		$classname = 'Mo';
 		$module = 'mrp';
 		$subelement = '';
+		$table_element = 'mrp_mo';
 	} elseif ($element_type == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
+		$table_element = 'cabinetmedcons';
 	} elseif ($element_type == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
+		$table_element = 'fichinter';
 	} elseif ($element_type == 'dolresource' || $element_type == 'resource') {
 		$classpath = 'resource/class';
 		$module = 'resource';
 		$subelement = 'dolresource';
+		$table_element = 'resource';
 	} elseif ($element_type == 'propaldet') {
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
@@ -11609,6 +11683,7 @@ function getElementProperties($element_type)
 		$element = 'order_supplier';
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
+		$table_element = 'commande_fournisseur';
 	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -11616,9 +11691,11 @@ function getElementProperties($element_type)
 		$element = 'invoice_supplier';
 		$subelement = '';
 		$classname = 'FactureFournisseur';
+		$table_element = 'facture_fourn';
 	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
+		$table_element = 'product';
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
@@ -11629,12 +11706,14 @@ function getElementProperties($element_type)
 		$classname = 'Productlot';
 		$element = 'productlot';
 		$subelement = '';
+		$table_element = 'product_lot';
 	} elseif ($element_type == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
+		$table_element = 'website_page';
 	} elseif ($element_type == 'fiscalyear') {
 		$classpath = 'core/class';
 		$module = 'accounting';
@@ -11642,10 +11721,12 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'chargesociales') {
 		$classpath = 'compta/sociales/class';
 		$module = 'tax';
+		$table_element = 'chargesociales';
 	} elseif ($element_type == 'tva') {
 		$classpath = 'compta/tva/class';
 		$module = 'tax';
 		$subdir = '/vat';
+		$table_element = 'tva';
 	}
 
 	if (empty($classfile)) {
@@ -11682,6 +11763,7 @@ function getElementProperties($element_type)
 	$element_properties = array(
 		'module' => $module,
 		'element' => $element,
+		'table_element' => $table_element,
 		'subelement' => $subelement,
 		'classpath' => $classpath,
 		'classfile' => $classfile,
@@ -11699,6 +11781,7 @@ function getElementProperties($element_type)
  * @param	string  	$element_type 	Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
  * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || <0 if error
+ * @see getElementProperties()
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
@@ -12184,14 +12267,16 @@ function dolForgeCriteriaCallback($matches)
 /**
  * Get timeline icon
  *
- * @param ActionComm $actionstatic actioncomm
- * @param array $histo histo
- * @param int $key key
- * @return string
+ * @param 	ActionComm 	$actionstatic 	actioncomm
+ * @param 	array 		$histo 			histo
+ * @param 	int 		$key 			key
+ * @return 	string						String with timeline icon
+ * @deprecated Use actioncomm->getPictoType() instead
  */
 function getTimelineIcon($actionstatic, &$histo, $key)
 {
 	global $conf, $langs;
+
 	$out = '<!-- timeline icon -->'."\n";
 	$iconClass = 'fa fa-comments';
 	$img_picto = '';
@@ -12679,10 +12764,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$out .= getTitleFieldOfList($tmp);
 		}
 
-
-		//require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-		//$caction=new CActionComm($db);
-		//$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+		$caction = new CActionComm($db);
+		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
 
 		$actualCycleDate = false;
 
@@ -12692,6 +12776,21 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$actionstatic->type_picto = $histo[$key]['apicto'];
 			$actionstatic->type_code = $histo[$key]['acode'];
+
+			$labeltype = $actionstatic->type_code;
+			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+				$labeltype = 'AC_OTH';
+			}
+			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+				$labeltype = $langs->trans("Message");
+			} else {
+				if (!empty($arraylist[$labeltype])) {
+					$labeltype = $arraylist[$labeltype];
+				}
+				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) {
+					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
+				}
+			}
 
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$histo[$key]['id'];
 
@@ -12711,7 +12810,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$out .= '<!-- timeline item -->'."\n";
 			$out .= '<li class="timeline-code-'.strtolower($actionstatic->code).'">';
 
-			$out .= getTimelineIcon($actionstatic, $histo, $key);
+			//$timelineicon = getTimelineIcon($actionstatic, $histo, $key);
+			$typeicon = $actionstatic->getTypePicto('pictofixedwidth timeline-icon-not-applicble', $labeltype);
+			//$out .= $timelineicon;
+			//var_dump($timelineicon);
+			$out .= $typeicon;
 
 			$out .= '<div class="timeline-item">'."\n";
 
@@ -12731,6 +12834,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			}
 
 			$out .= '</span>';
+
 			// Date
 			$out .= '<span class="time"><i class="fa fa-clock-o valignmiddle"></i> <span class="valignmiddle">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
@@ -12785,9 +12889,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$out .= '</div>';
 
 			// Title
-			$libelle = '';
 			$out .= ' <div class="messaging-title inline-block">';
+			//$out .= $actionstatic->getTypePicto();
+			if (empty($conf->dol_optimize_smallscreen) && $actionstatic->type_code != 'AC_OTH_AUTO') {
+				$out .= $labeltype.' - ';
+			}
 
+			$libelle = '';
 			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
 			} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
@@ -12810,16 +12918,32 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				}
 			}
 
+			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
+				if (isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']]) && isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
+					$link = $conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']];
+				} else {
+					if (!isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']])) {
+						$conf->cache['elementlinkcache'][$histo[$key]['elementtype']] = array();
+					}
+					$link = dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
+					$conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
+				}
+				if ($link) {
+					$out .= ' - '.$link;
+				}
+			}
+
 			$out .= '</div>';
 
 			$out .= '</h3>';
 
+			// Message
 			if (!empty($histo[$key]['message'] && $histo[$key]['message'] != $libelle)
 				&& $actionstatic->code != 'AC_TICKET_CREATE'
 				&& $actionstatic->code != 'AC_TICKET_MODIFY'
 			) {
-				$out .= '<div class="timeline-body">';
-				$out .= $histo[$key]['message'];
+				$out .= '<div class="timeline-body classfortooltip" title="'.dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($histo[$key]['message']), 1, 1, 1)), 1, 1).'">';
+				$out .= dolGetFirstLineOfText($histo[$key]['message'], 3);
 				$out .= '</div>';
 			}
 
@@ -12830,14 +12954,15 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$contactList = '';
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-					$contact = new Contact($db);
-					$result = $contact->fetch($cid);
-
-					if ($result < 0) {
-						dol_print_error($db, $contact->error);
+					if (empty($conf->cache['contact'][$histo[$key]['contact_id']])) {
+						$contact = new Contact($db);
+						$contact->fetch($cid);
+						$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
+					} else {
+						$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
 					}
 
-					if ($result > 0) {
+					if ($contact) {
 						$contactList .= !empty($contactList) ? ', ' : '';
 						$contactList .= $contact->getNomUrl(1);
 						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
@@ -12850,11 +12975,12 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 				$footer .= $langs->trans('ActionOnContact').' : '.$contactList;
 			} elseif (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0) {
-				$contact = new Contact($db);
-				$result = $contact->fetch($histo[$key]['contact_id']);
-
-				if ($result < 0) {
-					dol_print_error($db, $contact->error);
+				if (empty($conf->cache['contact'][$histo[$key]['contact_id']])) {
+					$contact = new Contact($db);
+					$result = $contact->fetch($histo[$key]['contact_id']);
+					$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
+				} else {
+					$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
 				}
 
 				if ($result > 0) {

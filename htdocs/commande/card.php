@@ -1988,7 +1988,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey("Currency", 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code')?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
+		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
 
@@ -2872,41 +2872,39 @@ if ($action == 'create' && $usercancreate) {
 				if (empty($user->socid)) {
 					if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 						} else {
-							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER['PHP_SELF']. '#', '', false);
 						}
 					}
 				}
 
 				// Valid
-				if ($object->statut == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || !empty($conf->global->ORDER_ENABLE_NEGATIVE)) && $numlines > 0 && $usercanvalidate) {
-					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, '');
+				if ($object->statut == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || !empty($conf->global->ORDER_ENABLE_NEGATIVE)) && $usercanvalidate) {
+					if ($numlines > 0) {
+						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, $object->id, 1);
+					} else {
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, $object->id, 0);
+					}
 				}
 				// Edit
 				if ($object->statut == Commande::STATUS_VALIDATED && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
-				// Create event
-				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
-				{
-					// Add hidden condition because this is not a
-					// "workflow" action so should appears somewhere else on
-					// page.
-					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
-				}*/
+
+				$arrayforbutaction = array();
 
 				// Create a purchase order
-				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_SALE_ORDER)) {
-					if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
-						if ($usercancreatepurchaseorder) {
-							print dolGetButtonAction('', $langs->trans('AddPurchaseOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
-						}
+				$arrayforbutaction[] = array('lang'=>'orders', 'enabled'=>(isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0), 'perm'=>$usercancreatepurchaseorder, 'label'=>'AddPurchaseOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+				/*if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0) {
+					if ($usercancreatepurchaseorder) {
+						print dolGetButtonAction('', $langs->trans('AddPurchaseOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id, '');
 					}
-				}
+				}*/
 
 				// Create intervention
-				if (isModEnabled('ficheinter')) {
+				$arrayforbutaction[] = array('lang'=>'interventions', 'enabled'=>(isModEnabled("ficheinter") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0), 'perm'=>$user->hasRight('ficheinter', 'creer'), 'label'=>'AddIntervention', 'url'=>'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
+				/*if (isModEnabled('ficheinter')) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
@@ -2916,55 +2914,72 @@ if ($action == 'create' && $usercancreate) {
 							print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 						}
 					}
-				}
+				}*/
 
 				// Create contract
-				if (isModEnabled('contrat') && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
+				$arrayforbutaction[] = array('lang'=>'contracts', 'enabled'=>(isModEnabled("contrat") && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)), 'perm'=>$user->hasRight('contrat', 'creer'), 'label'=>'AddContract', 'url'=>'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
+				/*if (isModEnabled('contrat') && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
 
 					if ($user->hasRight('contrat', 'creer')) {
 						print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
 					}
-				}
+				}*/
 
-				// Ship
 				$numshipping = 0;
 				if (isModEnabled('expedition')) {
 					$numshipping = $object->countNbOfShipments();
+				}
 
-					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-						if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
-							if ($user->hasRight('expedition', 'creer')) {
-								print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
-							} else {
-								print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
-							}
+				// Create shipment
+				if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+					if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
+						$arrayforbutaction[] = array('lang'=>'sendings', 'enabled'=>(isModEnabled("expedition") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))), 'perm'=>$user->hasRight('expedition', 'creer'), 'label'=>'CreateShipment', 'url'=>'/expedition/shipment.php?id='.$object->id);
+						/*
+						if ($user->hasRight('expedition', 'creer')) {
+							print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
 						} else {
-							$langs->load("errors");
-							print dolGetButtonAction($langs->trans('ErrorModuleSetupNotComplete'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
-						}
+							print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+						}*/
+					} else {
+						$langs->load("errors");
+						print dolGetButtonAction($langs->trans('ErrorModuleSetupNotComplete'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 					}
+				}
+
+				// Create bill
+				$arrayforbutaction[] = array('lang'=>'bills', 'enabled'=>(isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0), 'perm'=>($user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)), 'label'=>'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
+				/*
+				 if (isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
+				 if (isModEnabled('facture') && $user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+				 print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
+				 }
+				 }*/
+
+				if ($numlines > 0) {
+					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, $object->id, 1);
+				} else {
+					print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans("Create"), 'default', $arrayforbutaction, $object->id, 0);
 				}
 
 				// Set to shipped
 				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS) && $usercanclose) {
 					print dolGetButtonAction('', $langs->trans('ClassifyShipped'), 'default', $_SERVER["PHP_SELF"].'?action=shipped&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
-				// Create bill and Classify billed
+
+				// Set billed or unbilled
 				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
 				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
-					if (isModEnabled('facture') && $user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
-						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
-					}
 					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
 				if ($object->statut > Commande::STATUS_DRAFT && $object->billed) {
 					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
-						print dolGetButtonAction('', $langs->trans('ClassifyUnBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifyunbilled&amp;token='.newToken().'&amp;id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('ClassifyUnBilled'), 'delete', $_SERVER["PHP_SELF"].'?action=classifyunbilled&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
+
 				// Clone
 				if ($usercancreate) {
 					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&amp;token='.newToken().'&amp;id='.$object->id.'&amp;socid='.$object->socid, '');

@@ -1231,7 +1231,7 @@ class FormOther
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
-					$label = $label.' <span class="fa fa-bar-chart"></span>';
+					$label = $label.' <span class="fas fa-chart-bar"></span>';
 				}
 				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}

@@ -697,14 +697,14 @@ class Expedition extends CommonObject
 	 */
 	public function valid($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid");
 
 		// Protection
-		if ($this->statut) {
+		if ($this->status) {
 			dol_syslog(get_class($this)."::valid not in draft status", LOG_WARNING);
 			return 0;
 		}

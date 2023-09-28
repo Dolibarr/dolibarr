@@ -2090,7 +2090,8 @@ abstract class CommonObject
 	/**
 	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
-	 *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here.
+	 *      @param	string	$filter		Optional SQL filter. Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here.
+	 *      							Use SQL and not Universal Search Filter. @TODO Replace this with an USF string after changing all ->next_prev_filter
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
 	 *      @return int         		<0 if KO, >0 if OK
@@ -2155,7 +2156,7 @@ abstract class CommonObject
 		}
 		if (!empty($filter)) {
 			if (!preg_match('/^\s*AND/i', $filter)) {
-				$sql .= " AND "; // For backward compatibility
+				$sql .= " AND ";
 			}
 			$sql .= $filter;
 		}
@@ -9458,7 +9459,7 @@ abstract class CommonObject
 
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
-			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
+			if (key_exists('ref', $this->fields) && key_exists('notnull', $this->fields['ref']) && $this->fields['ref']['notnull'] > 0 && key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
