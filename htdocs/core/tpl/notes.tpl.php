@@ -123,7 +123,7 @@ print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sen
 print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
 print '</div>'."\n";
 print '</div>'."\n";
-if (empty($user->socid)) {
+if (empty($user->socid)&& empty($user->fk_member)) {
 	// Private notes (always hidden to external users)
 	print '<div class="tagtr table-border-row">'."\n";
 	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
