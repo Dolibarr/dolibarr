@@ -18,7 +18,7 @@ if (!$res && file_exists('../../../../../../main.inc.php')) $res = @include '../
 if (!$res) die('Include of main fails');
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
-dol_include_once('/webportal/public/lib/webportal.lib.php');
+dol_include_once('/public/webportal/lib/webportal.lib.php');
 dol_include_once('/webportal/class/context.class.php');
 dol_include_once('/webportal/class/webportalmember.class.php');
 dol_include_once('/webportal/class/webportalpartnership.class.php');

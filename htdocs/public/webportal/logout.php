@@ -35,8 +35,13 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 $res = 0;
-if (!$res && file_exists('../webportal.main.inc.php')) $res = @include '../webportal.main.inc.php';                // to work if your module directory is into dolibarr root htdocs directory
-if (!$res) die('Include of main fails');
+if (!$res && file_exists('./webportal.main.inc.php')) $res = @include './webportal.main.inc.php';                // to work if your module directory is into dolibarr root htdocs directory
+if (!$res) die('Include of WebPortal main fails');
+
+global $db;
+
+/** @var Context $context */
+$context = Context::getInstance();
 
 // Destroy session
 dol_syslog("End of session " . session_id());

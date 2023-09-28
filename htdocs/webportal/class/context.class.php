@@ -115,7 +115,7 @@ class Context
 
 		$this->topMenu = new stdClass();
 
-		$this->tplPath = realpath(__DIR__ . '/../public/tpl');
+		$this->tplPath = realpath(__DIR__ . '/../../public/webportal/tpl');
 
 		$this->controller = GETPOST('controller', 'aZ09'); // for security, limited to 'aZ09'
 		$this->action = GETPOST('action', 'aZ09');// for security, limited to 'aZ09'
@@ -241,7 +241,7 @@ class Context
 				$rootUrl .= '/';
 			}
 		} else {
-			$rootUrl = dol_buildpath('/webportal/public/', 2);
+			$rootUrl = dol_buildpath('/public/webportal/', 2);
 		}
 
 		return $rootUrl;

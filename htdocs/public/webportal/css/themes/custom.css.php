@@ -38,7 +38,7 @@ header("X-Frame-Options: SAMEORIGIN");
 } */
 
 
-require_once __DIR__ . '/../../class/webPortalTheme.class.php';
+require_once __DIR__ . '/../../../class/webPortalTheme.class.php';
 $webPortalTheme = new WebPortalTheme();
 
 ?>

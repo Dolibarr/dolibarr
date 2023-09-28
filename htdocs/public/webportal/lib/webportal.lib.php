@@ -1,7 +1,7 @@
 <?php
 
 /**
- * \file        htdocs/webportal/public/lib/webportal.lib.php
+ * \file        htdocs/public/webportal/lib/webportal.lib.php
  * \ingroup     webportal
  * \brief       Lib for public access of WebPortal
  */
