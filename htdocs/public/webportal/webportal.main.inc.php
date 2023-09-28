@@ -215,5 +215,3 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		}
 	}
 }
-
-
