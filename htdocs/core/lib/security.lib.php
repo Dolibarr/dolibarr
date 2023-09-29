@@ -822,7 +822,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 
 		if ($feature == 'payment_sc') {
-			$feature = "chargesociales";
+			$feature = "charges";
 		}
 		$checkonentitydone = 0;
 
