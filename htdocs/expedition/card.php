@@ -1850,7 +1850,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
@@ -1877,7 +1877,7 @@ if ($action == 'create') {
 
 	// Delivery date planned
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
 
@@ -2008,7 +2008,7 @@ if ($action == 'create') {
 
 	// Sending method
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('SendingMethod');
 	print '</td>';
 

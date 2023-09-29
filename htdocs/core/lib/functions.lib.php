@@ -3407,7 +3407,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  * 	@param 	int		$cid 		    Id of contact if known
  * 	@param 	int		$socid          Id of third party if known
  * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set), 'tel'=Force "tel:..." link
- * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx. You can also use 'hidenum' to hide the number, keep only the picto.
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
@@ -3613,11 +3613,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
+
+	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
-			$newphoneform = $newphone;
-			$newphone = '<a href="tel:'.$phone.'"';
-			$newphone .= '>'.$newphoneform.'</a>';
+			$newphoneastart = '<a href="tel:'.$phone.'">';
+			$newphoneaend .= '</a>';
 		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
 				$user->fetch_clicktodial();
@@ -3640,33 +3641,33 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 								'__LOGIN__'=>$clicktodial_login,
 								'__PASS__'=>$clicktodial_password);
 			$url = make_substitutions($url, $substitarray);
-			$newphonesav = $newphone;
 			if (empty($conf->global->CLICKTODIAL_DO_NOT_USE_AJAX_CALL)) {
 				// Default and recommended: New method using ajax without submiting a page making a javascript history.go(-1) back
-				$newphone = '<a href="'.$url.'" class="cssforclicktodial"';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
-				$newphone .= '>'.$newphonesav.'</a>';
+				$newphoneastart = '<a href="'.$url.'" class="cssforclicktodial">';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
+				$newphoneaend = '</a>';
 			} else {
 				// Old method
-				$newphone = '<a href="'.$url.'"';
+				$newphoneastart = '<a href="'.$url.'"';
 				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-					$newphone .= ' target="_blank" rel="noopener noreferrer"';
+					$newphoneastart .= ' target="_blank" rel="noopener noreferrer"';
 				}
-				$newphone .= '>'.$newphonesav.'</a>';
+				$newphoneastart .= '>';
+				$newphoneaend .= '</a>';
 			}
 		}
 
 		//if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
-			$link = '';
+			$addlinktoagenda = '';
 			if ($addlink == 'AC_FAX') {
 				$type = 'AC_FAX';
 			}
 			if (!empty($conf->global->AGENDA_ADDACTIONFORPHONE)) {
-				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage='. urlencode($_SERVER['REQUEST_URI']) .'&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$addlinktoagenda = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage='. urlencode($_SERVER['REQUEST_URI']) .'&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
-			if ($link) {
-				$newphone = '<div>'.$newphone.' '.$link.'</div>';
+			if ($addlinktoagenda) {
+				$newphone = '<span>'.$newphone.' '.$addlinktoagenda.'</span>';
 			}
 		}
 	}
@@ -3699,7 +3700,14 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (empty($adddivfloat)) {
 			$rep .= '<span style="margin-right: 10px;">';
 		}
-		$rep .= ($withpicto ?img_picto($titlealt, 'object_'.$picto.'.png').' ' : '').$newphone;
+
+		$rep .= $newphoneastart;
+		$rep .= ($withpicto ? img_picto($titlealt, 'object_'.$picto.'.png') : '');
+		if ($separ != 'hidenum') {
+			$rep .= ' '.$newphone;
+		}
+		$rep .= $newphoneaend;
+
 		if ($adddivfloat == 1) {
 			$rep .= '</div>';
 		} elseif (empty($adddivfloat)) {
@@ -4293,7 +4301,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
-			$fa = 'fas';
+			$fa = getDolGlobalString('MAIN_FONTAWESOME_ICON_STYLE', 'fas');
 			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}

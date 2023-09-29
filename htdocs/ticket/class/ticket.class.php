@@ -1276,7 +1276,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::load_cache_type_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1316,7 +1317,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
-		$sql .= " WHERE active > 0 AND entity = ".((int) $conf->entity);
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
+		$sql .= " AND active > 0";
 		if ($publicgroup > -1) {
 			$sql .= " AND public = ".((int) $publicgroup);
 		}
@@ -1368,7 +1370,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::loadCacheSeveritiesTickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2625,8 +2628,9 @@ class Ticket extends CommonObject
 						}
 
 						if (!empty($sendto)) {
-							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
+							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2674,8 +2678,8 @@ class Ticket extends CommonObject
 						$sendto = array();
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// Set default subject
-							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$appli = $label_title;
+							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
 							$subject = GETPOST('subject', 'alphanohtml') ? GETPOST('subject', 'alphanohtml') : '['.$appli.' - '.$langs->trans("Ticket").' #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
@@ -2755,8 +2759,8 @@ class Ticket extends CommonObject
 							$sendto = array();
 							if (is_array($external_contacts) && count($external_contacts) > 0) {
 								// Get default subject for email to external contacts
-								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-								$appli = $mysoc->name;
+								$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
 								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$appli.' - '.$langs->trans("Ticket").' #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO');

@@ -481,7 +481,9 @@ class Notify
 							$outputlangs->loadLangs(array("main", "other"));
 						}
 
-						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
+						$appli = $mysoc->name;
+
+						$subject = '['.$appli.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -771,7 +773,9 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
+				$appli = $mysoc->name;
+
+				$subject = '['.$appli.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':

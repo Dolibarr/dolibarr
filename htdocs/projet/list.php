@@ -1451,6 +1451,8 @@ while ($i < $imaxinloop) {
 	$companystatic->town = $obj->town;
 	$companystatic->country_code = $obj->country_code;
 
+	$object->thirdparty = $companystatic;
+
 	$stringassignedusers = '';
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
@@ -1494,7 +1496,7 @@ while ($i < $imaxinloop) {
 		}
 
 		$selected = in_array($object->id, $arrayofselected);
-		$arrayofdata = array('assignedusers' => $stringassignedusers, 'selected' => $selected);
+		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty'=>$companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
 

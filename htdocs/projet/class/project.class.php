@@ -2447,6 +2447,12 @@ class Project extends CommonObject
 			}
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
+			$return .= '</div><div class="inline-block valignmiddle">';
+			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone');
+			$return .='</div>';
+		}
 		if (!empty($arraydata['assignedusers'])) {
 			$return .= '<br>';
 			if ($this->public) {
@@ -2468,9 +2474,11 @@ class Project extends CommonObject
 			$return .= '<br><span class="info-box-label small">'.$langs->trans("OppStatus".$this->opp_status_code).'</span>';
 			$return .= ' <span class="opacitymedium small">('.round($this->opp_percent).'%)</span>';
 			$return .= '<br><span class="amount small">'.price($this->opp_amount).'</span>';
+		} else {
+			$return .= '<br>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status small">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status small marginleftonly inline-block">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
