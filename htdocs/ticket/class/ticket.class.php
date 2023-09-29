@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
+ * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -570,7 +571,18 @@ class Ticket extends CommonObject
 
 			if (!$error && !empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
 				// add creator as contributor
-				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
+
+				// We first check the type of contact (internal or external)
+				if (!empty($user->socid) && !empty($user->contact_id)) {
+					$contact_type = 'external';
+					$contributor_id = $user->contact_id;
+				} else {
+					$contact_type = 'internal';
+					$contributor_id = $user->id;
+				}
+
+				// We add the creator as contributor
+				if ($this->add_contact($contributor_id, 'CONTRIBUTOR', $contact_type) < 0) {
 					$error++;
 				}
 			}
