@@ -163,3 +163,8 @@ WarningSomeDirectDebitOrdersAlreadyExists=Warning: There is already some pending
 WarningSomeCreditTransferAlreadyExists=Warning: There is already some pending Credit Transfer (%s) requested for an amount of %s  
 UsedFor=Used for %s
 Societe_ribSigned=SEPA mandat Signed
+NbOfInvoiceToPayByBankTransferForSalaries=No. of qualified salaries waiting for a payment by credit transfer
+SalaryWaitingWithdraw=Salaries waiting for payment by credit transfer
+RefSalary=Salary
+SalaryInvoice=Salary invoice
+

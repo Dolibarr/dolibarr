@@ -775,4 +775,148 @@ class Salary extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+		// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
+	 *  Use the remain to pay excluding all existing open direct debit requests.
+	 *
+	 *	@param      User	$fuser      				User asking the direct debit transfer
+	 *  @param		float	$amount						Amount we request direct debit for
+	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
+	 */
+	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'salaire', $checkduplicateamongall = 0)
+	{
+		// phpcs:enable
+		global $conf;
+
+		$error = 0;
+
+		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+		if ($this->paye == 0) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			$bac = new CompanyBankAccount($this->db);
+			$bac->fetch(0, $this->socid);
+
+			$sql = "SELECT count(rowid) as nb";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
+			if ($type == 'salaire') {
+				$sql .= " WHERE fk_salary = ".((int) $this->id);
+			} else {
+				$sql .= " WHERE fk_facture = ".((int) $this->id);
+			}
+			$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
+			if (empty($checkduplicateamongall)) {
+				$sql .= " AND traite = 0";
+			}
+
+			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb == 0) {	// If no request found yet
+					$now = dol_now();
+
+					$totalpaid = $this->getSommePaiement();
+					// $totalcreditnotes = $this->getSumCreditNotesUsed();
+					// $totaldeposits = $this->getSumDepositsUsed();
+					//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+
+					// We can also use bcadd to avoid pb with floating points
+					// For example print 239.2 - 229.3 - 9.9; does not return 0.
+					//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					// if (empty($amount)) {
+					// 	$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+					// }
+
+					if (is_numeric($amount) && $amount != 0) {
+						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
+						if ($type == 'salaire') {
+							$sql .= 'fk_salary, ';
+						} else {
+							$sql .= 'fk_facture, ';
+						}
+						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
+						$sql .= " VALUES (".((int) $this->id);
+						$sql .= ", ".((float) price2num($amount));
+						$sql .= ", '".$this->db->idate($now)."'";
+						$sql .= ", ".((int) $fuser->id);
+						$sql .= ", '".$this->db->escape($bac->code_banque)."'";
+						$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
+						$sql .= ", '".$this->db->escape($bac->number)."'";
+						$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
+						$sql .= ", '".$this->db->escape($sourcetype)."'";
+						$sql .= ", 'ban'";
+						$sql .= ", ".((int) $conf->entity);
+						$sql .= ")";
+
+						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::demandeprelevement Erreur');
+							$error++;
+						}
+					} else {
+						$this->error = 'WithdrawRequestErrorNilAmount';
+						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
+						$error++;
+					}
+
+					if (!$error) {
+						// Force payment mode of invoice to withdraw
+						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+						if ($payment_mode_id > 0) {
+							$result = $this->setPaymentMethods($payment_mode_id);
+						}
+					}
+
+					if ($error) {
+						return -1;
+					}
+					return 1;
+				} else {
+					$this->error = "A request already exists";
+					dol_syslog(get_class($this).'::demandeprelevement Can t create a request to generate a direct debit, a request already exists.');
+					return 0;
+				}
+			} else {
+				$this->error = $this->db->error();
+				dol_syslog(get_class($this).'::demandeprelevement Error -2');
+				return -2;
+			}
+		} else {
+			$this->error = "Status of invoice does not allow this";
+			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->status, $this->paye, $this->mode_reglement_id");
+			return -3;
+		}
+	}
+
+		// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Remove a direct debit request or a credit transfer request
+	 *
+	 *  @param  User	$fuser      User making delete
+	 *  @param  int		$did        ID of request to delete
+	 *  @return	int					<0 if OK, >0 if KO
+	 */
+	public function demande_prelevement_delete($fuser, $did)
+	{
+		// phpcs:enable
+		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_demande';
+		$sql .= ' WHERE rowid = '.((int) $did);
+		$sql .= ' AND traite = 0';
+		if ($this->db->query($sql)) {
+			return 0;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
+			return -1;
+		}
+	}
 }

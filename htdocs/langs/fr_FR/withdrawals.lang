@@ -162,3 +162,7 @@ WarningSomeDirectDebitOrdersAlreadyExists=Attention : Il y a déjà des ordres 
 WarningSomeCreditTransferAlreadyExists=Attention : Il y a déjà des virements en attente (%s) demandés pour un montant de %s
 UsedFor=Utilisé pour %s
 Societe_ribSigned=SEPA mandat signé
+NbOfInvoiceToPayByBankTransferForSalaries=Nombre de salaires qualifiées en attente de paiement par virement
+SalaryWaitingWithdraw=salaire en attente de virement
+RefSalary=Salarié
+SalaryInvoice=Facture salarié

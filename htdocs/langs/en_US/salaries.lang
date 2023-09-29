@@ -25,3 +25,10 @@ SalariesAndPayments=Salaries and payments
 ConfirmDeleteSalaryPayment=Do you want to delete this salary payment ?
 FillFieldFirst=Fill employee field first
 UpdateAmountWithLastSalary=Set amount of last salary
+MakeTransferRequest=Make transfer request
+VirementOrder=Request virements
+BankTransferAmount=Amount of bank transfer
+WithdrawalReceipt=transfer order
+OrderWaiting=Order waiting
+
+

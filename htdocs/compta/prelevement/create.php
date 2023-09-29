@@ -52,7 +52,7 @@ $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
 $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-
+$sourcetype = GETPOST('sourcetype', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
@@ -101,13 +101,12 @@ if (empty($reshook)) {
 	}
 	if ($action == 'create') {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
-
+		$sourcetype = GETPOST('sourcetype', 'alpha');
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
 		if ($id_bankaccount != getDolGlobalInt($default_account)) {
 			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
-
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch(getDolGlobalInt($default_account));
@@ -115,6 +114,7 @@ if (empty($reshook)) {
 		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
 		) {*/
+
 		if (empty($bank->ics) && $type !== 'bank-transfer') {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
@@ -127,8 +127,12 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
-			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type);
-
+			if (GETPOSTISSET('sourcetype')) {
+				$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0, $sourcetype);
+			} else {
+				$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0);
+			}
+			//var_dump($result);exit;
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -203,20 +207,29 @@ if ($type == 'bank-transfer') {
 
 llxHeader('', $title);
 
+$head = bon_prelevement_prepare_head($bprev);
+
+print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
+
 print load_fiche_titre($title);
 
-print dol_get_fiche_head();
-
-$nb = $bprev->nbOfInvoiceToPay($type);
-$pricetowithdraw = $bprev->SommeAPrelever($type);
+if (!GETPOSTISSET('sourcetype')) {
+	$nb = $bprev->nbOfInvoiceToPay($type);
+	$pricetowithdraw = $bprev->SommeAPrelever($type);
+} else {
+	$nb = $bprev->nbOfInvoiceToPay($type, 'salary');
+	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');
+}
 if ($nb < 0) {
 	dol_print_error($bprev->error);
 }
 print '<table class="border centpercent tableforfield">';
 
 $labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
-if ($type == 'bank-transfer') {
+if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
 	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransfer");
+} else {
+	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransferForSalaries");
 }
 
 print '<tr><td class="titlefield">'.$labeltoshow.'</td>';
@@ -242,6 +255,8 @@ print '<div class="tabsAction">'."\n";
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
+
 if ($nb) {
 	if ($pricetowithdraw) {
 		$title = $langs->trans('BankToReceiveWithdraw').': ';
@@ -335,35 +350,40 @@ print '<br>';
 /*
  * Invoices waiting for withdraw
  */
-
-$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
-if ($type == 'bank-transfer') {
-	$sql .= " f.ref_supplier,";
-}
-$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount";
-if ($type == 'bank-transfer') {
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
+if (!GETPOSTISSET('sourcetype')) {
+	$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
+	if ($type == 'bank-transfer') {
+		$sql .= " f.ref_supplier,";
+	}
+	$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount";
+	if ($type == 'bank-transfer') {
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
+	} else {
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+	}
+	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " WHERE s.rowid = f.fk_soc";
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+	}
+	//$sql .= " AND pfd.amount > 0";
+	$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
+	if ($type == 'bank-transfer') {
+		$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+	} else {
+		$sql .= " AND pfd.fk_facture = f.rowid";
+	}
+	if ($socid > 0) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
 } else {
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
-}
-$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-$sql .= " WHERE s.rowid = f.fk_soc";
-$sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
-	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
-}
-//$sql .= " AND pfd.amount > 0";
-$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
-$sql .= " AND pfd.traite = 0";
-$sql .= " AND pfd.ext_payment_id IS NULL";
-if ($type == 'bank-transfer') {
-	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
-} else {
-	$sql .= " AND pfd.fk_facture = f.rowid";
-}
-if ($socid > 0) {
-	$sql .= " AND f.fk_soc = ".((int) $socid);
+	$sql = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ";
+	$sql .= MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0";
 }
 
 $nbtotalofrecords = '';
@@ -405,15 +425,19 @@ if ($resql) {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
 
-	$title = $langs->trans("InvoiceWaitingWithdraw");
-	if ($type == 'bank-transfer') {
+	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
 		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
+		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
+	} else {
+		$title = $langs->trans("SalaryWaitingWithdraw");
+		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, 'salary', 0, '', '', $limit);
 	}
-	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 
 	$tradinvoice = "Invoice";
-	if ($type == 'bank-transfer') {
+	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
 		$tradinvoice = "SupplierInvoice";
+	} else {
+		$tradinvoice = "SalaryInvoice";
 	}
 
 	print '<div class="div-table-responsive-no-min">';
@@ -426,12 +450,16 @@ if ($resql) {
 		}
 	}
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
-	if ($type == 'bank-transfer') {
+	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
 		print '<td>'.$langs->trans("RefSupplier").'</td>';
+	} else {
+		print '<td>'.$langs->trans("RefSalary").'</td>';
 	}
-	print '<td>'.$langs->trans("ThirdParty").'</td>';
+	if (!GETPOSTISSET('sourcetype')) {
+		print '<td>'.$langs->trans("ThirdParty").'</td>';
+	}
 	print '<td>'.$langs->trans("RIB").'</td>';
-	print '<td>'.$langs->trans("RUM").'</td>';
+	print (!GETPOSTISSET('sourcetype') ? '<td>'.$langs->trans("RUM").'</td>' : '');
 	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	// Action column
@@ -443,18 +471,28 @@ if ($resql) {
 	print '</tr>';
 
 	if ($num) {
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		if (!GETPOSTISSET('sourcetype')) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+		}
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
+			if (!GETPOSTISSET('sourcetype')) {
+				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
+				$bac->fetch(0, $obj->socid);
 
-			$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
-			$bac->fetch(0, $obj->socid);
-
-			$invoicestatic->id = $obj->rowid;
-			$invoicestatic->ref = $obj->ref;
-			$invoicestatic->ref_supplier = $obj->ref_supplier;
-
+				$invoicestatic->id = $obj->rowid;
+				$invoicestatic->ref = $obj->ref;
+				$invoicestatic->ref_supplier = $obj->ref_supplier;
+			} else {
+				$bac = new UserBankAccount($db);
+				$bac->fetch($obj->fk_user);
+				$salary = new Salary($db);
+				$salary->fetch($obj->fk_salary);
+			}
 			print '<tr class="oddeven">';
 
 			// Action column
@@ -472,21 +510,31 @@ if ($resql) {
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
-			print $invoicestatic->getNomUrl(1, 'withdraw');
+			if (!GETPOSTISSET('sourcetype')) {
+				print $invoicestatic->getNomUrl(1, 'withdraw');
+			} else {
+				print $salary->getNomUrl(1, 'withdraw');
+			}
 			print '</td>';
 
-			if ($type == 'bank-transfer') {
+			if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
 				print dol_escape_htmltag($invoicestatic->ref_supplier);
 				print '</td>';
 			}
 
 			// Thirdparty
-			print '<td class="tdoverflowmax100">';
-			$thirdpartystatic->fetch($obj->socid);
-			print $thirdpartystatic->getNomUrl(1, 'ban');
-			print '</td>';
-
+			if (!GETPOSTISSET('sourcetype')) {
+				print '<td class="tdoverflowmax100">';
+				$thirdpartystatic->fetch($obj->socid);
+				print $thirdpartystatic->getNomUrl(1, 'ban');
+				print '</td>';
+			} else {
+				print '<td class="tdoverflowmax100">';
+				$user->fetch($obj->fk_user);
+				print $user->getNomUrl(1);
+				print '</td>';
+			}
 			// RIB
 			print '<td>';
 			if ($bac->id > 0) {
@@ -504,20 +552,22 @@ if ($resql) {
 			print '</td>';
 
 			// RUM
-			print '<td>';
-			$rumtoshow = $thirdpartystatic->display_rib('rum');
-			if ($rumtoshow) {
-				print $rumtoshow;
-				$format = $thirdpartystatic->display_rib('format');
-				if ($type != 'bank-transfer') {
-					if ($format) {
-						print ' ('.$format.')';
+			if (!GETPOSTISSET('sourcetype')) {
+				print '<td>';
+				$rumtoshow = $thirdpartystatic->display_rib('rum');
+				if ($rumtoshow) {
+					print $rumtoshow;
+					$format = $thirdpartystatic->display_rib('format');
+					if ($type != 'bank-transfer') {
+						if ($format) {
+							print ' ('.$format.')';
+						}
 					}
+				} else {
+					print img_warning($langs->trans("NoBankAccountDefined"));
 				}
-			} else {
-				print img_warning($langs->trans("NoBankAccountDefined"));
+				print '</td>';
 			}
-			print '</td>';
 			// Amount
 			print '<td class="right amount">';
 			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);

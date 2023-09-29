@@ -63,6 +63,11 @@ function salaries_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("VirementOrder");
+	$head[$h][2] = 'request_virement';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'remove');

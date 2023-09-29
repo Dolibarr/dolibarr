@@ -104,3 +104,38 @@ function prelevement_check_config($type = 'direct-debit')
 	}
 	return 0;
 }
+
+	/**
+ *  Return array head with list of tabs to view object informations
+ *
+ *  @param	object	$object         Member
+ *  @return array           		head
+ */
+function bon_prelevement_prepare_head(BonPrelevement $object)
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer';
+	$head[$h][1] = $langs->trans("Invoices");
+	$head[$h][2] = 'invoice';
+	$h++;
+
+	// Salaries
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/prelevement/create.php?type=bank-transfer&sourcetype=salary";
+	$head[$h][1] = $langs->trans("Salaries");
+	$head[$h][2] = 'salary';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
+	return $head;
+}
