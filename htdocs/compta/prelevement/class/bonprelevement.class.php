@@ -968,7 +968,6 @@ class BonPrelevement extends CommonObject
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as ur ON s.fk_user = ur.fk_user ";
 				$sql .= " WHERE s.entity IN (".getEntity('salary').')';
 			}
-			var_dump($sql);exit;
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
