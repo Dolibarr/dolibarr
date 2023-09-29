@@ -3704,7 +3704,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		$rep .= $newphoneastart;
 		$rep .= ($withpicto ? img_picto($titlealt, 'object_'.$picto.'.png') : '');
 		if ($separ != 'hidenum') {
-			$rep .= ' '.$newphone;
+			$rep .= ($withpicto ? ' ' : '').$newphone;
 		}
 		$rep .= $newphoneaend;
 
