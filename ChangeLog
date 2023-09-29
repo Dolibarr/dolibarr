@@ -42,7 +42,7 @@ FIX: when adding new times on a survey, all hours would be erased.
 For uses:
 ---------
 
-NEW: PHP 8.2 compatibility (test not yet completed).
+NEW: PHP 8.2 compatibility (not yet complete).
 NEW: Module Workstations Management upgraded to stable status.
 NEW: Module Webhook upgraded to stable status
 NEW: #23436 Group social networks fields
