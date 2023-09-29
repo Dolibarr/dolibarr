@@ -643,6 +643,10 @@ $profid['IDPROF6'][0] = $langs->trans("ProfId6");
 $profid['IDPROF6'][1] = $langs->transcountry('ProfId6', $mysoc->country_code);
 $profid['EMAIL'][0] = $langs->trans("EMail");
 $profid['EMAIL'][1] = $langs->trans('Email');
+$profid['ACCOUNTANCY_CODE_CUSTOMER'][0] = $langs->trans("CustomerAccountancyCodeShort");
+$profid['ACCOUNTANCY_CODE_CUSTOMER'][1] = $langs->trans('CustomerAccountancyCodeShort');
+$profid['ACCOUNTANCY_CODE_SUPPLIER'][0] = $langs->trans("SupplierAccountancyCodeShort");
+$profid['ACCOUNTANCY_CODE_SUPPLIER'][1] = $langs->trans('SupplierAccountancyCodeShort');
 
 $nbofloop = count($profid);
 foreach ($profid as $key => $val) {
