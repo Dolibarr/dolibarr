@@ -2863,7 +2863,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->hasRight("user", "user", "read");
+			$genallowed = false;    // As far as I know, there is no user related document to generate
 			$delallowed = $user->hasRight("user", "user", "write");
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
