@@ -623,8 +623,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print '<span class="amount">';
-				if ($stock || (float) $objp->sellvalue) {
-					print price(price2num($objp->sellvalue, 'MT'), 1);
+				if ($stock || (float) ($stock * $objp->price)) {
+					print price(price2num($stock * $objp->price, 'MT'), 1);
 				}
 				print '</span>';
 				$totalsellingprice += $stock * $objp->price;
