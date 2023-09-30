@@ -621,7 +621,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			// Selling value
 			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($objp->sellvalue, 'MT'), 1);
+				print price(price2num($stock * $objp->price, 'MT'), 1);
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
 				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
