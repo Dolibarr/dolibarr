@@ -2264,7 +2264,7 @@ td.showDragHandle {
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
 	position: fixed;
-	top: 75px;
+	top: 45px;
 	<?php } ?>
 	z-index: 90;
 	-webkit-transform: translateZ(0);
@@ -3177,7 +3177,7 @@ div.login_block {
 	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
-	border-right: 1px solid rgba(0,0,0,0.2);
+	/* border-right: 1px solid rgba(0,0,0,0.2); */
 	<?php print $left; ?>: 0;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
@@ -3189,7 +3189,7 @@ div.login_block {
 	vertical-align: middle;
 	background: var(--colorbackvmenu1);
 	width: 228px;
-	height: 70px;
+	height: 68px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3197,7 +3197,6 @@ div.login_block {
 .sidebar-collapse div.login_block {
 	top: -1000px;
 }
-
 div.login_block a {
 	color: var(--colortexthmenu);
 	display: inline-block;
