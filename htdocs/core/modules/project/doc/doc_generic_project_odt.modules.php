@@ -1046,7 +1046,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					),
 				);
 
-				//Insert reference
+				// Insert list of objects into the project
 				try {
 					$listlines = $odfHandler->setSegment('projectrefs');
 
@@ -1122,6 +1122,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						$odfHandler->mergeSegment($listlines);
 					}
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// Do nothing
 				} catch (OdfException $e) {
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
