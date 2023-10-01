@@ -90,7 +90,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -371,7 +371,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROJECT_TASK_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';

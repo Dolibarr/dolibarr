@@ -91,7 +91,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "main"));
@@ -406,7 +406,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROJECT_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -438,7 +438,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalInt('PROJECT_ADDON_PDF_ODT_PATH');
+		$texte .= getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
