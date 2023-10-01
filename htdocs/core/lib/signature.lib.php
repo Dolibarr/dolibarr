@@ -77,7 +77,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 	$securekeyseed = '';
 
 	if ($type == 'proposal') {
-		$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
