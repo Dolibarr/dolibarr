@@ -5218,7 +5218,7 @@ abstract class CommonObject
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 * 	@param	CommonObjectLine	$line				Line
-	 * 	@param	string				$var				Var
+	 * 	@param	string				$var				Not used
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
 	 *  @param  array       		$selectedLines      Array of lines id for selected lines
