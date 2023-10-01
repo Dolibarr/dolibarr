@@ -567,13 +567,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print "<td class=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print "</td>";
 								} else {
 									print "<td class=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -582,7 +582,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->PROJECT_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -706,23 +706,23 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 									// Active
 									if (in_array($name, $def)) {
-										print "<td class=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deltask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=deltask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"), 'switch_on');
 										print '</a>';
 										print "</td>";
 									} else {
-										print "<td class=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=settask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 										print "</td>";
 									}
 
 									// Defaut
-									print "<td class=\"center\">";
+									print '<td class="center">';
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name") {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 									}
 									print '</td>';
 
