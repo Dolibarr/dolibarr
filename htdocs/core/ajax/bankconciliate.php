@@ -84,7 +84,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al = new AccountLine($db);
 	$al->dateo_next(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
-	var_dump($al);
+
 	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 
 	exit;
