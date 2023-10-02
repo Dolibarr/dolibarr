@@ -1087,7 +1087,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
 				$action = 'create';
-			} 
+			}
 
 			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
 				$selectedsubtype = GETPOST('subtype');
@@ -3712,11 +3712,11 @@ if ($action == 'create') {
         		</script>';
 	}
 
-	// Invoice Subtype 
+	// Invoice Subtype
 	if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE')) {
-	print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
-	print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
-	print '</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
+		print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
+		print '</td></tr>';
 	}
 
 	if ($socid > 0) {
