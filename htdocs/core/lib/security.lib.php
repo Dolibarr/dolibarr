@@ -190,12 +190,13 @@ function dolDecrypt($chain, $key = '')
 		$key = $conf->file->instance_unique_id;
 	}
 
+	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
-				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_ERR);
+				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
 				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
