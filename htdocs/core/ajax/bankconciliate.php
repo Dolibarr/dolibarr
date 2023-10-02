@@ -57,7 +57,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'dvnext') {
 	// Increase date
 	$al = new AccountLine($db);
 	$al->datev_next(GETPOST('rowid', 'int'));
@@ -68,7 +68,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvprev') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'dvprev') {
 	// Decrease date
 	$al = new AccountLine($db);
 	$al->datev_previous(GETPOST('rowid', 'int'));
@@ -79,7 +79,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'donext') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'donext') {
 	// Increase date
 	$al = new AccountLine($db);
 	$al->dateo_next(GETPOST('rowid', 'int'));
@@ -90,7 +90,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'doprev') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'doprev') {
 	// Decrease date
 	$al = new AccountLine($db);
 	$al->dateo_previous(GETPOST('rowid', 'int'));
