@@ -222,6 +222,16 @@ class Project extends CommonObject
 	public $weekWorkLoadPerTask; // Used to store workload details of tasks of a projet
 
 	/**
+	 * @var array Used to store workload details of a projet
+	 */
+	public $monthWorkLoad;
+
+	/**
+	 * @var array Used to store workload details of tasks of a projet
+	 */
+	public $monthWorkLoadPerTask;
+
+	/**
 	 * @var int Creation date
 	 * @deprecated
 	 * @see $date_c
@@ -244,6 +254,11 @@ class Project extends CommonObject
 	 * @var int Modification date
 	 */
 	public $date_m;
+
+	/**
+	 * @var string Ip address
+	 */
+	public $ip;
 
 	/**
 	 * @var Task[]
@@ -790,8 +805,8 @@ class Project extends CommonObject
 			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'element_time') {	// Case we want to duplicate line foreach user
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
-		} elseif ($type == 'stock_mouvement') {
-			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
+		} elseif ($type == 'stocktransfer_stocktransfer') {
+			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize($ids).")";
 		} else {
@@ -1440,7 +1455,7 @@ class Project extends CommonObject
 		$this->date_start = $now;
 		$this->date_end = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->fk_ele = 20000;
+		$this->fk_element = 20000;
 		$this->opp_amount = 20000;
 		$this->budget_amount = 10000;
 
@@ -1928,7 +1943,7 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif (in_array($tableName, ["entrepot","mrp_mo"])) {
+		} elseif (in_array($tableName, ["entrepot","mrp_mo","stocktransfer_stocktransfer"])) {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		} else {
@@ -2432,6 +2447,12 @@ class Project extends CommonObject
 			}
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
+			$return .= '</div><div class="inline-block valignmiddle">';
+			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone');
+			$return .='</div>';
+		}
 		if (!empty($arraydata['assignedusers'])) {
 			$return .= '<br>';
 			if ($this->public) {
@@ -2453,9 +2474,11 @@ class Project extends CommonObject
 			$return .= '<br><span class="info-box-label small">'.$langs->trans("OppStatus".$this->opp_status_code).'</span>';
 			$return .= ' <span class="opacitymedium small">('.round($this->opp_percent).'%)</span>';
 			$return .= '<br><span class="amount small">'.price($this->opp_amount).'</span>';
+		} else {
+			$return .= '<br>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status small">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status small marginleftonly inline-block">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
