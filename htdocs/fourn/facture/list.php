@@ -508,7 +508,7 @@ if ($search_type != '' && $search_type >= 0) {
 }
 if ($search_subtype != '') {
 	$param .= '&search_subtype='.urlencode($search_subtype);
-	}
+}
 if ($search_project) {
 	$sql .= natural_search('p.ref', $search_project);
 }
