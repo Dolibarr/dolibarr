@@ -163,7 +163,6 @@ class modApi extends DolibarrModules
 			'langs'=>'modulebuilder',
 			'position'=>100,
 			'perms'=>'1',
-			//'enabled'=>'isModEnabled("api") && preg_match(\'/^(devtools)/\',$leftmenu)',
 			'enabled'=>'isModEnabled("api")',
 			'target'=>'_apiexplorer',
 			'user'=>0);

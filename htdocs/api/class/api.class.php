@@ -95,6 +95,29 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
+	 * Filter properties that will be returned on object
+	 *
+	 * @param   Object  $object			Object to clean
+	 * @param   String  $properties		Comma separated list of properties names
+	 * @return	Object					Object with cleaned properties
+	 */
+	protected function _filterObjectProperties($object, $properties)
+	{
+		// If properties is empty, we return all properties
+		if (empty($properties)) {
+			return $object;
+		}
+		// Else we filter properties
+		foreach (get_object_vars($object) as $key => $value) {
+			if (!in_array($key, explode(',', $properties))) {
+				unset($object->$key);
+			}
+		}
+		return $object;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object		Object to clean

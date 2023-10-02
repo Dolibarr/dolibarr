@@ -299,25 +299,24 @@ class Target extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
-		if (!$error) {
-			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
-				$error++;
-			}
-		}
+		// if (!$error) {
+		// 	// copy internal contacts
+		// 	if ($this->copy_linked_contact($object, 'internal') < 0) {
+		// 		$error++;
+		// 	}
+		// }
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
+		// if (!$error) {
+		// 	// copy external contacts if same company
+		// 	if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+		// 		if ($this->copy_linked_contact($object, 'external') < 0) {
+		// 			$error++;
+		// 		}
+		// 	}
+		// }
 
 		unset($object->context['createfromclone']);
 
@@ -715,7 +714,7 @@ class Target extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -927,47 +926,38 @@ class Target extends CommonObject
 	{
 		global $langs, $conf;
 
-		if (empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$conf->global->WEBHOOK_TARGET_ADDON = 'mod_target_standard';
+		$mybool = false;
+
+		$classname = getDolGlobalString('WEBHOOK_TARGET_ADDON', 'mod_target_standard');
+		$file = $classname.".php";
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/webhook/");
+
+			// Load file with numbering class (if found)
+			$mybool |= @include_once $dir.$file;
 		}
 
-		if (!empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$mybool = false;
+		if ($mybool === false) {
+			dol_print_error('', "Failed to include file ".$file);
+			return '';
+		}
 
-			$file = $conf->global->WEBHOOK_TARGET_ADDON.".php";
-			$classname = $conf->global->WEBHOOK_TARGET_ADDON;
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			$numref = $obj->getNextValue($this);
 
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/webhook/");
-
-				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
-			}
-
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
 			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
 		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
+			print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
 			return "";
 		}
 	}

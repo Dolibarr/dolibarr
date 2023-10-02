@@ -70,6 +70,8 @@ class Conf
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
+	public $email_from;
+
 	//! Used to store current menu handler
 	public $standard_menu;
 	// List of activated modules
@@ -138,6 +140,7 @@ class Conf
 	public $agenda;
 	public $commande;
 	public $propal;
+	public $order;
 	/**
 	 * @deprecated Use invoice
 	 */
@@ -284,7 +287,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -712,6 +714,10 @@ class Conf
 			// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
 			if (empty($this->global->ACCOUNTING_MODE)) {
 				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+			}
+
+			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
 			}
 
 			// By default, suppliers objects can be linked to all projects

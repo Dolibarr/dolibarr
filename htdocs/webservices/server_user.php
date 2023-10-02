@@ -436,7 +436,7 @@ function getListOfGroups($authentication)
 		$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-		if (isModEnabled('multicompany') && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+		if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 			$sql .= " WHERE g.entity IS NOT NULL";
 		} else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -709,7 +709,7 @@ function setUserPassword($authentication, $shortuser)
 			$res = $userstat->fetch('', $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
-				if (is_numeric($res) && $res < 0) {
+				if (is_int($res) && $res < 0) {
 					$error++;
 					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				} else {

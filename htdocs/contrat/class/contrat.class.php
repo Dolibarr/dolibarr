@@ -113,6 +113,14 @@ class Contrat extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * Client id linked to the contract
+	 * @var int
+	 * @deprecated Use $socid
+	 */
+	public $fk_soc;
+
+
 	public $societe; // Objet societe
 
 	/**
@@ -485,7 +493,7 @@ class Contrat extends CommonObject
 	public function validate(User $user, $force_number = '', $notrigger = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		global $langs, $conf;
+		global $conf;
 
 		$now = dol_now();
 
@@ -499,7 +507,7 @@ class Contrat extends CommonObject
 
 		// A contract is validated so we can move thirdparty to status customer
 		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION)) {
-			$result = $this->thirdparty->set_as_client();
+			$result = $this->thirdparty->setAsCustomer();
 		}
 
 		// Define new ref
@@ -602,7 +610,6 @@ class Contrat extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		global $langs, $conf;
 
 		$now = dol_now();
 
@@ -662,7 +669,7 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
-		$sql = "SELECT rowid, statut as status, ref, fk_soc,";
+		$sql = "SELECT rowid, statut as status, ref, fk_soc as thirdpartyid,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
 		$sql .= " entity,";
@@ -724,8 +731,8 @@ class Contrat extends CommonObject
 					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
 
-					$this->socid = $obj->fk_soc;
-					$this->fk_soc = $obj->fk_soc;
+					$this->socid = $obj->thirdpartyid;
+					$this->fk_soc = $obj->thirdpartyid;
 					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 
@@ -775,8 +782,6 @@ class Contrat extends CommonObject
 	public function fetch_lines($only_services = 0, $loadalsotranslation = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->nbofservices = 0;
 		$this->nbofserviceswait = 0;
 		$this->nbofservicesopened = 0;
@@ -1097,7 +1102,6 @@ class Contrat extends CommonObject
 								continue; // ignore this, already forced previously
 							}
 
-							//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
 							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 						}
 					} else {
@@ -1309,7 +1313,7 @@ class Contrat extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 
 		// Clean parameters
@@ -1319,8 +1323,8 @@ class Contrat extends CommonObject
 		if (empty($this->fk_commercial_suivi) && $this->commercial_suivi_id > 0) {
 			$this->fk_commercial_suivi = $this->commercial_suivi_id;
 		}
-		if (empty($this->fk_soc) && $this->socid > 0) {
-			$this->fk_soc = (int) $this->socid;
+		if (empty($this->socid) && $this->fk_soc > 0) {
+			$this->socid = (int) $this->fk_soc;
 		}
 		if (empty($this->fk_project) && $this->projet > 0) {
 			$this->fk_project = (int) $this->projet;
@@ -1344,8 +1348,11 @@ class Contrat extends CommonObject
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
 		}
-		if (isset($this->fk_soc)) {
-			$this->fk_soc = (int) $this->fk_soc;
+		if (isset($this->status)) {
+			$this->status = (int) $this->status;
+		}
+		if (isset($this->socid)) {
+			$this->socid = (int) $this->socid;
 		}
 		if (isset($this->fk_commercial_signature)) {
 			$this->fk_commercial_signature = trim($this->fk_commercial_signature);
@@ -1375,8 +1382,8 @@ class Contrat extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".$conf->entity.",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
-		$sql .= " statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " fk_soc=".($this->fk_soc > 0 ? $this->fk_soc : "null").",";
+		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
+		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
 		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
 		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
@@ -1555,7 +1562,7 @@ class Contrat extends CommonObject
 
 
 			// if buy price not defined, define buyprice as configured in margin admin
-			if ($this->pa_ht == 0) {
+			if ($pa_ht == 0) {
 				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0) {
 					return $result;
 				} else {
@@ -2073,9 +2080,9 @@ class Contrat extends CommonObject
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -2112,7 +2119,7 @@ class Contrat extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($this->ref ? $this->ref : $this->id);

@@ -111,8 +111,8 @@ function dolGetRandomBytes($length)
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
- *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$chain		String to encode
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
@@ -144,6 +144,10 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 	$newchain = $chain;
 
 	if (function_exists('openssl_encrypt') && empty($dolibarr_disable_dolcrypt_for_debug)) {
+		if (empty($key)) {
+			return $chain;
+		}
+
 		$ivlen = 16;
 		if (function_exists('openssl_cipher_iv_length')) {
 			$ivlen = openssl_cipher_iv_length($ciphering);
@@ -191,7 +195,8 @@ function dolDecrypt($chain, $key = '')
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
-				return 'Error dolDecrypt decrypt key is empty';
+				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_ERR);
+				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
@@ -200,7 +205,8 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
-			$newchain = 'Error dolDecrypt function openssl_decrypt() not available';
+			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
+			return $chain;
 		}
 		return $newchain;
 	} else {
@@ -371,7 +377,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	print ", perm: user->right->".$features.($feature2 ? "->".$feature2 : "")."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	print ", perm: user->hasRight(".$features.($feature2 ? ",".$feature2 : "").", lire) = ".($feature2 ? $user->hasRight($features, $feature2, 'lire') : $user->hasRight($features, 'lire'))."<br>";
 	*/
 
 	$parentfortableentity = '';
@@ -388,6 +394,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	if ($features == 'facturerec') {
 		$features = 'facture';
+	}
+	if ($features == 'supplier_invoicerec') {
+		$features = 'fournisseur';
+		$feature2 = 'facture';
 	}
 	if ($features == 'mo') {
 		$features = 'mrp';
@@ -430,19 +440,21 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
-	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
+	if (!empty($hookmanager)) {
+		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
-	if (isset($hookmanager->resArray['result'])) {
-		if ($hookmanager->resArray['result'] == 0) {
-			if ($mode) {
-				return 0;
-			} else {
-				accessforbidden(); // Module returns 0, so access forbidden
+		if (isset($hookmanager->resArray['result'])) {
+			if ($hookmanager->resArray['result'] == 0) {
+				if ($mode) {
+					return 0;
+				} else {
+					accessforbidden(); // Module returns 0, so access forbidden
+				}
 			}
 		}
-	}
-	if ($reshook > 0) {		// No other test done.
-		return 1;
+		if ($reshook > 0) {		// No other test done.
+			return 1;
+		}
 	}
 
 	// Features/modules to check

@@ -44,6 +44,66 @@ abstract class CommonInvoice extends CommonObject
 	public $subtype;
 
 	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;
+
+	public $paye;
+
+	/**
+	 * Invoice date (date)
+	 *
+	 * @var integer
+	 */
+	public $date;
+
+	public $cond_reglement_id; // Id in llx_c_paiement
+	public $cond_reglement_code; // Code in llx_c_paiement
+	public $cond_reglement_label;
+	public $cond_reglement_doc; // Code in llx_c_paiement
+
+	public $mode_reglement_id;
+	public $mode_reglement_code; // Code in llx_c_paiement
+
+	public $totalpaid;			// duplicate with sumpayed
+	public $totaldeposits;		// duplicate with sumdeposit
+	public $totalcreditnotes;	// duplicate with sumcreditnote
+
+	public $sumpayed;
+	public $sumpayed_multicurrency;
+	public $sumdeposit;
+	public $sumdeposit_multicurrency;
+	public $sumcreditnote;
+	public $sumcreditnote_multicurrency;
+	public $remaintopay;
+
+	// Multicurrency
+	/**
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
+	public $close_code;
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
+	public $close_note;
+
+
+	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;
@@ -102,18 +162,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
-
-	public $totalpaid;			// duplicate with sumpayed
-	public $totaldeposits;		// duplicate with sumdeposit
-	public $totalcreditnotes;	// duplicate with sumcreditnote
-
-	public $sumpayed;
-	public $sumpayed_multicurrency;
-	public $sumdeposit;
-	public $sumdeposit_multicurrency;
-	public $sumcreditnote;
-	public $sumcreditnote_multicurrency;
-	public $remaintopay;
 
 
 	/**
@@ -335,9 +383,10 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return list of payments
 	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
 	 *  @return     array					Array with list of payments
 	 */
-	public function getListOfPayments($filtertype = '')
+	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
 		$retarray = array();
 

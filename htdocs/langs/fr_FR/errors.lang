@@ -318,9 +318,11 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Erreur : L'URL de vot
 ErrorMenuExistValue=Un menu existe déjà avec ce titre ou cette URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Les fichiers SVG ne sont pas autorisés en tant que liens externes sans l'option %s
 ErrorTypeMenu=Impossible d'ajouter un autre menu pour le même module sur la barre de navigation, pas encore géré
+ErrorObjectNotFound=L'objet <b>%s</b> est introuvable verifier votre url 
 ErrorTableExist=La table <b>%s</b> existe déja
 ErrorDictionaryNotFound=Le dictionnaire <b>%s</b> introuvable
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s
+
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -363,6 +365,7 @@ WarningModuleNeedRefrech = Le module <b>%s</b> a été désactivé. N'oubliez pa
 WarningPermissionAlreadyExist=Autorisations existantes pour cet objet
 WarningGoOnAccountancySetupToAddAccounts=Si cette liste est vide, allez dans le menu %s - %s - %s pour charger ou créer des comptes pour votre plan comptable.
 WarningCorrectedInvoiceNotFound=Facture corrigée introuvable
+WarningCommentNotFound=Verifier l'emplacement des commentaires debut et fin pour la section <b>%s</b> dans le fichier <b>%s</b> avant de soumettre votre action
 
 SwissQrOnlyVIR = La facture SwissQR ne peut être ajoutée que sur les factures définies pour être payées avec des paiements par virement.
 SwissQrCreditorAddressInvalid = L'adresse du créancier n'est pas valide (le code postal et la ville sont-ils définis ? (%s)

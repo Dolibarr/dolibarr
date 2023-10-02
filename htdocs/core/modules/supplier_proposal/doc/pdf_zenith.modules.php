@@ -1446,7 +1446,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	Object			$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
@@ -1468,24 +1468,6 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			'align' => 'C', // R,C,L
 			'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		);
-
-		/*
-		 * For exemple
-		 $this->cols['theColKey'] = array(
-		 'rank' => $rank, // int : use for ordering columns
-		 'width' => 20, // the column width in mm
-		 'title' => array(
-		 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
-		 'label' => ' ', // the final label : used fore final generated text
-		 'align' => 'L', // text alignement :  R,C,L
-		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-		 ),
-		 'content' => array(
-		 'align' => 'L', // text alignement :  R,C,L
-		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-		 ),
-		 );
-		 */
 
 		$rank = 0; // do not use negative rank
 		$this->cols['desc'] = array(
