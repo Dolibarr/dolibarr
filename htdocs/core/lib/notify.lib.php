@@ -26,21 +26,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 /**
  * Send the notification email
  *
- * @param	string			$notifCode		Notification code
- * @param	string			$targetType		Target type (tocontactid or touserid)
- * @param	string			$to				Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
- * @param	string			$from			Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
- * @param	CommonObject	$object			Related object
- * @param	string			$newRef			Related object new reference
- * @param	string			$companyName	Company name
- * @param	string			$urlWithRoot	URL with root
- * @param	Translate		$outputLangs	Object langs for output
- * @param	int				$actionId		Action Trigger ID
- * @param	string			$type			Type
- * @param	string			$email			Raw e-mail address(es)
- * @param	?int			$contactId		Contact ID
- * @param 	string			$addr_cc		Email cc (Example: 'abc@def.com, ghk@lmn.com')
- * @param 	string			$addr_bcc		Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
+ * @param	string			$notifCode			Notification code
+ * @param	string			$targetType			Target type (tocontactid or touserid)
+ * @param	string			$to					Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
+ * @param	string			$from				Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
+ * @param	CommonObject	$object				Related object
+ * @param	string			$newRef				Related object new reference
+ * @param	string			$companyName		Company name
+ * @param	string			$urlWithRoot		URL with root
+ * @param	Translate		$outputLangs		Object langs for output
+ * @param	int				$actionId			Action Trigger ID
+ * @param	string			$type				Type
+ * @param	string			$email				Raw e-mail address(es)
+ * @param 	array			$filename_list		List of files to attach (full path of filename on file system)
+ * @param 	array			$mimetype_list		List of MIME type of attached files
+ * @param 	array			$mimefilename_list	List of attached file name in message
+ * @param	?int			$contactId			Contact ID
+ * @param 	string			$addr_cc			Email cc (Example: 'abc@def.com, ghk@lmn.com')
+ * @param 	string			$addr_bcc			Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
  *
  * @return string The error message
  */
@@ -57,6 +60,9 @@ function notify_sendMail(
 	int				$actionId,
 	string			$type,
 	string			$email,
+	array			$filename_list = [],
+	array			$mimetype_list = [],
+	array			$mimefilename_list = [],
 	?int			$contactId = null,
 	string			$addr_cc = '',
 	string			$addr_bcc = ''
