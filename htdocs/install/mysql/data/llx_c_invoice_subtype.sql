@@ -32,6 +32,8 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '2.4', 'Τιμολόγιο Παροχής / Συμπληρωματικό Παραστατικό', 0);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '3.1', 'Τίτλος Κτήσης (μη υπόχρεος Εκδότης)', 0);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '3.2', 'Τίτλος Κτήσης (άρνηση έκδοσης από υπόχρεο Εκδότη)', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.1', 'Πιστωτικό Τιμολόγιο / Συσχετιζόμενο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '6.1', 'Στοιχείο Αυτοπαράδοσης', 0);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '6.2', 'Στοιχείο Ιδιοχρησιμοποίησης', 0);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '7.1', 'Συμβόλαιο - Έσοδο', 0);
@@ -40,4 +42,5 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.1', 'ΑΛΠ', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.2', 'ΑΠΥ', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.3', 'Απλοποιημένο Τιμολόγιο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχείο Λιανικής', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.5', 'Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων', 0);

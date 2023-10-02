@@ -74,6 +74,7 @@ $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
 $search_ref = GETPOST('sf_ref') ?GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
 $search_type = GETPOST('search_type', 'int');
+$search_subtype = GETPOST('search_subtype', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -169,6 +170,7 @@ $arrayfields = array(
 	'f.ref'=>array('label'=>"Ref", 'checked'=>1),
 	'f.ref_supplier'=>array('label'=>"RefSupplier", 'checked'=>1),
 	'f.type'=>array('label'=>"Type", 'checked'=>0),
+	'f.subtype'=>array('label'=>"InvoiceSubtype", 'checked'=>0,),
 	'f.label'=>array('label'=>"Label", 'checked'=>0),
 	'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1),
@@ -252,6 +254,7 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_refsupplier = "";
 		$search_type = "";
+		$search_subtype = '';
 		$search_label = "";
 		$search_project = '';
 		$search_company = "";
@@ -407,7 +410,7 @@ $sql = "SELECT";
 if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
+$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -503,6 +506,9 @@ if ($search_type != '' && $search_type >= 0) {
 	//if ($search_type == '4') $sql.=" AND f.type = 4";  // proforma
 	//if ($search_type == '5') $sql.=" AND f.type = 5";  // situation
 }
+if ($search_subtype != '') {
+	$param .= '&search_subtype='.urlencode($search_subtype);
+	}
 if ($search_project) {
 	$sql .= natural_search('p.ref', $search_project);
 }
@@ -672,7 +678,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 if (!$search_all) {
-	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement, f.fk_mode_reglement, f.fk_cond_reglement,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement, f.fk_mode_reglement, f.fk_cond_reglement,";
 	$sql .= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql .= " f.localtax1, f.localtax2,";
 	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
@@ -1043,6 +1049,12 @@ if (!empty($arrayfields['f.type']['checked'])) {
 	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
 	print '</td>';
 }
+// Invoice Subtype
+if (!empty($arrayfields['f.subtype']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone">';
+	print '<input class="flat maxwidth50imp" type="text" name="search_subtype" value="'.dol_escape_htmltag($search_subtype).'">';
+	print '</td>';
+}
 // Label
 if (!empty($arrayfields['f.label']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1268,6 +1280,9 @@ if (!empty($arrayfields['f.type']['checked'])) {
 	print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.subtype']['checked'])) {
+	print_liste_field_titre($arrayfields['f.subtype']['label'], $_SERVER["PHP_SELF"], 'f.subtype', '', $param, '', $sortfield, $sortorder);
+}
 if (!empty($arrayfields['f.label']['checked'])) {
 	print_liste_field_titre($arrayfields['f.label']['label'], $_SERVER['PHP_SELF'], "f.libelle,f.rowid", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1454,6 +1469,7 @@ while ($i < $imaxinloop) {
 	$facturestatic->id = $obj->facid;
 	$facturestatic->ref = $obj->ref;
 	$facturestatic->type = $obj->type;
+	$facturestatic->subtype = $obj->subtype;
 	$facturestatic->ref_supplier = $obj->ref_supplier;
 	$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 	$facturestatic->statut = $obj->fk_statut;
@@ -1578,6 +1594,16 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['f.type']['checked'])) {
 			print '<td class="nowrap">';
 			print $facturestatic->getLibType();
+			print "</td>";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Invoice Subtype
+		if (!empty($arrayfields['f.subtype']['checked'])) {
+			print '<td class="nowraponall tdoverflowmax300">';
+			print $facturestatic->getSubtypeLabel('facture_fourn');
 			print "</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;

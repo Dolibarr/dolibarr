@@ -16,6 +16,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -1083,12 +1083,28 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			} 
+
+			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
+				$selectedsubtype = GETPOST('subtype');
+				if (!in_array($selectedsubtype, array('5.1', '5.2', '11.4'))) {
+					$error++;
+					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				if (!empty($originentity)) {
 					$object->entity = $originentity;
 				}
 				$object->socid = GETPOST('socid', 'int');
 				$object->ref = GETPOST('ref');
+				$object->subtype = GETPOST('subtype');
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
@@ -1300,9 +1316,25 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
+			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
+				$selectedsubtype = GETPOST('subtype');
+				if (in_array($selectedsubtype, array('5.1', '5.2', '11.4'))) {
+					$error++;
+					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				$object->socid = GETPOST('socid', 'int');
 				$object->type            = GETPOST('type');
+				$object->subtype         = GETPOST('subtype');
 				$object->ref             = GETPOST('ref');
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
@@ -1379,10 +1411,26 @@ if (empty($reshook)) {
 				}
 			}
 
+			if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
+			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
+				$selectedsubtype = GETPOST('subtype');
+				if (in_array($selectedsubtype, array('5.1', '5.2', '11.4'))) {
+					$error++;
+					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				// Si facture standard
 				$object->socid = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
+				$object->subtype         = GETPOST('subtype');
 				$object->ref = GETPOST('ref');
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
@@ -3366,12 +3414,12 @@ if ($action == 'create') {
 				jQuery("#typedeposit").change(function() {
 					console.log("We change type of down payment");
 					jQuery("#radio_deposit").prop("checked", true);
-					setRadioForTypeOfIncoice();
+					setRadioForTypeOfInvoice();
 				});
     			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_creditnote, #radio_template").change(function() {
-					setRadioForTypeOfIncoice();
+					setRadioForTypeOfInvoice();
 				});
-				function setRadioForTypeOfIncoice() {
+				function setRadioForTypeOfInvoice() {
 					console.log("Change radio");
 					if (jQuery("#radio_deposit").prop("checked") && (jQuery("#typedeposit").val() == \'amount\' || jQuery("#typedeposit").val() == \'variable\')) {
 						jQuery(".checkforselect").prop("disabled", true);
@@ -3664,8 +3712,12 @@ if ($action == 'create') {
         		</script>';
 	}
 
-
+	// Invoice Subtype 
+	if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE')) {
+	print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
+	print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
 	print '</td></tr>';
+	}
 
 	if ($socid > 0) {
 		// Discounts for third party
@@ -4439,6 +4491,7 @@ if ($action == 'create') {
 	// Type
 	print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
 	print $object->getLibType(2);
+	print $object->getSubtypeLabel('facture');
 	if ($object->module_source) {
 		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.dol_escape_htmltag(ucfirst($object->module_source)).' - '.$langs->trans("Terminal").' '.dol_escape_htmltag($object->pos_source).')</span>';
 	}

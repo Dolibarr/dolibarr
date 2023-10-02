@@ -33,7 +33,7 @@ create table llx_facture
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice
-  subtype				smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
+  subtype				varchar(5) DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc				integer            NOT NULL,
 
   datec					datetime,								-- date de creation de la facture

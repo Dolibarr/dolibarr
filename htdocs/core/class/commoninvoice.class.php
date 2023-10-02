@@ -2,6 +2,7 @@
 /* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ abstract class CommonInvoice extends CommonObject
 	public $type = self::TYPE_STANDARD;
 
 	/**
-	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
+	 * @var string		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
 	 */
 	public $subtype;
 
@@ -636,7 +637,39 @@ abstract class CommonInvoice extends CommonObject
 		}
 		return $out;
 	}
+	
+	/**
+	 *	Return label of invoice subtype
+	 *
+	 *  @param string $table The table name ('facture' or 'facture_fourn')
+	 *	@return     string        				Label of invoice subtype
+	 */
+	public function getSubtypeLabel() 
+	{
+		if ($table === 'facture' || $table === 'facture_fourn') {
+			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.code";
+			$sql .= " WHERE f.ref = '" . $this->ref . "'";
 
+			$resql = $this->db->query($sql);
+
+			if ($resql) {
+				$subtypeLabel = '';
+
+				while ($obj = $this->db->fetch_object($resql)) {
+					$subtypeLabel = $obj->label;
+				}
+
+				if (!empty($subtypeLabel)) {
+                	print ' ' . ' ' . $subtypeLabel;	
+				}
+			} else {
+            	dol_print_error($this->db);
+            	return -1;
+			}
+		}
+	}
+		
 	/**
 	 *  Return label of object status
 	 *

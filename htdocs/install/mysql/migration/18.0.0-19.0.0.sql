@@ -120,4 +120,12 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
 -- VPGSQL8.2 DROP INDEX uk_links;
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
+ALTER TABLE llx_facture MODIFY COLUMN subtype varchar(5) DEFAULT NULL;
 
+ALTER TABLE llx_facture_fourn ADD COLUMN subtype varchar(5) DEFAULT NULL;
+
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(5) NOT NULL;
+
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.1', 'Πιστωτικό Τιμολόγιο / Συσχετιζόμενο', 0);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
+insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);

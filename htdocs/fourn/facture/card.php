@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -818,12 +819,27 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
+			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
+				$selectedsubtype = GETPOST('subtype');
+				if (!in_array($selectedsubtype, array('5.1', '5.2', '11.4'))) {
+					$error++;
+					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
+					$action = 'create';
+				}
+			}
 			if (!$error) {
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
+				$object->subtype = GETPOST('subtype', 'alphanohtml');
 				$object->socid				= GETPOST('socid', 'int');
 				$object->libelle = GETPOST('label', 'alphanohtml');
 				$object->label				= GETPOST('label', 'alphanohtml');
@@ -916,9 +932,25 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
+			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
+				$selectedsubtype = GETPOST('subtype');
+				if (in_array($selectedsubtype, array('5.1', '5.2', '11.4'))) {
+					$error++;
+					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				$object->socid = GETPOST('socid', 'int');
 				$object->type            = GETPOST('type', 'alphanohtml');
+				$object->subtype         = GETPOST('subtype', 'alphanohtml');
 				$object->ref             = GETPOST('ref', 'alphanohtml');
 				$object->date            = $dateinvoice;
 				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
@@ -972,12 +1004,28 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
+			if ($mysoc->country_code == 'GR' && getDolGlobalInt('ENABLE_INVOICE_SUBTYPE') && GETPOSTISSET('subtype')) {
+				$selectedsubtype = GETPOST('subtype');
+				if (in_array($selectedsubtype, array('5.1', '5.2', '11.4'))) {
+					$error++;
+					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
+					$action = 'create';
+				}
+			}
+
 			if (!$error) {
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation invoice
 				$object->socid				= GETPOST('socid', 'int');
 				$object->type				= GETPOST('type', 'alphanohtml');
+				$object->subtype            = GETPOST('subtype', 'alphanohtml');
 				$object->ref				= GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier		= GETPOST('ref_supplier', 'alphanohtml');
 				$object->socid				= GETPOST('socid', 'int');
@@ -2540,6 +2588,13 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	// Invoice Subtype 
+	if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE')) {
+	print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
+	print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
+	print '</td></tr>';
+	}
+
 	// Label
 	print '<tr><td>'.$langs->trans('Label').'</td><td><input class="minwidth200" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
 
@@ -3089,6 +3144,7 @@ if ($action == 'create') {
 		print '<span class="badgeneutral">';
 		print $object->getLibType();
 		print '</span>';
+		print $object->getSubtypeLabel('facture_fourn');
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
