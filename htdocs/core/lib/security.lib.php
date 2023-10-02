@@ -205,7 +205,7 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
-			dol_syslog("Error dolDecrypt decrypt key is empty", LOG_ERR);
+			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
 			return $chain;
 		}
 		return $newchain;
