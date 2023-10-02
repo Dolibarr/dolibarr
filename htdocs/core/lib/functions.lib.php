@@ -10000,7 +10000,10 @@ function printCommonFooter($zone = 'private')
 								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
 							// If we submit the cancel button we remove the required attributes
-							print 'jQuery("input[name=\'cancel\']").click(function() {jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});});'."\n";
+							print 'jQuery("input[name=\'cancel\']").click(function() {
+								console.log("We click on cancel button so removed all required attribute");
+								jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});
+								});'."\n";
 						}
 					}
 				}
