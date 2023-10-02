@@ -1370,8 +1370,7 @@ class Contrat extends CommonObject
 		}
 		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
-		// Check parameters
-		// Put here code to add a control on parameters values
+		// $this->oldcopy should have been set by the caller of update
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
@@ -1400,7 +1399,7 @@ class Contrat extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->insertExtraFields();
+			$result = $this->insertExtraFields();	// This delete and reinsert extrafields
 			if ($result < 0) {
 				$error++;
 			}
