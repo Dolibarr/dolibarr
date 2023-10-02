@@ -637,14 +637,14 @@ abstract class CommonInvoice extends CommonObject
 		}
 		return $out;
 	}
-	
+
 	/**
 	 *	Return label of invoice subtype
 	 *
-	 *  @param string $table The table name ('facture' or 'facture_fourn')
+	 *  @param      string       $table         The table name ('facture' or 'facture_fourn')
 	 *	@return     string        				Label of invoice subtype
 	 */
-	public function getSubtypeLabel() 
+	public function getSubtypeLabel()
 	{
 		if ($table === 'facture' || $table === 'facture_fourn') {
 			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
@@ -661,15 +661,15 @@ abstract class CommonInvoice extends CommonObject
 				}
 
 				if (!empty($subtypeLabel)) {
-                	print ' ' . ' ' . $subtypeLabel;	
+					print '  ' . $subtypeLabel;
 				}
 			} else {
-            	dol_print_error($this->db);
-            	return -1;
+				dol_print_error($this->db);
+				return -1;
 			}
 		}
 	}
-		
+
 	/**
 	 *  Return label of object status
 	 *
