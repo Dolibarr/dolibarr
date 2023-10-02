@@ -182,7 +182,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Si ajout champ produit predefini
 	if (GETPOST('mode') == 'predefined') {
 		$date_start = '';
 		$date_end = '';
@@ -897,7 +896,7 @@ if (empty($reshook)) {
 		if ($ret < 0) {
 			$error++;
 		}
-
+		var_dump($object);exit;
 		if (!$error) {
 			$result = $object->insertExtraFields('CONTRACT_MODIFY');
 			if ($result < 0) {

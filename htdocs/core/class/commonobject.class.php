@@ -481,11 +481,6 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
-	 * @var string		Open ID
-	 */
-	public $openid;
-
-	/**
 	 * @var string 		Public note
 	 * @see update_note()
 	 */
@@ -2979,7 +2974,6 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->model_pdf = $modelpdf;
-			$this->modelpdf = $modelpdf; // For bakward compatibility
 			return 1;
 		} else {
 			dol_print_error($this->db);
