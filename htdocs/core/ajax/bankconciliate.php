@@ -63,7 +63,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->datev_next(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($db->jdate($al->datev), "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
 
 	exit;
 }
@@ -74,7 +74,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->datev_previous(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($db->jdate($al->datev), "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
 
 	exit;
 }
@@ -84,8 +84,8 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al = new AccountLine($db);
 	$al->dateo_next(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
-
-	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
+	var_dump($al);
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 
 	exit;
 }
@@ -96,7 +96,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->dateo_previous(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 
 	exit;
 }
