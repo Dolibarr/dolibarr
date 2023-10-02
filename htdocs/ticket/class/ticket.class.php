@@ -573,7 +573,7 @@ class Ticket extends CommonObject
 				// add creator as contributor
 
 				// We first check the type of contact (internal or external)
-				if (!empty($user->socid) && !empty($user->contact_id)) {
+				if (!empty($user->socid) && !empty($user->contact_id) && $conf->global->TICKET_ADD_AUTHOR_AS_CONTACT == 2) {
 					$contact_type = 'external';
 					$contributor_id = $user->contact_id;
 				} else {
