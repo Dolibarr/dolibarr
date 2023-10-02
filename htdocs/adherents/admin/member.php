@@ -51,6 +51,7 @@ $scandir = GETPOST('scandir', 'alpha');
 $type = 'member';
 
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
 
 
 /*
