@@ -753,7 +753,7 @@ class Notify
 				if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) {
 					continue;
 				}
-				
+
 				$sendto = $val;
 
 				$threshold = (float) $reg[1];
