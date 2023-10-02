@@ -2588,11 +2588,11 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	// Invoice Subtype 
+	// Invoice Subtype
 	if (getDolGlobalInt('ENABLE_INVOICE_SUBTYPE')) {
-	print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
-	print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
-	print '</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
+		print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
+		print '</td></tr>';
 	}
 
 	// Label
