@@ -3307,7 +3307,6 @@ class ContratLigne extends CommonObjectLine
 				$this->statut = $obj->statut;
 				$this->product_ref = $obj->product_ref;
 				$this->product_label = $obj->product_label;
-				$this->product_description = $obj->product_description;
 				$this->product_type = $obj->product_type;
 				$this->label = $obj->label; // deprecated. We do not use this field. Only ref and label of product, and description of contract line
 				$this->description = $obj->description;
