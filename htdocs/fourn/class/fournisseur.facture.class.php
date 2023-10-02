@@ -1148,7 +1148,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->subtype)) {
 			$this->subtype = trim($this->subtype);
-		}			
+		}
 		if (isset($this->socid)) {
 			$this->socid = trim($this->socid);
 		}
