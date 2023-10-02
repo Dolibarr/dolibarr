@@ -641,7 +641,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Return label of invoice subtype
 	 *
-	 *  @param      string       $table         The table name ('facture' or 'facture_fourn')
+	 *  
 	 *	@return     string        				Label of invoice subtype
 	 */
 	public function getSubtypeLabel()
