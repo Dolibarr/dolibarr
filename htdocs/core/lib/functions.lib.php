@@ -9999,6 +9999,11 @@ function printCommonFooter($zone = 'private')
 								// Add 'field required' class on closest td for all input elements : input, textarea and select
 								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
+							// If we submit the cancel button we remove the required attributes
+							print 'jQuery("input[name=\'cancel\']").click(function() {
+								console.log("We click on cancel button so removed all required attribute");
+								jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});
+								});'."\n";
 						}
 					}
 				}
