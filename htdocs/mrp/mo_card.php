@@ -474,8 +474,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
+		$numberofmochilds = count($object->getAllMoChilds());
+
+		if ($numberofmochilds > 0)$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
+		else $label = $langs->trans("DeleteMoChild");
+
 		$formquestion = array(
-			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $langs->trans("DeleteMoChild", strval(count($object->getAllMoChilds()))), 'value' => 0),
+			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $label, 'value' => 0),
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', $formquestion, 0, 1);
 	}
