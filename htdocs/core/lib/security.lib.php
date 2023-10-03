@@ -187,7 +187,11 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 
 	//var_dump('key='.$key);
