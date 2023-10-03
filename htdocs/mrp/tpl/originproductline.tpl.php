@@ -61,6 +61,8 @@ if ($res) {
 print '</td>';
 // Qty
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
+// Unit
+print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
 print '<td class="center">'.(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
 if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
 	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
@@ -136,6 +138,9 @@ if ($resql) {
 		} else {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		}
+
+        // Unit
+        print '<td class="linecolunit nowrap right" id="sub_bom_unit_'.$sub_bom_line->id.'">'.measuringUnitString($sub_bom_line->fk_unit,'','',1).'</td>';
 
 		// Stock réel
 		if ($sub_bom_product->stock_reel > 0) {

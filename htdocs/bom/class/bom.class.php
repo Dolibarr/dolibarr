@@ -780,7 +780,8 @@ class BOM extends CommonObject
 			$line->efficiency = $efficiency;
 			$line->import_key = $import_key;
 			$line->position = $rankToUse;
-			if (!empty($fk_unit)) {
+
+            if (!empty($fk_unit)) {
 				$line->fk_unit = $fk_unit;
 			}
 

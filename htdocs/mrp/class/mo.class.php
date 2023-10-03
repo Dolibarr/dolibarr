@@ -734,6 +734,7 @@ class Mo extends CommonObject
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
 							$moline->origin_type = 'bomline';
+                            if(!empty($line->fk_unit)) $moline->fk_unit = $line->fk_unit;
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
@@ -1523,11 +1524,14 @@ class Mo extends CommonObject
 		print '</td>';
 		// Qty
 		print '<td class="right">'.$langs->trans('Qty');
-		if ($this->bom->bomtype == 0) {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
-		} else {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
-		}
+        if ($this->bom->bomtype == 0) {
+            print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
+        } else {
+            print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
+        }
+        // Unit
+		print '<td class="right">'.$langs->trans('Unit');
+
 		print '</td>';
 		print '<td class="center">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 		print '<td class="center">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
@@ -1597,6 +1601,7 @@ class Mo extends CommonObject
 		$this->tpl['seuil_stock_alerte'] = $productstatic->seuil_stock_alerte;
 		$this->tpl['virtual_stock'] = $productstatic->stock_theorique;
 		$this->tpl['qty'] = $line->qty;
+		$this->tpl['fk_unit'] = $line->fk_unit;
 		$this->tpl['qty_frozen'] = $line->qty_frozen;
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
 		$this->tpl['efficiency'] = $line->efficiency;
@@ -1780,7 +1785,8 @@ class MoLine extends CommonObjectLine
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
-		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>185)
+		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>185),
+		'fk_unit' =>array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>186)
 	);
 
 	public $rowid;
@@ -1804,6 +1810,7 @@ class MoLine extends CommonObjectLine
 	public $fk_user_modif;
 	public $import_key;
 	public $fk_parent_line;
+	public $fk_unit;
 
 	/**
 	 * @var int Service Workstation

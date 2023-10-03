@@ -177,6 +177,7 @@ if (empty($reshook)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+            if(empty($fk_unit)) $fk_unit = $product->fk_unit;
 		}
 
 		if ($qty == '') {

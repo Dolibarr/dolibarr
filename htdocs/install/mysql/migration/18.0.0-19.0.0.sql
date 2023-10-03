@@ -120,4 +120,6 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
 -- VPGSQL8.2 DROP INDEX uk_links;
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
-
+ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer NULL;
+UPDATE llx_mrp_production mp INNER JOIN llx_bom_bomline bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline';
+UPDATE llx_bom_bomline bbl INNER JOIN llx_product p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
