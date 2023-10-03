@@ -649,7 +649,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($table === 'facture' || $table === 'facture_fourn') {
 			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.code";
-			$sql .= " WHERE f.ref = '" . $this->ref . "'";
+			$sql .= " WHERE f.ref = \"$this->ref\"";
 
 			$resql = $this->db->query($sql);
 
