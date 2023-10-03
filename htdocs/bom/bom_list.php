@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -687,8 +688,17 @@ while ($i < $imaxinloop) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
+
+		// TODO Use a cache for product
+		if (!empty($obj->fk_product)) {
+			$prod = new Product($db);
+			$prod->fetch($obj->fk_product);
+		} else {
+			$prod = null;
+		}
+
 		// Output kanban
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('prod'=>$prod, 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
