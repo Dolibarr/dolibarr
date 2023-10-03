@@ -20,11 +20,12 @@
 /**
  * Return string with full online Url to accept and sign a quote
  *
- * @param   string	$type		Type of URL ('proposal', ...)
- * @param	string	$ref		Ref of object
+ * @param   string			$type		Type of URL ('proposal', ...)
+ * @param	string			$ref		Ref of object
+ * @param   CommonObject  	$obj  		object (needed to make multicompany good links)
  * @return	string				Url string
  */
-function showOnlineSignatureUrl($type, $ref)
+function showOnlineSignatureUrl($type, $ref, CommonObject $obj = null)
 {
 	global $conf, $langs;
 
@@ -34,7 +35,7 @@ function showOnlineSignatureUrl($type, $ref)
 	$servicename = 'Online';
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
-	$url = getOnlineSignatureUrl(0, $type, $ref);
+	$url = getOnlineSignatureUrl(0, $type, $ref, $obj);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
@@ -51,15 +52,25 @@ function showOnlineSignatureUrl($type, $ref)
 /**
  * Return string with full Url
  *
- * @param   int		$mode				0=True url, 1=Url formated with colors
- * @param   string	$type				Type of URL ('proposal', ...)
- * @param	string	$ref				Ref of object
- * @param   string  $localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   int				$mode				0=True url, 1=Url formated with colors
+ * @param   string			$type				Type of URL ('proposal', ...)
+ * @param	string			$ref				Ref of object
+ * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
  * @return	string						Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, CommonObject $obj = null)
 {
-	global $conf, $object, $dolibarr_main_url_root;
+	global $conf, $dolibarr_main_url_root;
+
+	if(null === $obj) {
+		//to be compatible with 15.0 -> 19.0
+		global $object;
+        if (!empty($object)) {
+			dol_syslog(__METHOD__." using global object is deprecated, please give obj as argument", LOG_WARNING);
+			$obj = $object;
+		}
+	}
 
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
@@ -90,7 +101,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($obj) ? '' : $obj->entity) : ''), '0');
 		}
 		/*
 		if ($mode == 1) {
@@ -165,7 +176,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
-		$out .= "&entity=".(is_null($object) ? '' : $object->entity); // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=".(is_null($obj) ? '' : $obj->entity); // Check the entity of object because we may have the same reference in several entities
 	}
 
 	return $out;
