@@ -960,7 +960,6 @@ class FactureFournisseur extends CommonInvoice
 				$this->note_private			= $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->import_key = $obj->import_key;
 
 				//Incoterms
@@ -2225,6 +2224,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->rang = $rang;
 			$supplierinvoiceline->info_bits = $info_bits;
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
+
 
 			$supplierinvoiceline->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;

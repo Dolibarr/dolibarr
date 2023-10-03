@@ -581,7 +581,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
-		$sql .= ', f.note_private, f.note_public, f.modelpdf';
+		$sql .= ', f.note_private, f.note_public, f.modelpdf as model_pdf';
 		$sql .= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ', f.usenewprice, f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.generate_pdf';
@@ -635,7 +635,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_lim_reglement       = $this->db->jdate($obj->date_lim_reglement);
 				$this->note_private             = $obj->note_private;
 				$this->note_public              = $obj->note_public;
-				$this->model_pdf                = $obj->modelpdf;
+				$this->model_pdf                = $obj->model_pdf;
 
 				// Multicurrency
 				$this->fk_multicurrency         = $obj->fk_multicurrency;

@@ -370,7 +370,9 @@ if (empty($reshook) && $action == 'add') {
 						$msg     = $arraydefaultmessage->content;
 					}
 					if (empty($labeltosue)) {
-						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+						$appli = $mysoc->name;
+
+						$labeltouse = '['.$appli.'] '.$langs->trans("YourMessage");
 						$msg = $langs->trans("YourMessageHasBeenReceived");
 					}
 
