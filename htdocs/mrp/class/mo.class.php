@@ -1660,6 +1660,43 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 * Function used to return all child MOs recursively
+	 *
+	 * @return Mo[]|int[]  array of MOs if OK, -1 if KO
+	 */
+	public function getAllMoChilds()
+	{
+		$TMoChilds = array();
+		$error = 0;
+
+		$childMoList = $this->getMoChilds();
+
+		if ($childMoList == -1) return -1;
+
+		foreach ($childMoList as $childMo) $TMoChilds[$childMo->id] = $childMo;
+
+		foreach ($childMoList as $childMo) {
+			$childMoChildren = $childMo->getAllMoChilds();
+
+			if ($childMoChildren == -1) {
+				$error++;
+			} else {
+				foreach ($childMoChildren as $child) {
+					$TMoChilds[$child->id] = $child;
+				}
+			}
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return $TMoChilds;
+		}
+	}
+
+
+
+	/**
 	 * Function used to return childs of Mo
 	 *
 	 * @return Mo|int			MO object if OK, -1 if KO, 0 if not exist
