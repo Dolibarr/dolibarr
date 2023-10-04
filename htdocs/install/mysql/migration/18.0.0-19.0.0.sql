@@ -122,6 +122,8 @@ ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
 ALTER TABLE llx_facture MODIFY COLUMN subtype varchar(5) DEFAULT NULL;
 
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
+
 ALTER TABLE llx_facture_fourn ADD COLUMN subtype varchar(5) DEFAULT NULL;
 
 ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(5) NOT NULL;

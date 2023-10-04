@@ -350,15 +350,20 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
+	$object->oldcopy = dol_clone($object);
+
+	$attribute = GETPOST('attribute', 'alphanohtml');
+
 	$error = 0;
 
-	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
 	if ($ret < 0) {
 		$error++;
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';

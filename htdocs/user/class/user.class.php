@@ -90,6 +90,11 @@ class User extends CommonObject
 
 	public $status;
 
+	/**
+	 * @var string		Open ID
+	 */
+	public $openid;
+
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
