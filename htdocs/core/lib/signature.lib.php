@@ -22,10 +22,10 @@
  *
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
- * @param   CommonObject  	$obj  		object (needed to make multicompany good links)
- * @return	string				Url string
+ * @param   Object  		$obj  		object (needed to make multicompany good links)
+ * @return	string						Url string
  */
-function showOnlineSignatureUrl($type, $ref, CommonObject $obj = null)
+function showOnlineSignatureUrl($type, $ref, $obj = null)
 {
 	global $conf, $langs;
 
@@ -56,10 +56,10 @@ function showOnlineSignatureUrl($type, $ref, CommonObject $obj = null)
  * @param   string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
  * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
- * @return	string						Url string
+ * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @return	string								Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, CommonObject $obj = null)
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
 	global $conf, $dolibarr_main_url_root;
 
@@ -67,7 +67,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, Co
 		// For compatibility with 15.0 -> 19.0
 		global $object;
         if (empty($object)) {
-            $obj = new CommonObject();
+            $obj = new stdClass();
         } else {
 			dol_syslog(__METHOD__." using global object is deprecated, please give obj as argument", LOG_WARNING);
 			$obj = $object;
