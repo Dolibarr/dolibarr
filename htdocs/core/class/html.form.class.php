@@ -2254,35 +2254,34 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return select list of users. Selected users are stored into session.
-	 *  List of users are provided into $_SESSION['assignedtouser'].
+	 * Return select list of users. Selected users are stored into session.
+	 * List of users are provided into $_SESSION['assignedtouser'].
 	 *
-	 * @param string $action Value for $action
-	 * @param string $htmlname Field name in form
-	 * @param int $show_empty 0=list without the empty value, 1=add empty value
-	 * @param array $exclude Array list of users id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param array $include Array list of users id to include or 'hierarchy' to have only supervised users
-	 * @param array $enableonly Array list of users id to be enabled. All other must be disabled
-	 * @param int $force_entity '0' or Ids of environment to force
-	 * @param int $maxlength Maximum length of string into list (0=no limit)
-	 * @param int $showstatus 0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 * @param string $morefilter Add more filters into sql request
-	 * @param int $showproperties Show properties of each attendees
-	 * @param array $listofuserid Array with properties of each user
-	 * @param array $listofcontactid Array with properties of each contact
-	 * @param array $listofotherid Array with properties of each other contact
+	 * @param string 	$action 			Value for $action
+	 * @param string 	$htmlname			Field name in form
+	 * @param int 		$show_empty 		0=list without the empty value, 1=add empty value
+	 * @param array 	$exclude 			Array list of users id to exclude
+	 * @param int 		$disabled 			If select list must be disabled
+	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
+	 * @param array 	$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param int 		$force_entity 		'0' or Ids of environment to force
+	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
+	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param string 	$morefilter 		Add more filters into sql request
+	 * @param int 		$showproperties 	Show properties of each attendees
+	 * @param array 	$listofuserid 		Array with properties of each user
+	 * @param array 	$listofcontactid 	Array with properties of each contact
+	 * @param array 	$listofotherid 		Array with properties of each other contact
 	 * @return    string                    HTML select string
 	 * @see select_dolgroups()
 	 */
 	public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $langs;
 
 		$userstatic = new User($this->db);
 		$out = '';
-
 
 		$assignedtouser = array();
 		if (!empty($_SESSION['assignedtouser'])) {
@@ -2347,6 +2346,94 @@ class Form
 		return $out;
 	}
 
+	/**
+	 * Return select list of resources. Selected resources are stored into session.
+	 * List of resources are provided into $_SESSION['assignedtoresource'].
+	 *
+	 * @param string 	$action 			Value for $action
+	 * @param string 	$htmlname			Field name in form
+	 * @param int 		$show_empty 		0=list without the empty value, 1=add empty value
+	 * @param array 	$exclude 			Array list of users id to exclude
+	 * @param int 		$disabled 			If select list must be disabled
+	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
+	 * @param array 	$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param int 		$force_entity 		'0' or Ids of environment to force
+	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
+	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param string 	$morefilter 		Add more filters into sql request
+	 * @param int 		$showproperties 	Show properties of each attendees
+	 * @param array 	$listofresourceid 	Array with properties of each resource
+	 * @return    string                    HTML select string
+	 */
+	public function select_dolresources_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofresourceid = array())
+	{
+		// phpcs:enable
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+		$formresources = new FormResource($this->db);
+		$resourcestatic = new DolResource($this->db);
+
+		$out = '';
+		$assignedtoresource = array();
+		if (!empty($_SESSION['assignedtoresource'])) {
+			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
+		}
+		$nbassignetoresource = count($assignedtoresource);
+
+		//if ($nbassignetoresource && $action != 'view') $out .= '<br>';
+		if ($nbassignetoresource) {
+			$out .= '<ul class="attendees">';
+		}
+		$i = 0;
+
+		foreach ($assignedtoresource as $key => $value) {
+			$out .= '<li>';
+			$resourcestatic->fetch($value['id']);
+			$out .= $resourcestatic->getNomUrl(-1);
+			if ($nbassignetoresource > 1 && $action != 'view') {
+				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $resourcestatic->id . '" class="removedassigned reposition" id="removedassignedresource_' . $resourcestatic->id . '" name="removedassignedresource_' . $resourcestatic->id . '">';
+			}
+			// Show my availability
+			if ($showproperties) {
+				if (is_array($listofresourceid) && count($listofresourceid)) {
+					$out .= '<div class="myavailability inline-block">';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparencyresource" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '</div>';
+				}
+			}
+			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
+			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
+
+			$out .= '</li>';
+			$i++;
+		}
+		if ($nbassignetoresource) {
+			$out .= '</ul>';
+		}
+
+		// Method with no ajax
+		if ($action != 'view') {
+			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassignedresource" value="">';
+			$out .= '<script nonce="' . getNonce() . '" type="text/javascript">jQuery(document).ready(function () {';
+			$out .= 'jQuery(".removedassignedresource").click(function() { jQuery(".removedassignedresourcehidden").val(jQuery(this).val()); });';
+			$out .= 'jQuery(".assignedtoresource").change(function() { console.log(jQuery(".assignedtoresource option:selected").val());';
+			$out .= ' if (jQuery(".assignedtoresource option:selected").val() > 0) { jQuery("#' . $action . 'assignedtoresource").attr("disabled", false); }';
+			$out .= ' else { jQuery("#' . $action . 'assignedtoresource").attr("disabled", true); }';
+			$out .= '});';
+			$out .= '})</script>';
+
+			$events = array();
+			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
+			$out .= $formresources->select_resource_list('', $htmlname, '', 1, 1, 0, $events, '', 2, null);
+			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
+			$out .= '<br>';
+		}
+
+		return $out;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
