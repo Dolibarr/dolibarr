@@ -113,17 +113,17 @@ class SupplierOrders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !empty($socids)) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur AS t LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
-		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		}
 
@@ -132,7 +132,7 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
-		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) || $search_sale > 0) {
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if (!empty($product_ids)) {
@@ -140,9 +140,6 @@ class SupplierOrders extends DolibarrApi
 		}
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
-		}
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 
 		// Filter by status
