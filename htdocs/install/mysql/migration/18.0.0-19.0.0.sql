@@ -122,3 +122,5 @@ ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
 ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 
+-- Force INVOICE_USE_SITUATION to value 2 if exist
+UPDATE llx_const SET value = 2 WHERE __DECRYPT('name')__ = 'INVOICE_USE_SITUATION' AND __DECRYPT('value')__ = '1';

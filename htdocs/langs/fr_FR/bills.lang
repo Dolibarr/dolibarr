@@ -641,3 +641,9 @@ MentionCategoryOfOperations=Catégorie d'opérations
 MentionCategoryOfOperations0=Livraison de marchandises
 MentionCategoryOfOperations1=Prestation de services
 MentionCategoryOfOperations2=Mixte - Livraison de biens & prestation de services
+SituationInvoiceProgressTotal=Progression totale
+SituationInvoiceProgressCurrent=Progression facture
+SituationInvoiceNewMethodAlert=Important:<br>- Si vous utilisiez les factures de situation avant d'activer cette méthode: Remettre la valeur 'Autoriser les factures de situation' sur Oui et utilisez le module <a href="https://github.com/progiseize/facture_situation_migration" target="_blank">FactureSituationMigration</a>.<br>- Si vous n'utilisiez pas les factures de situations avant, vous pouvez confirmer.
+SituationInvoiceNewMethodAlertMulticompany=(Toutes instances MultiCompany confondues)
+SituationInvoiceConfirmMigrationTitle=Êtes-vous sûr de vouloir confirmer la migration ?
+SituationInvoiceConfirmMigration=Le nouveau système de facture de situation necessite une migration des données si vous utilisiez déjà les factures de situation.<br><br>Confirmez vous l'avoir faite ou ne pas en avoir besoin ?
