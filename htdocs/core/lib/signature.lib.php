@@ -56,14 +56,14 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
  * @param   string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
  * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
- * @return	string						Url string
+ * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @return	string								Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, CommonObject $obj = null)
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
 	global $conf, $dolibarr_main_url_root;
 
-	if(null === $obj) {
+	if (empty($obj)) {
 		//to be compatible with 15.0 -> 19.0
 		global $object;
         if (empty($object)) {
