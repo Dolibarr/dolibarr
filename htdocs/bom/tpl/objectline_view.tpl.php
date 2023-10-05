@@ -128,7 +128,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
-		$label = measuringUnitString($line->fk_unit,'', '',1);
+		$label = measuringUnitString($line->fk_unit, '',  '', 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}

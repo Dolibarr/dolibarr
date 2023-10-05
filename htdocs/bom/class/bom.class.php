@@ -781,9 +781,8 @@ class BOM extends CommonObject
 			$line->import_key = $import_key;
 			$line->position = $rankToUse;
 
-            if (!empty($fk_unit)) {
-				$line->fk_unit = $fk_unit;
-			}
+            if (!empty($fk_unit)) $line->fk_unit = $fk_unit;
+
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options

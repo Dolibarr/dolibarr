@@ -129,7 +129,7 @@ if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
         $coldisplay++;
         print '<td class="nobottom nowrap linecolunit right">';
-        print  $formproduct->selectMeasuringUnits("fk_unit", '', ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
+        print  $formproduct->selectMeasuringUnits("fk_unit",  '',  (($line->fk_unit) ? $line->fk_unit : ''),  0,  0);
         print '</td>';
 	}
 
