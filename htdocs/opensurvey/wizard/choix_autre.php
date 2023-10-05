@@ -22,13 +22,16 @@
  *	\brief      Page to create a new survey (choice selection)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
-if (!$user->rights->opensurvey->write) accessforbidden();
+if (!$user->rights->opensurvey->write) {
+	accessforbidden();
+}
 
 
 
@@ -53,20 +56,16 @@ if (isset($_SESSION["nbrecases"])) {
 	$_SESSION["nbrecases"] = 5;
 }
 
-if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x"))
-{
+if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
 	$_SESSION["nbrecases"] = $_SESSION["nbrecases"] + 5;
 }
 
 // Create survey into database
-if (GETPOSTISSET("confirmecreation"))
-{
+if (GETPOSTISSET("confirmecreation")) {
 	//recuperation des données de champs textes
 	$toutchoix = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++)
-	{
-		if (!empty($arrayofchoices[$i]))
-		{
+	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++) {
+		if (!empty($arrayofchoices[$i])) {
 			$toutchoix .= ',';
 			$toutchoix .= str_replace(array(",", "@"), " ", $arrayofchoices[$i]).(empty($arrayoftypecolumn[$i]) ? '' : '@'.$arrayoftypecolumn[$i]);
 		}
@@ -77,10 +76,8 @@ if (GETPOSTISSET("confirmecreation"))
 
 	//test de remplissage des cases
 	$testremplissage = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++)
-	{
-		if (isset($arrayofchoices[$i]))
-		{
+	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
+		if (isset($arrayofchoices[$i])) {
 			$testremplissage = "ok";
 		}
 	}
@@ -107,8 +104,7 @@ $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss);
 
-if (empty($_SESSION['title']))
-{
+if (empty($_SESSION['title'])) {
 	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	llxFooter();
 	exit;

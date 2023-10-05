@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2004 Benoit Mortier      <benoit.mortier@opensides.be>
 -- Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2022 Juanjo Menent       <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,9 +20,9 @@
 
 create table llx_c_civility
 (
-  rowid       integer    PRIMARY KEY,
+  rowid       integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   code        varchar(6) NOT NULL,
-  label		  varchar(50),
+  label		  varchar(128),
   active      tinyint DEFAULT 1  NOT NULL,
   module      varchar(32) NULL
 )ENGINE=innodb;

@@ -10,10 +10,12 @@ namespace Stripe\ApiOperations;
 trait Create
 {
     /**
-     * @param array|null $params
-     * @param array|string|null $options
+     * @param null|array $params
+     * @param null|array|string $options
      *
-     * @return static The created resource.
+     * @throws \Stripe\Exception\ApiErrorException if the request fails
+     *
+     * @return static the created resource
      */
     public static function create($params = null, $options = null)
     {
@@ -23,6 +25,7 @@ trait Create
         list($response, $opts) = static::_staticRequest('post', $url, $params, $options);
         $obj = \Stripe\Util\Util::convertToStripeObject($response->json, $opts);
         $obj->setLastResponse($response);
+
         return $obj;
     }
 }

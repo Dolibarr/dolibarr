@@ -1,0 +1,9 @@
+PHPStan 
+
+https://phpstan.org 
+
+PHPStan requires PHP >= 7.1
+
+Install:  composer require --dev phpstan/phpstan
+
+Config File:  phpstan.neon

@@ -28,6 +28,7 @@
  */
 global $mysoc;
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -45,10 +46,16 @@ $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 
 // Security check
-if ($user->socid > 0) $socid = $user->socid;
-if (!empty($conf->comptabilite->enabled)) $result = restrictedArea($user, 'compta', '', '', 'resultat');
-if (!empty($conf->accounting->enabled)) $result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (isModEnabled('comptabilite')) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (isModEnabled('accounting')) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
+$hookmanager->initHooks(['purchasejournallist']);
 
 /*
  * Actions
@@ -67,11 +74,10 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 
 $form = new Form($db);
 
-$year_current = strftime("%Y", dol_now());
+$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
-if ($pastmonth == 0)
-{
+if ($pastmonth == 0) {
 	$pastmonth = 12;
 	$pastmonthyear--;
 }
@@ -79,8 +85,7 @@ if ($pastmonth == 0)
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
@@ -90,8 +95,11 @@ $periodlink = '';
 $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescPurchasesJournal").'<br>';
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-else $description .= $langs->trans("DepositsAreIncluded");
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description .= $langs->trans("DepositsAreNotIncluded");
+} else {
+	$description .= $langs->trans("DepositsAreIncluded");
+}
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
@@ -111,16 +119,22 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 AND f.entity IN (".getEntity('invoice').")";
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2)";
-else $sql .= " AND f.type IN (0,1,2,3)";
-if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql .= " AND f.type IN (0,1,2)";
+} else {
+	$sql .= " AND f.type IN (0,1,2,3)";
+}
+if ($date_start && $date_end) {
+	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+}
 
 // TODO Find a better trick to avoid problem with some mysql installations
-if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
+if (in_array($db->type, array('mysql', 'mysqli'))) {
+	$db->query('SET SQL_BIG_SELECTS=1');
+}
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	// les variables
 	$cptfour = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
@@ -135,16 +149,17 @@ if ($result)
 	$tabcompany = array();
 
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		// contrôles
 		$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour);
 		$compta_prod = $obj->accountancy_code_buy;
-		if (empty($compta_prod))
-		{
-			if ($obj->product_type == 0) $compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-			else $compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+		if (empty($compta_prod)) {
+			if ($obj->product_type == 0) {
+				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+			} else {
+				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+			}
 		}
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 		$compta_localtax1 = (!empty($obj->account_localtax1) ? $obj->account_localtax1 : $langs->trans("CodeNotDef"));
@@ -161,9 +176,11 @@ if ($result)
 		$tabfac[$obj->rowid]["lib"] = $obj->label;
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
-		if ($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+		if ($obj->recuperableonly != 1) {
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-   		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name);
 
 		$i++;
@@ -175,21 +192,22 @@ if ($result)
 /*
  * Show result array
  */
-print "<table class=\"noborder\" width=\"100%\">";
+print '<table class="liste noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 ///print "<td>".$langs->trans("JournalNum")."</td>";
 print "<td>".$langs->trans("Date")."</td>";
 print "<td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
-print "<td>".$langs->trans("Type")."</td><td class='right'>".$langs->trans("Debit")."</td><td class='right'>".$langs->trans("Credit")."</td>";
+print "<td>".$langs->trans("Type")."</td>";
+print "<td class='right'>".$langs->trans("AccountingDebit")."</td>";
+print "<td class='right'>".$langs->trans("AccountingCredit")."</td>";
 print "</tr>\n";
 
 
 $invoicestatic = new FactureFournisseur($db);
 $companystatic = new Fournisseur($db);
 
-foreach ($tabfac as $key => $val)
-{
+foreach ($tabfac as $key => $val) {
 	$invoicestatic->id = $key;
 	$invoicestatic->ref = $val["ref"];
 	$invoicestatic->type = $val["type"];
@@ -222,19 +240,15 @@ foreach ($tabfac as $key => $val)
 		)
 	);
 
-	foreach ($lines as $line)
-	{
-		foreach ($line['var'] as $k => $mt)
-		{
-			if (isset($line['nomtcheck']) || $mt)
-			{
+	foreach ($lines as $line) {
+		foreach ($line['var'] as $k => $mt) {
+			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
-				if (isset($line['inv']))
-				{
+				if (isset($line['inv'])) {
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 				} else {

@@ -35,7 +35,6 @@ NbOfInvoices=Nb de facturas
 Paymentnumpad=Tipo de Pad para ingresar el pago
 Numberspad=Pad de números
 BillsCoinsPad=Pad de monedas y billetes
-TakeposNeedsCategories=TakePOS necesita categorías de productos para funcionar
 CashDeskBankAccountFor=Cuenta predeterminada para usar para pagos en
 NoPaimementModesDefined=No hay modo de pavimento definido en la configuración de TakePOS
 TicketVatGrouped=IVA grupal por tasa en tickets recibos

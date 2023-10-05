@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Vendors
 SuppliersInvoice=Vendor invoice
+SupplierInvoices=Vendor invoices
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
+NewSupplierInvoice = New vendor invoice
 History=History
 ListOfSuppliers=List of vendors
 ShowSupplier=Show vendor
@@ -46,3 +48,10 @@ BuyerName=Buyer name
 AllProductServicePrices=All product / service prices
 AllProductReferencesOfSupplier=All references of vendor
 BuyingPriceNumShort=Vendor prices
+RepeatableSupplierInvoice=Template supplier invoice
+RepeatableSupplierInvoices=Template supplier invoices
+RepeatableSupplierInvoicesList=Template supplier invoices
+RecurringSupplierInvoices=Recurring supplier invoices
+ToCreateAPredefinedSupplierInvoice=In order to create template supplier invoice, you must create a standard invoice, then, without validating it, click on the "%s" button.
+GeneratedFromSupplierTemplate=Generated from supplier invoice template %s
+SupplierInvoiceGeneratedFromTemplate=Supplier invoice %s Generated from supplier invoice template %s

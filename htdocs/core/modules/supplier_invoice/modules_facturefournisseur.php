@@ -51,8 +51,6 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'invoice_supplier';
 		$list = array();
 
@@ -72,6 +70,9 @@ abstract class ModeleNumRefSuppliersInvoices
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	public $version;
+
 
 	/**  Return if a model can be used or not
 	 *
@@ -120,7 +121,7 @@ abstract class ModeleNumRefSuppliersInvoices
 	 * @param	string		$mode       'next' for next value or 'last' for last value
 	 * @return 	string      			Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $object, $mode)
+	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -135,10 +136,18 @@ abstract class ModeleNumRefSuppliersInvoices
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

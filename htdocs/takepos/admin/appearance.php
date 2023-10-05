@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,6 +23,7 @@
  *	\brief      Setup page for TakePos module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -30,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 
@@ -38,8 +41,7 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
  * Actions
  */
 
-if (GETPOST('action', 'alpha') == 'set')
-{
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
 	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -47,18 +49,18 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif (GETPOST('action', 'alpha') == 'setmethod')
-{
+} elseif (GETPOST('action', 'alpha') == 'setmethod') {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -113,14 +115,55 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfLinesToShow");
 print '<td colspan="2">';
 $array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6");
-print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, (empty($conf->global->TAKEPOS_LINES_TO_SHOW) ? '2' : $conf->global->TAKEPOS_LINES_TO_SHOW), 0);
+print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, getDolGlobalInt('TAKEPOS_LINES_TO_SHOW', 2), 0);
 print "</td></tr>\n";
+
+// D'ont display category
+print '<tr class="oddeven"><td>';
+print $langs->trans('HideCategories');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_HIDE_CATEGORIES", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Hide stock on line
+print '<tr class="oddeven"><td>';
+print $langs->trans('HideStockOnLine');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_HIDE_STOCK_ON_LINE", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Only the products in stock
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowOnlyProductInStock');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_PRODUCT_IN_STOCK", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// View description of the categories
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowCategoryDescription');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_SHOW_CATEGORY_DESCRIPTION", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// View reference of products
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowProductReference');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_SHOW_PRODUCT_REFERENCE", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Use price excl. taxes (HT) and not price incl. taxes (TTC)
+print '<tr class="oddeven"><td>';
+print $langs->trans('UsePriceHT');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 
 print '</table>';
 
-print '<br>';
-
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

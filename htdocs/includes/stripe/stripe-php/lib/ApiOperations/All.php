@@ -10,8 +10,10 @@ namespace Stripe\ApiOperations;
 trait All
 {
     /**
-     * @param array|null $params
-     * @param array|string|null $opts
+     * @param null|array $params
+     * @param null|array|string $opts
+     *
+     * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
      * @return \Stripe\Collection of ApiResources
      */
@@ -22,13 +24,14 @@ trait All
 
         list($response, $opts) = static::_staticRequest('get', $url, $params, $opts);
         $obj = \Stripe\Util\Util::convertToStripeObject($response->json, $opts);
-        if (!is_a($obj, 'Stripe\\Collection')) {
-            $class = get_class($obj);
-            $message = "Expected type \"Stripe\\Collection\", got \"$class\" instead";
-            throw new \Stripe\Error\Api($message);
+        if (!($obj instanceof \Stripe\Collection)) {
+            throw new \Stripe\Exception\UnexpectedValueException(
+                'Expected type ' . \Stripe\Collection::class . ', got "' . \get_class($obj) . '" instead.'
+            );
         }
         $obj->setLastResponse($response);
-        $obj->setRequestParams($params);
+        $obj->setFilters($params);
+
         return $obj;
     }
 }

@@ -22,6 +22,7 @@
  *      \brief      Page to setup printing module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -33,40 +34,46 @@ use OAuth\Common\Storage\DoliStorage;
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
-if (!$user->admin) accessforbidden();
-
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha', 0, null, null, 1); // The value may be __google__docs so we force disable of replace
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
-if (!empty($driver)) $langs->load($driver);
+if (!empty($driver)) {
+	$langs->load($driver);
+}
 
-if (!$mode) $mode = 'config';
+if (!$mode) {
+	$mode = 'config';
+}
 
 $OAUTH_SERVICENAME_GOOGLE = 'Google';
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
  * Action
  */
 
-if (($mode == 'test' || $mode == 'setup') && empty($driver))
-{
+if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
 	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
 	exit;
 }
 
-if ($action == 'setconst' && $user->admin)
-{
+if ($action == 'setconst' && $user->admin) {
 	$error = 0;
 	$db->begin();
 	foreach ($_POST['setupdriver'] as $setupconst) {
 		//print '<pre>'.print_r($setupconst, true).'</pre>';
 		$result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) $error++;
+		if (!($result > 0)) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -79,12 +86,13 @@ if ($action == 'setconst' && $user->admin)
 	$action = '';
 }
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) $error++;
+	if (!($result > 0)) {
+		$error++;
+	}
 
 	if (!$error) {
 		$db->commit();
@@ -110,8 +118,7 @@ print load_fiche_titre($langs->trans("PrintingSetup"), $linkback, 'title_setup')
 
 $head = printingAdminPrepareHead($mode);
 
-if ($mode == 'setup' && $user->admin)
-{
+if ($mode == 'setup' && $user->admin) {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setconst">';
@@ -129,7 +136,12 @@ if ($mode == 'setup' && $user->admin)
 	$submit_enabled = 0;
 
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
@@ -143,14 +155,13 @@ if ($mode == 'setup' && $user->admin)
 
 		$i = 0;
 		$submit_enabled = 0;
-		foreach ($printer->conf as $key)
-		{
+		foreach ($printer->conf as $key) {
 			switch ($key['type']) {
 				case "text":
 				case "password":
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
-					print '<td><input size="32" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
 					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
@@ -159,8 +170,7 @@ if ($mode == 'setup' && $user->admin)
 				case "info":    // Google Api setup or Google OAuth Token
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>';
-					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
-					{
+					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
 						print $langs->trans("IsTokenGenerated");
 					} else {
 						print $langs->trans($key['varname']);
@@ -169,10 +179,11 @@ if ($mode == 'setup' && $user->admin)
 					print '<td>'.$langs->trans($key['info']).'</td>';
 					print '<td>';
 					//var_dump($key);
-					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
-					{
+					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
 						// Delete remote tokens
-						if (!empty($key['delete'])) print '<a class="button" href="'.$key['delete'].'">'.$langs->trans('DeleteAccess').'</a><br><br>';
+						if (!empty($key['delete'])) {
+							print '<a class="button" href="'.$key['delete'].'">'.$langs->trans('DeleteAccess').'</a><br><br>';
+						}
 						// Request remote token
 						print '<a class="button" href="'.$key['renew'].'">'.$langs->trans('RequestAccess').'</a><br><br>';
 						// Check remote access
@@ -182,36 +193,37 @@ if ($mode == 'setup' && $user->admin)
 					print '</tr>'."\n";
 					break;
 				case "submit":
-					if ($key['enabled']) $submit_enabled = 1;
+					if ($key['enabled']) {
+						$submit_enabled = 1;
+					}
 					break;
 			}
 			$i++;
 
-			if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
-			{
+			if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
+				$keyforprovider = '';	// @BUG This must be set
+
 				// Token
 				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("Token").'</td>';
 				print '<td colspan="2">';
 				$tokenobj = null;
 				// Dolibarr storage
-				$storage = new DoliStorage($db, $conf);
+				$storage = new DoliStorage($db, $conf, $keyforprovider);
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
-				} catch (Exception $e)
-				{
+				} catch (Exception $e) {
 					// Return an error if token not found
 				}
-				if (is_object($tokenobj))
-				{
+				if (is_object($tokenobj)) {
 					//var_dump($tokenobj);
 					print $tokenobj->getAccessToken().'<br>';
 					//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
 					//print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
 					//var_dump($tokenobj->getExtraParams());
 					/*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
-                    print ''.join(',',$tokenobj->getExtraParams());
-                    print '</textarea>';*/
+					print ''.join(',',$tokenobj->getExtraParams());
+					print '</textarea>';*/
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -225,17 +237,15 @@ if ($mode == 'setup' && $user->admin)
 
 	print dol_get_fiche_end();
 
-	if (!empty($driver))
-	{
+	if (!empty($driver)) {
 		if ($submit_enabled) {
-			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
+			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 		}
 	}
 
 	print '</form>';
 }
-if ($mode == 'config' && $user->admin)
-{
+if ($mode == 'config' && $user->admin) {
 	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	print $langs->trans("PrintingDesc")."<br><br>\n";
@@ -251,16 +261,22 @@ if ($mode == 'config' && $user->admin)
 
 	$object = new PrintingDriver($db);
 	$result = $object->listDrivers($db, 10);
-	$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
-	foreach ($result as $driver) {
+
+	if (!empty($conf->modules_parts['printing'])) {
+		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+	} else {
+		$dirmodels = array('/core/modules/printing/');
+	}
+
+	foreach ($result as $tmpdriver) {
 		foreach ($dirmodels as $dir) {
-			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
-				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+			if (file_exists(dol_buildpath($dir, 0).$tmpdriver.'.modules.php')) {
+				$classfile = dol_buildpath($dir, 0).$tmpdriver.'.modules.php';
 				break;
 			}
 		}
 		require_once $classfile;
-		$classname = 'printing_'.$driver;
+		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
 		$langs->load($printer::LANGFILE);
 		//print '<pre>'.print_r($printer, true).'</pre>';
@@ -272,13 +288,13 @@ if ($mode == 'config' && $user->admin)
 			print ajax_constantonoff($printer->active);
 		} else {
 			if (empty($conf->global->{$printer->conf})) {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&token='.newToken().'&varname='.urlencode($printer->active).'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			} else {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&token='.newToken().'&varname='.urlencode($printer->active).'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 			}
 		}
-		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
-		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=test&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&token='.newToken().'&driver='.urlencode($printer->name).'">'.img_picto('', 'setup').'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=test&token='.newToken().'&driver='.urlencode($printer->name).'">'.img_picto('', 'setup').'</a></td>';
 		print '</tr>'."\n";
 	}
 
@@ -287,15 +303,19 @@ if ($mode == 'config' && $user->admin)
 	print dol_get_fiche_end();
 }
 
-if ($mode == 'test' && $user->admin)
-{
+if ($mode == 'test' && $user->admin) {
 	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
 	print '<table class="noborder centpercent">';
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
@@ -325,8 +345,7 @@ if ($mode == 'test' && $user->admin)
 	print dol_get_fiche_end();
 }
 
-if ($mode == 'userconf' && $user->admin)
-{
+if ($mode == 'userconf' && $user->admin) {
 	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";

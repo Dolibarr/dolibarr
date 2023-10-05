@@ -53,9 +53,10 @@ CREATE TABLE llx_expensereport (
   integration_compta integer DEFAULT NULL,			-- not used
   fk_bank_account 	integer DEFAULT NULL,
   model_pdf 		varchar(50) DEFAULT NULL,
+  last_main_doc		varchar(255),					-- relative filepath+filename of last main generated document
   
   fk_multicurrency        integer,
-  multicurrency_code      varchar(255),
+  multicurrency_code      varchar(3),
   multicurrency_tx        double(24,8) DEFAULT 1,
   multicurrency_total_ht  double(24,8) DEFAULT 0,
   multicurrency_total_tva double(24,8) DEFAULT 0,

@@ -26,9 +26,8 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
-	print "Error, template page can't be called as URL";
+if (empty($object) || !is_object($object)) {
+	print "Error, template page ".basename(__FILE__)." can't be called with no object defined.";
 	exit;
 }
 
@@ -44,30 +43,30 @@ $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
 $filepath = (empty($filepath) ? '' : $filepath);
 
-
 if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser->layout != 'phone') { ?>
 <script>
 $(document).ready(function(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();
-    $(".lineupdown").removeAttr('href');
-    $(".tdlineupdown").css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png'; ?>)');
-    $(".tdlineupdown").css("background-repeat","no-repeat");
-    $(".tdlineupdown").css("background-position","center center");
+	$(".lineupdown").removeAttr('href');
+	$(".tdlineupdown").css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png'; ?>)');
+	$(".tdlineupdown").css("background-repeat","no-repeat");
+	$(".tdlineupdown").css("background-position","center center");
 
-    console.log("Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
-    $("#<?php echo $tagidfortablednd; ?>").tableDnD({
+	console.log("Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
+	$("#<?php echo $tagidfortablednd; ?>").tableDnD({
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
+			$('#<?php echo $tagidfortablednd; ?> tr[data-ignoreidfordnd=1]').attr('id', '');	// Set id to empty value in order to ignore them in tableDnDSerialize function
 			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
 			var filepath = "<?php echo urlencode($filepath); ?>";
-			var token = "<?php echo $_SESSION["token"]; ?>";	// We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
+			var token = "<?php echo currentToken(); ?>";	// We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
 			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,
@@ -80,7 +79,6 @@ $(document).ready(function(){
 					function() {
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
-							//console.log('<?php echo $urltorefreshaftermove.' - '.$_SERVER['PHP_SELF'].' - '.dol_escape_js($_SERVER['QUERY_STRING']); ?>');
 							<?php
 							$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
 							// remove action parameter from URL
@@ -100,9 +98,9 @@ $(document).ready(function(){
 		onDragClass: "dragClass",
 		dragHandle: "td.tdlineupdown"
 	});
-    $(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
-    	function() { $(this).removeClass('showDragHandle'); }
-    );
+	$(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
+		function() { $(this).removeClass('showDragHandle'); }
+	);
 });
 </script>
 <?php } else { ?>
@@ -110,7 +108,7 @@ $(document).ready(function(){
 $(document).ready(function(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();
-    $(".lineupdown").removeAttr('href');
+	$(".lineupdown").removeAttr('href');
 });
 </script>
 <?php } ?>

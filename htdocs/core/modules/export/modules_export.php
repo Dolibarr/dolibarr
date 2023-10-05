@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 /**
  *	Parent class for export modules
  */
-class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
+class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by listOfAvailableExportFormat
 {
 	/**
 	 * @var string Error code (or message)
@@ -44,7 +44,6 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	public $libversion = array();
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -52,31 +51,30 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public function listOfAvailableExportFormat($db, $maxfilenamelength = 0)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+		dol_syslog(get_class($this)."::listOfAvailableExportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 		$handle = opendir($dir);
 
 		// Recherche des fichiers drivers exports disponibles
 		$i = 0;
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg))
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				$reg = array();
+				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg)) {
 					$moduleid = $reg[1];
+					if ($moduleid == 'csv') {
+						continue;	// This may happen if on old file export_csv.modules.php was not correctly deleted
+					}
 
 					// Loading Class
 					$file = $dir."export_".$moduleid.".modules.php";
 					$classname = "Export".ucfirst($moduleid);
 
 					require_once $file;
-					if (class_exists($classname))
-					{
+					if (class_exists($classname)) {
 						$module = new $classname($db);
 
 						// Picto
@@ -113,7 +111,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver export
+	 *  Return label of driver export
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label
@@ -146,7 +144,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi libelle de librairie externe du driver
+	 *  Renvoi label of driver lib
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label of library
@@ -157,7 +155,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi version de librairie externe du driver
+	 *  Return version of driver lib
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Version of library

@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Bruk lot/serienummer
-ProductStatusOnBatch=Ja (lot/serienummer påkrevd)
+ProductStatusOnBatch=Ja (LOT påkrevd)
+ProductStatusOnSerial=Ja (unikt serienummer kreves)
 ProductStatusNotOnBatch=Nei (lot/serienummer ikke i bruk)
-ProductStatusOnBatchShort=Ja
+ProductStatusOnBatchShort=LOT
+ProductStatusOnSerialShort=Serie
 ProductStatusNotOnBatchShort=Nei
 Batch=Lot/serienummer
 atleast1batchfield=Siste forbruksdato, siste salgsdato eller lot/serienummer
@@ -15,10 +17,31 @@ printBatch=Lot/Serienummer: %s
 printEatby=Siste forbruksdato: %s
 printSellby=Siste salgsdato: %s
 printQty=Ant: %d
+printPlannedWarehouse=Lager: %s
 AddDispatchBatchLine=Legg til en linje for holdbarhetsdato
-WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+WhenProductBatchModuleOnOptionAreForced=Når modul Lot/Serie er på, tvinges automatisk lagerreduksjon til '%s' og automatisk økningsmodus tvinges til '%s'. Noen valg er kanskje ikke tilgjengelige. Andre alternativer kan defineres som du ønsker.
 ProductDoesNotUseBatchSerial=Denne varen har ikke lot/serienummer
 ProductLotSetup=Oppsett av model Lot/serienmmer
 ShowCurrentStockOfLot=Vis gjeldende beholdning for vare/lot
 ShowLogOfMovementIfLot=Vis logg over bevegelser for vare/lot
 StockDetailPerBatch=Varedetaljer pr. lot
+SerialNumberAlreadyInUse=Serienummer %s er allerede brukt for vare%s
+TooManyQtyForSerialNumber=Du kan bare ha en vare %s for serienummer %s
+ManageLotMask=Tilpasset maske
+CustomMasks=Mulighet for å definere en annen nummereringsmaske for hvert produkt
+BatchLotNumberingModules=Nummereringsregel for automatisk generering av lotnummer
+BatchSerialNumberingModules=Nummereringsregel for automatisk generering av serienummer (for varer med egenskap 1 unikt parti/serie for hvert produkt)
+QtyToAddAfterBarcodeScan=Antall til %s for hver strekkode/parti/serie skannet
+LifeTime=Levetid (i dager)
+EndOfLife=End of life
+ManufacturingDate=Produksjonsdato
+DestructionDate=Destruksjonsdato
+FirstUseDate=Første bruksdato
+QCFrequency=Kvalitetskontrollfrekvens (i dager)
+ShowAllLots=Vis alle partiene
+HideLots=Skjul partier
+#Traceability - qc status
+OutOfOrder=I ustand
+InWorkingOrder=I fungerende stand
+ToReplace=Erstatt
+CantMoveNonExistantSerial=Feil. Du ber om et trekk på en post for en serie som ikke eksisterer lenger. Det kan være at du tar samme serie på samme lager flere ganger i samme forsendelse, eller den ble brukt av en annen forsendelse. Fjern denne forsendelsen og klargjør en ny.

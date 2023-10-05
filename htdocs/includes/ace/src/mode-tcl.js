@@ -373,6 +373,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/tcl";
+    this.snippetFileId = "ace/snippets/tcl";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

@@ -5,13 +5,13 @@ server {
 
         root /path/to/your/htdocs;
 
-        # Optionnal
+        # Optional
         error_log /path/to/your/log/directory/nginx.error.log;
 	    access_log /path/to/your/log/directory/nginx.access.log;
 
         index index.php index.html index.htm;
 
-        # Optionnal
+        # Optional
         server_name your-fqdn.tld;
 
         location / {
@@ -23,6 +23,6 @@ server {
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                 fastcgi_read_timeout 600;
                 include fastcgi_params;
-                fastcgi_pass unix:/var/run/php5-fpm.sock;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;  //  /var/run/php/php7.0-fpm.sock
         }
 }

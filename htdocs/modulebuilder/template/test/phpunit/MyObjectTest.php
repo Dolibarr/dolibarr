@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +25,7 @@
 
 global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/mymodule/class/myobject.class.php';
@@ -40,9 +42,12 @@ $langs->load("main");
 
 /**
  * Class MyObjectTest
- * @package Testmymodule
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class MyObjectTest extends \PHPUnit_Framework_TestCase
+class MyObjectTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -53,11 +58,11 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return MyObject
+	 * @param 	string	$name		Name
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf, $user, $langs, $db;
@@ -73,6 +78,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Global test setup
+	 *
 	 * @return void
 	 */
 	public static function setUpBeforeClass()
@@ -85,6 +91,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test setup
+	 *
 	 * @return void
 	 */
 	protected function setUp()
@@ -100,6 +107,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test teardown
+	 *
 	 * @return void
 	 */
 	protected function tearDown()
@@ -109,6 +117,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Global test teardown
+	 *
 	 * @return void
 	 */
 	public static function tearDownAfterClass()

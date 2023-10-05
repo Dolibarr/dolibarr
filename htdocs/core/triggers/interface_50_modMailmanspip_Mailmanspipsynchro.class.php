@@ -59,7 +59,9 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mailmanspip->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->mailmanspip) || empty($conf->mailmanspip->enabled)) {
+			return 0; // Module not active, we do nothing
+		}
 
 		require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
@@ -90,16 +92,16 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			return $return;
-		}
-
-		// Members
-		elseif ($action == 'MEMBER_VALIDATE') {
+		} elseif ($action == 'MEMBER_VALIDATE') {
+			// Members
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;
 			if ($object->add_to_abo() < 0) {
 				$this->errors = $object->errors;
-				if (!empty($object->error)) $this->errors[] = $object->error;
+				if (!empty($object->error)) {
+					$this->errors[] = $object->error;
+				}
 				$return = -1;
 			} else {
 				$return = 1;
@@ -115,7 +117,9 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 				if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))) {    // If email has changed or if list has changed we delete mailman subscription for old email
 					if ($object->oldcopy->del_to_abo() < 0) {
 						$this->errors = $object->oldcopy->errors;
-						if (!empty($object->oldcopy->error)) $this->errors[] = $object->oldcopy->error;
+						if (!empty($object->oldcopy->error)) {
+							$this->errors[] = $object->oldcopy->error;
+						}
 						$return = -1;
 					} else {
 						$return = 1;
@@ -124,7 +128,9 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 				// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
 				if ($object->add_to_abo() < 0) {
 					$this->errors = $object->errors;
-					if (!empty($object->error)) $this->errors[] = $object->error;
+					if (!empty($object->error)) {
+						$this->errors[] = $object->error;
+					}
 					$return = -1;
 				} else {
 					$return = 1;
@@ -139,7 +145,9 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			// Remove from external tools (mailman, spip, etc...)
 			if ($object->del_to_abo() < 0) {
 				$this->errors = $object->errors;
-				if (!empty($object->error)) $this->errors[] = $object->error;
+				if (!empty($object->error)) {
+					$this->errors[] = $object->error;
+				}
 				$return = -1;
 			} else {
 				$return = 1;

@@ -10,7 +10,7 @@ const subscribeHook = (z, bundle) => {
         action: bundle.inputData.action
     };
 
-    const url = bundle.authData.url  + '/api/index.php/zapierapi/hook';
+    const url = bundle.authData.url  + '/api/index.php/zapier/hook';
 
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
@@ -32,7 +32,7 @@ const unsubscribeHook = (z, bundle) => {
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
-        url: bundle.authData.url + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
+        url: bundle.authData.url + '/api/index.php/zapier/hook/' + bundle.subscribeData.id,
         method: 'DELETE',
     };
 
@@ -56,6 +56,12 @@ const getThirdparty = (z, bundle) => {
         fournisseur: bundle.cleanedRequest.fournisseur,
         code_client: bundle.cleanedRequest.code_client,
         code_fournisseur: bundle.cleanedRequest.code_fournisseur,
+        idprof1: bundle.cleanedRequest.idprof1,
+        idprof2: bundle.cleanedRequest.idprof2,
+        idprof3: bundle.cleanedRequest.idprof3,
+        idprof4: bundle.cleanedRequest.idprof4,
+        idprof5: bundle.cleanedRequest.idprof5,
+        idprof6: bundle.cleanedRequest.idprof6,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
         action: bundle.cleanedRequest.action
@@ -77,7 +83,7 @@ const getFallbackRealThirdparty = (z, bundle) => {
 // const getModulesChoices = (z/*, bundle*/) => {
 //     // For the test poll, you should get some real data, to aid the setup process.
 //     const options = {
-//         url: bundle.authData.url + '/api/index.php/zapierapi/getmoduleschoices',
+//         url: bundle.authData.url + '/api/index.php/zapier/getmoduleschoices',
 //     };
 
 //     return z.request(options).then((response) => JSON.parse(response.content));
@@ -96,7 +102,7 @@ const getFallbackRealThirdparty = (z, bundle) => {
 //     // For the test poll, you should get some real data, to aid the setup process.
 //     const module = bundle.inputData.module;
 //     const options = {
-//         url:  url: bundle.authData.url + '/api/index.php/zapierapi/getactionschoices/thirparty`,
+//         url:  url: bundle.authData.url + '/api/index.php/zapier/getactionschoices/thirparty`,
 //     };
 
 //     return z.request(options).then((response) => JSON.parse(response.content));
@@ -112,7 +118,7 @@ module.exports = {
     noun: 'Thirdparty',
     display: {
         label: 'New Thirdparty',
-        description: 'Triggers when a new thirdpaty action is done in Dolibarr.'
+        description: 'Triggers when a new thirdparty action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -170,7 +176,13 @@ module.exports = {
             {key: 'client', label: 'Customer/Prospect 0/1/2/3'},
             {key: 'fournisseur', label: 'Supplier 0/1'},
             {key: 'code_client', label: 'Customer code'},
-            {key: 'code_fournisseur', label: 'Supplier code'}
+            {key: 'code_fournisseur', label: 'Supplier code'},
+            {key: 'idprof1', label: 'Id Prof 1'},
+            {key: 'idprof2', label: 'Id Prof 2'},
+            {key: 'idprof3', label: 'Id Prof 3'},
+            {key: 'idprof4', label: 'Id Prof 4'},
+            {key: 'idprof5', label: 'Id Prof 5'},
+            {key: 'idprof6', label: 'Id Prof 6'}
         ]
     }
 };

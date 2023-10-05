@@ -43,15 +43,13 @@ abstract class ModelePdfReception extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'reception';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -63,7 +61,11 @@ abstract class ModelNumRefReception
 {
 	public $error = '';
 
-	/** Return if a model can be used or not
+	public $version;
+
+
+	/**
+	 *  Return if a model can be used or not
 	 *
 	 *  @return		boolean     true if model can be used
 	 */
@@ -110,10 +112,10 @@ abstract class ModelNumRefReception
 	 *	Returns next value assigned
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
+	 *	@param	Object		$reception	Reception object
 	 *	@return	string					Value
 	 */
-	public function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $reception)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -129,10 +131,15 @@ abstract class ModelNumRefReception
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

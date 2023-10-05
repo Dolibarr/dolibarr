@@ -53,8 +53,6 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'shipping';
 		$list = array();
 
@@ -75,6 +73,9 @@ abstract class ModelNumRefExpedition
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	public $version;
+
 
 	/** Return if a model can be used or not
 	 *
@@ -142,10 +143,18 @@ abstract class ModelNumRefExpedition
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

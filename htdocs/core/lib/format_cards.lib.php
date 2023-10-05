@@ -34,10 +34,8 @@ global $_Avery_Labels;
 
 $sql = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards WHERE active=1 ORDER BY code ASC";
 $resql = $db->query($sql);
-if ($resql)
-{
-	while ($row = $db->fetch_array($resql))
-	{
+if ($resql) {
+	while ($row = $db->fetch_array($resql)) {
 		$_Avery_Labels[$row['code']]['name'] = $row['name'];
 		$_Avery_Labels[$row['code']]['paper-size'] = $row['paper_size'];
 		$_Avery_Labels[$row['code']]['orientation'] = $row['orientation'];
@@ -60,7 +58,6 @@ if ($resql)
 }
 
 // We add characteristics to the name
-foreach ($_Avery_Labels as $key => $val)
-{
+foreach ($_Avery_Labels as $key => $val) {
 	$_Avery_Labels[$key]['name'] .= ' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
 }

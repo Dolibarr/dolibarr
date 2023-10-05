@@ -20,7 +20,7 @@
  *      \brief      Module to enable client for supplier WebServices
  *       \file       htdocs/core/modules/modWebServicesClient.class.php
  *       \ingroup    webservices
- *       \brief      File to describe client for supplier webservices module
+ *       \brief      Description and activation file for the module supplier webservices module
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -46,7 +46,7 @@ class modWebServicesClient extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Enable the web service client to call external supplier web services";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'experimental_deprecated';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -63,7 +63,7 @@ class modWebServicesClient extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("other");
 
 		// Constants

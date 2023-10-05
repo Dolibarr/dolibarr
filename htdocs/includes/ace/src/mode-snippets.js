@@ -192,6 +192,7 @@ oop.inherits(Mode, TextMode);
     this.$indentWithTabs = true;
     this.lineCommentStart = "#";
     this.$id = "ace/mode/snippets";
+    this.snippetFileId = "ace/snippets/snippets";
 }).call(Mode.prototype);
 exports.Mode = Mode;
 

@@ -1,0 +1,81 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Реф. боркашонӣ
+Sending=Интиқол
+Sendings=Интиқолҳо
+AllSendings=Ҳамаи интиқолҳо
+Shipment=Интиқол
+Shipments=Интиқолҳо
+ShowSending=Намоишҳоро нишон диҳед
+Receivings=Ҳуҷҷатҳои расонидани
+SendingsArea=Минтақаи интиқол
+ListOfSendings=Рӯйхати интиқолҳо
+SendingMethod=Усули интиқол
+LastSendings=Интиқолҳои охирини %s
+StatisticsOfSendings=Омор барои интиқол
+NbOfSendings=Шумораи интиқолҳо
+NumberOfShipmentsByMonth=Шумораи интиқолҳо аз рӯи моҳ
+SendingCard=Корти интиқол
+NewSending=Интиқоли нав
+CreateShipment=Эҷоди интиқол
+QtyShipped=Qty фиристода шуд
+QtyShippedShort=Киштии миқдор.
+QtyPreparedOrShipped=Миқдори омодашуда ё фиристодашуда
+QtyToShip=Миқдори интиқол
+QtyToReceive=Миқдори гирифтан
+QtyReceived=Миқдор гирифта шуд
+QtyInOtherShipments=Миқдори интиқолҳои дигар
+KeepToShip=Ба киштӣ мондан
+KeepToShipShort=Бимонед
+OtherSendingsForSameOrder=Интиқоли дигар барои ин фармоиш
+SendingsAndReceivingForSameOrder=Интиқолҳо ва гирифтани ин фармоиш
+SendingsToValidate=Интиқолҳо барои тасдиқ
+StatusSendingCanceled=Бекор карда шуд
+StatusSendingCanceledShort=Бекор карда шуд
+StatusSendingDraft=Лоиҳа
+StatusSendingValidated=Санҷидашуда (маҳсулоте, ки фиристода мешавад ё аллакай фиристода шудааст)
+StatusSendingProcessed=Коркард
+StatusSendingDraftShort=Лоиҳа
+StatusSendingValidatedShort=Санҷида шуд
+StatusSendingProcessedShort=Коркард
+SendingSheet=Варақаи интиқол
+ConfirmDeleteSending=Шумо мутмаин ҳастед, ки ин интиқолро нест кардан мехоҳед?
+ConfirmValidateSending=Шумо мутмаин ҳастед, ки ин интиқолро бо истинод <b> %s </b> тасдиқ кардан мехоҳед?
+ConfirmCancelSending=Шумо мутмаин ҳастед, ки ин интиқолро бекор кардан мехоҳед?
+DocumentModelMerou=Модели Merou A5
+WarningNoQtyLeftToSend=Огоҳӣ, ягон маҳсулот интизори интиқол нест.
+StatsOnShipmentsOnlyValidated=Омор танҳо барои интиқолҳои тасдиқшуда аст. Санаи истифодашуда санаи тасдиқи интиқол аст (санаи расонидани нақша на ҳама вақт маълум аст)
+DateDeliveryPlanned=Санаи ба нақша гирифташуда
+RefDeliveryReceipt=Қабули расонидани интиқол
+StatusReceipt=Қабули расонидани мақом
+DateReceived=Санаи расонидани қабул
+ClassifyReception=Classify Received
+SendShippingByEMail=Интиқолро тавассути почтаи электронӣ фиристед
+SendShippingRef=Пешниҳоди интиқол %s
+ActionsOnShipping=Ҳодисаҳо оид ба интиқол
+LinkToTrackYourPackage=Истинод барои пайгирии бастаи шумо
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentLine=Хатти интиқол
+ProductQtyInCustomersOrdersRunning=Миқдори маҳсулот аз фармоишҳои фурӯш
+ProductQtyInSuppliersOrdersRunning=Миқдори маҳсулот аз фармоишҳои харид
+ProductQtyInShipmentAlreadySent=Миқдори маҳсулот аз фармоиши фурӯши кушода аллакай фиристода шудааст
+ProductQtyInSuppliersShipmentAlreadyRecevied=Миқдори маҳсулот аз фармоишҳои хариди кушода аллакай гирифта шудааст
+NoProductToShipFoundIntoStock=Дар анбор <b> %s </b> ягон маҳсулот барои фиристодан ёфт нашуд. Ҳиссаи дуруст ё баргаштан барои интихоби анбори дигар.
+WeightVolShort=Вазн/ҷ.
+ValidateOrderFirstBeforeShipment=Пеш аз он ки шумо интиқол диҳед, шумо бояд аввал фармоишро тасдиқ кунед.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Модели мукаммалтари ҳуҷҷатҳо барои гирифтани квитансияҳо (логотип ...)
+DocumentModelStorm=Модели мукаммалтари ҳуҷҷатҳо барои гирифтани квитансияҳо ва мутобиқати экстафилдҳо (логотип ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER доимӣ муайян карда нашудааст
+SumOfProductVolumes=Ҳаҷми ҳаҷми маҳсулот
+SumOfProductWeights=Миқдори вазнҳои маҳсулот
+
+# warehouse details
+DetailWarehouseNumber= Тафсилоти анбор
+DetailWarehouseFormat= W: %s (Миқдор: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

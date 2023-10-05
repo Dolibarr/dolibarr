@@ -40,6 +40,9 @@ class ActionsTicket
 	 */
 	public $db;
 
+	/**
+	 * @var Ticket Ticket
+	 */
 	public $dao;
 
 	public $mesg;
@@ -108,7 +111,7 @@ class ActionsTicket
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return 	void
+	 * @return int              		<0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -161,7 +164,7 @@ class ActionsTicket
 		} elseif ($action == 'view') {
 			return $langs->trans("TicketCard");
 		} elseif ($action == 'add_message') {
-			return $langs->trans("AddMessage");
+			return $langs->trans("TicketAddMessage");
 		} else {
 			return $langs->trans("TicketsManagement");
 		}
@@ -191,21 +194,21 @@ class ActionsTicket
 
 		// Initial message
 		print '<div class="underbanner clearboth"></div>';
-		print '<div class="div-table-responsive-no-min" style="max-width: 70vw">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable">';
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder centpercent margintable margintablenotop">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($user->rights->ticket->manage) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+		if ($user->hasRight("ticket", "manage")) {
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr>';
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
-			$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
+			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
@@ -215,7 +218,7 @@ class ActionsTicket
 			// Deal with format differences (text / HTML)
 			if (dol_textishtml($object->message)) {
 				print '<div class="longmessagecut">';
-				print $object->message;
+				print dol_htmlwithnojs($object->message);
 				print '</div>';
 				/*print '<div class="clear center">';
 				print $langs->trans("More").'...';
@@ -233,7 +236,7 @@ class ActionsTicket
 		}
 		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}
@@ -262,14 +265,15 @@ class ActionsTicket
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();
-		if ($ret < 0) dol_print_error($this->dao->db);
+		if ($ret < 0) {
+			dol_print_error($this->dao->db);
+		}
 
 		$action = GETPOST('action', 'aZ09');
 
 		$this->viewTicketOriginalMessage($user, $action, $object);
 
-		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0)
-		{
+		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
 			print '<table class="border" style="width:100%;">';
 
 			print '<tr class="liste_titre">';
@@ -292,7 +296,7 @@ class ActionsTicket
 					//print '<tr>';
 					print '<tr class="oddeven">';
 					print '<td><strong>';
-					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datec'], 'dayhour');
+					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
 					if ($show_user) {
 						print '<td>';
@@ -301,6 +305,14 @@ class ActionsTicket
 							$res = $userstat->fetch($arraymsgs['fk_user_author']);
 							if ($res) {
 								print $userstat->getNomUrl(0);
+							}
+						} elseif (isset($arraymsgs['fk_contact_author'])) {
+							$contactstat = new Contact($this->db);
+							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
+							if ($res) {
+								print $contactstat->getNomUrl(0, 'nolink');
+							} else {
+								print $arraymsgs['fk_contact_author'];
 							}
 						} else {
 							print $langs->trans('Customer');
@@ -390,7 +402,7 @@ class ActionsTicket
 	{
 		global $langs;
 
-		print '<div class="div-table-responsive-no-min margintoponly">';
+		print '<div class="div-table-responsive-no-min margintoponly navBarForStatus">';
 		print '<div class="centpercent right">';
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
@@ -405,9 +417,9 @@ class ActionsTicket
 				print '<div class="inline-block center marginbottomonly">';
 
 				if ($status == 1) {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_read&token='.newToken(); // To set as read, we use a dedicated action
 				} else {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&token='.newToken().'&new_status='.$status;
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.((int) $status);
 				}
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
@@ -418,7 +430,9 @@ class ActionsTicket
 				print '</div>';
 			}
 		}
-		print '</div></div><br>';
+		print '</div>';
+		print '</div>';
+		print '<br>';
 	}
 
 	/**

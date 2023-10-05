@@ -22,6 +22,8 @@
  *		\brief      Page to setup ECM (GED) module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -29,17 +31,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+$action = GETPOST('action', 'aZ09');
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+
+// set
+$reg = array();
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -47,11 +54,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+// delete
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -64,6 +70,8 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
  * View
  */
 
+$form = new Form($db);
+
 $help_url = '';
 llxHeader('', $langs->trans("ECMSetup"), $help_url);
 
@@ -73,34 +81,26 @@ print '<br>';
 
 $head = ecm_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'ecm', $langs->trans("ECM"), -1, 'ecm');
+print dol_get_fiche_head($head, 'ecm', '', -1, '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="center" width="100px">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
-
-$form = new Form($db);
 
 // Mail required for members
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ECMAutoTree").'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-
-print '<td class="center" width="100">';
-if ($conf->use_javascript_ajax)
-{
-	print ajax_constantonoff('ECM_AUTO_TREE_ENABLED');
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('ECM_AUTO_TREE_HIDEN', null, null, 1);
 } else {
-	if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	} elseif (!empty($conf->global->USER_MAIL_REQUIRED))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_HIDEN&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_HIDEN&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
 print '</td></tr>';

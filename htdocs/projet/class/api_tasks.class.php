@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
- require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 /**
  * API class for projects
@@ -29,11 +30,10 @@
  */
 class Tasks extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'ref',
 		'label',
 		'fk_project'
@@ -60,7 +60,7 @@ class Tasks extends DolibarrApi
 	 * Return an array with task informations
 	 *
 	 * @param   int         $id                     ID of task
-	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
+	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return 	array|mixed                         data without useless information
 	 *
 	 * @throws 	RestException
@@ -80,14 +80,11 @@ class Tasks extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includetimespent == 1)
-		{
+		if ($includetimespent == 1) {
 			$timespent = $this->task->getSummaryOfTimeSpent(0);
 		}
-		if ($includetimespent == 1)
-		{
-			// TODO
-			// Add class for timespent records and loop and fill $line->lines with records of timespent
+		if ($includetimespent == 2) {
+			$timespent = $this->task->fetchTimeSpentOnTask();
 		}
 
 		return $this->_cleanObjectDatas($this->task);
@@ -111,6 +108,10 @@ class Tasks extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -118,38 +119,46 @@ class Tasks extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		}
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS t LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= " AND t.fk_soc = sc.fk_soc";
+		}
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+		if ($search_sale > 0) {
+			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
 		// Insert sale filter
-		if ($search_sale > 0)
-		{
-			$sql .= " AND sc.fk_user = ".$search_sale;
+		if ($search_sale > 0) {
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -160,13 +169,11 @@ class Tasks extends DolibarrApi
 		dol_syslog("API Rest request");
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$task_static = new Task($this->db);
 				if ($task_static->fetch($obj->rowid)) {
@@ -201,12 +208,12 @@ class Tasks extends DolibarrApi
 			$this->task->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
-          $lines = array();
-          foreach ($request_data["lines"] as $line) {
-            array_push($lines, (object) $line);
-          }
-          $this->project->lines = $lines;
-        }*/
+		  $lines = array();
+		  foreach ($request_data["lines"] as $line) {
+			array_push($lines, (object) $line);
+		  }
+		  $this->project->lines = $lines;
+		}*/
 		if ($this->task->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating task", array_merge(array($this->task->error), $this->task->errors));
 		}
@@ -223,48 +230,48 @@ class Tasks extends DolibarrApi
 	//  * @url	GET {id}/tasks
 	//  */
 	/*
-    public function getLines($id, $includetimespent=0)
-    {
-        if(! DolibarrApiAccess::$user->rights->projet->lire) {
-            throw new RestException(401);
-        }
+	public function getLines($id, $includetimespent=0)
+	{
+		if(! DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401);
+		}
 
-        $result = $this->project->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Project not found');
-        }
+		$result = $this->project->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Project not found');
+		}
 
-        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        $this->project->getLinesArray(DolibarrApiAccess::$user);
-        $result = array();
-        foreach ($this->project->lines as $line)      // $line is a task
-        {
-            if ($includetimespent == 1)
-            {
-                $timespent = $line->getSummaryOfTimeSpent(0);
-            }
-            if ($includetimespent == 1)
-            {
-                // TODO
-                // Add class for timespent records and loop and fill $line->lines with records of timespent
-            }
-            array_push($result,$this->_cleanObjectDatas($line));
-        }
-        return $result;
-    }
-    */
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$this->project->getLinesArray(DolibarrApiAccess::$user);
+		$result = array();
+		foreach ($this->project->lines as $line)      // $line is a task
+		{
+			if ($includetimespent == 1)
+			{
+				$timespent = $line->getSummaryOfTimeSpent(0);
+			}
+			if ($includetimespent == 1)
+			{
+				// TODO
+				// Add class for timespent records and loop and fill $line->lines with records of timespent
+			}
+			array_push($result,$this->_cleanObjectDatas($line));
+		}
+		return $result;
+	}
+	*/
 
 	/**
 	 * Get roles a user is assigned to a task with
 	 *
-	 * @param   int   $id             Id of task
-	 * @param   int   $userid         Id of user (0 = connected user)
+	 * @param   int   $id           Id of task
+	 * @param   int   $userid       Id of user (0 = connected user)
+	 * @return 	array				Array of roles
 	 *
 	 * @url	GET {id}/roles
 	 *
-	 * @return int
 	 */
 	public function getRoles($id, $userid = 0)
 	{
@@ -284,16 +291,16 @@ class Tasks extends DolibarrApi
 		}
 
 		$usert = DolibarrApiAccess::$user;
-		if ($userid > 0)
-		{
+		if ($userid > 0) {
 			$usert = new User($this->db);
 			$usert->fetch($userid);
 		}
-		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(0, $usert, 0, $id);
+		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(null, $usert, 0, $id);
 		$result = array();
 		foreach ($this->task->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
+
 		return $result;
 	}
 
@@ -309,59 +316,63 @@ class Tasks extends DolibarrApi
 	//  * @return int
 	//  */
 	/*
-    public function postLine($id, $request_data = null)
-    {
-        if(! DolibarrApiAccess::$user->rights->projet->creer) {
-            throw new RestException(401);
-        }
+	public function postLine($id, $request_data = null)
+	{
+		if(! DolibarrApiAccess::$user->rights->projet->creer) {
+			throw new RestException(401);
+		}
 
-        $result = $this->project->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Project not found');
-        }
+		$result = $this->project->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Project not found');
+		}
 
-        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        $request_data = (object) $request_data;
-        $updateRes = $this->project->addline(
-                        $request_data->desc,
-                        $request_data->subprice,
-                        $request_data->qty,
-                        $request_data->tva_tx,
-                        $request_data->localtax1_tx,
-                        $request_data->localtax2_tx,
-                        $request_data->fk_product,
-                        $request_data->remise_percent,
-                        $request_data->info_bits,
-                        $request_data->fk_remise_except,
-                        'HT',
-                        0,
-                        $request_data->date_start,
-                        $request_data->date_end,
-                        $request_data->product_type,
-                        $request_data->rang,
-                        $request_data->special_code,
-                        $fk_parent_line,
-                        $request_data->fk_fournprice,
-                        $request_data->pa_ht,
-                        $request_data->label,
-                        $request_data->array_options,
-                        $request_data->fk_unit,
-                        $this->element,
-                        $request_data->id
-        );
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        if ($updateRes > 0) {
-            return $updateRes;
+		$request_data = (object) $request_data;
 
-        }
-        return false;
-    }
-    */
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+
+		$updateRes = $this->project->addline(
+						$request_data->desc,
+						$request_data->subprice,
+						$request_data->qty,
+						$request_data->tva_tx,
+						$request_data->localtax1_tx,
+						$request_data->localtax2_tx,
+						$request_data->fk_product,
+						$request_data->remise_percent,
+						$request_data->info_bits,
+						$request_data->fk_remise_except,
+						'HT',
+						0,
+						$request_data->date_start,
+						$request_data->date_end,
+						$request_data->product_type,
+						$request_data->rang,
+						$request_data->special_code,
+						$fk_parent_line,
+						$request_data->fk_fournprice,
+						$request_data->pa_ht,
+						$request_data->label,
+						$request_data->array_options,
+						$request_data->fk_unit,
+						$this->element,
+						$request_data->id
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+
+		}
+		return false;
+	}
+	*/
 
 	// /**
-	//  * Update a task to given project
+	//  * Update a task of a given project
 	//  *
 	//  * @param int   $id             Id of project to update
 	//  * @param int   $taskid         Id of task to update
@@ -372,52 +383,56 @@ class Tasks extends DolibarrApi
 	//  * @return object
 	//  */
 	/*
-    public function putLine($id, $lineid, $request_data = null)
-    {
-        if(! DolibarrApiAccess::$user->rights->projet->creer) {
-            throw new RestException(401);
-        }
+	public function putLine($id, $lineid, $request_data = null)
+	{
+		if(! DolibarrApiAccess::$user->rights->projet->creer) {
+			throw new RestException(401);
+		}
 
-        $result = $this->project->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Project not found');
-        }
+		$result = $this->project->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Project not found');
+		}
 
-        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        $request_data = (object) $request_data;
-        $updateRes = $this->project->updateline(
-                        $lineid,
-                        $request_data->desc,
-                        $request_data->subprice,
-                        $request_data->qty,
-                        $request_data->remise_percent,
-                        $request_data->tva_tx,
-                        $request_data->localtax1_tx,
-                        $request_data->localtax2_tx,
-                        'HT',
-                        $request_data->info_bits,
-                        $request_data->date_start,
-                        $request_data->date_end,
-                        $request_data->product_type,
-                        $request_data->fk_parent_line,
-                        0,
-                        $request_data->fk_fournprice,
-                        $request_data->pa_ht,
-                        $request_data->label,
-                        $request_data->special_code,
-                        $request_data->array_options,
-                        $request_data->fk_unit
-        );
+		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        if ($updateRes > 0) {
-            $result = $this->get($id);
-            unset($result->line);
-            return $this->_cleanObjectDatas($result);
-        }
-        return false;
-    }*/
+		$request_data = (object) $request_data;
+
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+
+		$updateRes = $this->project->updateline(
+						$lineid,
+						$request_data->desc,
+						$request_data->subprice,
+						$request_data->qty,
+						$request_data->remise_percent,
+						$request_data->tva_tx,
+						$request_data->localtax1_tx,
+						$request_data->localtax2_tx,
+						'HT',
+						$request_data->info_bits,
+						$request_data->date_start,
+						$request_data->date_end,
+						$request_data->product_type,
+						$request_data->fk_parent_line,
+						0,
+						$request_data->fk_fournprice,
+						$request_data->pa_ht,
+						$request_data->label,
+						$request_data->special_code,
+						$request_data->array_options,
+						$request_data->fk_unit
+		);
+
+		if ($updateRes > 0) {
+			$result = $this->get($id);
+			unset($result->line);
+			return $this->_cleanObjectDatas($result);
+		}
+		return false;
+	}*/
 
 
 	/**
@@ -439,16 +454,17 @@ class Tasks extends DolibarrApi
 			throw new RestException(404, 'Task not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$this->task->$field = $value;
 		}
 
-		if ($this->task->update(DolibarrApiAccess::$user) > 0)
-		{
+		if ($this->task->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->task->error);
@@ -472,7 +488,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(404, 'Task not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -501,6 +517,7 @@ class Tasks extends DolibarrApi
 	 * @param   string      $note               Note
 	 *
 	 * @url POST    {id}/addtimespent
+	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
 	 *
 	 * @return  array
 	 */
@@ -519,14 +536,16 @@ class Tasks extends DolibarrApi
 		}
 
 		$uid = $user_id;
-		if (empty($uid)) $uid = DolibarrApiAccess::$user->id;
+		if (empty($uid)) {
+			$uid = DolibarrApiAccess::$user->id;
+		}
 
 		$newdate = dol_stringtotime($date, 1);
 		$this->task->timespent_date = $newdate;
 		$this->task->timespent_datehour = $newdate;
 		$this->task->timespent_withhour = 1;
 		$this->task->timespent_duration = $duration;
-		$this->task->timespent_fk_user  = $user_id;
+		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
@@ -545,6 +564,110 @@ class Tasks extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Update time spent for a task of a project.
+	 * You can test this API with the following input message
+	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
+	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @param   int         $duration           Duration in seconds (3600 = 1h)
+	 * @param   int         $user_id            User (Use 0 for connected user)
+	 * @param   string      $note               Note
+	 *
+	 * @url PUT    {id}/timespent/{timespent_id}
+	 *
+	 * @return  array
+	 */
+	public function putTimeSpent($id, $timespent_id, $date, $duration, $user_id = 0, $note = '')
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+			throw new RestException(401);
+		}
+		$this->timespentRecordChecks($id, $timespent_id);
+
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$newdate = dol_stringtotime($date, 1);
+		$this->task->timespent_date = $newdate;
+		$this->task->timespent_datehour = $newdate;
+		$this->task->timespent_withhour = 1;
+		$this->task->timespent_duration = $duration;
+		$this->task->timespent_fk_user  = $user_id ?? DolibarrApiAccess::$user->id;
+		$this->task->timespent_note     = $note;
+
+		$result = $this->task->updateTimeSpent(DolibarrApiAccess::$user, 0);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done.');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when updating time spent: '.$this->task->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Time spent updated'
+			)
+		);
+	}
+
+	/**
+	 * Delete time spent for a task of a project.
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
+	 *
+	 * @url DELETE    {id}/timespent/{timespent_id}
+	 *
+	 * @return  array
+	 */
+	public function deleteTimeSpent($id, $timespent_id)
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
+			throw new RestException(401);
+		}
+		$this->timespentRecordChecks($id, $timespent_id);
+
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->task->delTimeSpent(DolibarrApiAccess::$user, 0) < 0) {
+			throw new RestException(500, 'Error when deleting time spent: '.$this->task->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Time spent deleted'
+			)
+		);
+	}
+
+	/**
+	 * Validate task & timespent IDs for timespent API methods.
+	 * Loads the selected task & timespent records.
+	 *
+	 * @param   int         $id                 Task ID
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
+	 *
+	 * @return void
+	 */
+	protected function timespentRecordChecks($id, $timespent_id)
+	{
+		if ($this->task->fetch($id) <= 0) {
+			throw new RestException(404, 'Task not found');
+		}
+		if ($this->task->fetchTimeSpent($timespent_id) <= 0) {
+			throw new RestException(404, 'Timespent not found');
+		} elseif ($this->task->id != $id) {
+			throw new RestException(404, 'Timespent not found in selected task');
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -607,8 +730,9 @@ class Tasks extends DolibarrApi
 	{
 		$object = array();
 		foreach (self::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$object[$field] = $data[$field];
 		}
 		return $object;

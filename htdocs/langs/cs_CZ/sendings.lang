@@ -43,17 +43,17 @@ ConfirmValidateSending=Opravdu chcete tuto zásilku ověřit odkazem <b> %s</b>?
 ConfirmCancelSending=Opravdu chcete tuto zásilku zrušit?
 DocumentModelMerou=Merou A5 modelu
 WarningNoQtyLeftToSend=Varování: žádné zboží nečeká na dopravu
-StatsOnShipmentsOnlyValidated=Statistiky vedené pouze na ověřené zásilky. Datum použití je datum schválení zásilky (plánované datum dodání není vždy známo).
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
 DateDeliveryPlanned=Plánovaný termín dodání
 RefDeliveryReceipt=Ref. Potvrzení o doručení
 StatusReceipt=Stavové potvrzení o doručení
 DateReceived=Datum doručení
-ClassifyReception=Klasifikujte příjem
+ClassifyReception=Classify Received
 SendShippingByEMail=Odeslání zásilky emailem
 SendShippingRef=Podání zásilky %s
 ActionsOnShipping=Události zásilky
 LinkToTrackYourPackage=Odkaz pro sledování balíku
-ShipmentCreationIsDoneFromOrder=Pro tuto chvíli, je vytvoření nové zásilky provedeno z objednávkové  karty.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
 ShipmentLine=Řádek zásilky
 ProductQtyInCustomersOrdersRunning=Množství produktu z otevřených prodejních objednávek
 ProductQtyInSuppliersOrdersRunning=Množství produktu z otevřených objednávek
@@ -74,3 +74,8 @@ SumOfProductWeights=Součet hmotnosti produktů
 # warehouse details
 DetailWarehouseNumber= Detaily skladu
 DetailWarehouseFormat= W:%s (Množství : %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

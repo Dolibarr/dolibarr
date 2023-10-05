@@ -21,37 +21,42 @@
  *		\brief      Page to purge files (temporary or not)
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
-if (!$user->admin)
-	accessforbidden();
-
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $choice = GETPOST('choice', 'aZ09');
-
+$nbsecondsold = GETPOSTINT('nbsecondsold');
 
 // Define filelog to discard it from purge
 $filelog = '';
-if (!empty($conf->syslog->enabled))
-{
-	$filelog = $conf->global->SYSLOG_FILE;
+if (isModEnabled('syslog')) {
+	$filelog = getDolGlobalString('SYSLOG_FILE');
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
+}
+
+// Security
+if (!$user->admin) {
+	accessforbidden();
 }
 
 
 /*
  *	Actions
  */
-if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes'))
-{
+
+if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes')) {
 	// Increase limit of time. Works only if we are not in safe mode
 	$ExecTimeLimit = 600;
-	if (!empty($ExecTimeLimit))
-	{
+	if (!empty($ExecTimeLimit)) {
 		$err = error_reporting();
 		error_reporting(0); // Disable all errors
 		//error_reporting(E_ALL);
@@ -61,7 +66,8 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
-	$result = $utils->purgeFiles($choice);
+
+	$result = $utils->purgeFiles($choice, $nbsecondsold);
 
 	$mesg = $utils->output;
 	setEventMessages($mesg, null, 'mesgs');
@@ -90,7 +96,7 @@ print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
-if (!empty($conf->syslog->enabled)) {
+if (isModEnabled('syslog')) {
 	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;
@@ -107,18 +113,21 @@ if (!empty($conf->syslog->enabled)) {
 
 print '<input type="radio" name="choice" id="choicetempfiles" value="tempfiles"';
 print (!$choice || $choice == 'tempfiles' || $choice == 'allfiles') ? ' checked' : '';
-print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles").'</label><br><br>';
+print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFilesShort").'</label><br><br>';
 
 print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';
-print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label><br>';
-
+print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label>';
+print '<br>';
+if (getDolGlobalInt('MAIN_PURGE_ACCEPT_NBSECONDSOLD')) {
+	print 'NbSecondsOld = <input class="width50 right" type="text" name="nbsecondsold" value="'.$nbsecondsold.'">';
+}
 print '</td></tr></table>';
 
 //if ($choice != 'confirm_allfiles')
 //{
 	print '<br>';
-	print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("PurgeRunNow").'"></div>';
 //}
 
 print '</form>';
@@ -126,7 +135,7 @@ print '</form>';
 if (preg_match('/^confirm/i', $choice)) {
 	print '<br>';
 	$formquestion = array();
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles&nbsecondsold='.$nbsecondsold, $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
 // End of page

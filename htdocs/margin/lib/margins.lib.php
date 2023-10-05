@@ -71,7 +71,7 @@ function marges_prepare_head()
 		$h++;
 	}
 
-	if ($user->rights->societe->lire) {
+	if ($user->hasRight('societe', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT."/margin/customerMargins.php";
 		$head[$h][1] = $langs->trans("CustomerMargins");
 		$head[$h][2] = 'customerMargins';
@@ -96,8 +96,9 @@ function marges_prepare_head()
 		$head[$h][2] = 'checkMargins';
 	}
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
 
 	return $head;
 }
@@ -124,8 +125,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	if ($fk_pa > 0 && empty($paht)) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
-		if ($product->fetch_product_fournisseur_price($fk_pa))
-		{
+		if ($product->fetch_product_fournisseur_price($fk_pa)) {
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 		} else {
 			$paht_ret = $paht;
@@ -141,16 +141,20 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	$pu_ht_remise = price2num($pu_ht_remise, 'MU');
 
 	// calcul marge
-	if ($pu_ht_remise < 0)
+	if ($pu_ht_remise < 0) {
 		$marge = -1 * (abs($pu_ht_remise) - $paht_ret);
-	else $marge = $pu_ht_remise - $paht_ret;
+	} else {
+		$marge = $pu_ht_remise - $paht_ret;
+	}
 
 	// calcul taux marge
-	if ($paht_ret != 0)
+	if ($paht_ret != 0) {
 		$marge_tx_ret = (100 * $marge) / $paht_ret;
+	}
 	// calcul taux marque
-	if ($pu_ht_remise != 0)
+	if ($pu_ht_remise != 0) {
 		$marque_tx_ret = (100 * $marge) / $pu_ht_remise;
+	}
 
 	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2020  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2021  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,10 +108,10 @@ class printing_printipp extends PrintingDriver
 		global $conf;
 
 		$this->db = $db;
-		$this->host = $conf->global->PRINTIPP_HOST;
-		$this->port = $conf->global->PRINTIPP_PORT;
-		$this->user = $conf->global->PRINTIPP_USER;
-		$this->password = $conf->global->PRINTIPP_PASSWORD;
+		$this->host = getDolGlobalString('PRINTIPP_HOST');
+		$this->port = getDolGlobalString('PRINTIPP_PORT');
+		$this->user = getDolGlobalString('PRINTIPP_USER');
+		$this->password = getDolGlobalString('PRINTIPP_PASSWORD');
 		$this->conf[] = array('varname'=>'PRINTIPP_HOST', 'required'=>1, 'example'=>'localhost', 'type'=>'text');
 		$this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
 		$this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
@@ -143,10 +143,12 @@ class printing_printipp extends PrintingDriver
 		$ipp->setUserName($this->userid);
 		// Set default number of copy
 		$ipp->setCopies(1);
-		if (!empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
+		if (!empty($this->user)) {
+			$ipp->setAuthentication($this->user, $this->password);
+		}
 
 		// select printer uri for module order, propal,...
-		$sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$this->db->escape($module)."' AND driver = 'printipp' AND userid = ".$user->id;
+		$sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$this->db->escape($module)."' AND driver = 'printipp' AND userid = ".((int) $user->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -156,10 +158,9 @@ class printing_printipp extends PrintingDriver
 				// Set number of copy
 				$ipp->setCopies($obj->copy);
 			} else {
-				if (!empty($conf->global->PRINTIPP_URI_DEFAULT))
-				{
-					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
-					$ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
+				if (!empty($conf->global->PRINTIPP_URI_DEFAULT)) {
+					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".getDolGlobalString('PRINTIPP_URI_DEFAULT'));
+					$ipp->setPrinterURI(getDolGlobalString('PRINTIPP_URI_DEFAULT'));
 				} else {
 					$this->errors[] = 'NoDefaultPrinterDefined';
 					$error++;
@@ -171,7 +172,9 @@ class printing_printipp extends PrintingDriver
 		}
 
 		$fileprint = $conf->{$module}->dir_output;
-		if ($subdir != '') $fileprint .= '/'.$subdir;
+		if ($subdir != '') {
+			$fileprint .= '/'.$subdir;
+		}
 		$fileprint .= '/'.$file;
 		$ipp->setData($fileprint);
 		try {
@@ -180,7 +183,9 @@ class printing_printipp extends PrintingDriver
 			$this->errors[] = $e->getMessage();
 			$error++;
 		}
-		if ($error == 0) $this->errors[] = 'PRINTIPP: Job added';
+		if ($error == 0) {
+			$this->errors[] = 'PRINTIPP: Job added';
+		}
 
 		return $error;
 	}
@@ -228,7 +233,7 @@ class printing_printipp extends PrintingDriver
 			if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
-				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;token='.newToken().'&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTIPP_URI_DEFAULT&driver=printipp&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>'."\n";
@@ -304,7 +309,7 @@ class printing_printipp extends PrintingDriver
 			$ipp->setAuthentication($this->user, $this->password);
 		}
 		// select printer uri for module order, propal,...
-		$sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
+		$sql = "SELECT rowid,printer_uri,printer_name FROM ".MAIN_DB_PREFIX."printer_ipp WHERE module = '".$this->db->escape($module)."'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

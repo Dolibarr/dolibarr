@@ -22,8 +22,8 @@
  */
 
 /**
- * \file 	dev/tools/dolibarr-postgres2mysql.php
- * \brief 	Script to migrate a postgresql dump into a mysql dump
+ * \file    dev/tools/dolibarr-postgres2mysql.php
+ * \brief   Script to migrate a postgresql dump into a mysql dump
  */
 
 $sapi_type = php_sapi_name();
@@ -48,8 +48,9 @@ if (! ($argv[1] && $argv[2])) {
 	echo "Usage: php pg2mysql_cli.php <inputfilename> <outputfilename> [engine]\n";
 	exit();
 } else {
-	if (isset($argv[3]))
+	if (isset($argv[3])) {
 		$config['engine'] = $argv[3];
+	}
 	pg2mysql_large($argv[1], $argv[2]);
 
 	echo <<<XHTML
@@ -66,22 +67,26 @@ XHTML;
 /**
  * getfieldname
  *
- * @param	string		$l		String
- * @return	string|null			Field name
+ * @param  string $l String
+ * @return string|null         Field name
  */
 function getfieldname($l)
 {
 	// first check if its in nice quotes for us
 	$regs = array();
 	if (preg_match("/`(.*)`/", $l, $regs)) {
-		if ($regs[1])
+		if ($regs[1]) {
 			return $regs[1];
-		else return null;
-	} // if its not in quotes, then it should (we hope!) be the first "word" on the line, up to the first space.
-	elseif (preg_match("/([^\ ]*)/", trim($l), $regs)) {
-		if ($regs[1])
+		} else {
+			return null;
+		}
+	} elseif (preg_match("/([^\ ]*)/", trim($l), $regs)) {
+		// if its not in quotes, then it should (we hope!) be the first "word" on the line, up to the first space.
+		if ($regs[1]) {
 			return $regs[1];
-		else return null;
+		} else {
+			return null;
+		}
 	}
 }
 
@@ -89,26 +94,28 @@ function getfieldname($l)
 /**
  * formatsize
  *
- * @param 	string $s	Size to format
- * @return 	string		Formated size
+ * @param  string $s Size to format
+ * @return string      Formated size
  */
 function formatsize($s)
 {
-	if ($s < pow(2, 14))
+	if ($s < pow(2, 14)) {
 		return "{$s}B";
-	elseif ($s < pow(2, 20))
+	} elseif ($s < pow(2, 20)) {
 		return sprintf("%.1f", round($s / 1024, 1)) . "K";
-	elseif ($s < pow(2, 30))
+	} elseif ($s < pow(2, 30)) {
 		return sprintf("%.1f", round($s / 1024 / 1024, 1)) . "M";
-	else return sprintf("%.1f", round($s / 1024 / 1024 / 1024, 1)) . "G";
+	} else {
+		return sprintf("%.1f", round($s / 1024 / 1024 / 1024, 1)) . "G";
+	}
 }
 
 /**
  * pg2mysql_large
  *
- * @param string	$infilename			Input filename
- * @param string	$outfilename		Output filename
- * @return int							<0 if KO, >=0 if OK
+ * @param  string $infilename  Input filename
+ * @param  string $outfilename Output filename
+ * @return int                          <0 if KO, >=0 if OK
  */
 function pg2mysql_large($infilename, $outfilename)
 {
@@ -141,9 +148,11 @@ function pg2mysql_large($infilename, $outfilename)
 		$c = substr_count($instr, "'");
 		// we have an odd number of ' marks
 		if ($c % 2 != 0) {
-			if ($inquotes)
+			if ($inquotes) {
 				$inquotes = false;
-			else $inquotes = true;
+			} else {
+				$inquotes = true;
+			}
 		}
 
 		if ($linenum % 10000 == 0) {
@@ -225,10 +234,10 @@ function pg2mysql_large($infilename, $outfilename)
 /**
  * pg2mysql
  *
- * @param array		$input								Array of input
- * @param array		$arrayofprimaryalreadyintabledef	Array of table already output with a primary key set into definition
- * @param boolean 	$header								Boolean
- * @return string[]										Array of output
+ * @param  array   $input                           Array of input
+ * @param  array   $arrayofprimaryalreadyintabledef Array of table already output with a primary key set into definition
+ * @param  boolean $header                          Boolean
+ * @return string[]                                     Array of output
  */
 function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 {
@@ -323,9 +332,11 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = str_replace(" bool DEFAULT false", " bool DEFAULT 0", $line);
 			if (preg_match("/ character varying\(([0-9]*)\)/", $line, $regs)) {
 				$num = $regs[1];
-				if ($num <= 255)
+				if ($num <= 255) {
 					$line = preg_replace("/ character varying\([0-9]*\)/", " varchar($num)", $line);
-				else $line = preg_replace("/ character varying\([0-9]*\)/", " text", $line);
+				} else {
+					$line = preg_replace("/ character varying\([0-9]*\)/", " text", $line);
+				}
 			}
 			// character varying with no size, we will default to varchar(255)
 			if (preg_match("/ character varying/", $line)) {
@@ -345,9 +356,11 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = preg_replace("/::.*$/", "\n", $line);
 			if (preg_match("/character\(([0-9]*)\)/", $line, $regs)) {
 				$num = $regs[1];
-				if ($num <= 255)
+				if ($num <= 255) {
 					$line = preg_replace("/ character\([0-9]*\)/", " varchar($num)", $line);
-				else $line = preg_replace("/ character\([0-9]*\)/", " text", $line);
+				} else {
+					$line = preg_replace("/ character\([0-9]*\)/", " text", $line);
+				}
 			}
 			// timestamps
 			$line = str_replace(" timestamp with time zone", " datetime", $line);
@@ -457,9 +470,11 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 					$c = substr_count($line, "'");
 					// we have an odd number of ' marks
 					if ($c % 2 != 0) {
-						if ($inquotes)
+						if ($inquotes) {
 							$inquotes = false;
-						else $inquotes = true;
+						} else {
+							$inquotes = true;
+						}
 						// echo "inquotes=$inquotes\n";
 					}
 				} while (substr($lines[$linenumber], - 3, - 1) != ");" || $inquotes);
@@ -472,7 +487,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$pkey = $line;
 
 			$linenumber ++;
-			if (! empty($lines[$linenumber])) {
+			if (!empty($lines[$linenumber])) {
 				$line = $lines[$linenumber];
 			} else {
 				$line = '';
@@ -502,7 +517,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 		if (substr($line, 0, 12) == "CREATE INDEX") {
 			$matches = array();
 			preg_match('/CREATE INDEX "?([a-zA-Z0-9_]*)"? ON "?([a-zA-Z0-9_\.]*)"? USING btree \((.*)\);/', $line, $matches);
-			if (! empty($matches[3])) {
+			if (!empty($matches[3])) {
 				$indexname = $matches[1];
 				$tablename = str_replace('public.', '', $matches[2]);
 				$columns = $matches[3];
@@ -514,7 +529,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 		if (substr($line, 0, 19) == "CREATE UNIQUE INDEX") {
 			$matches = array();
 			preg_match('/CREATE UNIQUE INDEX "?([a-zA-Z0-9_]*)"? ON "?([a-zA-Z0-9_\.]*)"? USING btree \((.*)\);/', $line, $matches);
-			if (! empty($matches[3])) {
+			if (!empty($matches[3])) {
 				$indexname = $matches[1];
 				$tablename = str_replace('public.', '', $matches[2]);
 				$columns = str_replace('"', '', $matches[3]);
@@ -524,8 +539,9 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			}
 		}
 
-		if (substr($line, 0, 13) == 'DROP DATABASE')
+		if (substr($line, 0, 13) == 'DROP DATABASE') {
 			$output .= $line;
+		}
 
 		if (substr($line, 0, 15) == 'CREATE DATABASE') {
 			$matches = array();

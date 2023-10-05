@@ -1,0 +1,92 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Серіктестікті басқару
+PartnershipDescription=Серіктестікті басқару модулі
+PartnershipDescriptionLong= Серіктестікті басқару модулі
+Partnership=Partnership
+AddPartnership=Серіктестік қосу
+CancelPartnershipForExpiredMembers=Серіктестік: жазылу мерзімі өткен мүшелердің серіктестігін тоқтату
+PartnershipCheckBacklink=Серіктестік: сілтеме бойынша сілтемені тексеріңіз
+
+#
+# Menu
+#
+NewPartnership=Жаңа серіктестік
+ListOfPartnerships=Серіктестік тізімі
+
+#
+# Admin page
+#
+PartnershipSetup=Серіктестік орнату
+PartnershipAbout=Серіктестік туралы
+PartnershipAboutPage=Бет туралы серіктестік
+partnershipforthirdpartyormember=Серіктестік мәртебесі «үшінші тарапта» немесе «мүшеде» орнатылуы керек
+PARTNERSHIP_IS_MANAGED_FOR=Серіктестік басқарылды
+PARTNERSHIP_BACKLINKS_TO_CHECK=Тексеру үшін кері сілтемелер
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Жазылу мерзімі аяқталған кезде серіктестік мәртебесінен бас тартуға бірнеше күн қалғанда
+ReferingWebsiteCheck=Сайтқа сілтеме жасауды тексеру
+ReferingWebsiteCheckDesc=Сіз серіктестердің жеке веб -сайттағы веб -сайт домендеріне кері сілтеме қосқанын тексеру мүмкіндігін қосуға болады.
+
+#
+# Object
+#
+DeletePartnership=Серіктестікті жою
+PartnershipDedicatedToThisThirdParty=Бұл үшінші тарапқа арналған серіктестік
+PartnershipDedicatedToThisMember=Бұл мүшеге арналған серіктестік
+DatePartnershipStart=Басталатын күн
+DatePartnershipEnd=Аяқталу күні
+ReasonDecline=Бас тарту себебі
+ReasonDeclineOrCancel=Бас тарту себебі
+PartnershipAlreadyExist=Серіктестік қазірдің өзінде бар
+ManagePartnership=Серіктестікті басқару
+BacklinkNotFoundOnPartnerWebsite=Серіктестің веб -сайтында кері сілтеме табылмады
+ConfirmClosePartnershipAsk=Бұл серіктестіктен шынымен де бас тартқыңыз келе ме?
+PartnershipType=Серіктестік түрі
+PartnershipRefApproved=Partnership %s approved
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Серіктестік жақын арада жойылады
+SendingEmailOnPartnershipRefused=Серіктестік бас тартты
+SendingEmailOnPartnershipAccepted=Серіктестік қабылданды
+SendingEmailOnPartnershipCanceled=Серіктестік жойылды
+
+YourPartnershipWillSoonBeCanceledTopic=Серіктестік жақын арада жойылады
+YourPartnershipRefusedTopic=Серіктестік бас тартты
+YourPartnershipAcceptedTopic=Серіктестік қабылданды
+YourPartnershipCanceledTopic=Серіктестік жойылды
+
+YourPartnershipWillSoonBeCanceledContent=Сізге серіктестік жақын арада жойылатынын хабарлаймыз (кері сілтеме табылмады)
+YourPartnershipRefusedContent=Сізге серіктестік туралы өтінішіңіз қабылданбағанын хабарлаймыз.
+YourPartnershipAcceptedContent=Сіздің серіктестік туралы өтінішіңіз қабылданғанын хабарлаймыз.
+YourPartnershipCanceledContent=Сіздің серіктестігіңіздің жойылғанын хабарлаймыз.
+
+CountLastUrlCheckError=URL -ді соңғы тексеруге қателер саны
+LastCheckBacklink=URL мекенжайын соңғы тексеру күні
+ReasonDeclineOrCancel=Бас тарту себебі
+
+#
+# Status
+#
+PartnershipDraft=Жоба
+PartnershipAccepted=Қабылданды
+PartnershipRefused=Бас тартылды
+PartnershipCanceled=Бас тартылды
+PartnershipManagedFor=Серіктестер

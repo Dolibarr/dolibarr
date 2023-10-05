@@ -34,42 +34,65 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+global $filtertype;
+if (empty($filtertype))	$filtertype = 0;
+
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+
+
 // Title line
 print "<thead>\n";
 
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
-
-// Description
-print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-
-// Qty
-print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
-
-if (!empty($conf->global->PRODUCT_USE_UNITS))
-{
-	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	print '<td class="linecolnum center">&nbsp;</td>';
 }
 
-// Qty frozen
-print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
+// Product or sub-bom
+print '<td class="linecoldescription">'.$langs->trans('Description');
+if (!empty($conf->global->BOM_SUB_BOM) && $filtertype != 1) {
+	print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
+	print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
+}
+print '</td>';
 
-// Disable stock change
-print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
+// Qty
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
-// Efficiency
-print '<td class="linecolefficiency right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
+if ($filtertype != 1) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
+	}
 
-// Cost
-print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
+	// Qty frozen
+	print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+
+	// Disable stock change
+	print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
+
+	// Efficiency
+	print '<td class="linecolefficiency right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
+
+	// Cost
+	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
+} else {
+	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+
+	if (isModEnabled('workstation')) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+
+	// Cost
+	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';
+}
+
+
+
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 
@@ -77,8 +100,7 @@ print '<td class="linecoldelete" style="width: 10px"></td>';
 
 print '<td class="linecolmove" style="width: 10px"></td>';
 
-if ($action == 'selectlines')
-{
+if ($action == 'selectlines') {
 	print '<td class="linecolcheckall center">';
 	print '<input type="checkbox" class="linecheckboxtoggle" />';
 	print '<script>$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';

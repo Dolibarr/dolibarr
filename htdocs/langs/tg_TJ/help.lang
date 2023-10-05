@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Дастгирии форум/Wiki
+EMailSupport=Дастгирии почтаи электронӣ
+RemoteControlSupport=Дастгирии онлайн дар вақти воқеӣ / дурдаст
+OtherSupport=Дастгирии дигар
+ToSeeListOfAvailableRessources=Барои тамос/дидани захираҳои мавҷуда:
+HelpCenter=Маркази кӯмак
+DolibarrHelpCenter=Маркази кӯмак ва дастгирии Dolibarr
+ToGoBackToDolibarr=Дар акси ҳол, <a href="%s"> барои идома додани истифодаи Dolibarr </a> ин ҷо клик кунед.
+TypeOfSupport=Навъи дастгирӣ
+TypeSupportCommunauty=Ҷамъият (ройгон)
+TypeSupportCommercial=Тиҷоратӣ
+TypeOfHelp=Навиштан
+NeedHelpCenter=Need support?
+Efficiency=Самаранокӣ
+TypeHelpOnly=Фақат ёрдам
+TypeHelpDev=Кӯмак+Рушд
+TypeHelpDevForm=Кӯмак+Рушд+Омӯзиш
+BackToHelpCenter=Дар акси ҳол, <a href="%s"> ба саҳифаи хонагии маркази Help </a> баргардед.
+LinkToGoldMember=Шумо метавонед ба яке аз тренерон, ки Dolibarr барои забони худ интихоб кардааст, занг занед (%s) бо пахши виҷети онҳо (мақом ва нархи ҳадди аксар ба таври худкор нав карда мешавад):
+PossibleLanguages=Забонҳои дастгирӣшаванда
+SubscribeToFoundation=Ба лоиҳаи Dolibarr кумак кунед, ба бунёд обуна шавед
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

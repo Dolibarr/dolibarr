@@ -22,6 +22,7 @@
  *       \brief      Home page for top menu tools
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Load translation files required by the page
@@ -29,7 +30,9 @@ $langs->loadLangs(array("companies", "other"));
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 
 
 

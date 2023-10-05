@@ -61,15 +61,24 @@ class InterfaceLogevents extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0; // Log events is disabled (hidden features)
+		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) {
+			return 0; // Log events is disabled (hidden features)
+		}
 
 		$key = 'MAIN_LOGEVENTS_'.$action;
 		//dol_syslog("xxxxxxxxxxx".$key);
-		if (empty($conf->global->$key)) return 0; // Log events not enabled for this action
+		if (empty($conf->global->$key)) {
+			return 0; // Log events not enabled for this action
+		}
 
-		if (empty($conf->entity)) $conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
+		if (empty($conf->entity)) {
+			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
+		}
 
 		$date = dol_now();
+
+		$text = '';
+		$desc = '';
 
 		// Actions
 		if ($action == 'USER_LOGIN') {
@@ -78,15 +87,9 @@ class InterfaceLogevents extends DolibarrTriggers
 			$langs->load("users");
 			// Initialisation donnees (date,duree,texte,desc)
 			$text = "(UserLogged,".$object->login.")";
-			$text .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
 			$desc = "(UserLogged,".$object->login.")";
-			$desc .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
 		} elseif ($action == 'USER_LOGIN_FAILED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-			// Initialisation donnees (date,duree,texte,desc)
-			$text = $object->trigger_mesg; // Message direct
-			$desc = $object->trigger_mesg; // Message direct
 		} elseif ($action == 'USER_LOGOUT') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -156,15 +159,17 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		// If not found
 		/*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+		else
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
-        }
-        */
+		}
+		*/
 
 		// Add more information into desc from the context property
-		if (!empty($desc) && !empty($object->context['audit'])) $desc .= ' - '.$object->context['audit'];
+		if (!empty($object->context['audit'])) {
+			$desc .= (empty($desc) ? '' : ' - ').$object->context['audit'];
+		}
 
 		// Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
@@ -175,6 +180,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		$event->label = $text;
 		$event->description = $desc;
 		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"]) ? '' : $_SERVER["HTTP_USER_AGENT"]);
+		$event->authentication_method = (empty($object->context['authentication_method']) ? '' : $object->context['authentication_method']);
 
 		$result = $event->create($user);
 		if ($result > 0) {

@@ -23,6 +23,8 @@ ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_code_fournisseur(code_fourni
 
 ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_barcode (barcode, fk_barcode_type, entity);
 
+ALTER TABLE llx_societe ADD INDEX idx_societe_nom(nom);
+
 ALTER TABLE llx_societe ADD INDEX idx_societe_user_creat(fk_user_creat);
 ALTER TABLE llx_societe ADD INDEX idx_societe_user_modif(fk_user_modif);
 
@@ -33,7 +35,7 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_prospectlevel(fk_prospectlevel);
 ALTER TABLE llx_societe ADD INDEX idx_societe_typent(fk_typent);
 ALTER TABLE llx_societe ADD INDEX idx_societe_forme_juridique(fk_forme_juridique);
 ALTER TABLE llx_societe ADD INDEX idx_societe_shipping_method(fk_shipping_method);
-ALTER TABLE llx_societe ADD INDEX idx_societe_entrepot(fk_entrepot);
+-- ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 -- ALTER TABLE llx_societe ADD FOREIGN KEY fk_prospectlevel llx_c_prospectlevel(code);
 

@@ -17,12 +17,14 @@
  */
 
 /**
- * \file scripts/website/regenerate_pages.php
+ * \file scripts/website/regenerate-pages.php
  * \ingroup scripts
  * \brief Regenerate all pages of a web site
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -56,7 +58,17 @@ include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
+
+/*
+ * Main
+ */
+
 $langs->load('main');
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
 
 $website = new Website($db);
 $result = $website->fetch(0, $websiteref);

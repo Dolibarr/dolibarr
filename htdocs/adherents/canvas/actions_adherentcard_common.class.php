@@ -61,18 +61,15 @@ abstract class ActionsAdherentCardCommon
 	 */
 	public function getObject($id)
 	{
-		//$ret = $this->getInstanceDao();
+		$object = new Adherent($this->db);
 
-		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
-    	{
-    		if (! empty($id)) $this->object->fetch($id);
-    	}
-    	else
-    	{*/
-			$object = new Adherent($this->db);
-			if (!empty($id)) $object->fetch($id);
-			$this->object = $object;
-		//}
+		if (!empty($id)) {
+			$object->fetch($id);
+		}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -81,7 +78,7 @@ abstract class ActionsAdherentCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{
@@ -89,7 +86,9 @@ abstract class ActionsAdherentCardCommon
 		global $conf, $langs, $user, $canvas;
 		global $form, $formcompany, $objsoc;
 
-		if ($action == 'add' || $action == 'update') $this->assign_post();
+		if ($action == 'add' || $action == 'update') {
+			$this->assign_post();
+		}
 
 		foreach ($this->object as $key => $value) {
 			$this->tpl[$key] = $value;
@@ -100,7 +99,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'create' || $action == 'edit') {
 			if ($conf->use_javascript_ajax) {
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
 				jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
@@ -123,12 +122,24 @@ abstract class ActionsAdherentCardCommon
 
 			// Predefined with third party
 			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE')) {
-				if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
-				if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->zip;
-				if (dol_strlen(trim($this->object->town)) == 0) $this->object->town = $objsoc->town;
-				if (dol_strlen(trim($this->object->phone_perso)) == 0) $this->object->phone_perso = $objsoc->phone;
-				if (dol_strlen(trim($this->object->phone_mobile)) == 0) $this->object->phone_mobile = $objsoc->phone_mobile;
-				if (dol_strlen(trim($this->object->email)) == 0) $this->object->email = $objsoc->email;
+				if (dol_strlen(trim($this->object->address)) == 0) {
+					$this->tpl['address'] = $objsoc->address;
+				}
+				if (dol_strlen(trim($this->object->zip)) == 0) {
+					$this->object->zip = $objsoc->zip;
+				}
+				if (dol_strlen(trim($this->object->town)) == 0) {
+					$this->object->town = $objsoc->town;
+				}
+				if (dol_strlen(trim($this->object->phone_perso)) == 0) {
+					$this->object->phone_perso = $objsoc->phone;
+				}
+				if (dol_strlen(trim($this->object->phone_mobile)) == 0) {
+					$this->object->phone_mobile = $objsoc->phone_mobile;
+				}
+				if (dol_strlen(trim($this->object->email)) == 0) {
+					$this->object->email = $objsoc->email;
+				}
 			}
 
 			// Zip
@@ -137,17 +148,24 @@ abstract class ActionsAdherentCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) $this->object->country_id = $objsoc->country_id;
+			if (dol_strlen(trim($this->object->country_id)) == 0) {
+				$this->object->country_id = $objsoc->country_id;
+			}
 
 			// Country
 			$this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
 			$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-			if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if ($user->admin) {
+				$this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
 
 			// State
-			if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
-			else $this->tpl['select_state'] = $countrynotdefined;
+			if ($this->object->country_id) {
+				$this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
+			} else {
+				$this->tpl['select_state'] = $countrynotdefined;
+			}
 
 			// Physical or Moral
 			$selectarray = array('0'=>$langs->trans("Physical"), '1'=>$langs->trans("Moral"));
@@ -156,7 +174,7 @@ abstract class ActionsAdherentCardCommon
 
 		if ($action == 'view' || $action == 'edit' || $action == 'delete') {
 			// Emailing
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}
@@ -166,7 +184,9 @@ abstract class ActionsAdherentCardCommon
 				$dolibarr_user = new User($this->db);
 				$result = $dolibarr_user->fetch($this->object->user_id);
 				$this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
-			} else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+			} else {
+				$this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+			}
 		}
 
 		if ($action == 'view' || $action == 'delete') {
@@ -196,7 +216,7 @@ abstract class ActionsAdherentCardCommon
 
 			$this->tpl['visibility'] = $this->object->getmorphylib($this->object->morphy);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {
@@ -205,7 +225,7 @@ abstract class ActionsAdherentCardCommon
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$login = dol_buildlogin($this->object->lastname, $this->object->firstname);
 
-	   		$generated_password = getRandomPassword(false);
+			$generated_password = getRandomPassword(false);
 			$password = $generated_password;
 
 			// Create a form array
@@ -221,34 +241,35 @@ abstract class ActionsAdherentCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->old_name = $_POST["old_name"];
-		$this->object->old_firstname = $_POST["old_firstname"];
+		$this->object->old_name = GETPOST("old_name");
+		$this->object->old_firstname = GETPOST("old_firstname");
 
-		$this->object->fk_soc = $_POST["fk_soc"];
-		$this->object->lastname			= $_POST["lastname"];
-		$this->object->firstname		= $_POST["firstname"];
-		$this->object->civility_id = $_POST["civility_id"];
-		$this->object->address = $_POST["address"];
-		$this->object->zip = $_POST["zipcode"];
-		$this->object->town = $_POST["town"];
-		$this->object->country_id = $_POST["country_id"] ? $_POST["country_id"] : $mysoc->country_id;
-		$this->object->state_id = $_POST["state_id"];
-		$this->object->phone_perso = $_POST["phone_perso"];
-		$this->object->phone_mobile = $_POST["phone_mobile"];
-		$this->object->email			= $_POST["email"];
-		$this->object->note				= $_POST["note"];
-		$this->object->canvas = $_POST["canvas"];
+		$this->object->fk_soc = GETPOST("fk_soc", 'int');
+		$this->object->socid = GETPOST("fk_soc", 'int');
+		$this->object->lastname			= GETPOST("lastname");
+		$this->object->firstname		= GETPOST("firstname");
+		$this->object->civility_id = GETPOST("civility_id");
+		$this->object->address = GETPOST("address");
+		$this->object->zip = GETPOST("zipcode");
+		$this->object->town = GETPOST("town");
+		$this->object->country_id = GETPOST("country_id", 'int') ? GETPOST("country_id", 'int') : $mysoc->country_id;
+		$this->object->state_id = GETPOST("state_id", 'int');
+		$this->object->phone_perso = GETPOST("phone_perso");
+		$this->object->phone_mobile = GETPOST("phone_mobile");
+		$this->object->email = GETPOST("email", 'alphawithlgt');
+		$this->object->note_private = GETPOST("note", 'restricthtml');
+		$this->object->canvas = GETPOST("canvas");
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {
-			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".((int) $this->object->country_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);

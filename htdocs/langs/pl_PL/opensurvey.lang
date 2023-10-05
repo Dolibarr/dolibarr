@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Głosowanie
 Surveys=Ankiety
-OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select the type of poll...
+OrganizeYourMeetingEasily=Z łatwością organizuj spotkania i ankiety. Najpierw wybierz typ ankiety ...
 NewSurvey=Nowa sonda
 OpenSurveyArea=Obszar ankiet
 AddACommentForPoll=Możesz dodać komentarz do ankiety...
@@ -48,8 +48,10 @@ AddEndHour=Dodaj godzinę zakończenia
 votes=głos (y)
 NoCommentYet=Nie wysłano jeszcze żadnego komentarza do tej ankiety
 CanComment=Wyborcy mogą wypowiedzieć się w ankiecie
+YourVoteIsPrivate=This poll is private, nobody can see your vote.
+YourVoteIsPublic=This poll is public, anybody with the link can see your vote.
 CanSeeOthersVote=Wyborcy widzą głos innych ludzi
-SelectDayDesc=For each selected day, you can choose, or not, meeting hours in the following format:<br>- empty,<br>- "8h", "8H" or "8:00" to give a meeting's start hour,<br>- "8-11", "8h-11h", "8H-11H" or "8:00-11:00" to give a meeting's start and end hour,<br>- "8h15-11h15", "8H15-11H15" or "8:15-11:15" for the same thing but with minutes.
+SelectDayDesc=Dla każdego wybranego dnia możesz wybrać lub nie godziny spotkania w następującym formacie: <br> - puste, <br> - „8h”, „8H” lub „8:00”, aby podać godzinę rozpoczęcia spotkania, <br> - „8- 11 ”,„ 8h-11h ”,„ 8H-11H ”lub„ 8: 00-11: 00 ”, aby podać godzinę rozpoczęcia i zakończenia spotkania, <br> -„ 8h15-11h15 ”,„ 8H15-11H15 ”lub„ 8: 15-11: 15 "na to samo, ale z minutami.
 BackToCurrentMonth=Powrót do bieżącego miesiąca
 ErrorOpenSurveyFillFirstSection=Nie zapełnione pierwszą część tworzenia ankiecie
 ErrorOpenSurveyOneChoice=Wprowadź co najmniej jeden wybór

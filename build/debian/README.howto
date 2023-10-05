@@ -51,16 +51,17 @@ export DEBEMAIL="eldy@destailleur.fr"
 
 export QUILT_PATCHES=debian/patches
 
-# To use Alioth.debian.org
-* Create an account login
-* Update your ~/.ssh/config file to add:
-Host svn.debian.org git.debian.org bzr.debian.org hg.debian.org darcs.debian.org arch.debian.org
+
+# Note: alioth.debian.org is outdated --> https://alioth-archive.debian.org/  -->  https://salsa.debian.org/public 
+ * Create an account login
+ * Update your ~/.ssh/config file to add:
+ Host svn.debian.org git.debian.org bzr.debian.org hg.debian.org darcs.debian.org arch.debian.org
 	User eldy-guest
 	IdentityFile ~/.ssh/id_rsa
-* Check login on page https://alioth.debian.org/users/login
-Ex: https://alioth.debian.org/users/eldy-guest
-* Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
-* Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
+ * Check login on page https://alioth.debian.org/users/login
+ Ex: https://alioth.debian.org/users/eldy-guest
+ * Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
+ * Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
 
 
 
@@ -82,7 +83,7 @@ Ex: https://alioth.debian.org/users/eldy-guest
 # dpkg -c package.deb                    List content of package
 # dpkg -I package.deb                    Give informations on package
 # dpkg -i package.deb                    Install a package
-# dpkg-reconfigure -plow package		 Reconfigure package
+# dpkg-reconfigure -plow package         Reconfigure package
 # dpkg -L packagename                    List content of installed package 
 # dpkg -r packagename                    Remove config files and interactive saved answers
 # dpkg -s packagename                    Give status of installed package
@@ -90,7 +91,7 @@ Ex: https://alioth.debian.org/users/eldy-guest
 #
 # dpkg-buildpackage -us -uc              Build a source and binary package
 #
-# gdebi package.deb						 Install a package + dependencies
+# gdebi package.deb                      Install a package + dependencies
 
 
 
@@ -98,21 +99,21 @@ Ex: https://alioth.debian.org/users/eldy-guest
 
 - Post an ITP with reportbugs :
 > reportbug -B debian --email username@domain.tld wnpp
-See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests contents.
+See page https://www.debian.org/devel/wnpp/#l1 for example of ITP requests contents.
 
 - Wait until you received bug number.
   For first ITP submission of Dolibarr, bug id was 634783.
 
 - Check bug is into database by searching with id on 
-  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=634783
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=634783
   
 - Add a line for upstream into file changelog with bug number
 
 - Call for a mentor on ML debian-mentors to upload packages
 
 - Once package is uploaded, following URL are available:
-http://packages.qa.debian.org/package.html
-http://bugs.debian.org/package
+https://packages.qa.debian.org/package.html
+https://bugs.debian.org/package
 
 
 ##### Modify severity of a bug ticket

@@ -17,21 +17,51 @@
 
 /**
  *	\file       /htdocs/core/ajax/extraparams.php
- *	\brief      File to make Ajax action on setting extra parameters of elements
+ *	\brief      File to make Ajax action on setting extra parameters of elements.
+ *				Called bu bloc_showhide.tpl.php, itself called when MAIN_DISABLE_CONTACTS_TAB or MAIN_DISABLE_NOTES_TAB are set
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 include '../../main.inc.php';
 
 $id = GETPOST('id', 'int');
-$element = GETPOST('element', 'alpha');
+$element = GETPOST('element', 'aZ09arobase');
 $htmlelement = GETPOST('htmlelement', 'alpha');
 $type = GETPOST('type', 'alpha');
+
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
 
 /*
  * View
@@ -41,54 +71,16 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type))
-{
+if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type)) {
 	$value = GETPOST('value', 'alpha');
 	$params = array();
 
 	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
 
-	$classpath = $subelement = $element;
+	if (is_object($object)) {
+		$params[$htmlelement] = array($type => $value);
+		$object->extraparams = array_merge($object->extraparams, $params);
 
-	// For compatibility
-	if ($element == 'order' || $element == 'commande') {
-		$classpath = $subelement = 'commande';
-	} elseif ($element == 'propal') {
-		$classpath = 'comm/propal';
-		$subelement = 'propal';
-	} elseif ($element == 'facture') {
-		$classpath = 'compta/facture';
-		$subelement = 'facture';
-	} elseif ($element == 'contract') {
-		$classpath = $subelement = 'contrat';
-	} elseif ($element == 'shipping') {
-		$classpath = $subelement = 'expedition';
-	} elseif ($element == 'deplacement') {
-		$classpath = 'compta/deplacement';
-		$subelement = 'deplacement';
-	} elseif ($element == 'order_supplier') {
-		$classpath = 'fourn';
-		$subelement = 'fournisseur.commande';
-	} elseif ($element == 'invoice_supplier') {
-		$classpath = 'fourn';
-		$subelement = 'fournisseur.facture';
+		$result = $object->setExtraParameters();
 	}
-
-	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
-
-	if ($element == 'order_supplier') {
-		$classname = 'CommandeFournisseur';
-	} elseif ($element == 'invoice_supplier') {
-		$classname = 'FactureFournisseur';
-	} else {
-		$classname = ucfirst($subelement);
-	}
-
-	$object = new $classname($db);
-	$object->fetch($id);
-
-	$params[$htmlelement] = array($type => $value);
-	$object->extraparams = array_merge($object->extraparams, $params);
-
-	$result = $object->setExtraParameters();
 }

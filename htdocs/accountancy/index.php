@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2020  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016-2019  Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019       Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  * \brief   Home accounting module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -31,28 +33,45 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
 
-// Security check
-if ($user->socid > 0)
-	accessforbidden();
-
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('accountancyindex'));
+
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+/*
+if (!isModEnabled('accounting')) {
+	accessforbidden();
+}
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+	accessforbidden();
+}
+*/
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting') && !isModEnabled('asset') && !isModEnabled('intracommreport')) {
+	accessforbidden();
+}
+if (!$user->hasRight('compta', 'resultat', 'lire') && !$user->hasRight('accounting', 'comptarapport', 'lire') && !$user->hasRight('accounting', 'mouvements', 'lire') && !$user->hasRight('asset', 'read') && !$user->hasRight('intracommreport', 'read')) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
-{
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
 }
 
 
@@ -60,10 +79,11 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-llxHeader('', $langs->trans("AccountancyArea"));
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
 
-if ($conf->accounting->enabled)
-{
+llxHeader('', $langs->trans("AccountancyArea"), $help_url);
+
+if (isModEnabled('accounting')) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
@@ -71,14 +91,13 @@ if ($conf->accounting->enabled)
 	$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
-	if (!$helpisexpanded)
-	{
+	if (!$helpisexpanded) {
 		$showtutorial  = '<div align="right"><a href="#" id="show_hide">';
 		$showtutorial .= img_picto('', 'chevron-down');
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
-		$showtutorial .= '<script type="text/javascript" language="javascript">
+		$showtutorial .= '<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
 	            jQuery( "#idfaq" ).toggle({
@@ -89,15 +108,18 @@ if ($conf->accounting->enabled)
 	    </script>';
 	}
 
+	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'title_accountancy', 0, '', '', $showtutorial);
+	if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
+		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+		print "<br>";
+	}
 
-    print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
-    print "<br>\n";
-    print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
-	if (!empty($user->rights->accounting->chartofaccount)){
-		print "<br>\n"; print "<br>\n";
-
+	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
+	print "<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
+	if ($user->hasRight('accounting', 'chartofaccount')) {
+		print '<br>';
 		print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 		print '<hr>';
 		print "<br>\n";
@@ -142,8 +164,8 @@ if ($conf->accounting->enabled)
 		$s = str_replace('{s}', $textlink, $s);
 		print $s;
 		print "<br>\n";
-		if (!empty($conf->tax->enabled))
-		{
+
+		if (isModEnabled('tax')) {
 			$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, '{s}');
@@ -151,9 +173,7 @@ if ($conf->accounting->enabled)
 			print $s;
 			print "<br>\n";
 		}
-
-		if (!empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
-		{
+		if (isModEnabled('expensereport')) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '{s}');
 			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);
@@ -192,8 +212,7 @@ if ($conf->accounting->enabled)
 	print $s;
 	print "<br>\n";
 
-	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled))
-	{
+	if (isModEnabled('expensereport') || isModEnabled('deplacement')) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '{s}')."\n";
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>', $s);
@@ -220,9 +239,9 @@ if ($conf->accounting->enabled)
 	print '<div class="fichecenter fichecenterbis">';
 
 	/*
-     * Show boxes
-     */
-	$boxlist .= '<div class="twocolumns">';
+	 * Show boxes
+	 */
+	$boxlist = '<div class="twocolumns">';
 
 	$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
@@ -243,10 +262,14 @@ if ($conf->accounting->enabled)
 	print $boxlist;
 
 	print '</div>';
-} else {
+} elseif (isModEnabled('compta')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
-	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
+	print "<br>";
+} else {
+	// This case can happen mode no accounting module is on but module "intracommreport" is on
+	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 }
 
 // End of page

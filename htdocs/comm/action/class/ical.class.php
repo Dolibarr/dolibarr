@@ -25,6 +25,7 @@
  *       \brief      File of class to parse ical calendars
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/xcal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 
 /**
@@ -39,6 +40,7 @@ class ICal
 	public $todo_count; // Number of Todos
 	public $freebusy_count; // Number of Freebusy
 	public $last_key; //Help variable save last key (multiline string)
+	public $error;
 
 
 	/**
@@ -52,8 +54,8 @@ class ICal
 	/**
 	 *  Read text file, icalender text file
 	 *
-	 *  @param  string  $file       File
-	 *  @return string
+	 *  @param  string  		$file       File
+	 *  @return string|null					Content of remote file read or null if error
 	 */
 	public function read_file($file)
 	{
@@ -61,12 +63,15 @@ class ICal
 		$this->file = $file;
 		$file_text = '';
 
-		$tmparray = file($file);
-		if (is_array($tmparray))
-		{
-			$file_text = join("", $tmparray); //load file
-			$file_text = preg_replace("/[\r\n]{1,} /", "", $file_text);
+		$tmpresult = getURLContent($file, 'GET');
+		if ($tmpresult['http_code'] != 200) {
+			$file_text = null;
+			$this->error = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+		} else {
+			$file_text = preg_replace("/[\r\n]{1,} /", "", $tmpresult['content']);
 		}
+		//var_dump($tmpresult);
+
 		return $file_text; // return all text
 	}
 
@@ -97,36 +102,58 @@ class ICal
 	/**
 	 * Translate Calendar
 	 *
-	 * @param	string 	$uri	Url
+	 * @param	string	 	$uri			Url
+	 * @param	string		$usecachefile	Full path of a cache file to use a cache file
+	 * @param	string		$delaycache		Delay in seconds for cache (by default 3600 secondes)
 	 * @return	array|string
 	 */
-	public function parse($uri)
+	public function parse($uri, $usecachefile = '', $delaycache = 3600)
 	{
 		$this->cal = array(); // new empty array
 
 		$this->event_count = -1;
+		$this->file_text = null;
+
+		// Save file into a cache
+		if ($usecachefile) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			$datefile = dol_filemtime($usecachefile);
+			$now = dol_now('gmt');
+			//print $datefile.' '.$now.' ...';
+			if ($datefile && $datefile > ($now - $delaycache)) {
+				// We reuse the cache file
+				$this->file_text = file_get_contents($usecachefile);
+			}
+		}
 
 		// read FILE text
-		$this->file_text = $this->read_file($uri);
+		if (is_null($this->file_text)) {
+			$this->file_text = $this->read_file($uri);
+
+			if ($usecachefile && !is_null($this->file_text)) {
+				// Save the file content into cache file
+				file_put_contents($usecachefile, $this->file_text, LOCK_EX);
+				dolChmod($usecachefile);
+			}
+		}
 
 		$this->file_text = preg_split("[\n]", $this->file_text);
 
 		// is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
-		if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
+		if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) {
+			return 'error not VCALENDAR';
+		}
 
 		$insidealarm = 0;
 		$tmpkey = ''; $tmpvalue = ''; $type = '';
-		foreach ($this->file_text as $text)
-		{
+		foreach ($this->file_text as $text) {
 			$text = trim($text); // trim one line
-			if (!empty($text))
-			{
+			if (!empty($text)) {
 				// get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
 				list($key, $value) = $this->retun_key_value($text);
 				//var_dump($text.' -> '.$key.' - '.$value);
 
-				switch ($text) // search special string
-				{
+				switch ($text) { // search special string
 					case "BEGIN:VTODO":
 						$this->todo_count = $this->todo_count + 1; // new to do begin
 						$type = "VTODO";
@@ -152,7 +179,6 @@ class ICal
 					case "END:VTODO": // end special text - goto VCALENDAR key
 					case "END:VEVENT":
 					case "END:VFREEBUSY":
-
 					case "END:VCALENDAR":
 					case "END:DAYLIGHT":
 					case "END:VTIMEZONE":
@@ -169,27 +195,25 @@ class ICal
 						break;
 
 					default: // no special string (SUMMARY, DESCRIPTION, ...)
-						if ($tmpvalue)
-						{
+						if ($tmpvalue) {
 							$tmpvalue .= $text;
-							if (!preg_match('/=$/', $text))	// No more lines
-							{
+							if (!preg_match('/=$/', $text)) {	// No more lines
 								$key = $tmpkey;
 								$value = quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue));
 								$tmpkey = '';
 								$tmpvalue = '';
 							}
-						} elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
-						{
-							if (preg_match('/=$/', $value))
-							{
+						} elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value)) {
+							if (preg_match('/=$/', $value)) {
 								$tmpkey = $key;
 								$tmpvalue = $tmpvalue.preg_replace('/=$/', "", $value); // We must wait to have next line to have complete message
 							} else {
 								$value = quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
 							}
 						}                    	//$value=quotedPrintDecode($tmpvalue.$value);
-						if (!$insidealarm && !$tmpkey) $this->add_to_array($type, $key, $value); // add to array
+						if (!$insidealarm && !$tmpkey) {
+							$this->add_to_array($type, $key, $value); // add to array
+						}
 						break;
 				}
 			}
@@ -214,32 +238,35 @@ class ICal
 
 		//print 'type='.$type.' key='.$key.' value='.$value.'<br>'."\n";
 
-		if (empty($key))
-		{
+		if (empty($key)) {
 			$key = $this->last_key;
-			switch ($type)
-			{
-				case 'VEVENT': $value = $this->cal[$type][$this->event_count][$key].$value; break;
-				case 'VFREEBUSY': $value = $this->cal[$type][$this->freebusy_count][$key].$value; break;
-				case 'VTODO': $value = $this->cal[$type][$this->todo_count][$key].$value; break;
+			switch ($type) {
+				case 'VEVENT':
+					$value = $this->cal[$type][$this->event_count][$key].$value;
+					break;
+				case 'VFREEBUSY':
+					$value = $this->cal[$type][$this->freebusy_count][$key].$value;
+					break;
+				case 'VTODO':
+					$value = $this->cal[$type][$this->todo_count][$key].$value;
+					break;
 			}
 		}
 
-		if (($key == "DTSTAMP") || ($key == "LAST-MODIFIED") || ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
+		if (($key == "DTSTAMP") || ($key == "LAST-MODIFIED") || ($key == "CREATED")) {
+			$value = $this->ical_date_to_unix($value);
+		}
 		//if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
-		{
-			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
-			{
+		if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
+			if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE")) {
 				list($key, $value) = array($key, $value);
 			} else {
 				list($key, $value) = $this->ical_dt_date($key, $value);
 			}
 		}
 
-		switch ($type)
-		{
+		switch ($type) {
 			case "VTODO":
 				$this->cal[$type][$this->todo_count][$key] = $value;
 				break;
@@ -270,17 +297,17 @@ class ICal
 	{
 		// phpcs:enable
 		/*
-        preg_match("/([^:]+)[:]([\w\W]+)/", $text, $matches);
+		preg_match("/([^:]+)[:]([\w\W]+)/", $text, $matches);
 
-        if (empty($matches))
-        {
-            return array(false,$text);
-        }
-        else
-        {
-            $matches = array_splice($matches, 1, 2);
-            return $matches;
-        }*/
+		if (empty($matches))
+		{
+			return array(false,$text);
+		}
+		else
+		{
+			$matches = array_splice($matches, 1, 2);
+			return $matches;
+		}*/
 		return explode(':', $text, 2);
 	}
 
@@ -296,8 +323,7 @@ class ICal
 		// phpcs:enable
 		$result = array();
 		$rrule = explode(';', $value);
-		foreach ($rrule as $line)
-		{
+		foreach ($rrule as $line) {
 			$rcontent = explode('=', $line);
 			$result[$rcontent[0]] = $rcontent[1];
 		}
@@ -319,8 +345,9 @@ class ICal
 
 		$ntime = 0;
 		// TIME LIMITED EVENT
-		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date))
+		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
 			$ntime = dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
+		}
 
 		//if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
 		//print dol_print_date($ntime,'dayhour');exit;
@@ -344,8 +371,7 @@ class ICal
 		// Analyse TZID
 		$temp = explode(";", $key);
 
-		if (empty($temp[1])) // not TZID
-		{
+		if (empty($temp[1])) { // not TZID
 			$value = str_replace('T', '', $value);
 			return array($key, $value);
 		}
@@ -368,8 +394,7 @@ class ICal
 	{
 		// phpcs:enable
 		$temp = $this->get_event_list();
-		if (!empty($temp))
-		{
+		if (!empty($temp)) {
 			usort($temp, array(&$this, "ical_dtstart_compare"));
 			return $temp;
 		} else {
@@ -400,19 +425,19 @@ class ICal
 	public function get_event_list()
 	{
 		// phpcs:enable
-		return (!empty($this->cal['VEVENT']) ? $this->cal['VEVENT'] : '');
+		return (empty($this->cal['VEVENT']) ? array() : $this->cal['VEVENT']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return eventlist array (not sort eventlist array)
+	 * Return freebusy array (not sort eventlist array)
 	 *
 	 * @return array
 	 */
 	public function get_freebusy_list()
 	{
 		// phpcs:enable
-		return $this->cal['VFREEBUSY'];
+		return (empty($this->cal['VFREEBUSY']) ? array() : $this->cal['VFREEBUSY']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

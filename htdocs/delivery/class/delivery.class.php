@@ -3,9 +3,10 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2018 Philippe Grand	     <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (!empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (isModEnabled("propal")) {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+}
+if (isModEnabled('commande')) {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+}
 
 
 /**
@@ -102,6 +107,16 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
+	public $commande_id;
+
+	/**
+	 * @var array statuts labels
+	 */
+	public $statuts;
+
+	/**
+	 * @var DeliveryLine[] lines
+	 */
 	public $lines = array();
 
 
@@ -132,7 +147,9 @@ class Delivery extends CommonObject
 
 		dol_syslog("Delivery::create");
 
-		if (empty($this->model_pdf)) $this->model_pdf = $conf->global->DELIVERY_ADDON_PDF;
+		if (empty($this->model_pdf)) {
+			$this->model_pdf = $conf->global->DELIVERY_ADDON_PDF;
+		}
 
 		$error = 0;
 
@@ -160,11 +177,11 @@ class Delivery extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$this->socid;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->escape($this->ref_customer)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_delivery ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -176,22 +193,19 @@ class Delivery extends CommonObject
 
 		dol_syslog("Delivery::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."delivery");
 
 			$numref = "(PROV".$this->id.")";
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery ";
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				if (!$conf->expedition_bon->enabled)
-				{
+			if ($resql) {
+				if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
 					$commande->fetch_lines();
@@ -202,38 +216,32 @@ class Delivery extends CommonObject
 				 *  Inserting products into the database
 				 */
 				$num = count($this->lines);
-				for ($i = 0; $i < $num; $i++)
-				{
+				for ($i = 0; $i < $num; $i++) {
 					$origin_id = $this->lines[$i]->origin_line_id;
-					if (!$origin_id) $origin_id = $this->lines[$i]->commande_ligne_id; // For backward compatibility
+					if (!$origin_id) {
+						$origin_id = $this->lines[$i]->commande_ligne_id; // For backward compatibility
+					}
 
-					if (!$this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description))
-					{
+					if (!$this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description, $this->lines[$i]->array_options)) {
 						$error++;
 					}
 				}
 
-				if (!$error && $this->id && $this->origin_id)
-				{
+				if (!$error && $this->id && $this->origin_id) {
 					$ret = $this->add_object_linked();
-					if (!$ret)
-					{
+					if (!$ret) {
 						$error++;
 					}
 
-					if (!$conf->expedition_bon->enabled)
-					{
-						// TODO standardize status uniformiser les statuts
+					if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
-						if (!$ret)
-						{
+						if (!$ret) {
 							$error++;
 						}
 					}
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$this->db->commit();
 					return $this->id;
 				} else {
@@ -264,32 +272,41 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
+	 *  @param	array	$array_options			Array options
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
 		// phpcs:enable
 		$error = 0;
 		$idprod = $fk_product;
-		$j = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
-		$sql .= " VALUES (".$this->id.",".$origin_id.",";
-		$sql .= " ".($idprod > 0 ? $idprod : "null").",";
+		$sql .= " VALUES (".$this->id.",".((int) $origin_id).",";
+		$sql .= " ".($idprod > 0 ? ((int) $idprod) : "null").",";
 		$sql .= " ".($description ? "'".$this->db->escape($description)."'" : "null").",";
-		$sql .= $qty.")";
+		$sql .= (price2num($qty, 'MS')).")";
 
 		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
-		if (!$this->db->query($sql))
-		{
+		if (!$this->db->query($sql)) {
 			$error++;
 		}
 
-		if ($error == 0)
-		{
+		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."deliverydet");
+
+		if (is_array($array_options) && count($array_options) > 0) {
+			$line = new DeliveryLine($this->db);
+			$line->id = $id;
+			$line->array_options = $array_options;
+			$result = $line->insertExtraFields();
+		}
+
+		if (!$error) {
 			return 1;
 		}
+
+		return -1;
 	}
 
 	/**
@@ -300,8 +317,6 @@ class Delivery extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $conf;
-
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
 		$sql .= " l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql .= ", l.date_delivery, l.fk_address, l.model_pdf";
@@ -311,14 +326,12 @@ class Delivery extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."delivery as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
-		$sql .= " WHERE l.rowid = ".$id;
+		$sql .= " WHERE l.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                   = $obj->rowid;
@@ -346,7 +359,9 @@ class Delivery extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
-				if ($this->statut == 0) $this->draft = 1;
+				if ($this->statut == 0) {
+					$this->draft = 1;
+				}
 
 				// Retrieve all extrafields
 				// fetch optionals attributes and labels
@@ -354,8 +369,7 @@ class Delivery extends CommonObject
 
 				// Load lines
 				$result = $this->fetch_lines();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					return -3;
 				}
 
@@ -380,7 +394,8 @@ class Delivery extends CommonObject
 	 */
 	public function valid($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid begin");
@@ -390,15 +405,12 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-	   	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
-		{
-			if (!empty($conf->global->DELIVERY_ADDON_NUMBER))
-			{
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
 
-				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php'))
-				{
+				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
 
 					$now = dol_now();
@@ -408,8 +420,7 @@ class Delivery extends CommonObject
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
-					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
-					{
+					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 						$numref = $objMod->delivery_get_num($soc, $this);
 					} else {
 						$numref = $this->ref;
@@ -421,14 +432,12 @@ class Delivery extends CommonObject
 					$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
 					$sql .= " WHERE ref = '".$this->db->escape($numref)."'";
 					$sql .= " AND fk_statut <> 0";
-					$sql .= " AND entity = ".$conf->entity;
+					$sql .= " AND entity = ".((int) $conf->entity);
 
 					$resql = $this->db->query($sql);
-					if ($resql)
-					{
+					if ($resql) {
 						$num = $this->db->num_rows($resql);
-						if ($num > 0)
-						{
+						if ($num > 0) {
 							return 0;
 						}
 					}
@@ -438,54 +447,51 @@ class Delivery extends CommonObject
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
 					$sql .= ", fk_user_valid = ".$user->id;
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
 
 					$resql = $this->db->query($sql);
-					if (!$resql)
-					{
+					if (!$resql) {
 						dol_print_error($this->db);
 						$this->error = $this->db->lasterror();
 						$error++;
 					}
 
-					if (!$error && !$notrigger)
-					{
+					if (!$error && !$notrigger) {
 						// Call trigger
 						$result = $this->call_trigger('DELIVERY_VALIDATE', $user);
-						if ($result < 0) $error++;
+						if ($result < 0) {
+							$error++;
+						}
 						// End call triggers
 					}
 
-					if (!$error)
-					{
+					if (!$error) {
 						$this->oldref = $this->ref;
 
 						// Rename directory if dir was a temporary ref
-						if (preg_match('/^[\(]?PROV/i', $this->ref))
-						{
+						if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 							// Now we rename also files into index
 							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
-							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 							$resql = $this->db->query($sql);
-							if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+							if (!$resql) {
+								$error++; $this->error = $this->db->lasterror();
+							}
 
 							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 							$oldref = dol_sanitizeFileName($this->ref);
 							$newref = dol_sanitizeFileName($numref);
 							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
 							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
-							if (!$error && file_exists($dirsource))
-							{
+							if (!$error && file_exists($dirsource)) {
 								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
-								if (@rename($dirsource, $dirdest))
-								{
+								if (@rename($dirsource, $dirdest)) {
 									dol_syslog("Rename ok");
 									// Rename docs starting with $oldref with $newref
 									$listoffiles = dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-									foreach ($listoffiles as $fileentry)
-									{
+									foreach ($listoffiles as $fileentry) {
 										$dirsource = $fileentry['name'];
 										$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 										$dirsource = $fileentry['path'].'/'.$dirsource;
@@ -497,8 +503,7 @@ class Delivery extends CommonObject
 						}
 
 						// Set new ref and current status
-						if (!$error)
-						{
+						if (!$error) {
 							$this->ref = $numref;
 							$this->statut = 1;
 						}
@@ -506,8 +511,7 @@ class Delivery extends CommonObject
 						dol_syslog(get_class($this)."::valid ok");
 					}
 
-					if (!$error)
-					{
+					if (!$error) {
 						$this->db->commit();
 						return 1;
 					} else {
@@ -516,8 +520,10 @@ class Delivery extends CommonObject
 					}
 				}
 			}
+
+			return -1;
 		} else {
-			$this->error = "Non autorise";
+			$this->error = "NotAllowed";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -527,28 +533,34 @@ class Delivery extends CommonObject
 	/**
 	 * 	Creating the delivery slip from an existing shipment
 	 *
-	 *	@param	User	$user            User who creates
-	 *	@param  int		$sending_id      Id of the expedition that serves as a model
-	 *	@return	integer
+	 *	@param	User	$user           User who creates
+	 *	@param  int		$sending_id		Id of the expedition that serves as a model
+	 *	@return	integer					<=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
+		if ($result <= 0) {
+			return $result;
+		}
 
 		$this->lines = array();
 
 		$num = count($expedition->lines);
-		for ($i = 0; $i < $num; $i++)
-		{
+		for ($i = 0; $i < $num; $i++) {
 			$line = new DeliveryLine($this->db);
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
 			$line->label             = $expedition->lines[$i]->label;
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
-
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
+				$line->array_options = $expedition->lines[$i]->array_options;
+			}
 			$this->lines[$i] = $line;
 		}
 
@@ -583,40 +595,46 @@ class Delivery extends CommonObject
 		global $conf;
 		$error = 0;
 
-		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
-		{
+		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
 			$line = new DeliveryLine($this->db);
 			$line->array_options = $array_options;
 			$line->id = $id;
 			$result = $line->insertExtraFields();
 
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->error[] = $line->error;
 				$error++;
 			}
 		}
 
-		if (!$error) return 1;
-		else return -1;
+		if (!$error) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id		Origin id
-	 *	@param	int		$qty			Qty
+	 *	@param	int		$origin_id				Origin id
+	 *	@param	int		$qty					Qty
+	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty)
+	public function addline($origin_id, $qty, $array_options = null)
 	{
+		global $conf;
+
 		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
-
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+			$line->array_options = $array_options;
+		}
 		$this->lines[$num] = $line;
 	}
 
@@ -624,24 +642,24 @@ class Delivery extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	integer|null
+	 *	@return	integer				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function deleteline($lineid)
 	{
-		if ($this->statut == 0)
-		{
+		if ($this->statut == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".$lineid;
+			$sql .= " WHERE rowid = ".((int) $lineid);
 
-			if ($this->db->query($sql))
-			{
-				$this->update_price();
+			if ($this->db->query($sql)) {
+				$this->update_price(1);
 
 				return 1;
 			} else {
-				return 0;
+				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -659,38 +677,32 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deliverydet";
-		$sql .= " WHERE fk_delivery = ".$this->id;
-		if ($this->db->query($sql))
-		{
+		$sql .= " WHERE fk_delivery = ".((int) $this->id);
+		if ($this->db->query($sql)) {
 			// Delete linked object
 			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
+			if ($res < 0) {
+				$error++;
+			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."delivery";
-				$sql .= " WHERE rowid = ".$this->id;
-				if ($this->db->query($sql))
-				{
+				$sql .= " WHERE rowid = ".((int) $this->id);
+				if ($this->db->query($sql)) {
 					$this->db->commit();
 
 					// Deleting pdf folder's draft On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
-					if (!empty($conf->expedition->dir_output))
-					{
+					if (!empty($conf->expedition->dir_output)) {
 						$dir = $conf->expedition->dir_output.'/receipt/'.$ref;
 						$file = $dir.'/'.$ref.'.pdf';
-						if (file_exists($file))
-						{
-							if (!dol_delete_file($file))
-							{
+						if (file_exists($file)) {
+							if (!dol_delete_file($file)) {
 								return 0;
 							}
 						}
-						if (file_exists($dir))
-						{
-							if (!dol_delete_dir($dir))
-							{
+						if (file_exists($dir)) {
+							if (!dol_delete_dir($dir)) {
 								$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
 								return 0;
 							}
@@ -699,8 +711,7 @@ class Delivery extends CommonObject
 
 					// Call trigger
 					$result = $this->call_trigger('DELIVERY_DELETE', $user);
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$this->db->rollback();
 						return -4;
 					}
@@ -725,6 +736,24 @@ class Delivery extends CommonObject
 	}
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$datas = [];
+
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$datas['picto'] .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+
+		return $datas;
+	}
+
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -733,38 +762,68 @@ class Delivery extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
-		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
 		$url = DOL_URL_ROOT.'/delivery/card.php?id='.$this->id;
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			$add_save_lastsearch_values = 1;
+		}
+		if ($add_save_lastsearch_values) {
+			$url .= '&save_lastsearch_values=1';
+		}
 		//}
 
-
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
-		if ($withpicto) $result .= ($linkstart.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
+		if ($withpicto) {
+			$result .= ($linkstart.img_object($label, $this->picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
+		}
+		if ($withpicto && $withpicto != 2) {
+			$result .= ' ';
+		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines
+	 *	Load lines insto $this->lines.
 	 *
-	 *	@return	void
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -778,19 +837,17 @@ class Delivery extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."deliverydet as ld";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql .= " WHERE ld.fk_origin_line = cd.rowid";
-		$sql .= " AND ld.fk_delivery = ".$this->id;
+		$sql .= " AND ld.fk_delivery = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
-				$line = new DeliveryLine($this->db);
-
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
+
+				$line = new DeliveryLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
@@ -807,7 +864,7 @@ class Delivery extends CommonObject
 				$line->product_type		= $obj->fk_product_type;
 				$line->fk_origin_line = $obj->fk_origin_line;
 
-				$line->price = $obj->price;
+				$line->price = $obj->subprice;
 				$line->total_ht = $obj->total_ht;
 
 				// units
@@ -832,17 +889,19 @@ class Delivery extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
 
-		return $this->lines;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
 	/**
-	 *  Retourne le libelle du statut d'une expedition
+	 *  Return the label of the status
 	 *
-	 *  @param	int			$mode		Mode
-	 *  @return string      			Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -851,32 +910,35 @@ class Delivery extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string					Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
 		// phpcs:enable
 		global $langs;
 
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatus[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatus[1] = $langs->trans('StatusDeliveryValidated');
-			$this->labelStatusShort[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatusShort[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatusShort[1] = $langs->trans('StatusDeliveryValidated');
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
 		}
 
 		$statusType = 'status0';
-		if ($status == -1) $statusType = 'status5';
-		if ($status == 1) $statusType = 'status4';
+		if ($status == -1) {
+			$statusType = 'status5';
+		}
+		if ($status == 1) {
+			$statusType = 'status4';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -891,8 +953,6 @@ class Delivery extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 
 		// Load array of products prodids
@@ -905,12 +965,10 @@ class Delivery extends CommonObject
 		$sql .= $this->db->plimit(100);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num_prods = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num_prods)
-			{
+			while ($i < $num_prods) {
 				$i++;
 				$row = $this->db->fetch_row($resql);
 				$prodids[$i] = $row[0];
@@ -928,7 +986,7 @@ class Delivery extends CommonObject
 
 		$i = 0;
 		$line = new DeliveryLine($this->db);
-		$line->fk_product     = $prodids[0];
+		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
 		$line->ref            = 'REFPROD';
@@ -943,13 +1001,11 @@ class Delivery extends CommonObject
 	/**
 	 *  Renvoie la quantite de produit restante a livrer pour une commande
 	 *
-	 *  @return     array		Product remaining to be delivered
+	 *  @return     array|int		Product remaining to be delivered or <0 if KO
 	 *  TODO use new function
 	 */
 	public function getRemainingDelivered()
 	{
-		global $langs;
-
 		// Get the linked object
 		$this->fetchObjectLinked('', '', $this->id, $this->element);
 		//var_dump($this->linkedObjectsIds);
@@ -958,37 +1014,33 @@ class Delivery extends CommonObject
 		$sqlSourceLine .= ", p.ref, p.label";
 		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
+		$sqlSourceLine .= " WHERE fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
-		if ($resultSourceLine)
-		{
+		if ($resultSourceLine) {
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
-			$resultArray = array();
-			while ($i < $num_lines)
-			{
+			$array = array();
+			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
 				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
-				$sql .= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
-				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
+				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
+				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']."det as cd";
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
-				$sql .= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
+				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = c.rowid";
+				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
+				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 
 				$result = $this->db->query($sql);
 				$row = $this->db->fetch_row($result);
 
-				if ($objSourceLine->qty - $row[1] > 0)
-				{
-					if ($row[0] == $objSourceLine->rowid)
-					{
+				if ($objSourceLine->qty - $row[1] > 0) {
+					if ($row[0] == $objSourceLine->rowid) {
 						$array[$i]['qty'] = $objSourceLine->qty - $row[1];
 					} else {
 						$array[$i]['qty'] = $objSourceLine->qty;
@@ -996,14 +1048,13 @@ class Delivery extends CommonObject
 
 					$array[$i]['ref'] = $objSourceLine->ref;
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
-				} elseif ($objSourceLine->qty - $row[1] < 0)
-				{
+				} elseif ($objSourceLine->qty - $row[1] < 0) {
 					$array[$i]['qty'] = $objSourceLine->qty - $row[1]." Erreur livraison !";
 					$array[$i]['ref'] = $objSourceLine->ref;
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
 				}
 
-					$i++;
+				$i++;
 			}
 			return $array;
 		} else {
@@ -1021,16 +1072,14 @@ class Delivery extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		if ($user->rights->expedition->creer)
-		{
+		if ($user->rights->expedition->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$this->date_delivery = $delivery_date;
 				return 1;
 			} else {
@@ -1054,7 +1103,7 @@ class Delivery extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$langs->load("deliveries");
 		$outputlangs->load("products");
@@ -1077,21 +1126,37 @@ class Delivery extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'delivery'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'deliverydet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 }
-
 
 
 /**
@@ -1114,14 +1179,6 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $table_element = 'deliverydet';
 
-	// From llx_expeditiondet
-	public $qty;
-	public $qty_asked;
-	public $qty_shipped;
-	public $price;
-	public $fk_product;
-	public $origin_id;
-
 	/**
 	 * @var string delivery note lines label
 	 */
@@ -1143,10 +1200,34 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $libelle;
 
-	public $origin_line_id;
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
 
+	public $fk_product;
+	public $product_desc;
+	public $product_type;
 	public $product_ref;
 	public $product_label;
+
+	public $price;
+
+	public $fk_origin_line;
+	public $origin_id;
+
+	/**
+	 * @var int origin line ID
+	 */
+	public $origin_line_id;
+
+	/**
+	 * @var int origin line ID
+	 * @deprecated
+	 * @see $origin_line_id
+	 */
+	public $commande_ligne_id;
+
 
 	/**
 	 *	Constructor

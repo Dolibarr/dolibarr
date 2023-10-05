@@ -1,0 +1,183 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Shirika la Tukio
+EventOrganizationDescription = Shirika la Tukio kupitia Mradi wa Moduli
+EventOrganizationDescriptionLong= Dhibiti mpangilio wa tukio (onyesho, makongamano, waliohudhuria au wazungumzaji, na kurasa za umma za mapendekezo, kura au usajili)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Matukio yaliyopangwa
+EventOrganizationConferenceOrBoothMenuLeft = Mkutano Au Kibanda
+
+PaymentEvent=Malipo ya tukio
+
+#
+# Admin page
+#
+NewRegistration=Usajili
+EventOrganizationSetup=Mpangilio wa Shirika la Tukio
+EventOrganization=Shirika la tukio
+Settings=Mipangilio
+EventOrganizationSetupPage = Ukurasa wa kuanzisha Shirika la Tukio
+EVENTORGANIZATION_TASK_LABEL = Lebo ya kazi za kuunda kiotomatiki mradi utakapothibitishwa
+EVENTORGANIZATION_TASK_LABELTooltip = Unapoidhinisha tukio ili kupanga, baadhi ya kazi zinaweza kuundwa kiotomatiki katika mradi <br>  <br> Kwa mfano: <br> Tuma Wito kwa Mikutano <br> Tuma Simu kwa Booths <br> Thibitisha mapendekezo ya Mikutano <br> Thibitisha ombi la Booths <br> Fungua usajili wa tukio kwa waliohudhuria <br> Tuma ukumbusho wa tukio kwa wazungumzaji <br> Tuma ukumbusho wa tukio kwa wapangishaji wa Booth <br> Tuma ukumbusho wa tukio kwa waliohudhuria
+EVENTORGANIZATION_TASK_LABELTooltip2=Weka tupu ikiwa huhitaji kuunda kazi kiotomatiki.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kitengo cha kuongeza kwa wahusika wengine kiliundwa kiotomatiki mtu anapopendekeza mkutano
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kitengo cha kuongeza kwa wahusika wengine kiliundwa kiotomatiki wanapopendekeza kibanda
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Kiolezo cha barua pepe cha kutuma baada ya kupokea pendekezo la mkutano.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Kiolezo cha barua pepe cha kutuma baada ya kupokea pendekezo la kibanda.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Kiolezo cha barua pepe cha kutuma baada ya usajili kwenye kibanda kulipwa.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Kiolezo cha barua pepe cha kutuma baada ya usajili wa tukio kulipwa.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Kiolezo cha barua pepe cha kutumia wakati wa kutuma barua pepe kutoka kwa mauaji "Tuma barua pepe" kwa wasemaji
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Kiolezo cha barua pepe cha kutumia wakati wa kutuma barua pepe kutoka kwa mauaji "Tuma barua pepe" kwenye orodha ya waliohudhuria
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Katika fomu ya kuunda/kuongeza mhudhuriaji, inaweka vikwazo kwenye orodha ya wahusika wengine kwa wahusika wengine katika kategoria.
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Katika fomu ya kuunda/kuongeza mhudhuriaji, inaweka vikwazo kwenye orodha ya wahusika wengine kwa wahusika wengine wenye asili.
+
+#
+# Object
+#
+OrganizedEvent=Tukio lililoandaliwa
+EventOrganizationConfOrBooth= Mkutano Au Kibanda
+EventOrganizationConfOrBoothes=Mikutano au Vibanda
+ManageOrganizeEvent = Dhibiti mpangilio wa tukio
+ConferenceOrBooth = Mkutano Au Kibanda
+ConferenceOrBoothTab = Mkutano Au Kibanda
+AmountPaid = Kiasi kilicholipwa
+DateOfRegistration = Tarehe ya usajili
+ConferenceOrBoothAttendee = Mhudhuriaji wa Mkutano au Kibanda
+ApplicantOrVisitor=Mwombaji au mgeni
+Speaker=Spika
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Ombi lako la mkutano lilipokelewa
+YourOrganizationEventBoothRequestWasReceived = Ombi lako la kibanda limepokelewa
+EventOrganizationEmailAskConf = Ombi la mkutano
+EventOrganizationEmailAskBooth = Ombi la kibanda
+EventOrganizationEmailBoothPayment = Malipo ya kibanda chako
+EventOrganizationEmailRegistrationPayment = Usajili wa tukio
+EventOrganizationMassEmailAttendees = Mawasiliano kwa waliohudhuria
+EventOrganizationMassEmailSpeakers = Mawasiliano kwa wazungumzaji
+ToSpeakers=Kwa wazungumzaji
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Ruhusu watu kupendekeza mikutano
+AllowUnknownPeopleSuggestConfHelp=Ruhusu watu wasiojulikana kupendekeza mkutano wanaotaka kufanya
+AllowUnknownPeopleSuggestBooth=Ruhusu watu kutuma maombi ya kibanda
+AllowUnknownPeopleSuggestBoothHelp=Ruhusu watu wasiojulikana kutuma maombi ya kibanda
+PriceOfRegistration=Bei ya usajili
+PriceOfRegistrationHelp=Bei ya kulipa ili kujiandikisha au kushiriki katika tukio
+PriceOfBooth=Bei ya usajili ili kusimama kibanda
+PriceOfBoothHelp=Bei ya usajili ili kusimama kibanda
+EventOrganizationICSLink=Unganisha ICS kwa mikutano
+ConferenceOrBoothInformation=Taarifa za Mkutano au Kibanda
+Attendees=Waliohudhuria
+ListOfAttendeesOfEvent=Orodha ya waliohudhuria mradi wa tukio
+DownloadICSLink = Pakua kiungo cha ICS
+EVENTORGANIZATION_SECUREKEY = Mbegu ili kupata ufunguo wa ukurasa wa usajili wa umma ili kupendekeza mkutano
+SERVICE_BOOTH_LOCATION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu eneo la kibanda
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Huduma inayotumika kwa safu mlalo ya ankara kuhusu usajili wa mhudhuriaji kwa tukio
+NbVotes=Idadi ya kura
+#
+# Status
+#
+EvntOrgDraft = Rasimu
+EvntOrgSuggested = Imependekezwa
+EvntOrgConfirmed = Imethibitishwa
+EvntOrgNotQualified = Hajahitimu
+EvntOrgDone = Imekamilika
+EvntOrgCancelled = Imeghairiwa
+#
+# Public page
+#
+SuggestForm = Ukurasa wa pendekezo
+SuggestOrVoteForConfOrBooth = Ukurasa wa pendekezo au kura
+EvntOrgRegistrationHelpMessage = Hapa, unaweza kupiga kura kwa ajili ya mkutano au kupendekeza mpya kwa ajili ya tukio. Unaweza pia kutuma maombi ya kuwa na kibanda wakati wa tukio.
+EvntOrgRegistrationConfHelpMessage = Hapa, unaweza kupendekeza mkutano mpya ili kuhuisha wakati wa tukio.
+EvntOrgRegistrationBoothHelpMessage = Hapa, unaweza kutuma maombi ya kuwa na kibanda wakati wa tukio.
+ListOfSuggestedConferences = Orodha ya mikutano iliyopendekezwa
+ListOfSuggestedBooths=Vibanda vilivyopendekezwa
+ListOfConferencesOrBooths=Mikutano au vibanda vya mradi wa hafla
+SuggestConference = Pendekeza mkutano mpya
+SuggestBooth = Pendekeza kibanda
+ViewAndVote = Tazama na upigie kura matukio yaliyopendekezwa
+PublicAttendeeSubscriptionGlobalPage = Kiungo cha umma cha usajili kwa tukio
+PublicAttendeeSubscriptionPage = Kiungo cha umma cha usajili kwa tukio hili pekee
+MissingOrBadSecureKey = Ufunguo wa usalama ni batili au haupo
+EvntOrgWelcomeMessage = Fomu hii hukuruhusu kujiandikisha kama mshiriki mpya kwenye hafla
+EvntOrgDuration = Mkutano huu utaanza %s na inaisha %s.
+ConferenceAttendeeFee = Ada ya waliohudhuria mkutano kwa ajili ya tukio : '%s' ikitokea %s hadi %s.
+BoothLocationFee = Eneo la kibanda cha tukio : '%s' ikitokea %s hadi %s
+EventType = Aina ya tukio
+LabelOfBooth=Lebo ya kibanda
+LabelOfconference=Lebo ya mkutano
+ConferenceIsNotConfirmed=Usajili haupatikani, mkutano bado haujathibitishwa
+DateMustBeBeforeThan=%s lazima iwe kabla ya %s
+DateMustBeAfterThan=%s lazima iwe baada ya %s
+MaxNbOfAttendeesReached=Idadi ya juu zaidi ya washiriki imefikiwa
+NewSubscription=Usajili
+OrganizationEventConfRequestWasReceived=Pendekezo lako la mkutano limepokelewa
+OrganizationEventBoothRequestWasReceived=Ombi lako la kibanda limepokelewa
+OrganizationEventPaymentOfBoothWasReceived=Malipo yako ya kibanda chako yamerekodiwa
+OrganizationEventPaymentOfRegistrationWasReceived=Malipo yako ya usajili wa tukio yako yamerekodiwa
+OrganizationEventBulkMailToAttendees=Huu ni ukumbusho kuhusu ushiriki wako katika tukio kama mhudhuriaji
+OrganizationEventBulkMailToSpeakers=Hiki ni kikumbusho cha ushiriki wako katika tukio kama mzungumzaji
+OrganizationEventLinkToThirdParty=Unganisha kwa wahusika wengine (mteja, mtoa huduma au mshirika)
+OrganizationEvenLabelName=Jina la umma la mkutano au kibanda
+
+NewSuggestionOfBooth=Maombi ya kibanda
+NewSuggestionOfConference=Ombi la kufanya mkutano
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya mkutano au kibanda.
+EvntOrgRegistrationConfWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya mkutano.
+EvntOrgRegistrationBoothWelcomeMessage = Karibu kwenye ukurasa wa mapendekezo ya kibanda.
+EvntOrgVoteHelpMessage = Hapa, unaweza kutazama na kupiga kura kwa ajili ya matukio yaliyopendekezwa kwa mradi huo
+VoteOk = Kura yako imekubaliwa.
+AlreadyVoted = Tayari umepigia kura tukio hili.
+VoteError = Hitilafu imetokea wakati wa kupiga kura, tafadhali jaribu tena.
+
+SubscriptionOk=Usajili wako umerekodiwa
+ConfAttendeeSubscriptionConfirmation = Uthibitishaji wa usajili wako kwa tukio
+Attendee = Mhudhuriaji
+PaymentConferenceAttendee = Malipo ya waliohudhuria mkutano
+PaymentBoothLocation = Malipo ya eneo la kibanda
+DeleteConferenceOrBoothAttendee=Ondoa mshiriki
+RegistrationAndPaymentWereAlreadyRecorder=Usajili na malipo tayari yamerekodiwa kwa barua pepe <b> %s </b> 
+EmailAttendee=Barua pepe ya mshiriki
+EmailCompany=Barua pepe ya kampuni
+EmailCompanyForInvoice=Barua pepe ya kampuni (kwa ankara, ikiwa tofauti na barua pepe ya mhudhuriaji)
+ErrorSeveralCompaniesWithEmailContactUs=Kampuni kadhaa zilizo na barua pepe hii zimepatikana kwa hivyo hatuwezi kuthibitisha usajili wako kiotomatiki. Tafadhali wasiliana nasi kwa %s kwa uthibitisho wa mwongozo
+ErrorSeveralCompaniesWithNameContactUs=Kampuni kadhaa zilizo na jina hili zimepatikana kwa hivyo hatuwezi kuthibitisha usajili wako kiotomatiki. Tafadhali wasiliana nasi kwa %s kwa uthibitisho wa mwongozo
+NoPublicActionsAllowedForThisEvent=Hakuna vitendo vya umma vilivyo wazi kwa tukio hili
+MaxNbOfAttendees=Idadi ya juu zaidi ya waliohudhuria
+DateStartEvent=Tarehe ya kuanza kwa tukio
+DateEndEvent=Tarehe ya mwisho ya tukio
+ModifyStatus=Rekebisha hali
+ConfirmModifyStatus=Thibitisha urekebishaji wa hali
+ConfirmModifyStatusQuestion=Je, una uhakika unataka kurekebisha %s rekodi zilizochaguliwa?
+RecordsUpdated = %s Rekodi zimesasishwa
+RecordUpdated = Rekodi imesasishwa
+NoRecordUpdated = Hakuna Rekodi iliyosasishwa

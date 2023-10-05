@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  *       \brief      Page fiche LDAP contact
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -36,12 +37,13 @@ $action = GETPOST('action', 'aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
-if ($id > 0)
-{
+if ($id > 0) {
 	$object->fetch($id, $user);
 }
 
@@ -50,8 +52,7 @@ if ($id > 0)
  * Actions
  */
 
-if ($action == 'dolibarr2ldap')
-{
+if ($action == 'dolibarr2ldap') {
 	$db->begin();
 
 	$ldap = new Ldap();
@@ -63,8 +64,7 @@ if ($action == 'dolibarr2ldap')
 
 	$result = $ldap->update($dn, $info, $user, $olddn);
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		setEventMessages($langs->trans("ContactSynchronized"), null, 'mesgs');
 		$db->commit();
 	} else {
@@ -98,8 +98,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
 // Company
-if ($object->socid > 0)
-{
+if ($object->socid > 0) {
 	$thirdparty = new Societe($db);
 	$thirdparty->fetch($object->socid);
 
@@ -116,15 +115,15 @@ print $object->getCivilityLabel();
 print '</td></tr>';
 
 // LDAP DN
-print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur" colspan="3">'.getDolGlobalString('LDAP_CONTACT_DN')."</td></tr>\n";
 
 // LDAP Cle
-print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_KEY_CONTACTS."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur" colspan="3">'.getDolGlobalString('LDAP_KEY_CONTACTS')."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur" colspan="3">'.getDolGlobalString('LDAP_SERVER_HOST')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur" colspan="3">'.getDolGlobalString('LDAP_SERVER_HOST_SLAVE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur" colspan="3">'.getDolGlobalString('LDAP_SERVER_PORT')."</td></tr>\n";
 
 print '</table>';
 
@@ -134,19 +133,19 @@ print dol_get_fiche_end();
 
 
 /*
- * Barre d'actions
+ * Action bar
  */
-
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
-{
+if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr') print "<br>\n";
+if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+	print "<br>\n";
+}
 
 
 
@@ -163,8 +162,7 @@ print '</tr>';
 // Lecture LDAP
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
-if ($result > 0)
-{
+if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
@@ -174,20 +172,17 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
-	{
-		if (!is_array($records))
-		{
-			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
+		if (!is_array($records)) {
+			print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.dol_escape_htmltag($dn).' - search='.dol_escape_htmltag($search).')</td></tr>';
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }

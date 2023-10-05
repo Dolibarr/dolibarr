@@ -43,7 +43,7 @@ class ModeleImports
 	public $error = '';
 
 	/**
-	 * @var int id of driver
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -75,19 +75,61 @@ class ModeleImports
 
 	public $libversion = array();
 
+	public $charset;
+
+
+	/**
+	 * @var	array	Element mapping from table name
+	 */
+	public static $mapTableToElement = array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		//'bank_account' => 'bank_account',
+		'categorie' => 'category',
+		//'commande' => 'commande',
+		//'commande_fournisseur' => 'commande_fournisseur',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		//'expensereport' => 'expensereport',
+		'facture' => 'invoice',
+		//'facture_fourn' => 'facture_fourn',
+		'fichinter' => 'intervention',
+		//'holiday' => 'holiday',
+		//'product' => 'product',
+		'product_price' => 'productprice',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'projet'  => 'project',
+		//'propal' => 'propal',
+		//'societe' => 'societe',
+		'socpeople' => 'contact',
+		//'supplier_proposal' => 'supplier_proposal',
+		//'ticket' => 'ticket',
+	);
 
 	/**
 	 *  Constructor
 	 */
 	public function __construct()
 	{
-	}
+		global $hookmanager;
 
+		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('import'));
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('constructModeleImports', $parameters, $this);
+			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+				foreach ($hookmanager->resArray as $mapList) {
+					self::$mapTableToElement[$mapList['table']] = $mapList['element'];
+				}
+			}
+		}
+	}
 
 	/**
 	 * getDriverId
 	 *
-	 * @return string		Id
+	 * @return int		Id
 	 */
 	public function getDriverId()
 	{
@@ -155,30 +197,25 @@ class ModeleImports
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge en memoire et renvoie la liste des modeles actifs
+	 *  Load into memory list of available import format
 	 *
 	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public function listOfAvailableImportFormat($db, $maxfilenamelength = 0)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+		dol_syslog(get_class($this)."::listOfAvailableImportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle = opendir($dir);
 
 		// Recherche des fichiers drivers imports disponibles
 		$i = 0;
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg)) {
 					$moduleid = $reg[1];
 
 					// Loading Class
@@ -219,7 +256,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver import
+	 *  Return label of driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string
@@ -230,7 +267,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi la description d'un driver import
+	 *  Return description of import drivervoi la description d'un driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string
@@ -271,5 +308,23 @@ class ModeleImports
 	public function getLibVersionForKey($key)
 	{
 		return $this->libversion[$key];
+	}
+
+	/**
+	 * Get element from table name with prefix
+	 *
+	 * @param 	string	$tableNameWithPrefix		Table name with prefix
+	 * @return 	string	Element name or table element as default
+	 */
+	public function getElementFromTableWithPrefix($tableNameWithPrefix)
+	{
+		$tableElement = preg_replace('/^'.preg_quote($this->db->prefix(), '/').'/', '', $tableNameWithPrefix);
+		$element = $tableElement;
+
+		if (isset(self::$mapTableToElement[$tableElement])) {
+			$element = self::$mapTableToElement[$tableElement];
+		}
+
+		return $element;
 	}
 }

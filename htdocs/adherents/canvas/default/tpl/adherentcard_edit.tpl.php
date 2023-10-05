@@ -77,7 +77,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <tr>
 	<td><?php echo $langs->trans("Morphy"); ?></td>
-	<td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['select_morphy']; ?>"></td>
+	<td colspan="3"><input name="poste" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['select_morphy']; ?>"></td>
 </tr>
 
 <tr>
@@ -114,7 +114,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <tr>
 	<td><?php echo $langs->trans("Email"); ?></td>
-	<td><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
+	<td><input name="email" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
 </tr>
 
 <tr>

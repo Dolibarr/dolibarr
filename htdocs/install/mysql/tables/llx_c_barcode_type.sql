@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2022      Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@ create table llx_c_barcode_type
   rowid    integer            AUTO_INCREMENT PRIMARY KEY,
   code     varchar(16)        NOT NULL,
   entity   integer  DEFAULT 1 NOT NULL,	-- multi company id
-  libelle  varchar(50)        NOT NULL,
+  libelle  varchar(128)        NOT NULL,
   coder    varchar(16)        NOT NULL,
   example  varchar(16)        NOT NULL
   

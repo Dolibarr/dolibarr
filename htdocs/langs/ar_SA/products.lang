@@ -2,7 +2,7 @@
 ProductRef=مرجع المنتج
 ProductLabel=وصف المنتج
 ProductLabelTranslated=تسمية المنتج مترجمة
-ProductDescription=Product description
+ProductDescription=وصف المنتج
 ProductDescriptionTranslated=ترجمة وصف المنتج
 ProductNoteTranslated=ترجمة مذكرة المنتج
 ProductServiceCard=منتجات / بطاقة الخدمات
@@ -17,43 +17,43 @@ Create=إنشاء
 Reference=المرجع
 NewProduct=منتج جديد
 NewService=خدمة جديدة
-ProductVatMassChange=Global VAT Update
-ProductVatMassChangeDesc=This tool updates the VAT rate defined on <b><u>ALL</u></b> products and services!
+ProductVatMassChange=تحديث شامل لضريبة القيمة المضافة
+ProductVatMassChangeDesc=تقوم هذه الأداة بتحديث معدل ضريبة القيمة المضافة المحدد في <b> <u> ALL </u> </b> المنتجات والخدمات!
 MassBarcodeInit=الحرف الأول الباركود الشامل
 MassBarcodeInitDesc=هذه الصفحة يمكن استخدامها لتهيئة الباركود على الكائنات التي لا يكون الباركود تعريف. تحقق قبل أن الإعداد وحدة الباركود كاملة.
 ProductAccountancyBuyCode=كود المحاسبة (شراء)
-ProductAccountancyBuyIntraCode=Accounting code (purchase intra-community)
-ProductAccountancyBuyExportCode=Accounting code (purchase import)
+ProductAccountancyBuyIntraCode=كود المحاسبة (شراء داخل المجتمع)
+ProductAccountancyBuyExportCode=كود المحاسبة (شراء استيراد)
 ProductAccountancySellCode=كود المحاسبة (بيع)
-ProductAccountancySellIntraCode=Accounting code (sale intra-Community)
-ProductAccountancySellExportCode=Accounting code (sale export)
+ProductAccountancySellIntraCode=كود المحاسبة (البيع داخل المجتمع)
+ProductAccountancySellExportCode=كود المحاسبة (بيع تصدير)
 ProductOrService=المنتج أو الخدمة
 ProductsAndServices=المنتجات والخدمات
 ProductsOrServices=منتجات أو خدمات
-ProductsPipeServices=Products | Services
-ProductsOnSale=Products for sale
-ProductsOnPurchase=Products for purchase
-ProductsOnSaleOnly=Products for sale only
-ProductsOnPurchaseOnly=Products for purchase only
+ProductsPipeServices=المنتجات | خدمات
+ProductsOnSale=منتجات للبيع
+ProductsOnPurchase=منتجات للشراء
+ProductsOnSaleOnly=منتجات للبيع فقط
+ProductsOnPurchaseOnly=منتجات للشراء فقط
 ProductsNotOnSell=منتجات ليست للبيع ولا الشراء
 ProductsOnSellAndOnBuy=المنتجات للبيع والشراء
-ServicesOnSale=Services for sale
-ServicesOnPurchase=Services for purchase
-ServicesOnSaleOnly=Services for sale only
-ServicesOnPurchaseOnly=Services for purchase only
+ServicesOnSale=خدمات للبيع
+ServicesOnPurchase=خدمات للشراء
+ServicesOnSaleOnly=خدمات للبيع فقط
+ServicesOnPurchaseOnly=خدمات للشراء فقط
 ServicesNotOnSell=خدمات ليست للبيع ولا الشراء
 ServicesOnSellAndOnBuy=خدمات للبيع والشراء
-LastModifiedProductsAndServices=Latest %s modified products/services
-LastRecordedProducts=Latest %s recorded products
-LastRecordedServices=Latest %s recorded services
+LastModifiedProductsAndServices=أحدث منتجات / خدمات %s التي تم تعديلها
+LastRecordedProducts=أحدث المنتجات المسجلة %s
+LastRecordedServices=أحدث الخدمات المسجلة %s
 CardProduct0=المنتج
 CardProduct1=الخدمة
 Stock=المخزون
 MenuStocks=المخزون
-Stocks=Stocks and location (warehouse) of products
+Stocks=المخزون وموقع (المستودع) للمنتجات
 Movements=حركات
 Sell=يبيع
-Buy=Purchase
+Buy=شراء
 OnSell=متاح للبيع
 OnBuy=للشراء
 NotOnSell=ليس للبيع
@@ -68,26 +68,27 @@ ProductStatusNotOnBuyShort=ليس للشراء
 UpdateVAT=تحديث الضريبة على القيمة المضافة
 UpdateDefaultPrice=تحديث السعر الافتراضي
 UpdateLevelPrices=أسعار التحديث لكل مستوى
-AppliedPricesFrom=Applied from
+AppliedPricesFrom=تطبق من
 SellingPrice=سعر البيع
-SellingPriceHT=Selling price (excl. tax)
+SellingPriceHT=سعر البيع (بدون الضريبة)
 SellingPriceTTC=سعر البيع (شامل الضريبية)
-SellingMinPriceTTC=Minimum Selling price (inc. tax)
-CostPriceDescription=This price field (excl. tax) can be used to store the average amount this product costs to your company. It may be any price you calculate yourself, for example from the average buying price plus average production and distribution cost.
-CostPriceUsage=This value could be used for margin calculation.
-SoldAmount=Sold amount
-PurchasedAmount=Purchased amount
+SellingMinPriceTTC=الحد الأدنى لسعر البيع (شامل الضريبة)
+CostPriceDescription=يمكن استخدام حقل السعر هذا (باستثناء الضريبة) لتسجيل متوسط المبلغ الذي يكلفه هذا المنتج لشركتك. قد يكون أي سعر تحسبه بنفسك ، على سبيل المثال ، من متوسط سعر الشراء بالإضافة إلى متوسط تكلفة الإنتاج والتوزيع.
+CostPriceUsage=يمكن استخدام هذه القيمة لحساب الهامش.
+ManufacturingPrice=سعر التصنيع
+SoldAmount=المبلغ المباع
+PurchasedAmount=الكمية المشتراة
 NewPrice=السعر الجديد
-MinPrice=Min. sell price
-EditSellingPriceLabel=Edit selling price label
+MinPrice=دقيقة. سعر البيع
+EditSellingPriceLabel=تحرير تسمية سعر البيع
 CantBeLessThanMinPrice=سعر البيع لا يمكن أن يكون أقل من الحد الأدنى المسموح لهذا المنتج (٪ ق بدون الضرائب)
 ContractStatusClosed=مغلق
 ErrorProductAlreadyExists=المنتج ذو المرجع %sموجود بالفعل.
 ErrorProductBadRefOrLabel=قيمة خاطئة لـ مرجع  أو ملصق.
 ErrorProductClone=كان هناك مشكلة أثناء محاولة استنساخ المنتج أو الخدمة.
 ErrorPriceCantBeLowerThanMinPrice=خطأ، سعر لا يمكن أن يكون أقل من الحد الأدنى السعر.
-Suppliers=Vendors
-SupplierRef=Vendor SKU
+Suppliers=الموردين
+SupplierRef=البائع SKU
 ShowProduct=عرض المنتج
 ShowService=عرض الخدمة
 ProductsAndServicesArea=منطقة المنتجات والخدمات
@@ -96,7 +97,7 @@ ServicesArea=منطقة الخدمات
 ListOfStockMovements=قائمة الحركات المخزون
 BuyingPrice=سعر الشراء
 PriceForEachProduct=المنتجات بأسعار محددة
-SupplierCard=Vendor card
+SupplierCard=بطاقة البائع
 PriceRemoved=تمت إزالة السعر
 BarCode=الباركود
 BarcodeType=نوع الباركود
@@ -104,25 +105,25 @@ SetDefaultBarcodeType=حدد نوع الباركود
 BarcodeValue=قيمة الباركود
 NoteNotVisibleOnBill=ملحوظة(غيرمرئية على الفواتير والعروض...)
 ServiceLimitedDuration=إذا كان المنتج هو خدمة لفترة محدودة :
-FillWithLastServiceDates=Fill with last service line dates
-MultiPricesAbility=Multiple price segments per product/service (each customer is in one price segment)
+FillWithLastServiceDates=املأ بتاريخ آخر سطر خدمة
+MultiPricesAbility=شرائح أسعار متعددة لكل منتج / خدمة (كل عميل في شريحة سعر واحدة)
 MultiPricesNumPrices=عدد من السعر
-DefaultPriceType=Base of prices per default (with versus without tax) when adding new sale prices
-AssociatedProductsAbility=Enable Kits (set of several products)
-VariantsAbility=Enable Variants (variations of products, for example color, size)
-AssociatedProducts=Kits
-AssociatedProductsNumber=Number of products composing this kit
+DefaultPriceType=أساس أسعار التخلف عن السداد (مع عدم وجود ضريبة) عند إضافة أسعار بيع جديدة
+AssociatedProductsAbility=مجموعات التمكين (مجموعة من عدة منتجات)
+VariantsAbility=تمكين المتغيرات (أشكال المنتجات ، على سبيل المثال اللون والحجم)
+AssociatedProducts=أطقم
+AssociatedProductsNumber=عدد المنتجات المكونة لهذه المجموعة
 ParentProductsNumber=عدد منتج التعبئة الاب
-ParentProducts=Parent products
-IfZeroItIsNotAVirtualProduct=If 0, this product is not a kit
-IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any kit
+ParentProducts=المنتجات الأم
+IfZeroItIsNotAVirtualProduct=إذا كانت القيمة 0 ، فهذا المنتج ليس مجموعة
+IfZeroItIsNotUsedByVirtualProduct=إذا كانت القيمة 0 ، فلا تستخدم أي مجموعة هذا المنتج
 KeywordFilter=فلتر الكلمة المقتاحية
 CategoryFilter=فلتر التصنيف
 ProductToAddSearch= إبحث عن منتج لإضافتة
 NoMatchFound=لا يوجد نتائج متطابقة
-ListOfProductsServices=List of products/services
-ProductAssociationList=List of products/services that are component(s) of this kit
-ProductParentList=List of kits with this product as a component
+ListOfProductsServices=قائمة المنتجات / الخدمات
+ProductAssociationList=قائمة المنتجات / الخدمات المكونة (مكونات) هذه المجموعة
+ProductParentList=قائمة مجموعات مع هذا المنتج كمكون
 ErrorAssociationIsFatherOfThis=واحد من اختيار المنتج الأم الحالية المنتج
 DeleteProduct=حذف منتج / خدمة
 ConfirmDeleteProduct=هل أنت متأكد من حذف هذا المنتج / الخدمة؟
@@ -134,20 +135,22 @@ ImportDataset_service_1=الخدمات
 DeleteProductLine=حذف خط الإنتاج
 ConfirmDeleteProductLine=هل أنت متأكد من أنك تريد حذف خط الإنتاج؟
 ProductSpecial=خاص
-QtyMin=Min. purchase quantity
-PriceQtyMin=Price quantity min.
-PriceQtyMinCurrency=Price (currency) for this qty. (no discount)
-VATRateForSupplierProduct=VAT Rate (for this vendor/product)
-DiscountQtyMin=Discount for this qty.
-NoPriceDefinedForThisSupplier=No price/qty defined for this vendor/product
-NoSupplierPriceDefinedForThisProduct=No vendor price/qty defined for this product
-PredefinedProductsToSell=Predefined Product
-PredefinedServicesToSell=Predefined Service
+QtyMin=دقيقة. كمية الشراء
+PriceQtyMin=كمية السعر دقيقة.
+PriceQtyMinCurrency=السعر (العملة) لهذه الكمية.
+WithoutDiscount=بدون خصم
+VATRateForSupplierProduct=معدل ضريبة القيمة المضافة (لهذا البائع / المنتج)
+DiscountQtyMin=خصم على هذه الكمية.
+NoPriceDefinedForThisSupplier=لم يتم تحديد سعر / كمية لهذا البائع / المنتج
+NoSupplierPriceDefinedForThisProduct=لم يتم تحديد سعر البائع / الكمية لهذا المنتج
+PredefinedItem=عنصر محدد مسبقًا
+PredefinedProductsToSell=منتج محدد مسبقا
+PredefinedServicesToSell=الخدمة المحددة مسبقًا
 PredefinedProductsAndServicesToSell=منتجات محددة مسبقا / خدمات للبيع
 PredefinedProductsToPurchase=المنتج مسبقا لشراء
 PredefinedServicesToPurchase=خدمات محددة مسبقا لشراء
-PredefinedProductsAndServicesToPurchase=Predefined products/services to purchase
-NotPredefinedProducts=Not predefined products/services
+PredefinedProductsAndServicesToPurchase=المنتجات / الخدمات المحددة مسبقًا للشراء
+NotPredefinedProducts=منتجات / خدمات غير محددة مسبقًا
 GenerateThumb=توليد صورة مصغرة
 ServiceNb=خدمة #%s
 ListProductServiceByPopularity=قائمة المنتجات / الخدمات حسب الشهرة
@@ -156,25 +159,25 @@ ListServiceByPopularity=قائمة الخدمات بحسب الشهرة
 Finished=المنتجات المصنعة
 RowMaterial=المادة الخام
 ConfirmCloneProduct=هل انت متأكد انك ترغب في استنساخ المنتج/الخدمة <b>%s</b>؟
-CloneContentProduct=Clone all main information of product/service
-ClonePricesProduct=Clone prices
-CloneCategoriesProduct=Clone tags/categories linked
-CloneCompositionProduct=Clone virtual product/service
-CloneCombinationsProduct=Clone product variants
+CloneContentProduct=استنساخ جميع المعلومات الرئيسية للمنتج / الخدمة
+ClonePricesProduct=أسعار النسخ
+CloneCategoriesProduct=استنساخ العلامات / الفئات المرتبطة
+CloneCompositionProduct=استنساخ المنتجات / الخدمات الافتراضية
+CloneCombinationsProduct=استنساخ متغيرات المنتج
 ProductIsUsed=هذا المنتج يتم استخدامة
 NewRefForClone=مرجع. المنتج/ الخدمة الجديدة 
 SellingPrices=أسعار بيع
 BuyingPrices=شراء أسعار
 CustomerPrices=أسعار العميل
-SuppliersPrices=Vendor prices
-SuppliersPricesOfProductsOrServices=Vendor prices (of products or services)
-CustomCode=Customs|Commodity|HS code
+SuppliersPrices=أسعار المورد
+SuppliersPricesOfProductsOrServices=أسعار البائعين (للمنتجات أو الخدمات)
+CustomCode=الجمارك | السلع | رمز النظام المنسق
 CountryOrigin=بلد المنشأ
-RegionStateOrigin=Region origin
-StateOrigin=State|Province origin
-Nature=Nature of product (material/finished)
-NatureOfProductShort=Nature of product
-NatureOfProductDesc=Raw material or finished product
+RegionStateOrigin=منطقة المنشأ
+StateOrigin=الولاية | مقاطعة المنشأ
+Nature=طبيعة المنتج (خام / مصنع)
+NatureOfProductShort=طبيعة المنتج
+NatureOfProductDesc=المواد الخام أو المنتجات المصنعة
 ShortLabel=التسمية قصيرة
 Unit=وحدة
 p=ش.
@@ -197,39 +200,39 @@ m2=متر مربع
 m3=متر مكعب
 liter=لتر
 l=L
-unitP=Piece
-unitSET=Set
+unitP=قطعة
+unitSET=تعيين
 unitS=الثاني
 unitH=ساعة
 unitD=يوم
-unitG=Gram
-unitM=Meter
-unitLM=Linear meter
-unitM2=Square meter
-unitM3=Cubic meter
-unitL=Liter
-unitT=ton
+unitG=غرام
+unitM=متر
+unitLM=متر طولي
+unitM2=متر مربع
+unitM3=متر مكعب
+unitL=لتر
+unitT=طن
 unitKG=كجم
-unitG=Gram
+unitG=غرام
 unitMG=مغلم
 unitLB=جنيه
 unitOZ=أوقية
-unitM=Meter
+unitM=متر
 unitDM=مارك ألماني
 unitCM=الطول
 unitMM=مم
-unitFT=ft
-unitIN=in
-unitM2=Square meter
+unitFT=قدم
+unitIN=في
+unitM2=متر مربع
 unitDM2=dm²
 unitCM2=سم ²
 unitMM2=مم ²
 unitFT2=قدم مربع
 unitIN2=in²
-unitM3=Cubic meter
+unitM3=متر مكعب
 unitDM3=dm³
-unitCM3=cm³
-unitMM3=mm³
+unitCM3=سم³
+unitMM3=مم³
 unitFT3=ft³
 unitIN3=في بوابة
 unitOZ3=أوقية
@@ -240,15 +243,15 @@ CurrentProductPrice=السعر الحالي
 AlwaysUseNewPrice=دائما استخدم السعر الحالي للمنتج / الخدمة
 AlwaysUseFixedPrice=استخدم السعر الثابت
 PriceByQuantity=أسعار مختلفة حسب الكمية
-DisablePriceByQty=Disable prices by quantity
+DisablePriceByQty=تعطيل الأسعار بالكمية
 PriceByQuantityRange=مدى الكمية
-MultipriceRules=Automatic prices for segment
-UseMultipriceRules=Use price segment rules (defined into product module setup) to auto calculate prices of all other segments according to first segment
+MultipriceRules=الأسعار التلقائية للقطاع
+UseMultipriceRules=استخدم قواعد شريحة السعر (المحددة في إعداد وحدة المنتج) لحساب أسعار جميع الشرائح الأخرى تلقائيًا وفقًا للشريحة الأولى
 PercentVariationOver=٪٪ الاختلاف على الصورة٪
 PercentDiscountOver=٪٪ خصم أكثر من٪ الصورة
-KeepEmptyForAutoCalculation=Keep empty to have this calculated automatically from weight or volume of products
-VariantRefExample=Examples: COL, SIZE
-VariantLabelExample=Examples: Color, Size
+KeepEmptyForAutoCalculation=احتفظ به فارغًا ليتم حسابه تلقائيًا من وزن أو حجم المنتجات
+VariantRefExample=أمثلة: COL ، SIZE
+VariantLabelExample=أمثلة: اللون والحجم
 ### composition fabrication
 Build=إنتاج
 ProductsMultiPrice=المنتجات و الاسعار لكل شريحة
@@ -259,57 +262,58 @@ Quarter1=الربع الإول
 Quarter2=الربع الثاني
 Quarter3=الربع الثالث
 Quarter4=الربع الرابع
-BarCodePrintsheet=طباعة الباركود
-PageToGenerateBarCodeSheets=With this tool, you can print sheets of barcode stickers. Choose format of your sticker page, type of barcode and value of barcode, then click on button <b>%s</b>.
+BarCodePrintsheet=طباعة الرموز الشريطية
+PageToGenerateBarCodeSheets=باستخدام هذه الأداة ، يمكنك طباعة أوراق ملصقات الباركود. اختر تنسيق صفحة الملصق ونوع الباركود وقيمة الباركود ، ثم انقر فوق الزر <b> %s </b>.
 NumberOfStickers=عدد من الملصقات للطباعة على الصفحة
 PrintsheetForOneBarCode=طباعة عدة ملصقات لالباركود واحد
 BuildPageToPrint=توليد صفحة للطباعة
 FillBarCodeTypeAndValueManually=ملء نوع وقيمة الباركود  يدويا.
 FillBarCodeTypeAndValueFromProduct=ملء نوع وقيمة الباركود من باركود المنتج.
 FillBarCodeTypeAndValueFromThirdParty=ملء نوع وقيمة الباركود من باركود طرف ثالت.
-DefinitionOfBarCodeForProductNotComplete=Definition of type or value of barcode not complete for product %s.
-DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of barcode non complete for third party %s.
-BarCodeDataForProduct=Barcode information of product %s:
-BarCodeDataForThirdparty=Barcode information of third party %s:
-ResetBarcodeForAllRecords=Define barcode value for all record (this will also reset barcode value already defined with new values)
-PriceByCustomer=Different prices for each customer
-PriceCatalogue=A single sell price per product/service
-PricingRule=Rules for selling prices
+DefinitionOfBarCodeForProductNotComplete=تعريف نوع أو قيمة الباركود غير كامل للمنتج %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=تعريف نوع أو قيمة الباركود غير كامل بالنسبة لجهة خارجية %s.
+BarCodeDataForProduct=معلومات الباركود للمنتج %s:
+BarCodeDataForThirdparty=معلومات الباركود لطرف ثالث %s:
+ResetBarcodeForAllRecords=تحديد قيمة الرمز الشريطي لجميع السجلات (سيؤدي هذا أيضًا إلى إعادة تعيين قيمة الرمز الشريطي المحددة بالفعل بقيم جديدة)
+PriceByCustomer=أسعار مختلفة لكل عميل
+PriceCatalogue=سعر بيع واحد لكل منتج / خدمة
+PricingRule=قواعد أسعار البيع
 AddCustomerPrice=إضافة السعر من قبل العملاء
-ForceUpdateChildPriceSoc=تعيين نفس السعر على الشركات التابعة العملاء
+ForceUpdateChildPriceSoc=حدد نفس السعر على الشركات التابعة للعميل
 PriceByCustomerLog=سجل الأسعار العملاء السابقة
 MinimumPriceLimit=سعر الحد الأدنى لا يمكن أن يكون أقل ثم٪ الصورة
-MinimumRecommendedPrice=Minimum recommended price is: %s
+MinimumRecommendedPrice=أدنى سعر موصى به هو: %s
 PriceExpressionEditor=محرر السعر التعبير
 PriceExpressionSelected=اختيار التعبير السعر
 PriceExpressionEditorHelp1="السعر = 2 + 2" أو "2 + 2" لتحديد السعر. استخدام ؛ لفصل التعبيرات
 PriceExpressionEditorHelp2=يمكنك الوصول إلى ExtraFields مع المتغيرات <b>مثل</b> # <b># extrafield_myextrafieldkey</b> والمتغيرات العالمية مع <b># global_mycode #</b>
-PriceExpressionEditorHelp3=In both product/service and vendor prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
-PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+PriceExpressionEditorHelp3=تتوفر هذه المتغيرات في أسعار المنتج / الخدمة والموردين: <br> <b> # tva_tx # # localtax1_tx # # localtax2_tx # # weight # # length # # Surface # # price_min # </b>
+PriceExpressionEditorHelp4=في سعر المنتج / الخدمة فقط: <b> # supplier_min_price # </b> <br> في أسعار البائعين فقط: <b> # supplier_quantity # and # supplier_tva_tx # a09a4b739f17
 PriceExpressionEditorHelp5=القيم العالمية المتاحة:
 PriceMode=وضع السعر
 PriceNumeric=عدد
 DefaultPrice=سعر افتراضي
-DefaultPriceLog=Log of previous default prices
+DefaultPriceLog=سجل الأسعار الافتراضية السابقة
 ComposedProductIncDecStock=زيادة / نقصان الأسهم على التغيير الأم
-ComposedProduct=Child products
+ComposedProduct=منتجات الأطفال
 MinSupplierPrice=الحد الأدنى من سعر الشراء
-MinCustomerPrice=Minimum selling price
+MinCustomerPrice=أدنى سعر بيع
+NoDynamicPrice=لا يوجد سعر ديناميكي
 DynamicPriceConfiguration=التكوين سعر ديناميكي
-DynamicPriceDesc=You may define mathematical formulae to calculate Customer or Vendor prices. Such formulas can use all mathematical operators, some constants and variables. You can define here the variables you wish to use. If the variable needs an automatic update, you may define the external URL to allow Dolibarr to update the value automatically.
-AddVariable=Add Variable
-AddUpdater=Add Updater
+DynamicPriceDesc=يمكنك تحديد الصيغ الرياضية لحساب أسعار العميل أو البائع. يمكن أن تستخدم هذه الصيغ جميع العوامل الرياضية ، وبعض الثوابت والمتغيرات. يمكنك هنا تحديد المتغيرات التي ترغب في استخدامها. إذا كان المتغير يحتاج إلى تحديث تلقائي ، فيمكنك تحديد عنوان URL الخارجي للسماح لـ Dolibarr بتحديث القيمة تلقائيًا.
+AddVariable=أضف متغير
+AddUpdater=أضف المحدث
 GlobalVariables=المتغيرات العالمية
-VariableToUpdate=Variable to update
-GlobalVariableUpdaters=External updaters for variables
+VariableToUpdate=متغير للتحديث
+GlobalVariableUpdaters=المحدِّثات الخارجية للمتغيرات
 GlobalVariableUpdaterType0=البيانات JSON
 GlobalVariableUpdaterHelp0=يوزع البيانات JSON من URL محددة، تحدد قيمة الموقع من القيمة ذات الصلة،
-GlobalVariableUpdaterHelpFormat0=Format for request {"URL": "http://example.com/urlofjson", "VALUE": "array1,array2,targetvalue"}
+GlobalVariableUpdaterHelpFormat0=تنسيق الطلب {"URL": "http://example.com/urlofjson"، "VALUE": "array1، array2، targetvalue"}
 GlobalVariableUpdaterType1=بيانات خدمة ويب
 GlobalVariableUpdaterHelp1=يوزع بيانات خدمة ويب من URL المحدد، NS يحدد مساحة الاسم، تحدد قيمة الموقع من القيمة ذات الصلة، يجب أن تحتوي على بيانات البيانات لإرسال والطريقة هي الطريقة WS الدعوة
-GlobalVariableUpdaterHelpFormat1=Format for request is {"URL": "http://example.com/urlofws", "VALUE": "array,targetvalue", "NS": "http://example.com/urlofns", "METHOD": "myWSMethod", "DATA": {"your": "data", "to": "send"}}
+GlobalVariableUpdaterHelpFormat1=تنسيق الطلب هو {"URL": "http://example.com/urlofws" ، "VALUE": "array ، targetvalue" ، "NS": "http://example.com/urlofns" ، "METHOD" : "myWSMethod"، "DATA": {"your": "data"، "to": "send"}}
 UpdateInterval=تحديث الفاصل الزمني (دقائق)
-LastUpdated=Latest update
+LastUpdated=اخر تحديث
 CorrectlyUpdated=تحديثها بشكل صحيح
 PropalMergePdfProductActualFile=استخدام الملفات لإضافة إلى PDF دازور هي / هو
 PropalMergePdfProductChooseFile=اختر ملفات PDF
@@ -317,81 +321,112 @@ IncludingProductWithTag=بما في ذلك المنتجات / الخدمات م�
 DefaultPriceRealPriceMayDependOnCustomer=سعر افتراضي، السعر الحقيقي قد تعتمد على العملاء
 WarningSelectOneDocument=يرجى تحديد وثيقة واحدة على الأقل
 DefaultUnitToShow=وحدة
-NbOfQtyInProposals=Qty in proposals
-ClinkOnALinkOfColumn=Click on a link of column %s to get a detailed view...
-ProductsOrServicesTranslations=Products/Services translations
-TranslatedLabel=Translated label
-TranslatedDescription=Translated description
-TranslatedNote=Translated notes
-ProductWeight=Weight for 1 product
-ProductVolume=Volume for 1 product
-WeightUnits=Weight unit
-VolumeUnits=Volume unit
-WidthUnits=Width unit
-LengthUnits=Length unit
-HeightUnits=Height unit
-SurfaceUnits=Surface unit
-SizeUnits=Size unit
-DeleteProductBuyPrice=Delete buying price
-ConfirmDeleteProductBuyPrice=Are you sure you want to delete this buying price?
-SubProduct=Sub product
-ProductSheet=Product sheet
-ServiceSheet=Service sheet
-PossibleValues=Possible values
-GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...)
-UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
-ProductSupplierDescription=Vendor description for the product
-UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
-PackagingForThisProduct=Packaging
-PackagingForThisProductDesc=On supplier order, you will automaticly order this quantity (or a multiple of this quantity). Cannot be less than minimum buying quantity
-QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+NbOfQtyInProposals=الكمية في المقترحات
+ClinkOnALinkOfColumn=انقر فوق ارتباط العمود %s للحصول على عرض تفصيلي ...
+ProductsOrServicesTranslations=ترجمة المنتجات / الخدمات
+TranslatedLabel=تسمية مترجمة
+TranslatedDescription=وصف مترجم
+TranslatedNote=ملاحظات مترجمة
+ProductWeight=الوزن لمنتج واحد
+ProductVolume=الحجم لمنتج واحد
+WeightUnits=وحدة الوزن
+VolumeUnits=وحدة الحجم
+WidthUnits=وحدة العرض
+LengthUnits=وحدة الطول
+HeightUnits=وحدة الارتفاع
+SurfaceUnits=وحدة السطح
+SizeUnits=وحدة الحجم
+DeleteProductBuyPrice=حذف سعر الشراء
+ConfirmDeleteProductBuyPrice=هل أنت متأكد أنك تريد حذف سعر الشراء هذا؟
+SubProduct=المنتج الفرعي
+ProductSheet=ورقة المنتج
+ServiceSheet=ورقة الخدمة
+PossibleValues=القيم الممكنة
+GoOnMenuToCreateVairants=انتقل إلى القائمة %s - %s لإعداد متغيرات السمات (مثل الألوان والحجم ...)
+UseProductFournDesc=أضف ميزة لتحديد وصف المنتج المحدد من قبل البائعين (لكل مرجع مورد) بالإضافة إلى وصف العملاء
+ProductSupplierDescription=وصف البائع للمنتج
+UseProductSupplierPackaging=Use the "packaging" feature to round the quantities to some given multiples (when adding/updating line in a vendor documents, recalculate quantities and purchase prices according to the higher multiple set on the purchase prices of a product)
+PackagingForThisProduct=Packaging of quantities
+PackagingForThisProductDesc=سوف تشتري تلقائيًا مضاعفات هذه الكمية.
+QtyRecalculatedWithPackaging=تمت إعادة حساب كمية الخط وفقًا لتعبئة المورد
 
 #Attributes
-VariantAttributes=Variant attributes
-ProductAttributes=Variant attributes for products
-ProductAttributeName=Variant attribute %s
-ProductAttribute=Variant attribute
-ProductAttributeDeleteDialog=Are you sure you want to delete this attribute? All values will be deleted
-ProductAttributeValueDeleteDialog=Are you sure you want to delete the value "%s" with reference "%s" of this attribute?
-ProductCombinationDeleteDialog=Are you sure want to delete the variant of the product "<strong>%s</strong>"?
-ProductCombinationAlreadyUsed=There was an error while deleting the variant. Please check it is not being used in any object
-ProductCombinations=Variants
-PropagateVariant=Propagate variants
-HideProductCombinations=Hide products variant in the products selector
-ProductCombination=Variant
-NewProductCombination=New variant
-EditProductCombination=Editing variant
-NewProductCombinations=New variants
-EditProductCombinations=Editing variants
-SelectCombination=Select combination
-ProductCombinationGenerator=Variants generator
-Features=Features
-PriceImpact=Price impact
-ImpactOnPriceLevel=Impact on price level %s
-ApplyToAllPriceImpactLevel= Apply to all levels
-ApplyToAllPriceImpactLevelHelp=By clicking here you set the same price impact on all levels
-WeightImpact=Weight impact
+VariantAttributes=سمات متغيرة
+ProductAttributes=سمات متغيرة للمنتجات
+ProductAttributeName=سمة المتغير %s
+ProductAttribute=السمة المتغيرة
+ProductAttributeDeleteDialog=هل أنت متأكد أنك تريد حذف هذه السمة؟ سيتم حذف جميع القيم
+ProductAttributeValueDeleteDialog=هل تريد بالتأكيد حذف القيمة "%s" بالمرجع "%s" لهذه السمة؟
+ProductCombinationDeleteDialog=هل تريد بالتأكيد حذف متغير المنتج "<strong> %s </strong>"؟
+ProductCombinationAlreadyUsed=حدث خطأ أثناء حذف المتغير. يرجى التحقق من عدم استخدامه في أي كائن
+ProductCombinations=المتغيرات
+PropagateVariant=نشر المتغيرات
+HideProductCombinations=إخفاء متغير المنتجات في محدد المنتجات
+ProductCombination=متغير
+NewProductCombination=متغير جديد
+EditProductCombination=تحرير المتغير
+NewProductCombinations=المتغيرات الجديدة
+EditProductCombinations=تحرير المتغيرات
+SelectCombination=حدد مجموعة
+ProductCombinationGenerator=مولد المتغيرات
+Features=سمات
+PriceImpact=تأثير السعر
+ImpactOnPriceLevel=التأثير على مستوى السعر %s
+ApplyToAllPriceImpactLevel= تنطبق على جميع المستويات
+ApplyToAllPriceImpactLevelHelp=بالضغط هنا فإنك تحدد نفس تأثير السعر على جميع المستويات
+WeightImpact=تأثير الوزن
 NewProductAttribute=جديد السمة
-NewProductAttributeValue=New attribute value
-ErrorCreatingProductAttributeValue=There was an error while creating the attribute value. It could be because there is already an existing value with that reference
-ProductCombinationGeneratorWarning=If you continue, before generating new variants, all previous ones will be DELETED. Already existing ones will be updated with the new values
-TooMuchCombinationsWarning=Generating lots of variants may result in high CPU, memory usage and Dolibarr not able to create them. Enabling the option "%s" may help reduce memory usage.
-DoNotRemovePreviousCombinations=Do not remove previous variants
-UsePercentageVariations=Use percentage variations
-PercentageVariation=Percentage variation
-ErrorDeletingGeneratedProducts=There was an error while trying to delete existing product variants
-NbOfDifferentValues=No. of different values
-NbProducts=Number of products
-ParentProduct=Parent product
-HideChildProducts=Hide variant products
-ShowChildProducts=Show variant products
-NoEditVariants=Go to Parent product card and edit variants price impact in the variants tab
-ConfirmCloneProductCombinations=Would you like to copy all the product variants to the other parent product with the given reference?
-CloneDestinationReference=Destination product reference
-ErrorCopyProductCombinations=There was an error while copying the product variants
-ErrorDestinationProductNotFound=Destination product not found
-ErrorProductCombinationNotFound=Product variant not found
-ActionAvailableOnVariantProductOnly=Action only available on the variant of product
-ProductsPricePerCustomer=Product prices per customers
-ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
-DeleteLinkedProduct=Delete the child product linked to the combination
+NewProductAttributeValue=قيمة السمة الجديدة
+ErrorCreatingProductAttributeValue=حدث خطأ أثناء إنشاء قيمة السمة. قد يكون ذلك بسبب وجود قيمة موجودة بالفعل بهذا المرجع
+ProductCombinationGeneratorWarning=إذا تابعت ، قبل إنشاء متغيرات جديدة ، سيتم حذف جميع المتغيرات السابقة. سيتم تحديث القيم الموجودة بالفعل بالقيم الجديدة
+TooMuchCombinationsWarning=قد يؤدي توليد الكثير من المتغيرات إلى ارتفاع استخدام وحدة المعالجة المركزية والذاكرة وعدم قدرة Dolibarr على إنشائها. قد يساعد تمكين الخيار "%s" في تقليل استخدام الذاكرة.
+DoNotRemovePreviousCombinations=لا تقم بإزالة المتغيرات السابقة
+UsePercentageVariations=استخدم الاختلافات المئوية
+PercentageVariation=اختلاف النسبة المئوية
+ErrorDeletingGeneratedProducts=حدث خطأ أثناء محاولة حذف متغيرات المنتج الحالية
+NbOfDifferentValues=عدد القيم المختلفة
+NbProducts=عدد من المنتجات
+ParentProduct=المنتج الأصلي
+HideChildProducts=إخفاء المنتجات المتنوعة
+ShowChildProducts=عرض المنتجات المتنوعة
+NoEditVariants=انتقل إلى بطاقة المنتج الرئيسي وقم بتعديل تأثير سعر المتغيرات في علامة تبويب المتغيرات
+ConfirmCloneProductCombinations=هل ترغب في نسخ جميع متغيرات المنتج إلى المنتج الأصلي الآخر مع المرجع المحدد؟
+CloneDestinationReference=مرجع المنتج الوجهة
+ErrorCopyProductCombinations=حدث خطأ أثناء نسخ متغيرات المنتج
+ErrorDestinationProductNotFound=المنتج الوجهة غير موجود
+ErrorProductCombinationNotFound=لم يتم العثور على صيغة المنتج
+ActionAvailableOnVariantProductOnly=الإجراء متاح فقط على متغير المنتج
+ProductsPricePerCustomer=أسعار المنتجات لكل عميل
+ProductSupplierExtraFields=السمات الإضافية (أسعار الموردين)
+DeleteLinkedProduct=احذف المنتج الفرعي المرتبط بالمجموعة
+AmountUsedToUpdateWAP=Unit amount to use to update the Weighted Average Price
+PMPValue=المتوسط المرجح لسعر
+PMPValueShort=الواب
+mandatoryperiod=فترات إلزامية
+mandatoryPeriodNeedTobeSet=ملاحظة: يجب تحديد الفترة (تاريخ البدء والانتهاء)
+mandatoryPeriodNeedTobeSetMsgValidate=تتطلب الخدمة فترة بداية ونهاية
+mandatoryHelper=حدد هذا إذا كنت تريد رسالة إلى المستخدم عند إنشاء / التحقق من صحة فاتورة ، أو عرض تجاري ، أو أمر مبيعات دون إدخال تاريخ بدء وانتهاء في سطور هذه الخدمة. <br> لاحظ أن الرسالة تحذير وليست خطأ حظر.
+DefaultBOM=الافتراضي BOM
+DefaultBOMDesc=يوصى باستخدام قائمة مكونات الصنف الافتراضية لتصنيع هذا المنتج. يمكن تعيين هذا الحقل فقط إذا كانت طبيعة المنتج "%s".
+Rank=مرتبة
+MergeOriginProduct=منتج مكرر (المنتج الذي تريد حذفه)
+MergeProducts=دمج المنتجات
+ConfirmMergeProducts=هل أنت متأكد أنك تريد دمج المنتج المختار مع المنتج الحالي؟ سيتم نقل جميع العناصر المرتبطة (الفواتير ، الطلبات ، ...) إلى المنتج الحالي ، وبعد ذلك سيتم حذف المنتج المختار.
+ProductsMergeSuccess=تم دمج المنتجات
+ErrorsProductsMerge=دمج الأخطاء في المنتجات
+SwitchOnSaleStatus=قم بتشغيل حالة البيع
+SwitchOnPurchaseStatus=قم بتشغيل حالة الشراء
+UpdatePrice=Increase/decrease customer price
+StockMouvementExtraFields= الحقول الإضافية (حركة الأسهم)
+InventoryExtraFields= الحقول الإضافية (المخزون)
+ScanOrTypeOrCopyPasteYourBarCodes=امسح أو اكتب أو انسخ / الصق الرموز الشريطية
+PuttingPricesUpToDate=تحديث الأسعار بالأسعار الحالية المعروفة
+PuttingDescUpToDate=Update descriptions with current known descriptions
+PMPExpected=يتوقع PMP
+ExpectedValuation=التقييم المتوقع
+PMPReal=حقيقي PMP
+RealValuation=التقييم الحقيقي
+ConfirmEditExtrafield = حدد المجال الإضافي الذي تريد تعديله
+ConfirmEditExtrafieldQuestion = هل أنت متأكد أنك تريد تعديل هذا المجال الإضافي؟
+ModifyValueExtrafields = تعديل قيمة اكسترافيلد
+OrProductsWithCategories=Or products with tags/categories

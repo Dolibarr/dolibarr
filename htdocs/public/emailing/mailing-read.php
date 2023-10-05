@@ -25,14 +25,30 @@
  *      \brief      Script use to update mail status if destinaries read it (if images during mail read are display)
  */
 
-if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined("NOSESSION"))      define("NOSESSION", '1');
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 /**
  * Header empty
@@ -42,6 +58,8 @@ if (!defined("NOSESSION"))      define("NOSESSION", '1');
 function llxHeader()
 {
 }
+
+
 /**
  * Footer empty
  *
@@ -52,6 +70,7 @@ function llxFooter()
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $mtid = GETPOST('mtid');
@@ -66,19 +85,17 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
-{
+if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
 	print 'Bad security key value.';
 	exit;
 }
 
-if (!empty($tag))
-{
+if (!empty($tag) && $tag != 'undefined') {
 	dol_syslog("public/emailing/mailing-read.php : Update status of email target and thirdparty for tag ".$tag, LOG_DEBUG);
 
 	$sql = "SELECT mc.rowid, mc.email, mc.statut, mc.source_type, mc.source_id, m.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
-	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
+	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag = '".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
 	if (!$resql) dol_print_error($db);
@@ -106,21 +123,21 @@ if (!empty($tag))
 	 }
 	 */
 
-	//Update status of target
+	// Update status of target
 	$statut = '2';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE rowid = ".((int) $obj->rowid);
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE rowid = ".((int) $obj->rowid);
 	$resql = $db->query($sql);
 	if (!$resql) dol_print_error($db);
 
-	//Update status communication of thirdparty prospect
+	// Update status communication of thirdparty prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'thirdparty' && $obj->entity) {
-		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.$obj->entity.' AND rowid = '.$obj->source_id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.((int) $obj->entity).' AND rowid = '.((int) $obj->source_id);
 		$resql = $db->query($sql);
 	}
 
-	//Update status communication of contact prospect
+	// Update status communication of contact prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'contact' && $obj->entity) {
-		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.$obj->entity.' AND rowid IN (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'socpeople AS sc WHERE sc.rowid = '.$obj->source_id.')';
+		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.((int) $obj->entity).' AND rowid IN (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'socpeople AS sc WHERE sc.rowid = '.((int) $obj->source_id).')';
 		$resql = $db->query($sql);
 	}
 }

@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -28,7 +27,7 @@ $object = $GLOBALS['object'];
 $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE product/canvas/product/tpl/card_create.tpl.php  -->
 
 <?php
 print load_fiche_titre($langs->trans("NewProduct"), '', 'product');
@@ -44,7 +43,7 @@ print dol_get_fiche_head('');
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="0">
 <input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
-<?php if (empty($conf->stock->enabled)) { ?>
+<?php if (!isModEnabled('stock')) { ?>
 <input name="seuil_stock_alerte" type="hidden" value="0">
 <?php } ?>
 
@@ -53,7 +52,9 @@ print dol_get_fiche_head('');
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
 <td><input name="ref" size="40" maxlength="32" value="<?php echo $object->ref; ?>">
-<?php if ($refalreadyexists == 1) echo $langs->trans("RefAlreadyExists"); ?>
+<?php if ($refalreadyexists == 1) {
+	echo $langs->trans("RefAlreadyExists");
+} ?>
 </td></tr>
 
 <tr>
@@ -71,7 +72,7 @@ print dol_get_fiche_head('');
 <td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
-<?php if (!empty($conf->stock->enabled)) { ?>
+<?php if (isModEnabled('stock')) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
 <input name="seuil_stock_alerte" size="4" value="<?php echo $object->seuil_stock_alerte; ?>">
 </td></tr>

@@ -1,0 +1,67 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Активтер
+NewAsset = Жаңа актив
+AccountancyCodeAsset = Есеп коды (актив)
+AccountancyCodeDepreciationAsset = Есеп коды (амортизациялық активтер шоты)
+AccountancyCodeDepreciationExpense = Бухгалтерлік есеп коды (амортизациялық шығындар шоты)
+NewAssetType=Жаңа актив түрі
+AssetsTypeSetup=Актив типін реттеу
+AssetTypeModified=Актив түрі өзгертілді
+AssetType=Актив түрі
+AssetsLines=Активтер
+DeleteType=Жою
+DeleteAnAssetType=Активтің түрін жою
+ConfirmDeleteAssetType=Бұл актив түрін шынымен жойғыңыз келе ме?
+ShowTypeCard='%s' түрін көрсету
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Активтер
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Активтердің сипаттамасы
+
+#
+# Admin page
+#
+AssetsSetup = Активтерді баптау
+Settings = Параметрлер
+AssetsSetupPage = Активтерді орнату беті
+ExtraFieldsAssetsType = Қосымша атрибуттар (актив түрі)
+AssetsType=Актив түрі
+AssetsTypeId=Актив түрінің идентификаторы
+AssetsTypeLabel=Активтер түрінің белгісі
+AssetsTypes=Активтердің түрлері
+
+#
+# Menu
+#
+MenuAssets = Активтер
+MenuNewAsset = Жаңа актив
+MenuTypeAssets = Активтерді теріңіз
+MenuListAssets = Тізім
+MenuNewTypeAssets = Жаңа
+MenuListTypeAssets = Тізім
+
+#
+# Module
+#
+Asset=Актив
+NewAssetType=Жаңа актив түрі
+NewAsset=Жаңа актив
+ConfirmDeleteAsset=Бұл активті шынымен жойғыңыз келе ме?

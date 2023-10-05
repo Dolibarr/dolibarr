@@ -17,14 +17,23 @@
 
 /**
  *       \file       htdocs/core/ajax/loadinplace.php
- *       \brief      File to load field value
+ *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -32,6 +41,30 @@ $field = GETPOST('field', 'alpha');
 $element = GETPOST('element', 'alpha');
 $table_element = GETPOST('table_element', 'alpha');
 $fk_element = GETPOST('fk_element', 'alpha');
+$id = $fk_element;
+
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
+
 
 /*
  * View
@@ -42,24 +75,26 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element))
-{
+if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element)) {
 	$ext_element	= GETPOST('ext_element', 'alpha');
 	$field = substr($field, 8); // remove prefix val_
 	$type = GETPOST('type', 'alpha');
 	$loadmethod		= (GETPOST('loadmethod', 'alpha') ? GETPOST('loadmethod', 'alpha') : 'getValueFrom');
 
-	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
-	{
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
 		$element = $regs[1];
 		$subelement = $regs[2];
 	}
 
-	if ($element == 'propal') $element = 'propale';
-	elseif ($element == 'fichinter') $element = 'ficheinter';
-	elseif ($element == 'product') $element = 'produit';
-	elseif ($element == 'member') $element = 'adherent';
-	elseif ($element == 'order_supplier') {
+	if ($element == 'propal') {
+		$element = 'propale';
+	} elseif ($element == 'fichinter') {
+		$element = 'ficheinter';
+	} elseif ($element == 'product') {
+		$element = 'produit';
+	} elseif ($element == 'member') {
+		$element = 'adherent';
+	} elseif ($element == 'order_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'commande';
 	} elseif ($element == 'invoice_supplier') {
@@ -69,24 +104,22 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 
 	if ($user->rights->$element->lire || $user->rights->$element->read
 	|| (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
-	|| ($element == 'payment' && $user->rights->facture->lire)
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire))
-	{
-		if ($type == 'select')
-		{
+	|| ($element == 'payment' && $user->hasRight('facture', 'lire'))
+	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire)) {
+		if ($type == 'select') {
 			$methodname = 'load_cache_'.$loadmethod;
 			$cachename = 'cache_'.GETPOST('loadmethod', 'alpha');
 
 			$form = new Form($db);
-			if (method_exists($form, $methodname))
-			{
+			if (method_exists($form, $methodname)) {
 				$ret = $form->$methodname();
-				if ($ret > 0) echo json_encode($form->$cachename);
-			} elseif (!empty($ext_element))
-			{
+				if ($ret > 0) {
+					echo json_encode($form->$cachename);
+				}
+			} elseif (!empty($ext_element)) {
 				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
-				{
+				$regs = array();
+				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs)) {
 					$module = $regs[1];
 					$subelement = $regs[2];
 				}
@@ -95,7 +128,9 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
 				$ret = $object->$methodname($fk_element);
-				if ($ret > 0) echo json_encode($object->$cachename);
+				if ($ret > 0) {
+					echo json_encode($object->$cachename);
+				}
 			}
 		} else {
 			$object = new GenericObject($db);

@@ -26,11 +26,12 @@
  * \brief      List of products or services by popularity
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('commande', 'propal', 'bills', 'other'));
+$langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -39,22 +40,28 @@ $type = GETPOST("type", "int");
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : '';
 
 // Security check
-if (!empty($user->socid)) $socid = $user->socid;
-$result = restrictedArea($user, 'produit|service');
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-if (!$sortfield) $sortfield = "c";
-if (!$sortorder) $sortorder = "DESC";
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
+if (!$sortfield) {
+	$sortfield = "c";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
-$staticproduct = new Product($db);
+restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
 
 
 /*
@@ -62,6 +69,7 @@ $staticproduct = new Product($db);
  */
 
 $form = new Form($db);
+$tmpproduct = new Product($db);
 
 $helpurl = '';
 if ($type == '0') {
@@ -76,7 +84,7 @@ $title = $langs->trans("Statistics");
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg, 'product');
+print load_fiche_titre($title, '', 'product');
 
 
 $param = '';
@@ -88,8 +96,13 @@ if ((string) $type == '0') {
 	$title = $langs->trans("ListProductByPopularity");
 }
 
-if ($type != '') $param .= '&type='.urlencode($type);
-if ($mode != '') $param .= '&mode='.urlencode($mode);
+if ($type != '') {
+	$param .= '&type='.urlencode($type);
+}
+if ($mode != '') {
+	$param .= '&mode='.urlencode($mode);
+}
+
 
 $h = 0;
 $head = array();
@@ -105,7 +118,7 @@ $head[$h][2] = 'popularity';
 $h++;
 
 
-print dol_get_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'popularity', '', -1);
 
 
 // Array of liens to show
@@ -113,7 +126,7 @@ $infoprod = array();
 
 
 // Add lines for object
-$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, SUM(pd.qty) as c";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, p.tobuy, p.tosell, p.tobatch, p.barcode, SUM(pd.qty) as c";
 $textforqty = 'Qty';
 if ($mode == 'facture') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as pd";
@@ -128,14 +141,16 @@ $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql .= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
-	$sql .= " AND fk_product_type = ".$type;
+	$sql .= " AND fk_product_type = ".((int) $type);
 }
-$sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
+$sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type, p.tobuy, p.tosell, p.tobatch, p.barcode";
+
+$num = 0;
+$totalnboflines = 0;
 
 if (!empty($mode) && $mode != '-1') {
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$totalnboflines = $db->num_rows($result);
 	}
 
@@ -143,16 +158,14 @@ if (!empty($mode) && $mode != '-1') {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
-			$infoprod[$objp->rowid] = array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
+			$infoprod[$objp->rowid] = array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label, 'tobuy'=>$objp->tobuy, 'tosell'=>$objp->tobuy, 'tobatch'=>$objp->tobatch, 'barcode'=>$objp->barcode);
 			$infoprod[$objp->rowid]['nbline'] = $objp->c;
 
 			$i++;
@@ -170,8 +183,8 @@ $arrayofmode = array(
 	'commande' => 'Orders',
 	'facture' => 'Facture'
 	);
-$title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1);
-$title .= ' <input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1, 0, 0, '', 1);
+$title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -179,15 +192,19 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="action" value="add">';
-if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+if ($backtopage) {
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+}
+if ($backtopageforcancel) {
+	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+}
 
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $totalnboflines, '', 0, '', '', -1, 0, 0, 1);
 
 print '<table class="noborder centpercent">';
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
@@ -195,36 +212,47 @@ print_liste_field_titre($textforqty, $_SERVER["PHP_SELF"], 'c', '', $param, '', 
 print "</tr>\n";
 
 if ($mode && $mode != '-1') {
-	foreach ($infoprod as $prodid => $vals)
-	{
+	foreach ($infoprod as $prodid => $vals) {
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-		{
+		if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$prodid;
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " WHERE fk_product = ".((int) $prodid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);
-			if ($resultp)
-			{
+			if ($resultp) {
 				$objtp = $db->fetch_object($resultp);
-				if (!empty($objtp->label)) $vals['label'] = $objtp->label;
+				if (!empty($objtp->label)) {
+					$vals['label'] = $objtp->label;
+				}
 			}
 		}
 
+		$tmpproduct->id = $prodid;
+		$tmpproduct->ref = $vals['ref'];
+		$tmpproduct->label = $vals['label'];
+		$tmpproduct->type = $vals['type'];
+		$tmpproduct->status = $vals['tosell'];
+		$tmpproduct->status_buy = $vals['tobuy'];
+		$tmpproduct->status_batch = $vals['tobatch'];
+		$tmpproduct->barcode = $vals['barcode'];
+
 		print "<tr>";
-		print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
-		if ($vals['type'] == 1) print img_object($langs->trans("ShowService"), "service");
-		else print img_object($langs->trans("ShowProduct"), "product");
-		print " ";
-		print $vals['ref'].'</a></td>';
 		print '<td>';
-		if ($vals['type'] == 1) print $langs->trans("Service");
-		else print $langs->trans("Product");
+		print $tmpproduct->getNomUrl(1);
 		print '</td>';
-		print '<td>'.$vals['label'].'</td>';
+		print '<td>';
+		$s = '';
+		if ($vals['type'] == 1) {
+			$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
+		} else {
+			$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
+		}
+		print $s;
+		print '</td>';
+		print '<td>'.dol_escape_htmltag($vals['label']).'</td>';
 		print '<td class="right">'.$vals['nbline'].'</td>';
 		print "</tr>\n";
 		$i++;

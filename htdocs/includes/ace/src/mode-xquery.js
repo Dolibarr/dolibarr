@@ -2630,6 +2630,7 @@ oop.inherits(Mode, TextMode);
     };    
         
     this.$id = "ace/mode/xquery";
+    this.snippetFileId = "ace/snippets/xquery";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

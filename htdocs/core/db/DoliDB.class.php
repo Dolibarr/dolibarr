@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var bool|resource|SQLite3 Database handler */
+	/** @var bool|resource|mysqli|SQLite3|PgSql\connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -37,8 +37,10 @@ abstract class DoliDB implements Database
 	public $forcecharset = 'utf8';
 	/** @var string Collate used to force collate when creating database */
 	public $forcecollate = 'utf8_unicode_ci';
+
 	/** @var resource Resultset of last query */
 	private $_results;
+
 	/** @var bool true if connected, else false */
 	public $connected;
 	/** @var bool true if database selected, else false */
@@ -62,10 +64,26 @@ abstract class DoliDB implements Database
 	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
+	/** @var string If we need to set a prefix specific to the database so it can be reused (when defined instead of MAIN_DB_PREFIX) to forge requests */
+	public $prefix_db;
+
 	/** @var bool Status */
 	public $ok;
 	/** @var string */
 	public $error;
+
+
+
+	/**
+	 *	Return the DB prefix found into prefix_db (if it was set manually by doing $dbhandler->prefix_db=...).
+	 *  Otherwise return MAIN_DB_PREFIX (common use).
+	 *
+	 *	@return string		The DB prefix
+	 */
+	public function prefix()
+	{
+		return (empty($this->prefix_db) ? MAIN_DB_PREFIX : $this->prefix_db);
+	}
 
 	/**
 	 *	Format a SQL IF
@@ -77,8 +95,39 @@ abstract class DoliDB implements Database
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
+
+	/**
+	 * Return SQL string to force an index
+	 *
+	 * @param	string	$nameofindex	Name of index
+	 * @return	string					SQL string
+	 */
+	public function hintindex($nameofindex)
+	{
+		return '';
+	}
+
+
+	/**
+	 *	Format a SQL REGEXP
+	 *
+	 *	@param	string	$subject        string tested
+	 *	@param	string  $pattern        SQL pattern to match
+	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@return	string          		SQL string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = false)
+	{
+		if ($sqlstring) {
+			return "(". $subject ." REGEXP '" . $pattern . "')";
+		}
+
+		return "('". $subject ."' REGEXP '" . $pattern . "')";
+	}
+
 
 	/**
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
@@ -90,7 +139,7 @@ abstract class DoliDB implements Database
 	 */
 	public function idate($param, $gm = 'tzserver')
 	{
-		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		// TODO $param should be gmt, so we should have default $gm to 'gmt' instead of default 'tzserver'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 
@@ -108,32 +157,28 @@ abstract class DoliDB implements Database
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
-	 * @param   int		$allowsimplequote 	Allow simple quote
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @param	string	$allowsequals		1=Allow equals sign
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
 	{
-		if ($allowsimplequote) {
-			return preg_replace('/[^a-z0-9_\-\.,\']/i', '', $stringtosanitize);
-		} else {
-			return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
-		}
+		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
 	 * Start transaction
 	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return	int         			1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin()
+	public function begin($textinlog = '')
 	{
-		if (!$this->transaction_opened)
-		{
+		if (!$this->transaction_opened) {
 			$ret = $this->query("BEGIN");
-			if ($ret)
-			{
+			if ($ret) {
 				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction", LOG_DEBUG);
+				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
 			}
 			return $ret;
@@ -153,11 +198,9 @@ abstract class DoliDB implements Database
 	public function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened <= 1)
-		{
+		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("COMMIT");
-			if ($ret)
-			{
+			if ($ret) {
 				$this->transaction_opened = 0;
 				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
@@ -179,8 +222,7 @@ abstract class DoliDB implements Database
 	public function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened <= 1)
-		{
+		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("ROLLBACK");
 			$this->transaction_opened = 0;
 			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
@@ -201,10 +243,17 @@ abstract class DoliDB implements Database
 	public function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
-		if (empty($limit)) return "";
-		if ($limit < 0) $limit = $conf->liste_limit;
-		if ($offset > 0) return " LIMIT $offset,$limit ";
-		else return " LIMIT $limit ";
+		if (empty($limit)) {
+			return "";
+		}
+		if ($limit < 0) {
+			$limit = $conf->liste_limit;
+		}
+		if ($offset > 0) {
+			return " LIMIT ".((int) $offset).",".((int) $limit)." ";
+		} else {
+			return " LIMIT ".((int) $limit)." ";
+		}
 	}
 
 	/**
@@ -231,21 +280,23 @@ abstract class DoliDB implements Database
 	 * Define sort criteria of request
 	 *
 	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
-	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null)
+	public function order($sortfield = '', $sortorder = '')
 	{
-		if (!empty($sortfield))
-		{
+		if (!empty($sortfield)) {
 			$oldsortorder = '';
 			$return = '';
 			$fields = explode(',', $sortfield);
 			$orders = explode(',', $sortorder);
 			$i = 0;
 			foreach ($fields as $val) {
-				if (!$return) $return .= ' ORDER BY ';
-				else $return .= ', ';
+				if (!$return) {
+					$return .= ' ORDER BY ';
+				} else {
+					$return .= ', ';
+				}
 
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
 
@@ -282,8 +333,8 @@ abstract class DoliDB implements Database
 
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
-	 * 	19700101020000 -> 3600 with TZ+1 and gmt=0
-	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
+	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
@@ -292,7 +343,9 @@ abstract class DoliDB implements Database
 	public function jdate($string, $gm = 'tzserver')
 	{
 		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
-		if ($string == 0 || $string == "0000-00-00 00:00:00") return '';
+		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+			return '';
+		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
@@ -313,8 +366,9 @@ abstract class DoliDB implements Database
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
 	 * Dont add LIMIT to your query, it will be added by this method
-	 * @param string $sql the sql query string
-	 * @return bool|int|object    false on failure, 0 on empty, object on success
+	 *
+	 * @param 	string 				$sql 	The sql query string
+	 * @return 	bool|int|object    			False on failure, 0 on empty, object on success
 	 */
 	public function getRow($sql)
 	{
@@ -334,17 +388,18 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-	 * return all results from query as an array of objects
+	 * Return all results from query as an array of objects
 	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
-	 * be carefull with this method use it only with some limit of results to avoid performences loss
-	 * @param string $sql the sql query string
-	 * @return bool| array
+	 * be carefull with this method use it only with some limit of results to avoid performences loss.
+	 *
+	 * @param 	string 		$sql 		The sql query string
+	 * @return 	bool|array				Result
+	 * @deprecated
 	 */
 	public function getRows($sql)
 	{
 		$res = $this->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$results = array();
 			if ($this->num_rows($res) > 0) {
 				while ($obj = $this->fetch_object($res)) {

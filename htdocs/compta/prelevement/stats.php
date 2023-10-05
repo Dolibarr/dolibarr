@@ -24,6 +24,7 @@
  *      \brief      Page with statistics on withdrawals
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -31,12 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
+$type = GETPOST('type', 'aZ09');
+
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
-
-$type = GETPOST('type', 'aZ09');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
@@ -64,13 +71,11 @@ if ($type == 'bank-transfer') {
 }
 $sql .= " AND pb.entity = ".$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$row = $db->fetch_row($resql);
 		$total = $row[0];
 		$nbtotal = $row[1];
@@ -100,8 +105,7 @@ if ($type == 'bank-transfer') {
 $sql .= " GROUP BY pl.statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -111,37 +115,44 @@ if ($resql)
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
 
+		print '<td>';
 		print $ligne->LibStatut($row[2], 1);
 		//print $st[$row[2]];
-		print '</td><td align="center">';
+		print '</td>';
+
+		print '<td align="center nowraponall">';
 		print $row[1];
+		print '</td>';
 
-		print '</td><td class="right">';
+		print '<td class="right nowraponall">';
 		print round($row[1] / $nbtotal * 100, 2)." %";
+		print '</td>';
 
-		print '</td><td class="right">';
-
+		print '<td class="right amount nowraponall">';
 		print price($row[0]);
+		print '</td>';
 
-		print '</td><td class="right">';
+		print '<td class="right nowraponall">';
 		print round($row[0] / $total * 100, 2)." %";
-		print '</td></tr>';
+		print '</td>';
+
+		print '</tr>';
 
 		$i++;
 	}
 
 	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td class="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print '<td class="center nowraponall">'.$nbtotal.'</td><td>&nbsp;</td><td class="right nowraponall">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
-	$db->free();
+
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }
@@ -168,13 +179,11 @@ if ($type == 'bank-transfer') {
 	$sql .= " AND pb.type = 'debit-order'";
 }
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$row = $db->fetch_row($resql);
 		$total = $row[0];
 		$nbtotal = $row[1];
@@ -202,8 +211,7 @@ $sql .= " GROUP BY pr.motif";
 $sql .= " ORDER BY cc DESC";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -216,8 +224,7 @@ if ($resql)
 	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 	$Rejet = new RejetPrelevement($db, $user, $type);
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven"><td>';

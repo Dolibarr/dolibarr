@@ -77,8 +77,8 @@ class mailing_xinputuser extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param      string	$sql   	Sql request to count
-	 *	@return		string			'' means NA
+	 *  @param      string			$sql   		Sql request to count
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -127,20 +127,19 @@ class mailing_xinputuser extends MailingTargets
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$tmparray = explode(';', GETPOST('xinputuser'));
+
 		$email = $tmparray[0];
-		$lastname = $tmparray[1];
-		$firstname = $tmparray[2];
-		$other = $tmparray[3];
+		$lastname = empty($tmparray[1]) ? '' : $tmparray[1];
+		$firstname = empty($tmparray[2]) ? '' : $tmparray[2];
+		$other = empty($tmparray[3]) ? '' : $tmparray[3];
 
 		$cibles = array();
-		if (!empty($email))
-		{
-			if (isValidEMail($email))
-			{
+		if (!empty($email)) {
+			if (isValidEMail($email)) {
 				$cibles[] = array(
-		   			'email' => $email,
-		   			'lastname' => $lastname,
-		   			'firstname' => $firstname,
+					'email' => $email,
+					'lastname' => $lastname,
+					'firstname' => $firstname,
 					'other' => $other,
 					'source_url' => '',
 					'source_id' => '',

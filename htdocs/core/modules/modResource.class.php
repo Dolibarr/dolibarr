@@ -23,7 +23,7 @@
  * 	\brief		Resource module descriptor.
  * 	\file		core/modules/modResource.class.php
  * 	\ingroup	resource
- * 	\brief		Description and activation file for module Resource
+ * 	\brief		Description and activation file for the module Resource
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -55,7 +55,7 @@ class modResource extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
-		$this->module_position = '16';
+		$this->module_position = '20';
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -95,7 +95,7 @@ class modResource extends DolibarrModules
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
-		$this->phpmin = array(5, 4);
+		$this->phpmin = array(7, 0);
 
 		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
@@ -120,7 +120,7 @@ class modResource extends DolibarrModules
 		// 'order_supplier'		to add a tab in supplier order view
 		// 'invoice_supplier'	to add a tab in supplier invoice view
 		// 'invoice'			to add a tab in customer invoice view
-		// 'order'				to add a tab in customer order view
+		// 'order'				to add a tab in sales order view
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view
@@ -185,10 +185,11 @@ class modResource extends DolibarrModules
 
 		// Menus declaration
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools',
+			'fk_menu'=>'fk_mainmenu=agenda',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
-			'mainmenu'=>'tools',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
+			'mainmenu'=>'agenda',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -200,10 +201,10 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_add',
 			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
@@ -215,10 +216,10 @@ class modResource extends DolibarrModules
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -238,11 +239,15 @@ class modResource extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "ResourceSingular"; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("resource", "read"));
-		$this->export_fields_array[$r] = array('r.rowid'=>'IdResource', 'r.ref'=>'ResourceFormLabel_ref', 'c.code'=>'ResourceTypeCode', 'c.rowid'=>'ResourceType', 'c.label'=>'ResourceTypeLabel', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>"DateCreation", 'r.tms'=>"DateLastModification");
-		$this->export_TypeFields_array[$r] = array('r.rowid'=>'List:resource:ref', 'r.ref'=>'Text','r.asset_number'=>'Text', 'r.description'=>'Text', 'c.code'=>'Text', 'c.rowid'=>'List:c_type_resource:label', 'r.datec'=>'Date', 'r.tms'=>'Date', 'r.note_private'=>'Text', 'r.note_public'=>'Text');
-		$this->export_entities_array[$r] = array('r.rowid'=>'resource', 'r.ref'=>'resource', 'c.code'=>'resource', 'c.rowid'=>'resource', 'r.description'=>'resource', 'r.note_private'=>"resource", 'r.resource'=>"resource", 'r.asset_number'=>'resource', 'r.datec'=>"resource", 'r.tms'=>"resource");
 
-		$keyforselect = 'resource'; $keyforelement = 'resource'; $keyforaliasextra = 'extra';
+		$this->export_fields_array[$r] = array('r.rowid'=>'IdResource', 'r.ref'=>'ResourceFormLabel_ref', 'c.rowid'=>'ResourceTypeID', 'c.code'=>'ResourceTypeCode', 'c.label'=>'ResourceTypeLabel', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>"DateCreation", 'r.tms'=>"DateLastModification");
+		$this->export_TypeFields_array[$r] = array('r.rowid'=>'List:resource:ref', 'r.ref'=>'Text', 'r.asset_number'=>'Text', 'r.description'=>'Text', 'c.code'=>'Text', 'c.label'=>'List:c_type_resource:label', 'r.datec'=>'Date', 'r.tms'=>'Date', 'r.note_private'=>'Text', 'r.note_public'=>'Text');
+		$this->export_entities_array[$r] = array('r.rowid'=>'resource', 'r.ref'=>'resource', 'c.code'=>'resource', 'c.label'=>'resource', 'r.description'=>'resource', 'r.note_private'=>"resource", 'r.resource'=>"resource", 'r.asset_number'=>'resource', 'r.datec'=>"resource", 'r.tms'=>"resource");
+
+		$keyforselect = 'resource';
+		$keyforelement = 'resource';
+		$keyforaliasextra = 'extra';
+
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_dependencies_array[$r] = array('resource'=>array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
@@ -269,10 +274,8 @@ class modResource extends DolibarrModules
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
@@ -302,21 +305,6 @@ class modResource extends DolibarrModules
 	{
 		$sql = array();
 
-		$result = $this->loadTables();
-
 		return $this->_init($sql, $options);
-	}
-
-	/**
-	 * Create tables, keys and data required by module
-	 * Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * and create data commands must be stored in directory /resource/sql/
-	 * This function is called by this->init
-	 *
-	 * 	@return		int		<=0 if KO, >0 if OK
-	 */
-	protected function loadTables()
-	{
-		return $this->_load_tables('/resource/sql/');
 	}
 }

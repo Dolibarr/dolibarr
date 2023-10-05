@@ -26,6 +26,7 @@
  *		\brief      Page to setup extra fields of bank
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -39,13 +40,17 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
+foreach ($tmptype2label as $key => $val) {
+	$type2label[$key] = $langs->transnoentitiesnoconv($val);
+}
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'bank_account'; //Must be the $element of the class that manage extrafield
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -60,38 +65,31 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Bank");
+$help_url = '';
+$page_name = "BankSetupModule";
 
 llxHeader('', $langs->trans("BankSetupModule"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 
 $head = bank_admin_prepare_head(null);
 
-print dol_get_fiche_head($head, 'attributes', $langs->trans("BankSetupModule"), -1, 'account');
+print dol_get_fiche_head($head, 'attributes', $langs->trans($page_name), -1, 'account');
+
+$textobject = $langs->transnoentitiesnoconv("Bank");
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
 
-// Buttons
-if ($action != 'create' && $action != 'edit')
-{
-	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-	print "</div>";
-}
-
-
 /*
  * Creation of an optional field
  */
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
@@ -101,8 +99,7 @@ if ($action == 'create')
 /*
  * Edition of an optional field
  */
-if ($action == 'edit' && !empty($attrname))
-{
+if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 

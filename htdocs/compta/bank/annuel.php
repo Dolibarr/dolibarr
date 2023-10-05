@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
+/* Copyright (C) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Charles-Fr BENKE        <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  *		\brief       Page to report input-output of a bank account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -38,16 +39,20 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 $id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankannualreport', 'globalcard'));
+
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 
 $year_start = GETPOST('year_start');
 $year_current = strftime("%Y", time());
-if (!$year_start)
-{
+if (!$year_start) {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;
 } else {
@@ -60,25 +65,26 @@ if (!$year_start)
  * View
  */
 
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 
 // Get account informations
 $object = new Account($db);
-if ($id > 0 && !preg_match('/,/', $id))	// if for a particular account and not a list
-{
+if ($id > 0 && !preg_match('/,/', $id)) {	// if for a particular account and not a list
 	$result = $object->fetch($id);
 	$id = $object->id;
 }
-if (!empty($ref))
-{
+if (!empty($ref)) {
 	$result = $object->fetch(0, $ref);
 	$id = $object->id;
 }
 
+$annee = '';
+$totentrees = array();
+$totsorties = array();
+
+$title = $object->ref.' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 // Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 // plutot que sur llx_paiement + llx_paiementfourn
@@ -90,17 +96,16 @@ $sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql .= " AND b.amount >= 0";
-if (!empty($id))
+if (!empty($id)) {
 	$sql .= " AND b.fk_account IN (".$db->sanitize($db->escape($id)).")";
+}
 $sql .= " GROUP BY dm";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$encaiss[$row[1]] = $row[0];
 		$i++;
@@ -116,17 +121,16 @@ $sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql .= " AND b.amount <= 0";
-if (!empty($id))
+if (!empty($id)) {
 	$sql .= " AND b.fk_account IN (".$db->sanitize($db->escape($id)).")";
+}
 $sql .= " GROUP BY dm";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		$decaiss[$row[1]] = -$row[0];
 		$i++;
@@ -141,25 +145,25 @@ $head = bank_prepare_head($object);
 print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 $title = $langs->trans("FinancialAccount")." : ".$object->label;
-$link = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start - 1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start + 1)."'>".img_next('', 'class="valignbottom"')."</a>" : "");
+$link = ($year_start ? '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&year_start='.($year_start - 1).'">'.img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year").' <a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&year_start='.($year_start + 1).'">'.img_next('', 'class="valignbottom"').'</a>' : '');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+$morehtmlref = '';
 
-if (!empty($id))
-{
-	if (!preg_match('/,/', $id))
-	{
+if (!empty($id)) {
+	if (!preg_match('/,/', $id)) {
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 	} else {
 		$bankaccount = new Account($db);
 		$listid = explode(',', $id);
-		foreach ($listid as $key => $aId)
-		{
+		foreach ($listid as $key => $aId) {
 			$bankaccount->fetch($aId);
 			$bankaccount->label = $bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
-			if ($key < (count($listid) - 1)) print ', ';
+			if ($key < (count($listid) - 1)) {
+				print ', ';
+			}
 		}
 	}
 } else {
@@ -176,39 +180,39 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
-for ($annee = $year_start; $annee <= $year_end; $annee++)
-{
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
 }
 print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">&nbsp;</td>';
-for ($annee = $year_start; $annee <= $year_end; $annee++)
-{
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	print '<td class="liste_titre" align="center">'.$langs->trans("Debit").'</td><td class="liste_titre" align="center">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
-for ($mois = 1; $mois < 13; $mois++)
-{
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
+	$totsorties[$annee] = 0;
+	$totentrees[$annee] = 0;
+}
+
+for ($mois = 1; $mois < 13; $mois++) {
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
-	for ($annee = $year_start; $annee <= $year_end; $annee++)
-	{
+
+	for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
 		print '<td class="right" width="10%">&nbsp;';
-		if ($decaiss[$case] > 0)
-		{
+		if (isset($decaiss[$case]) && $decaiss[$case] > 0) {
 			print price($decaiss[$case]);
 			$totsorties[$annee] += $decaiss[$case];
 		}
 		print "</td>";
 
 		print '<td class="right borderrightlight" width="10%">&nbsp;';
-		if ($encaiss[$case] > 0)
-		{
+		if (isset($encaiss[$case]) && $encaiss[$case] > 0) {
 			print price($encaiss[$case]);
 			$totentrees[$annee] += $encaiss[$case];
 		}
@@ -219,9 +223,9 @@ for ($mois = 1; $mois < 13; $mois++)
 
 // Total debit-credit
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
-for ($annee = $year_start; $annee <= $year_end; $annee++)
-{
-	print '<td class="right nowraponall"><b>'.price($totsorties[$annee]).'</b></td><td class="right nowraponall"><b>'.price($totentrees[$annee]).'</b></td>';
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
+	print '<td class="right nowraponall"><b>'. (isset($totsorties[$annee]) ? price($totsorties[$annee]) : '') .'</b></td>';
+	print '<td class="right nowraponall"><b>'. (isset($totentrees[$annee]) ? price($totentrees[$annee]) : '') .'</b></td>';
 }
 print "</tr>\n";
 
@@ -239,20 +243,23 @@ $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-if (!empty($id))
+if (!empty($id)) {
 	$sql .= " AND b.fk_account IN (".$db->sanitize($db->escape($id)).")";
+}
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$obj = $db->fetch_object($resql);
-	if ($obj) $balance = $obj->total;
+	if ($obj) {
+		$balance = $obj->total;
+	}
 } else {
 	dol_print_error($db);
 }
 
 print '<table class="noborder centpercent">';
 
+$nbcol = '';
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" class="right">'.price($balance).'</td>';
 print "</tr>\n";
@@ -264,8 +271,7 @@ print "</table>";
 $year = $year_end;
 
 $result = dol_mkdir($conf->bank->dir_temp);
-if ($result < 0)
-{
+if ($result < 0) {
 	$langs->load("errors");
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
@@ -276,11 +282,12 @@ if ($result < 0)
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql .= " WHERE b.fk_account = ba.rowid";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-	if ($id && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$id.")";
+	if ($id && GETPOST("option") != 'all') {
+		$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
+	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$obj = $db->fetch_object($resql);
 		$min = $db->jdate($obj->min);
@@ -297,8 +304,7 @@ if ($result < 0)
 	$tblyear[1] = array();
 	$tblyear[2] = array();
 
-	for ($annee = 0; $annee < 3; $annee++)
-	{
+	for ($annee = 0; $annee < 3; $annee++) {
 		$sql = "SELECT date_format(b.datev,'%m')";
 		$sql .= ", SUM(b.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -308,16 +314,16 @@ if ($result < 0)
 		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
-		if ($id && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$id.")";
+		if ($id && GETPOST("option") != 'all') {
+			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
+		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				$tblyear[$annee][$row[0]] = $row[1];
 				$i++;
@@ -333,8 +339,7 @@ if ($result < 0)
 	$data_year_1 = array();
 	$data_year_2 = array();
 
-	for ($i = 0; $i < 12; $i++)
-	{
+	for ($i = 0; $i < 12; $i++) {
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i + 1), -2)]) ? $tblyear[0][substr("0".($i + 1), -2)] : 0;
 		$data_year_1[$i] = isset($tblyear[1][substr("0".($i + 1), -2)]) ? $tblyear[1][substr("0".($i + 1), -2)] : 0;
 		$data_year_2[$i] = isset($tblyear[2][substr("0".($i + 1), -2)]) ? $tblyear[2][substr("0".($i + 1), -2)] : 0;
@@ -347,8 +352,7 @@ if ($result < 0)
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/credmovement".$id."-".$year.".png";
 	$title = $langs->transnoentities("Credit").' - '.$langs->transnoentities("Year").': '.($year - 2).' - '.($year - 1)." - ".$year;
 	$graph_datas = array();
-	for ($i = 0; $i < 12; $i++)
-	{
+	for ($i = 0; $i < 12; $i++) {
 		$graph_datas[$i] = array($labels[$i], $data_year_0[$i], $data_year_1[$i], $data_year_2[$i]);
 	}
 
@@ -382,8 +386,7 @@ if ($result < 0)
 	$tblyear[1] = array();
 	$tblyear[2] = array();
 
-	for ($annee = 0; $annee < 3; $annee++)
-	{
+	for ($annee = 0; $annee < 3; $annee++) {
 		$sql = "SELECT date_format(b.datev,'%m')";
 		$sql .= ", SUM(b.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -393,16 +396,16 @@ if ($result < 0)
 		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
-		if ($id && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$id.")";
+		if ($id && GETPOST("option") != 'all') {
+			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
+		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				$tblyear[$annee][$row[0]] = abs($row[1]);
 				$i++;
@@ -418,8 +421,7 @@ if ($result < 0)
 	$data_year_1 = array();
 	$data_year_2 = array();
 
-	for ($i = 0; $i < 12; $i++)
-	{
+	for ($i = 0; $i < 12; $i++) {
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i + 1), -2)]) ? $tblyear[0][substr("0".($i + 1), -2)] : 0;
 		$data_year_1[$i] = isset($tblyear[1][substr("0".($i + 1), -2)]) ? $tblyear[1][substr("0".($i + 1), -2)] : 0;
 		$data_year_2[$i] = isset($tblyear[2][substr("0".($i + 1), -2)]) ? $tblyear[2][substr("0".($i + 1), -2)] : 0;
@@ -431,8 +433,7 @@ if ($result < 0)
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/debmovement".$id."-".$year.".png";
 	$title = $langs->transnoentities("Debit").' - '.$langs->transnoentities("Year").': '.($year - 2).' - '.($year - 1)." - ".$year;
 	$graph_datas = array();
-	for ($i = 0; $i < 12; $i++)
-	{
+	for ($i = 0; $i < 12; $i++) {
 		$graph_datas[$i] = array($labels[$i], $data_year_0[$i], $data_year_1[$i], $data_year_2[$i]);
 	}
 
@@ -462,10 +463,10 @@ if ($result < 0)
 
 	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show1;
-	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
+	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
-	print '</div></div></div></div>';
-	print '<div style="clear:both"></div>';
+	print '</div></div></div>';
+	print '<div class="clearboth"></div>';
 }
 
 

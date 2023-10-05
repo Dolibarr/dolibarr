@@ -43,17 +43,17 @@ ConfirmValidateSending=Сигурни ли сте, че искате да вал
 ConfirmCancelSending=Сигурни ли сте, че ли искате да анулирате тази пратка?
 DocumentModelMerou=Шаблон А5 размер
 WarningNoQtyLeftToSend=Внимание, няма продукти чакащи да бъдат изпратени.
-StatsOnShipmentsOnlyValidated=Статистики водени само за валидирани пратки. Използваната дата е дата на валидиране на пратка (планираната дата на доставка не винаги е известна)
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
 DateDeliveryPlanned=Планирана дата за доставка
 RefDeliveryReceipt=Разписка за доставка №
 StatusReceipt=Статус
 DateReceived=Дата на получаване
-ClassifyReception=Класифициране на приема
+ClassifyReception=Classify Received
 SendShippingByEMail=Изпращане на пратка по имейл
 SendShippingRef=Изпращане на пратка %s
 ActionsOnShipping=Свързани събития
 LinkToTrackYourPackage=Връзка за проследяване на вашата пратка
-ShipmentCreationIsDoneFromOrder=За момента създаването на нова пратка се извършва от картата на поръчка.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
 ShipmentLine=Ред на пратка
 ProductQtyInCustomersOrdersRunning=Количество продукт в активни поръчки за продажба
 ProductQtyInSuppliersOrdersRunning=Количество продукт в активни поръчки за покупка
@@ -74,3 +74,8 @@ SumOfProductWeights=Общо тегло на продуктите
 # warehouse details
 DetailWarehouseNumber= Детайли за склада
 DetailWarehouseFormat= Тегло: %s (Кол.: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

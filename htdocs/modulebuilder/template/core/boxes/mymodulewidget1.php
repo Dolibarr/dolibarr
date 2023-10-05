@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -78,6 +78,12 @@ class mymodulewidget1 extends ModeleBoxes
 	public $info_box_contents = array();
 
 	/**
+	 * @var string 	Widget type ('graph' means the widget is a graph widget)
+	 */
+	public $widgettype = 'graph';
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -86,8 +92,8 @@ class mymodulewidget1 extends ModeleBoxes
 	public function __construct(DoliDB $db, $param = '')
 	{
 		global $user, $conf, $langs;
-		$langs->load("boxes");
-		$langs->load('mymodule@mymodule');
+		// Translations
+		$langs->loadLangs(array("boxes", "mymodule@mymodule"));
 
 		parent::__construct($db, $param);
 
@@ -95,8 +101,10 @@ class mymodulewidget1 extends ModeleBoxes
 
 		$this->param = $param;
 
-		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
-		//$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
+		// Condition when module is enabled or not
+		// $this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0;
+		// Condition when module is visible by user (test on permission)
+		// $this->hidden = !$user->hasRight('mymodule', 'myobject', 'read');
 	}
 
 	/**
@@ -200,7 +208,7 @@ class mymodulewidget1 extends ModeleBoxes
 	 * @param array $head       Array with properties of box title
 	 * @param array $contents   Array with properties of box lines
 	 * @param int   $nooutput   No print, only return string
-	 * @return void
+	 * @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

@@ -1,7 +1,29 @@
 <?php
+/* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/debugbar/class/DataCollector/DolLogsCollector.php
+ *	\brief      Class for debugbar collection
+ *	\ingroup    debugbar
+ */
 
 use DebugBar\DataCollector\MessagesCollector;
 use Psr\Log\LogLevel;
+
 //use ReflectionClass;
 
 /**
@@ -20,6 +42,11 @@ class DolLogsCollector extends MessagesCollector
 	protected $maxnboflines;
 
 	/**
+	 * @var int number of lines
+	 */
+	protected $nboflines;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $path     Path
@@ -32,7 +59,7 @@ class DolLogsCollector extends MessagesCollector
 		parent::__construct($name);
 
 		$this->nboflines = 0;
-		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER; // High number slows seriously output
+		$this->maxnboflines = getDolGlobalInt('DEBUGBAR_LOGS_LINES_NUMBER', 250); // High number slows seriously output
 
 		$this->path = $path ?: $this->getLogsFile();
 	}
@@ -72,17 +99,15 @@ class DolLogsCollector extends MessagesCollector
 	{
 		global $conf;
 
-		$uselogfile = $conf->global->DEBUGBAR_USE_LOG_FILE;
+		$uselogfile =  getDolGlobalInt('DEBUGBAR_USE_LOG_FILE');
 
-		if ($uselogfile)
-		{
+		if ($uselogfile) {
 			$this->getStorageLogs($this->path);
 		} else {
 			$log_levels = $this->getLevels();
 
 			foreach ($conf->logbuffer as $line) {
-				if ($this->nboflines >= $this->maxnboflines)
-				{
+				if ($this->nboflines >= $this->maxnboflines) {
 					break;
 				}
 				foreach ($log_levels as $level_key => $level) {
@@ -112,8 +137,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get logs
 	 *
-	 * @param string $path     Path
-	 * @return array
+	 * @param 	string 	$path     	Path
+	 * @return 	void
 	 */
 	public function getStorageLogs($path)
 	{

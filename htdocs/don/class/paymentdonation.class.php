@@ -64,7 +64,8 @@ class PaymentDonation extends CommonObject
 
 	public $amounts = array(); // Array of amounts
 
-	public $typepayment;
+	public $fk_typepayment;	// Payment mode ID
+	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
 
 	public $num_payment;
 
@@ -91,7 +92,20 @@ class PaymentDonation extends CommonObject
 
 	public $type_code;
 	public $type_label;
+	public $chid;
+	public $datepaid;
+	public $bank_account;
+	public $bank_line;
 
+	/**
+	 * @var string Id of external payment mode
+	 */
+	public $ext_payment_id;
+
+	/**
+	 * @var string Name of external payment mode
+	 */
+	public $ext_payment_site;
 
 	/**
 	 *	Constructor
@@ -120,25 +134,46 @@ class PaymentDonation extends CommonObject
 		$now = dol_now();
 
 		// Validate parameters
-		if (!$this->datepaid)
-		{
+		if (!$this->datep) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentDonation';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_donation)) 		$this->fk_donation = (int) $this->fk_donation;
-		if (isset($this->amount))			$this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment))   $this->fk_typepayment = trim($this->fk_typepayment);
-		if (isset($this->num_payment))      $this->num_payment    = trim($this->num_payment);
-		if (isset($this->note_public))		$this->note_public = trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat))	$this->fk_user_creat  = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif))	$this->fk_user_modif  = (int) $this->fk_user_modif;
+		if (isset($this->chid)) {
+			$this->chid = (int) $this->chid;
+		} elseif (isset($this->fk_donation)) {
+			// NOTE : The property used in INSERT for fk_donation is not fk_donation but chid
+			//        (keep priority to chid property)
+			$this->chid = (int) $this->fk_donation;
+		}
+		if (isset($this->fk_donation)) {
+			$this->fk_donation = (int) $this->fk_donation;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = trim($this->fk_typepayment);
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment    = trim($this->num_payment);
+		}
+		if (isset($this->note_public)) {
+			$this->note_public = trim($this->note_public);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_creat)) {
+			$this->fk_user_creat  = (int) $this->fk_user_creat;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif  = (int) $this->fk_user_modif;
+		}
 
 		$totalamount = 0;
-		foreach ($this->amounts as $key => $value)  // How payment is dispatch
-		{
+		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
 			$newvalue = price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
@@ -146,25 +181,27 @@ class PaymentDonation extends CommonObject
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
-		if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		if ($totalamount == 0) {
+			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		}
 
 
 		$this->db->begin();
 
-		if ($totalamount != 0)
-		{
+		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_donation (fk_donation, datec, datep, amount,";
-			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaid)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
-			$sql .= " 0)";
+			$sql .= " fk_typepayment, num_payment, note, ext_payment_id, ext_payment_site,";
+			$sql .= " fk_user_creat, fk_bank)";
+			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
+			$sql .= " ".((float) price2num($totalamount)).",";
+			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
+			$sql .= " ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").",";
+			$sql .= " ".((int) $user->id).", 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
 				$this->ref = $this->id;
 			} else {
@@ -172,16 +209,16 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call triggers
 			$result = $this->call_trigger('DONATION_PAYMENT_CREATE', $user);
-			if ($result < 0) { $error++; }
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
-		if ($totalamount != 0 && !$error)
-		{
+		if ($totalamount != 0 && !$error) {
 			$this->amount = $totalamount;
 			$this->total = $totalamount; // deprecated
 			$this->db->commit();
@@ -220,14 +257,12 @@ class PaymentDonation extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id  = $obj->rowid;
@@ -238,7 +273,8 @@ class PaymentDonation extends CommonObject
 				$this->tms            = $this->db->jdate($obj->tms);
 				$this->datep		  = $this->db->jdate($obj->datep);
 				$this->amount         = $obj->amount;
-				$this->fk_typepayment = $obj->fk_typepayment;
+				$this->fk_typepayment = $obj->fk_typepayment;	// Id on type of payent
+				$this->paymenttype    = $obj->fk_typepayment;	// Id on type of payment. We should store the code into paymenttype.
 				$this->num_payment    = $obj->num_payment;
 				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
@@ -275,14 +311,30 @@ class PaymentDonation extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_donation))		$this->fk_donation = (int) $this->fk_donation;
-		if (isset($this->amount))			$this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
-		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
-		if (isset($this->note_public))		$this->note_public = trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat))	$this->fk_user_creat = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif))	$this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_donation)) {
+			$this->fk_donation = (int) $this->fk_donation;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = trim($this->fk_typepayment);
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note_public)) {
+			$this->note_public = trim($this->note_public);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_creat)) {
+			$this->fk_user_creat = (int) $this->fk_user_creat;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -299,7 +351,7 @@ class PaymentDonation extends CommonObject
 		$sql .= " note=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null");
 		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
@@ -311,25 +363,22 @@ class PaymentDonation extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				if (!$error && !$notrigger)
-				{
+		if (!$error) {
+			if (!$notrigger) {
+				if (!$error && !$notrigger) {
 					// Call triggers
 					$result = $this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
-					if ($result < 0) { $error++; }
+					if ($result < 0) {
+						$error++;
+					}
 					// End call triggers
 				}
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -356,20 +405,20 @@ class PaymentDonation extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
 			$sql .= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_donation";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -379,25 +428,22 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				if (!$error && !$notrigger)
-				{
+		if (!$error) {
+			if (!$notrigger) {
+				if (!$error && !$notrigger) {
 					// Call triggers
 					$result = $this->call_trigger('DONATION_PAYMENT_DELETE', $user);
-					if ($result < 0) { $error++; }
+					if ($result < 0) {
+						$error++;
+					}
 					// End call triggers
 				}
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -439,21 +485,18 @@ class PaymentDonation extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
 		} else {
@@ -464,10 +507,10 @@ class PaymentDonation extends CommonObject
 
 
 	/**
-	 * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *  @return string        		Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -476,11 +519,11 @@ class PaymentDonation extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -508,6 +551,7 @@ class PaymentDonation extends CommonObject
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
+		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
 		$this->fk_bank = '';
@@ -534,19 +578,19 @@ class PaymentDonation extends CommonObject
 
 		$error = 0;
 
-		if (!empty($conf->banque->enabled))
-		{
+		if (isModEnabled("banque")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
 			$total = $this->total;
-			if ($mode == 'payment_donation') $amount = $total;
-
+			if ($mode == 'payment_donation') {
+				$amount = $total;
+			}
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
-				$this->datepaid,
+				$this->datep,
 				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$amount,
@@ -559,23 +603,21 @@ class PaymentDonation extends CommonObject
 
 			// Update fk_bank in llx_paiement.
 			// On connait ainsi le paiement qui a genere l'ecriture bancaire
-			if ($bank_line_id > 0)
-			{
+			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
-				if ($result <= 0)
-				{
+				if ($result <= 0) {
 					$error++;
 					dol_print_error($this->db);
 				}
 
 				// Add link 'payment', 'payment_supplier', 'payment_donation' in bank_url between payment and bank transaction
 				$url = '';
-				if ($mode == 'payment_donation') $url = DOL_URL_ROOT.'/don/payment/card.php?rowid=';
-				if ($url)
-				{
+				if ($mode == 'payment_donation') {
+					$url = DOL_URL_ROOT.'/don/payment/card.php?rowid=';
+				}
+				if ($url) {
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
-					if ($result <= 0)
-					{
+					if ($result <= 0) {
 						$error++;
 						dol_print_error($this->db);
 					}
@@ -586,8 +628,7 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			return 1;
 		} else {
 			return -1;
@@ -609,8 +650,7 @@ class PaymentDonation extends CommonObject
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			return 1;
 		} else {
 			$this->error = $this->db->error();
@@ -627,7 +667,7 @@ class PaymentDonation extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -635,16 +675,30 @@ class PaymentDonation extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		if (!empty($this->id))
-		{
+		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend = '</a>';
 
-			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result .= ' ';
-			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+			if ($withpicto) {
+				$result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+			}
+			if ($withpicto && $withpicto != 2) {
+				$result .= ' ';
+			}
+			if ($withpicto != 2) {
+				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+			}
 		}
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 }

@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Маржа
+Margins=Ҳошияҳо
+TotalMargin=Маржаи умумӣ
+MarginOnProducts=Маржа / Маҳсулот
+MarginOnServices=Маржа / Хизматҳо
+MarginRate=Меъёри маржа
+MarkRate=Нархи меъёр
+DisplayMarginRates=Меъёрҳои маржа нишон диҳед
+DisplayMarkRates=Нишон додани сатҳи нишондиҳандаҳо
+InputPrice=Нархи воридот
+margin=Идоракунии маржаи фоида
+margesSetup=Танзими идоракунии маржаи фоида
+MarginDetails=Тафсилоти маржа
+ProductMargins=Ҳудуди маҳсулот
+CustomerMargins=Ҳудуди муштариён
+SalesRepresentativeMargins=Ҳудуди намояндагии фурӯш
+ContactOfInvoice=Тамос бо фактура
+UserMargins=Ҳудуди корбар
+ProductService=Маҳсулот ё Хизмат
+AllProducts=Ҳама маҳсулот ва хидматҳо
+ChooseProduct/Service=Маҳсулот ё хидматро интихоб кунед
+ForceBuyingPriceIfNull=Маблағи харидан/арзиши хароҷот ба нархи фурӯш, агар муайян нашуда бошад
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=Усули маржа барои тахфифҳои глобалӣ
+UseDiscountAsProduct=Ҳамчун маҳсулот
+UseDiscountAsService=Ҳамчун хидмат
+UseDiscountOnTotal=Дар маҷмӯъ
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Муайян мекунад, ки агар тахфифи умумиҷаҳонӣ ҳамчун маҳсулот, хидмат ё танҳо дар маҷмӯъ барои ҳисобкунии маржа ҳисоб карда шавад.
+MARGIN_TYPE=Харид/Нархи арзиши пешфарз барои ҳисобкунии маржа
+MargeType1=Маржа аз беҳтарин нархи фурӯшанда
+MargeType2=Маржа аз рӯи нархи миёнавазн (WAP)
+MargeType3=Маржа оид ба нарх
+MarginTypeDesc=* Маржа аз нархи беҳтари харид = Нархи фурӯш - Беҳтарин фурӯшанда дар корти маҳсулот муайян карда шудааст <br> дар бораи Арзиши нарх = Нархи фурӯш - Нархи арзиши дар корти маҳсулот ё WAP муайяншуда, агар нархи хароҷот муайян нашуда бошад, ё беҳтарин нархи фурӯшанда, агар WAP ҳанӯз муайян нашуда бошад
+CostPrice=Нархи арзиши
+UnitCharges=Хароҷоти воҳид
+Charges=Пардохтҳо
+AgentContactType=Навъи тамос бо агенти тиҷоратӣ
+AgentContactTypeDetails=Муайян кунед, ки кадом намуди тамос (дар ҳисобнома -фактураҳо пайванд карда шудааст) барои гузориши маржа барои як тамос/суроға истифода мешавад. Аҳамият диҳед, ки хондани омор дар тамос эътимоднок нест, зеро дар аксари ҳолатҳо тамосро дар фактураҳо возеҳ муайян кардан мумкин нест.
+rateMustBeNumeric=Нарх бояд арзиши рақамӣ бошад
+markRateShouldBeLesserThan100=Меъёри нишондиҳанда бояд аз 100 камтар бошад
+ShowMarginInfos=Маълумоти маржа нишон диҳед
+CheckMargins=Тафсилоти маржа
+MarginPerSaleRepresentativeWarning=Ҳисоботи маржа барои як корбар пайванди байни шахсони сеюм ва намояндагони фурӯшро барои ҳисоб кардани маржаи ҳар як намояндаи фурӯш истифода мебарад. Азбаски баъзе шахсони сеюм наметавонанд намояндаи махсуси фурӯш дошта бошанд ва баъзе шахсони сеюм метавонанд бо якчанд нафар алоқаманд бошанд, баъзе маблағҳо метавонанд ба ин ҳисобот дохил карда нашаванд (агар намояндаи фурӯш набошад) ва баъзеҳо метавонанд дар сатрҳои гуногун пайдо шаванд (барои ҳар як намояндаи фурӯш) .

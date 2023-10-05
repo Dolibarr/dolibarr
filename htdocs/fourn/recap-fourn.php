@@ -23,6 +23,7 @@
  *		\brief      Page de fiche recap supplier
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -32,8 +33,7 @@ $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -51,22 +51,20 @@ $userstatic = new User($db);
 
 llxHeader();
 
-if ($socid > 0)
-{
+if ($socid > 0) {
 	$societe = new Societe($db);
 	$societe->fetch($socid);
 
 	/*
-     * Affichage onglets
-     */
+	 * Affichage onglets
+	 */
 	$head = societe_prepare_head($societe);
 
 	print dol_get_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	print dol_get_fiche_end();
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->facture->lire)
-	{
+	if ((isModEnabled("fournisseur") && $user->hasRight("fournisseur", "facture", "lire") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->hasRight("supplier_invoice", "lire"))) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -76,14 +74,13 @@ if ($socid > 0)
 		$sql .= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql .= " u.login, u.rowid as userid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $societe->id);
 		$sql .= " AND f.entity IN (".getEntity("facture_fourn").")"; // Recognition of the entity attributed to this invoice for Multicompany
 		$sql .= " AND f.fk_user_valid = u.rowid";
 		$sql .= " ORDER BY f.datef DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
 			print '<tr class="liste_titre">';
@@ -96,33 +93,30 @@ if ($socid > 0)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			if (!$num > 0)
-			{
-				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			if ($num <= 0) {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 
 			$solde = 0;
 
 			// Boucle sur chaque facture
-			for ($i = 0; $i < $num; $i++)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$objf = $db->fetch_object($resql);
 
 				$fac = new FactureFournisseur($db);
 				$ret = $fac->fetch($objf->facid);
-				if ($ret < 0)
-				{
+				if ($ret < 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				print '<tr class="oddeven">';
 
-				print "<td class=\"center\">".dol_print_date($fac->date)."</td>\n";
+				print '<td class="center">'.dol_print_date($fac->date)."</td>\n";
 				print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
 
-				print '<td class="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
+				print '<td class="left">'.$fac->getLibStatut(2, $totalpaid).'</td>';
 				print '<td class="right">'.price($fac->total_ttc)."</td>\n";
 				$solde = $solde + $fac->total_ttc;
 
@@ -141,16 +135,14 @@ if ($socid > 0)
 				$sql .= " ".MAIN_DB_PREFIX."paiementfourn as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
 				$sql .= " WHERE pf.fk_paiementfourn = p.rowid";
-				$sql .= " AND pf.fk_facturefourn = ".$fac->id;
+				$sql .= " AND pf.fk_facturefourn = ".((int) $fac->id);
 
 				$resqlp = $db->query($sql);
-				if ($resqlp)
-				{
+				if ($resqlp) {
 					$nump = $db->num_rows($resqlp);
 					$j = 0;
 
-					while ($j < $nump)
-					{
+					while ($j < $nump) {
 						$objp = $db->fetch_object($resqlp);
 						//
 						print '<tr class="oddeven">';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +22,15 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disabled because this page is into a popup on module search page and we want to avoid to have an Anti CSRF token error (done if MAIN_SECURITY_CSRF_WITH_TOKEN is on) when we make a second search after closing popup.
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disabled because this page is into a popup on module search page and we want to avoid to have an Anti CSRF token error (done if MAIN_SECURITY_CSRF_WITH_TOKEN is on) when we make a second search after closing popup.
+}
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -36,10 +42,13 @@ $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
 $mode = GETPOST('mode', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-if (empty($mode)) $mode = 'desc';
+if (empty($mode)) {
+	$mode = 'desc';
+}
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 
 
@@ -63,6 +72,9 @@ print '<!-- Force style container -->'."\n".'<style>
 .id-container {
     width: 100%;
 }
+#id-right {
+	padding-left: unset;
+}
 </style>';
 
 $arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
@@ -80,25 +92,19 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
-foreach ($modulesdir as $dir)
-{
+foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
 	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
 	$handle = @opendir($dir);
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle)) !== false)
-		{
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-			{
+			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
 				$modName = substr($file, 0, dol_strlen($file) - 10);
 
-				if ($modName)
-				{
-					if (!empty($modNameLoaded[$modName]))
-					{
+				if ($modName) {
+					if (!empty($modNameLoaded[$modName])) {
 						$mesg = "Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
 						setEventMessages($mesg, null, 'warnings');
 						dol_syslog($mesg, LOG_ERR);
@@ -107,15 +113,13 @@ foreach ($modulesdir as $dir)
 
 					try {
 						$res = include_once $dir.$file;
-						if (class_exists($modName))
-						{
+						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
 								$modNameLoaded[$modName] = $dir;
 
-								if (!$objMod->numero > 0 && $modName != 'modUser')
-								{
-					 				dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
+								if (!$objMod->numero > 0 && $modName != 'modUser') {
+									dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
 								}
 								$j = $objMod->numero;
 
@@ -123,21 +127,24 @@ foreach ($modulesdir as $dir)
 
 								// We discard modules according to features level (PS: if module is activated we always show it)
 								$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified = 0;
-								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified = 0;
-								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified = 0;
+								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
+									$modulequalified = 0;
+								}
+								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
+									$modulequalified = 0;
+								}
+								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
+									$modulequalified = 0;
+								}
 
 								// We discard modules according to property disabled
-								//if (! empty($objMod->hidden)) $modulequalified=0;
+								//if (!empty($objMod->hidden)) $modulequalified=0;
 
-								if ($modulequalified > 0)
-								{
+								if ($modulequalified > 0) {
 									$publisher = dol_escape_htmltag($objMod->getPublisher());
 									$external = ($objMod->isCoreOrExternalModule() == 'external');
-									if ($external)
-									{
-										if ($publisher)
-										{
+									if ($external) {
+										if ($publisher) {
 											$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
 										} else {
 											$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
@@ -147,14 +154,15 @@ foreach ($modulesdir as $dir)
 								}
 
 								// Define array $categ with categ with at least one qualified module
-								if ($modulequalified > 0)
-								{
+								if ($modulequalified > 0) {
 									$modules[$i] = $objMod;
 									$filename[$i] = $modName;
 
 									// Gives the possibility to the module, to provide his own family info and position of this family
 									if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
-										if (!is_array($familyinfo)) $familyinfo = array();
+										if (!is_array($familyinfo)) {
+											$familyinfo = array();
+										}
 										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 										$familykey = key($objMod->familyinfo);
 									} else {
@@ -162,9 +170,12 @@ foreach ($modulesdir as $dir)
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
-									if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
-									{
+									if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external')) {
 										$moduleposition = '80'; // External modules at end by default
+									}
+
+									if (empty($familyinfo[$familykey]['position'])) {
+										$familyinfo[$familykey]['position'] = '0';
 									}
 
 									$orders[$i] = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
@@ -172,21 +183,26 @@ foreach ($modulesdir as $dir)
 									//print $i.'-'.$dirmod[$i].'<br>';
 									// Set categ[$i]
 									$specialstring = 'unknown';
-									if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring = 'expdev';
-									if (isset($categ[$specialstring])) $categ[$specialstring]++; // Array of all different modules categories
-									else $categ[$specialstring] = 1;
+									if ($objMod->version == 'development' || $objMod->version == 'experimental') {
+										$specialstring = 'expdev';
+									}
+									if (isset($categ[$specialstring])) {
+										$categ[$specialstring]++; // Array of all different modules categories
+									} else {
+										$categ[$specialstring] = 1;
+									}
 									$j++;
 									$i++;
-								} else dol_syslog("Module ".get_class($objMod)." not qualified");
-							} catch (Exception $e)
-							{
+								} else {
+									dol_syslog("Module ".get_class($objMod)." not qualified");
+								}
+							} catch (Exception $e) {
 								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
-					} catch (Exception $e)
-					{
+					} catch (Exception $e) {
 						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 					}
 				}
@@ -206,11 +222,9 @@ asort($orders);
 
 unset($objMod);
 $i = 0;
-foreach ($orders as $tmpkey => $tmpvalue)
-{
+foreach ($orders as $tmpkey => $tmpvalue) {
 	$tmpMod = $modules[$tmpkey];
-	if ($tmpMod->numero == $id)
-	{
+	if ($tmpMod->numero == $id) {
 		$key = $i;
 		$modName = $filename[$tmpkey];
 		$dirofmodule = $dirmod[$tmpkey];
@@ -236,22 +250,28 @@ $moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 $text = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
-if (!empty($conf->global->$const_name)) $text .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
-else $text .= $langs->trans("Disabled");
+if (!empty($conf->global->$const_name)) {
+	$text .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+} else {
+	$text .= $langs->trans("Disabled");
+}
 $tmp = $objMod->getLastActivationInfo();
-$authorid = $tmp['authorid'];
-if ($authorid > 0)
-{
+$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
+if ($authorid > 0) {
 	$tmpuser = new User($db);
 	$tmpuser->fetch($authorid);
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
 	$text .= $tmpuser->getNomUrl(1);
 }
-$ip = $tmp['ip'];
-if ($ip)
-{
+$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
+if ($ip) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
 	$text .= $ip;
+}
+$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
+if ($lastactivationversion) {
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
+	$text .= $lastactivationversion;
 }
 
 $moreinfo = $text;
@@ -267,16 +287,13 @@ print '<br>';
 
 print dol_get_fiche_head($head, $mode, '', -1);
 
-if (!$modulename)
-{
+if (!$modulename) {
 	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
 }
 
 // Load all lang files of module
-if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-{
-	foreach ($objMod->langfiles as $domain)
-	{
+if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
+	foreach ($objMod->langfiles as $domain) {
 		$langs->load($domain);
 	}
 }
@@ -287,24 +304,30 @@ if (isset($objMod->langfiles) && is_array($objMod->langfiles))
 // Version (with picto warning or not)
 $version = $objMod->getVersion(0);
 $versiontrans = '';
-if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), 'style="float: left"');
-if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), 'style="float: left"');
-if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), 'style="float: left"');
+if (preg_match('/development/i', $version)) {
+	$versiontrans .= img_warning($langs->trans("Development"), 'style="float: left"');
+}
+if (preg_match('/experimental/i', $version)) {
+	$versiontrans .= img_warning($langs->trans("Experimental"), 'style="float: left"');
+}
+if (preg_match('/deprecated/i', $version)) {
+	$versiontrans .= img_warning($langs->trans("Deprecated"), 'style="float: left"');
+}
 $versiontrans .= $objMod->getVersion(1);
 
 // Define imginfo
 $imginfo = "info";
-if ($objMod->isCoreOrExternalModule() == 'external')
-{
+if ($objMod->isCoreOrExternalModule() == 'external') {
 	$imginfo = "info_black";
 }
 
 // Define text of description of module
 $text = '';
 
-if ($mode == 'desc')
-{
-	if ($moduledesc) $text .= '<br>'.$moduledesc.'<br><br><br>';
+if ($mode == 'desc') {
+	if ($moduledesc) {
+		$text .= '<br>'.$moduledesc.'<br><br><br>';
+	}
 
 	$text .= '<span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
 
@@ -312,13 +335,26 @@ if ($mode == 'desc')
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
 
 	$textexternal = '';
-	if ($objMod->isCoreOrExternalModule() == 'external')
-	{
-		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $dirofmodule);
-		if ($objMod->editor_name != 'dolibarr') $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Publisher").':</span> '.(empty($objMod->editor_name) ? $langs->trans("Unknown") : $objMod->editor_name);
+	if ($objMod->isCoreOrExternalModule() == 'external') {
+		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $dirofmodule);
+		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
+
+		global $dolibarr_allow_download_external_modules;
+		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', $dirofmodule)) {
+			// Add a link to download a zip of the module
+			$textexternal .= ' <a href="'.DOL_URL_ROOT.'/admin/tools/export_files.php?export_type=externalmodule&what='.urlencode($moduledir).'&compression=zip&zipfilename_template=module_'.$moduledir.'-'.$version.'.notorig" target="_blank" rel="noopener">'.img_picto('', 'download').'</a>';
+		}
+
+		if ($objMod->editor_name != 'dolibarr') {
+			$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Publisher").':</span> '.(empty($objMod->editor_name) ? $langs->trans("Unknown") : $objMod->editor_name);
+		}
 		$editor_url = $objMod->editor_url;
-		if (!preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
-		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) $textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+		if (!preg_match('/^http/', $editor_url)) {
+			$editor_url = 'http://'.$editor_url;
+		}
+		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) {
+			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
+		}
 		$text .= $textexternal;
 		$text .= '<br>';
 	} else {
@@ -326,120 +362,147 @@ if ($mode == 'desc')
 	}
 
 	$moduledesclong = $objMod->getDescLong();
-	if ($moduledesclong) $text .= '<br><hr><div class="moduledesclong">'.$moduledesclong.'<div>';
+	if ($moduledesclong) {
+		$text .= '<br><hr><div class="moduledesclong">'.$moduledesclong.'<div>';
+	}
 }
 
-if ($mode == 'feature')
-{
+if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-	if (count($objMod->depends)) $text .= join(',', $objMod->depends);
-	else $text .= $langs->trans("None");
+	if (is_array($objMod->depends) && count($objMod->depends)) {
+		$i = 0;
+		foreach ($objMod->depends as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+	}
+	$text .= '<br>';
+
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
-	if (count($objMod->requiredby)) $text .= join(',', $objMod->requiredby);
-	else $text .= $langs->trans("None");
+	if (is_array($objMod->requiredby) && count($objMod->requiredby)) {
+		$i = 0;
+		foreach ($objMod->requiredby as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+	}
 
 	$text .= '<br><br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
-	if (count($sqlfiles) > 0)
-	{
-		$text .= $langs->trans("Yes").' (';
+	$listofsqlfiles1 = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/mysql/tables/', 'files', 0, 'llx.*-'.$moduledir.'\.sql', array('\.key\.sql', '\.sql\.back'));
+	$listofsqlfiles2 = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
+	$sqlfiles = array_merge($listofsqlfiles1, $listofsqlfiles2);
+
+	if (count($sqlfiles) > 0) {
 		$i = 0;
-		foreach ($sqlfiles as $val)
-		{
-			$text .= ($i ? ', ' : '').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
+		foreach ($sqlfiles as $val) {
+			$text .= ($i ? ', ' : '').preg_replace('/\-'.$moduledir.'$/', '', preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name'])));
 			$i++;
 		}
-		$text .= ')';
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
-	if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
-	{
+	if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib'])) {
 		$i = 0;
-		foreach ($objMod->dictionaries['tablib'] as $val)
-		{
+		foreach ($objMod->dictionaries['tablib'] as $val) {
 			$text .= ($i ? ', ' : '').$val;
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddData").':</strong> ';
 	$filedata = dol_buildpath($moduledir.'/sql/data.sql');
-	if (dol_is_file($filedata))
-	{
-		$text .= $langs->trans("Yes").' ('.$moduledir.'/sql/data.sql)';
-	} else $text .= $langs->trans("No");
+	if (dol_is_file($filedata)) {
+		$text .= $langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
-	if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
-	{
+	if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs)) {
 		$i = 0;
-		foreach ($objMod->tabs as $val)
-		{
-			if (is_array($val)) $val = $val['data'];
-			if (is_string($val))
-			{
+		foreach ($objMod->tabs as $val) {
+			if (is_array($val)) {
+				$val = $val['data'];
+			}
+			if (is_string($val)) {
 				$tmp = explode(':', $val, 3);
 				$text .= ($i ? ', ' : '').$tmp[0].':'.$tmp[1];
-		   		$i++;
+				$i++;
 			}
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddModels").':</strong> ';
-	if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
-	{
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models']) {
 		$text .= $langs->trans("Yes");
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
-	if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
-	{
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions']) {
 		$text .= $langs->trans("Yes");
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
-	if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
-	{
+	if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs)) {
 		$i = 0;
-		foreach ($objMod->cronjobs as $val)
-		{
+		foreach ($objMod->cronjobs as $val) {
 			$text .= ($i ? ', ' : '').($val['label']);
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
 	$moreinfoontriggerfile = '';
-	if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
-	{
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers']) {
 		$yesno = 'Yes';
 	} else {
-		$yesno = 'No';
+		$yesno = '<span class="opacitymedium">No</span>';
 	}
 	require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 	$interfaces = new Interfaces($db);
 	$triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external') ? '/'.$moduledir : '').'/core/triggers'));
-	foreach ($triggers as $triggercursor)
-	{
-		if ($triggercursor['module'] == $moduledir)
-		{
+	foreach ($triggers as $triggercursor) {
+		if ($triggercursor['module'] == $moduledir) {
 			$yesno = 'Yes';
 			$moreinfoontriggerfile = ' ('.$triggercursor['relpath'].')';
 		}
@@ -450,33 +513,33 @@ if ($mode == 'feature')
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
-	if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
-	{
+	if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes)) {
 		$i = 0;
-		foreach ($objMod->boxes as $val)
-		{
-			$text .= ($i ? ', ' : '').($val['file'] ? $val['file'] : $val[0]);
+		foreach ($objMod->boxes as $val) {
+			$boxstring = (empty($val['file']) ? (empty($val[0]) ? '' : $val[0]) : $val['file']);
+			if ($boxstring) {
+				$text .= ($i ? ', ' : '').$boxstring;
+			}
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-	if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
-	{
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
 		$i = 0;
-		foreach ($objMod->module_parts['hooks'] as $key => $val)
-		{
-			if ($key === 'entity') continue;
+		foreach ($objMod->module_parts['hooks'] as $key => $val) {
+			if ($key === 'entity') {
+				continue;
+			}
 
 			// For special values
-			if ($key === 'data')
-			{
-				if (is_array($val))
-				{
-					foreach ($val as $value)
-					{
+			if ($key === 'data') {
+				if (is_array($val)) {
+					foreach ($val as $value) {
 						$text .= ($i ? ', ' : '').($value);
 						$i++;
 					}
@@ -488,67 +551,72 @@ if ($mode == 'feature')
 			$text .= ($i ? ', ' : '').($val);
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
-	if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
-	{
+	if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights)) {
 		$i = 0;
-		foreach ($objMod->rights as $val)
-		{
+		foreach ($objMod->rights as $val) {
 			$text .= ($i ? ', ' : '').($val[1]);
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-	if (isset($objMod->menu) && !empty($objMod->menu)) // objMod can be an array or just an int 1
-	{
+	if (isset($objMod->menu) && !empty($objMod->menu)) { // objMod can be an array or just an int 1
 		$text .= $langs->trans("Yes");
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
-	if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
-	{
+	if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label)) {
 		$i = 0;
-		foreach ($objMod->export_label as $val)
-		{
+		foreach ($objMod->export_label as $val) {
 			$text .= ($i ? ', ' : '').($val);
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
-	if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
-	{
+	if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label)) {
 		$i = 0;
-		foreach ($objMod->import_label as $val)
-		{
+		foreach ($objMod->import_label as $val) {
 			$text .= ($i ? ', ' : '').($val);
 			$i++;
 		}
-	} else $text .= $langs->trans("No");
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
-	$text .= $langs->trans("DetectionNotPossible");
+	$text .= '<span class="opacitymedium">'.$langs->trans("DetectionNotPossible").'</span>';
 }
 
 
-if ($mode == 'changelog')
-{
+if ($mode == 'changelog') {
 	$changelog = $objMod->getChangeLog();
-	if ($changelog) $text .= '<div class="moduledesclong">'.$changelog.'<div>';
-	else $text .= '<div class="moduledesclong">'.$langs->trans("NotAvailable").'</div>';
+	if ($changelog) {
+		$text .= '<div class="moduledesclong">'.$changelog.'<div>';
+	} else {
+		$text .= '<div class="moduledesclong"><span class="opacitymedium">'.$langs->trans("NotAvailable").'</span></div>';
+	}
 }
 
 print $text;

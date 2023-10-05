@@ -59,16 +59,24 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->blockedlog->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
+			return 0; // Module not active, we do nothing
+		}
 
 		// Test if event/record is qualified
-		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
-		if (!in_array($object->element, $listofqualifiedelement)) return 1;
+		if (empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) || !in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED))) {
+			// If custom actions are not set or if action not into custom actions, we can exclude action if object->elementis not valid
+			$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
+			if (!in_array($object->element, $listofqualifiedelement)) {
+				return 1;
+			}
+		}
 
-		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
+		$b->loadTrackedEvents();
 
 		// Tracked events
 		if (!in_array($action, array_keys($b->trackedevents))) {
@@ -91,10 +99,13 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
-				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) $amounts = (double) $object->amount;
-			elseif ($action == 'CASHCONTROL_VALIDATE') {
+				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
+				$amounts = (double) $object->amount;
+			} elseif ($action == 'CASHCONTROL_VALIDATE') {
 				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
-			} else $amounts = (double) $object->total_ttc;
+			} elseif (property_exists($object, 'total_ttc')) {
+				$amounts = (double) $object->total_ttc;
+			}
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
@@ -108,8 +119,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$amounts = 0;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
-					$amounts += price2num($amount);
+					$amounts += (double) $amount;
 				}
+			} elseif (!empty($object->amount)) {
+				$amounts = $object->amount;
 			}
 		} elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
 			$qualified++;
@@ -122,7 +135,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
-		$result = $b->setObjectData($object, $action, $amounts, $user); // Set field date_object, ref_object, fk_object, element, object_data
+		// Set field date_object, ref_object, fk_object, element, object_data
+		$result = $b->setObjectData($object, $action, $amounts, $user);
+		//var_dump($b); exit;
 
 		if ($result < 0) {
 			$this->error = $b->error;

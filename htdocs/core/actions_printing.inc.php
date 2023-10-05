@@ -55,16 +55,15 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 
 				$subdir = '';
 				$module = GETPOST('printer', 'alpha');
-				switch ($module)
-				{
-					case 'livraison' :
+				switch ($module) {
+					case 'livraison':
 						$subdir = 'receipt';
 						$module = 'expedition';
 						break;
-					case 'expedition' :
+					case 'expedition':
 						$subdir = 'sending';
 						break;
-					case 'commande_fournisseur' :
+					case 'commande_fournisseur':
 						$module = 'fournisseur';
 						$subdir = 'commande';
 						break;
@@ -75,20 +74,20 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 						//print '<pre>'.print_r($printer->errors, true).'</pre>';
 						setEventMessages($printer->error, $printer->errors, 'errors');
 					}
-					if ($ret == 0)
-					{
+					if ($ret == 0) {
 						//print '<pre>'.print_r($printer->errors, true).'</pre>';
 						setEventMessages($printer->error, $printer->errors);
 						setEventMessages($langs->transnoentitiesnoconv("FileWasSentToPrinter", basename(GETPOST('file', 'alpha'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
 					}
-				} catch (Exception $e)
-				{
+				} catch (Exception $e) {
 					$ret = 1;
 					setEventMessages($e->getMessage(), null, 'errors');
 				}
 			}
 		}
-		if ($printerfound == 0) setEventMessages($langs->trans("NoActivePrintingModuleFound", $langs->transnoentities("Module64000Name")), null, 'warnings');
+		if ($printerfound == 0) {
+			setEventMessages($langs->trans("NoActivePrintingModuleFound", $langs->transnoentities("Module64000Name")), null, 'warnings');
+		}
 	} else {
 		setEventMessages($langs->trans("NoModuleFound"), null, 'warnings');
 	}

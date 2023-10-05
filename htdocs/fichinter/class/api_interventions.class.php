@@ -16,9 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+/**
+ *       \file       htdocs/fichinter/class/api_interventions.class.php
+ *       \ingroup    fichinter
+ *       \brief      File of API to manage intervention
+ */
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+
 
 /**
  * API class for Interventions
@@ -32,7 +38,7 @@ class Interventions extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 	  'socid',
 	  'fk_project',
 	  'description',
@@ -41,7 +47,7 @@ class Interventions extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDSLINE = array(
+	public static $FIELDSLINE = array(
 	  'description',
 	  'date',
 	  'duree',
@@ -64,11 +70,10 @@ class Interventions extends DolibarrApi
 
 	/**
 	 * Get properties of a Expense Report object
-	 *
 	 * Return an array with Expense Report information
 	 *
 	 * @param       int         $id         ID of Expense Report
-	 * @return 	    array|mixed             Data without useless information
+	 * @return  	Object              	Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -93,7 +98,6 @@ class Interventions extends DolibarrApi
 
 	/**
 	 * List of interventions
-	 *
 	 * Return a list of interventions
 	 *
 	 * @param string	       $sortfield	        Sort field
@@ -110,6 +114,10 @@ class Interventions extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->ficheinter->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -117,37 +125,46 @@ class Interventions extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as t";
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		}
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('intervention').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= " AND t.fk_soc = sc.fk_soc";
+		}
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+		if ($search_sale > 0) {
+			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -158,13 +175,11 @@ class Interventions extends DolibarrApi
 		dol_syslog("API Rest request");
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$fichinter_static = new Fichinter($this->db);
 				if ($fichinter_static->fetch($obj->rowid)) {
@@ -216,28 +231,28 @@ class Interventions extends DolibarrApi
 	 * @return int
 	 */
 	/* TODO
-    public function getLines($id)
-    {
-        if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
-            throw new RestException(401);
-        }
+	public function getLines($id)
+	{
+		if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
+			throw new RestException(401);
+		}
 
-        $result = $this->fichinter->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Intervention not found');
-        }
+		$result = $this->fichinter->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Intervention not found');
+		}
 
-        if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        $this->fichinter->getLinesArray();
-        $result = array();
-        foreach ($this->fichinter->lines as $line) {
-            array_push($result,$this->_cleanObjectDatas($line));
-        }
-        return $result;
-    }
-    */
+		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$this->fichinter->getLinesArray();
+		$result = array();
+		foreach ($this->fichinter->lines as $line) {
+			array_push($result,$this->_cleanObjectDatas($line));
+		}
+		return $result;
+	}
+	*/
 
 	/**
 	 * Add a line to given intervention
@@ -270,11 +285,11 @@ class Interventions extends DolibarrApi
 		}
 
 		$updateRes = $this->fichinter->addLine(
-				DolibarrApiAccess::$user,
-				$id,
-				$this->fichinter->description,
-				$this->fichinter->date,
-				$this->fichinter->duree
+			DolibarrApiAccess::$user,
+			$id,
+			$this->fichinter->description,
+			$this->fichinter->date,
+			$this->fichinter->duree
 		);
 
 		if ($updateRes > 0) {
@@ -324,12 +339,12 @@ class Interventions extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int $id             Intervention ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int 	$id             Intervention ID
+	 * @param   int 	$notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -361,16 +376,15 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @param   int 	$id             Intervention ID
+	 * @param   	int 	$id             Intervention ID
 	 *
 	 * @url POST    {id}/close
 	 *
-	 * @return  array
+	 * @return  Object
 	 */
 	public function closeFichinter($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->creer)
-		{
+		if (!DolibarrApiAccess::$user->rights->ficheinter->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		$result = $this->fichinter->fetch($id);
@@ -408,8 +422,9 @@ class Interventions extends DolibarrApi
 	{
 		$fichinter = array();
 		foreach (Interventions::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$fichinter[$field] = $data[$field];
 		}
 		return $fichinter;
@@ -447,8 +462,9 @@ class Interventions extends DolibarrApi
 	{
 		$fichinter = array();
 		foreach (Interventions::$FIELDSLINE as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$fichinter[$field] = $data[$field];
 		}
 		return $fichinter;

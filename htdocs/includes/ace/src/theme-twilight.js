@@ -80,8 +80,7 @@ color: #DAD085\
 color: #F9EE98\
 }\
 .ace-twilight .ace_entity.ace_name.ace_function,\
-.ace-twilight .ace_meta.ace_tag,\
-.ace-twilight .ace_variable {\
+.ace-twilight .ace_meta.ace_tag {\
 color: #AC885B\
 }\
 .ace-twilight .ace_string {\
@@ -102,10 +101,11 @@ color: #494949\
 }\
 .ace-twilight .ace_indent-guide {\
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWMQERFpYLC1tf0PAAgOAnPnhxyiAAAAAElFTkSuQmCC) right repeat-y\
-}";
+}\
+";
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+dom.importCssString(exports.cssText, exports.cssClass, false);
 });                (function() {
                     window.require(["ace/theme/twilight"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

@@ -21,12 +21,14 @@
  */
 
 /**
- * \file scripts/members/sync_members_types_ldap2dolibarr.php
+ * \file 	scripts/members/sync_members_types_ldap2dolibarr.php
  * \ingroup ldap member
- * \brief Script to update members types into Dolibarr from LDAP
+ * \brief 	Script to update members types into Dolibarr from LDAP
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -72,14 +74,23 @@ if (!isset($argv[1])) {
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror') {
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) {
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -128,7 +139,7 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$membertype = new AdherentType($db);
-			$membertype->fetch('', $ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
+			$membertype->fetch($ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
 			$membertype->label = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME];
 			$membertype->description = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION];
 			$membertype->entity = $conf->entity;
@@ -163,9 +174,11 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
-			if (!$error)
+			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			} else {
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

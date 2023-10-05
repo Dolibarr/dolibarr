@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +59,10 @@ class FormPropal
 	 *    @param	int 	$showempty		1=Add empty line
 	 *    @param    string  $mode           'customer', 'supplier'
 	 *    @param    string  $htmlname       Name of select field
+	 *    @param	string	$morecss		More css
 	 *    @return	void
 	 */
-	public function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut')
+	public function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut', $morecss = '')
 	{
 		global $langs;
 
@@ -80,18 +82,15 @@ class FormPropal
 		} else {
 			$prefix = "PropalStatus";
 
-			$sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
+			$sql = "SELECT id, code, label, active FROM ".$this->db->prefix()."c_propalst";
 			$sql .= " WHERE active = 1";
 			dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$i = 0;
-				if ($num)
-				{
-					while ($i < $num)
-					{
+				if ($num) {
+					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 						$listofstatus[$obj->id] = array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>$obj->label);
 						$i++;
@@ -102,40 +101,50 @@ class FormPropal
 			}
 		}
 
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) print '<option value="-1">&nbsp;</option>';
+		print '<select id="'.$htmlname.'" name="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+		if ($showempty) {
+			print '<option value="-1">&nbsp;</option>';
+		}
 
-		foreach ($listofstatus as $key => $obj)
-		{
-			if ($excludedraft)
-			{
-				if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT')
-				{
+		$i = 0;
+		foreach ($listofstatus as $key => $obj) {
+			if ($excludedraft) {
+				if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT') {
 					$i++;
 					continue;
 				}
 			}
-			if ($selected != '' && $selected == $obj['id'])
-			{
+			if ($selected != '' && $selected == $obj['id']) {
 				print '<option value="'.$obj['id'].'" selected>';
 			} else {
 				print '<option value="'.$obj['id'].'">';
 			}
 			$key = $obj['code'];
-			if ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : ''))
-			{
+			if ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : '')) {
 				print $langs->trans($prefix.$key.($short ? 'Short' : ''));
 			} else {
 				$conv_to_new_code = array('PR_DRAFT'=>'Draft', 'PR_OPEN'=>'Validated', 'PR_CLOSED'=>'Closed', 'PR_SIGNED'=>'Signed', 'PR_NOTSIGNED'=>'NotSigned', 'PR_FAC'=>'Billed');
-				if (!empty($conv_to_new_code[$obj['code']])) $key = $conv_to_new_code[$obj['code']];
+				if (!empty($conv_to_new_code[$obj['code']])) {
+					$key = $conv_to_new_code[$obj['code']];
+				}
 
 				print ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : '')) ? $langs->trans($prefix.$key.($short ? 'Short' : '')) : ($obj['label'] ? $obj['label'] : $obj['code']);
 			}
 			print '</option>';
 			$i++;
 		}
+		// Option for Signed+Billed
+		if ($mode == 'customer') {
+			if ($selected != '' && $selected == "2,4") {
+				print '<option value="2,4" selected>';
+			} else {
+				print '<option value="2,4">';
+			}
+			print ($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
+			print '</option>';
+		}
 		print '</select>';
 
-		print ajax_combobox($htmlname);
+		print ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
 	}
 }

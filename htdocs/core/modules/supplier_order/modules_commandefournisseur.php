@@ -37,6 +37,23 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // requir
  */
 abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 {
+	public $posxpicture;
+	public $posxtva;
+	public $posxup;
+	public $posxqty;
+	public $posxunit;
+	public $posxdesc;
+	public $posxdiscount;
+	public $postotalht;
+
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
+	public $atleastoneratenotnull = 0;
+	public $atleastonediscount = 0;
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -54,15 +71,13 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'order_supplier';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -77,6 +92,9 @@ abstract class ModeleNumRefSuppliersOrders
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	public $version;
+
 
 	/**  Return if a model can be used or not
 	 *
@@ -120,9 +138,11 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Returns next value assigned
 	 *
-	 *   @return     string      Valeur
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object	    $object		Object
+	 *  @return string      			Valeur
 	 */
-	public function getNextValue()
+	public function getNextValue($objsoc = 0, $object = '')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -137,10 +157,18 @@ abstract class ModeleNumRefSuppliersOrders
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

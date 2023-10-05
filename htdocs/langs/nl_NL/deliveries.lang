@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Referentie aflevering
-DeliveryCard=Afleverings kaart
+DeliveryCard=Voorraad ontvangst
 DeliveryOrder=Ontvangstbewijs
 DeliveryDate=Leveringsdatum
 CreateDeliveryOrder=Genereer afleverbon
@@ -30,3 +30,4 @@ NonShippable=Niet verzendbaar
 ShowShippableStatus=Toon verzendstatus
 ShowReceiving=Toon afleverbon
 NonExistentOrder=Niet bestaande order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Hoeveelheid al toegekend in vorige regels

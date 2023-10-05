@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
 ProjectsArea=Project Omgeving
 AllAllowedProjects=Alle projecten die ik kan lezen (mijn + openbaar)
-MyProjectsDesc=Deze weergave is beperkt tot projecten waarvoor u een contactpersoon bent
 TasksOnProjectsPublicDesc=Deze weergave geeft alle taken weer van projecten die u mag lezen.
 TasksOnProjectsDesc=In deze weergave worden alle taken voor alle projecten weergegeven (uw gebruikersrechten geven u toestemming om alles te bekijken).
 ImportDatasetTasks=Taken van projecten

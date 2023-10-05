@@ -22,6 +22,7 @@
  * 	\brief      Page to show a trip information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -32,7 +33,9 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 
@@ -42,8 +45,7 @@ $result = restrictedArea($user, 'deplacement', $id, '');
 
 llxHeader();
 
-if ($id)
-{
+if ($id) {
 	$object = new Deplacement($db);
 	$object->fetch($id);
 	$object->info($id);

@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal модулін орнату
+PaypalDesc=Бұл модуль клиенттерге <a href="http://www.paypal.com" target="_blank"> PayPal </a> арқылы төлем жасауға мүмкіндік береді. Бұл арнайы төлем үшін немесе Dolibarr объектісіне байланысты төлем үшін пайдаланылуы мүмкін (шот-фактура, тапсырыс, ...)
+PaypalOrCBDoPayment=PayPal арқылы төлеу (карта немесе PayPal)
+PaypalDoPayment=PayPal арқылы төлеу
+PAYPAL_API_SANDBOX=Режимді тексеру/құм жәшігі
+PAYPAL_API_USER=API пайдаланушы аты
+PAYPAL_API_PASSWORD=API құпия сөзі
+PAYPAL_API_SIGNATURE=API қолтаңбасы
+PAYPAL_SSLVERSION=Curl SSL нұсқасы
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Тек «интегралды» төлемді (несиелік карта+PayPal) немесе «PayPal» ұсыну
+PaypalModeIntegral=Ажырамас
+PaypalModeOnlyPaypal=Тек PayPal
+ONLINE_PAYMENT_CSS_URL=Онлайн төлем бетіндегі CSS стиль кестесінің қосымша URL мекенжайы
+ThisIsTransactionId=Бұл транзакция идентификаторы: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=Құжатты электрондық пошта арқылы жіберген кезде PayPal төлем URL мекенжайын қосыңыз
+NewOnlinePaymentReceived=Жаңа онлайн төлем алынды
+NewOnlinePaymentFailed=Жаңа онлайн төлем жүргізілді, бірақ сәтсіз болды
+ONLINE_PAYMENT_SENDEMAIL=Әр төлем әрекетінен кейін хабарландыру үшін электрондық пошта мекенжайы (сәттілік пен сәтсіздік үшін)
+ReturnURLAfterPayment=Төлемнен кейін URL мекенжайын қайтарыңыз
+ValidationOfOnlinePaymentFailed=Онлайн төлемді растау сәтсіз аяқталды
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Төлем жүйесі төлемді растау бетіне қоңырау шалды, қате жіберілді
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API қоңырауы сәтсіз аяқталды.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API қоңырауы сәтсіз аяқталды.
+DetailedErrorMessage=Толық қате туралы хабар
+ShortErrorMessage=Қысқа қате туралы хабар
+ErrorCode=Қате коды
+ErrorSeverityCode=Қателік дәрежесінің коды
+OnlinePaymentSystem=Онлайн төлем жүйесі
+PaypalLiveEnabled=PayPal «тірі» режимі қосылды (әйтпесе тест/құм жәшігі режимі)
+PaypalImportPayment=PayPal төлемдерін импорттаңыз
+PostActionAfterPayment=Төлем жасалғаннан кейін әрекеттерді жіберіңіз
+ARollbackWasPerformedOnPostActions=Барлық Post әрекеттері бойынша қайтару орындалды. Қажет болса, пост әрекеттерін қолмен аяқтау керек.
+ValidationOfPaymentFailed=Төлем расталмады
+CardOwner=Карточка ұстаушы
+PayPalBalance=Paypal несиесі

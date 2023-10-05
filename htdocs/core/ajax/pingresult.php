@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2019-2022		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,30 @@
 
 /**
  *       \file       htdocs/core/ajax/pingresult.php
- *       \brief      File to save result of an anonymous ping into database (1 ping is done per installation)
+ *       \brief      Page called after a ping was done in js to the official dolibarr ping service.
+ *                   This ajax URL is called with parameter 'firstpingok' or 'firstpingko' depending on the result of the ping.
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -36,35 +50,32 @@ $hash_algo = GETPOST('hash_algo', 'alpha');
 
 
 // Security check
-if (!empty($user->socid))
-	$socid = $user->socid;
+// None. Beeing connected is enough.
 
-$now = dol_now();
 
 
 /*
  * View
  */
 
+$now = dol_now();
+
 top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // If ok
-if ($action == 'firstpingok')
-{
+if ($action == 'firstpingok') {
 	// Note: pings are per installed instances / entity.
 	// Once this constants are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
-	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
-	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id);
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id, 'chaine', 0, '', $conf->entity);
 
 	print 'First ping OK saved for entity '.$conf->entity;
-}
-// If ko
-elseif ($action == 'firstpingko')
-{
+} elseif ($action == 'firstpingko') {
+	// If ko
 	// Note: pings are by installation, done on entity 1.
-	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt'); // erase last value
+	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity); // erase last value
 	print 'First ping KO saved for entity '.$conf->entity;
 } else {
 	print 'Error action='.$action.' not supported';

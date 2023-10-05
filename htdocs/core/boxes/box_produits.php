@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class box_produits extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>(!empty($conf->product->enabled) || !empty($conf->service->enabled)), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
+		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>(!empty($user->rights->produit->lire) || $user->hasRight('service', 'lire')), 'module'=>'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -84,7 +84,7 @@ class box_produits extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
-		if ($user->rights->produit->lire || $user->rights->service->lire) {
+		if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
 			$sql .= ", p.accountancy_code_sell";
 			$sql .= ", p.accountancy_code_sell_intra";
@@ -103,8 +103,8 @@ class box_produits extends ModeleBoxes
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
-				$parameters = array('boxproductlist'=>1);
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+				$parameters = array('boxproductlist' => 1, 'boxcode' => $this->boxcode);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
 			$sql .= $this->db->order('p.datec', 'DESC');
@@ -119,11 +119,11 @@ class box_produits extends ModeleBoxes
 					$datem = $this->db->jdate($objp->tms);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld .= " WHERE fk_product=".$objp->rowid;
-						$sqld .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sqld .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
@@ -148,6 +148,12 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
+					$productstatic->date_modification = $datem;
+
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+					if ($productstatic->isService()) {
+						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+					}
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
@@ -161,26 +167,30 @@ class box_produits extends ModeleBoxes
 					);
 					$price = '';
 					$price_base_type = '';
-					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
-						$price_base_type = $langs->trans($objp->price_base_type);
-						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-					} else {
-						//Parse the dynamic price
-						$productstatic->fetch($objp->rowid, '', '', 1);
-						$priceparser = new PriceParser($this->db);
-						$price_result = $priceparser->parseProduct($productstatic);
-						if ($price_result >= 0) {
-							if ($objp->price_base_type == 'HT') {
-								$price_base_type = $langs->trans("HT");
-							} else {
-								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
-								$price_base_type = $langs->trans("TTC");
+					if ($usercancreadprice) {
+						if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
+							$price_base_type = $langs->trans($objp->price_base_type);
+							$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+						} else {
+							//Parse the dynamic price
+							$productstatic->fetch($objp->rowid, '', '', 1);
+
+							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+							$priceparser = new PriceParser($this->db);
+							$price_result = $priceparser->parseProduct($productstatic);
+							if ($price_result >= 0) {
+								if ($objp->price_base_type == 'HT') {
+									$price_base_type = $langs->trans("HT");
+								} else {
+									$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+									$price_base_type = $langs->trans("TTC");
+								}
+								$price = price($price_result);
 							}
-							$price = price($price_result);
 						}
 					}
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => $price,
 					);
 
@@ -190,13 +200,13 @@ class box_produits extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, 'day'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'</span>',
 						'asis' => 1
 					);
 

@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -32,8 +31,12 @@ $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-if ($this->control->tpl['error']) echo $this->control->tpl['error'];
-if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+if ($this->control->tpl['error']) {
+	echo $this->control->tpl['error'];
+}
+if ($this->control->tpl['action_delete']) {
+	echo $this->control->tpl['action_delete'];
+} ?>
 
 <table class="border allwidth">
 
@@ -54,7 +57,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
 	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
@@ -65,13 +68,13 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
 	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
 <?php } ?>
 
-<?php if (!empty($conf->barcode->enabled)) { ?>
+<?php if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>
@@ -119,14 +122,16 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td colspan="3"><?php echo $this->control->tpl['tva_assuj']; ?></td>
 </tr>
 
-<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans("Type"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['typent']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>
@@ -169,7 +174,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (!empty($conf->adherent->enabled)) { ?>
+<?php if (isModEnabled('adherent')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
@@ -182,14 +187,14 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("Modify"); ?></a>
+<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
-<?php if ($user->rights->societe->supprimer) { ?>
+<?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;token='.newToken().'&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
 </div>
@@ -200,12 +205,12 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 <div id="builddoc"></div>
 <?php
 /*
- * Documents generes
+ * Generated documents
  */
 $filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed = $user->rights->societe->lire;
-$delallowed = $user->rights->societe->creer;
+$genallowed = $user->hasRight('societe', 'lire');
+$delallowed = $user->hasRight('societe', 'creer');
 
 print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>

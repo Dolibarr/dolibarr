@@ -13,15 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file		htdocs/admin/intracommreport.php
- *      \ingroup	intracommreport
- *      \brief		Page to setup the module intracomm report
+ *    \file       htdocs/intracommreport/admin/intracommreport.php
+ *    \ingroup    intracommreport
+ *    \brief      Page to setup the module intracomm report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/intracommreport.lib.php';
@@ -30,8 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "intracommreport"));
 
-if (!$user->admin) accessforbidden();
+// Access Control
+if (!$user->admin) {
+	accessforbidden();
+}
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 
 // Parameters INTRACOMMREPORT_* and others
@@ -46,10 +51,8 @@ $list_DES = array(
 if ($action == 'update') {
 	$error = 0;
 
-	if (!$error)
-	{
-		foreach ($list_DEB as $constname)
-		{
+	if (!$error) {
+		foreach ($list_DEB as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -57,8 +60,7 @@ if ($action == 'update') {
 			}
 		}
 
-		foreach ($list_DES as $constname)
-		{
+		foreach ($list_DES as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -81,6 +83,7 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
+
 
 /*
  * View
@@ -110,8 +113,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-foreach ($list_DEB as $key)
-{
+foreach ($list_DEB as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -119,7 +121,7 @@ foreach ($list_DEB as $key)
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td>';
 
 	print '</tr>';
@@ -175,8 +177,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-foreach ($list_DES as $key)
-{
+foreach ($list_DES as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -184,7 +185,7 @@ foreach ($list_DES as $key)
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td>';
 
 	print '</tr>';

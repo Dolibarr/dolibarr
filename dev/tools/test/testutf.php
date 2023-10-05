@@ -38,13 +38,14 @@ print 'Files has been created. Check its name from your explorer'."\n";
 
 /**
  * Creates an example PDF TEST document using TCPDF
- * @package com.tecnick.tcpdf
- * @abstract TCPDF - Example: CID-0 CJK unembedded font
- * @author Nicola Asuni
+ *
+ * @package   com.tecnick.tcpdf
+ * @abstract  TCPDF - Example: CID-0 CJK unembedded font
+ * @author    Nicola Asuni
  * @copyright 2004-2009 Nicola Asuni - Tecnick.com S.r.l (www.tecnick.com) Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
- * @link http://tcpdf.org
- * @license https://www.gnu.org/copyleft/lesser.html LGPL
- * @since 2008-09-15
+ * @link      http://tcpdf.org
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL
+ * @since     2008-09-15
  */
 
 require_once '../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php';
@@ -64,8 +65,8 @@ $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 $pdf->SetHeaderData('', PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 038', PDF_HEADER_STRING);
 
 // set header and footer fonts
-$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+$pdf->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
 // set default monospaced font
 $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);

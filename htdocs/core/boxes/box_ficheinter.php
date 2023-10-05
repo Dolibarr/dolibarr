@@ -59,7 +59,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->ficheinter->lire);
+		$this->hidden = !($user->hasRight('ficheinter', 'lire'));
 	}
 
 	/**
@@ -80,8 +80,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
-		if (!empty($user->rights->ficheinter->lire))
-		{
+		if (!empty($user->rights->ficheinter->lire)) {
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
 			$sql .= ", f.datec";
 			$sql .= ", f.date_valid as datev";
@@ -90,28 +89,33 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir)) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
 			$sql .= " ORDER BY f.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$now = dol_now();
 
 				$i = 0;
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->datem);
 
 					$ficheinterstatic->statut = $objp->status;
 					$ficheinterstatic->status = $objp->status;
@@ -135,14 +139,14 @@ class box_ficheinter extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -154,10 +158,12 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$i][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$i][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoRecordedInterventions")
-				);
+					);
+				}
 
 				$this->db->free($resql);
 			} else {

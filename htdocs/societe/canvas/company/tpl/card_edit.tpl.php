@@ -17,8 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -34,7 +33,9 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['error']; ?>
 
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
-<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) {
+	echo $this->control->tpl['js_checkVatPopup'];
+} ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
@@ -119,7 +120,7 @@ if ($this->control->tpl['fournisseur']) {
 	}
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -165,15 +166,23 @@ if (!empty($conf->barcode->enabled)) { ?>
 <?php
 for ($i = 1; $i <= 4; $i++) {
 	if ($this->control->tpl['langprofid'.$i] != '-') {
-		if ($i == 1 || $i == 3) echo '<tr>';
+		if ($i == 1 || $i == 3) {
+			echo '<tr>';
+		}
 		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
 		echo '<td>'.$this->control->tpl['showprofid'.$i].'</td>';
-		if ($i == 2 || $i == 4) echo '</tr>';
+		if ($i == 2 || $i == 4) {
+			echo '</tr>';
+		}
 	} else {
-		if ($i == 1 || $i == 3) echo '<tr>';
+		if ($i == 1 || $i == 3) {
+			echo '<tr>';
+		}
 		echo '<td>&nbsp;</td>';
 		echo '<td>&nbsp;</td>';
-		if ($i == 2 || $i == 4) echo '</tr>';
+		if ($i == 2 || $i == 4) {
+			echo '</tr>';
+		}
 	}
 }
 ?>
@@ -202,14 +211,16 @@ for ($i = 1; $i <= 4; $i++) {
 	<td><?php echo $this->control->tpl['select_workforce']; echo $this->control->tpl['info_admin']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
 </tr>
 <?php }
 
-if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 </table>
 <br>

@@ -24,23 +24,45 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1);
-if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1);
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 
+
+/*
+ * View
+ */
+
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
 
 
 
@@ -105,6 +127,19 @@ $langs->trans("FridayMin"),
 $langs->trans("SaturdayMin")
 );
 
+
+$dec = ',';
+$thousand = ' ';
+if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+	$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+}
+if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+	$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+}
+if ($thousand == 'Space') {
+	$thousand = ' ';
+}
+
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
@@ -114,6 +149,7 @@ var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
 var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
 var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
+var currencyCache = <?php echo json_encode($langs->cache_currencies) ?>;
 
 // For JQuery date picker
 $(document).ready(function() {
@@ -142,7 +178,7 @@ jQuery(function($){
 		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
 		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
- 		yearSuffix: ''			/* TODO add specific to country */
+		 yearSuffix: ''			/* TODO add specific to country */
 	};
 	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
 });
@@ -248,7 +284,7 @@ function formatDate(date,format)
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
-		substr="";
+		var substr = '';
 		j=i;
 		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
 		{
@@ -331,32 +367,32 @@ function getDateFromFormat(val,format)
 		}
 
 		// alert('substr='+substr);
-        if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
-        if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
-        if (substr == "MM" ||substr == "M")
-        {
-            month=getIntegerInString(val,d,1,2);
-            if (month) d -= 2- month.length;
-        }
-        if (substr == "dd")
-        {
-            day=getIntegerInString(val,d,1,2);
-            if (day) d -= 2- day.length;
-        }
-        if (substr == "HH" ||substr == "hh" )
-        {
-            hour=getIntegerInString(val,d,1,2);
-            if (dhouray) d -= 2- hour.length;
-        }
-        if (substr == "mm"){
-            minute=getIntegerInString(val,d,1,2);
-            if (minute) d -= 2- minute.length;
-        }
-        if (substr == "ss")
-        {
-            seconde=getIntegerInString(val,d,1,2);
-            if (seconde) d -= 2- seconde.length;
-        }
+		if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
+		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+		if (substr == "MM" ||substr == "M")
+		{
+			month=getIntegerInString(val,d,1,2);
+			if (month) d -= 2- month.length;
+		}
+		if (substr == "dd")
+		{
+			day=getIntegerInString(val,d,1,2);
+			if (day) d -= 2- day.length;
+		}
+		if (substr == "HH" ||substr == "hh" )
+		{
+			hour=getIntegerInString(val,d,1,2);
+			if (dhouray) d -= 2- hour.length;
+		}
+		if (substr == "mm"){
+			minute=getIntegerInString(val,d,1,2);
+			if (minute) d -= 2- minute.length;
+		}
+		if (substr == "ss")
+		{
+			seconde=getIntegerInString(val,d,1,2);
+			if (seconde) d -= 2- seconde.length;
+		}
 
 		i+=substr.length;
 		d+=substr.length;
@@ -420,15 +456,15 @@ function getIntegerInString(str,i,minlength,maxlength)
  * ==================================================================
  */
 function urlencode(s) {
-	news=s;
-	news=news.replace(/\+/gi,'%2B');
-	news=news.replace(/&/gi,'%26');
+	var news = s;
+	news = news.replace(/\+/gi,'%2B');
+	news = news.replace(/&/gi,'%26');
 	return news;
 }
 
 /*
  * =================================================================
- * Purpose: Clean string to have it url encoded
+ * Purpose: Clean string to get a HTML coded string.
  * Input:   s
  * Author:  Laurent Destailleur
  * Licence: GPL
@@ -436,16 +472,16 @@ function urlencode(s) {
  */
 function htmlEntityDecodeJs(inp){
 	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
-	if (inp)
-	{
+	if (inp) {
 	  for(var r in replacements){
-	    inp = inp.replace(new RegExp(r,'g'),replacements[r]);
+		inp = inp.replace(new RegExp(r,'g'),replacements[r]);
 	  }
 	  return inp.replace(/&#(\d+);/g, function(match, dec) {
-	    return String.fromCharCode(dec);
+		return String.fromCharCode(dec);
 	  });
+	} else {
+		return '';
 	}
-	else { return ''; }
 }
 
 
@@ -458,8 +494,8 @@ function htmlEntityDecodeJs(inp){
  * ==================================================================
  */
  function ac_delay(funct,delay) {
- 	// delay before start of action
-  	setTimeout(funct,delay);
+	 // delay before start of action
+	  setTimeout(funct,delay);
 }
 
 
@@ -473,7 +509,9 @@ function htmlEntityDecodeJs(inp){
  * ==================================================================
  */
 function cleanSerialize(expr) {
-	if (typeof(expr) != 'string') return '';
+	if (typeof(expr) != 'string') {
+		return '';
+	}
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
@@ -527,20 +565,28 @@ function hideMessage(fieldId,message) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param	int		value       Value to set
  * @param   string  token       Token
+ * @retun   boolean
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		value: value
 	},
 	function() {	/* handler for success of post */
-		console.log("url request success forcereload="+forcereload);
-		$("#set_" + code).hide();
-		$("#del_" + code).show();
+		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
+		if (value == 0) {
+			$("#set_" + code).show();
+			$("#del_" + code).hide();
+		} else {
+			$("#set_" + code).hide();
+			$("#del_" + code).show();
+		}
 		$.each(input, function(type, data) {
 			// Enable another element
 			if (type == "disabled" && strict != 1) {
@@ -586,23 +632,48 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			var page_y = $(document).scrollTop();
+			url = url.replace(/page_y=\d+/g, '');
+			if (page_y > 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&page_y="+page_y;
+				} else {
+					url = url + "?page_y="+page_y;
+				}
+			}
+			url = url.replace(/&&+/, '&');
+			console.log("url ro redirect = "+url);
+
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+
+	return true;
 }
 
 /*
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
- * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
- * @param	int		entity		Entity
- * @param	int		strict		Strict
- * @param   int     forcereload Force reload
- * @param   int     userid      User id
- * @param   string  token       Token
+ * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
+ * @param	{string}	code		Code
+ * @param	{string}	intput		Array of complementary actions to do if success
+ * @param	{int}		entity		Entity
+ * @param	{int}		strict		Strict
+ * @param   {int}     forcereload Force reload
+ * @param   {int}     userid      User id
+ * @param   {string}  token       Token
+ * @return  boolean
  */
 function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
 	var saved_url = url; /* avoid undefined url */
@@ -613,7 +684,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		token: token
 	},
 	function() {
-		console.log("url request success forcereload="+forcereload);
+		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
@@ -657,9 +728,33 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			var page_y = $(document).scrollTop();
+			url = url.replace(/page_y=\d+/g, '');
+			if (page_y > 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&page_y="+page_y;
+				} else {
+					url = url + "?page_y="+page_y;
+				}
+			}
+			url = url.replace(/&&+/, '&');
+			console.log("url ro redirect = "+url);
+
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+
+	return true;
 }
 
 /*
@@ -677,6 +772,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	int		strict		Strict
  * @param   int     userid      User id
  * @param   string  token       Token
+ * @return  boolean
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid, token) {
 	var boxConfirm = box;
@@ -694,7 +790,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity, strict, 0, userid, token);
+								setConstant(url, code, input, entity, strict, 0, userid, token, 1);
 							} else if (action == "del") {
 								delConstant(url, code, input, entity, strict, 0, userid, token);
 							}
@@ -722,6 +818,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	if (boxConfirm.info) {
 		$("#noButton_" + code).button().hide();
 	}
+
+	return true;
 }
 
 
@@ -738,105 +836,105 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 		options: {
 			minLengthToAutocomplete: 0
 		},
-        _create: function() {
-        	var savMinLengthToAutocomplete = this.options.minLengthToAutocomplete;
-            var self = this,
-                select = this.element.hide(),
-                selected = select.children( ":selected" ),
-                value = selected.val() ? selected.text() : "";
-            var input = this.input = $( "<input>" )
-                .insertAfter( select )
-                .val( value )
-                .attr('id', 'inputautocomplete'+select.attr('id'))
-                .autocomplete({
-                    delay: 0,
-                    minLength: this.options.minLengthToAutocomplete,
-                    source: function( request, response ) {
-                        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-                        response( select.children( "option:enabled" ).map(function() {
-                            var text = $( this ).text();
-                            if ( this.value && ( !request.term || matcher.test(text) ) )
-                                return {
-                                    label: text.replace(
-                                        new RegExp(
-                                            "(?![^&;]+;)(?!<[^<>]*)(" +
-                                            $.ui.autocomplete.escapeRegex(request.term) +
-                                            ")(?![^<>]*>)(?![^&;]+;)", "gi"
-                                        ), "<strong>$1</strong>" ),
-                                    value: text,
-                                    option: this
-                                };
-                        }) );
-                    },
-                    select: function( event, ui ) {
-                        ui.item.option.selected = true;
-                        self._trigger( "selected", event, {
-                            item: ui.item.option
-                        });
-                    },
-                    change: function( event, ui ) {
-                        if ( !ui.item ) {
-                            var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $(this).val() ) + "$", "i" ),
-                                valid = false;
-                            select.children( "option" ).each(function() {
-                                if ( $( this ).text().match( matcher ) ) {
-                                    this.selected = valid = true;
-                                    return false;
-                                }
-                            });
-                            if ( !valid ) {
-                                // remove invalid value, as it didnt match anything
-                            	$( this ).val( "" );
-                                select.val( "" );
-                                input.data("ui-autocomplete").term = "";
-                                return false;
-                            }
-                        }
-                    }
-                })
-                .addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
+		_create: function() {
+			var savMinLengthToAutocomplete = this.options.minLengthToAutocomplete;
+			var self = this,
+				select = this.element.hide(),
+				selected = select.children( ":selected" ),
+				value = selected.val() ? selected.text() : "";
+			var input = this.input = $( "<input>" )
+				.insertAfter( select )
+				.val( value )
+				.attr('id', 'inputautocomplete'+select.attr('id'))
+				.autocomplete({
+					delay: 0,
+					minLength: this.options.minLengthToAutocomplete,
+					source: function( request, response ) {
+						var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+						response( select.children( "option:enabled" ).map(function() {
+							var text = $( this ).text();
+							if ( this.value && ( !request.term || matcher.test(text) ) )
+								return {
+									label: text.replace(
+										new RegExp(
+											"(?![^&;]+;)(?!<[^<>]*)(" +
+											$.ui.autocomplete.escapeRegex(request.term) +
+											")(?![^<>]*>)(?![^&;]+;)", "gi"
+										), "<strong>$1</strong>" ),
+									value: text,
+									option: this
+								};
+						}) );
+					},
+					select: function( event, ui ) {
+						ui.item.option.selected = true;
+						self._trigger( "selected", event, {
+							item: ui.item.option
+						});
+					},
+					change: function( event, ui ) {
+						if ( !ui.item ) {
+							var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $(this).val() ) + "$", "i" ),
+								valid = false;
+							select.children( "option" ).each(function() {
+								if ( $( this ).text().match( matcher ) ) {
+									this.selected = valid = true;
+									return false;
+								}
+							});
+							if ( !valid ) {
+								// remove invalid value, as it didnt match anything
+								$( this ).val( "" );
+								select.val( "" );
+								input.data("ui-autocomplete").term = "";
+								return false;
+							}
+						}
+					}
+				})
+				.addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
-            input.data("ui-autocomplete")._renderItem = function( ul, item ) {
-                return $("<li>")
-                    .data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
-                    .append( "<a>" + item.label + "</a>" )
-                    .appendTo( ul );
-            };
+			input.data("ui-autocomplete")._renderItem = function( ul, item ) {
+				return $("<li>")
+					.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+					.append( "<a>" + item.label + "</a>" )
+					.appendTo( ul );
+			};
 
-            this.button = $( "<button type=\'button\'>&nbsp;</button>" )
-                .attr( "tabIndex", -1 )
-                .attr( "title", "Show All Items" )
-                .insertAfter( input )
-                .button({
-                    icons: {
-                        primary: "ui-icon-triangle-1-s"
-                    },
-                    text: false
-                })
-                .removeClass( "ui-corner-all" )
-                .addClass( "ui-corner-right ui-button-icon" )
-                .click(function() {
-                    // close if already visible
-                    if ( input.autocomplete( "widget" ).is( ":visible" ) ) {
-                        input.autocomplete( "close" );
-                        return;
-                    }
+			this.button = $( "<button type=\'button\'>&nbsp;</button>" )
+				.attr( "tabIndex", -1 )
+				.attr( "title", "Show All Items" )
+				.insertAfter( input )
+				.button({
+					icons: {
+						primary: "ui-icon-triangle-1-s"
+					},
+					text: false
+				})
+				.removeClass( "ui-corner-all" )
+				.addClass( "ui-corner-right ui-button-icon" )
+				.click(function() {
+					// close if already visible
+					if ( input.autocomplete( "widget" ).is( ":visible" ) ) {
+						input.autocomplete( "close" );
+						return;
+					}
 
-                    // pass empty string as value to search for, displaying all results
-                    input.autocomplete({ minLength: 0 });
-                    input.autocomplete( "search", "" );
-                    input.autocomplete({ minLength: savMinLengthToAutocomplete });
-                    input.focus();
-                });
-        },
+					// pass empty string as value to search for, displaying all results
+					input.autocomplete({ minLength: 0 });
+					input.autocomplete( "search", "" );
+					input.autocomplete({ minLength: savMinLengthToAutocomplete });
+					input.focus();
+				});
+		},
 
-        destroy: function() {
-            this.input.remove();
-            this.button.remove();
-            this.element.show();
-            $.Widget.prototype.destroy.call( this );
-        }
-    });
+		destroy: function() {
+			this.input.remove();
+			this.button.remove();
+			this.element.show();
+			$.Widget.prototype.destroy.call( this );
+		}
+	});
 })( jQuery );
 
 
@@ -844,8 +942,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /**
  * Function to output a dialog box for copy/paste
  *
- * @param	string	text	Text to put into copy/paste area
- * @param	string	text2	Text to put under the copy/paste area
+ * @param	text	Text to put into copy/paste area
+ * @param	text2	Text to put under the copy/paste area
  */
 function copyToClipboard(text,text2)
 {
@@ -855,6 +953,7 @@ function copyToClipboard(text,text2)
 	$("#dialogforpopup").html(newElem);
 	$("#dialogforpopup").dialog();
 	$("#coordsforpopup").select();
+
 	return false;
 }
 
@@ -862,15 +961,15 @@ function copyToClipboard(text,text2)
 /**
  * Show a popup HTML page. Use the "window.open" function.
  *
- * @param	string	url		Url
- * @param	string	title  	Title of popup
- * @return	boolean			False
- * @see document_preview
+ * @param	url			Url
+ * @param	title  		Title of popup
+ * @return	boolean		False
+ * @see document_preview()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
-	tmp=url;
+	var tmp = url;
 	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
@@ -878,6 +977,7 @@ function newpopup(url, title) {
 	var top = (screen.height - h)/2;
 	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
 	fen=window.open(tmp,title,wfeatures);
+
 	return false;
 }
 
@@ -885,11 +985,11 @@ function newpopup(url, title) {
  * Function show document preview. It uses the "dialog" function.
  * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
- * @param 	string file 		Url
- * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
- * @param 	string title		Title of popup
+ * @param 	file 		Url
+ * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
+ * @param 	title		Title of popup
  * @return	void
- * @see newpopup
+ * @see newpopup()
  */
 function document_preview(file, type, title)
 {
@@ -941,6 +1041,7 @@ function document_preview(file, type, title)
 		img.src = file;
 
 	}
+
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
@@ -949,12 +1050,13 @@ function document_preview(file, type, title)
 		if (mode == 'image' && showOriginalSizeButton)
 		{
 			optionsbuttons = {
-			    "<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
 
 		$("#dialogforpopup").html(newElem);
+
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
@@ -975,16 +1077,16 @@ function document_preview(file, type, title)
 /*
  * Provide a function to get an URL GET parameter in javascript
  *
- * @param 	string	name				Name of parameter
- * @param	mixed	valueifnotfound		Value if not found
- * @return	string						Value
+ * @param 	name				Name of parameter
+ * @param	valueifnotfound		Value if not found
+ * @return	string				Value
  */
 function getParameterByName(name, valueifnotfound)
 {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
+	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 
@@ -1040,50 +1142,105 @@ function getParameterByName(name, valueifnotfound)
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
 
-
 /**
  * Function similar to PHP price()
  *
+ * Example use:
+ *   pricejs(13312.448, 'MT', 'EUR', 'fr_FR')
+ *   // (depending on conf for 'MT'): '13 312.45 €'
+ *
+ *   pricejs(343000.121, 'MT')
+ *   // assuming conf for 'MT' is 2 and $langs->defaultlang is 'en_US': '343,000.12'
+ *
  * @param  {number|string} amount    The amount to show
  * @param  {string} mode             'MT' or 'MU'
+ * @param  {string} currency_code    ISO code of currency (empty by default)
+ * @param  {string} force_locale     ISO code locale to use (if empty, will use Dolibarr's current locale code)
  * @return {string}                  The amount with digits
+ *
  */
-function pricejs(amount, mode) {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
+	var main_decimal_separator = <?php echo json_encode($dec) ?>;
+	var main_thousand_separator = <?php echo json_encode($thousand) ?>;
+	var locale_code = force_locale || <?php echo json_encode($langs->defaultlang) ?>;
+	var amountAsLocalizedString;
+	var useIntl = Boolean(Intl && Intl.NumberFormat);
+	var nDigits;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
 
-	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
-	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
-	return 'Bad value for parameter mode';
+	if (mode === 'MU') nDigits = main_rounding_unit;
+	else if (mode === 'MT') nDigits = main_rounding_tot;
+	else return 'Bad value for parameter mode';
+
+	if (useIntl) {
+		// simple version: let the browser decide how to format the number using the provided language / currency
+		// parameters
+		var formattingOptions = {
+			minimumFractionDigits: nDigits,
+			maximumFractionDigits: nDigits
+		};
+		if (currency_code) {
+			formattingOptions['style'] = 'currency';
+			formattingOptions['currency'] = currency_code;
+		}
+		return Intl.NumberFormat(locale_code.replace('_', '-'), formattingOptions).format(amount);
+	}
+
+	// No Intl -> attempt to format the number in a way similar to Dolibarr PHP's `price()` function
+	amountAsLocalizedString = amount.toFixed(nDigits).replace(
+		/((?!^)(?:\d{3})*)(?:\.(\d+))?$/,
+		(fullMatch, digitsByThree, decimals) =>
+			digitsByThree.replace(
+				/\d{3}/g,
+				(groupOfThree) => main_thousand_separator + groupOfThree
+			) + (decimals !== undefined ? main_decimal_separator + decimals : '')
+	).replace(/ /, ' ');
+	if (!currency_code) return amountAsLocalizedString;
+
+	// print with currency
+	var currency_symbol = currency_code;
+
+	// codes of languages / currencies where the symbol must be placed before the amount
+	var currencyBeforeAmountCodes = {
+		currency: ['AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD'],
+		language: ['nl_NL']
+	};
+
+	if (currencyCache[currency_code]
+		&& currencyCache[currency_code]['unicode']
+		&& currencyCache[currency_code]['unicode'].length) {
+		currency_symbol = currencyCache[currency_code]['unicode'].reduce(function (res, cur) {return res + cur}, '');
+	}
+
+	if (currencyBeforeAmountCodes.currency.indexOf(currency_code) >= 0
+		|| currencyBeforeAmountCodes.language.indexOf(locale_code)) {
+		// if we use a language or a currency where the symbol is placed before the amount
+		return currency_symbol + amountAsLocalizedString;
+	}
+
+	// by default: currency symbol after the amount
+	return amountAsLocalizedString + ' ' + currency_symbol;
 }
 
 /**
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean
- * @return {string}                  The amount in universal numeric format (Example: '99.99999')
+ * @return {number}                  The amount in universal numeric format (Example: '99.99999')
  * @todo Implement rounding parameter
  */
 function price2numjs(amount) {
 	if (amount == '') return '';
 
-	<?php
-	$dec = ',';
-	$thousand = ' ';
-	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
-	}
-	if ($thousand == 'Space') $thousand = ' ';
-	print "var dec='".dol_escape_js($dec)."'; var thousand='".dol_escape_js($thousand)."';\n"; // Set var in javascript
-	?>
+	var dec = <?php echo json_encode($dec) ?>;
+	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 
 	var amount = amount.toString();
 
@@ -1091,20 +1248,27 @@ function price2numjs(amount) {
 	var rounding = main_rounding_unit;
 	var pos = amount.indexOf(dec);
 	var decpart = '';
-	if (pos >= 0) decpart = amount.substr(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	if (pos >= 0) {
+		decpart = amount.substring(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	}
 	var nbdec = decpart.length;
-	if (nbdec > rounding) rounding = nbdec;
+	if (nbdec > rounding) {
+		rounding = nbdec;
+	}
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');             // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
+
 	//console.log("amount before="+amount+" rouding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
-	console.log("res="+res)
+
+	console.log("price2numjs text="+amount+" return="+res);
+
 	return res;
 }
 
@@ -1114,8 +1278,7 @@ if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUER
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
-	if (typeof $.jnotify == 'function')
-	{
+	if (typeof $.jnotify == 'function') {
 		$.jnotify.setup({
 			delay: 3000									// the default time to show each notification (in milliseconds)
 			, sticky: false								// determines if the message should be considered "sticky" (user must manually close notification)
@@ -1124,20 +1287,20 @@ $(document).ready(function() {
 			, fadeSpeed: 1000							// the speed to fade messages out (in milliseconds)
 			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
 			, classContainer: "jnotify-container"
-				, classNotification: "jnotify-notification"
-					, classBackground: "jnotify-background"
-						, classClose: "jnotify-close"
-							, classMessage: "jnotify-message"
-								, init: null                                // callback that occurs when the main jnotify container is created
-								, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
-								, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+			, classNotification: "jnotify-notification"
+			, classBackground: "jnotify-background"
+			, classClose: "jnotify-close"
+			, classMessage: "jnotify-message"
+			, init: null                                // callback that occurs when the main jnotify container is created
+			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
+			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
 	}
 });
 <?php } ?>
 
-// Force to hide menus when page is inside an iFrame
-$(document).ready(function() {
+jQuery(document).ready(function() {
+	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
@@ -1145,6 +1308,35 @@ $(document).ready(function() {
 		jQuery(".id-container").css('width', '100%');
 
 	}
+
+	// Code to set tooltip on search field
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not("maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
+
+
+/*
+ * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * see: https://github.com/select2/select2/issues/5993
+ * see: https://github.com/jquery/jquery/issues/4382
+ *
+ * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
+ */
+
+<?php
+if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
+$(document).on('select2:open', (e) => {
+	console.log("Execute the focus (click on combo or use space when on component");
+	const target = $(e.target);
+	if (target && target.length) {
+		let id = target[0].id || target[0].name;
+		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		document.querySelector('input[aria-controls*='+id+']').focus();
+	}
+});
+	<?php
+}
+?>
+
 
 // End of lib_head.js.php

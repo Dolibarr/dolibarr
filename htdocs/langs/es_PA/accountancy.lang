@@ -1,2 +1,2 @@
 # Dolibarr language file - Source file is en_US - accountancy
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s

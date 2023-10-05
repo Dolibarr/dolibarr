@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Ресурси
+MenuResourceAdd=Новий ресурс
+DeleteResource=Видалити ресурс
+ConfirmDeleteResourceElement=Підтвердьте видалення ресурсу для цього елемента
+NoResourceInDatabase=Немає ресурсу в базі даних.
+NoResourceLinked=Немає посилання на ресурс
+ActionsOnResource=Події на цьому ресурсі
+ResourcePageIndex=Список ресурсів
+ResourceSingular=Ресурс
+ResourceCard=Картка ресурсів
+AddResource=Створіть ресурс
+ResourceFormLabel_ref=Назва ресурсу
+ResourceType=Тип ресурсу
+ResourceFormLabel_description=Опис ресурсу
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Ресурси, пов’язані з елементом
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Показати ресурс
 
-ShowResource=Show resource
+ResourceElementPage=Ресурси елементів
+ResourceCreatedWithSuccess=Ресурс успішно створено
+RessourceLineSuccessfullyDeleted=Рядок ресурсу успішно видалено
+RessourceLineSuccessfullyUpdated=Рядок ресурсів успішно оновлено
+ResourceLinkedWithSuccess=Ресурс, пов'язаний з успіхом
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=Підтвердьте видалення цього ресурсу
+RessourceSuccessfullyDeleted=Ресурс успішно видалено
+DictionaryResourceType=Тип ресурсів
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=Виберіть ресурс
 
-SelectResource=Select resource
+IdResource=Ідентифікатор ресурсу
+AssetNumber=Серійний номер
+ResourceTypeCode=Код типу ресурсу
+ImportDataset_resource_1=Ресурси
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+ErrorResourcesAlreadyInUse=Деякі ресурси використовуються
+ErrorResourceUseInEvent=%s використовується в події %s

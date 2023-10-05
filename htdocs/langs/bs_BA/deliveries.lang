@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostava
 DeliveryRef=Ref Delivery
-DeliveryCard=Receipt card
+DeliveryCard=Stock receipt
 DeliveryOrder=Delivery receipt
 DeliveryDate=Datum dostave
 CreateDeliveryOrder=Generate delivery receipt
@@ -27,5 +27,7 @@ Recipient=Primalac
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
 ShowReceiving=Show delivery receipt
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

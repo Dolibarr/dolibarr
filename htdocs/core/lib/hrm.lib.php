@@ -52,6 +52,8 @@ function establishment_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment', 'remove');
 
 	return $head;
@@ -64,7 +66,7 @@ function establishment_prepare_head($object)
  */
 function hrm_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$langs->load('hrm');
 

@@ -50,6 +50,10 @@ then
         then
         	aaupper="SA"
         fi        
+        if [ $bb = "IQ" ]
+        then
+        	aaupper="SA"
+        fi        
 
     	bblower=`echo $dirshort | nawk -F"_" '{ print tolower($2) }'`
 
@@ -57,23 +61,29 @@ then
     	if [ "$aa" != "$bblower" -a "$dirshort" != "en_US" ]
     	then
     	    reflang="htdocs/langs/"$aa"_"$aaupper
-    	    if [ -d $reflang -a $aa"_"$bb != $aa"_"$aaupper ]
+    	    echo $reflang" "$aa"_"$bb != $aa"_"$aaupper
+    	    
+    	    # If $reflang is a main language to use to sanitize the alternative file 
+    	    if [ -d $reflang ]
     	    then
-		    	echo "***** Search original into "$reflang
-    			echo $dirshort is an alternative language of $reflang
-    			echo ./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
-    			./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
-    			for fic in `ls htdocs/langs/${aa}_${bb}/*.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done 
-    			for fic in `ls htdocs/langs/${aa}_${bb}/*.lang`; 
-    			do f=`cat $fic | wc -l`; 
-    			    #echo $f lines into file $fic; 
-    			    if [ $f = 1 ] 
-    			    then 
-    			        echo Only one line remainging into file $fic, we delete it;
-    			        rm $fic 
-    			    fi;
-    			done
-    		fi
+    	    	if [ $aa"_"$bb != $aa"_"$aaupper ]
+    	    	then
+			    	echo "***** Search original into "$reflang
+	    			echo $dirshort is an alternative language of $reflang
+	    			echo ./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
+	    			./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
+	    			for fic in `ls htdocs/langs/${aa}_${bb}/*.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done 
+	    			for fic in `ls htdocs/langs/${aa}_${bb}/*.lang`; 
+	    			do f=`cat $fic | wc -l`; 
+	    			    #echo $f lines into file $fic; 
+	    			    if [ $f = 1 ] 
+	    			    then 
+	    			        echo Only one line remainging into file $fic, we delete it;
+	    			        rm $fic 
+	    			    fi;
+	    			done
+	    		fi
+	    	fi
     	fi
     done;
 fi

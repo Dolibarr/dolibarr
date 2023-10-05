@@ -1,6 +1,6 @@
 {
   "name": "dolibarr",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "An app for connecting Dolibarr to the Zapier platform.",
   "repository": "Dolibarr/dolibarr",
   "homepage": "https://www.dolibarr.org/",
@@ -11,11 +11,11 @@
     "test": "mocha --recursive"
   },
   "engines": {
-    "node": "8.10.0",
+    "node": "14.0.0",
     "npm": ">=5.6.0"
   },
   "dependencies": {
-    "zapier-platform-core": "10.1.2"
+    "zapier-platform-core": "11.3.1"
   },
   "devDependencies": {
     "mocha": "^5.2.0",

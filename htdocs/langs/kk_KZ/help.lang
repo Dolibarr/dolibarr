@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Форум/Викиге қолдау
+EMailSupport=Электрондық поштаны қолдау
+RemoteControlSupport=Нақты уақыттағы / қашықтағы онлайн қолдау
+OtherSupport=Басқа қолдау
+ToSeeListOfAvailableRessources=Байланыс/қол жетімді ресурстарды көру үшін:
+HelpCenter=Анықтама орталығы
+DolibarrHelpCenter=Dolibarr анықтама және қолдау орталығы
+ToGoBackToDolibarr=Әйтпесе, <a href="%s"> Dolibarr </a> пайдалануды жалғастыру үшін мына жерді басыңыз.
+TypeOfSupport=Қолдау түрі
+TypeSupportCommunauty=Қауымдастық (тегін)
+TypeSupportCommercial=Коммерциялық
+TypeOfHelp=Түрі
+NeedHelpCenter=Need support?
+Efficiency=Тиімділік
+TypeHelpOnly=Тек көмек
+TypeHelpDev=Көмек+Даму
+TypeHelpDevForm=Көмек+Дамыту+Оқыту
+BackToHelpCenter=Әйтпесе, <a href="%s"> Анықтама орталығының </a> басты бетіне қайтыңыз.
+LinkToGoldMember=Сіз өз тіліңізге Dolibarr таңдаған жаттықтырушылардың біріне қоңырау шала аласыз (%s), олардың виджетін басу арқылы (күй мен максималды баға автоматты түрде жаңартылады):
+PossibleLanguages=Қолдау көрсетілетін тілдер
+SubscribeToFoundation=Dolibarr жобасына көмектесіңіз, қорға жазылыңыз
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

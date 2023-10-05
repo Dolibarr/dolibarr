@@ -1,0 +1,177 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Организация мероприятий
+EventOrganizationDescription = Организация мероприятий через модуль Проекты
+EventOrganizationDescriptionLong= Управляйте организацией мероприятия (конференции, участники, спикеры, с публичными предложениями, страницами голосования или регистрации)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Организованные мероприятия
+EventOrganizationConferenceOrBoothMenuLeft = Конференция или выставка
+
+PaymentEvent=Оплата мероприятия
+
+#
+# Admin page
+#
+NewRegistration=Регистрация
+EventOrganizationSetup=Настройка организации мероприятий
+EventOrganization=Организация мероприятий
+Settings=Настройки
+EventOrganizationSetupPage = Страница настройки организации мероприятий
+EVENTORGANIZATION_TASK_LABEL = Ярлык задач, которые создаются автоматически при утверждении проекта.
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Отправить напоминание о мероприятии спикерам <br> Отправить напоминание о мероприятии организаторам стенда <br> Отправить напоминание о мероприятии участникам
+EVENTORGANIZATION_TASK_LABELTooltip2=Оставьте пустым, если вам не нужно создавать задачи автоматически.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категория для добавления к третьим сторонам автоматически создается, когда кто-то предлагает конференцию
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категория для добавления к третьим сторонам автоматически создается, когда они предлагают выставку
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон электронного письма для отправки после получения предложения о конференции.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон электронного письма для отправки после получения предложения о выставке.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Шаблон электронного письма для отправки после оплаты регистрации на стенде.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Шаблон электронного письма для отправки после оплаты регистрации на мероприятие.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон электронного письма для отправки писем из массовой акции «Отправить электронные письма» спикерам
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон электронного письма для использования при отправке электронных писем из массовой акции «Отправить электронные письма» в списке участников
+EVENTORGANIZATION_FILTERATTENDEES_CAT = В форме создания/добавления участника ограничивает список третьих лиц третьими лицами в категории
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = В форме создания/добавления участника ограничивает список третьих лиц третьими лицами с характером
+
+#
+# Object
+#
+OrganizedEvent=Organized event
+EventOrganizationConfOrBooth= Конференция или выставка
+EventOrganizationConfOrBoothes=Conferences or Boothes
+ManageOrganizeEvent = Управляйте организацией мероприятия
+ConferenceOrBooth = Конференция или выставка
+ConferenceOrBoothTab = Конференция или выставка
+AmountPaid = Оплаченная сумма
+DateOfRegistration = Дата регистрации
+ConferenceOrBoothAttendee = Участник конференции или выставки
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Ваш запрос на конференцию был получен
+YourOrganizationEventBoothRequestWasReceived = Ваш запрос на выставку был получен
+EventOrganizationEmailAskConf = Запрос на конференцию
+EventOrganizationEmailAskBooth = Запрос на выставку
+EventOrganizationEmailBoothPayment = Оплата вашей выставки
+EventOrganizationEmailRegistrationPayment = Регистрация на мероприятие
+EventOrganizationMassEmailAttendees = Общение с участниками
+EventOrganizationMassEmailSpeakers = Общение со спикерами
+ToSpeakers=Спикерам
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Разрешить людям предлагать конференции
+AllowUnknownPeopleSuggestConfHelp=Разрешить неизвестным людям предлагать конференцию, которую они хотят провести
+AllowUnknownPeopleSuggestBooth=Разрешить людям подавать заявки на выставку
+AllowUnknownPeopleSuggestBoothHelp=Разрешить неизвестным людям подавать заявки на выставку
+PriceOfRegistration=Стоимость регистрации
+PriceOfRegistrationHelp=Стоимость регистрации или участия в мероприятии
+PriceOfBooth=Стоимость подписки на выставку
+PriceOfBoothHelp=Стоимость подписки на выставку
+EventOrganizationICSLink=Link ICS для конференций
+ConferenceOrBoothInformation=Информация о конференции или выставке
+Attendees=Участники
+ListOfAttendeesOfEvent=Список участников событийного проекта
+DownloadICSLink = Ссылка для скачивания ICS
+EVENTORGANIZATION_SECUREKEY = Seed для защиты ключа для страницы публичной регистрации, чтобы предложить конференцию
+SERVICE_BOOTH_LOCATION = Услуга, используемая для строки счета-фактуры о местонахождении выставки
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Служба, используемая для строки счета о подписке участника на мероприятие
+NbVotes=Количество голосов
+#
+# Status
+#
+EvntOrgDraft = Проект
+EvntOrgSuggested = Предложено
+EvntOrgConfirmed = Подтверждено
+EvntOrgNotQualified = Неквалифицировано
+EvntOrgDone = Завершено
+EvntOrgCancelled = Отменено
+#
+# Public page
+#
+SuggestForm = Страница предложений
+SuggestOrVoteForConfOrBooth = Страница для предложения или голосования
+EvntOrgRegistrationHelpMessage = Здесь вы можете проголосовать за конференцию или предложить новую для мероприятия. Вы также можете подать заявку на получение выставки во время мероприятия.
+EvntOrgRegistrationConfHelpMessage = Здесь вы можете предложить новую конференцию для анимации во время мероприятия.
+EvntOrgRegistrationBoothHelpMessage = Здесь вы можете подать заявку на получение ваыставки во время мероприятия.
+ListOfSuggestedConferences = Список предлагаемых конференций
+ListOfSuggestedBooths=Предлагаемые стенды
+ListOfConferencesOrBooths=Conferences or booths of event project
+SuggestConference = Предложить новую конференцию
+SuggestBooth = Предложить выставку
+ViewAndVote = Просмотр и голосование за предложенные мероприятия
+PublicAttendeeSubscriptionGlobalPage = Публичная ссылка для регистрации на мероприятие
+PublicAttendeeSubscriptionPage = Публичная ссылка только для регистрации на это мероприятие
+MissingOrBadSecureKey = Электронный ключ недействителен или отсутствует
+EvntOrgWelcomeMessage = Эта форма позволяет вам зарегистрироваться в качестве нового участника мероприятия
+EvntOrgDuration = Конференция начинается %s и заканчивается %s.
+ConferenceAttendeeFee = Плата за участие в конференции: '%s', происходящая от %s до %s.
+BoothLocationFee = Место расположения выставки для события : '%s' происходящего с %s до %s
+EventType = Тип события
+LabelOfBooth=Этикетка выставки
+LabelOfconference=Этикетка конференции
+ConferenceIsNotConfirmed=Регистрация недоступна, конференция еще не подтверждена
+DateMustBeBeforeThan=%s должно быть до %s
+DateMustBeAfterThan=%s должно быть после %s
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
+NewSubscription=Регистрация
+OrganizationEventConfRequestWasReceived=Ваше предложение о конференции получено
+OrganizationEventBoothRequestWasReceived=Ваш запрос на выставку получен
+OrganizationEventPaymentOfBoothWasReceived=Ваш платеж за вашу выставку был зарегистрирован
+OrganizationEventPaymentOfRegistrationWasReceived=Ваш платеж за регистрацию на мероприятие был зарегистрирован
+OrganizationEventBulkMailToAttendees=Напоминание о вашем участии в мероприятии в качестве участника
+OrganizationEventBulkMailToSpeakers=Напоминание о вашем участии в мероприятии в качестве спикера.
+OrganizationEventLinkToThirdParty=Ссылка на третью сторону (покупателя, поставщика или партнера)
+OrganizationEvenLabelName=Public name of the conference or booth
+
+NewSuggestionOfBooth=Заявка на выставку
+NewSuggestionOfConference=Application to hold a conference
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Добро пожаловать на страницу предложений конференции или стенда.
+EvntOrgRegistrationConfWelcomeMessage = Добро пожаловать на страницу предложений по проведению конференции.
+EvntOrgRegistrationBoothWelcomeMessage = Добро пожаловать на страницу стенда предложений.
+EvntOrgVoteHelpMessage = Здесь вы можете просмотреть и проголосовать за предлагаемые мероприятия для проекта.
+VoteOk = Ваш голос был принят.
+AlreadyVoted = Вы уже проголосовали за это событие.
+VoteError = Произошла ошибка во время голосования, попробуйте еще раз.
+
+SubscriptionOk=Ваша регистрация зарегистрирована
+ConfAttendeeSubscriptionConfirmation = Подтверждение подписки на мероприятие
+Attendee = Участник
+PaymentConferenceAttendee = Оплата участникам конференции
+PaymentBoothLocation = Оплата места стенда
+DeleteConferenceOrBoothAttendee=Удалить участника
+RegistrationAndPaymentWereAlreadyRecorder=На электронную почту уже были зарегистрированы регистрация и оплата <b>%s</b>
+EmailAttendee=Электронная почта участника
+EmailCompany=Company email
+EmailCompanyForInvoice=Электронная почта компании (для счета-фактуры, если она отличается от электронной почты участника)
+ErrorSeveralCompaniesWithEmailContactUs=Было найдено несколько компаний с этим адресом электронной почты, поэтому мы не можем автоматически подтвердить вашу регистрацию. Свяжитесь с нами по адресу %s для ручной проверки
+ErrorSeveralCompaniesWithNameContactUs=Было найдено несколько компаний с таким названием, поэтому мы не можем автоматически подтвердить вашу регистрацию. Свяжитесь с нами по адресу %s для ручной проверки
+NoPublicActionsAllowedForThisEvent=В связи с этим мероприятием не проводятся публичные акции.
+MaxNbOfAttendees=Максимальное количество участников
+DateStartEvent=Event start date
+DateEndEvent=Event end date

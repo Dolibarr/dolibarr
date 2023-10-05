@@ -18,15 +18,18 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($blocname))
-{
+if (empty($blocname)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 $hide = true; // Hide by default
-if (isset($parameters['showblocbydefault'])) $hide = (empty($parameters['showblocbydefault']) ? true : false);
-if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+if (isset($parameters['showblocbydefault'])) {
+	$hide = (empty($parameters['showblocbydefault']) ? true : false);
+}
+if (isset($object->extraparams[$blocname]['showhide'])) {
+	$hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+}
 
 ?>
 <!-- BEGIN PHP TEMPLATE bloc_showhide.tpl.php -->
@@ -49,9 +52,9 @@ print '		$("#hide-'.$blocname.'").show();'."\n";
 print '});'."\n";
 
 print 'function setShowHide(status) {'."\n";
-print '		var id			= '.$object->id.";\n";
-print "		var element		= '".$object->element."';\n";
-print "		var htmlelement	= '".$blocname."';\n";
+print '		var id			= '.((int) $object->id).";\n";
+print "		var element		= '".dol_escape_js($object->element)."';\n";
+print "		var htmlelement	= '".dol_escape_js($blocname)."';\n";
 print '		var type		= "showhide";'."\n";
 print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
 print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";

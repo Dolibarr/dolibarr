@@ -17,17 +17,26 @@
  */
 
 /**
- *       \file       htdocs/expensereport/ajax/ajaxprojet.php
+ *       \file       htdocs/expensereport/ajax/ajaxik.php
  *       \ingroup    expensereport
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 $res = 0;
 require '../../main.inc.php';
@@ -37,36 +46,59 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'trips'));
 
+$fk_expense = GETPOST('fk_expense', 'int');
+$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
+$vatrate = GETPOST('vatrate', 'int');
+$qty = GETPOST('qty', 'int');
+
+// Security check
+$result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
+
+
 /*
  * View
  */
 
 top_httphead();
+$rep = new stdClass();
+$rep->response_status = 0;
+$rep->data = null;
+$rep->error = '';//@todo deprecated use error_message instead
+$rep->errorMessage = '';
 
 
-dol_syslog(join(',', $_POST));
+if (empty($fk_expense) || $fk_expense < 0) {
+	$rep->errorMessage =   $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense');
+} elseif (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) {
+	$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat');
 
-$fk_expense = GETPOST('fk_expense');
-$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
-
-
-if (empty($fk_expense) || $fk_expense < 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense')));
-elseif (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat')));
-else {
+	$rep->response_status = 'error';
+} else {
 	// @see ndfp.class.php:3576 (method: compute_total_km)
 	$expense = new ExpenseReport($db);
-	if ($expense->fetch($fk_expense) <= 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_expense' => $fk_expense));
-	else {
+	if ($expense->fetch($fk_expense) <= 0) {
+		$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorRecordNotFound');
+		$rep->response_status = 'error';
+	} else {
 		$userauthor = new User($db);
-		if ($userauthor->fetch($expense->fk_user_author) <= 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_user_author' => $expense->fk_user_author));
-		else {
-			$range = ExpenseReportIk::getRangeByUser($userauthor, $fk_c_exp_tax_cat);
-
-			if (empty($range)) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'range' => $range));
-			else {
-				$ikoffset = price($range->ikoffset, 0, $langs, 1, -1, -1, $conf->currency);
-				echo json_encode(array('up' => $range->coef, 'ikoffset' => $range->ikoffset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $offset), 'comment' => 'offset should be apply on addline or updateline'));
+		if ($userauthor->fetch($expense->fk_user_author) <= 0) {
+			$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorRecordNotFound');
+			$rep->response_status = 'error';
+		} else {
+			$expense = new ExpenseReport($db);
+			$result = $expense->fetch($fk_expense);
+			if ($result) {
+				$result = $expense->computeTotalKm($fk_c_exp_tax_cat, $qty, $vatrate);
+				if ($result < 0) {
+					$rep->error = $result;
+					$rep->errorMessage = $langs->trans('errorComputeTtcOnMileageExpense');
+					$rep->response_status = 'error';
+				} else {
+					$rep->data = $result;
+					$rep->response_status = 'success';
+				}
 			}
 		}
 	}
 }
+echo json_encode($rep);

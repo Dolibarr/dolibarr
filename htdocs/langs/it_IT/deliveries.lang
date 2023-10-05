@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Consegna
 DeliveryRef=Rif. consegna
-DeliveryCard=Scheda ricevuta di consegna
+DeliveryCard=Stock receipt
 DeliveryOrder=Ordine di consegna
 DeliveryDate=Data di consegna
 CreateDeliveryOrder=Genera la ricevuta di consegna
@@ -30,3 +30,4 @@ NonShippable=Non disponibile per spedizione
 ShowShippableStatus=Mostra lo stato di spedizione
 ShowReceiving=Mostra ricevuta di consegna
 NonExistentOrder=Ordine inesistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantità di stock già allocate su righe precedenti

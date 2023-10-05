@@ -56,7 +56,7 @@ class box_bookmarks extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->bookmark->lire);
+		$this->hidden = empty($user->rights->bookmark->lire);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class box_bookmarks extends ModeleBoxes
 			'text' => $langs->trans("BoxMyLastBookmarks", $max),
 			'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
 		);
-		if ($user->rights->bookmark->creer) {
+		if ($user->hasRight("bookmark", "creer")) {
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		} else {
@@ -84,18 +84,16 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}
 
-		if ($user->rights->bookmark->lire)
-		{
+		if ($user->rights->bookmark->lire) {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
-			$sql .= " WHERE fk_user = ".$user->id;
+			$sql .= " WHERE fk_user = ".((int) $user->id);
 			$sql .= " AND b.entity = ".$conf->entity;
 			$sql .= $this->db->order("position", "ASC");
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
@@ -123,7 +121,9 @@ class box_bookmarks extends ModeleBoxes
 
 				if ($num == 0) {
 					$mytxt = $langs->trans("NoRecordedBookmarks");
-					if ($user->rights->bookmark->creer) $mytxt .= ' '.$langs->trans("ClickToAdd");
+					if ($user->hasRight("bookmark", "creer")) {
+						$mytxt .= ' '.$langs->trans("ClickToAdd");
+					}
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center" colspan="2"',
 						'tooltip' => $mytxt,

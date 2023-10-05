@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Маржа
+Margins=Шеттер
+TotalMargin=Жалпы маржа
+MarginOnProducts=Маржа / өнімдер
+MarginOnServices=Маржа / қызметтер
+MarginRate=Маржа мөлшерлемесі
+MarkRate=Белгілеу жылдамдығы
+DisplayMarginRates=Маржа мөлшерлемелерін көрсету
+DisplayMarkRates=Белгілеу жылдамдығын көрсету
+InputPrice=Кіріс бағасы
+margin=Пайда маржасын басқару
+margesSetup=Пайда маржасын басқаруды реттеу
+MarginDetails=Маржа мәліметтері
+ProductMargins=Өнім шегі
+CustomerMargins=Клиенттердің шегі
+SalesRepresentativeMargins=Сатылым өкілдерінің шегі
+ContactOfInvoice=Шот -фактурамен байланыс
+UserMargins=Пайдаланушылардың шегі
+ProductService=Өнім немесе қызмет
+AllProducts=Барлық өнімдер мен қызметтер
+ChooseProduct/Service=Өнімді немесе қызметті таңдаңыз
+ForceBuyingPriceIfNull=Анықталмаған жағдайда сатып алу/өзіндік құн сату бағасына мәжбүрлейді
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=Жаһандық жеңілдіктер үшін маржа әдісі
+UseDiscountAsProduct=Өнім ретінде
+UseDiscountAsService=Қызмет ретінде
+UseDiscountOnTotal=Жиынтық бойынша
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Жаһандық жеңілдік өнім, қызмет немесе тек маржа есептеу үшін қосалқы жиын ретінде қарастырылатынын анықтайды.
+MARGIN_TYPE=Маржа есептеу үшін әдепкі бойынша ұсынылған сатып алу/өзіндік құн
+MargeType1=Ең жақсы сатушы бағасы бойынша маржа
+MargeType2=Орташа бағаның маржасы (WAP)
+MargeType3=Бағаның маржасы
+MarginTypeDesc=* Ең жақсы сатып алу бағасы бойынша маржа = Сату бағасы - Өнім картасында <br> анықталған ең жақсы сатушы бағасы * Орташа баға бойынша маржа (WAP) = Сату бағасы - Өнімнің орташа бағасы (WAP) немесе егер WAP әлі анықталмаған болса, ең жақсы сатушы бағасы <br> * Маржа Шығын бағасы бойынша = Сату бағасы - егер өнімнің бағасы анықталмаса, өнім картасында немесе WAP -те анықталған өзіндік құн немесе WAP әлі анықталмаған жағдайда ең жақсы сатушы бағасы.
+CostPrice=Шығын бағасы
+UnitCharges=Бірлік төлемдері
+Charges=Төлемдер
+AgentContactType=Коммерциялық агентпен байланыс түрі
+AgentContactTypeDetails=Байланыс/мекенжай бойынша маржа есебі үшін қандай байланыс түрі (шот -фактураларда көрсетілген) қолданылатынын анықтаңыз. Контакт бойынша статистиканы оқу сенімді емес екенін ескеріңіз, себебі көп жағдайда байланыс шот -фактураларда анықталмауы мүмкін.
+rateMustBeNumeric=Бағасы сандық мән болуы керек
+markRateShouldBeLesserThan100=Бағалау коэффициенті 100 -ден төмен болуы керек
+ShowMarginInfos=Маржа ақпаратын көрсету
+CheckMargins=Жиектер туралы мәліметтер
+MarginPerSaleRepresentativeWarning=Бір пайдаланушыға есептелген маржа туралы есеп әрбір сату өкілінің маржасын есептеу үшін үшінші тұлғалар мен сату өкілдері арасындағы байланысты қолданады. Кейбір үшінші тараптардың арнайы сату өкілі болмауы мүмкін, ал кейбір үшінші тараптармен байланыстырылуы мүмкін, кейбір сомалар бұл есепке енгізілмеуі мүмкін (егер сату өкілі болмаса) және кейбіреулер әр түрлі жолдарда пайда болуы мүмкін (әр сату өкілі үшін) .

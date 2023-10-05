@@ -22,10 +22,15 @@
  *		\brief      Page to list donators
  */
 
-if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
 
 // C'est un wrapper, donc header vierge
 /**
@@ -47,11 +52,14 @@ function llxFooterVierge()
 	print '</body></html>';
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Security check
-if (empty($conf->don->enabled)) accessforbidden('', 0, 0, 1);
+if (!isModEnabled('don')) {
+	httponly_accessforbidden('Module Donation not enabled');
+}
 
 
 $langs->load("donations");
@@ -68,11 +76,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 $sql .= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+	if ($num) {
 		print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
 		print '<tr>';
@@ -81,13 +87,11 @@ if ($resql)
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print "</tr>\n";
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			if ($objp->public)
-			{
+			if ($objp->public) {
 				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".dol_escape_htmltag($objp->societe)."</td>\n";
 			} else {
 				print "<td>".$langs->trans("Anonymous")."</td>\n";

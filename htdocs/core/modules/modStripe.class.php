@@ -21,7 +21,7 @@
  * 	\brief      Add integration with Stripe online payment system.
  *  \file       htdocs/core/modules/modStripe.class.php
  *  \ingroup    stripe
- *  \brief      Description and activation file for module Stripe
+ *  \brief      Description and activation file for the module Stripe
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -72,7 +72,7 @@ class modStripe extends DolibarrModules
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(5, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("stripe");
 
@@ -93,31 +93,32 @@ class modStripe extends DolibarrModules
 		// Main menu entries
 		$r = 0;
 		/* $this->menu[$r]=array(
-            'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-	        'mainmenu'=>'billing',
-        	'leftmenu'=>'customers_bills_payment_stripe',
-        	'type'=>'left',			                // This is a Left menu entry
-	        'titre'=>'StripeImportPayment',
-	        'url'=>'/stripe/importpayments.php',
-	        'langs'=>'stripe',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-	        'position'=>500,
-	        'enabled'=>'$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-	        'perms'=>'$user->rights->banque->modifier',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-	        'target'=>'',
-	        'user'=>2
-        );				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;*/
+			'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'mainmenu'=>'billing',
+			'leftmenu'=>'customers_bills_payment_stripe',
+			'type'=>'left',			                // This is a Left menu entry
+			'titre'=>'StripeImportPayment',
+			'url'=>'/stripe/importpayments.php',
+			'langs'=>'stripe',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>500,
+			'enabled'=>'$conf->stripe->enabled && isModEnabled("banque") && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->rights->banque->modifier',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2
+		);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r++;*/
 
 		$this->menu[$r] = array(
 			'fk_menu'=>'fk_mainmenu=bank',
 			'type'=>'left',
 			'titre'=>'StripeAccount',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'bank',
 			'leftmenu'=>'stripe',
 			'url' => '',
 			'langs' => 'stripe',
 			'position' => 100,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque")',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -131,7 +132,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/charge.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 1',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -145,7 +146,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/transaction.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -159,7 +160,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/payout.php',
 			'langs' => 'stripe',
 			'position' => 103,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'enabled' => 'isModEnabled("stripe") && isModenabled("banque")',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0

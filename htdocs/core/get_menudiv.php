@@ -27,24 +27,50 @@
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', 1);
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', 1);
+}
 
-if (!defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND', 1);
-if (!defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY', 1);
-if (!defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT', 1);
-if (!defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE', 1);
-if (!defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR', 1);
-if (!defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER', 1);
-if (!defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2', 1);
+if (!defined('DISABLE_JQUERY_TABLEDND')) {
+	define('DISABLE_JQUERY_TABLEDND', 1);
+}
+if (!defined('DISABLE_JQUERY_JNOTIFY')) {
+	define('DISABLE_JQUERY_JNOTIFY', 1);
+}
+if (!defined('DISABLE_JQUERY_FLOT')) {
+	define('DISABLE_JQUERY_FLOT', 1);
+}
+if (!defined('DISABLE_JQUERY_JEDITABLE')) {
+	define('DISABLE_JQUERY_JEDITABLE', 1);
+}
+if (!defined('DISABLE_CKEDITOR')) {
+	define('DISABLE_CKEDITOR', 1);
+}
+if (!defined('DISABLE_DATE_PICKER')) {
+	define('DISABLE_DATE_PICKER', 1);
+}
+if (!defined('DISABLE_SELECT2')) {
+	define('DISABLE_SELECT2', 1);
+}
 
 require_once '../main.inc.php';
 
-if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
+if (GETPOST('lang', 'aZ09')) {
+	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
+}
 
 $langs->load("main");
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
@@ -55,10 +81,22 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * View
  */
 
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
+	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public, must-revalidate');
+	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	// HTTP/1.0
+	header('Pragma: token=public');
+} else {
+	// HTTP/1.0
+	header('Cache-Control: no-cache');
+}
+
 $title = $langs->trans("Menu");
 
 // URL http://mydolibarr/core/get_menudiv.php?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Menu -->'."\n";
+$head = '<!-- Menu -->'."\n";	// This is used by DoliDroid to know page is a menu page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -83,15 +121,24 @@ print '
         display: none;
     }
 
-    a.alilevel0 {
-        background-image: url(\''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/next.png\') !important;
-        background-repeat: no-repeat !important;
-        background-position-x: 10px;
+	ul li.lilevel2 {
+		padding-left: 42px;
+	}
+
+    a.alilevel0, span.spanlilevel0 {
+        background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
+        background-repeat: no-repeat !important;';
+if ($langs->trans("DIRECTION") == 'rtl') {
+	print 'background-position: right;';
+} else {
+	print 'background-position-x: 10px;';
+}
+	print '
         background-position-y: 16px;
         padding: 1em 15px 1em 40px;
+		display: block;
     }
     li.lilevel0 font.vsmenudisabled {
-        /* background-image: url(/dolibarr_dev/htdocs/theme/eldy/img/next.png) !important; */
         background-repeat: no-repeat !important;
         background-position-x: 10px;
         background-position-y: 16px;
@@ -114,6 +161,18 @@ print '
     li.lilevel1 a {
         padding-bottom: 5px;
     }
+	li.lilevel1 > a, li.lilevel1 > i {
+        /* background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/puce.png\') !important; */
+        background-repeat: no-repeat !important;';
+if ($langs->trans("DIRECTION") == 'rtl') {
+	print 'background-position: right;';
+} else {
+	print 'background-position-x: 10px;';
+}
+	print 'background-position-y: 1px;';
+	print 'padding-left: 20px;';
+	print '
+	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;
         cursor: pointer;
@@ -152,9 +211,12 @@ print '
         white-space: nowrap;
         display: block;
     }
+	.vsmenudisabled .fa, .vsmenudisabled .fas, .vsmenudisabled .far {
+	    color: #aaa !important;
+	}
 </style>
 
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
     $("body ul").click(function(){
         console.log("We click on body ul");
@@ -163,7 +225,7 @@ $(document).ready(function(){
 
         $(this).find("li ul").slideToggle(200);
 
-        target = $(this);
+        var target = $(this);
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);
@@ -174,8 +236,7 @@ $(document).ready(function(){
 ';
 
 
-if (empty($user->socid))	// If internal user or not defined
-{
+if (empty($user->socid)) {	// If internal user or not defined
 	$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
 } else // If external user
 {
@@ -184,18 +245,19 @@ if (empty($user->socid))	// If internal user or not defined
 
 // Load the menu manager (only if not already done)
 $file_menu = $conf->standard_menu;
-if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09'); // example: menu=eldy_menu.php
-if (!class_exists('MenuManager'))
-{
+if (GETPOST('menu', 'aZ09')) {
+	$file_menu = GETPOST('menu', 'aZ09'); // example: menu=eldy_menu.php
+}
+if (!class_exists('MenuManager')) {
 	$menufound = 0;
 	$dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
-	foreach ($dirmenus as $dirmenu)
-	{
+	foreach ($dirmenus as $dirmenu) {
 		$menufound = dol_include_once($dirmenu."standard/".$file_menu);
-		if ($menufound) break;
+		if ($menufound) {
+			break;
+		}
 	}
-	if (!$menufound)	// If failed to include, we try with standard
-	{
+	if (!$menufound) {	// If failed to include, we try with standard
 		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
 		$file_menu = 'eldy_menu.php';
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;

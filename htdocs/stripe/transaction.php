@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 // Put here all includes required by your class file
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -26,26 +27,36 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
+$optioncss = GETPOST('optioncss', 'alpha');
+$param = "";
+$num = 0;
+$totalnboflines = 0;
+$result = restrictedArea($user, 'banque');
 
 
 /*
@@ -60,8 +71,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
-{
+if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -77,7 +87,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -86,12 +98,12 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripeTransactionList");
-	$title .= ($stripeaccount ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= (!empty($stripeacc) ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -104,17 +116,16 @@ if (!$rowid) {
 	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
+	$connect = "";
 
 	try {
-		if ($stripeacc)
-		{
+		if ($stripeacc) {
 			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
 			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 		}
 
-		foreach ($txn->data as $txn)
-		{
+		foreach ($txn->data as $txn) {
 			//$charge = $txn;
 			//var_dump($txn);
 
@@ -124,7 +135,7 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 			// Load origin object according to metadata
-			if (! empty($tmparray['CUS']))
+			if (!empty($tmparray['CUS']))
 			{
 				$societestatic->fetch($tmparray['CUS']);
 			}
@@ -132,14 +143,14 @@ if (!$rowid) {
 			{
 				$societestatic->id = 0;
 			}
-			if (! empty($tmparray['MEM']))
+			if (!empty($tmparray['MEM']))
 			{
 				$memberstatic->fetch($tmparray['MEM']);
 			}
 			else
 			{
 				$memberstatic->id = 0;
-			}*/
+			}
 
 			$societestatic->fetch($charge->metadata->idcustomer);
 			$societestatic->id = $charge->metadata->idcustomer;
@@ -148,12 +159,14 @@ if (!$rowid) {
 			$societestatic->admin = $obj->admin;
 			$societestatic->login = $obj->login;
 			$societestatic->email = $obj->email;
-			$societestatic->societe_id = $obj->fk_soc;
+			$societestatic->societe_id = $obj->fk_soc;*/
 
 			print '<tr class="oddeven">';
 
 			// Ref
-			if (!empty($stripeacc)) $connect = $stripeacc.'/';
+			if (!empty($stripeacc)) {
+				$connect = $stripeacc.'/';
+			}
 
 			// Ref
 			if (preg_match('/po_/i', $txn->source)) {
@@ -178,12 +191,10 @@ if (!$rowid) {
 			//print "<td>".$charge->customer."</td>\n";
 			// Link
 			/*print "<td>";
-			if ($societestatic->id > 0)
-			{
+			if ($societestatic->id > 0) {
 				print $societestatic->getNomUrl(1);
 			}
-			if ($memberstatic->id > 0)
-			{
+			if ($memberstatic->id > 0) {
 				print $memberstatic->getNomUrl(1);
 			}
 			print "</td>\n";*/
@@ -200,20 +211,20 @@ if (!$rowid) {
 			//}
 			//print "</td>\n";
 			// Date payment
-			print '<td class="center">'.dol_print_date($txn->created, '%d/%m/%Y %H:%M')."</td>\n";
+			print '<td class="center">'.dol_print_date($txn->created, 'dayhour')."</td>\n";
 			// Type
 			print '<td>'.$txn->type.'</td>';
 			// Amount
-			print '<td class="right">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
-			print '<td class="right">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
+			print '<td class="right"><span class="amount">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
+			print '<td class="right"><span class="amount">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
 			// Status
 			print "<td class='right'>";
 			if ($txn->status == 'available') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut4');
+				print img_picto($langs->trans($txn->status), 'statut4');
 			} elseif ($txn->status == 'pending') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut7');
+				print img_picto($langs->trans($txn->status), 'statut7');
 			} elseif ($txn->status == 'failed') {
-				print img_picto($langs->trans("".$txn->status.""), 'statut8');
+				print img_picto($langs->trans($txn->status), 'statut8');
 			}
 			print '</td>';
 			print "</tr>\n";

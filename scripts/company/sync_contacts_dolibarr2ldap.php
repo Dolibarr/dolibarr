@@ -24,7 +24,9 @@
  * \brief Script to update all contacts from Dolibarr into a LDAP database
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -60,11 +62,17 @@ if (!isset($argv[1]) || !$argv[1]) {
 }
 
 foreach ($argv as $key => $val) {
-	if (preg_match('/-y$/', $val, $reg))
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
 }
 
 $now = $argv[1];
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
@@ -146,7 +154,6 @@ if ($resql) {
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	dol_print_error($db);
 }

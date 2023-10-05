@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Leveranse ref.
-DeliveryCard=Kvitteringskort
+DeliveryCard=Lagerkvittering
 DeliveryOrder=Leveringsbekreftelse
 DeliveryDate=Leveringsdato
 CreateDeliveryOrder=Generer leveringskvittering
@@ -30,3 +30,4 @@ NonShippable=Kan ikke sendes
 ShowShippableStatus=Vis status sendingsklar
 ShowReceiving=Vis leveringskvittering
 NonExistentOrder=Ikkeeksisterende ordre
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Lagermengder som allerede er tildelt på tidligere linjer

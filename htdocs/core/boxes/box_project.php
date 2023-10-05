@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/boxes/box_project.php
- *  \ingroup    projet
+ *  \ingroup    project
  *  \brief      Module to show Projet activity of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
@@ -62,7 +62,7 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = !($user->rights->projet->lire);
+		$this->hidden = empty($user->rights->projet->lire);
 	}
 
 	/**
@@ -84,23 +84,32 @@ class box_project extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjects");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
+		$i = 0;
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$projectstatic = new Project($this->db);
+			$companystatic = new Societe($this->db);
 
 			$socid = 0;
 			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			if (empty($user->rights->projet->all->lire)) {
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			}
 
-			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public";
+			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public, p.fk_soc,";
+			$sql .= " s.nom as name, s.name_alias";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
-			$sql .= " AND p.fk_statut = 1"; // Only open projects
-			if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+			$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
+			if (empty($user->rights->projet->all->lire)) {
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
+			}
 
 			$sql .= " ORDER BY p.datec DESC";
 			//$sql.= $this->db->plimit($max, 0);
@@ -109,7 +118,6 @@ class box_project extends ModeleBoxes
 
 			if ($result) {
 				$num = $this->db->num_rows($result);
-				$i = 0;
 				while ($i < min($num, $max)) {
 					$objp = $this->db->fetch_object($result);
 
@@ -118,6 +126,10 @@ class box_project extends ModeleBoxes
 					$projectstatic->title = $objp->title;
 					$projectstatic->public = $objp->public;
 					$projectstatic->statut = $objp->status;
+
+					$companystatic->id = $objp->fk_soc;
+					$companystatic->name = $objp->name;
+					$companystatic->name_alias = $objp->name_alias;
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="nowraponall"',
@@ -130,10 +142,17 @@ class box_project extends ModeleBoxes
 						'text' => $objp->title,
 					);
 
+					$this->info_box_contents[$i][] = array(
+						'td' => 'class="tdoverflowmax100"',
+						'text' => ($objp->fk_soc > 0 ? $companystatic->getNomUrl(1) : ''),
+						'asis' => 1
+					);
+
 					$sql = "SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql .= " FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
-					   $sql .= " WHERE p.entity IN (".getEntity('project').')';
-					$sql .= " AND p.rowid = ".$objp->rowid;
+					$sql .= " WHERE p.entity IN (".getEntity('project').')';
+					$sql .= " AND p.rowid = ".((int) $objp->rowid);
+
 					$resultTask = $this->db->query($sql);
 					if ($resultTask) {
 						$objTask = $this->db->fetch_object($resultTask);
@@ -141,12 +160,14 @@ class box_project extends ModeleBoxes
 							'td' => 'class="right"',
 							'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
 						);
-						if ($objTask->nb > 0)
+						if ($objTask->nb > 0) {
 							$this->info_box_contents[$i][] = array(
 								'td' => 'class="right"',
 								'text' => round($objTask->totprogress / $objTask->nb, 0)."%",
 							);
-						else $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+						} else {
+							$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+						}
 						$totalnbTask += $objTask->nb;
 					} else {
 						$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));
@@ -156,9 +177,8 @@ class box_project extends ModeleBoxes
 
 					$i++;
 				}
-				if ($max < $num)
-				{
-					$this->info_box_contents[$i][] = array('td' => 'colspan="5"', 'text' => '...');
+				if ($max < $num) {
+					$this->info_box_contents[$i][] = array('td' => 'colspan="6"', 'text' => '...');
 					$i++;
 				}
 			}
@@ -167,9 +187,9 @@ class box_project extends ModeleBoxes
 
 		// Add the sum à the bottom of the boxes
 		$this->info_box_contents[$i][] = array(
+			'tr' => 'class="liste_total_wrap"',
 			'td' => 'class="liste_total"',
 			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-			 'text' => "&nbsp;",
 		);
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="right liste_total" ',
@@ -178,6 +198,10 @@ class box_project extends ModeleBoxes
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="right liste_total" ',
 			'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
+		);
+		$this->info_box_contents[$i][] = array(
+			'td' => 'class="liste_total"',
+			'text' => "&nbsp;",
 		);
 		$this->info_box_contents[$i][] = array(
 			'td' => 'class="liste_total"',

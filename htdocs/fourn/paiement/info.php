@@ -18,20 +18,26 @@
  */
 
 /**
- *   	\file       htdocs/fourn/paiement/info.php
- *		\ingroup    facture
- *		\brief      Onglet info d'un paiement fournisseur
+ *    \file       htdocs/fourn/paiement/info.php
+ *    \ingroup    facture, fournisseur
+ *    \brief      Tab for Supplier Payment Information
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("bills", "suppliers", "companies"));
 
+// Get Parameters
 $id = GETPOST('id', 'int');
 
+// Initialize Objects
 $object = new PaiementFourn($db);
 
 // Load object
@@ -40,7 +46,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
 // It should be enough because all payments are done on invoices of the same thirdparty.
 if ($socid && $socid != $object->thirdparty->id) {

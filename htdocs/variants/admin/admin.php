@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -25,8 +26,9 @@ $langs->loadLangs(array("admin", "products"));
 $action = GETPOST('action', 'alphanohtml');
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+if (!$user->admin || !isModEnabled('variants')) {
 	accessforbidden();
+}
 
 $error = 0;
 

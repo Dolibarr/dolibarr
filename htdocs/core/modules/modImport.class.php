@@ -21,7 +21,7 @@
  *  \brief      Module to make generic import of data into dolibarr database
  *	\file       htdocs/core/modules/modImport.class.php
  *	\ingroup    import
- *	\brief      Fichier de description et activation du module Import
+ *	\brief      Description and activation file for the module Import
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modImport extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -64,10 +63,10 @@ class modImport extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module - Need auto_detect_line_endings php option to solve MAC pbs.
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module - Need auto_detect_line_endings php option to solve MAC pbs.
 		$this->phpmax = array();
 		$this->need_dolibarr_version = array(2, 7, -1); // Minimum version of Dolibarr required by module
-		$this->need_javascript_ajax = 1;
+		$this->enabled_bydefault = true; // Will be enabled during install
 
 		// Constants
 		$this->const = array();

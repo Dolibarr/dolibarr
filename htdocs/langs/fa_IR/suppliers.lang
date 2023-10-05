@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=فروشندگان
 SuppliersInvoice=صورت‌حساب فروشنده
+SupplierInvoices=صورت‌حساب فروشندگان
 ShowSupplierInvoice=نمایش صورت‌حساب فروشنده
 NewSupplier=فروشندۀ جدید
 History=سابقه

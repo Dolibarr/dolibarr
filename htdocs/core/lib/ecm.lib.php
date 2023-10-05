@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,9 @@
  */
 
 /**
- *  \file       htdocs/core/lib/ecm.lib.php
- *  \brief      Ensemble de fonctions de base pour le module ecm
- *  \ingroup    ecm
+ * \file       htdocs/core/lib/ecm.lib.php
+ * \brief      Ensemble de fonctions de base pour le module ecm
+ * \ingroup    ecm
  */
 
 
@@ -32,23 +33,38 @@
 function ecm_prepare_dasboard_head($object)
 {
 	global $langs, $conf, $user, $form;
-	global $helptext1, $helptext2;
 
 	$h = 0;
 	$head = array();
+
+	$showmediasection = 0;
+	if (isModEnabled('mailing') || isModEnabled('website')) {
+		$showmediasection = 1;
+	}
+
 	$helptext = $langs->trans("ECMAreaDesc").'<br>';
-	$helptext .= $langs->trans("ECMAreaDesc2");
+	$helptext .= $langs->trans("ECMAreaDesc2a").'<br>';
+	$helptext .= $langs->trans("ECMAreaDesc2b");
+	if ($showmediasection) {
+		$helptext .= '<br>'.$langs->trans("ECMAreaDesc3");
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
 	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
-	{
+	if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
+		$h++;
+	}
+
+	if ($showmediasection && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1';
+		$head[$h][1] = $langs->trans("ECMSectionsMedias").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
+		$head[$h][2] = 'index_medias';
 		$h++;
 	}
 
@@ -78,8 +94,7 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 	$h = 0;
 	$head = array();
 
-	if ($module == 'ecm')
-	{
+	if ($module == 'ecm') {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$object->id;
 		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
@@ -109,6 +124,22 @@ function ecm_file_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
 	$head[$h][1] = $langs->trans("File");
 	$head[$h][2] = 'card';
+	$h++;
+
+	// Notes
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_note.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][1] = $langs->trans("Notes");
+	$nbNote = 0;
+	if (!empty($object->note_private)) {
+		$nbNote++;
+	}
+	if (!empty($object->note_public)) {
+		$nbNote++;
+	}
+	if ($nbNote > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	}
+	$head[$h][2] = 'note';
 	$h++;
 
 	return $head;
@@ -146,7 +177,12 @@ function ecm_prepare_head_fm($object)
  */
 function ecm_admin_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('ecm_files');
+	$extrafields->fetch_name_optionals_label('ecm_directories');
+
 	$langs->load("ecm");
 
 	$h = 0;
@@ -159,11 +195,19 @@ function ecm_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_files_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
+	$nbExtrafields = $extrafields->attributes['ecm_files']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_ecm_files';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
+	$nbExtrafields = $extrafields->attributes['ecm_directories']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_ecm_directories';
 	$h++;
 

@@ -20,9 +20,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
+}
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -34,8 +54,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -229,7 +248,9 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	dol_syslog("Function: getSupplierInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -237,26 +258,21 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->fournisseur->facture->lire)
-		{
+		if ($fuser->rights->fournisseur->facture->lire) {
 			$invoice = new FactureFournisseur($db);
 			$result = $invoice->fetch($id, $ref, $ref_ext);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$linesresp = array();
 				$i = 0;
-				foreach ($invoice->lines as $line)
-				{
+				foreach ($invoice->lines as $line) {
 					//var_dump($line); exit;
 					$linesresp[] = array(
 						'id'=>$line->rowid,
@@ -275,7 +291,7 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'invoice'=>array(
 					'id' => $invoice->id,
-		   			'ref' => $invoice->ref,
+					'ref' => $invoice->ref,
 					'ref_supplier'=>$invoice->ref_supplier,
 					'ref_ext' => $invoice->ref_ext,
 					'fk_user_author' => $invoice->fk_user_author,
@@ -302,20 +318,17 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 					// '1'=>array('id'=>333,'type'=>1)),
 
 				));
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -336,7 +349,9 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 
 	dol_syslog("Function: getSupplierInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -345,39 +360,32 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
-	if (!$error && empty($idthirdparty))
-	{
+	if (!$error && empty($idthirdparty)) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$linesinvoice = array();
 
-		$sql .= 'SELECT f.rowid as facid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
-		//$sql.=', '.MAIN_DB_PREFIX.'societe as s';
-		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
-		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
-		$sql .= " WHERE f.entity = ".$conf->entity;
-		if ($idthirdparty != 'all') $sql .= " AND f.fk_soc = ".$db->escape($idthirdparty);
+		$sql = "SELECT f.rowid as facid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
+		if ($idthirdparty != 'all') {
+			$sql .= " AND f.fk_soc = ".((int) $idthirdparty);
+		}
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				// En attendant remplissage par boucle
 				$obj = $db->fetch_object($resql);
 
 				$invoice = new FactureFournisseur($db);
 				$result = $invoice->fetch($obj->facid);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 					$errorcode = $result; $errorlabel = $invoice->error;
 					break;
@@ -385,9 +393,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 
 				// Define lines of invoice
 				$linesresp = array();
-				foreach ($invoice->lines as $line)
-				{
-   					$linesresp[] = array(
+				foreach ($invoice->lines as $line) {
+					$linesresp[] = array(
 						'id'=>$line->rowid,
 						'type'=>$line->product_type,
 						'desc'=>dol_htmlcleanlastbr($line->description),
@@ -396,10 +403,10 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 						'total'=>$line->total_ttc,
 						'vat_rate'=>$line->tva_tx,
 						'qty'=>$line->qty,
-   						'product_ref'=>$line->product_ref,
+						'product_ref'=>$line->product_ref,
 						'product_label'=>$line->product_label,
 						'product_desc'=>$line->product_desc,
-   					);
+					);
 				}
 
 				// Now define invoice
@@ -438,15 +445,13 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 				'invoices'=>$linesinvoice
 
 			);
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

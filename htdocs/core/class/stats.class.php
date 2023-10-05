@@ -34,6 +34,13 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 *  @param	int		$year 			number
+	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * 	@return int						value
+	 */
+	protected abstract function getNbByMonth($year, $format = 0);
+
+	/**
 	 * Return nb of elements by month for several years
 	 *
 	 * @param 	int		$endyear		Start year
@@ -47,13 +54,14 @@ abstract class Stats
 	{
 		global $conf, $user, $langs;
 
-		if ($startyear > $endyear) return -1;
+		if ($startyear > $endyear) {
+			return array();
+		}
 
 		$datay = array();
 
 		// Search into cache
-		if (!empty($cachedelay))
-		{
+		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
@@ -64,11 +72,9 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
-		if ($cachedelay > 0)
-		{
+		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
-			if ($filedate >= ($nowgmt - $cachedelay))
-			{
+			if ($filedate >= ($nowgmt - $cachedelay)) {
 				$foundintocache = 1;
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
@@ -77,44 +83,43 @@ abstract class Stats
 			}
 		}
 		// Load file into $data
-		if ($foundintocache)    // Cache file found and is not too old
-		{
+		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
-			if ($sm != 0) $year = $year - 1;
-			while ($year <= $endyear)
-			{
+			if ($sm != 0) {
+				$year = $year - 1;
+			}
+			while ($year <= $endyear) {
 				$datay[$year] = $this->getNbByMonth($year, $format);
 				$year++;
 			}
 
 			$data = array();
 
-			for ($i = 0; $i < 12; $i++)
-			{
+			for ($i = 0; $i < 12; $i++) {
 				$data[$i][] = $datay[$endyear][($i + $sm) % 12][0];
 				$year = $startyear;
-				while ($year <= $endyear)
-				{
-					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
+				while ($year <= $endyear) {
+					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
+					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
 					$year++;
 				}
 			}
 		}
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
-		{
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1)) {
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
-			if (!dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			if (!dol_is_dir($conf->user->dir_temp)) {
+				dol_mkdir($conf->user->dir_temp);
+			}
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
-			@chmod($newpathofdestfile, octdec($newmask));
+			dolChmod($newpathofdestfile);
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -122,6 +127,13 @@ abstract class Stats
 		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
+
+	/**
+	 * @param	int		$year			year number
+	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	int						value
+	 */
+	protected abstract function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
@@ -140,13 +152,14 @@ abstract class Stats
 	{
 		global $conf, $user, $langs;
 
-		if ($startyear > $endyear) return -1;
+		if ($startyear > $endyear) {
+			return array();
+		}
 
 		$datay = array();
 
 		// Search into cache
-		if (!empty($cachedelay))
-		{
+		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
@@ -157,11 +170,9 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
-		if ($cachedelay > 0)
-		{
+		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
-			if ($filedate >= ($nowgmt - $cachedelay))
-			{
+			if ($filedate >= ($nowgmt - $cachedelay)) {
 				$foundintocache = 1;
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
@@ -171,52 +182,58 @@ abstract class Stats
 		}
 
 		// Load file into $data
-		if ($foundintocache)    // Cache file found and is not too old
-		{
+		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
-			if ($sm != 0) $year = $year - 1;
-			while ($year <= $endyear)
-			{
+			if ($sm != 0) {
+				$year = $year - 1;
+			}
+			while ($year <= $endyear) {
 				$datay[$year] = $this->getAmountByMonth($year, $format);
 				$year++;
 			}
 
 			$data = array();
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
-			for ($i = 0; $i < 12; $i++)
-			{
+			for ($i = 0; $i < 12; $i++) {
 				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
 				$year = $startyear;
-				while ($year <= $endyear)
-				{
-					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
+				while ($year <= $endyear) {
+					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
+					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
 					$year++;
 				}
 			}
 		}
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
-		{
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1)) {
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
-			if (!dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			if (!dol_is_dir($conf->user->dir_temp)) {
+				dol_mkdir($conf->user->dir_temp);
+			}
 			$fp = fopen($newpathofdestfile, 'w');
-			if ($fp)
-			{
+			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
-				@chmod($newpathofdestfile, octdec($newmask));
-			} else dol_syslog("Failed to write cache file", LOG_ERR);
+				dolChmod($newpathofdestfile);
+			} else {
+				dol_syslog("Failed to write cache file", LOG_ERR);
+			}
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
 		return $data;
 	}
+
+	/**
+	 * @param	int     $year           year number
+	 * @return 	array					array of values
+	 */
+	protected abstract function getAverageByMonth($year);
 
 	/**
 	 * Return average of entity by month for several years
@@ -227,25 +244,24 @@ abstract class Stats
 	 */
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
-		if ($startyear > $endyear) return -1;
+		if ($startyear > $endyear) {
+			return array();
+		}
 
 		$datay = array();
 
 		$year = $startyear;
-		while ($year <= $endyear)
-		{
+		while ($year <= $endyear) {
 			$datay[$year] = $this->getAverageByMonth($year);
 			$year++;
 		}
 
 		$data = array();
 
-		for ($i = 0; $i < 12; $i++)
-		{
+		for ($i = 0; $i < 12; $i++) {
 			$data[$i][] = $datay[$endyear][$i][0];
 			$year = $startyear;
-			while ($year <= $endyear)
-			{
+			while ($year <= $endyear) {
 				$data[$i][] = $datay[$year][$i][1];
 				$year++;
 			}
@@ -269,8 +285,7 @@ abstract class Stats
 		$data = array();
 
 		// Search into cache
-		if (!empty($cachedelay))
-		{
+		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
@@ -281,11 +296,9 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
-		if ($cachedelay > 0)
-		{
+		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
-			if ($filedate >= ($nowgmt - $cachedelay))
-			{
+			if ($filedate >= ($nowgmt - $cachedelay)) {
 				$foundintocache = 1;
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
@@ -295,8 +308,7 @@ abstract class Stats
 		}
 
 		// Load file into $data
-		if ($foundintocache)    // Cache file found and is not too old
-		{
+		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
@@ -305,17 +317,16 @@ abstract class Stats
 		}
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
-		{
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1)) {
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
-			if (!dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			if (!dol_is_dir($conf->user->dir_temp)) {
+				dol_mkdir($conf->user->dir_temp);
+			}
 			$fp = fopen($newpathofdestfile, 'w');
-			if ($fp)
-			{
+			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			}
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -339,14 +350,12 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$result[$i] = $row;
 				$i++;
@@ -370,27 +379,38 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $this->db->fetch_object($resql);
 				$result[$i]['year'] = $row->year;
 				$result[$i]['nb'] = $row->nb;
-				if ($i > 0 && $row->nb > 0) $result[$i - 1]['nb_diff'] = ($result[$i - 1]['nb'] - $row->nb) / $row->nb * 100;
-				$result[$i]['total'] = $row->total;
-				if ($i > 0 && $row->total > 0) $result[$i - 1]['total_diff'] = ($result[$i - 1]['total'] - $row->total) / $row->total * 100;
-				$result[$i]['avg'] = $row->avg;
-				if ($i > 0 && $row->avg > 0) $result[$i - 1]['avg_diff'] = ($result[$i - 1]['avg'] - $row->avg) / $row->avg * 100;
+				if ($i > 0 && $row->nb > 0) {
+					$result[$i - 1]['nb_diff'] = ($result[$i - 1]['nb'] - $row->nb) / $row->nb * 100;
+				}
 				// For some $sql only
-				if (isset($row->weighted))
-				{
+				if (property_exists($row, 'total')) {
+					$result[$i]['total'] = $row->total;
+					if ($i > 0 && $row->total > 0) {
+						$result[$i - 1]['total_diff'] = ($result[$i - 1]['total'] - $row->total) / $row->total * 100;
+					}
+				}
+				// For some $sql only
+				if (property_exists($row, 'total')) {
+					$result[$i]['avg'] = $row->avg;
+					if ($i > 0 && $row->avg > 0) {
+						$result[$i - 1]['avg_diff'] = ($result[$i - 1]['avg'] - $row->avg) / $row->avg * 100;
+					}
+				}
+				// For some $sql only
+				if (property_exists($row, 'weighted')) {
 					$result[$i]['weighted'] = $row->weighted;
-					if ($i > 0 && $row->weighted > 0) $result[$i - 1]['avg_weighted'] = ($result[$i - 1]['weighted'] - $row->weighted) / $row->weighted * 100;
+					if ($i > 0 && $row->weighted > 0) {
+						$result[$i - 1]['avg_weighted'] = ($result[$i - 1]['weighted'] - $row->weighted) / $row->weighted * 100;
+					}
 				}
 				$i++;
 			}
@@ -419,14 +439,13 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			$i = 0; $j = 0;
-			while ($i < $num)
-			{
+			$i = 0;
+			$j = 0;
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$j = $row[0] * 1;
 				$result[$j] = $row[1];
@@ -437,19 +456,21 @@ abstract class Stats
 			dol_print_error($this->db);
 		}
 
-		for ($i = 1; $i < 13; $i++)
-		{
+		for ($i = 1; $i < 13; $i++) {
 			$res[$i] = (isset($result[$i]) ? $result[$i] : 0);
 		}
 
 		$data = array();
 
-		for ($i = 1; $i < 13; $i++)
-		{
+		for ($i = 1; $i < 13; $i++) {
 			$month = 'unknown';
-			if ($format == 0) $month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month = $i;
-			elseif ($format == 2) $month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			if ($format == 0) {
+				$month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			} elseif ($format == 1) {
+				$month = $i;
+			} elseif ($format == 2) {
+				$month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			}
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			//$month=dol_substr($month,0,3);
 			$data[$i - 1] = array($month, $res[$i]);
@@ -457,7 +478,6 @@ abstract class Stats
 
 		return $data;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -476,36 +496,38 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-		  	{
-		  		$row = $this->db->fetch_row($resql);
-		  		$j = $row[0] * 1;
-		  		$result[$j] = $row[1];
-		  		$i++;
-		  	}
-		  	$this->db->free($resql);
-		} else dol_print_error($this->db);
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$j = $row[0] * 1;
+				$result[$j] = $row[1];
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
 
-		for ($i = 1; $i < 13; $i++)
-		{
+		for ($i = 1; $i < 13; $i++) {
 			$res[$i] = (int) round((isset($result[$i]) ? $result[$i] : 0));
 		}
 
 		$data = array();
 
-		for ($i = 1; $i < 13; $i++)
-		{
+		for ($i = 1; $i < 13; $i++) {
 			$month = 'unknown';
-			if ($format == 0) $month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month = $i;
-			elseif ($format == 2) $month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			if ($format == 0) {
+				$month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			} elseif ($format == 1) {
+				$month = $i;
+			} elseif ($format == 2) {
+				$month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			}
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			//$month=dol_substr($month,0,3);
 			$data[$i - 1] = array($month, $res[$i]);
@@ -532,35 +554,38 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			$i = 0; $j = 0;
-			while ($i < $num)
-			{
-		  		$row = $this->db->fetch_row($resql);
-		  		$j = $row[0] * 1;
-		  		$result[$j] = $row[1];
-		  		$i++;
-		  	}
-		  	$this->db->free($resql);
-		} else dol_print_error($this->db);
+			$i = 0;
+			$j = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$j = $row[0] * 1;
+				$result[$j] = $row[1];
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
 
-		for ($i = 1; $i < 13; $i++)
-		{
+		for ($i = 1; $i < 13; $i++) {
 			$res[$i] = (isset($result[$i]) ? $result[$i] : 0);
 		}
 
 		$data = array();
 
-		for ($i = 1; $i < 13; $i++)
-		{
+		for ($i = 1; $i < 13; $i++) {
 			$month = 'unknown';
-			if ($format == 0) $month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month = $i;
-			elseif ($format == 2) $month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			if ($format == 0) {
+				$month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			} elseif ($format == 1) {
+				$month = $i;
+			} elseif ($format == 2) {
+				$month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			}
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			//$month=dol_substr($month,0,3);
 			$data[$i - 1] = array($month, $res[$i]);
@@ -585,23 +610,56 @@ abstract class Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			$i = 0; $other = 0;
-			while ($i < $num)
-			{
+			$i = 0;
+			$other = 0;
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
-		  		if ($i < $limit || $num == $limit) $result[$i] = array($row[0], $row[1]); // Ref of product, nb
-		  		else $other += $row[1];
-		  		$i++;
+				if ($i < $limit || $num == $limit) {
+					$result[$i] = array($row[0], $row[1]); // Ref of product, nb
+				} else {
+					$other += $row[1];
+				}
+				$i++;
 			}
-		  	if ($num > $limit) $result[$i] = array($langs->transnoentitiesnoconv("Other"), $other);
-		  	$this->db->free($resql);
-		} else dol_print_error($this->db);
+			if ($num > $limit) {
+				$result[$i] = array($langs->transnoentitiesnoconv("Other"), $other);
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
 
+		return $result;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 *  Returns the summed amounts per year for a given number of past years ending now
+	 *  @param  string  $sql    SQL
+	 *  @return array
+	 */
+	protected function _getAmountByYear($sql)
+	{
+		$result = array();
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$j = (int) $row[0];
+				$result[] = [
+					0 => (int) $row[0],
+					1 => (int) $row[1],
+				];
+				$i++;
+			}
+			$this->db->free($resql);
+		}
 		return $result;
 	}
 }

@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +20,8 @@
  */
 
 /**
- *  \file		htdocs/core/lib/agenda.lib.php
- *  \brief		Set of function for the agenda module
+ * \file		htdocs/core/lib/agenda.lib.php
+ * \brief		Set of function for the agenda module
  */
 
 
@@ -61,81 +62,70 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	// Filters
 	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="year" value="'.$year.'">';
-	print '<input type="hidden" name="month" value="'.$month.'">';
-	print '<input type="hidden" name="day" value="'.$day.'">';
-	if ($massaction != 'predelete') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
+	print '<input type="hidden" name="year" value="'.((int) $year).'">';
+	print '<input type="hidden" name="month" value="'.((int) $month).'">';
+	print '<input type="hidden" name="day" value="'.((int) $day).'">';
+	if ($massaction != 'predelete' && $massaction != 'preaffecttag') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
 		print '<input type="hidden" name="action" value="'.$action.'">';
 	}
-	print '<input type="hidden" name="search_showbirthday" value="'.$showbirthday.'">';
+	print '<input type="hidden" name="search_showbirthday" value="'.((int) $showbirthday).'">';
 
-	if ($canedit)
-	{
+	print '<div class="divsearchfield">';
+	// Type
+	$multiselect = 0;
+	if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	}
+	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print '</div>';
+
+	if ($canedit) {
+		// Assigned to user
 		print '<div class="divsearchfield">';
-		// Type
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
-		print '<span class="hideonsmartphone">'.$langs->trans("Type").'</span>';
-		$multiselect = 0;
-		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-		{
-			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
-		}
-		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
+		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
-		// Assigned to
+		// Assigned to user group
 		print '<div class="divsearchfield">';
-		print img_picto('', 'user', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ActionsToDoBy").'</span>';
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
-		print '</div>';
-		print '<div class="divsearchfield">';
-		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ToUserOfGroup").'</span>';
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
+		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
-		if ($conf->resource->enabled)
-		{
+		if (isModEnabled('resource')) {
 			include_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 			$formresource = new FormResource($db);
 
 			// Resource
 			print '<div class="divsearchfield">';
-			print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
-			print '<span class="hideonsmartphone">'.$langs->trans("Resource").'</span>';
+			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
 			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
 			print '</div>';
 		}
 	}
 
-	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
-	{
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
-		print img_picto('', 'company', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ThirdParty").'</span>';
+		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</div>';
 	}
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire)
-	{
+	if (isModEnabled('projet') && !empty($user->rights->projet->lire)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
 		print '<div class="divsearchfield">';
-		print img_picto('', 'project', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("Project").'</span>';
+		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</div>';
 	}
 
-	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"]))
-	{
+	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto('', 'setup', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("Status").'</span>';
+		print img_picto($langs->trans("Status"), 'setup', 'class="pictofixedwidth inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}
@@ -145,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	$object = null;
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 
@@ -172,23 +162,28 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND s.rowid = ".$socid;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
 	$sql .= " ORDER BY a.datep DESC, a.id DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$i = 0;
@@ -196,8 +191,7 @@ function show_array_actions_to_do($max = 5)
 		$staticaction = new ActionComm($db);
 		$customerstatic = new Client($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 
@@ -211,8 +205,7 @@ function show_array_actions_to_do($max = 5)
 			// print '<td>'.dol_trunc($obj->label,22).'</td>';
 
 			print '<td>';
-			if ($obj->socid > 0)
-			{
+			if ($obj->socid > 0) {
 				$customerstatic->id = $obj->socid;
 				$customerstatic->name = $obj->name;
 				//$customerstatic->name_alias = $obj->name_alias;
@@ -232,11 +225,21 @@ function show_array_actions_to_do($max = 5)
 			// Date
 			print '<td width="100" class="right tddate">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late = 0;
-			if ($obj->percent == 0 && $datep && $datep < time()) $late = 1;
-			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < time()) $late = 1;
-			if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < time()) $late = 1;
-			if ($obj->percent > 0 && $obj->percent < 100 && !$datep2 && $datep && $datep < time()) $late = 1;
-			if ($late) print img_warning($langs->trans("Late"));
+			if ($obj->percent == 0 && $datep && $datep < time()) {
+				$late = 1;
+			}
+			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < time()) {
+				$late = 1;
+			}
+			if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < time()) {
+				$late = 1;
+			}
+			if ($obj->percent > 0 && $obj->percent < 100 && !$datep2 && $datep && $datep < time()) {
+				$late = 1;
+			}
+			if ($late) {
+				print img_warning($langs->trans("Late"));
+			}
 			print "</td>";
 
 			// Statut
@@ -275,23 +278,28 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND s.rowid = ".$socid;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$i = 0;
@@ -299,23 +307,21 @@ function show_array_last_actions_done($max = 5)
 		$staticaction = new ActionComm($db);
 		$customerstatic = new Societe($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 
 			print '<tr class="oddeven">';
 
 			$staticaction->type_code = $obj->code;
-			$staticaction->libelle = $obj->label;
+			$staticaction->label = $obj->label;
 			$staticaction->id = $obj->id;
 			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
 			//print '<td>'.dol_trunc($obj->label,24).'</td>';
 
 			print '<td>';
-			if ($obj->socid > 0)
-			{
+			if ($obj->socid > 0) {
 				$customerstatic->id = $obj->socid;
 				$customerstatic->name = $obj->name;
 				//$customerstatic->name_alias = $obj->name_alias;
@@ -357,7 +363,11 @@ function show_array_last_actions_done($max = 5)
  */
 function agenda_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('actioncomm');
+
 	$h = 0;
 	$head = array();
 
@@ -390,6 +400,10 @@ function agenda_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -418,16 +432,17 @@ function actions_prepare_head($object)
 	$h++;
 
 	// Tab to link resources
-	if ($conf->resource->enabled)
-	{
+	if (isModEnabled('resource')) {
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-		$resource = new DolResource($db);
+		$resource = new Dolresource($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
 		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);
 		$nbResources = (is_array($listofresourcelinked) ?count($listofresourcelinked) : 0);
 		$head[$h][1] = $langs->trans("Resources");
-		if ($nbResources > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
+		if ($nbResources > 0) {
+			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
+		}
 		$head[$h][2] = 'resources';
 		$h++;
 	}
@@ -440,7 +455,9 @@ function actions_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -470,29 +487,28 @@ function calendars_prepare_head($param)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?action=show_list'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?mode=show_list'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewList");
 	$head[$h][2] = 'cardlist';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_month'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewCal");
 	$head[$h][2] = 'cardmonth';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_week'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewWeek");
 	$head[$h][2] = 'cardweek';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewDay");
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (!empty($conf->global->AGENDA_SHOW_PERTYPE))
-	{
+	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");
 		$head[$h][2] = 'cardpertype';

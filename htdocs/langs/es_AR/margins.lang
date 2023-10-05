@@ -15,7 +15,6 @@ UserMargins=Márgenes de usuario
 AllProducts=Todos los productos y servicios.
 ChooseProduct/Service=Elige producto o servicio
 ForceBuyingPriceIfNull=Forzar el costo al precio de venta si no está definido
-ForceBuyingPriceIfNullDetails=Si el costo no está definido, y esta opción está "ACTIVADA", el margen será cero en cada línea (costo = precio de venta), de lo contrario ("DESACTIVADO"), el margen será igual al valor sugerido por defecto.
 MARGIN_METHODE_FOR_DISCOUNT=Método de margen para descuentos globales
 UseDiscountOnTotal=En subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define si un descuento global se debe tratar como un producto, un servicio o solo como un subtotal para el cálculo del margen.
