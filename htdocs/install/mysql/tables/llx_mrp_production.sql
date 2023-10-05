@@ -35,6 +35,6 @@ CREATE TABLE llx_mrp_production(
 	fk_user_modif integer, 
 	import_key varchar(14),
 	fk_default_workstation integer DEFAULT NULL,
-	fk_unit integer DEFAULT NULL
+	fk_unit float DEFAULT NULL
 ) ENGINE=innodb;
 

@@ -122,6 +122,6 @@ ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
 ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 
-ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer NULL;
+ALTER TABLE llx_mrp_production ADD COLUMN fk_unit float DEFAULT NULL;
 UPDATE llx_mrp_production mp INNER JOIN llx_bom_bomline bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline';
 UPDATE llx_bom_bomline bbl INNER JOIN llx_product p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
