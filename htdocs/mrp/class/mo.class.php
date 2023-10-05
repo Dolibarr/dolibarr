@@ -697,9 +697,9 @@ class Mo extends CommonObject
 			$moline->qty = $this->qty;
 			$moline->fk_product = $this->fk_product;
 			$moline->position = 1;
-            $product = new Product($this->db);
-            $product->fetch($this->fk_product);
-            $moline->fk_unit = $product->fk_unit;
+            $tmpproduct = new Product($this->db);
+            $tmpproduct->fetch($this->fk_product);
+            $moline->fk_unit = $tmpproduct->fk_unit;
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
