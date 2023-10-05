@@ -203,7 +203,7 @@ print '<tr>';
 print '<td class="tdtop nopaddingleftimp">';
 
 print '<div class="centpercent center margintoponly marginbottomonly">';
-print img_picto('', 'setup', 'class="pictofixedwidth"').'<a id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
+print img_picto('', 'setup', 'class="pictofixedwidth"').'<a class="classlink" id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
 print '</div>';
 
 print '<script type="text/javascript">

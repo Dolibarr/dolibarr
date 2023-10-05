@@ -1080,7 +1080,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 	// When action is 'reconcile', we force to have the column num_releve always enabled (otherwise we can't make reconciliation).
 	if ($action == 'reconcile') {
 		$arrayfields['b.num_releve']['checked'] = 1;
@@ -1089,8 +1089,14 @@ if ($resql) {
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-
 	print '<tr class="liste_titre_filter">';
+	// Actions and select
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre valignmiddle center">';
+		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+		print $searchpicto;
+		print '</td>';
+	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
@@ -1168,14 +1174,20 @@ if ($resql) {
 	}
 
 	// Actions and select
-	print '<td class="liste_titre" align="middle">';
-	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre valignmiddle center">';
+		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+		print $searchpicto;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	// Fields title
 	print '<tr class="liste_titre">';
+	// Actions and select
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1186,10 +1198,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '', $sortfield, $sortorder, "center ");
 	}
 	if (!empty($arrayfields['b.datev']['checked'])) {
-		print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
 		print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
@@ -1229,7 +1241,9 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Actions and select
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print "</tr>\n";
 
 	$balance = 0; // For balance
@@ -1317,6 +1331,10 @@ if ($resql) {
 				}
 
 				print '<tr class="oddeven trforbreak">';
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td></td>';
+				}
 				if ($tmpnbfieldbeforebalance) {
 					print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
 					print '&nbsp;';
@@ -1347,9 +1365,13 @@ if ($resql) {
 							</script>';
 					print '</td>';
 				}
-				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance).'">';
 				print '&nbsp;';
 				print '</td>';
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td></td>';
+				}
 				print '</tr>';
 			}
 		}
@@ -1388,6 +1410,21 @@ if ($resql) {
 
 		print '<tr class="oddeven" '.$backgroundcolor.'>';
 
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Ref
 		if (!empty($arrayfields['b.rowid']['checked'])) {
 				print '<td class="nowrap left">';
@@ -1405,6 +1442,7 @@ if ($resql) {
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
 			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
+				// Example: $reg[1] = 'CustomerInvoicePayment', 'SupplierInvoicePayment', ... (or on old version: 'WithdrawalPayment', 'BankTransferPayment')
 				$labeltoshow = $langs->trans($reg[1]);
 			} else {
 				if ($objp->label == '(payment_salary)') {
@@ -1779,16 +1817,18 @@ if ($resql) {
 		}
 
 		// Action column
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";

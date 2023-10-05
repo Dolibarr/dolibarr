@@ -1062,7 +1062,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.fk_ecm_files,';
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
-		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
+		$sql .= ' ctf.code as code_type_fees, ctf.label as label_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
@@ -1105,7 +1105,7 @@ class ExpenseReport extends CommonObject
 				$deplig->total_localtax2  = $objp->total_localtax2;
 
 				$deplig->type_fees_code     = empty($objp->code_type_fees) ? 'TF_OTHER' : $objp->code_type_fees;
-				$deplig->type_fees_libelle  = $objp->libelle_type_fees;
+				$deplig->type_fees_libelle  = $objp->label_type_fees;
 				$deplig->type_fees_accountancy_code = $objp->accountancy_code_type_fees;
 
 				$deplig->tva_tx             = $objp->tva_tx;
@@ -1778,7 +1778,7 @@ class ExpenseReport extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -2226,14 +2226,14 @@ class ExpenseReport extends CommonObject
 			$this->line->id = ((int) $rowid);
 
 			// Select des infos sur le type fees
-			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
+			$sql = "SELECT c.code as code_type_fees, c.label as label_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 			$sql .= " WHERE c.id = ".((int) $type_fees_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objp_fees = $this->db->fetch_object($resql);
 				$this->line->type_fees_code      = $objp_fees->code_type_fees;
-				$this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+				$this->line->type_fees_libelle   = $objp_fees->label_type_fees;
 				$this->db->free($resql);
 			}
 
@@ -2431,8 +2431,6 @@ class ExpenseReport extends CommonObject
 		if (!dol_strlen($modele)) {
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
 				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
 			}

@@ -45,6 +45,11 @@ class DolibarrApiAccess implements iAuthenticate
 	const REALM = 'Restricted Dolibarr API';
 
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+	/**
 	 * @var array $requires	role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');

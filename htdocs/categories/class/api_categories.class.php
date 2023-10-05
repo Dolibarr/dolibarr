@@ -80,11 +80,11 @@ class Categories extends DolibarrApi
 	 *
 	 * Return an array with category informations
 	 *
-	 * @param 	int 	$id ID of category
-	 * @param 	bool 	$include_childs Include child categories list (true or false)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id ID of category
+	 * @param	bool	$include_childs Include child categories list (true or false)
+	 * @return	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $include_childs = false)
 	{
@@ -126,11 +126,12 @@ class Categories extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -174,7 +175,7 @@ class Categories extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($category_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($category_static), $properties);
 				}
 				$i++;
 			}

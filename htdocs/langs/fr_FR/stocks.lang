@@ -318,6 +318,7 @@ StockTransferRightRead=Lire les transferts de stocks
 StockTransferRightCreateUpdate=Créer/Mettre à jour les transferts de stocks
 StockTransferRightDelete=Supprimer les transferts de stocks
 BatchNotFound=Lot/série introuvable pour ce produit
+IncludeSubWarehouse=Inclure les sous-entrepôts ?
 StockMovementWillBeRecorded=Les mouvements de stock seront enregistrés
 StockMovementNotYetRecorded=Le mouvement des stocks ne sera pas affecté par cette étape
 WarningThisWIllAlsoDeleteStock=Attention, cela détruira également toutes les quantités en stock dans l'entrepôt

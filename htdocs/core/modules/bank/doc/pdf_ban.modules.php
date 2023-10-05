@@ -36,11 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_ban extends ModeleBankAccountDoc
 {
 	/**
-	 * @var Societe Issuer
-	 */
-	public $emetteur;
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'development';
@@ -52,7 +47,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));

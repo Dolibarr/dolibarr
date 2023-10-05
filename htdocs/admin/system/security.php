@@ -115,6 +115,8 @@ print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') 
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
+//$arrayoffunctionstodisable[] = 'stream_wrapper_restore';
+//$arrayoffunctionstodisable[] = 'stream_wrapper_register';
 if ($execmethod == 1) {
 	$arrayoffunctionstodisable2 = explode(',', 'passthru,shell_exec,system,proc_open,popen');
 	$functiontokeep = 'exec';
@@ -321,7 +323,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, clamdscan').')</span>';
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
@@ -359,7 +361,7 @@ if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
 	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 }
 print '<strong>'.$langs->trans("SessionTimeOut").'</strong>';
-if (ini_get("session.gc_probability") == 0) {
+if (!ini_get("session.gc_probability")) {
 	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
 } else {
 	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
@@ -459,7 +461,7 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 	foreach ($eventstolog as $key => $arr) {
 		if ($arr['id']) {
 			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			$value = getDolGlobalString($key);
 			if ($value) {
 				if ($i > 0) {
 					$out .= ', ';

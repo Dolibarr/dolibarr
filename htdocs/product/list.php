@@ -10,8 +10,10 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
- * Copyright (C) 2020-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016       Ferran Marcet		        <fmarcet@2byte.es>
+ * Copyright (C) 2020-2021	Open-DSI				        <support@open-dsi.fr>
+ * Copyright (C) 2022		    Charlene Benke			    <charlene@patas-monkey.com>
+ * Copyright (C) 2020-2023	Alexandre Spangaro		  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +46,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+
+if (isModEnabled('workstation')) {
+	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+}
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -103,12 +108,9 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 $mode = GETPOST('mode', 'alpha');
 
-
-//Show/hide child products
-if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+// Show/hide child product variants
+if (isModEnabled('variants')) {
 	$show_childproducts = GETPOST('search_show_childproducts');
-} else {
-	$show_childproducts = '';
 }
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
@@ -225,6 +227,7 @@ $arrayfields = array(
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service")), 'position'=>11),
 	'p.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(isModEnabled('barcode')), 'position'=>12),
 	'p.duration'=>array('label'=>"Duration", 'checked'=>($contextpage != 'productlist'), 'enabled'=>(isModEnabled("service") && (string) $type == '1'), 'position'=>13),
+	'pac.fk_product_parent' => array('label'=>"ParentProductOfVariant", 'checked'=>-1, 'enabled'=>(isModEnabled('variants')), 'position'=>14),
 	'p.finished'=>array('label'=>"Nature", 'checked'=>0, 'enabled'=>(isModEnabled("product") && $type != '1'), 'position'=>19),
 	'p.weight'=>array('label'=>'Weight', 'checked'=>0, 'enabled'=>(isModEnabled("product") && $type != '1'), 'position'=>20),
 	'p.weight_units'=>array('label'=>'WeightUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && $type != '1'), 'position'=>21),
@@ -411,7 +414,9 @@ if (empty($reshook)) {
  */
 
 $product_static = new Product($db);
-$static_ws = new Workstation($db);
+if (isModEnabled('workstation')) {
+	$workstation_static = new Workstation($db);
+}
 $product_fourn = new ProductFournisseur($db);
 
 $title = $langs->trans("ProductsAndServices");
@@ -439,12 +444,13 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 }
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
 $sql .= ' MIN(pfp.unitprice) as bestpurchaseprice';
-if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants')) {
 	$sql .= ', pac.rowid as prod_comb_id';
+	$sql .= ', pac.fk_product_parent';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -476,11 +482,10 @@ $sql .= $linktopfp;
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
 }
-
-if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 }
 
@@ -511,7 +516,7 @@ if (dol_strlen($search_type) && $search_type != '-1') {
 	}
 }
 
-if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants') && !$show_childproducts) {
 	$sql .= " AND pac.rowid IS NULL";
 }
 
@@ -621,15 +626,15 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ', p.fk_unit, cu.label';
 }
 if (isModEnabled('workstation')) {
-	$sql .= ', p.fk_default_workstation, ws.status, ws.ref ';
+	$sql .= ', p.fk_default_workstation, ws.status, ws.ref';
 }
-
-if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants')) {
 	$sql .= ', pac.rowid';
+	$sql .= ', pac.fk_product_parent';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -913,8 +918,8 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
 }
 
-//Show/hide child products. Hidden by default
-if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+// Show/hide child variant products
+if (isModEnabled('variants')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
 	$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
@@ -998,7 +1003,11 @@ if (!empty($arrayfields['p.duration']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-
+// Parent
+if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Finished
 if (!empty($arrayfields['p.finished']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1267,6 +1276,9 @@ if (!empty($arrayfields['p.barcode']['checked'])) {
 if (!empty($arrayfields['p.duration']['checked'])) {
 	print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"], "p.duration", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
+	print_liste_field_titre($arrayfields['pac.fk_product_parent']['label'], $_SERVER["PHP_SELF"], "pac.fk_product_parent", "", $param, '', $sortfield, $sortorder, '', empty($arrayfields['pac.fk_product_parent']['help']) ? '' : $arrayfields['pac.fk_product_parent']['help']);
 }
 if (!empty($arrayfields['p.finished']['checked'])) {
 	print_liste_field_titre($arrayfields['p.finished']['label'], $_SERVER["PHP_SELF"], "p.finished", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1678,6 +1690,23 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
+			print '<td class="nowraponall">';
+			if ($obj->fk_product_parent > 0) {
+				if (!empty($conf->cache['product'][$obj->fk_product_parent])) {
+					$product_parent_static = $conf->cache['product'][$obj->fk_product_parent];
+				} else {
+					$product_parent_static= new Product($db);
+					$product_parent_static->fetch($obj->fk_product_parent);
+					$conf->cache['product'][$obj->fk_product_parent] = $product_parent_static;
+				}
+				print $product_parent_static->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Finished
 		if (!empty($arrayfields['p.finished']['checked'])) {
 			print '<td class="center">';
@@ -1823,12 +1852,12 @@ while ($i < $imaxinloop) {
 		// Default Workstation
 		if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 			print '<td align="left">';
-			if (!empty($obj->fk_default_workstation)) {
-				$static_ws->id = $obj->fk_default_workstation;
-				$static_ws->ref = $obj->ref_workstation;
-				$static_ws->status = $obj->status_workstation;
+			if (isModEnabled('workstation') && !empty($obj->fk_default_workstation)) {
+				$workstation_static->id = $obj->fk_default_workstation;
+				$workstation_static->ref = $obj->ref_workstation;
+				$workstation_static->status = $obj->status_workstation;
 
-				print $static_ws->getNomUrl(1);
+				print $workstation_static->getNomUrl(1);
 			}
 			print '</td>';
 			if (!$i) {

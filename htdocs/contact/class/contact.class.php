@@ -61,6 +61,11 @@ class Contact extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'contact';
@@ -107,7 +112,7 @@ class Contact extends CommonObject
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
-		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
 		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
@@ -242,41 +247,6 @@ class Contact extends CommonObject
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
-
-	/**
-	 * Skype username
-	 * @var string
-	 * @deprecated
-	 */
-	public $skype;
-
-	/**
-	 * Twitter username
-	 * @var string
-	 * @deprecated
-	 */
-	public $twitter;
-
-	 /**
-	  * Facebook username
-	  * @var string
-	  * @deprecated
-	  */
-	public $facebook;
-
-	 /**
-	  * Linkedin username
-	  * @var string
-	  * @deprecated
-	  */
-	public $linkedin;
-
-	/**
-	 * Jabber username
-	 * @var string
-	 * @deprecated
-	 */
-	public $jabberid;
 
 	/**
 	 * @var string filename for photo
@@ -1513,7 +1483,7 @@ class Contact extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -1551,7 +1521,7 @@ class Contact extends CommonObject
 
 		if ($withpicto) {
 			if ($withpicto < 0) {
-				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				$result .= '<!-- picto photo contact --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 				if ($withpicto != 2 && $withpicto != -2) {
 					$result .= ' ';
 				}
@@ -1699,6 +1669,8 @@ class Contact extends CommonObject
 		$this->email = 'specimen@specimen.com';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
+			'twitter' => 'tomhanson',
+			'linkedin' => 'tomhanson',
 		);
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';

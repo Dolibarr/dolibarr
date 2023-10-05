@@ -547,7 +547,7 @@ if (empty($reshook)) {
 		$object->title          = (string) GETPOST("title");
 		$object->sujet          = (string) GETPOST("sujet");
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
-		$object->bgcolor        = (string) GETPOST("bgcolor");
+		$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 		$object->bgimage        = (string) GETPOST("bgimage");
 
 		if (!$object->title) {
@@ -641,7 +641,7 @@ if (empty($reshook)) {
 			$mesgs = array();
 			$object->sujet          = (string) GETPOST("sujet");
 			$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
-			$object->bgcolor        = (string) GETPOST("bgcolor");
+			$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 			$object->bgimage        = (string) GETPOST("bgimage");
 
 			if (!$object->sujet) {

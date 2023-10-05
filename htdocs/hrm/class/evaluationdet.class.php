@@ -26,15 +26,15 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for Evaluationline
+ * Class for EvaluationLine
  */
-class Evaluationline extends CommonObject
+class EvaluationLine extends CommonObjectLine
 {
 	/**
 	 * @var string ID of module.
@@ -143,7 +143,7 @@ class Evaluationline extends CommonObject
 	// /**
 	//  * @var string    Name of subtable class that manage subtable lines
 	//  */
-	// public $class_element_line = 'Evaluationline';
+	// public $class_element_line = 'EvaluationLine';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -708,7 +708,7 @@ class Evaluationline extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -758,7 +758,7 @@ class Evaluationline extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -887,7 +887,7 @@ class Evaluationline extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationline($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_evaluationdet = '.$this->id));
 
 		if (is_numeric($result)) {

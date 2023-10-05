@@ -180,8 +180,8 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>45),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>50),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
-	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
-	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
+	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60, 'csslist'=>'nowraponall'),
+	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65, 'csslist'=>'nowraponall'),
 	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled("expedition")),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
@@ -206,7 +206,7 @@ $arrayfields = array(
 	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>135),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled("expedition")), 'position'=>990),
-	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
+	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
@@ -295,16 +295,16 @@ if (empty($reshook)) {
 		$search_fk_input_reason = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-	 || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
-		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
+			$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
-	// Mass actions
-	$objectclass = 'Commande';
-	$objectlabel = 'Orders';
-	$permissiontoread = $user->hasRight("commande", "lire");
-	$permissiontoadd = $user->hasRight("commande", "creer");
-	$permissiontodelete = $user->hasRight("commande", "supprimer");
+		// Mass actions
+		$objectclass = 'Commande';
+		$objectlabel = 'Orders';
+		$permissiontoread = $user->hasRight("commande", "lire");
+		$permissiontoadd = $user->hasRight("commande", "creer");
+		$permissiontodelete = $user->hasRight("commande", "supprimer");
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 		$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
 		$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
@@ -316,9 +316,9 @@ if (empty($reshook)) {
 		$permissiontocancel = $user->hasRight("commande", "creer");
 		$permissiontosendbymail = $user->hasRight("commande", "creer");
 	}
-	$uploaddir = $conf->commande->multidir_output[$conf->entity];
-	$triggersendname = 'ORDER_SENTBYMAIL';
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+		$uploaddir = $conf->commande->multidir_output[$conf->entity];
+		$triggersendname = 'ORDER_SENTBYMAIL';
+		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 		$orders = GETPOST('toselect', 'array');
@@ -509,7 +509,7 @@ if (empty($reshook)) {
 								100,
 								0,
 								$lines[$i]->fk_unit
-							);
+								);
 							if ($result > 0) {
 								$lineid = $result;
 								if (!empty($createbills_onebythird)) //increment rang to keep order
@@ -902,17 +902,14 @@ if ($search_status <> '') {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
 		}
 	}
-	if ($search_status == -2) {	// "validated + in process"
+	if ($search_status == -2) {	// "validated + in progress"
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 		$sql .= " AND (c.fk_statut IN (1,2))";
 	}
-	if ($search_status == -3) {	// "validated + in process + delivered"
+	if ($search_status == -3) {	// "validated + in progress + shipped"
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
 		$sql .= ' AND (c.fk_statut IN (1,2,3))'; // validated, in process or closed
-	}
-	if ($search_status == -4) {	//  "validate + in progress"
-		$sql .= ' AND (c.fk_statut IN (1,2))'; // validated, in process
 	}
 }
 
@@ -1164,7 +1161,7 @@ if ($sall) {
 	$param .= '&sall='.urlencode($sall);
 }
 if ($socid > 0) {
-	$param .= '&socid='.urlencode($socid);
+	$param .= '&socid='.((int) $socid);
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -1761,13 +1758,13 @@ if (!empty($arrayfields['c.import_key']['checked'])) {
 if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array(
-		Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
-		Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-		Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
-		Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-		-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-		-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
-		Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
+		Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraftShort"),
+		Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+		Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSentShort"),
+		-2 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+		-3 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceledShort")
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
@@ -2001,16 +1998,16 @@ if (isModEnabled('margin') && (
 		$with_margin_info = true;
 }
 
-$total_ht = 0;
-$total_margin = 0;
+	$total_ht = 0;
+	$total_margin = 0;
 
-// Loop on record
-// --------------------------------------------------------------------
-$i = 0;
-$savnbfield = $totalarray['nbfield'];
-$totalarray = array();
-$totalarray['nbfield'] = 0;
-$imaxinloop = ($limit ? min($num, $limit) : $num);
+	// Loop on record
+	// --------------------------------------------------------------------
+	$i = 0;
+	$savnbfield = $totalarray['nbfield'];
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -2266,7 +2263,7 @@ while ($i < $imaxinloop) {
 
 		// Order date
 		if (!empty($arrayfields['c.date_commande']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
 			// Warning late icon and note
 			if ($generic_commande->hasDelay()) {
@@ -2280,7 +2277,7 @@ while ($i < $imaxinloop) {
 
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
 			print '</td>';
 			if (!$i) {
@@ -2748,10 +2745,10 @@ while ($i < $imaxinloop) {
 	$i++;
 }
 
-// Show total line
-include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-// If no record found
+	// If no record found
 if ($num == 0) {
 	$colspan = 1;
 	foreach ($arrayfields as $key => $val) {
@@ -2762,16 +2759,16 @@ if ($num == 0) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
-$db->free($resql);
+	$db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-print '</table>'."\n";
-print '</div>'."\n";
+	print '</table>'."\n";
+	print '</div>'."\n";
 
-print '</form>'."\n";
+	print '</form>'."\n";
 
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
@@ -2790,6 +2787,6 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();

@@ -61,6 +61,7 @@ class Import
 	public $array_import_entities;
 	public $array_import_regex;
 	public $array_import_updatekeys;
+	public $array_import_preselected_updatekeys;
 	public $array_import_examplevalues;
 	public $array_import_convertvalue;
 	public $array_import_run_sql_after;
@@ -191,6 +192,8 @@ class Import
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
+						// Array of columns preselected as UPDATE options
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)

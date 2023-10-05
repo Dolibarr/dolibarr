@@ -1657,7 +1657,7 @@ if (empty($reshook)) {
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
+									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 									if ($object->situation_counter == 1) {
 										$lines[$i]->situation_percent = 0;
 									}
@@ -3167,6 +3167,7 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" id="formtocreateaction" value="add">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	if ($soc->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
@@ -3236,6 +3237,7 @@ if ($action == 'create') {
 
    					// For company change, we must submit page with action=create instead of action=add
 					console.log("We have changed the company - Resubmit page");
+					jQuery("input[name=changecompany]").val("1");
 					jQuery("#formtocreateaction").val("create");
 					jQuery("#formtocreate").submit();
 				});
@@ -3561,9 +3563,15 @@ if ($action == 'create') {
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
-				// Show credit note options only if we checked credit note
+				// Show credit note options only if we checked credit note and disable standard invoice if "create credit note" button is pressed
 				print '<script type="text/javascript">
     			jQuery(document).ready(function() {
+					if (jQuery("#radio_creditnote").is(":checked"))
+                    {
+                        jQuery("#radio_standard").prop("disabled", true);
+                    } else {
+                        jQuery("#radio_standard").prop("disabled", false);
+                    }
     				if (! jQuery("#radio_creditnote").is(":checked"))
     				{
     					jQuery("#credit_note_options").hide();
@@ -3631,7 +3639,7 @@ if ($action == 'create') {
 		$jsListType = '';
 		foreach ($listtType as $type) {
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-			$curent = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+			$curent = getDolGlobalString($thisTypeConfName, getDolGlobalString('FACTURE_ADDON_PDF'));
 			$jsListType .= (!empty($jsListType) ? ',' : '').'"'.$type.'":"'.$curent.'"';
 		}
 
@@ -3823,7 +3831,7 @@ if ($action == 'create') {
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
 		print img_picto('', 'currency', 'class="pictofixedwidth"');
-		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code');
 		print '</td></tr>';
 	}
 
@@ -4508,7 +4516,7 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($action != 'editinvoicedate' && !empty($object->brouillon) && $usercancreate && empty($conf->global->FAC_FORCE_DATE_VALIDATION)) {
+	if ($action != 'editinvoicedate' && $object->status == $object::STATUS_DRAFT && $usercancreate && !getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -4610,7 +4618,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
-		if ($usercancreate && $action != 'editmulticurrencycode' && !empty($object->brouillon)) {
+		if ($usercancreate && $action != 'editmulticurrencycode' && $object->status == $object::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -4626,7 +4634,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
-			if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+			if ($usercancreate && $action != 'editmulticurrencyrate' && $object->status == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -4858,7 +4866,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('RevenueStamp');
 		print '</td>';
-		if ($action != 'editrevenuestamp' && !empty($object->brouillon) && $usercancreate) {
+		if ($action != 'editrevenuestamp' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
 		}
 		print '</tr></table>';

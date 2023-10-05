@@ -6,7 +6,7 @@
  * Copyright (C) 2009-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
- * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015-2023  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
@@ -64,12 +64,12 @@ class ExtraFields
 	public $errors = array();
 
 	/**
-	 * @var string DB Error number
+	 * @var string 	DB Error number
 	 */
 	public $errno;
 
 	/**
-	 * @var array array of type to label
+	 * @var array 	Array of type to label
 	 */
 	public static $type2label = array(
 		'varchar'=>'String1Line',
@@ -96,7 +96,6 @@ class ExtraFields
 		'link' => 'ExtrafieldLink',
 		'separate' => 'ExtrafieldSeparator',
 	);
-
 
 	/**
 	 *	Constructor
@@ -553,7 +552,7 @@ class ExtraFields
 	 */
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
-		global $hookmanager;
+		global $action, $hookmanager;
 
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -999,9 +998,9 @@ class ExtraFields
 			} elseif ($type == 'radio') {
 				$morecss = 'width25';
 			} else {
-				if (empty($size) || round($size) < 12) {
+				if (empty($size) || round((float) $size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (round((float) $size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -1556,6 +1555,9 @@ class ExtraFields
 			}
 		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
+				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
+			}
 			$showempty = (($required && $default != '') ? 0 : 1);
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
 		} elseif ($type == 'password') {
@@ -2076,7 +2078,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $_POST, $langs;
+		global $conf, $_POST, $langs;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
@@ -2140,10 +2142,9 @@ class ExtraFields
 					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
 					// technically non-empty value may be treated as empty functionally).
 					// value can be alpha, int, array, etc...
-					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
-						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
-						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
+					$v = $_POST["options_".$key] ?? null;
+					$type = $this->attributes[$object->table_element]['type'][$key];
+					if (self::isEmptyValue($v, $type)) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 
 						// Field is not defined. We mark this as an error. We may fix it later if there is a default value and $todefaultifmissing is set.
@@ -2349,5 +2350,29 @@ class ExtraFields
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Return if a value is "empty" for a mandatory vision.
+	 *
+	 * @param 	mixed	$v		Value to test
+	 * @param 	string 	$type	Type of extrafield 'sellist', 'link', 'select', ...
+	 * @return 	boolean			True is value is an empty value, not allowed for a mandatory field.
+	 */
+	public static function isEmptyValue($v, string $type)
+	{
+		if ($v === null || $v === '') {
+			return true;
+		}
+		if (is_array($v) || $type == 'select') {
+			return empty($v);
+		}
+		if ($type == 'link') {
+			return ($v == '-1');
+		}
+		if ($type == 'sellist') {
+			return ($v == '0');
+		}
+		return (empty($v) && $v != '0');
 	}
 }

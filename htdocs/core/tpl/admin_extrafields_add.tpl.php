@@ -157,7 +157,22 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>" pattern="\w+"> <span class="opacitymedium">(<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</span></td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type', $type2label, GETPOST('type', 'alpha'), 0, 0, 0, '', 0, 0, 0, '', '', 1); ?>
+<?php
+print '<select id="type" class="flat type" name="type">';
+foreach ($type2label as $key => $val) {
+	$selected = '';
+	if ($key == GETPOST('type', 'alpha')) {
+		$selected = ' selected="selected"';
+	}
+
+	// Set $valhtml with the picto for the type
+	$valhtml = ($key ? getPictoForType($key) : '').$val;
+
+	print '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+}
+print '</select>';
+print ajax_combobox('type');
+?>
 </td></tr>
 <!-- Size -->
 <tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size', 'alpha') ?GETPOST('size', 'alpha') : ''); ?>"></td></tr>

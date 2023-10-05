@@ -154,7 +154,7 @@ class Evaluation extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'Evaluationline';
+	public $class_element_line = 'EvaluationLine';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -166,10 +166,10 @@ class Evaluation extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	protected $childtablesoncascade = array('@Evaluationline:hrm/class/evaluationdet.class.php:fk_evaluation');
+	protected $childtablesoncascade = array('@EvaluationLine:hrm/class/evaluationdet.class.php:fk_evaluation');
 
 	/**
-	 * @var Evaluationline[]     Array of subtable lines
+	 * @var EvaluationLine[]     Array of subtable lines
 	 */
 	public $lines = array();
 
@@ -237,7 +237,7 @@ class Evaluation extends CommonObject
 			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
 				foreach ($TRequiredRanks as $required) {
-					$line = new Evaluationline($this->db);
+					$line = new EvaluationLine($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
 					$line->required_rank = $required->rankorder;
@@ -740,7 +740,7 @@ class Evaluation extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -790,7 +790,7 @@ class Evaluation extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -919,7 +919,7 @@ class Evaluation extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationline($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', '', 0, 0, array('customsql'=>'fk_evaluation = '.$this->id));
 
 		if (is_numeric($result)) {

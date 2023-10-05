@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2023 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
@@ -71,6 +71,25 @@ if ($user->socid) {
 // It should be enough because all payments are done on invoices of the same thirdparty.
 if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
+}
+
+// Init Stripe objects
+if (isModEnabled('stripe')) {
+	require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+
+	$stripe = new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
 }
 
 $error = 0;
@@ -396,9 +415,39 @@ if (isModEnabled("banque")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
-print $form->editfieldval("Note", 'note', $object->note, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
+
+if (!empty($object->ext_payment_id)) {
+	// External payment ID
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
+	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
+		$tmp1 = explode('@', $object->ext_payment_id);
+		if (!empty($tmp1[1])) {
+			$site_account_payment = $tmp1[1];	// pk_live_...
+		}
+		$tmp2 = explode(':', $tmp1[0]);
+		if (!empty($tmp2[1])) {
+			$stripecu = $tmp2[1];
+		}
+
+		print dol_escape_htmltag($tmp1[0]);
+
+		$connect = '';
+		if (!empty($stripeacc)) {
+			$connect = $stripeacc.'/';
+		}
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
+		if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
+			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+		}
+		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account_payment, 'globe').'</a>';
+	} else {
+		print dol_escape_htmltag($object->ext_payment_id);
+	}
+	print '</td></tr>';
+}
 
 print '</table>';
 

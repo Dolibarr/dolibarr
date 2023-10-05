@@ -598,7 +598,7 @@ if ($action == 'edit') {
 				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 			}
 		} else {
-			print yn(0).' ('.$langs->trans("NotSupported").')';
+			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 		}
 		print '</td></tr>';
 
@@ -611,7 +611,7 @@ if ($action == 'edit') {
 				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 			}
 		} else {
-			print yn(0).' ('.$langs->trans("NotSupported").')';
+			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 		}
 		print '</td></tr>';
 	}

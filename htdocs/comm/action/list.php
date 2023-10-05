@@ -79,6 +79,7 @@ $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
+// $dateselect is a day included inside the event range
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
 $datestart_dtstart = dol_mktime(0, 0, 0, GETPOST('datestart_dtstartmonth', 'int'), GETPOST('datestart_dtstartday', 'int'), GETPOST('datestart_dtstartyear', 'int'), 'tzuserrel');
 $datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int'), GETPOST('datestart_dtendday', 'int'), GETPOST('datestart_dtendyear', 'int'), 'tzuserrel');

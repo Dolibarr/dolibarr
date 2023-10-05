@@ -192,6 +192,7 @@ if (empty($reshook)) {
 			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->libelle = GETPOST('libelle', 'alpha');
+			$object->label = GETPOST('libelle', 'alpha');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
@@ -366,6 +367,7 @@ if (empty($reshook)) {
 		// Set label
 		$object->fetch($id);
 		$object->libelle = GETPOST('libelle');
+		$object->label = GETPOST('libelle');
 		$result = $object->update($user);
 
 		if ($result < 0) {
@@ -1256,7 +1258,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($usercancreate && $action != 'editmulticurrencycode' && !empty($object->brouillon)) {
+			if ($usercancreate && $action != 'editmulticurrencycode' && $object->suspended == $object::STATUS_SUSPENDED) {
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
@@ -1272,7 +1274,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
-				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+				if ($usercancreate && $action != 'editmulticurrencyrate' && $object->suspended == $object::STATUS_SUSPENDED && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 				}
 				print '</tr></table>';

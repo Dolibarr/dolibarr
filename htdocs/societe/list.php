@@ -1018,6 +1018,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
+}
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if (empty($arrayfields['customerorsupplier']['checked'])) {
@@ -1565,7 +1568,7 @@ while ($i < $imaxinloop) {
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-		$companystatic->parent = $obj->fk_parent;
+		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
 	}
 

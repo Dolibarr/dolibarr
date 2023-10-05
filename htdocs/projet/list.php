@@ -98,7 +98,6 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
-$search_status = GETPOST("search_status", 'int');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
@@ -163,8 +162,10 @@ if (isModEnabled('categorie')) {
 	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
-if ($search_status == '') {
-	$search_status = -1; // -1 or 1
+if (GETPOSTISARRAY('search_status')) {
+	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+} else {
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
 
@@ -528,11 +529,11 @@ if ($search_date_end_end) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-if ($search_status >= 0) {
+if ($search_status != '' && $search_status != '-1') {
 	if ($search_status == 99) {
-		$sql .= " AND p.fk_statut <> 2";
+		$sql .= " AND p.fk_statut IN (0,1)";
 	} else {
-		$sql .= " AND p.fk_statut = ".((int) $search_status);
+		$sql .= " AND p.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 	}
 }
 if ($search_opp_status) {
@@ -843,8 +844,8 @@ if ($search_societe != '') {
 if ($search_societe_alias != '') {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
 }
-if ($search_status >= 0) {
-	$param .= '&search_status='.urlencode($search_status);
+if ($search_status != '' && $search_status != '-1') {
+	$param .= "&search_status=".urlencode($search_status);
 }
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) {
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
@@ -1245,12 +1246,7 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	$arrayofstatus = array();
-	foreach ($object->statuts_short as $key => $val) {
-		$arrayofstatus[$key] = $langs->trans($val);
-	}
-	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
+	$formproject->selectProjectsStatus($search_status, 1, 'search_status');
 	print '</td>';
 }
 // Action column
@@ -1451,6 +1447,8 @@ while ($i < $imaxinloop) {
 	$companystatic->town = $obj->town;
 	$companystatic->country_code = $obj->country_code;
 
+	$object->thirdparty = $companystatic;
+
 	$stringassignedusers = '';
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
@@ -1467,19 +1465,20 @@ while ($i < $imaxinloop) {
 						$c = new Contact($db);
 					}
 					$c->fetch($contactproject['id']);
-					if (!empty($c->photo)) {
-						if (get_class($c) == 'User') {
-							$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						} else {
-							$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-						}
+					//var_dump($c->photo);
+					//if (!empty($c->photo)) {
+					if (get_class($c) == 'User') {
+						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
+						$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
+					}
+					/*} else {
 						if (get_class($c) == 'User') {
 							$stringassignedusers .= $c->getNomUrl(2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 						} else {
 							$stringassignedusers .= $c->getNomUrl(2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 						}
-					}
+					}*/
 					$ifisrt = 0;
 				}
 			}
@@ -1493,7 +1492,7 @@ while ($i < $imaxinloop) {
 		}
 
 		$selected = in_array($object->id, $arrayofselected);
-		$arrayofdata = array('assignedusers' => $stringassignedusers, 'selected' => $selected);
+		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty'=>$companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
 

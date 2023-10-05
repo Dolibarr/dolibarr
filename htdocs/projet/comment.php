@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
+ *	\file       htdocs/projet/comment.php
  *	\ingroup    project
- *	\brief      Page of a project task
+ *	\brief      Page of a project
  */
 
 // Load Dolibarr environment

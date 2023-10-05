@@ -73,47 +73,6 @@ class pdf_cyan extends ModelePDFPropales
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
-
-	/**
 	 * @var array of document table columns
 	 */
 	public $cols;
@@ -126,7 +85,7 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -1533,7 +1492,16 @@ class pdf_cyan extends ModelePDFPropales
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
 
+		if (!empty($conf->global->MAIN_PDF_TITLE_TEXT_COLOR)) {
+			$arrayColorTextTitle = explode(',', $conf->global->MAIN_PDF_TITLE_TEXT_COLOR);
+			$pdf->SetTextColor($arrayColorTextTitle[0], $arrayColorTextTitle[1], $arrayColorTextTitle[2]);
+		}
+
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
+
+		if (!empty($conf->global->MAIN_PDF_TITLE_TEXT_COLOR)) {
+			$pdf->SetTextColor(0, 0, 0);
+		}
 
 		if (empty($hidetop)) {
 			$pdf->line($this->marge_gauche, $tab_top + $this->tabTitleHeight, $this->page_largeur - $this->marge_droite, $tab_top + $this->tabTitleHeight); // line takes a position y in 2nd parameter and 4th parameter

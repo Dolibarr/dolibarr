@@ -148,6 +148,7 @@ if ($action == 'updatelines' && $usercancreate) {
 			$ent = "entrepot_".$reg[1].'_'.$reg[2];
 			$fk_commandedet = "fk_commandedet_".$reg[1].'_'.$reg[2];
 			$idline = GETPOST("idline_".$reg[1].'_'.$reg[2]);
+			$warehouse_id = GETPOSTINT($ent);
 			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 			$lot = '';
 			$dDLUO = '';
@@ -164,7 +165,7 @@ if ($action == 'updatelines' && $usercancreate) {
 			// We ask to move a qty
 			if (($modebatch == "batch" && $newqty >= 0) || ($modebatch == "barcode" && $newqty != 0)) {
 				if ($newqty > 0) {	// If we want a qty, we make test on input data
-					if (!(GETPOST($ent, 'int') > 0)) {
+					if (!($warehouse_id > 0)) {
 						dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 						$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
 						setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
@@ -242,14 +243,13 @@ if ($action == 'updatelines' && $usercancreate) {
 										$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
 										$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
 										$sql .= " , qty = ".((float) $newqty);
-										// TODO Add a column fk_warehouse
+										$sql .= " , fk_warehouse = ".((int) $warehouse_id);
 										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." (";
-										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock)";
-										// TODO Add a column fk_warehouse
+										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
 										$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
-										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0)";
+										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
 									}
 								} else {
 									$sql = " DELETE FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
@@ -877,7 +877,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '</td>';
 								}
 								// Qty to dispatch
-								print '<td class="right">';
+								print '<td class="right nowraponall">';
 								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
 								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty);
 								//var_dump($suggestedvalue);exit;

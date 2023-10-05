@@ -47,12 +47,15 @@ create table llx_societe_rib
   fk_country     integer,
   currency_code  varchar(3),
 
+  model_pdf		 varchar(255),					-- last template used to generate main document
+  last_main_doc	 varchar(255),					-- relative filepath+filename of last main generated document
+
   -- For BAN direct debit feature
   rum            varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum		 date,							-- Date of mandate
   frstrecur      varchar(16) default 'FRST',    -- 'FRST' or 'RECUR'
 
-  --For credit card
+  -- For credit card
   last_four varchar(4),										-- last 4
   card_type varchar(255),									-- card type 'VISA', 'MC' , ...
   cvn varchar(255),
@@ -60,7 +63,7 @@ create table llx_societe_rib
   exp_date_year INTEGER,
   country_code varchar(10),
 
-  --For Paypal
+  -- For Paypal
   approved INTEGER DEFAULT 0,
   email varchar(255),
   ending_date date,
@@ -75,6 +78,13 @@ create table llx_societe_rib
 
   ext_payment_site varchar(128),						    -- name of external paymentmode (for example 'StripeLive')
 
+  extraparams    varchar(255),                      -- for other parameters with json format
+  
+  -- For Online Sign
+  date_signature		datetime,
+  online_sign_ip		varchar(48),
+  online_sign_name		varchar(64),
+  
   comment        varchar(255),
   ipaddress      varchar(68),
   status integer NOT NULL DEFAULT 1,						-- 1=ACTIVE, 0=IN_TRASH

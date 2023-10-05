@@ -751,8 +751,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $params = array('morecss'=>'reposition');
 
+$urlnew = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl);
+
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd, $params);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlnew, '', $permissiontoadd, $params);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 

@@ -1562,6 +1562,8 @@ if ($placeid > 0) {
 				}
 				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? '<b>' . $line->product_ref . '</b> - ' . $line->product_label : dolGetFirstLineOfText($line->desc, 1), $tooltiptext);
+				} elseif (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 2) {
+					$htmlforlines .= $form->textwithpicto($line->product_ref ? '<b>'.$line->product_ref.'<b>' : dolGetFirstLineOfText($line->desc, 1), $tooltiptext);
 				} else {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
 				}
@@ -1702,7 +1704,7 @@ if (($action == "valid" || $action == "history") && $invoice->type != Facture::T
 
 if ($action == "search") {
 	print '<center>
-	<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
+	<input type="text" id="search" class="input-nobottom" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
 	</center>';
 }
 
