@@ -2247,7 +2247,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Login name with photo and tooltip
 		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+		$toprightmenu .= '<div class="inline-block login_block_elem login_block_elem_name nowrap centpercent" style="padding: 0px;">';
 
 		if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
 			// Add search dropdown
@@ -2265,7 +2265,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Add user dropdown
 		$toprightmenu .= top_menu_user();
 
-		$toprightmenu .= '</div></div>';
+		$toprightmenu .= '</div>';
 
 		$toprightmenu .= '</div>'."\n";
 

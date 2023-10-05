@@ -1075,7 +1075,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testDolFormatAddress
+	 * testDolPrintPhone
 	 *
 	 * @return	void
 	 */

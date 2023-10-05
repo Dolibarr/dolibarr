@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
+/* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify

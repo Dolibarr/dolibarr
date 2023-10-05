@@ -298,7 +298,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = $mc->getEntity($element, $shared, $currentobject);
 	} else {
 		$out = '';
-		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values');
+		$addzero = array('user', 'usergroup', 'cronjob', 'c_email_templates', 'email_template', 'default_values', 'overwrite_trans');
 		if (in_array($element, $addzero)) {
 			$out .= '0,';
 		}
@@ -2571,7 +2571,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/[\n\r]/', $sep, $object->address)));
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/(\r\n|\r|\n)+/', $sep, $object->address)));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
@@ -3407,7 +3407,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  * 	@param 	int		$cid 		    Id of contact if known
  * 	@param 	int		$socid          Id of third party if known
  * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set), 'tel'=Force "tel:..." link
- * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx. You can also use 'hidenum' to hide the number, keep only the picto.
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
@@ -3613,11 +3613,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
+
+	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
-			$newphoneform = $newphone;
-			$newphone = '<a href="tel:'.$phone.'"';
-			$newphone .= '>'.$newphoneform.'</a>';
+			$newphoneastart = '<a href="tel:'.$phone.'">';
+			$newphoneaend .= '</a>';
 		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
 				$user->fetch_clicktodial();
@@ -3640,33 +3641,33 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 								'__LOGIN__'=>$clicktodial_login,
 								'__PASS__'=>$clicktodial_password);
 			$url = make_substitutions($url, $substitarray);
-			$newphonesav = $newphone;
 			if (empty($conf->global->CLICKTODIAL_DO_NOT_USE_AJAX_CALL)) {
 				// Default and recommended: New method using ajax without submiting a page making a javascript history.go(-1) back
-				$newphone = '<a href="'.$url.'" class="cssforclicktodial"';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
-				$newphone .= '>'.$newphonesav.'</a>';
+				$newphoneastart = '<a href="'.$url.'" class="cssforclicktodial">';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
+				$newphoneaend = '</a>';
 			} else {
 				// Old method
-				$newphone = '<a href="'.$url.'"';
+				$newphoneastart = '<a href="'.$url.'"';
 				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-					$newphone .= ' target="_blank" rel="noopener noreferrer"';
+					$newphoneastart .= ' target="_blank" rel="noopener noreferrer"';
 				}
-				$newphone .= '>'.$newphonesav.'</a>';
+				$newphoneastart .= '>';
+				$newphoneaend .= '</a>';
 			}
 		}
 
 		//if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create'))
 		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
-			$link = '';
+			$addlinktoagenda = '';
 			if ($addlink == 'AC_FAX') {
 				$type = 'AC_FAX';
 			}
 			if (!empty($conf->global->AGENDA_ADDACTIONFORPHONE)) {
-				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage='. urlencode($_SERVER['REQUEST_URI']) .'&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$addlinktoagenda = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage='. urlencode($_SERVER['REQUEST_URI']) .'&amp;actioncode='.$type.($cid ? '&amp;contactid='.$cid : '').($socid ? '&amp;socid='.$socid : '').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
-			if ($link) {
-				$newphone = '<div>'.$newphone.' '.$link.'</div>';
+			if ($addlinktoagenda) {
+				$newphone = '<span>'.$newphone.' '.$addlinktoagenda.'</span>';
 			}
 		}
 	}
@@ -3699,7 +3700,14 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		} elseif (empty($adddivfloat)) {
 			$rep .= '<span style="margin-right: 10px;">';
 		}
-		$rep .= ($withpicto ?img_picto($titlealt, 'object_'.$picto.'.png').' ' : '').$newphone;
+
+		$rep .= $newphoneastart;
+		$rep .= ($withpicto ? img_picto($titlealt, 'object_'.$picto.'.png') : '');
+		if ($separ != 'hidenum') {
+			$rep .= ($withpicto ? ' ' : '').$newphone;
+		}
+		$rep .= $newphoneaend;
+
 		if ($adddivfloat == 1) {
 			$rep .= '</div>';
 		} elseif (empty($adddivfloat)) {
@@ -4211,10 +4219,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
 
-		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
-			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+		if (strpos($pictowithouttext, 'fontawesome_') === 0 || strpos($pictowithouttext, 'fa-') === 0) {
+			// This is a font awesome image 'fontawesome_xxx' or 'fa-xxx'
 			$pictowithouttext = str_replace('fontawesome_', '', $pictowithouttext);
 			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+
+			// Compatibility with old fontawesome versions
+			if ($pictowithouttext == 'file-o') {
+				$pictowithouttext = 'file';
+			}
 
 			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
@@ -4222,12 +4235,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (!empty($pictowithouttextarray[1])) {
 				// Syntax is 'fontawesome_fakey_faprefix_facolor_fasize' or 'fa-fakey_faprefix_facolor_fasize'
 				$fakey      = 'fa-'.$pictowithouttextarray[0];
-				$fa         = empty($pictowithouttextarray[1]) ? 'fa' : $pictowithouttextarray[1];
+				$faprefix   = empty($pictowithouttextarray[1]) ? 'fas' : $pictowithouttextarray[1];
 				$facolor    = empty($pictowithouttextarray[2]) ? '' : $pictowithouttextarray[2];
 				$fasize     = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
 			} else {
 				$fakey      = 'fa-'.$pictowithouttext;
-				$fa         = 'fa';
+				$faprefix   = 'fas';
 				$facolor    = '';
 				$fasize     = '';
 			}
@@ -4246,7 +4259,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			$moreatt = trim($moreatt);
 
-			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
+			$enabledisablehtml = '<span class="'.$faprefix.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
 			$enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
 			/*if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml .= $titlealt;
@@ -4266,7 +4279,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
-				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
+				'filter', 'file', 'file-o', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
 				'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'hands-helping', 'help', 'holiday',
 				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
@@ -4294,7 +4307,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$facolor = '';
 			$fasize = '';
 			$fa = getDolGlobalString('MAIN_FONTAWESOME_ICON_STYLE', 'fas');
-			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
+			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'file', 'file-o', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('black-tie', 'github', 'google', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
@@ -4311,7 +4324,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
-				'generate'=>'plus-square', 'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
+				'file-o'=>'file', 'generate'=>'plus-square', 'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
 				'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 				'email'=>'at', 'establishment'=>'building', 'edit'=>'pencil-alt', 'entity'=>'globe',
 				'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
@@ -9991,6 +10004,11 @@ function printCommonFooter($zone = 'private')
 								// Add 'field required' class on closest td for all input elements : input, textarea and select
 								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
+							// If we submit the cancel button we remove the required attributes
+							print 'jQuery("input[name=\'cancel\']").click(function() {
+								console.log("We click on cancel button so removed all required attribute");
+								jQuery("input, textarea, select").each(function(){this.removeAttribute(\'required\');});
+								});'."\n";
 						}
 					}
 				}

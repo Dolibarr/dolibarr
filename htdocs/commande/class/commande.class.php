@@ -1949,7 +1949,6 @@ class Commande extends CommonOrder
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -4144,8 +4143,6 @@ class Commande extends CommonOrder
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
 			}
