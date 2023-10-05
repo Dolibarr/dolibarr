@@ -6162,7 +6162,7 @@ abstract class CommonObject
 
 				//fix #22571 : order by could be set
 				//remember to be close to extrafields 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]',
-				if(isset($InfoFieldList[7]) && $InfoFieldList[7] != "") {
+				if (isset($InfoFieldList[7]) && $InfoFieldList[7] != "") {
                     $sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
 				} else {
 					$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
