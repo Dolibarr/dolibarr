@@ -357,7 +357,7 @@ class ActionsTicket
 								$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
 								$mime = dol_mimetype($filePath);
 								$thumb = $arraymsgs['id'].'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-								$doclink = dol_buildpath('document.php', 1)."?hashp=$doc->share";
+								$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
 
 								$mimeAttr = ' mime="'.$mime.'" ';
 								$class = '';
