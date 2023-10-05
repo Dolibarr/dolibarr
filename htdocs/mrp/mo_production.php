@@ -1216,6 +1216,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
+        /// Unit
+		print '<td class="right">'.$langs->trans("Unit").'</td>';
 		// Cost price
 		if ($permissiontoupdatecost) {
 			if (empty($bomcostupdated)) {
@@ -1265,6 +1267,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+            //Unit
+            print '<td></td>';
 			// Cost price
 			if ($permissiontoupdatecost) {
 				print '<td></td>';
@@ -1327,7 +1331,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
 					print '</td>';
 					// Qty
-					print '<td class="right">'.$line->qty.'</td>';
+					print '<td class="right">'.measuringUnitString($line->qty,'','',1).'</td>';
+                    // Unit
+					print '<td class="right">'.$line->fk_unit.'</td>';
 					// Cost price
 					if ($permissiontoupdatecost) {
 						// Defined $manufacturingcost
@@ -1423,6 +1429,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						// Qty
 						print '<td></td>';
+                        // Unit
+						print '<td></td>';
 						// Cost price
 						if ($permissiontoupdatecost) {
 							print '<td></td>';
@@ -1472,7 +1480,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						// Cost
+						//Unit
+                        print '<td class="right"></td>';
+                        // Cost
 						if ($permissiontoupdatecost) {
 							// Defined $manufacturingcost
 							$manufacturingcost = 0;
