@@ -67,6 +67,7 @@ Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
 Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
 Notify_CONTRACT_VALIDATE=Contract validated
 Notify_FICHINTER_VALIDATE=Intervention validated
+Notify_FICHINTER_CLOSE=Intervention closed
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_SHIPPING_VALIDATE=Shipping validated

@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
+ * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,6 +201,31 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
 		$result = $object->setDraft($user);
+		if ($result >= 0) {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->model_pdf : GETPOST('model', 'alpha'), $outputlangs);
+			}
+
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
+		}
+	} elseif ($action == 'confirm_done' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
+		$result = $object->setClose($user);
 		if ($result >= 0) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
@@ -1113,6 +1139,10 @@ if ($action == 'create') {
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
+	}
+
+	if ($action == 'classifydone') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseIntervention'), $langs->trans('ConfirmCloseIntervention'), 'confirm_done', '', 0, 1);
 	}
 
 	// Confirm back to draft

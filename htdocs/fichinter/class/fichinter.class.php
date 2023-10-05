@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -662,6 +663,60 @@ class Fichinter extends CommonObject
 		}
 
 		return 0;
+	}
+
+	/**
+	 *  Close intervention
+	 *
+	 * 	@param      User	$user       Objet user that close
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return		int					<0 if KO, >0 if OK
+	 */
+	public function setClose($user, $notrigger = 0)
+	{
+		global $conf;
+
+		$error = 0;
+
+		if ($this->statut == self::STATUS_CLOSED) {
+			return 0;
+		} else {
+			$this->db->begin();
+
+			$now = dol_now();
+
+			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element;
+			$sql .= ' SET fk_statut = ' . self::STATUS_CLOSED . ',';
+			$sql .= " datet = '" . $this->db->idate($now) . "',";
+			$sql .= " fk_user_modif = " . ((int)$user->id);
+			$sql .= " WHERE rowid = " . ((int)$this->id);
+			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
+			$sql .= " AND entity = " . ((int) $conf->entity);
+
+			if ($this->db->query($sql)) {
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('FICHINTER_CLOSE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (!$error) {
+					$this->statut = self::STATUS_CLOSED;
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->db->rollback();
+					return -1;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+		}
 	}
 
 	/**
