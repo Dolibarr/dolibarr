@@ -187,15 +187,20 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 
+	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
-				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_ERR);
+				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
 				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
@@ -434,6 +439,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
+	}
+	if ($features == 'payment_sc') {
+		$tableandshare = 'paiementcharge';
+		$parentfortableentity = 'fk_charge@chargesociales';
 	}
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
@@ -909,7 +918,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
 			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
 		}
-
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";

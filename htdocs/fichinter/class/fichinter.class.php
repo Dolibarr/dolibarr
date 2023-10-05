@@ -475,7 +475,6 @@ class Fichinter extends CommonObject
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->model_pdf    = $obj->model_pdf;
-				$this->modelpdf     = $obj->model_pdf; // deprecated
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->entity = $obj->entity;
 
@@ -711,8 +710,6 @@ class Fichinter extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
 				$modele = $conf->global->FICHEINTER_ADDON_PDF;
 			}
