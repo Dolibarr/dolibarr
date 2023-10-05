@@ -166,3 +166,6 @@ NbOfInvoiceToPayByBankTransferForSalaries=Nombre de salaires qualifiées en atte
 SalaryWaitingWithdraw=salaire en attente de virement
 RefSalary=Salarié
 SalaryInvoice=Facture salarié
+NoSalaryInvoiceToWithdraw=Aucune facture de salarié avec '%s' ouvert n'est en attente. Allez sur l'onglet '%s' sur la fiche de salaire pour faire une demande.
+SalaryInvoiceWaitingWithdraw=Facture salarié en attente de paiement par virement bancaire
+

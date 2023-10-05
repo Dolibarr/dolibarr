@@ -957,6 +957,7 @@ class BonPrelevement extends CommonObject
 				if ($did > 0) {
 					$sql .= " AND pd.rowid = ".((int) $did);
 				}
+				print_r($sql);exit;
 			} else {
 				$sql = "SELECT s.rowid, pd.rowid as pfdrowid, s.fk_user";
 				$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
@@ -967,6 +968,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = s.fk_user";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as ur ON s.fk_user = ur.fk_user ";
 				$sql .= " WHERE s.entity IN (".getEntity('salary').')';
+				var_dump($sql);exit;
 			}
 
 			$resql = $this->db->query($sql);

@@ -129,6 +129,7 @@ if (empty($reshook)) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			if (GETPOSTISSET('sourcetype')) {
 				$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0, $sourcetype);
+				//var_dump($result);exit;
 			} else {
 				$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0);
 			}
@@ -208,8 +209,11 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title);
 
 $head = bon_prelevement_prepare_head($bprev);
-
-print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
+if ($type) {
+	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
+} else {
+	print load_fiche_titre($title);
+}
 
 print load_fiche_titre($title);
 

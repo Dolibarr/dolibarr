@@ -167,4 +167,6 @@ NbOfInvoiceToPayByBankTransferForSalaries=No. of qualified salaries waiting for 
 SalaryWaitingWithdraw=Salaries waiting for payment by credit transfer
 RefSalary=Salary
 SalaryInvoice=Salary invoice
+NoSalaryInvoiceToWithdraw=No salary invoice with open '%s' is waiting. Go on tab '%s' on salary card to make a request.
+SalaryInvoiceWaitingWithdraw=Salary invoice waiting for payment by credit transfer
 
