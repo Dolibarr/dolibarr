@@ -965,6 +965,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 					$tmp = explode('_', $action);
 					$object->actionmsg = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
 				}
+				if (isModEnabled('multicompany') && property_exists($object, 'entity') && $object->entity > 1) {
+					$object->actionmsg .= ' ('.$langs->trans("Entity").' '.$object->entity.')';
+				}
 			}
 
 			if (!isset($object->sendtoid) || !is_array($object->sendtoid)) {

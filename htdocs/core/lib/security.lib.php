@@ -144,6 +144,10 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 	$newchain = $chain;
 
 	if (function_exists('openssl_encrypt') && empty($dolibarr_disable_dolcrypt_for_debug)) {
+		if (empty($key)) {
+			return $chain;
+		}
+
 		$ivlen = 16;
 		if (function_exists('openssl_cipher_iv_length')) {
 			$ivlen = openssl_cipher_iv_length($ciphering);
@@ -428,6 +432,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		} elseif (is_object($object) && $object->element == 'order_supplier') {
 			$feature2 = 'commande';
 		}
+	}
+	if ($features == 'payment_sc') {
+		$tableandshare = 'paiementcharge';
+		$parentfortableentity = 'fk_charge@chargesociales';
 	}
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
@@ -896,7 +904,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
 			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
 		}
-
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";

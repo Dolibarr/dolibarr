@@ -191,7 +191,7 @@ th.wrapcolumntitle dl dt a span.fas.fa-list {
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 */
-.liste_titre input[name=search_month] {
+.liste_titre input[name=search_month], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end] {
 	margin-right: 4px;
 }
 

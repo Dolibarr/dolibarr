@@ -1192,6 +1192,7 @@ class Facture extends CommonInvoice
 
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
+		$facture->fk_account         = $this->fk_account;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
 		$facture->situation_counter = $this->situation_counter;
@@ -2099,7 +2100,7 @@ class Facture extends CommonInvoice
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($max ?dol_trunc($this->ref, $max) : $this->ref);

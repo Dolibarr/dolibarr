@@ -895,7 +895,7 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 					$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
 				}
 
-				$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow, 'selected'=>$selected);
+				$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow, 'selected'=>$selected, 'nbopenedday'=>$nbopenedday);
 			}
 			print $holidaystatic->getKanbanView('', $arraydata);
 			if ($i == ($imaxinloop - 1)) {
@@ -957,8 +957,6 @@ if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) 
 			}
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
-				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
-				$totalduration += $nbopenedday;
 				print $nbopenedday;
 				//print ' '.$langs->trans('DurationDays');
 				print '</td>';

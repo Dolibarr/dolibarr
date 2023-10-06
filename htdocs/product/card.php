@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2013-2016	Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador		 <csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2020	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2023	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Cédric Gross		 <c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
@@ -490,7 +490,7 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
-					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
 					$action = "create";
 					$error++;
 			}
@@ -538,6 +538,7 @@ if (empty($reshook)) {
 				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+				$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -1363,7 +1364,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($modCodeProduct->code_auto)) {
 				$tmpcode = $modCodeProduct->getNextValue($object, $type);
 			}
-			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
 			if ($refalreadyexists) {
 				print $langs->trans("RefAlreadyExists");
 			}
@@ -2347,7 +2348,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = " fk_product_type = ".$object->type;
+			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {

@@ -1852,7 +1852,7 @@ if ($action == 'create' && $usercancreate) {
 
 		$thirdparty = $soc;
 		$discount_type = 0;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid'));
+		$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 		print '</td></tr>';
@@ -2470,7 +2470,7 @@ if ($action == 'create' && $usercancreate) {
 
 		$thirdparty = $soc;
 		$discount_type = 0;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+		$backtopage = $_SERVER["PHP_SELF"].'?id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 		print '</td></tr>';
@@ -2898,9 +2898,9 @@ if ($action == 'create' && $usercancreate) {
 
 				// Create a purchase order
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_SALE_ORDER)) {
-					if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
+					if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0) {
 						if ($usercancreatepurchaseorder) {
-							print dolGetButtonAction('', $langs->trans('AddPurchaseOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
+							print dolGetButtonAction('', $langs->trans('AddPurchaseOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id, '');
 						}
 					}
 				}

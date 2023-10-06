@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -6305,6 +6305,7 @@ class Form
 		$sql .= " FROM " . $this->db->prefix() . "c_tva as t, " . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " AND c.code IN (" . $this->db->sanitize($country_code, 1) . ")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
@@ -8212,7 +8213,7 @@ class Form
 		}
 
 		$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
-		$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . '"';
+		$out .= '<select id="' . preg_replace('/^\./', '', $idname) . '" ' . ($disabled ? 'disabled="disabled" ' : '') . 'class="flat ' . (preg_replace('/^\./', '', $htmlname)) . ($morecss ? ' ' . $morecss : '') . ' selectformat"';
 		$out .= ' name="' . preg_replace('/^\./', '', $htmlname) . '" ' . ($moreparam ? $moreparam : '');
 		$out .= '>';
 
@@ -8224,7 +8225,7 @@ class Form
 			if (!is_numeric($show_empty)) {
 				$textforempty = $show_empty;
 			}
-			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 		}
 
 		if (is_array($array)) {
@@ -8316,7 +8317,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
+			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', (((int) $show_empty) < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 		return $out;

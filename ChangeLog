@@ -42,7 +42,7 @@ FIX: when adding new times on a survey, all hours would be erased.
 For uses:
 ---------
 
-NEW: PHP 8.2 compatibility (test not yet completed).
+NEW: PHP 8.2 compatibility (not yet complete).
 NEW: Module Workstations Management upgraded to stable status.
 NEW: Module Webhook upgraded to stable status
 NEW: #23436 Group social networks fields
@@ -1999,6 +1999,8 @@ Following changes may create regressions for some external modules, but were nec
 * v14 seems to work correctly on PHP v8 but it generates a lot of verbose warnings. Currently, v14 i snot yet officialy supported with PHP 8.
 * To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in
   method executeCLI() available into core/class/utils.class.php
+* the trigger "*_DELETE_CONTACT" inside "delete_contact()" function from commonobject.class.php is call before delete the object element
+  and a $object->context['contact_id'] is now available for this trigger
 
 
 ***** ChangeLog for 13.0.5 compared to 13.0.4 *****

@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
@@ -208,10 +208,10 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[10] = "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid";
+$tabsql[10] = "SELECT t.rowid, t.entity, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity = ".getEntity($tabname[10]);
 $tabsql[11] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = ".getEntity($tabname[12]);
-$tabsql[13] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = ".getEntity($tabname[13]);
+$tabsql[12] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[12]).")";
+$tabsql[13] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[13]).")";
 $tabsql[14] = "SELECT e.rowid as rowid, e.code as code, e.label, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15] = "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
@@ -223,7 +223,7 @@ $tabsql[21] = "SELECT c.rowid as rowid, c.code, c.label, c.type_duration, c.qty,
 $tabsql[22] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
-$tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity = ".getEntity($tabname[25]);
+$tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[25]).")";
 //$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
@@ -236,7 +236,7 @@ $tabsql[34] = "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PR
 $tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
 $tabsql[36] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 $tabsql[37] = "SELECT r.rowid, r.code, r.sortorder, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
-$tabsql[38] = "SELECT s.rowid, s.entity, s.code, s.label, s.url, s.icon, s.active FROM ".MAIN_DB_PREFIX."c_socialnetworks as s WHERE s.entity = ".getEntity($tabname[38]);
+$tabsql[38] = "SELECT s.rowid, s.entity, s.code, s.label, s.url, s.icon, s.active FROM ".MAIN_DB_PREFIX."c_socialnetworks as s WHERE s.entity IN (".getEntity($tabname[38]).")";
 $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 $tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
@@ -304,8 +304,8 @@ $tabfield[8] = "code,libelle,country_id,country".(!empty($conf->global->SOCIETE_
 $tabfield[9] = "code,label,unicode";
 $tabfield[10] = "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11] = "element,source,code,libelle,position";
-$tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
-$tabfield[13] = "code,libelle,type,entity";
+$tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
+$tabfield[13] = "code,libelle,type";
 $tabfield[14] = "code,label,price,organization,country";
 $tabfield[15] = "code,libelle,width,height,unit";
 $tabfield[16] = "code,libelle,sortorder";
@@ -330,7 +330,7 @@ $tabfield[34] = "code,label";
 $tabfield[35] = "label";
 $tabfield[36] = "range_ik,fk_c_exp_tax_cat";
 $tabfield[37] = "code,label,short_label,unit_type,scale,sortorder";
-$tabfield[38] = "code,label,url,icon,entity";
+$tabfield[38] = "code,label,url,icon";
 $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
 $tabfield[41] = "code,label";
@@ -385,7 +385,7 @@ $tabfieldvalue[42] = "code,label";
 $tabfieldvalue[43] = "code,label";
 $tabfieldvalue[44] = "code,label";
 
-// Field names in the table for inserting a record
+// Field names in the table for inserting a record (add field "entity" only here when dictionary is ready to personalized by entity)
 $tabfieldinsert = array();
 $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
@@ -396,7 +396,7 @@ $tabfieldinsert[6] = "code,libelle,type,color,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code";
 $tabfieldinsert[8] = "code,libelle,fk_country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
 $tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10] = "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[10] = "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
 $tabfieldinsert[11] = "element,source,code,libelle,position";
 $tabfieldinsert[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[13] = "code,libelle,type,entity";
@@ -411,7 +411,7 @@ $tabfieldinsert[21] = "code,label,qty,type_duration,position";
 $tabfieldinsert[22] = "code,label";
 $tabfieldinsert[23] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24] = "code,label";
-$tabfieldinsert[25] = "code,label";
+$tabfieldinsert[25] = "code,label,entity";
 //$tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27] = "code,libelle,picto";
 $tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country,block_if_negative,sortorder";
@@ -882,7 +882,7 @@ if (empty($reshook)) {
 			}
 			$i = 0;
 			foreach ($listfieldinsert as $f => $value) {
-				$keycode = $listfieldvalue[$i];
+				$keycode = (isset($listfieldvalue[$i]) ? $listfieldvalue[$i] : '');
 				if (empty($keycode)) {
 					$keycode = $value;
 				}

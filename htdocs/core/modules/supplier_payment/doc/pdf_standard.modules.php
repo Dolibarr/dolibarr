@@ -92,7 +92,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bills"));
@@ -233,7 +233,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-				$nblines = count($object->lines);
+				$nblines = (empty($object->lines) ? 0 : count($object->lines));
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance

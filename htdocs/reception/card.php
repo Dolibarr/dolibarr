@@ -143,13 +143,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// TODO Test on reception module on only
 if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
-	$result = restrictedArea($user, 'reception', $id);
+	$result = restrictedArea($user, 'reception', $object->id);
 } else {
 	// We do not use the reception module, so we test permission on the supplier orders
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
 		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
-	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
 	}
 }

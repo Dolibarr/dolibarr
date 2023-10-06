@@ -1951,6 +1951,8 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 				$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
 				$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+				$object->fk_account = GETPOST('fk_account', 'int');
+
 
 				// Proprietes particulieres a facture de remplacement
 
@@ -2037,6 +2039,8 @@ if (empty($reshook)) {
 		$price_ht_devise = '';
 		$price_ttc = '';
 		$price_ttc_devise = '';
+		$price_min = '';
+		$price_min_ttc = '';
 
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
@@ -3180,7 +3184,6 @@ if ($action == 'create') {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
 	print '<input name="force_cond_reglement_id" type="hidden" value="0">';
@@ -3675,7 +3678,7 @@ if ($action == 'create') {
 
 		$thirdparty = $soc;
 		$discount_type = 0;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin', 'alpha').'&originid='.GETPOST('originid', 'int'));
+		$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 		print '</td></tr>';
@@ -4515,7 +4518,7 @@ if ($action == 'create') {
 	print '<td>';
 	$thirdparty = $soc;
 	$discount_type = 0;
-	$backtopage = urlencode($_SERVER["PHP_SELF"].'?facid='.$object->id);
+	$backtopage = $_SERVER["PHP_SELF"].'?facid='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 	print '</td></tr>';
 

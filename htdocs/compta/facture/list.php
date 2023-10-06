@@ -112,8 +112,8 @@ $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'alpha');
+$search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_company_code_client = GETPOST("search_type_thirdparty", 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -146,8 +146,8 @@ $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-$option = GETPOST('search_option');
-if ($option == 'late') {
+$search_late = GETPOST('search_late');
+if ($search_late == 'late') {
 	$search_status = '1';
 }
 $filtre = GETPOST('filtre', 'alpha');
@@ -353,6 +353,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_state = "";
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_customer_code = '';
 	$search_date_startday = '';
 	$search_date_startmonth = '';
 	$search_date_startyear = '';
@@ -381,7 +382,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
-	$option = '';
+	$search_late = '';
 	$socid = 0;
 }
 
@@ -704,8 +705,8 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
 }
-if ($search_company_code_client) {
-	$sql .= natural_search('s.code_client', $search_company_code_client);
+if ($search_customer_code) {
+	$sql .= natural_search('s.code_client', $search_customer_code);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -825,7 +826,7 @@ if ($search_datelimit_start) {
 if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
-if ($option == 'late') {
+if ($search_late == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 if ($search_sale > 0) {
@@ -950,7 +951,6 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -1103,6 +1103,9 @@ if ($resql) {
 	if ($search_type_thirdparty != '') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
+	if ($search_customer_code) {
+		$param .= '&search_customer_code='.urlencode($search_customer_code);
+	}
 	if ($search_sale > 0) {
 		$param .= '&search_sale='.urlencode($search_sale);
 	}
@@ -1166,8 +1169,8 @@ if ($resql) {
 	if ($show_files) {
 		$param .= '&show_files='.urlencode($show_files);
 	}
-	if ($option) {
-		$param .= "&search_option=".urlencode($option);
+	if ($search_late) {
+		$param .= "&search_late=".urlencode($search_late);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -1304,6 +1307,11 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
+	// alert on due date
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= '</div>';
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
@@ -1399,14 +1407,10 @@ if ($resql) {
 	if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		/*
-		 print $langs->trans('From').' ';
-		 print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
-		 print '</div>';
-		 print '<div class="nowrap">';
-		 print $langs->trans('to').' ';*/
-		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
-		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+		print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -1434,7 +1438,7 @@ if ($resql) {
 	}
 	// Customer Code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_code_client" value="'.dol_escape_htmltag($search_company_code_client).'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
