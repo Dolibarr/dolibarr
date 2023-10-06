@@ -9317,7 +9317,7 @@ abstract class CommonObject
 					$line = (object) $line;
 				}
 
-				$result = $line->create($user, 1);
+				$result = $line->insert($user, 1);
 				if ($result < 0) {
 					$this->error = $line->error;
 					$this->db->rollback();
