@@ -5008,10 +5008,10 @@ abstract class CommonObject
 			//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
 			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 				if (empty($line->fk_parent_line)) {
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'defaulttpldir'=>$defaulttpldir);
 					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				} else {
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line, 'defaulttpldir'=>$defaulttpldir);
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 			}
@@ -6358,26 +6358,42 @@ abstract class CommonObject
 								//global $action;		// $action may be 'create', 'update', 'update_extras'...
 								//var_dump($action);
 								//var_dump($this->oldcopy);exit;
-								if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
-									//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
-										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
-									} else {
+								if (is_object($this->oldcopy)) {	// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+									//var_dump('iii'.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
+									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {
+										// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
 											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
-												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);
+												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
 											} else {
 												$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 											}
 										} else {
-											$newvalue = dol_hash($this->array_options[$key], $algo);
-											$new_array_options[$key] = $newvalue;
+											$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+										}
+									} else {
+										// If value has changed
+										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
+											} else {
+												$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+											}
+										} else {
+											$new_array_options[$key] = dol_hash($this->array_options[$key], $algo);
 										}
 									}
 								} else {
-									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+									//var_dump('jjj'.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
+									// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+									if ($algo == 'dolcrypt' && !preg_match('/^dolcrypt:/', $this->array_options[$key])) {	// dolibarr reversible encryption
+										$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
+									} else {
+										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+									}
 								}
 							} else {
+								// No encryption
 								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 							}
 						} else { // Common usage
@@ -6700,7 +6716,6 @@ abstract class CommonObject
 
 			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
-
 			if (!empty($attrfieldcomputed)) {
 				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
 					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
@@ -6744,7 +6759,7 @@ abstract class CommonObject
 				case 'password':
 					$new_array_options = array();
 					$algo = '';
-					if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
+					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
 						// If there is an encryption choice, we use it to crypt data before insert
 						$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
 						$algo = reset($tmparrays);
@@ -6752,32 +6767,46 @@ abstract class CommonObject
 							//global $action;		// $action may be 'create', 'update', 'update_extras'...
 							//var_dump($action);
 							//var_dump($this->oldcopy);exit;
+							//var_dump($key.' '.$this->array_options["options_".$key].' '.$algo);
 							if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
-								//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-								if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
-									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
-								} else {
+								//var_dump($this->oldcopy->array_options["options_".$key]); var_dump($this->array_options["options_".$key]);
+								if (isset($this->oldcopy->array_options["options_".$key]) && $this->array_options["options_".$key] == $this->oldcopy->array_options["options_".$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
-										if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
-											$new_array_options[$key] = dolEncrypt($this->array_options[$key]);
+										if (!preg_match('/^dolcrypt:/', $this->array_options["options_".$key])) {
+											$new_array_options["options_".$key] = dolEncrypt($this->array_options["options_".$key]);	// warning, must be called when on the master
 										} else {
-											$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+											$new_array_options["options_".$key] = $this->array_options["options_".$key]; // Value is kept
 										}
 									} else {
-										$newvalue = dol_hash($this->array_options[$key], $algo);
-										$new_array_options[$key] = $newvalue;
+										$new_array_options["options_".$key] = $this->array_options["options_".$key]; // Value is kept
+									}
+								} else {
+									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+										if (!preg_match('/^dolcrypt:/', $this->array_options["options_".$key])) {
+											$new_array_options["options_".$key] = dolEncrypt($this->array_options["options_".$key]);
+										} else {
+											$new_array_options["options_".$key] = $this->array_options["options_".$key]; // Value is kept
+										}
+									} else {
+										$new_array_options["options_".$key] = dol_hash($this->array_options["options_".$key], $algo);
 									}
 								}
 							} else {
-								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+								if ($algo == 'dolcrypt' && !preg_match('/^dolcrypt:/', $this->array_options["options_".$key])) {	// dolibarr reversible encryption
+									$new_array_options["options_".$key] = dolEncrypt($this->array_options["options_".$key]);	// warning, must be called when on the master
+								} else {
+									$new_array_options["options_".$key] = $this->array_options["options_".$key]; // Value is kept
+								}
 							}
 						} else {
-							$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+							// No encryption
+							$new_array_options["options_".$key] = $this->array_options["options_".$key]; // Value is kept
 						}
 					} else { // Common usage
-						$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+						$new_array_options["options_".$key] = $this->array_options["options_".$key]; // Value is kept
 					}
-					$this->array_options["options_".$key] = $new_array_options[$key];
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 				case 'date':
 				case 'datetime':
@@ -6835,11 +6864,14 @@ abstract class CommonObject
 				*/
 				case 'checkbox':
 				case 'chkbxlst':
-					if (is_array($this->array_options[$key])) {
-						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					$new_array_options = array();
+					if (is_array($this->array_options["options_".$key])) {
+						$new_array_options["options_".$key] = implode(',', $this->array_options["options_".$key]);
 					} else {
-						$new_array_options[$key] = $this->array_options[$key];
+						$new_array_options["options_".$key] = $this->array_options["options_".$key];
 					}
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 			}
 
@@ -6857,6 +6889,7 @@ abstract class CommonObject
 				}
 			}
 
+			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql);
 			if ($linealreadyfound) {
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = null";
@@ -6864,6 +6897,12 @@ abstract class CommonObject
 					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
 			} else {
 				$result = $this->insertExtraFields('', $user);
 				if ($result < 0) {
@@ -6871,11 +6910,6 @@ abstract class CommonObject
 				}
 			}
 
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->error = $this->db->lasterror();
-			}
 			if (!$error && $trigger) {
 				// Call trigger
 				$this->context = array('extrafieldupdate'=>1);
@@ -7168,6 +7202,7 @@ abstract class CommonObject
 				$InfoFieldList = explode(":", $param_list[0]);
 				$parentName = '';
 				$parentField = '';
+
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -7175,6 +7210,7 @@ abstract class CommonObject
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				// 7 : sort field
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -7236,7 +7272,12 @@ abstract class CommonObject
 					$sql .= $sqlwhere;
 					//print $sql;
 
-					$sql .= ' ORDER BY ' . implode(', ', $fields_label);
+					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
+					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_-,]+$/i', $InfoFieldList[7])) {
+						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
+					} else {
+						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
+					}
 
 					dol_syslog(get_class($this) . '::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -9647,7 +9688,6 @@ abstract class CommonObject
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-		global $conf, $langs;
 		dol_syslog(get_class($this)."::updateCommon update", LOG_DEBUG);
 
 		$error = 0;
@@ -9715,7 +9755,7 @@ abstract class CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			$result = $this->insertExtraFields();
+			$result = $this->insertExtraFields();	// This delete and reinsert extrafields
 			if ($result < 0) {
 				$error++;
 			}

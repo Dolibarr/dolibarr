@@ -519,7 +519,7 @@ class Facture extends CommonInvoice
 		$nextdatewhen = null;
 		$previousdaynextdatewhen = null;
 
-		// Create invoice from a template recurring invoice
+		// Erase some properties of the invoice to create with the one of the recurring invoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
@@ -796,7 +796,7 @@ class Facture extends CommonInvoice
 			if (!$error && empty($this->fac_rec) && count($this->lines) && is_object($this->lines[0])) {	// If this->lines is array of InvoiceLines (preferred mode)
 				$fk_parent_line = 0;
 
-				dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
+				dol_syslog("There is ".count($this->lines)." lines into ->lines that are InvoiceLines");
 				foreach ($this->lines as $i => $val) {
 					$newinvoiceline = $this->lines[$i];
 
@@ -884,7 +884,7 @@ class Facture extends CommonInvoice
 			} elseif (!$error && empty($this->fac_rec)) { 		// If this->lines is an array of invoice line arrays
 				$fk_parent_line = 0;
 
-				dol_syslog("There is ".count($this->lines)." lines that are array lines");
+				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
 
 				foreach ($this->lines as $i => $val) {
 					$line = $this->lines[$i];
@@ -969,9 +969,10 @@ class Facture extends CommonInvoice
 			}
 
 			/*
-			 * Insert lines of template invoices
+			 * Insert lines coming from the template invoice
 			 */
 			if (!$error && $this->fac_rec > 0) {
+				dol_syslog("There is ".count($_facrec->lines)." lines from recurring invoice");
 				$fk_parent_line = 0;
 
 				foreach ($_facrec->lines as $i => $val) {

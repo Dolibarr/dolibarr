@@ -1617,9 +1617,6 @@ class BOM extends CommonObject
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$prod = new Product($db);
-		$prod->fetch($this->fk_product);
-
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1636,7 +1633,8 @@ class BOM extends CommonObject
 				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
 			}
 		}
-		if (property_exists($this, 'fk_product') && !is_null($this->fk_product)) {
+		if (!empty($arraydata['prod'])) {
+			$prod = $arraydata['prod'];
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
