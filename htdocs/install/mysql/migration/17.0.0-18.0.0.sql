@@ -563,3 +563,6 @@ insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_count
 -- VPGSQL8.2 DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
+
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
