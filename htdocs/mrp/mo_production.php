@@ -437,11 +437,12 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_editline' && $permissiontoadd) {
 		$moline = new MoLine($db);
-		$moline->fetch(GETPOST('lineid', 'int'));
-		$moline->qty = GETPOST('qty_lineProduce', 'int');
-		$moline->update($user);
-
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		$res = $moline->fetch(GETPOST('lineid', 'int'));
+		if ($result > 0){
+			$moline->qty = GETPOST('qty_lineProduce', 'int');
+			$moline->update($user);
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		}
 	}
 }
 
@@ -818,7 +819,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td></td>';
 
 		//Edit Line
-		if ($object->status == Mo::STATUS_DRAFT){
+		if ($object->status == Mo::STATUS_DRAFT) {
 			print '<td></td>';
 		}
 
@@ -904,8 +905,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$alreadyconsumed += $line2['qty'];
 					}
 
-					if ($action == 'editline' && $lineid == $line->id){
-
+					if ($action == 'editline' && $lineid == $line->id) {
 						$linecost = price2num($tmpproduct->pmp, 'MT');
 
 						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
@@ -963,8 +963,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '<td></td>';
 						print '</tr>';
-
-					}else {
+					} else {
 						$suffix = '_' . $line->id;
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
 						// hidden fields for js function
