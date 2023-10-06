@@ -424,7 +424,7 @@ class Paiement extends CommonObject
 										// Loop on each vat rate
 										$i = 0;
 										foreach ($invoice->lines as $line) {
-											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+											if ($line->product_type != 9 && $line->total_ht != 0) {    // no need to create discount if special product or amount is null
 												$amount_ht[$line->tva_tx] += $line->total_ht;
 												$amount_tva[$line->tva_tx] += $line->total_tva;
 												$amount_ttc[$line->tva_tx] += $line->total_ttc;
