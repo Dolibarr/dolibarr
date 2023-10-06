@@ -688,8 +688,8 @@ class Fichinter extends CommonObject
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' SET fk_statut = ' . self::STATUS_CLOSED . ',';
 			$sql .= " datet = '" . $this->db->idate($now) . "',";
-			$sql .= " fk_user_modif = " . ((int)$user->id);
-			$sql .= " WHERE rowid = " . ((int)$this->id);
+			$sql .= " fk_user_modif = " . ((int) $user->id);
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
 			$sql .= " AND entity = " . ((int) $conf->entity);
 
