@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -6305,6 +6305,7 @@ class Form
 		$sql .= " FROM " . $this->db->prefix() . "c_tva as t, " . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " AND c.code IN (" . $this->db->sanitize($country_code, 1) . ")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 

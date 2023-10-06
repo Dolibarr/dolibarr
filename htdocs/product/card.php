@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2013-2016	Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador		 <csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2020	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2023	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Cédric Gross		 <c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
@@ -538,6 +538,7 @@ if (empty($reshook)) {
 				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+				$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
