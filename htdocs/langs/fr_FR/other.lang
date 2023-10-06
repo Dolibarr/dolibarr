@@ -199,6 +199,7 @@ AmountIn=Montant en %s
 NumberOfUnitsMos=Quantités à produire dans les ordres de fabrication
 EMailTextInterventionAddedContact=Une nouvelle intervention %s vous a été assignée
 EMailTextInterventionValidated=La fiche intervention %s vous concernant a été validée.
+EMailTextInterventionClosed=La fiche intervention %s vous concernant a été réalisée.
 EMailTextInvoiceValidated=La facture %s vous concernant a été validée.
 EMailTextInvoicePayed=La facture %s a été payée.
 EMailTextProposalValidated=La proposition commerciale %s vous concernant a été validée.
