@@ -592,15 +592,6 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'classifydone' && $user->hasRight('ficheinter', 'creer')) {
-		// Classify Done
-		$result = $object->setStatut(Fichinter::STATUS_CLOSED);
-		if ($result > 0) {
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-			exit;
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
 	} elseif ($action == 'confirm_reopen' && $user->hasRight('ficheinter', 'creer')) {
 		// Reopen
 		$result = $object->setStatut(Fichinter::STATUS_VALIDATED);
@@ -1142,6 +1133,7 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
 	}
 
+	// Confirm done
 	if ($action == 'classifydone') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseIntervention'), $langs->trans('ConfirmCloseIntervention'), 'confirm_done', '', 0, 1);
 	}
