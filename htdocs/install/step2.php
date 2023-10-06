@@ -153,9 +153,10 @@ if ($action == "set") {
 	$createdata = GETPOSTISSET('createdata') ? GETPOST('createdata') : 1;
 
 
-	// To say sql requests are escaped for mysql so we need to unescape them
-	$db->unescapeslashquot = true;
-
+	// To say that SQL we pass to query are already escaped for mysql, so we need to unescape them
+	if (property_exists($db, 'unescapeslashquot')) {
+		$db->unescapeslashquot = true;
+	}
 
 	/**************************************************************************************
 	 *
