@@ -1307,7 +1307,7 @@ class Contact extends CommonObject
 			}
 		}
 
-		// Removed extrafields
+		// Remove extrafields
 		if (!$error) {
 			// For avoid conflicts if trigger used
 			$result = $this->deleteExtraFields();
@@ -1328,9 +1328,9 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Charge les informations sur le contact, depuis la base
+	 *  Load contact information from the database
 	 *
-	 *  @param		int		$id      Id du contact a charger
+	 *  @param		int		$id      Id of the contact to load
 	 *  @return		void
 	 */
 	public function info($id)
@@ -1370,7 +1370,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *  Return number of mass Emailing received by this contacts with its email
+	 *  Return number of mass Emailing received by these contacts with its email
 	 *
 	 *  @return       int     Number of EMailings
 	 */
@@ -1705,7 +1705,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		// Desactive utilisateur
+		// User disable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " SET statut = ".((int) $this->statut);
 		$sql .= ", fk_user_modif = ".((int) $user->id);
@@ -1955,9 +1955,9 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *	Return prostect level
+	 *	Return prospect level
 	 *
-	 *  @return     string        Libelle
+	 *  @return     string        Label
 	 */
 	public function getLibProspLevel()
 	{
@@ -1986,7 +1986,7 @@ class Contact extends CommonObject
 	/**
 	 *  Set prospect level
 	 *
-	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *  @param  User	$user		User who defines the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
@@ -2078,7 +2078,7 @@ class Contact extends CommonObject
 	/**
 	 *  Set "blacklist" mailing status
 	 *
-	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to receive mailing
 	 *  @return int					<0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
@@ -2158,7 +2158,7 @@ class Contact extends CommonObject
 
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
