@@ -299,7 +299,7 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 		if (!empty($conf->use_javascript_ajax)) {
 			print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET');
 		} else {
-			if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'))) {
+			if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			} else {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
