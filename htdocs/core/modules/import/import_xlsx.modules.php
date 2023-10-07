@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -42,20 +42,8 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int ID
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -86,6 +74,10 @@ class ImportXlsx extends ModeleImports
 
 	public $cachefieldtable = array(); // Array to cache list of value found into fields@tables
 
+	public $nbinsert = 0; // # of insert done during the import
+
+	public $nbupdate = 0; // # of update done during the import
+
 	public $workbook; // temporary import file
 
 	public $record; // current record
@@ -102,6 +94,8 @@ class ImportXlsx extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
@@ -111,26 +105,25 @@ class ImportXlsx extends ModeleImports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version = '1.0'; // Driver version
+
 		// If driver use an external library, put its name here
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 		$this->workbook = new Spreadsheet();
 
-		//if ($this->id == 'excel2007new')
-		{
+		// If driver use an external library, put its name here
 		if (!class_exists('ZipArchive')) {	// For Excel2007
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
 			return -1;
-		}
 		}
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
 
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
-			$this->thirpartyobject = new Societe($this->db);
+			$this->thirdpartyobject = new Societe($this->db);
 		}
 	}
 
@@ -301,7 +294,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
@@ -336,6 +329,7 @@ class ImportXlsx extends ModeleImports
 		// phpcs:enable
 		$this->workbook->disconnectWorksheets();
 		unset($this->workbook);
+		return 0;
 	}
 
 
@@ -363,8 +357,6 @@ class ImportXlsx extends ModeleImports
 		$warning = 0;
 		$this->errors = array();
 		$this->warnings = array();
-		$this->nbinsert = 0;
-		$this->nbupdate = 0;
 
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
 
@@ -404,7 +396,7 @@ class ImportXlsx extends ModeleImports
 						if ($obj) {
 							$tablewithentity_cache[$tablename] = 1; // table contains entity field
 						} else {
-							$tablewithentity_cache[$tablename] = 0; // table does not contains entity field
+							$tablewithentity_cache[$tablename] = 0; // table does not contain entity field
 						}
 					} else {
 						dol_print_error($this->db);
@@ -438,11 +430,14 @@ class ImportXlsx extends ModeleImports
 							$newval = $arrayrecord[($key)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
 						}
 
+						//var_dump($newval);var_dump($val);
+						//var_dump($objimport->array_import_convertvalue[0][$val]);
+
 						// Make some tests on $newval
 
 						// Is it a required field ?
 						if (preg_match('/\*/', $objimport->array_import_fields[0][$val]) && ((string) $newval == '')) {
-							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', $key);
+							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', num2Alpha($key - 1));
 							$this->errors[$error]['type'] = 'NOTNULL';
 							$errorforthistable++;
 							$error++;
@@ -461,7 +456,7 @@ class ImportXlsx extends ModeleImports
 										$isidorref = 'ref';
 									}
 									$newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
-									//print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+									//print 'Newval is now "'.$newval.'" and is type '.$isidorref."<br>\n";
 
 									if ($isidorref == 'ref') {    // If value into input import file is a ref, we apply the function defined into descriptor
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -476,15 +471,20 @@ class ImportXlsx extends ModeleImports
 												break;
 											}
 											$classinstance = new $class($this->db);
+											if ($class == 'CGenericDic') {
+												$classinstance->element = $objimport->array_import_convertvalue[0][$val]['element'];
+												$classinstance->table_element = $objimport->array_import_convertvalue[0][$val]['table_element'];
+											}
+
 											// Try the fetch from code or ref
 											$param_array = array('', $newval);
 											if ($class == 'AccountingAccount') {
 												//var_dump($arrayrecord[0]['val']);
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												$tmpchartofaccount = new AccountancySystem($this->db);
-												$tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
+												$tmpchartofaccount->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 												//var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
-												if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
+												if ((! (getDolGlobalInt('CHARTOFACCOUNTS') > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												{
 													$this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
 													$this->errors[$error]['type']='RESTRICTONCURRENCTCHART';
@@ -493,17 +493,28 @@ class ImportXlsx extends ModeleImports
 												}*/
 												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
 											}
-											call_user_func_array(array($classinstance, $method), $param_array);
+
+											$result = call_user_func_array(array($classinstance, $method), $param_array);
+
+											// If duplicate record found
+											if (!($classinstance->id != '') && $result == -2) {
+												$this->errors[$error]['lib'] = $langs->trans('ErrorMultipleRecordFoundFromRef', $newval);
+												$this->errors[$error]['type'] = 'FOREIGNKEY';
+												$errorforthistable++;
+												$error++;
+											}
+
 											// If not found, try the fetch from label
 											if (!($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel') {
 												$param_array = array('', '', $newval);
 												call_user_func_array(array($classinstance, $method), $param_array);
 											}
 											$this->cacheconvert[$file . '_' . $class . '_' . $method . '_'][$newval] = $classinstance->id;
+
 											//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
 											if ($classinstance->id != '') {	// id may be 0, it is a found value
 												$newval = $classinstance->id;
-											} else {
+											} elseif (! $error) {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
@@ -595,8 +606,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codeclient(0, 0);
-										$newval = $this->thirpartyobject->code_client;
+										$this->thirdpartyobject->get_codeclient(0, 0);
+										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
 									if (empty($newval)) {
@@ -604,8 +615,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
-										$newval = $this->thirpartyobject->code_fournisseur;
+										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
 									if (empty($newval)) {
@@ -613,8 +624,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('customer');
-										$newval = $this->thirpartyobject->code_compta;
+										$this->thirdpartyobject->get_codecompta('customer');
+										$newval = $this->thirdpartyobject->code_compta;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -622,8 +633,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('supplier');
-										$newval = $this->thirpartyobject->code_compta_fournisseur;
+										$this->thirdpartyobject->get_codecompta('supplier');
+										$newval = $this->thirdpartyobject->code_compta_fournisseur;
 										if (empty($newval)) {
 											$arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 										}
@@ -674,7 +685,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -747,30 +758,38 @@ class ImportXlsx extends ModeleImports
 								}
 							}
 
+							// Check HTML injection
+							$inj = testSqlAndScriptInject($newval, 0);
+							if ($inj) {
+								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', $key, dol_trunc($newval, 100));
+								$this->errors[$error]['type'] = 'HTMLINJECTION';
+								$errorforthistable++;
+								$error++;
+							}
+
 							// Other tests
 							// ...
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
+								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array. Example socialkey=19
+								$listvalues[$socialkey] = '';
 							}
 							if (!empty($newval) && $arrayrecord[($key)]['type'] > 0) {
-								$socialkey = array_search("socialnetworks", $listfields);
+								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array. Example socialkey=19
+								$socialnetwork = explode("_", $fieldname)[1];
 								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
-									$socialnetwork = explode("_", $fieldname)[1];
 									$json = new stdClass();
 									$json->$socialnetwork = $newval;
-									$newvalue = json_encode($json);
-									$listvalues[$socialkey] = $newvalue;
+									$listvalues[$socialkey] = json_encode($json);
 								} else {
-									$socialnetwork = explode("_", $fieldname)[1];
 									$jsondata = $listvalues[$socialkey];
-									$jsondata = str_replace("'", "", $jsondata);
 									$json = json_decode($jsondata);
-									$json->$socialnetwork = $this->db->escape($newval);
-									$listvalues[$socialkey] = "'".$this->db->escape(json_encode($json))."'";
+									$json->$socialnetwork = $newval;
+									$listvalues[$socialkey] = json_encode($json);
 								}
 							}
 						} else {
@@ -782,7 +801,7 @@ class ImportXlsx extends ModeleImports
 							} elseif (empty($newval) && $arrayrecord[($key)]['type'] == 0) {
 								$listvalues[] = "''";
 							} else {
-								$listvalues[] = "'" . $this->db->escape($newval) . "'";
+								$listvalues[] = "'".$this->db->escape($newval)."'";
 							}
 						}
 					}
@@ -795,7 +814,7 @@ class ImportXlsx extends ModeleImports
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
-						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $key)) {
+						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $key)) {
 							continue; // Not a field of current table
 						}
 						if ($val == 'user->id') {
@@ -825,7 +844,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
@@ -850,20 +869,47 @@ class ImportXlsx extends ModeleImports
 					if (!empty($listfields)) {
 						$updatedone = false;
 						$insertdone = false;
+
+						$is_table_category_link = false;
+						$fname = 'rowid';
+						if (strpos($tablename, '_categorie_') !== false) {
+							$is_table_category_link = true;
+							$fname='*';
+						}
+
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = "SELECT rowid FROM " . $tablename;
+								$sqlSelect = "SELECT ".$fname." FROM " . $tablename;
 
 								$data = array_combine($listfields, $listvalues);
-								$where = array();
-								$filters = array();
+
+								$where = array();	// filters to forge SQL request
+								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									$where[] = $key . ' = ' . $data[$key];
-									$filters[] = $col . ' = ' . $data[$key];
+									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
+										$tmp = explode("_", $key);
+										$key = $tmp[0];
+										$socialnetwork = $tmp[1];
+										$jsondata = $data[$key];
+										$json = json_decode($jsondata);
+										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
+										//var_dump($stringtosearch);
+										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
+										$where[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										$filters[] = $col." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										//var_dump($where[1]); // This provide a value for sql string inside a like
+									} else {
+										$where[] = $key.' = '.$data[$key];
+										$filters[] = $col.' = '.$data[$key];
+									}
+								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
 								}
 								$sqlSelect .= " WHERE " . implode(' AND ', $where);
 
@@ -873,6 +919,7 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
@@ -895,10 +942,15 @@ class ImportXlsx extends ModeleImports
 								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
 
+
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= "WHERE " . $keyfield . " = " .((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -919,13 +971,20 @@ class ImportXlsx extends ModeleImports
 							}
 
 							if (!empty($lastinsertid)) {
+								// We db escape social network field because he isn't in field creation
+								if (in_array("socialnetworks", $listfields)) {
+									$socialkey = array_search("socialnetworks", $listfields);
+									$tmpsql =  $listvalues[$socialkey];
+									$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+								}
+
 								// Build SQL UPDATE request
 								$sqlstart = "UPDATE " . $tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key . ' = ' . $val;
+									$set[] = $key." = ".$val;
 								}
 								$sqlstart .= " SET " . implode(', ', $set);
 
@@ -933,6 +992,14 @@ class ImportXlsx extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
+
+								if ($is_table_category_link) {
+									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$sql = $sqlstart . $sqlend;
 
@@ -952,6 +1019,13 @@ class ImportXlsx extends ModeleImports
 
 						// Update not done, we do insert
 						if (!$error && !$updatedone) {
+							// We db escape social network field because he isn't in field creation
+							if (in_array("socialnetworks", $listfields)) {
+								$socialkey = array_search("socialnetworks", $listfields);
+								$tmpsql =  $listvalues[$socialkey];
+								$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+							}
+
 							// Build SQL INSERT request
 							$sqlstart = "INSERT INTO " . $tablename . "(" . implode(", ", $listfields) . ", import_key";
 							$sqlend = ") VALUES(" . implode(', ', $listvalues) . ", '" . $this->db->escape($importid) . "'";
@@ -970,7 +1044,9 @@ class ImportXlsx extends ModeleImports
 							if ($sql) {
 								$resql = $this->db->query($sql);
 								if ($resql) {
-									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									if (!$is_table_category_link) {
+										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									}
 									$insertdone = true;
 								} else {
 									//print 'E';

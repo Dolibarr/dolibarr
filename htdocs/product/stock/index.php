@@ -25,6 +25,7 @@
  *  \brief		Home page of stock area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -141,7 +142,7 @@ print '</div><div class="fichetwothirdright">';
 $max = 10;
 $sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 $sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
-$sql .= " m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
+$sql .= " m.rowid as mid, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 $sql .= ", ".MAIN_DB_PREFIX."product as p";
@@ -161,10 +162,10 @@ if ($resql) {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		print '<th>'.$langs->trans("Batch").'</th>';
 		/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			print '<th>'.$langs->trans("SellByDate").'</th>';
@@ -200,11 +201,11 @@ if ($resql) {
 		$tmplotstatic->eatby = $objp->eatby;
 
 		print '<tr class="oddeven">';
-		print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
-		print '<td class="tdoverflowmax200">';
+		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement',  'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+		print '<td class="tdoverflowmax150">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print $tmplotstatic->getNomUrl(0, 'nolink');
 			print '</td>';
@@ -215,7 +216,7 @@ if ($resql) {
 				print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 			}*/
 		}
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax150">';
 		print $warehouse->getNomUrl(1);
 		print "</td>\n";
 		print '<td class="right">';

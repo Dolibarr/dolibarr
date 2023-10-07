@@ -72,7 +72,7 @@ class modMargin extends DolibarrModules
 		$this->depends = array("modPropale", "modProduct"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 2); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("margins");
 
@@ -113,7 +113,7 @@ class modMargin extends DolibarrModules
 			'url'=>'/margin/index.php',
 			'langs'=>'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>100,
-			'enabled'=>'$conf->margin->enabled', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+			'enabled'=>'isModEnabled("margin")', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
 			'perms'=>'$user->rights->margins->liretous', // Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both

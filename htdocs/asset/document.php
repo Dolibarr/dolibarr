@@ -22,6 +22,7 @@
  *  \brief      Page for attached files on assets
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
@@ -78,7 +79,7 @@ $permissiontoadd = $user->rights->asset->asset->write; // Used by the include of
 if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 
 
 /*
@@ -141,9 +142,9 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'asset';
-	$permissiontoadd = $user->rights->asset->write;
+	$permissiontoadd = $user->hasRight('asset', 'write');
 	//  $permissiontoadd = 1;
-	$permtoedit = $user->rights->asset->write;
+	$permtoedit = $user->hasRight('asset', 'write');
 	//  $permtoedit = 1;
 	$param = '&id=' . $object->id;
 

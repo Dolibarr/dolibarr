@@ -46,7 +46,7 @@ KnowledgeRecords = Мақолаҳо
 KnowledgeRecord = Мақола
 KnowledgeRecordExtraFields = Майдони экзотикӣ барои мақола
 GroupOfTicket=Гурӯҳи чиптаҳо
-YouCanLinkArticleToATicketCategory=Шумо метавонед мақоларо ба гурӯҳи чиптаҳо пайваст кунед (аз ин рӯ мақола ҳангоми тахассуси чиптаҳои нав пешниҳод карда мешавад)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
 
 SetObsolete=Set as obsolete

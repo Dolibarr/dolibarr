@@ -20,6 +20,7 @@ ModulePartnershipName=パートナーシップ管理
 PartnershipDescription=モジュールパートナーシップ管理
 PartnershipDescriptionLong= モジュールパートナーシップ管理
 Partnership=パートナーシップ
+Partnerships=パートナーシップ
 AddPartnership=パートナーシップを追加
 CancelPartnershipForExpiredMembers=パートナーシップ: サブスクリプションの有効期限が切れた構成員のパートナーシップをキャンセル
 PartnershipCheckBacklink=パートナーシップ: 参照元のバックリンクを確認する
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=パートナーシップ: 参照元のバックリン�
 # Menu
 #
 NewPartnership=新規パートナーシップ
+NewPartnershipbyWeb=パートナーシップ リクエストが正常に追加された。近日中にご連絡するやも...
 ListOfPartnerships=パートナーシップのリスト
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=チェックするバックリンク
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=サブスクリプションの有効期限が切れた場合にパートナーシップの状態をキャンセルするまでの日数
 ReferingWebsiteCheck=参考ウェブサイトの確認
 ReferingWebsiteCheckDesc=パートナーが独自の ウェブサイトに ウェブサイト ドメインへのバックリンクを追加したことを確認する機能を有効にできる。
+PublicFormRegistrationPartnerDesc=Dolibarrは、外部の訪問者がパートナーシッププログラムへの参加を要求できるように、公開URL/ウェブサイトを提供できる。
 
 #
 # Object
@@ -60,6 +63,11 @@ ConfirmClosePartnershipAsk=このパートナーシップをキャンセルし�
 PartnershipType=パートナーシップの種類
 PartnershipRefApproved=パートナーシップ%sは承認済
 KeywordToCheckInWebsite=特定のキーワードが各パートナーのウェブサイトに存在することを確認する場合、ここでこのキーワードを定義する
+PartnershipDraft=下書き
+PartnershipAccepted=承認済
+PartnershipRefused=拒否
+PartnershipCanceled=キャンセル
+PartnershipManagedFor=パートナーは
 
 #
 # Template Mail
@@ -83,12 +91,7 @@ CountLastUrlCheckError=最後のURLチェックのエラー数
 LastCheckBacklink=最後のURLチェックの日付
 ReasonDeclineOrCancel=断りの理由
 
-#
-# Status
-#
-PartnershipDraft=下書き
-PartnershipAccepted=承認済
-PartnershipRefused=拒否
-PartnershipCanceled=キャンセル
-PartnershipManagedFor=パートナーは
+NewPartnershipRequest=新しいパートナーシップリクエスト
+NewPartnershipRequestDesc=このフォームでは、パートナーシッププログラムへの参加をリクエストできる。このフォームへの記入についてサポートが必要な場合は、メール<b>%s</b>までご連絡ください。
+ThisUrlMustContainsAtLeastOneLinkToWebsite=このページには、次のドメインのいずれかへのリンクが少なくとも 1 つ含まれている必要がある: %s
 

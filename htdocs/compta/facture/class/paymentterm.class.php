@@ -51,6 +51,12 @@ class PaymentTerm // extends CommonObject
 	 */
 	public $id;
 
+
+	/**
+	 * @var int Entity ID
+	 */
+	public $entity;
+
 	public $code;
 	public $sortorder;
 	public $active;
@@ -137,7 +143,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= " ".(!isset($this->libelle_facture) ? 'NULL' : "'".$this->db->escape($this->libelle_facture)."'").",";
 		$sql .= " ".(!isset($this->type_cdr) ? 'NULL' : "'".$this->db->escape($this->type_cdr)."'").",";
 		$sql .= " ".(!isset($this->nbjour) ? 'NULL' : "'".$this->db->escape($this->nbjour)."'").",";
-		$sql .= " ".(!isset($this->decalage) ? 'NULL' : "'".$this->db->escape($this->decalage)."'")."";
+		$sql .= " ".(!isset($this->decalage) ? 'NULL' : "'".$this->db->escape($this->decalage)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -172,15 +178,14 @@ class PaymentTerm // extends CommonObject
 	 *    Load object in memory from database
 	 *
 	 *    @param      int		$id     Id object
+	 *    @param      string    $code   Code object
 	 *    @return     int         		<0 if KO, >0 if OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $code = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
-
 		$sql .= " t.code,";
 		$sql .= " t.sortorder,";
 		$sql .= " t.active,";
@@ -189,10 +194,13 @@ class PaymentTerm // extends CommonObject
 		$sql .= " t.type_cdr,";
 		$sql .= " t.nbjour,";
 		$sql .= " t.decalage";
-
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-		$sql .= " WHERE t.rowid = ".((int) $id);
+		if ($id) {
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		}
+		if ($code) {
+			$sql .= " WHERE t.code='".$this->db->escape($code)."' AND t.entity IN (".getEntity('payment_term').")";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -310,7 +318,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= " libelle_facture=".(isset($this->libelle_facture) ? "'".$this->db->escape($this->libelle_facture)."'" : "null").",";
 		$sql .= " type_cdr=".(isset($this->type_cdr) ? $this->type_cdr : "null").",";
 		$sql .= " nbjour=".(isset($this->nbjour) ? $this->nbjour : "null").",";
-		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null")."";
+		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
@@ -395,10 +403,6 @@ class PaymentTerm // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
-
-		// Clear fields
-		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

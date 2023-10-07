@@ -24,12 +24,13 @@
  *		\brief      Page with reports of actions
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
@@ -56,13 +57,9 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
+//$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if (!$user->hasRight("agenda", "allactions", "read")) {
+	accessForbidden();
 }
 
 
@@ -100,7 +97,7 @@ $sql .= " GROUP BY year, month, df";
 $sql .= " ORDER BY year DESC, month DESC, df DESC";
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0

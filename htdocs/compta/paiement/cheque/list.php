@@ -25,6 +25,7 @@
  *   \brief      Page list of cheque deposits
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -43,6 +44,7 @@ $result = restrictedArea($user, 'banque', '', '');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
+$mode = GETPOST('mode', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -58,16 +60,28 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "dp";
+	$sortfield = "bc.date_bordereau";
 }
 
 $year = GETPOST("year");
 $month = GETPOST("month");
+$optioncss = GETPOST('optioncss', 'alpha');
+$view = GETPOST("view", 'alpha');
 
 $form = new Form($db);
 $formother = new FormOther($db);
 $checkdepositstatic = new RemiseCheque($db);
 $accountstatic = new Account($db);
+
+// List of payment mode to support
+// Example: BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT = 'CHQ','TRA'
+$arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODES_FOR_DEPOSIT_MANAGEMENT', 'CHQ'));
+
+$arrayoflabels = array();
+foreach ($arrayofpaymentmodetomanage as $key => $val) {
+	$labelval = ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $val);
+	$arrayoflabels[$key] = $labelval;
+}
 
 
 /*
@@ -89,15 +103,18 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-llxHeader('', $langs->trans("ChequesReceipts"));
+llxHeader('', $langs->trans("ChequeDeposits"));
 
-$sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
-$sql .= " bc.nbcheque, bc.amount, bc.statut,";
+$sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
+$sql .= " bc.nbcheque, bc.amount, bc.statut, bc.type,";
 $sql .= " ba.rowid as bid, ba.label";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE bc.fk_bank_account = ba.rowid";
-$sql .= " AND bc.entity = ".$conf->entity;
+$sql .= " AND bc.entity = ".((int) $conf->entity);
 
 // Search criteria
 if ($search_ref) {
@@ -111,19 +128,31 @@ if ($search_amount) {
 }
 $sql .= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
 
-$sql .= $db->order($sortfield, $sortorder);
-
+// Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 //print "$sql";
 
 $resql = $db->query($sql);
@@ -131,6 +160,9 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.$contextpage;
 	}
@@ -142,7 +174,10 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
+	$newcardbutton  = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
@@ -154,6 +189,8 @@ if ($resql) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
@@ -164,10 +201,13 @@ if ($resql) {
 
 	// Fields title search
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="center">';
+	// Type
+	print '<td class="liste_titre">';
+	print '</td>';
+	print '<td class="liste_titre center">';
 	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
@@ -190,7 +230,8 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "bc.type", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "bc.date_bordereau", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -199,45 +240,74 @@ if ($resql) {
 	print "</tr>\n";
 
 	if ($num > 0) {
-		while ($i < min($num, $limit)) {
+		$savnbfield = 8;
+
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
-
-			// Num ref cheque
-			print '<td>';
 			$checkdepositstatic->id = $objp->rowid;
 			$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 			$checkdepositstatic->statut = $objp->statut;
-			print $checkdepositstatic->getNomUrl(1);
-			print '</td>';
+			$checkdepositstatic->nbcheque = $objp->nbcheque;
+			$checkdepositstatic->amount = $objp->amount;
+			$checkdepositstatic->date_bordereau = $objp->date_bordereau;
+			$checkdepositstatic->type = $objp->type;
 
-			// Date
-			print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
+			$account = new Account($db);
+			$account->fetch($objp->bid);
+			$checkdepositstatic->account_id = $account->getNomUrl(1);
 
-			// Bank
-			print '<td>';
-			if ($objp->bid) {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+					print '<div class="box-flex-container kanban">';
+				}
+				// Output Kanban
+				print $checkdepositstatic->getKanbanView('', array('selected' => in_array($checkdepositstatic->id, $arrayofselected)));
+				if ($i == ($imaxinloop - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
 			} else {
-				print '&nbsp;';
+				print '<tr class="oddeven">';
+
+				// Num ref cheque
+				print '<td>';
+				print $checkdepositstatic->getNomUrl(1);
+				print '</td>';
+
+				// Type
+				$labelpaymentmode = ($langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) != "PaymentType".$checkdepositstatic->type ? $langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) : $checkdepositstatic->type);
+				print '<td>'.dol_escape_htmltag($labelpaymentmode).'</td>';
+
+				// Date
+				print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'dayhour', 'tzuser').'</td>';
+
+				// Bank
+				print '<td>';
+				if ($objp->bid) {
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+				} else {
+					print '&nbsp;';
+				}
+				print '</td>';
+
+				// Number of cheques
+				print '<td class="right">'.$objp->nbcheque.'</td>';
+
+				// Amount
+				print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+
+				// Statut
+				print '<td class="right">';
+				print $checkdepositstatic->LibStatut($objp->statut, 5);
+				print '</td>';
+
+				print '<td></td>';
+
+				print "</tr>\n";
 			}
-			print '</td>';
-
-			// Number of cheques
-			print '<td class="right">'.$objp->nbcheque.'</td>';
-
-			// Amount
-			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
-
-			// Statut
-			print '<td class="right">';
-			print $checkdepositstatic->LibStatut($objp->statut, 5);
-			print '</td>';
-
-			print '<td></td>';
-
-			print "</tr>\n";
 			$i++;
 		}
 	} else {

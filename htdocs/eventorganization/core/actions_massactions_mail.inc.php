@@ -31,7 +31,7 @@
 // $parameters, $object, $action must be defined for the hook.
 
 // $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
-// $uploaddir may be defined (example to $conf->projet->dir_output."/";)
+// $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
 
@@ -41,18 +41,6 @@ if (empty($objectclass) || empty($uploaddir)) {
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
 }
-
-// For backward compatibility
-if (!empty($permtoread) && empty($permissiontoread)) {
-	$permissiontoread = $permtoread;
-}
-if (!empty($permtocreate) && empty($permissiontoadd)) {
-	$permissiontoadd = $permtocreate;
-}
-if (!empty($permtodelete) && empty($permissiontodelete)) {
-	$permissiontodelete = $permtodelete;
-}
-
 
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS) ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
@@ -203,7 +191,6 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			}
 			$substitutionarray['__EVENTORGANIZATION_ICS_LINK__'] = $html_link;
 			$substitutionarray['__EVENTORGANIZATION_URL_LINK__'] = $url_link;
-			$substitutionarray['__CHECK_READ__'] = '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . urlencode($attendees->thirdparty->tag) . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 			$parameters = array('mode' => 'formemail');
 

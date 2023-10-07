@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-EnterNameOfModuleDesc=Ingrese el nombre del módulo / aplicación para crear sin espacios. Use letras mayúsculas para separar palabras (por ejemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Ingrese el nombre del objeto para crear sin espacios. Use mayúsculas para separar las palabras (por ejemplo: MyObject, Student, Teacher ...). Se generará el archivo de clase CRUD, pero también el archivo API, páginas para listar / agregar / editar / eliminar objetos y archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definidos en %s): <strong>%s</strong>
 ModuleBuilderDesc3=Se encontraron módulos generados/editables: <strong>%s</strong>
 NewObjectInModulebuilder=Nuevo Objeto
@@ -61,7 +59,6 @@ NoWidget=Sin widget
 ListOfDictionariesEntries=Lista de entradas del diccionario
 ListOfPermissionsDefined=Lista de permisos definidos
 SeeExamples=Ver ejemplos aquí
-EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $ conf-> global-> MYMODULE_MYOPTION)
 IsAMeasureDesc=¿Se puede acumular el valor de campo para obtener un total en la lista? (Ejemplos: 1 o 0)
 SearchAllDesc=¿Se utiliza el campo para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 LanguageDefDesc=Ingrese en estos archivos, toda la clave y la traducción para cada archivo de idioma.
@@ -84,6 +81,5 @@ UseSpecificEditorURL =Usa un editor URL específico
 UseSpecificFamily =Usa una familia específica
 UseSpecificVersion =Usa una versión inicial específica
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
-ShowOnCombobox=Mostrar valor en el cuadro combinado
 KeyForTooltip=Clave para información sobre herramientas
 ForeignKey=Clave Foránea

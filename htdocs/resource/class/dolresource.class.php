@@ -44,27 +44,56 @@ class Dolresource extends CommonObject
 	 */
 	public $picto = 'resource';
 
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_code_type_resource;
+
+	public $type_label;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	public $fk_country;
+
+
+	// Variable for a link of resource
+
+	/**
+	 * @var int ID
+	 */
 	public $resource_id;
 	public $resource_type;
 	public $element_id;
 	public $element_type;
 	public $busy;
 	public $mandatory;
+	public $fulldayevent;
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
-
-	public $type_label;
 	public $tms = '';
 
+	/**
+	 * Used by fetch_element_resource() to return an object
+	 */
+	public $objelement;
+
+	/**
+	 * @var array	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
+	 */
 	public $cache_code_type_resource = array();
 
 	/**
 	 * @var Dolresource Clone of object before changing it
 	 */
 	public $oldcopy;
+
 
 	/**
 	 *  Constructor
@@ -262,10 +291,9 @@ class Dolresource extends CommonObject
 			$this->country_id = 0;
 		}
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$org = new self($this->db);
-			$org->fetch($this->id);
-			$this->oldcopy = $org;
+			$this->oldcopy = dol_clone($this);
 		}
 
 		// Update request
@@ -274,7 +302,7 @@ class Dolresource extends CommonObject
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -340,15 +368,14 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Load object in memory from database
+	 *    Load data of resource links in memory from database
 	 *
-	 *    @param      int	$id          id object
-	 *    @return     int         <0 if KO, >0 if OK
+	 *    @param      int	$id         Id of link element_resources
+	 *    @return     int         		<0 if KO, >0 if OK
 	 */
 	public function fetch_element_resource($id)
 	{
 		// phpcs:enable
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.resource_id,";
@@ -377,9 +404,9 @@ class Dolresource extends CommonObject
 				$this->mandatory = $obj->mandatory;
 				$this->fk_user_create = $obj->fk_user_create;
 
-				if ($obj->resource_id && $obj->resource_type) {
+				/*if ($obj->resource_id && $obj->resource_type) {
 					$this->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
-				}
+				}*/
 				if ($obj->element_id && $obj->element_type) {
 					$this->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
 				}
@@ -473,18 +500,16 @@ class Dolresource extends CommonObject
 	/**
 	 *	Load resource objects into $this->lines
 	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	string		$sortorder    	sort order
+	 *  @param	string		$sortfield    	sort field
+	 *  @param	int			$limit		  	limit page
+	 *  @param	int			$offset    	  	page
+	 *  @param	array		$filter    	  	filter output
+	 *  @return int          				<0 if KO, Number of lines loaded if OK
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
 		// phpcs:enable
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
@@ -520,15 +545,11 @@ class Dolresource extends CommonObject
 			}
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
-		$this->num_all = 0;
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$result = $this->db->query($sql);
-			$this->num_all = $this->db->num_rows($result);
-		}
 		if ($limit) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 
 		$this->lines = array();
 		$resql = $this->db->query($sql);
@@ -601,7 +622,7 @@ class Dolresource extends CommonObject
 		$sql .= " element_type=".(isset($this->element_type) ? "'".$this->db->escape($this->element_type)."'" : "null").",";
 		$sql .= " busy=".(isset($this->busy) ? $this->busy : "null").",";
 		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -729,7 +750,7 @@ class Dolresource extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+
 				$label = ($langs->trans("ResourceTypeShort".$obj->code) != ("ResourceTypeShort".$obj->code) ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
 				$this->cache_code_type_resource[$obj->rowid]['label'] = $label;
@@ -741,6 +762,33 @@ class Dolresource extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('resource');
+
+		$datas = [];
+
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		/*if (isset($this->status)) {
+		 $datas['status'] = '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		 }*/
+		if (isset($this->type_label)) {
+			$datas['label'] = '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
+		}
+
+		return $datas;
 	}
 
 	/**
@@ -759,14 +807,18 @@ class Dolresource extends CommonObject
 		global $conf, $langs, $hookmanager;
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		/*if (isset($this->status)) {
-			$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}*/
-		if (isset($this->type_label)) {
-			$label .= '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
 
 		$url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;
@@ -774,7 +826,7 @@ class Dolresource extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -788,8 +840,8 @@ class Dolresource extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -798,11 +850,11 @@ class Dolresource extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 		/*$linkstart = '<a href="'.DOL_URL_ROOT.'/resource/card.php?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend = '</a>';*/
+		 $linkend = '</a>';*/
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -823,9 +875,9 @@ class Dolresource extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -844,8 +896,6 @@ class Dolresource extends CommonObject
 	public static function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
 		return '';
 	}
 
@@ -858,8 +908,6 @@ class Dolresource extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->nb = array();
 
 		$sql = "SELECT count(r.rowid) as nb";

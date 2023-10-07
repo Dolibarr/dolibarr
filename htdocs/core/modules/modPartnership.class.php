@@ -138,7 +138,7 @@ class modPartnership extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -147,7 +147,7 @@ class modPartnership extends DolibarrModules
 		$this->langfiles = array("partnership");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -199,7 +199,7 @@ class modPartnership extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -212,7 +212,7 @@ class modPartnership extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries=array(
-			'langs'=>'partnership@partnership',
+			'langs'=>'partnership',
 			// List of tables we want to see into dictonnary editor
 			'tabname'=>array("c_partnership_type"),
 			// Label of tables
@@ -253,8 +253,8 @@ class modPartnership extends DolibarrModules
 		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 
 		$this->cronjobs = array(
-			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfMemberPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>1, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
-			1	=> array('priority'=>61, 'label'=>'PartnershipCheckBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
+			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfMemberPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>1, 'test'=>'isModEnabled("partnership")', 'datestart'=>$datestart),
+			1	=> array('priority'=>61, 'label'=>'PartnershipCheckBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Add a warning on partnership record if the backlink keyword is not found on the partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'isModEnabled("partnership")', 'datestart'=>$datestart),
 		);
 
 		// Permissions provided by this module
@@ -291,7 +291,7 @@ class modPartnership extends DolibarrModules
 		//     'leftmenu'=>'partnership',
 		//     'url'=>'/partnership/partnership_list.php',
 		//     // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//     'langs'=>'partnership@partnership',
+		//     'langs'=>'partnership',
 		//     'position'=>1100+$r,
 		//     // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 		//     'enabled'=>'$conf->partnership->enabled',
@@ -349,18 +349,18 @@ class modPartnership extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT PARTNERSHIP */
 		/*
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='PartnershipLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='partnership@partnership';
+		$this->export_icon[$r]='partnership';
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'Partnership'; $keyforclassfile='/partnership/class/partnership.class.php'; $keyforelement='partnership@partnership';
+		$keyforclass = 'Partnership'; $keyforclassfile='/partnership/class/partnership.class.php'; $keyforelement='partnership';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
 		//$keyforclass = 'PartnershipLine'; $keyforclassfile='/partnership/class/partnership.class.php'; $keyforelement='partnershipline@partnership'; $keyforalias='tl';
 		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='partnership'; $keyforaliasextra='extra'; $keyforelement='partnership@partnership';
+		$keyforselect='partnership'; $keyforaliasextra='extra'; $keyforelement='partnership';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		//$keyforselect='partnershipline'; $keyforaliasextra='extraline'; $keyforelement='partnershipline@partnership';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -380,13 +380,13 @@ class modPartnership extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT PARTNERSHIP */
 		/*
-		 $langs->load("partnership@partnership");
+		 $langs->load("partnership");
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
 		 $this->export_label[$r]='PartnershipLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		 $this->export_icon[$r]='partnership@partnership';
-		 $keyforclass = 'Partnership'; $keyforclassfile='/partnership/class/partnership.class.php'; $keyforelement='partnership@partnership';
+		 $this->export_icon[$r]='partnership';
+		 $keyforclass = 'Partnership'; $keyforclassfile='/partnership/class/partnership.class.php'; $keyforelement='partnership';
 		 include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		 $keyforselect='partnership'; $keyforaliasextra='extra'; $keyforelement='partnership@partnership';
+		 $keyforselect='partnership'; $keyforaliasextra='extra'; $keyforelement='partnership';
 		 include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		 //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		 $this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -417,11 +417,11 @@ class modPartnership extends DolibarrModules
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('partnership_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'partnership@partnership', '$conf->partnership->enabled');
-		//$result2=$extrafields->addExtraField('partnership_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'partnership@partnership', '$conf->partnership->enabled');
-		//$result3=$extrafields->addExtraField('partnership_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'partnership@partnership', '$conf->partnership->enabled');
-		//$result4=$extrafields->addExtraField('partnership_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'partnership@partnership', '$conf->partnership->enabled');
-		//$result5=$extrafields->addExtraField('partnership_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'partnership@partnership', '$conf->partnership->enabled');
+		//$result1=$extrafields->addExtraField('partnership_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'partnership', '$conf->partnership->enabled');
+		//$result2=$extrafields->addExtraField('partnership_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'partnership', '$conf->partnership->enabled');
+		//$result3=$extrafields->addExtraField('partnership_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'partnership', '$conf->partnership->enabled');
+		//$result4=$extrafields->addExtraField('partnership_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'partnership', '$conf->partnership->enabled');
+		//$result5=$extrafields->addExtraField('partnership_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'partnership', '$conf->partnership->enabled');
 
 		// Permissions
 		$this->remove($options);

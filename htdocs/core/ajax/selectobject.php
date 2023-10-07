@@ -35,36 +35,20 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 $objectdesc = GETPOST('objectdesc', 'alpha');
 $htmlname = GETPOST('htmlname', 'aZ09');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $id = GETPOST('id', 'int');
-
-
-/*
- * View
- */
-
-//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-//print_r($_GET);
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-$form = new Form($db);
-
-//$langs->load("companies");
-
-top_httphead();
+$filter = GETPOST('filter', 'alphanohtml');	// Universal Syntax filter
 
 if (empty($htmlname)) {
-	return;
+	httponly_accessforbidden('Bad value for param htmlname');
 }
-
 
 $InfoFieldList = explode(":", $objectdesc);
 $classname = $InfoFieldList[0];
@@ -76,9 +60,20 @@ if (!empty($classpath)) {
 	}
 }
 if (!is_object($objecttmp)) {
-	dol_syslog('Error bad param objectdesc', LOG_WARNING);
-	print 'Error bad param objectdesc';
+	httponly_accessforbidden('Bad value for param objectdesc');
 }
+
+/*
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+*/
 
 // When used from jQuery, the search term is added as GET param "term".
 $searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
@@ -86,7 +81,21 @@ $searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlna
 // Add a security test to avoid to get content of all tables
 restrictedArea($user, $objecttmp->element, $id);
 
-$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1);
+
+/*
+ * View
+ */
+
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
+//print_r($_GET);
+
+//$langs->load("companies");
+
+$form = new Form($db);
+
+top_httphead($outjson ? 'application/json' : 'text/html');
+
+$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 
 $db->close();
 

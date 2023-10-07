@@ -5,7 +5,7 @@
 
 .mainmenu::before{
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -16,10 +16,6 @@
 	text-decoration:none;
 	color: var(--colortextbackhmenu);
 	/* font-size: <?php echo $topMenuFontSize; ?>; */
-}
-
-.fa-15x {
-	font-size: 1.5em;
 }
 
 div.mainmenu.menu {

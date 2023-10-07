@@ -85,7 +85,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 			'limit' => dol_strlen($text)
 		);
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$data = array();
 			$totalnb = 0;
 			$sql = "SELECT COUNT(t.datec) as nb";

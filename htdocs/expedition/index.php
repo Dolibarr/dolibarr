@@ -25,11 +25,13 @@
  *       \brief      Home page of shipping area.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $hookmanager = new HookManager($db);
+
 $socid = GETPOST('socid', 'int');
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array

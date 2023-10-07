@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=En tilbakerulling ble utført på alle postha
 ValidationOfPaymentFailed=Validering av betaling har feilet
 CardOwner=Kortholder
 PayPalBalance=Paypal kreditt
+OnlineSubscriptionPaymentLine=Nettabonnement registrert på %s <br> Betalt via %s <br> Opprinnelig IP-adresse: %s <br> Transaksjons-ID:1%s

@@ -77,8 +77,26 @@ abstract class CommonObjectLine extends CommonObject
 	public $multilangs;
 
 	public $product_type;		// type in line
+	public $fk_product;			// product id in line (when line is linked to a product)
+
+	/**
+	 * Description of the line
+	 * @var string
+	 */
+	public $desc;
+
+	/**
+	 * Description of the line
+	 * @var string
+	 * @deprecated
+	 * @see $desc
+	 */
+	public $description;
+
+	public $product;			// To store full product object after a fetch_product() on a line
 	public $product_ref;		// ref in product table
 	public $product_label;		// label in product table
+	public $product_barcode;	// barcode in product table
 	public $product_desc;		// desc in product table
 	public $fk_product_type;	// type in product table
 
@@ -87,7 +105,15 @@ abstract class CommonObjectLine extends CommonObject
 	public $remise_percent;
 	public $info_bits;
 	public $special_code;
+	public $subprice;
+	public $tva_tx;
 
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 
 	/**

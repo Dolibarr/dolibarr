@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *  \brief      Page to show Security information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -40,18 +41,26 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
-$execmethod = empty($conf->global->MAIN_EXEC_USE_POPEN) ? 1 : $conf->global->MAIN_EXEC_USE_POPEN;
+$execmethod = getDolGlobalInt('MAIN_EXEC_USE_POPEN', 1);
 
 
 /*
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span>';
+print ' &nbsp; &nbsp; ';
+print '<a href="'.$_SERVER["PHP_SELF"].'">';
+print img_picto($langs->trans("Reload"), 'refresh').' ';
+print $langs->trans("Reload");
+print '</a>';
+print '<br>';
 print '<br>';
 
 print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
@@ -106,6 +115,8 @@ print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') 
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
+//$arrayoffunctionstodisable[] = 'stream_wrapper_restore';
+//$arrayoffunctionstodisable[] = 'stream_wrapper_register';
 if ($execmethod == 1) {
 	$arrayoffunctionstodisable2 = explode(',', 'passthru,shell_exec,system,proc_open,popen');
 	$functiontokeep = 'exec';
@@ -160,13 +171,19 @@ if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
+$arrayofstreams = stream_get_wrappers();
+if (!empty($arrayofstreams)) {
+	sort($arrayofstreams);
+	print "<strong>PHP streams</strong> = ".(join(',', $arrayofstreams)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'file,http,https,php').')</span>'."<br>\n";
+}
+
 print '<br>';
 
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
@@ -234,13 +251,40 @@ print '<br>';
 print '<br>';
 
 $installlock = DOL_DATA_ROOT.'/install.lock';
+$upgradeunlock = DOL_DATA_ROOT.'/upgrade.unlock';
+$installmoduleslock = DOL_DATA_ROOT.'/installmodules.lock';
+
+// Is install (upgrade) locked
 print '<strong>'.$langs->trans("DolibarrSetup").'</strong>: ';
 if (file_exists($installlock)) {
-	print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
+	if (file_exists($upgradeunlock)) {
+		print img_picto('', 'tick').' '.$langs->trans("InstallLockedBy", $installlock);
+	} else {
+		print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installlock);
+	}
 } else {
 	print img_warning().' '.$langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT);
 }
 print '<br>';
+
+// Is upgrade unlocked
+if (file_exists($installlock)) {	// If install not locked, no need to show this.
+	if (file_exists($upgradeunlock)) {
+		print '<strong>'.$langs->trans("DolibarrUpgrade").'</strong>: ';
+		print img_warning().' '.$langs->trans("UpgradeHasBeenUnlocked", $upgradeunlock);
+		print '<br>';
+	}
+}
+
+// Is addon install locked ?
+print '<strong>'.$langs->trans("DolibarrAddonInstall").'</strong>: ';
+if (file_exists($installmoduleslock)) {
+	print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installmoduleslock);
+} else {
+	print $langs->trans("InstallOfAddonIsNotBlocked", DOL_DATA_ROOT);
+}
+print '<br>';
+
 
 
 // File conf.php
@@ -279,7 +323,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore').')</span>';
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
@@ -296,7 +340,7 @@ if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 
 
 
-// Menu security
+// Menu Home - Setup - Security
 
 print '<br>';
 print '<br>';
@@ -312,10 +356,78 @@ print '<br>';
 print '<br>';
 
 
+$sessiontimeout = ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
+}
+print '<strong>'.$langs->trans("SessionTimeOut").'</strong>';
+if (!ini_get("session.gc_probability")) {
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+} else {
+	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
+}
+print ': '.getDolGlobalInt('MAIN_SESSION_TIMEOUT').' '.strtolower($langs->trans("Seconds"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("MaxNumberOfImagesInGetPost").'</strong>: ';
+print getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT').' '.strtolower($langs->trans("Images"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("MaxNumberOfPostOnPublicPagesByIP").'</strong>: ';
+print getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200).' '.strtolower($langs->trans("Posts"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("MaxNumberOfAttachementOnForms").'</strong>: ';
+print getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolower($langs->trans("Files"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';
+print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
+if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
+}
+print '<br>';
+print '<br>';
+
+/* Already into section conf file */
+/*
+$usepassinconfencrypted = 0;
+global $dolibarr_main_db_pass, $dolibarr_main_db_encrypted_pass;
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	$usepassinconfencrypted = 1;
+}
+print '<strong>'.$langs->trans("MainDbPasswordFileConfEncrypted").'</strong>: ';
+print $usepassinconfencrypted ? img_picto('', 'tick').' ' : img_warning().' ';
+print yn($usepassinconfencrypted);
+if (empty($usepassinconfencrypted)) {
+	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
+}
+print '<br>';
+print '<br>';
+*/
+
+/* Password length
+
+// Stored into $tabconf[0] if module generator is "Perso" or specific to the module generator.
+$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
+
+print '<strong>'.$langs->trans("PasswordLength").'</strong>: ';
+print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
+if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
+}
+print '<br>';
+print '<br>';
+*/
+
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
+print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
 print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
-if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
+} else {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
@@ -323,6 +435,20 @@ if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 }
 print '<br>';
 print '<br>';
+
+$umask = getDolGlobalString('MAIN_UMASK');
+
+print '<strong>'.$langs->trans("UMask").'</strong>: ';
+if (! in_array($umask, array('600', '660', '0600', '0660'))) {
+	print img_warning().' ';
+}
+print $umask;
+if (! in_array($umask, array('600', '660', '0600', '0660'))) {
+	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0600 | 0660)</span>';
+}
+print '<br>';
+print '<br>';
+
 
 $securityevent = new Events($db);
 $eventstolog = $securityevent->eventstolog;
@@ -335,7 +461,7 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 	foreach ($eventstolog as $key => $arr) {
 		if ($arr['id']) {
 			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			$value = getDolGlobalString($key);
 			if ($value) {
 				if ($i > 0) {
 					$out .= ', ';
@@ -364,29 +490,56 @@ print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 
 // Module log
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
-$test = empty($conf->syslog->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+$test = isModEnabled('syslog');
+if (!$test) {
+	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
-	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+	if (getDolGlobalInt('SYSLOG_LEVEL') > LOG_NOTICE) {
 		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
 	} else {
-		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+		print img_picto('', 'tick').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), getDolGlobalInt('SYSLOG_LEVEL'));
 	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
+print '<br>';
+
 // Module debugbar
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+$test = isModEnabled('debugbar');
+if (!$test) {
+	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
 	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
+
+print '<br>';
+
+// Modules for Payments
+$test = isModEnabled('stripe');
+if ($test) {
+	print '<strong>'.$langs->trans("Stripe").'</strong>: ';
+	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+		print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
+	} else {
+		print img_picto('', 'tick').' '.$langs->trans("OptionXIsCorrectlyEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
+	}
+	print '<br>';
+} else {
+	$test = isModEnabled('paypal');
+	if ($test) {
+		print '<strong>'.$langs->trans("Paypal").'</strong>: ';
+		if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+			print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
+		} else {
+			print img_picto('', 'tick').' '.$langs->trans("OptionXIsCorrectlyEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
+		}
+		print '<br>';
+	}
+}
 
 
 // APIs
@@ -396,15 +549,15 @@ print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("API"), '', 'folder');
 
-if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
+if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	print $langs->trans("APIsAreNotEnabled");
 } else {
-	if (!empty($conf->webservices->enabled)) {
+	if (isModEnabled('webservices')) {
 		print $langs->trans('YouEnableDeprecatedWSAPIsUseRESTAPIsInstead')."<br>\n";
 		print '<br>';
 	}
-	if (!empty($conf->api->enabled)) {
-		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+	if (isModEnabled('api')) {
+		print '<strong>API_ENDPOINT_RULES</strong> = '.getDolGlobalString('API_ENDPOINT_RULES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>')."<br>\n";
 		print '<br>';
 	}
 }
@@ -418,14 +571,19 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
 
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
+print '<br>';
+
+print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.getDolGlobalString('MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
+print '<br>';
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
+print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
 if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.getDolGlobalString('MAIN_SECURITY_SALT', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').'<br>';
 } else {
 	print '<span class="opacitymedium">('.$langs->trans("Recommended").': password_hash)</span>';
 	print '<br>';
@@ -440,16 +598,10 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 }
 print '<br>';
 
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
-print '<br>';
-
-print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
-print '<br>';
-
-print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 2)</span>'."<br>";
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 2)</span>'."<br>";
 print '<br>';
 
 print '<br>';
@@ -458,15 +610,6 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
 
-print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
-print '<br>';
-
-print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
-print '<br>';
-
-print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
-print '<br>';
-
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
 if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
@@ -474,17 +617,86 @@ if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print $conf->global->MAIN_EXEC_USE_POPEN;
 }
 if ($execmethod == 1) {
-	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "exec" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
 if ($execmethod == 2) {
-	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; "popen" PHP method will be used for shell commands';
 	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
 	print '</span>';
 }
-print "<br>";
 print '<br>';
+print '<br>';
+
+print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 100000000)</span>')."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
+print '<br>';
+
+print '<strong>MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
+// MAIN_ALLOW_LOCAL_LINKS_AS_EXTERNAL_LINKS
+
+print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
+print '<strong>MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED</strong> = '.getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
+print '<br>';
+
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+print '<strong>MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
+print '<br>';
+
+$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "'.$examplecsprule.'")</span><br>';
+print '<br>';
+
+print '<strong>MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\" so browser doesn't send any referrer when going into another web site domain)</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.google-analytics.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"frame-ancestors 'self'; default-src 'self' 'unsafe-inline'; style-src https://cdnjs.cloudflare.com *.googleapis.com; script-src *.transifex.com *.google-analytics.com *.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src * data:;\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.getDolGlobalString('>WEBSITE_MAIN_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera: (); microphone: ();\")</span><br>";
+print '<br>';
+
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("LimitsAndMitigation"), '', 'folder');
+
+print '<span class="opacitymedium">';
+print $langs->trans("RecommendMitigationOnURL").'<br>';
+print '</span>';
+
+print '<br>';
+$urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/fail2ban/filter.d/';
+print '- Login or API authentication (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulesbruteforce.conf">fail2ban example on GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/passwordforgotten.php (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassforgotten.conf">fail2ban example on GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/public/* (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-limitpublic.conf">fail2ban example on GitHub</a>)<br>';
+print '<br>';
+$urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/apache/';
+print '- You can also protect the application using a HTTP Basic authentication layer (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'virtualhost">apache2 virtualhost example on GitHub</a>)<br>';
 
 
 // End of page

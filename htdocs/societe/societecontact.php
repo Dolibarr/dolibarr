@@ -23,17 +23,21 @@
 /**
  *     \file       htdocs/societe/societecontact.php
  *     \ingroup    societe
- *     \brief      Onglet de gestion des contacts additionnel d'une société
+ *     \brief      Tab to manage differently contact. Used when unstable feature MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES is on.
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->loadLangs(array("orders", "companies"));
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'orders'));
 
+// Get parameters
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -62,6 +66,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $id, '');
 
+
+// Initialize objects
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -72,7 +78,7 @@ $hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->societe->creer) {
+if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -92,14 +98,14 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->societe->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'deletecontact' && $user->rights->societe->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
 	// Efface un contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
@@ -128,17 +134,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View and edit
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
 		$head = societe_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
@@ -206,7 +205,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		// additionnal list with adherents of company
-		if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
+		if (isModEnabled('adherent') && $user->rights->adherent->lire) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
@@ -217,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql .= " d.datefin,";
 			$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql .= " t.libelle as type, t.subscription";
+			$sql .= " t.libelle as type_label, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE d.fk_soc = ".((int) $id);
@@ -281,8 +280,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Type
 						$membertypestatic->id = $objp->type_id;
-						$membertypestatic->libelle = $objp->type;
-						$membertypestatic->label = $objp->type;
+						$membertypestatic->libelle = $objp->type_label;	// deprecated
+						$membertypestatic->label = $objp->type_label;
 
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);

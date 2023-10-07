@@ -1,6 +1,5 @@
 <?php
-/* Lead
- * Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -27,7 +27,11 @@ class TaskStats extends Stats
 	private $project;
 	public $userid;
 	public $socid;
-	public $year;
+
+	/**
+	 * @var int priority
+	 */
+	public $priority;
 
 	/**
 	 * Constructor of the class
@@ -37,9 +41,6 @@ class TaskStats extends Stats
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		require_once 'task.class.php';
-		$this->task = new Task($this->db);
 	}
 
 
@@ -52,14 +53,12 @@ class TaskStats extends Stats
 	 */
 	public function getAllTaskByStatus($limit = 5)
 	{
-		global $conf, $user, $langs;
-
-		$datay = array();
+		global $user, $langs;
 
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (empty($user->rights->societe->client->voir) && !$user->soc_id) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
@@ -67,9 +66,8 @@ class TaskStats extends Stats
 		$sql .= " GROUP BY t.priority";
 
 		$result = array();
-		$res = array();
 
-		dol_syslog(get_class($this).'::'.__METHOD__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -110,15 +108,11 @@ class TaskStats extends Stats
 	 */
 	public function getAllByYear()
 	{
-		global $conf, $user, $langs;
-
-		$datay = array();
-
-		$wonlostfilter = 0; // No filter on status WON/LOST
+		global $user;
 
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (empty($user->rights->societe->client->voir) && !$user->soc_id) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
@@ -148,11 +142,11 @@ class TaskStats extends Stats
 		if (!empty($this->socid)) {
 			$sqlwhere[] = ' p.fk_soc = '.((int) $this->socid); // Link on thirdparty is on project, not on task
 		}
-		if (!empty($this->year) && empty($this->yearmonth)) {
-			$sqlwhere[] = " date_format(t.datec,'%Y')='".$this->db->escape($this->year)."'";
+		if (!empty($this->year) && empty($this->month)) {
+			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->year, 1))."' AND '".$this->db->idate(dol_get_last_day($this->year, 12))."'";
 		}
-		if (!empty($this->yearmonth)) {
-			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
+		if (!empty($this->year) && !empty($this->month)) {
+			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month))."' AND '".$this->db->idate(dol_get_last_day($this->year, $this->month))."'";
 		}
 		if (!empty($this->priority)) {
 			$sqlwhere[] = " t.priority IN (".$this->db->sanitize($this->priority, 1).")";
@@ -176,21 +170,50 @@ class TaskStats extends Stats
 	{
 		global $user;
 
-		$this->yearmonth = $year;
+		$this->year = $year;
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (empty($user->rights->societe->client->voir) && !$user->soc_id) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$this->yearmonth = 0;
-
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
 		return $res;
+	}
+
+
+	/**
+	 * Return the Task amount by month for a year
+	 *
+	 * @param 	int 	$year 		Year to scan
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	array 				Array with amount by month
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		// Return an empty array at the moment because task has no amount
+		return array();
+	}
+
+	/**
+	 * Return average of entity by month
+	 * @param	int     $year           year number
+	 * @return 	array					array of values
+	 */
+	protected function getAverageByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
 	}
 }
