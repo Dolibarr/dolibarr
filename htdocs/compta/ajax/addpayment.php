@@ -41,7 +41,7 @@ $errors_msg = array();
 /*
  * View
  */
-top_httphead();
+top_httphead('application/json');
 
 $facid		= GETPOST('facid', 'int');
 $accountid	= GETPOST('accountid', 'int');
