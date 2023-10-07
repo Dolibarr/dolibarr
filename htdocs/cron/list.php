@@ -754,7 +754,7 @@ if ($num > 0) {
 		$i++;
 	}
 } else {
-	print '<tr><td colspan="16" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
+	print '<tr><td colspan="16"><span class="opacitymedium">'.$langs->trans('CronNoJobs').'</span></td></tr>';
 }
 
 print '</table>';

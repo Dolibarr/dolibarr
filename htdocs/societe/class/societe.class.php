@@ -1988,7 +1988,6 @@ class Societe extends CommonObject
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->default_lang = $obj->default_lang;
 				$this->logo = $obj->logo;
 				$this->logo_squarred = $obj->logo_squarred;
@@ -5349,7 +5348,7 @@ class Societe extends CommonObject
 		if ($code) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
-		$sql .= " AND sc.entity = ".getEntity($this->element);
+		$sql .= " AND sc.entity IN (".getEntity($this->element).")";
 		$sql .= " AND tc.source = 'external'";
 		$sql .= " AND tc.active=1";
 
