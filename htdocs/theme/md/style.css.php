@@ -5171,7 +5171,6 @@ div.ui-tooltip {
 }
 
 div.ui-tooltip.mytooltip {
-	width: <?php print dol_size(450, 'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
 	border-<?php print $left; ?>: solid 1px #BBBBBB;
 	border-<?php print $right; ?>: solid 1px #444444;
