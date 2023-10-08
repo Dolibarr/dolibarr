@@ -1430,7 +1430,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 										}
 						';
 					}
-					if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+					if (isset($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
 						print '
 										if (this.value == 2) {
 											$("#field_mask, #mask_option").toggleClass("hideobject");
