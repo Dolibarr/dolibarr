@@ -9828,8 +9828,6 @@ class Form
 				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}
-		} else {
-			dol_print_error('', 'Call of showphoto with wrong parameters modulepart=' . $modulepart);
 		}
 
 		return $ret;
