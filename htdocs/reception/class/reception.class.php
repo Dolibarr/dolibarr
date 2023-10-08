@@ -1706,96 +1706,94 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		{
-			$this->statut = self::STATUS_VALIDATED;
-			$this->status = self::STATUS_VALIDATED;
-			$this->billed = 0;
+		$this->statut = self::STATUS_VALIDATED;
+		$this->status = self::STATUS_VALIDATED;
+		$this->billed = 0;
 
-			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-				$numref = $this->ref;
-				$langs->load("agenda");
+		// If stock increment is done on closing
+		if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$numref = $this->ref;
+			$langs->load("agenda");
 
-				// Loop on each product line to add a stock movement
-				// TODO possibilite de receptionner a partir d'une propale ou autre origine
-				$sql = "SELECT ed.fk_product, cd.subprice,";
-				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql .= " ed.eatby, ed.sellby, ed.batch,";
-				$sql .= " ed.cost_price";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
+			// Loop on each product line to add a stock movement
+			// TODO possibilite de receptionner a partir d'une propale ou autre origine
+			$sql = "SELECT ed.fk_product, cd.subprice,";
+			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+			$sql .= " ed.eatby, ed.sellby, ed.batch,";
+			$sql .= " ed.cost_price";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
+			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
-				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if ($resql) {
-					$cpt = $this->db->num_rows($resql);
-					for ($i = 0; $i < $cpt; $i++) {
-						$obj = $this->db->fetch_object($resql);
+			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$cpt = $this->db->num_rows($resql);
+				for ($i = 0; $i < $cpt; $i++) {
+					$obj = $this->db->fetch_object($resql);
 
-						$qty = $obj->qty;
+					$qty = $obj->qty;
 
-						if ($qty <= 0) {
-							continue;
+					if ($qty <= 0) {
+						continue;
+					}
+
+					dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
+
+					//var_dump($this->lines[$i]);
+					$mouvS = new MouvementStock($this->db);
+					$mouvS->origin = &$this;
+					$mouvS->setOrigin($this->element, $this->id);
+
+					if (empty($obj->batch)) {
+						// line without batch detail
+
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+						$inventorycode = '';
+						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
+
+						if ($result < 0) {
+							$this->error = $mouvS->error;
+							$this->errors = $mouvS->errors;
+							$error++; break;
 						}
+					} else {
+						// line with batch detail
 
-						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
-
-						//var_dump($this->lines[$i]);
-						$mouvS = new MouvementStock($this->db);
-						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
-
-						if (empty($obj->batch)) {
-							// line without batch detail
-
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$inventorycode = '';
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
-
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++; break;
-							}
-						} else {
-							// line with batch detail
-
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$inventorycode = '';
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock, $inventorycode);
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++; break;
-							}
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+						$inventorycode = '';
+						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock, $inventorycode);
+						if ($result < 0) {
+							$this->error = $mouvS->error;
+							$this->errors = $mouvS->errors;
+							$error++; break;
 						}
 					}
-				} else {
-					$this->error = $this->db->lasterror();
-					$error++;
 				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$error++;
 			}
+		}
 
-			if (!$error) {
-				// Call trigger
-				$result = $this->call_trigger('RECEPTION_REOPEN', $user);
-				if ($result < 0) {
-					$error++;
-				}
+		if (!$error) {
+			// Call trigger
+			$result = $this->call_trigger('RECEPTION_REOPEN', $user);
+			if ($result < 0) {
+				$error++;
 			}
+		}
 
-			if (!$error && $this->origin == 'order_supplier') {
-				$commande = new CommandeFournisseur($this->db);
-				$commande->fetch($this->origin_id);
-				$result = $commande->setStatus($user, 4);
-				if ($result < 0) {
-					$error++;
-					$this->error = $commande->error;
-					$this->errors = $commande->errors;
-				}
+		if (!$error && $this->origin == 'order_supplier') {
+			$commande = new CommandeFournisseur($this->db);
+			$commande->fetch($this->origin_id);
+			$result = $commande->setStatus($user, 4);
+			if ($result < 0) {
+				$error++;
+				$this->error = $commande->error;
+				$this->errors = $commande->errors;
 			}
 		}
 
