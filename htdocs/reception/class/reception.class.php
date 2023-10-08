@@ -1083,10 +1083,12 @@ class Reception extends CommonObject
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) {
-					$error++;
+					$this->error = $this->db->lasterror()." - sql=$sql";
+					$this->db->rollback();
+					return -2;
 				}
 
-				if (!$error) {
+				{
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1142,10 +1144,6 @@ class Reception extends CommonObject
 						$this->db->rollback();
 						return -3;
 					}
-				} else {
-					$this->error = $this->db->lasterror()." - sql=$sql";
-					$this->db->rollback();
-					return -2;
 				}
 			}
 		}
