@@ -56,7 +56,7 @@ class box_actions extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
@@ -84,7 +84,7 @@ class box_actions extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestActionsToDo", $max));
 
-		if ($user->rights->agenda->myactions->read) {
+		if ($user->hasRight('agenda', 'myactions', 'read')) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";
@@ -105,7 +105,7 @@ class box_actions extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (empty($user->rights->agenda->allactions->read)) {
+			if (!$user->hasRight('agenda', 'allactions', 'read')) {
 				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
 			$sql .= " ORDER BY a.datep ASC";
@@ -145,7 +145,7 @@ class box_actions extends ModeleBoxes
 					}
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label = empty($objp->label) ? $objp->type_label : $objp->label;
+					//$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="tdoverflowmax200"',

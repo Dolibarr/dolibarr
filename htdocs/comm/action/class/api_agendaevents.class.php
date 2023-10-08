@@ -57,10 +57,10 @@ class AgendaEvents extends DolibarrApi
 	 *
 	 * Return an array with Agenda Events informations
 	 *
-	 * @param       int         $id         ID of Agenda Events
-	 * @return 	    array|mixed             Data without useless information
+	 * @param   int         $id         ID of Agenda Events
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -81,7 +81,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
-			throw new RestException(401, "Insufficient rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+			throw new RestException(401, 'Insufficient rights to read event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
@@ -99,11 +99,12 @@ class AgendaEvents extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Agenda Events objects
 	 */
-	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -185,7 +186,7 @@ class AgendaEvents extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$actioncomm_static = new ActionComm($this->db);
 				if ($actioncomm_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($actioncomm_static), $properties);
 				}
 				$i++;
 			}
@@ -289,7 +290,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'delete')) {
 			throw new RestException(401, "Insufficient rights to delete your Agenda Event");
 		}
 
@@ -405,7 +406,6 @@ class AgendaEvents extends DolibarrApi
 		unset($object->region_id);
 		unset($object->actions);
 		unset($object->lines);
-		unset($object->modelpdf);
 
 		return $object;
 	}

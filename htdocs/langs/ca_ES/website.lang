@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Codi
 WebsiteName=Nom del lloc web
-WebsiteSetupDesc=Creeu aquí els llocs web que voleu utilitzar. A continuació, vagi a menú de llocs web per editar-los.
+WebsiteSetupDesc=Creeu aquí els llocs web que voleu utilitzar. A continuació, aneu al menú Llocs web per a editar-los.
 DeleteWebsite=Elimina la pàgina web
 ConfirmDeleteWebsite=Esteu segur que voleu suprimir aquest lloc web? També se suprimiran totes les seves pàgines i contingut. Els fitxers penjats (com al directori de suports, al mòdul ECM...) es mantindran.
 WEBSITE_TYPE_CONTAINER=Tipus de pàgina/contenidor
@@ -20,7 +20,7 @@ WEBSITE_KEYWORDSDesc=Utilitzeu una coma per a separar els valors
 EnterHereReadmeInformation=Introduïu aquí una descripció del lloc web. Si distribuïu el vostre lloc web com a plantilla, el fitxer s'inclourà al paquet de la plantilla.
 EnterHereLicenseInformation=Introduïu aquí la LLICÈNCIA del codi de la web. Si distribuïu el vostre lloc web com a plantilla, el fitxer s'inclourà a la plantilla del paquet.
 HtmlHeaderPage=Encapçalament HTML (específic sols per aquesta pàgina)
-PageNameAliasHelp=Nom o àlies de la pàgina. <br> Aquest àlies també s'utilitza per construir un URL de SEO quan el lloc web es llanci des d'un Host Virtual d'un servidor web (com Apache, Nginx...). Utilitzeu el botó "<strong>%s</strong>" per editar aquest àlies.
+PageNameAliasHelp=Nom o àlies de la pàgina.<br>Aquest àlies també s'utilitza per a construir un URL de SEO quan el lloc web s'executa des d'un host virtual d'un servidor web (com Apache, Nginx, ...). Utilitzeu el botó «<strong>%s</strong>» per a editar aquest àlies.
 EditTheWebSiteForACommonHeader=Nota: si voleu definir una capçalera personalitzada per a totes les pàgines, editeu la capçalera al nivell del lloc en lloc de la pàgina/contenidor.
 MediaFiles=Mediateca
 EditCss=Editar propietats
@@ -42,7 +42,7 @@ ViewSiteInNewTab=Mostra el lloc en una pestanya nova
 ViewPageInNewTab=Mostra la pàgina en una pestanya nova
 SetAsHomePage=Indica com a Pàgina principal
 RealURL=URL real
-ViewWebsiteInProduction=Mostra la pàgina web utilitzant les URLs d'inici
+ViewWebsiteInProduction=Visualitza el lloc web utilitzant els URL d'inici
 Virtualhost=Host virtual o nom de domini
 VirtualhostDesc=El nom de l'amfitrió o domini virtual (per exemple: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u>Utilitzeu-lo amb Apache/NGinx/...</u><br>Creeu al vostre servidor web (Apache, Nginx, ...) un host virtual dedicat amb PHP habilitat i un directori arrel a<br><strong>%s</strong>
@@ -58,11 +58,11 @@ PreviewSiteServedByDolibarr=<u>Previsualitza %s en una pestanya nova.</u><br><br
 VirtualHostUrlNotDefined=No s'ha definit l'URL de l'amfitrió virtual servit per un servidor web extern
 NoPageYet=Encara sense pàgines
 YouCanCreatePageOrImportTemplate=Podeu crear una pàgina nova o importar una plantilla completa del lloc web
-SyntaxHelp=Ajuda sobre consells de sintaxi específics
+SyntaxHelp=Ajuda sobre consells de sintaxi específica
 YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi font" a l'editor.
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Podeu incloure codi PHP en aquesta font utilitzant les etiquetes <strong>&lt;?php ?&gt;</strong>. Les variables globals següents estan disponibles: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs. <br> <br> <span class="fa fa-bug"> </span> També podeu incloure el contingut d'una altra pàgina/contenidor amb la sintaxi següent: <br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> Podeu fer una redirecció a una altra pàgina/contenidor amb la següent sintaxi (Nota: no emeten cap contingut abans d'una redirecció): <br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span>Per a afegir un vincle a una altra pàgina, utilitzeu la sintaxi: <br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span>Per a incloure <strong>un enllaç per a descàrrega</strong> un arxiu emmagatzemat en el directori <strong>documents</strong> utilitza el visor <strong>document.php</strong>: <br>Exemple, per a un fitxer a documents/ecm (cal registrar-se), la sintaxi és:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Per a un fitxer a documents/mitjans (directori obert per a l'accés públic), la sintaxi és:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br> Per a un fitxer compartit amb un enllaç de compartició (accés obert utilitzant una clau de fitxer compartit), la sintaxi és: <br><strong>&lt;a href=" /document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span>Per a incloure una <strong>imatge</strong> emmagatzemada en el directori <strong>documents</strong>, utilitza el visor <strong>viewimage.php</strong> : <br> Exemple, per a una imatge a documents/medias (directori obert d'accés públic), la sintaxi és: <br><strong>   &lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç compartit (accés obert mitjançant la tecla hash compartida del fitxer), la sintaxi és: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dcbe087987
+YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç compartit (accés obert utilitzant la clau hash de compartició del fitxer), la sintaxi és:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSourceMore= <br> Més exemples d'HTML o codi dinàmic disponibles a <a href="%s" target="_blank" rel="noopener noreferrer external"> la documentació wiki </a> <br> .
 ClonePage=Clona la pàgina/contenidor
 CloneSite=Clona el lloc
@@ -83,7 +83,7 @@ BlogPost=Entrada al blog
 WebsiteAccount=Compte del lloc web
 WebsiteAccounts=Comptes de lloc web
 AddWebsiteAccount=Crear un compte de lloc web
-BackToListForThirdParty=Tornar al llistat del tercer
+BackToListForThirdParty=Torna a la llista de tercers
 DisableSiteFirst=Deshabilita primer el lloc web
 MyContainerTitle=Títol del meu lloc web
 AnotherContainer=Així s’inclou contingut d’una altra pàgina / contenidor (pot ser que tingueu un error aquí si activeu el codi dinàmic perquè pot no existir el subconjunt incrustat)
@@ -122,7 +122,7 @@ LinkAndScriptsHereAreNotLoadedInEditor=Avís: aquest contingut només es produei
 Dynamiccontent=Exemple d’una pàgina amb contingut dinàmic
 ImportSite=Importa la plantilla del lloc web
 EditInLineOnOff=El mode &quot;Edita en línia&quot; és %s
-ShowSubContainersOnOff=El mode per executar &quot;contingut dinàmic&quot; és %s
+ShowSubContainersOnOff=El mode d'execució del «contingut dinàmic» és %s
 GlobalCSSorJS=Fitxer CSS / JS / Capçalera global del lloc web
 BackToHomePage=Torna a la pàgina principal...
 TranslationLinks=Enllaços de traducció
@@ -157,3 +157,6 @@ Booking=Reserva
 Reservation=Reserva
 PagesViewedPreviousMonth=Pàgines vistes (mes anterior)
 PagesViewedTotal=Pàgines vistes (total)
+Visibility=Visibilitat
+Everyone=Tothom
+AssignedContacts=Contactes assignats

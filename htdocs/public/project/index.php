@@ -51,10 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-// Hook to be used by external payment modules (ie Payzen, ...)
-$hookmanager = new HookManager($db);
-
-$hookmanager->initHooks(array('newpayment'));
+global $dolibarr_main_url_root;
 
 // Load translation files
 $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -65,7 +62,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $securekeyreceived = GETPOST("securekey", 'alpha');
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -84,9 +81,87 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+$hookmanager->initHooks(array('newpayment'));
+
+$extrafields = new ExtraFields($db);
+
+$user->loadDefaultValues();
+
 // Security check
 if (empty($conf->project->enabled)) {
 	httponly_accessforbidden('Module Project not enabled');
+}
+
+
+
+/**
+ * Show header for new member
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	array  		$arrayofjs			Array of complementary js files
+ * @param 	array  		$arrayofcss			Array of complementary css files
+ * @return	void
+ */
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+{
+	global $user, $conf, $langs, $mysoc;
+
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+
+	print '<body id="mainbody" class="publicnewmemberform">';
+
+	// Define urllogo
+	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+
+	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
+	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+	}
+
+	print '<div class="center">';
+	// Output html code for logo
+	if ($urllogo) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+		print '>';
+		print '</div>';
+		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
+
+	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
+		print '<div class="backimagepubliceventorganizationsubscription">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+		print '</div>';
+	}
+
+	print '</div>';
+
+	print '<div class="divmainbodylarge">';
+}
+
+/**
+ * Show footer for new member
+ *
+ * @return	void
+ */
+function llxFooterVierge()
+{
+	print '</div>';
+
+	printCommonFooter('public');
+
+	print "</body>\n";
+	print "</html>\n";
 }
 
 
@@ -147,66 +222,22 @@ print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox',
 print "\n";
 
 
-// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-// Define logo and logosmall
-$logosmall = $mysoc->logo_small;
-$logo = $mysoc->logo;
-$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
-}
-//print '- Show logo (logosmall='.$logosmall.' logo='.$logo.') '."\n";
-// Define urllogo
-$urllogo = '';
-$urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-}
-
-// Output html code for logo
-if ($urllogo) {
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
-	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-}
-
-if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
-	print '<div class="backimagepublicorganizedevent">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
-	print '</div>';
-}
-
-print '<br>';
-
-
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
 
-// Event summary
-print '<div class="center">';
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
-print '<br><br>'."\n";
-print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage")."</span>\n";
-print $project->note_public."\n";
-//print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
+// Sub banner
+print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
+// Welcome message
+print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
+print '<br>';
+// Title
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
 print '</div>';
 
-
 // Help text
-print '<div class="center subscriptionformhelptext">';
+print '<div class="justify subscriptionformhelptext">';
 
 if ($project->date_start_event || $project->date_end_event) {
 	print '<br><span class="fa fa-calendar pictofixedwidth opacitymedium"></span>';
@@ -301,61 +332,3 @@ htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 llxFooter('', 'public');
 
 $db->close();
-
-
-
-/**
- * Show header for new member
- *
- * @param 	string		$title				Title
- * @param 	string		$head				Head array
- * @param 	int    		$disablejs			More content into html header
- * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
- * @return	void
- */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
-{
-	global $user, $conf, $langs, $mysoc;
-
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-
-	print '<body id="mainbody" class="publicnewmemberform">';
-
-	// Define urllogo
-	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
-
-	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-	}
-
-	print '<div class="center">';
-
-	// Output html code for logo
-	if ($urllogo) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-		print '>';
-		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
-	}
-
-	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_CONFERENCE)) {
-		print '<div class="backimagepublicsuggestconference">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_CONFERENCE" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_CONFERENCE.'">';
-		print '</div>';
-	}
-
-	print '</div>';
-
-	print '<div class="divmainbodylarge">';
-}

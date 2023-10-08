@@ -224,7 +224,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$object->note = GETPOST('note', 'alpha');
+		$object->note = GETPOST('note', 'restricthtml');
+		$object->note_private = GETPOST('note', 'restricthtml');
 		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
@@ -333,6 +334,7 @@ if (empty($reshook)) {
 					$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
 
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
+					$subtotalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 
 					$j++;
 					$stockLocation = "ent1".$i."_".$j;
@@ -342,7 +344,15 @@ if (empty($reshook)) {
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty, 'int') > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
+					$subtotalqty = price2num(GETPOST($qty, 'alpha'), 'MS');
 				}
+			}
+
+			// check qty shipped not greater than ordered
+			if (getDolGlobalInt("MAIN_DONT_SHIP_MORE_THAN_ORDERED") && $subtotalqty > $objectsrc->lines[$i]->qty) {
+				setEventMessages($langs->trans("ErrorTooMuchShipped", $i+1), null, 'errors');
+				$error++;
+				continue;
 			}
 
 			// Extrafields
@@ -357,8 +367,7 @@ if (empty($reshook)) {
 		}
 
 		//var_dump($batch_line[2]);
-		if (($totalqty > 0 || !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) && !$error) {		// There is at least one thing to ship and no error
-			//var_dump($_POST);exit;
+		if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 
@@ -368,7 +377,7 @@ if (empty($reshook)) {
 						//shipment from multiple stock locations
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
-							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
+							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -377,7 +386,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && !empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))) {
+						if (GETPOST($qty, 'int') > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
@@ -388,7 +397,7 @@ if (empty($reshook)) {
 								$entrepot_id = 0;
 							}
 
-							$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i]);
+							$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), price2num(GETPOST($qty, 'alpha'), 'MS'), $array_options[$i]);
 							if ($ret < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;
@@ -397,7 +406,7 @@ if (empty($reshook)) {
 					}
 				} else {
 					// batch mode
-					if ($batch_line[$i]['qty'] > 0) {
+					if ($batch_line[$i]['qty'] > 0 || ($batch_line[$i]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
 						$ret = $object->addline_batch($batch_line[$i], $array_options[$i]);
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -648,7 +657,7 @@ if (empty($reshook)) {
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOST($batch, 'int');
 						$batch_qty = GETPOST($qty, 'int');
-						if (!empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->qty)) {
+						if (!empty($batch_id)) {
 							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0) {	// $line is ExpeditionLine
 								if ($lines[$i]->entrepot_id != 0) {
 									// allow update line entrepot_id if not multi warehouse shipping
@@ -862,7 +871,7 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans("Shipment");
+$title = $object->ref.' - '.$langs->trans("Shipment");
 if ($action == 'create2') {
 	$title = $langs->trans("CreateShipment");
 }
@@ -1287,7 +1296,7 @@ if ($action == 'create') {
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
-								if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+								if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 									print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
 								}
@@ -1370,7 +1379,7 @@ if ($action == 'create') {
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty; // To get a numeric
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
-									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'>';
+									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
 									print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
@@ -1430,6 +1439,7 @@ if ($action == 'create') {
 							}
 							$tmpwarehouseObject = new Entrepot($db);
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
+								$var = $subj % 2;
 								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
 									// if a warehouse was selected by user, picking is limited to this warehouse and his children
 									continue;
@@ -1441,7 +1451,7 @@ if ($action == 'create') {
 									$deliverableQty = min($quantityToBeDelivered, $stock);
 									$deliverableQty = max(0, $deliverableQty);
 									// Quantity to send
-									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'>';
+									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
@@ -1459,6 +1469,8 @@ if ($action == 'create') {
 										$tooltip = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
+										} else {
+											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
 										}
 
 										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
@@ -1471,7 +1483,7 @@ if ($action == 'create') {
 										print '<input '.$tooltip.' class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
-										if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 											print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
 										}
 
@@ -1539,6 +1551,7 @@ if ($action == 'create') {
 							}
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								$var = $subj % 2;
 								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
 									// if a warehouse was selected by user, picking is limited to this warehouse and his children
 									continue;
@@ -1573,10 +1586,12 @@ if ($action == 'create') {
 										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 											$tooltipClass = ' classfortooltip';
 											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+										} else {
+											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0 ;
 										}
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
-										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
+										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ?'oddeven' : '').'><td colspan="3"></td><td class="center">';
 										print '<input class="qtyl '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '</td>';
 
@@ -1749,9 +1764,9 @@ if ($action == 'create') {
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);
 		if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
-			$text .= '<br>'.$langs->trans("StockMovementWillBeRecorded").'.';
+			$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementWillBeRecorded").'.';
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
-			$text .= '<br>'.$langs->trans("StockMovementNotYetRecorded").'.';
+			$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementNotYetRecorded").'.';
 		}
 
 		if (isModEnabled('notification')) {
@@ -1835,7 +1850,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
@@ -1862,7 +1877,7 @@ if ($action == 'create') {
 
 	// Delivery date planned
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
 
@@ -1993,7 +2008,7 @@ if ($action == 'create') {
 
 	// Sending method
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
@@ -2312,6 +2327,9 @@ if ($action == 'create') {
 
 							$qtyalreadysent += $shipmentline_var['qty_shipped'];
 						}
+						if ($j) {
+							$htmltooltip = $langs->trans("QtyInOtherShipments").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
+						}
 					}
 				}
 				print $form->textwithpicto($qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
@@ -2402,7 +2420,7 @@ if ($action == 'create') {
 
 				// Warehouse source
 				if (isModEnabled('stock')) {
-					print '<td class="linecolwarehousesource left">';
+					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
@@ -2523,6 +2541,10 @@ if ($action == 'create') {
 
 	// TODO Show also lines ordered but not delivered
 
+	if (empty($num_prod)) {
+		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")).'</span></td></tr>';
+	}
+
 	print "</table>\n";
 	print '</tbody>';
 	print '</div>';
@@ -2555,7 +2577,6 @@ if ($action == 'create') {
 			}
 
 			// 0=draft, 1=validated/delivered, 2=closed/delivered
-			// If WORKFLOW_BILL_ON_SHIPMENT: 0=draft, 1=validated, 2=billed (no status delivered)
 			if ($object->statut == Expedition::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id, '');
@@ -2563,11 +2584,7 @@ if ($action == 'create') {
 			}
 			if ($object->statut == Expedition::STATUS_CLOSED) {
 				if ($user->hasRight('expedition', 'creer')) {
-					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-						print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
-					} else {
-						print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
-					}
+					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
@@ -2584,10 +2601,10 @@ if ($action == 'create') {
 
 			// Create bill
 			if (isModEnabled('facture') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
-				if ($user->rights->facture->creer) {
-					// TODO show button only   if (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
-					// If we do that, we must also make this option official.
-					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
+				if ($user->hasRight('facture', 'creer')) {
+					if (getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
+						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
+					}
 				}
 			}
 
@@ -2596,28 +2613,26 @@ if ($action == 'create') {
 			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery'])) {
 				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
-			// Close
+
+			// Set Billed and Closed
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
-				if ($user->rights->expedition->creer && $object->statut > 0 && !$object->billed) {
-					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
-					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-						$label = "ClassifyBilled";
-						$paramaction = 'classifybilled';
+				if ($user->hasRight('expedition', 'creer') && $object->statut > 0) {
+					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
+						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
-					print dolGetButtonAction('', $langs->trans($label), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
 			// Cancel
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
-				if ($user->rights->expedition->supprimer) {
+				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 
 			// Delete
-			if ($user->rights->expedition->supprimer) {
+			if ($user->hasRight('expedition', 'supprimer')) {
 				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 			}
 		}

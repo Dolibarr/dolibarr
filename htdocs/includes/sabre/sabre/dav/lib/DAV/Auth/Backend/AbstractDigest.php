@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Auth\Backend;
 
 use Sabre\DAV;
@@ -8,7 +10,7 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * HTTP Digest authentication backend class
+ * HTTP Digest authentication backend class.
  *
  * This class can be used by authentication objects wishing to use HTTP Digest
  * Most of the digest logic is handled, implementors just need to worry about
@@ -18,8 +20,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractDigest implements BackendInterface {
-
+abstract class AbstractDigest implements BackendInterface
+{
     /**
      * Authentication Realm.
      *
@@ -45,12 +47,10 @@ abstract class AbstractDigest implements BackendInterface {
      * existing hashes will break and nobody can authenticate.
      *
      * @param string $realm
-     * @return void
      */
-    function setRealm($realm) {
-
+    public function setRealm($realm)
+    {
         $this->realm = $realm;
-
     }
 
     /**
@@ -60,9 +60,10 @@ abstract class AbstractDigest implements BackendInterface {
      *
      * @param string $realm
      * @param string $username
+     *
      * @return string|null
      */
-    abstract function getDigestHash($realm, $username);
+    abstract public function getDigestHash($realm, $username);
 
     /**
      * When this method is called, the backend must check if authentication was
@@ -88,12 +89,10 @@ abstract class AbstractDigest implements BackendInterface {
      *
      * principals/users/[username]
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $digest = new HTTP\Auth\Digest(
             $this->realm,
             $request,
@@ -110,8 +109,8 @@ abstract class AbstractDigest implements BackendInterface {
 
         $hash = $this->getDigestHash($this->realm, $username);
         // If this was false, the user account didn't exist
-        if ($hash === false || is_null($hash)) {
-            return [false, "Username or password was incorrect"];
+        if (false === $hash || is_null($hash)) {
+            return [false, 'Username or password was incorrect'];
         }
         if (!is_string($hash)) {
             throw new DAV\Exception('The returned value from getDigestHash must be a string or null');
@@ -119,11 +118,10 @@ abstract class AbstractDigest implements BackendInterface {
 
         // If this was false, the password or part of the hash was incorrect.
         if (!$digest->validateA1($hash)) {
-            return [false, "Username or password was incorrect"];
+            return [false, 'Username or password was incorrect'];
         }
 
-        return [true, $this->principalPrefix . $username];
-
+        return [true, $this->principalPrefix.$username];
     }
 
     /**
@@ -142,13 +140,9 @@ abstract class AbstractDigest implements BackendInterface {
      * WWW-Authenticate headers may already have been set, and you'll want to
      * append your own WWW-Authenticate header instead of overwriting the
      * existing one.
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Digest(
             $this->realm,
             $request,
@@ -162,7 +156,5 @@ abstract class AbstractDigest implements BackendInterface {
         // Preventing the digest utility from modifying the http status code,
         // this should be handled by the main plugin.
         $response->setStatus($oldStatus);
-
     }
-
 }

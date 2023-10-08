@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SocieteTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -335,7 +337,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->set_as_client();
+		$result=$localobject->setAsCustomer();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -460,7 +462,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nFrance", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nFrance", $result);
 
 		// Belgium
 		unset($localobjectadd->country_code);
@@ -471,7 +473,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nBelgium", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nBelgium", $result);
 
 		// Switzerland
 		unset($localobjectadd->country_code);
@@ -482,7 +484,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nSwitzerland", $result);
 
 		// USA
 		unset($localobjectadd->country_code);
@@ -494,7 +496,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->state='New state';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew town, New state, New zip\nUnited States", $result);
+		$this->assertStringContainsString("New address\nNew town, New state, New zip\nUnited States", $result);
 
 		return $localobjectadd->id;
 	}

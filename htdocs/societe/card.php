@@ -13,6 +13,8 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023  George Gkantinas	    <info@geowv.eu>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +63,12 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('eventorganization')) {
 	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+}
+
+if ($mysoc->country_code == 'GR') {
+	$u = getDolGlobalString('AADE_WEBSERVICE_USER');
+	$p = getDolGlobalString('AADE_WEBSERVICE_KEY');
+	$myafm = getDolGlobalString('MAIN_INFO_TVAINTRA');
 }
 
 
@@ -188,10 +196,10 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
-		$soc_origin = new Societe($db);
+		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
 		if ($soc_origin_id <= 0) {
 			$langs->load('errors');
@@ -241,6 +249,11 @@ if (empty($reshook)) {
 					}
 				}
 
+				// If alias name is not defined on target thirdparty, we can store in it the old name of company.
+				if (empty($object->name_bis) && $object->name != $soc_origin->name) {
+					$object->name_bis = $soc_origin->name;
+				}
+
 				// Merge categories
 				$static_cat = new Categorie($db);
 
@@ -279,7 +292,7 @@ if (empty($reshook)) {
 					// TODO Mutualise the list into object societe.class.php
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
-						'Don' => '/don/class/don.class.php',
+						'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
 						'Societe' => '/societe/class/societe.class.php',
 						//'Categorie' => '/categories/class/categorie.class.php',
 						'ActionComm' => '/comm/action/class/actioncomm.class.php',
@@ -300,7 +313,7 @@ if (empty($reshook)) {
 						'Delivery' => '/delivery/class/delivery.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
-						'Ticket' => '/ticket/class/ticket.class.php',
+						'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
 						'User' => '/user/class/user.class.php',
 						'Account' => '/compta/bank/class/account.class.php',
 						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
@@ -308,6 +321,13 @@ if (empty($reshook)) {
 
 					//First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
+						if (is_array($object_file)) {
+							if (empty($object_file['enabled'])) {
+								continue;
+							}
+							$object_file = $object_file['file'];
+						}
+
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
 						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
@@ -320,10 +340,8 @@ if (empty($reshook)) {
 
 				// External modules should update their ones too
 				if (!$error) {
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
-						'soc_origin' => $soc_origin->id,
-						'soc_dest' => $object->id
-					), $object, $action);
+					$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
 
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -333,7 +351,7 @@ if (empty($reshook)) {
 
 
 				if (!$error) {
-					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id, 'mergefromname'=>$soc_origin->name);
 
 					// Call trigger
 					$result = $object->call_trigger('COMPANY_MODIFY', $user);
@@ -345,7 +363,7 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					//We finally remove the old thirdparty
+					// We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
 						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
 						$error++;
@@ -375,13 +393,13 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'set_localtax1') {
-		//obtidre selected del combobox
+		//get selected from combobox
 		$value = GETPOST('lt1');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
 	if ($action == 'set_localtax2') {
-		//obtidre selected del combobox
+		//get selected from combobox
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
@@ -415,7 +433,7 @@ if (empty($reshook)) {
 
 	// Add new or update third party
 	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode'))
-	&& ($action == 'add' || $action == 'update') && $user->rights->societe->creer) {
+	&& ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -618,10 +636,10 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
+				if ($result >= 0 && isModEnabled('mailing') && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
-					$result = $object->setNoEmail($object->no_email);
-					if ($result < 0) {
+					$resultnoemail = $object->setNoEmail($object->no_email);
+					if ($resultnoemail < 0) {
 						$error++;
 						$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 						$action = 'create';
@@ -813,7 +831,7 @@ if (empty($reshook)) {
 				}
 
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!$error && !empty($user->rights->categorie->lire)) {
+				if (!$error && $user->hasRight('categorie', 'lire')) {
 					// Customer categories association
 					$categories = GETPOST('custcats', 'array');
 					$result = $object->setCategories($categories, 'customer');
@@ -885,7 +903,7 @@ if (empty($reshook)) {
 							break;
 					}
 				}
-				// Gestion du logo de la société
+				// Company logo management
 
 
 				// Update linked member
@@ -935,31 +953,31 @@ if (empty($reshook)) {
 	}
 
 	// Set third-party type
-	if ($action == 'set_thirdpartytype' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdpartytype' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setThirdpartyType(GETPOST('typent_id', 'int'));
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->rights->societe->creer && isModEnabled('incoterm')) {
+	if ($action == 'set_incoterms' && $user->hasRight('societe', 'creer') && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
 	// Set parent company
-	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+	if ($action == 'set_thirdparty' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setParent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer) {
+	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->rights->societe->creer) {
+	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
 		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
 	}
 
@@ -1177,7 +1195,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$object->logo = (isset($_FILES['photo']) ?dol_sanitizeFileName($_FILES['photo']['name']) : '');
 
-		// Gestion du logo de la société
+		// Company logo management
 		$dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos";
 		$file_OK = (isset($_FILES['photo']) ?is_uploaded_file($_FILES['photo']['tmp_name']) : false);
 		if ($file_OK) {
@@ -1718,7 +1736,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print "\n";
 				print '<script type="text/javascript">';
 				print "function CheckVAT(a) {\n";
-				print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+				if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+					print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+				} else {
+					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+				}
 				print "}\n";
 				print '</script>';
 				print "\n";
@@ -1818,7 +1840,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Customer
@@ -1947,7 +1969,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 			$modCodeClient = new $module($db);
-			// We verified if the tag prefix is used
+			// We check if the prefix tag is used
 			if ($modCodeClient->code_auto) {
 				$prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
 			}
@@ -1963,7 +1985,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 			$modCodeFournisseur = new $module($db);
-			// On verifie si la balise prefix est utilisee
+			// We check if the prefix tag is used
 			if ($modCodeFournisseur->code_auto) {
 				$prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
 			}
@@ -2490,7 +2512,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
-					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} else {
+						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					}
 					print "}\n";
 					print '</script>';
 					print "\n";
@@ -2558,7 +2584,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 				// Customer
 				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -2958,7 +2984,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
-					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} else {
+						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					}
 					print "}\n";
 					print '</script>';
 					print "\n";
@@ -3004,7 +3034,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			// Customer
 			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
@@ -3194,7 +3224,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $dolibarr_user->getLoginUrl(-1);
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->rights->user->user->creer) {
+			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
 				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}
@@ -3329,3 +3359,46 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 // End of page
 llxFooter();
 $db->close();
+
+?>
+
+<script>
+// Function to retrieve VAT details from the Greek Ministry of Finance GSIS SOAP web service
+function GRVAT(a, u, p, myafm) {
+  var afm = a.replace(/\D/g, ""); // Remove non-digit characters from 'a'
+
+  $.ajax({
+	type: "GET",
+	url: "/societe/checkvat/checkVatGr.php",
+	data: { afm }, // Set request parameters
+	success: function(data) {
+		var obj = data; // Parse response data as JSON
+
+		// Update form fields based on retrieved data
+		if (obj.RgWsPublicBasicRt_out.afm === null) {
+			alert(obj.pErrorRec_out.errorDescr); // Display error message if AFM is null
+		} else {
+			$("#name").val(obj.RgWsPublicBasicRt_out.onomasia); // Set 'name' field value
+			$("#zipcode").val(obj.RgWsPublicBasicRt_out.postalZipCode); // Set 'zipcode' field value
+			$("#town").val(obj.RgWsPublicBasicRt_out.postalAreaDescription); // Set 'town' field value
+			$("#idprof2").val(obj.RgWsPublicBasicRt_out.doyDescr); // Set 'idprof2' field value
+			$("#name_alias_input").val(obj.RgWsPublicBasicRt_out.commerTitle); // Set 'name_alias' field value
+
+		if (obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser) {
+			var firmActUser = obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser;
+			
+		if (Array.isArray(firmActUser)) {
+			var primaryFirmAct = firmActUser.find(item => item.firmActKindDescr === "ΚΥΡΙΑ"); // Find primary client activity
+			if (primaryFirmAct) {
+				$("#idprof1").val(primaryFirmAct.firmActDescr); // Set 'idprof1' field value
+			}
+		} else {
+			$("#idprof1").val(firmActUser.firmActDescr); // Set 'idprof1' field value
+			}
+		}
+		}
+	}
+	});
+}
+
+</script>

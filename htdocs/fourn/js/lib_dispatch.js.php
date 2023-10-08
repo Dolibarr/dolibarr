@@ -101,8 +101,8 @@ function addDispatchLine(index, type, mode) {
 	if (qty <= 1) {
 		window.alert("Remain quantity to dispatch is too low to be split");
 	} else {
-		oldlineqty = qtyDispatched;
-		newlineqty = qtyOrdered - qtyDispatched;
+		var oldlineqty = qtyDispatched;
+		var newlineqty = qtyOrdered - qtyDispatched;
 		if (newlineqty <= 0) {
 			newlineqty = qty - 1;
 			oldlineqty = 1;
@@ -146,7 +146,8 @@ function addDispatchLine(index, type, mode) {
 		$("tr[name^='" + type + "_'][name$='_" + index + "'] .splitbutton").hide();
 		$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
 
-		$("#reset_" + (nbrTrs) + "_" + index).click(function () {
+		$("#reset_" + (nbrTrs) + "_" + index).click(function (event) {
+			event.preventDefault();
 			id = $(this).attr("id");
 			id = id.split("reset_");
 			idrow = id[1];
@@ -156,7 +157,7 @@ function addDispatchLine(index, type, mode) {
 				$('tr[name="' + type + '_' + idrow + '"').remove();
 				$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
 			} else {
-				console.log("Reset trigger for id = #qty_" + idrow);
+				console.log("fourn/js/lib_dispatch.js.php Reset trigger for id = qty_" + idrow);
 				$("#qty_" + idrow).val("");
 			}
 		});

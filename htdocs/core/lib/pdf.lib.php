@@ -1586,7 +1586,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-				$productCustomerPriceStatic = new Productcustomerprice($db);
+				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -2547,11 +2547,12 @@ function pdf_getSizeForImage($realpath)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	string							Return total of line excl tax
+ * 	@return	float							Return total of line excl tax
  */
 function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
 {
 	global $conf, $hookmanager;
+
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) {
 		$sign = -1;
@@ -2574,8 +2575,12 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 			$action = '';
 
-			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {
-				return $hookmanager->resPrint; // Note that $action and $object may have been modified by some hooks
+			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {	// Note that $action and $object may have been modified by some hooks
+				if (isset($hookmanager->resArray['linetotalremise'])) {
+					return $hookmanager->resArray['linetotalremise'];
+				} else {
+					return (float) $hookmanager->resPrint;	// For backward compatibility
+				}
 			}
 		}
 
@@ -2583,5 +2588,5 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 			return $sign * (($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
 	}
-	return '';
+	return 0;
 }

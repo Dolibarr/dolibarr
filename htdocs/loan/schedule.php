@@ -57,6 +57,8 @@ $echeances->fetchAll($object->id);
 
 if ($object->paid > 0 && count($echeances->lines) == 0) {
 	$pay_without_schedule = 1;
+} else {
+	$pay_without_schedule = 0;
 }
 
 /*
@@ -150,7 +152,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 // Project
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->loadLangs(array("projects"));
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if ($user->rights->loan->write) {

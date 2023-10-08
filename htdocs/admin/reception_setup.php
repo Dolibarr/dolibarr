@@ -218,7 +218,7 @@ foreach ($dirmodels as $reldir) {
 
 						print '<tr><td>'.$module->nom."</td>\n";
 						print '<td>';
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module

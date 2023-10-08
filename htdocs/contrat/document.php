@@ -84,7 +84,7 @@ $modulepart = 'contract';
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
-$permissiontoadd = $user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('contrat', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -100,7 +100,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 
 if ($object->id) {
@@ -183,8 +186,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'contract';
-	$permissiontoadd = $user->rights->contrat->creer;
-	$permtoedit = $user->rights->contrat->creer;
+	$permissiontoadd = $user->hasRight('contrat', 'creer');
+	$permtoedit = $user->hasRight('contrat', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

@@ -6,3 +6,6 @@ FileIsTooBig=Bestanden zijn te groot
 WebsiteSetup=Setup van de module website
 WEBSITE_PAGEURL=URL van de pagina
 WEBSITE_KEYWORDS=Trefwoorden
+ExternalSiteSetup=Setup link naar externe website
+ExternalSiteModuleNotComplete=Module ExternalSite werd niet correct geconfigureerd.
+FailedToGetFile=Mislukt om de bestanden te ontvangen %s

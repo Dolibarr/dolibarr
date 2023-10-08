@@ -234,6 +234,8 @@ if ($action == "view_ticketlist") {
 			$param .= '&entity='.((int) $entity);
 		}
 
+		$param .= '&token='.newToken();
+
 		// Definition of fields for list
 		$arrayfields = array(
 			't.datec' => array('label' => $langs->trans("Date"), 'checked' => 1),
@@ -264,7 +266,7 @@ if ($action == "view_ticketlist") {
 		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-					$enabled = abs(dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, 0));
+					$enabled = abs(dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, '2'));
 					$enabled = (($enabled == 0 || $enabled == 3) ? 0 : $enabled);
 					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $enabled && $extrafields->attributes[$object->table_element]['perms'][$key]);
 				}
@@ -419,6 +421,7 @@ if ($action == "view_ticketlist") {
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -500,7 +503,7 @@ if ($action == "view_ticketlist") {
 				$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
-				// Status
+				// Status ticket
 				if (!empty($arrayfields['t.fk_statut']['checked'])) {
 					print '<td class="liste_titre">';
 					$selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
@@ -763,8 +766,10 @@ if ($action == "view_ticketlist") {
 	print "</div>";
 }
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

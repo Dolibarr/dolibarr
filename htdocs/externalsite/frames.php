@@ -40,6 +40,10 @@ $theme = GETPOST('theme', 'aZ09');
 $codelang = GETPOST('lang', 'aZ09');
 $keyforcontent = GETPOST('keyforcontent', 'aZ09');
 
+if (!isModEnabled("externalsite")) {
+	accessforbidden('Module externalsite not enabled');
+}
+
 
 /*
  * View
