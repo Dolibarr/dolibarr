@@ -1153,7 +1153,11 @@ class Reception extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch WHERE fk_reception = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 
-		if (!empty($resql)) {
+		if (empty($resql)) {
+			return -1;
+		}
+
+		{
 			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new CommandeFournisseurDispatch($this->db);
 
@@ -1210,8 +1214,6 @@ class Reception extends CommonObject
 			}
 
 			return 1;
-		} else {
-			return -1;
 		}
 	}
 
