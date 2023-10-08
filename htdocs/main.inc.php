@@ -1303,7 +1303,7 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 			) {
 		$conf->dol_optimize_smallscreen = 1;
 
-	if (isset($conf->global->PRODUIT_DESC_IN_FORM) && $conf->global->PRODUIT_DESC_IN_FORM == 1) {
+	if (isset($conf->global->PRODUIT_DESC_IN_FORM) && getDolGlobalInt('PRODUIT_DESC_IN_FORM') == 1) {
 			$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
 	}
 }
@@ -1896,7 +1896,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Chart
-			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
+			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || getDolGlobalString('MAIN_JS_GRAPH') == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1936,7 +1936,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!$disablejs && !empty($conf->use_javascript_ajax)) {
 			// CKEditor
-			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || getDolGlobalString('FCKEDITOR_EDITORNAME') == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
 				print '<!-- Includes JS for CKEditor -->'."\n";
 				$pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
 				$jsckeditor = 'ckeditor.js';
@@ -3235,7 +3235,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		if (!empty($conf->global->MAIN_BUGTRACK_ENABLELINK)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-			if ($conf->global->MAIN_BUGTRACK_ENABLELINK == 'github') {
+			if (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') == 'github') {
 				$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
 				$bugbaseurl .= '&title=';
 				$bugbaseurl .= urlencode("Bug: ");

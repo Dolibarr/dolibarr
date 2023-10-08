@@ -854,11 +854,11 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			$bankviainvoice = 1;
 		}
 	} else {
-		if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+		if (!empty($conf->global->ADHERENT_BANK_USE) && getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 			$bankviainvoice = 1;
-		} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled('banque')) {
+		} elseif (!empty($conf->global->ADHERENT_BANK_USE) && getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled('banque')) {
 			$bankdirect = 1;
-		} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+		} elseif (!empty($conf->global->ADHERENT_BANK_USE) && getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 			$invoiceonly = 1;
 		}
 	}

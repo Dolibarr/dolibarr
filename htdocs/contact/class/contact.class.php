@@ -843,7 +843,7 @@ class Contact extends CommonObject
 			$info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 		}
 
-		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware') {
+		if (getDolGlobalString('LDAP_SERVER_TYPE') == 'egroupware') {
 			$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
 
 			$info['uidnumber'] = $this->id;

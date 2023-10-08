@@ -215,7 +215,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (intval($conf->global->LDAP_SYNCHRO_ACTIVE) === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && $conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+			if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
 				if ($result > 0) {

@@ -535,7 +535,7 @@ class Commande extends CommonOrder
 
 		if (!$error) {
 			// If stock is incremented on validate order, we must increment it
-			if ($result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if ($result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -663,7 +663,7 @@ class Commande extends CommonOrder
 			}
 
 			// If stock is decremented on validate order, we must reincrement it
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1) {
 				$result = 0;
 
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
@@ -848,7 +848,7 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock is decremented on validate order, we must reincrement it
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 

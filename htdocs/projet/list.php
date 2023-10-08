@@ -394,7 +394,7 @@ $title = $langs->trans("LeadsOrProjects");
 if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	$title = $langs->trans("Projects");
 }
-if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
 	$title = $langs->trans("Leads");
 }
 $morejs = array();

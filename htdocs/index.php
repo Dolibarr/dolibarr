@@ -157,7 +157,7 @@ $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 // Dolibarr Working Board with weather
 if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
-	$showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
+	$showweather = (empty($conf->global->MAIN_DISABLE_METEO) || getDolGlobalInt('MAIN_DISABLE_METEO') == 2) ? 1 : 0;
 
 	//Array that contains all WorkboardResponse classes to process them
 	$dashboardlines = array();
@@ -614,7 +614,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		}
 
 		if ($showweather && !empty($isIntopOpenedDashBoard)) {
-			$appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '');
+			$appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && getDolGlobalInt('MAIN_DISABLE_METEO') == 2 ? ' hideonsmartphone' : '');
 			$weather = getWeatherStatus($totallate);
 
 			$text = '';

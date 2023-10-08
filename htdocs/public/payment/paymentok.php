@@ -571,11 +571,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled("banque")) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled("banque")) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {

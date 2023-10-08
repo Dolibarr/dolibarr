@@ -2482,7 +2482,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '</div>';
 		}
 	}
-	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
+	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.((int) $object->id);

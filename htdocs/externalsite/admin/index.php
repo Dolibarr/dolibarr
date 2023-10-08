@@ -102,7 +102,7 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"".(GETPOST('EXTERNALSITE_LABEL', 'alpha') ?GETPOST('EXTERNALSITE_LABEL', 'alpha') : ((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL == 'ExternalSite') ? '' : $conf->global->EXTERNALSITE_LABEL))."\" size=\"12\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"".(GETPOST('EXTERNALSITE_LABEL', 'alpha') ?GETPOST('EXTERNALSITE_LABEL', 'alpha') : ((empty($conf->global->EXTERNALSITE_LABEL) || getDolGlobalString('EXTERNALSITE_LABEL') == 'ExternalSite') ? '' : $conf->global->EXTERNALSITE_LABEL))."\" size=\"12\"></td>";
 print "<td>".$langs->trans("ExampleMyMenuEntry")."</td>";
 print "</tr>";
 

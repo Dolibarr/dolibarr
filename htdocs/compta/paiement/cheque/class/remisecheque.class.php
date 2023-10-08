@@ -401,9 +401,9 @@ class RemiseCheque extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
-		} elseif ($conf->global->CHEQUERECEIPTS_ADDON == 'thyme') {
+		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'thyme') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_thyme';
-		} elseif ($conf->global->CHEQUERECEIPTS_ADDON == 'mint') {
+		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'mint') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		}
 

@@ -148,7 +148,7 @@ if ($nolinesbefore) {
 				$colspan++;
 			} else {
 				print '<td class="margininfos linecolmargin1 right">';
-				if ($conf->global->MARGIN_TYPE == "1") {
+				if (getDolGlobalString('MARGIN_TYPE') == "1") {
 					echo $langs->trans('BuyingPrice');
 				} else {
 					echo $langs->trans('CostPrice');
@@ -818,7 +818,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 						<?php
-						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 							if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
 								<?php
@@ -880,13 +880,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					/* setup of margin calculation */
 					var defaultbuyprice = '<?php
 					if (isset($conf->global->MARGIN_TYPE)) {
-						if ($conf->global->MARGIN_TYPE == '1') {
+						if (getDolGlobalString('MARGIN_TYPE') == '1') {
 							print 'bestsupplierprice';
 						}
-						if ($conf->global->MARGIN_TYPE == 'pmp') {
+						if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 							print 'pmp';
 						}
-						if ($conf->global->MARGIN_TYPE == 'costprice') {
+						if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 							print 'costprice';
 						}
 					} ?>';
