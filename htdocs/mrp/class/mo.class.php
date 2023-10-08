@@ -1664,8 +1664,10 @@ class Mo extends CommonObject
 	 *
 	 * @return Mo[]|int[]  array of MOs if OK, -1 if KO
 	 */
-	public function getAllMoChilds()
+	public function getAllMoChilds($depth = 0)
 	{
+		if ($depth > 1000) return -1;
+
 		$TMoChilds = array();
 		$error = 0;
 
@@ -1676,7 +1678,7 @@ class Mo extends CommonObject
 		foreach ($childMoList as $childMo) $TMoChilds[$childMo->id] = $childMo;
 
 		foreach ($childMoList as $childMo) {
-			$childMoChildren = $childMo->getAllMoChilds();
+			$childMoChildren = $childMo->getAllMoChilds($depth + 1);
 
 			if ($childMoChildren == -1) {
 				$error++;
