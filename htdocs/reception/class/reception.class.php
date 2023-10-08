@@ -1411,13 +1411,13 @@ class Reception extends CommonObject
 
 		dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$this->date_delivery = $delivery_date;
-			return 1;
-		} else {
+		if (!$resql) {
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		$this->date_delivery = $delivery_date;
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
