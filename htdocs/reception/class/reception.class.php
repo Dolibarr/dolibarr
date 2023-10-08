@@ -1092,7 +1092,13 @@ class Reception extends CommonObject
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 
-					if ($this->db->query($sql)) {
+					if (!$this->db->query($sql)) {
+						$this->error = $this->db->lasterror()." - sql=$sql";
+						$this->db->rollback();
+						return -3;
+					}
+
+					{
 						// Call trigger
 						$result = $this->call_trigger('RECEPTION_DELETE', $user);
 						if ($result < 0) {
@@ -1139,10 +1145,6 @@ class Reception extends CommonObject
 							$this->db->rollback();
 							return -1;
 						}
-					} else {
-						$this->error = $this->db->lasterror()." - sql=$sql";
-						$this->db->rollback();
-						return -3;
 					}
 				}
 			}
