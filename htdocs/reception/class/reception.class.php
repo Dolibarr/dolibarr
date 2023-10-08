@@ -345,16 +345,18 @@ class Reception extends CommonObject
 					// End call triggers
 				}
 
-				if (!$error) {
-					$this->db->commit();
-					return $this->id;
-				} else {
+				if ($error) {
 					foreach ($this->errors as $errmsg) {
 						dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 						$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 					}
 					$this->db->rollback();
 					return -1 * $error;
+				}
+
+				{
+					$this->db->commit();
+					return $this->id;
 				}
 			}
 		}
