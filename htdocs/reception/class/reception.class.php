@@ -1405,20 +1405,18 @@ class Reception extends CommonObject
 		if (!$user->rights->reception->creer)
 			return -2;
 
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
+		$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$this->date_delivery = $delivery_date;
-				return 1;
-			} else {
-				$this->error = $this->db->error();
-				return -1;
-			}
+		dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->date_delivery = $delivery_date;
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
 		}
 	}
 
