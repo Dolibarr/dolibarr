@@ -440,6 +440,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			$feature2 = 'commande';
 		}
 	}
+	if ($features == 'payment_sc') {
+		$tableandshare = 'paiementcharge';
+		$parentfortableentity = 'fk_charge@chargesociales';
+	}
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -914,7 +918,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
 			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
 		}
-
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";

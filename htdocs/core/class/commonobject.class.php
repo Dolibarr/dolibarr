@@ -5008,10 +5008,10 @@ abstract class CommonObject
 			//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
 			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 				if (empty($line->fk_parent_line)) {
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'defaulttpldir'=>$defaulttpldir);
 					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				} else {
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line, 'defaulttpldir'=>$defaulttpldir);
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 			}
@@ -7202,6 +7202,7 @@ abstract class CommonObject
 				$InfoFieldList = explode(":", $param_list[0]);
 				$parentName = '';
 				$parentField = '';
+
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -7209,6 +7210,7 @@ abstract class CommonObject
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				// 7 : sort field
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -7270,7 +7272,12 @@ abstract class CommonObject
 					$sql .= $sqlwhere;
 					//print $sql;
 
-					$sql .= ' ORDER BY ' . implode(', ', $fields_label);
+					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
+					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_-,]+$/i', $InfoFieldList[7])) {
+						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
+					} else {
+						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
+					}
 
 					dol_syslog(get_class($this) . '::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
