@@ -1534,7 +1534,13 @@ class Reception extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if (!$resql) {
+			dol_print_error($this->db);
+			$this->db->rollback();
+			return -1;
+		}
+
+		{
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
 			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
 				$order = new CommandeFournisseur($this->db);
@@ -1636,9 +1642,6 @@ class Reception extends CommonObject
 					$error++;
 				}
 			}
-		} else {
-			dol_print_error($this->db);
-			$error++;
 		}
 
 		if (!$error) {
