@@ -1059,7 +1059,12 @@ class Reception extends CommonObject
 			}
 		}
 
-		if (!$error) {
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		{
 			$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
 			$ef = $main."_extrafields";
 
@@ -1141,9 +1146,6 @@ class Reception extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-		} else {
-			$this->db->rollback();
-			return -1;
 		}
 	}
 
