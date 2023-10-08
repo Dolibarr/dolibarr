@@ -5,6 +5,7 @@
  * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,7 @@ class Notify
 		'PROPAL_CLOSE_SIGNED',
 		'PROPAL_CLOSE_REFUSED',
 		'FICHINTER_VALIDATE',
+		'FICHINTER_CLOSE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
@@ -548,6 +550,12 @@ class Notify
 								$object_type = 'ficheinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
+							case 'FICHINTER_CLOSE':
+								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->ficheinter->dir_output;
+								$object_type = 'ficheinter';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
+								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
@@ -824,6 +832,12 @@ class Notify
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
+						break;
+					case 'FICHINTER_CLOSE':
+						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$dir_output = $conf->facture->dir_output;
+						$object_type = 'ficheinter';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
 					case 'ORDER_SUPPLIER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
