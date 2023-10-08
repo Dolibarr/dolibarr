@@ -294,72 +294,66 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."reception");
+		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."reception");
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-			$sql .= " SET ref = '(PROV".$this->id.")'";
-			$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
+		$sql .= " SET ref = '(PROV".$this->id.")'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-			if (!$this->db->query($sql)) {
+		if (!$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror()." - sql=$sql";
+			$this->db->rollback();
+			return -2;
+		}
+
+		// Insert of lines
+		$num = count($this->lines);
+		for ($i = 0; $i < $num; $i++) {
+			$this->lines[$i]->fk_reception = $this->id;
+
+			if (!$this->lines[$i]->create($user) > 0) {
 				$error++;
-				$this->error = $this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -2;
-			}
-
-			{
-				// Insert of lines
-				$num = count($this->lines);
-				for ($i = 0; $i < $num; $i++) {
-					$this->lines[$i]->fk_reception = $this->id;
-
-					if (!$this->lines[$i]->create($user) > 0) {
-						$error++;
-					}
-				}
-
-				if (!$error && $this->id && $this->origin_id) {
-					$ret = $this->add_object_linked();
-					if (!$ret) {
-						$error++;
-					}
-				}
-
-				// Create extrafields
-				if (!$error) {
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
-				}
-
-				if (!$error && !$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('RECEPTION_CREATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if ($error) {
-					foreach ($this->errors as $errmsg) {
-						dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-						$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-					}
-					$this->db->rollback();
-					return -1 * $error;
-				}
-
-				{
-					$this->db->commit();
-					return $this->id;
-				}
 			}
 		}
+
+		if (!$error && $this->id && $this->origin_id) {
+			$ret = $this->add_object_linked();
+			if (!$ret) {
+				$error++;
+			}
+		}
+
+		// Create extrafields
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('RECEPTION_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		}
+
+		$this->db->commit();
+		return $this->id;
 	}
 
 
