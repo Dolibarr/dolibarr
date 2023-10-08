@@ -1004,10 +1004,10 @@ class Reception extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
 		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
