@@ -334,7 +334,7 @@ if ($action == 'edit') {
 	// Host server
 
 	print '<tr class="oddeven hideifdefault">';
-	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail') {
+	if (!$conf->use_javascript_ajax && $linuxlike && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail') {
 		print '<td>';
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
@@ -369,7 +369,7 @@ if ($action == 'edit') {
 	// Port
 
 	print '<tr class="oddeven hideifdefault"><td>';
-	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail') {
+	if (!$conf->use_javascript_ajax && $linuxlike && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail') {
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
@@ -536,14 +536,14 @@ if ($action == 'edit') {
 
 	if (!empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default') {
 		// Host server
-		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail')) {
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail')) {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_SERVER_EMAILING) ? $conf->global->MAIN_MAIL_SMTP_SERVER_EMAILING : '').'</td></tr>';
 		}
 
 		// Port
-		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail')) {
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail')) {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ?ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_PORT_EMAILING) ? $conf->global->MAIN_MAIL_SMTP_PORT_EMAILING : '').'</td></tr>';
@@ -622,7 +622,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_end();
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) {
 		print '<br>';
 		/*
 		// Warning 1
@@ -662,7 +662,7 @@ if ($action == 'edit') {
 	print '</div>';
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && !in_array($action, array('testconnect', 'test', 'testhtml'))) {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail' && !in_array($action, array('testconnect', 'test', 'testhtml'))) {
 		$text = $langs->trans("WarningPHPMail");
 		print info_admin($text);
 	}

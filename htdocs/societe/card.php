@@ -1307,7 +1307,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.action.value="create";
                         	document.formsoc.submit();
                         });';
-				if ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+				if (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print '
 						function init_check_no_email(input) {
 							if (input.val()!="") {
@@ -1653,7 +1653,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Unsubscribe
 		if (isModEnabled('mailing')) {
-			if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+			if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 				print "\n".'<script type="text/javascript">'."\n";
 				print '$(document).ready(function () {
 							$("#email").keyup(function() {
@@ -1675,7 +1675,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr>';
 			print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 			print '<td>';
-			print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+			print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 			print '</td>';
 			print '</tr>';
 		}
@@ -2376,7 +2376,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (isModEnabled('mailing')) {
-				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 
 					print '
@@ -2404,7 +2404,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
-				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+				$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
 				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
 				print '</td>';
 				print '</tr>';

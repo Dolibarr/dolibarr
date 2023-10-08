@@ -1114,9 +1114,9 @@ class Paiement extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->PAYMENT_ADDON)) {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
-		} elseif ($conf->global->PAYMENT_ADDON == 'ant') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'ant') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_ant';
-		} elseif ($conf->global->PAYMENT_ADDON == 'cicada') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'cicada') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		}
 

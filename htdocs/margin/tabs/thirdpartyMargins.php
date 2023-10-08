@@ -186,7 +186,7 @@ if ($socid > 0) {
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-	if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+	if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
 	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
