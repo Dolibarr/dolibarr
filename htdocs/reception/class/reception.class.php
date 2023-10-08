@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,7 +287,14 @@ class Reception extends CommonObject
 
 		$resql = $this->db->query($sql);
 
-		if ($resql) {
+		if (!$resql) {
+			$error++;
+			$this->error = $this->db->error()." - sql=$sql";
+			$this->db->rollback();
+			return -1;
+		}
+
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."reception");
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
@@ -346,11 +354,6 @@ class Reception extends CommonObject
 				$this->db->rollback();
 				return -2;
 			}
-		} else {
-			$error++;
-			$this->error = $this->db->error()." - sql=$sql";
-			$this->db->rollback();
-			return -1;
 		}
 	}
 
