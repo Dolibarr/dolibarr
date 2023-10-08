@@ -232,9 +232,10 @@ class FactureRec extends CommonInvoice
 	 * 	@param		User	$user		User object
 	 * 	@param		int		$facid		Id of source invoice
 	 *  @param		int		$notrigger	No trigger
+	 *  @param		array	$onlylines	Only the lines of the array
 	 *	@return		int					<0 if KO, id of invoice created if OK
 	 */
-	public function create($user, $facid, $notrigger = 0)
+	public function create($user, $facid, $notrigger = 0, $onlylines = array())
 	{
 		global $conf;
 
@@ -336,12 +337,11 @@ class FactureRec extends CommonInvoice
 				$this->multicurrency_tx = $facsrc->multicurrency_tx;
 
 				// Add lines
-				$selectedLines = GETPOST('toselect', 'array');
 				$fk_parent_line = 0;
 
 				$num = count($facsrc->lines);
 				for ($i = 0; $i < $num; $i++) {
-					if (!in_array($facsrc->lines[$i]->id, $selectedLines)) {
+					if (!empty($onlylines) && !in_array($facsrc->lines[$i]->id, $onlylines)) {
 						continue; // Skip unselected lines
 					}
 
@@ -606,7 +606,6 @@ class FactureRec extends CommonInvoice
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
-				$this->modelpdf               = $obj->model_pdf; // deprecated
 				$this->model_pdf              = $obj->model_pdf;
 				//$this->special_code = $obj->special_code;
 				$this->frequency			  = $obj->frequency;

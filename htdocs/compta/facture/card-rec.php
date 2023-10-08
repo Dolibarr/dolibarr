@@ -243,7 +243,9 @@ if (empty($reshook)) {
 			$oldinvoice = new Facture($db);
 			$oldinvoice->fetch(GETPOST('facid', 'int'));
 
-			$result = $object->create($user, $oldinvoice->id);
+			$onlylines = GETPOST('toselect', 'array');
+
+			$result = $object->create($user, $oldinvoice->id, 0, $onlylines);
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
 				if ($result < 0) {

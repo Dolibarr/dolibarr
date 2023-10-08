@@ -24,6 +24,83 @@ Following changes may create regressions for some external modules, but were nec
 * It was possible to use a variable $soc or $right inside a php code condition of some extrafields properties, this is no more true (this vars are no more defined globaly).
 
 
+
+***** ChangeLog for 18.0.2 compared to 18.0.1 *****
+FIX: 17.0 PHP8: supplier invoice class
+FIX: #24908 #25824
+FIX: #25780 Various payment - List - Fatal error on PHP8.x
+FIX: #25884
+FIX: #25919
+FIX: #25934 #25929
+FIX: Accountancy - Update Quadra export format
+FIX: add field "entity" only in $tabfieldinsert
+FIX: add warning in the changelog
+FIX: Avoid duplicate popup when popup setup to work as ajax
+FIX: avoid excess line breaks
+FIX: removed some php8 warning
+FIX: avoid wrong backtopage url
+FIX: bad check return for sendfile
+FIX: Bad choice of filter on product/service
+FIX: bad from and to
+FIX: Bad length for value
+FIX: Bad value of accounting account shown in list. Edit fails.
+FIX: batch to update non valid backlink check
+FIX: better sql request for all cases
+FIX: Can't access to rec supplier invoice card
+FIX: Can't delete a fourn commande row if a commande ligne is linked
+FIX: could not delete a fourn commande row if a commande ligne is linked
+FIX: create intervention from time spend
+FIX: customer code search filter on invoice list
+FIX: #CVE-2023-4197
+FIX: date comparison for user expiration on user list
+FIX: Debug the dispatch page to work on corrupted data
+FIX: delete useless condition in massaction_pre
+FIX: Edition of line on the list of timespent for all projects
+FIX: Edition of shipment detail with lot not updating correctly tables
+FIX: emailcollector to search existing thirdparty when extract not found
+FIX: Error message
+FIX: Expense report is created on the wrong entity
+FIX: export FEC
+FIX: Filter on partnership status
+FIX: fix the wrong position of the hook 'printFieldListTitle' and 'printFieldListValue' in the stock at date page
+FIX: If PHPIMAP is active, emailcollector "recordjoinpiece" operation will not work
+FIX: include
+FIX: Kanban view
+FIX: link to create purchase order from sale order
+FIX: Look and feel search v18
+FIX: message order in ticket public view is not coherent with tickets events tab
+FIX: missing contact_id for the trigger
+FIX: missing entity filter to customize ticket dictionaries by entity
+FIX: Missing error message on CommandeFourn creation
+FIX: missing fk_account situation invoice
+FIX: missing group "members" + multiple broken features for Multicompany
+FIX: missing 'overwrite_trans' for $addzero (Multicompany)
+FIX: modification of complementary attributes in commercial proposals
+FIX: multicompany compatibility
+FIX: multiple broken features for Multicompany !!!!
+FIX: Navigation to/from a project from page of projects of a thirdparty
+FIX: payment : language is not propagated to following pages
+FIX: Prices visible on TakePOS KO with multiprices support
+FIX: product list accounting length
+FIX: Quick search Intervention redirect to wrong page
+FIX: Return right content type
+FIX: right access on salary card and tabs
+FIX: rights paymentsc paiementcharge
+FIX: same broken feature as v18 (Multicompany)
+FIX: Save user modif id when changing a contact status
+FIX: Social Contrib - List - Fatal error on kanban view PHP8.x & Missing colspan
+FIX: thirdparty object in proposal card is not loaded
+FIX: Total of holidays is doubled
+FIX: translation button
+FIX: trigger for email sent from partnership
+FIX: uniformize getEntity sql request
+FIX: use urlencode for origin and originid
+FIX: Various payment - List - Fatal error on php8.1
+FIX: warning when Workboard Responses display non numeric strings
+FIX: wrong place of trigger delete
+FIX: wrong test + is_int is better for negative integer
+
+
 ***** ChangeLog for 18.0.1 compared to 18.0.0 *****
 FIX: Adding a product in recurring invoice does not use the correct VAT
 FIX: API /product/getAttributes

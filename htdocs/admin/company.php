@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,6 +232,14 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2', 'aZ09'), 'chaine', 0, '', $conf->entity);
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	}
+
+	// Credentials for AADE webservices, applicable only for Greece
+	if ($mysoc->country_code == 'GR') {
+		dolibarr_set_const($db, "MYDATA_AADE_USER", GETPOST("MYDATA_AADE_USER", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MYDATA_AADE_KEY", GETPOST("MYDATA_AADE_KEY", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "AADE_WEBSERVICE_USER", GETPOST("AADE_WEBSERVICE_USER", 'alpha'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "AADE_WEBSERVICE_KEY", GETPOST("AADE_WEBSERVICE_KEY", 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
 	// Remove constant MAIN_INFO_SOCIETE_SETUP_TODO_WARNING
@@ -846,6 +855,41 @@ if ($mysoc->useRevenueStamp()) {
 }
 
 print "</table>";
+
+// AADE webservices credentials, applicable only for Greece
+if ($mysoc->country_code == 'GR') {
+	print load_fiche_titre($langs->trans("AADEWebserviceCredentials"), '', '');
+	print '<table class="noborder centpercent editmode">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("AccountParameter").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_USER").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_USER" value="'.getDolGlobalString('MYDATA_AADE_USER').'"';
+	print '</td><td></td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
+	print '</td><td></td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_USER").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_USER" value="'.getDolGlobalString('AADE_WEBSERVICE_USER').'"';
+	print '</td><td></td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.getDolGlobalString('AADE_WEBSERVICE_KEY').'"';
+	print '</td><td></td></tr>';
+
+	print '<br>';
+
+	print "</table>";
+}
 
 print $form->buttonsSaveCancel("Save", '');
 
