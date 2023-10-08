@@ -302,7 +302,15 @@ class Reception extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
-			if ($this->db->query($sql)) {
+
+			if (!$this->db->query($sql)) {
+				$error++;
+				$this->error = $this->db->lasterror()." - sql=$sql";
+				$this->db->rollback();
+				return -2;
+			}
+
+			{
 				// Insert of lines
 				$num = count($this->lines);
 				for ($i = 0; $i < $num; $i++) {
@@ -348,11 +356,6 @@ class Reception extends CommonObject
 					$this->db->rollback();
 					return -1 * $error;
 				}
-			} else {
-				$error++;
-				$this->error = $this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -2;
 			}
 		}
 	}
