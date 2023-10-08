@@ -1402,7 +1402,10 @@ class Reception extends CommonObject
 	public function setDeliveryDate($user, $delivery_date)
 	{
 		// phpcs:enable
-		if ($user->rights->reception->creer) {
+		if (!$user->rights->reception->creer)
+			return -2;
+
+		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1416,8 +1419,6 @@ class Reception extends CommonObject
 				$this->error = $this->db->error();
 				return -1;
 			}
-		} else {
-			return -2;
 		}
 	}
 
