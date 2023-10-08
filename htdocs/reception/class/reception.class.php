@@ -1796,13 +1796,13 @@ class Reception extends CommonObject
 			$this->errors[] = $this->db->lasterror();
 		}
 
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
+		if ($error) {
 			$this->db->rollback();
 			return -1;
 		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	 /**
