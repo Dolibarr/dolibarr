@@ -1700,7 +1700,13 @@ class Reception extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		{
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
@@ -1791,9 +1797,6 @@ class Reception extends CommonObject
 					$this->errors = $commande->errors;
 				}
 			}
-		} else {
-			$error++;
-			$this->errors[] = $this->db->lasterror();
 		}
 
 		if ($error) {
