@@ -1119,7 +1119,12 @@ class Reception extends CommonObject
 							}
 						}
 
-						if (!$error) {
+						if ($error) {
+							$this->db->rollback();
+							return -1;
+						}
+
+						{
 							$this->db->commit();
 
 							// We delete PDFs
@@ -1141,9 +1146,6 @@ class Reception extends CommonObject
 							}
 
 							return 1;
-						} else {
-							$this->db->rollback();
-							return -1;
 						}
 					}
 				}
