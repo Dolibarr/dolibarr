@@ -1073,7 +1073,13 @@ class Reception extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " WHERE fk_reception = ".((int) $this->id);
 
-			if ($this->db->query($sqlef) && $this->db->query($sql)) {
+			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
+				$this->error = $this->db->lasterror()." - sql=$sql";
+				$this->db->rollback();
+				return -1;
+			}
+
+			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) {
@@ -1141,10 +1147,6 @@ class Reception extends CommonObject
 					$this->db->rollback();
 					return -2;
 				}
-			} else {
-				$this->error = $this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -1;
 			}
 		}
 	}
