@@ -1157,64 +1157,62 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		{
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new CommandeFournisseurDispatch($this->db);
+		while ($obj = $this->db->fetch_object($resql)) {
+			$line = new CommandeFournisseurDispatch($this->db);
 
-				$line->fetch($obj->rowid);
+			$line->fetch($obj->rowid);
 
-				// TODO Remove or keep this ?
-				$line->fetch_product();
+			// TODO Remove or keep this ?
+			$line->fetch_product();
 
-				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva';
-				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
-				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
-				$sql_commfourndet .= ' ORDER BY rang';
+			$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva';
+			$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
+			$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
+			$sql_commfourndet .= ' ORDER BY rang';
 
-				$resql_commfourndet = $this->db->query($sql_commfourndet);
-				if (!empty($resql_commfourndet)) {
-					$obj = $this->db->fetch_object($resql_commfourndet);
-					$line->qty_asked = $obj->qty;
-					$line->description = $obj->description;
-					$line->desc = $obj->description;
-					$line->tva_tx = $obj->tva_tx;
-					$line->vat_src_code = $obj->vat_src_code;
-					$line->subprice = $obj->subprice;
-					$line->multicurrency_subprice = $obj->multicurrency_subprice;
-					$line->remise_percent = $obj->remise_percent;
-					$line->label = !empty($obj->label) ? $obj->label : $line->product->label;
-					$line->ref_supplier = $obj->ref;
-					$line->total_ht = $obj->total_ht;
-					$line->total_ttc = $obj->total_ttc;
-					$line->total_tva = $obj->total_tva;
-				} else {
-					$line->qty_asked = 0;
-					$line->description = '';
-					$line->desc = '';
-					$line->label = $obj->label;
-				}
-
-				$pu_ht = ($line->subprice * $line->qty) * (100 - $line->remise_percent) / 100;
-				$tva = $pu_ht * $line->tva_tx / 100;
-				$this->total_ht += $pu_ht;
-				$this->total_tva += $pu_ht * $line->tva_tx / 100;
-
-				$this->total_ttc += $pu_ht + $tva;
-
-				if (isModEnabled('productbatch') && !empty($line->batch)) {
-					$detail_batch = new stdClass();
-					$detail_batch->eatby = $line->eatby;
-					$detail_batch->sellby = $line->sellby;
-					$detail_batch->batch = $line->batch;
-					$detail_batch->qty = $line->qty;
-					$line->detail_batch[] = $detail_batch;
-				}
-
-				$this->lines[] = $line;
+			$resql_commfourndet = $this->db->query($sql_commfourndet);
+			if (!empty($resql_commfourndet)) {
+				$obj = $this->db->fetch_object($resql_commfourndet);
+				$line->qty_asked = $obj->qty;
+				$line->description = $obj->description;
+				$line->desc = $obj->description;
+				$line->tva_tx = $obj->tva_tx;
+				$line->vat_src_code = $obj->vat_src_code;
+				$line->subprice = $obj->subprice;
+				$line->multicurrency_subprice = $obj->multicurrency_subprice;
+				$line->remise_percent = $obj->remise_percent;
+				$line->label = !empty($obj->label) ? $obj->label : $line->product->label;
+				$line->ref_supplier = $obj->ref;
+				$line->total_ht = $obj->total_ht;
+				$line->total_ttc = $obj->total_ttc;
+				$line->total_tva = $obj->total_tva;
+			} else {
+				$line->qty_asked = 0;
+				$line->description = '';
+				$line->desc = '';
+				$line->label = $obj->label;
 			}
 
-			return 1;
+			$pu_ht = ($line->subprice * $line->qty) * (100 - $line->remise_percent) / 100;
+			$tva = $pu_ht * $line->tva_tx / 100;
+			$this->total_ht += $pu_ht;
+			$this->total_tva += $pu_ht * $line->tva_tx / 100;
+
+			$this->total_ttc += $pu_ht + $tva;
+
+			if (isModEnabled('productbatch') && !empty($line->batch)) {
+				$detail_batch = new stdClass();
+				$detail_batch->eatby = $line->eatby;
+				$detail_batch->sellby = $line->sellby;
+				$detail_batch->batch = $line->batch;
+				$detail_batch->qty = $line->qty;
+				$line->detail_batch[] = $detail_batch;
+			}
+
+			$this->lines[] = $line;
 		}
+
+		return 1;
 	}
 
 	/**
