@@ -502,13 +502,13 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		if (!empty($conf->global->TAKEPOS_SUPPLEMENTS)) {
+		if (getDolGlobalString('TAKEPOS_SUPPLEMENTS')) {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$cat = new Categorie($db);
 			$categories = $cat->containing($idproduct, 'product');
-			$found = (array_search($conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, array_column($categories, 'id')));
+			$found = (array_search(getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY'), array_column($categories, 'id')));
 			if ($found !== false) { // If this product is a supplement
-				$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid=$selectedline";
+				$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid = ".((int) $selectedline);
 				$resql = $db->query($sql);
 				$row = $db->fetch_array($resql);
 				if ($row[0] == null) {
