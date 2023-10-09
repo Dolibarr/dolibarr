@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
@@ -425,7 +425,7 @@ if ($id > 0) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill', 0, '', '', 0, '', 1);
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', 1);
 
 		// Loan card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
