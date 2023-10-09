@@ -1796,7 +1796,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 		// If adding log inside HTML page is required
 		if ((!empty($_REQUEST['logtohtml']) && !empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
-			|| ($user->hasRight('debugbar', 'read') && is_object($debugbar))) {
+			|| (is_object($user) && $user->hasRight('debugbar', 'read') && is_object($debugbar))) {
 			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
 		}
 
