@@ -1106,7 +1106,9 @@ class Reception extends CommonObject
 						// Call trigger
 						$result = $this->call_trigger('RECEPTION_DELETE', $user);
 						if ($result < 0) {
-							$error++;
+							$this->error = $this->db->lasterror()." - sql=$sql";
+							$this->db->rollback();
+							return -1;
 						}
 						// End call triggers
 
@@ -1121,11 +1123,6 @@ class Reception extends CommonObject
 									$this->$origin->setStatut(3); // ordered
 								}
 							}
-						}
-
-						if ($error) {
-							$this->db->rollback();
-							return -1;
 						}
 
 						{
