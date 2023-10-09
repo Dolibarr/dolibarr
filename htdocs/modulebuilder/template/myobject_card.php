@@ -47,6 +47,10 @@
 
 // Load Dolibarr environment
 $res = 0;
+// Try main.inc.php into web root defined in DOCUMENT_ROOT, very frequently defined
+if (!$res && !empty($_SERVER["DOCUMENT_ROOT"])) {
+	$res = @include $_SERVER["DOCUMENT_ROOT"]."/main.inc.php";
+}
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
