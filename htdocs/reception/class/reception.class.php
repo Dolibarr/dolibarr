@@ -1042,7 +1042,13 @@ class Reception extends CommonObject
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql) {
+			if (!$resql) {
+				$this->errors[] = "Error ".$this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+
+			{
 				$cpt = $this->db->num_rows($resql);
 				for ($i = 0; $i < $cpt; $i++) {
 					dol_syslog(get_class($this)."::delete movement index ".$i);
@@ -1054,8 +1060,6 @@ class Reception extends CommonObject
 
 					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
 				}
-			} else {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
