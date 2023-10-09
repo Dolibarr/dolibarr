@@ -107,8 +107,6 @@ $search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
 $search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
-$optioncss = GETPOST('optioncss', 'alpha');
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
