@@ -2472,6 +2472,9 @@ if ($resql) {
 						$totalarray['nbfield']++;
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_pa';
 					}
+					if (empty($totalarray['val']['total_pa'])) {
+						$totalarray['val']['total_pa'] = 0;
+					}
 					$totalarray['val']['total_pa'] += $marginInfo['pa_total'];
 				}
 				// Total margin
@@ -2480,6 +2483,9 @@ if ($resql) {
 					if (!$i) {
 						$totalarray['nbfield']++;
 						$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+					}
+					if (empty($totalarray['val']['total_margin'])) {
+						$totalarray['val']['total_margin'] = 0;
 					}
 					$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 				}
