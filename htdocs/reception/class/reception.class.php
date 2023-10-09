@@ -1048,110 +1048,93 @@ class Reception extends CommonObject
 				return -1;
 			}
 
-			{
-				$cpt = $this->db->num_rows($resql);
-				for ($i = 0; $i < $cpt; $i++) {
-					dol_syslog(get_class($this)."::delete movement index ".$i);
-					$obj = $this->db->fetch_object($resql);
+			$cpt = $this->db->num_rows($resql);
+			for ($i = 0; $i < $cpt; $i++) {
+				dol_syslog(get_class($this)."::delete movement index ".$i);
+				$obj = $this->db->fetch_object($resql);
 
-					$mouvS = new MouvementStock($this->db);
-					// we do not log origin because it will be deleted
-					$mouvS->origin = null;
+				$mouvS = new MouvementStock($this->db);
+				// we do not log origin because it will be deleted
+				$mouvS->origin = null;
 
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
-				}
+				$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
 			}
 		}
 
-		if ($error) {
+		$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+		$ef = $main."_extrafields";
+
+		$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_reception = ".((int) $this->id).")";
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
+		$sql .= " WHERE fk_reception = ".((int) $this->id);
+
+		if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
+			$this->error = $this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
 		}
 
-		{
-			$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-			$ef = $main."_extrafields";
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$this->error = $this->db->lasterror()." - sql=$sql";
+			$this->db->rollback();
+			return -2;
+		}
 
-			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_reception = ".((int) $this->id).")";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
-			$sql .= " WHERE fk_reception = ".((int) $this->id);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror()." - sql=$sql";
+			$this->db->rollback();
+			return -3;
+		}
 
-			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
-				$this->error = $this->db->lasterror()." - sql=$sql";
-				$this->db->rollback();
-				return -1;
-			}
+		// Call trigger
+		$result = $this->call_trigger('RECEPTION_DELETE', $user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror()." - sql=$sql";
+			$this->db->rollback();
+			return -1;
+		}
+		// End call triggers
 
-			{
-				// Delete linked object
-				$res = $this->deleteObjectLinked();
-				if ($res < 0) {
-					$this->error = $this->db->lasterror()." - sql=$sql";
-					$this->db->rollback();
-					return -2;
-				}
-
-				{
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."reception";
-					$sql .= " WHERE rowid = ".((int) $this->id);
-
-					if (!$this->db->query($sql)) {
-						$this->error = $this->db->lasterror()." - sql=$sql";
-						$this->db->rollback();
-						return -3;
-					}
-
-					{
-						// Call trigger
-						$result = $this->call_trigger('RECEPTION_DELETE', $user);
-						if ($result < 0) {
-							$this->error = $this->db->lasterror()." - sql=$sql";
-							$this->db->rollback();
-							return -1;
-						}
-						// End call triggers
-
-						if (!empty($this->origin) && $this->origin_id > 0) {
-							$this->fetch_origin();
-							$origin = $this->origin;
-							if ($this->$origin->statut == 4) {     // If order source of reception is "partially received"
-								// Check if there is no more reception. If not, we can move back status of order to "validated" instead of "reception in progress"
-								$this->$origin->loadReceptions();
-								//var_dump($this->$origin->receptions);exit;
-								if (count($this->$origin->receptions) <= 0) {
-									$this->$origin->setStatut(3); // ordered
-								}
-							}
-						}
-
-						{
-							$this->db->commit();
-
-							// We delete PDFs
-							$ref = dol_sanitizeFileName($this->ref);
-							if (!empty($conf->reception->dir_output)) {
-								$dir = $conf->reception->dir_output.'/'.$ref;
-								$file = $dir.'/'.$ref.'.pdf';
-								if (file_exists($file)) {
-									if (!dol_delete_file($file)) {
-										return 0;
-									}
-								}
-								if (file_exists($dir)) {
-									if (!dol_delete_dir_recursive($dir)) {
-										$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
-										return 0;
-									}
-								}
-							}
-
-							return 1;
-						}
-					}
+		if (!empty($this->origin) && $this->origin_id > 0) {
+			$this->fetch_origin();
+			$origin = $this->origin;
+			if ($this->$origin->statut == 4) {     // If order source of reception is "partially received"
+				// Check if there is no more reception. If not, we can move back status of order to "validated" instead of "reception in progress"
+				$this->$origin->loadReceptions();
+				//var_dump($this->$origin->receptions);exit;
+				if (count($this->$origin->receptions) <= 0) {
+					$this->$origin->setStatut(3); // ordered
 				}
 			}
 		}
+
+		$this->db->commit();
+
+		// We delete PDFs
+		$ref = dol_sanitizeFileName($this->ref);
+		if (!empty($conf->reception->dir_output)) {
+			$dir = $conf->reception->dir_output.'/'.$ref;
+			$file = $dir.'/'.$ref.'.pdf';
+			if (file_exists($file)) {
+				if (!dol_delete_file($file)) {
+					return 0;
+				}
+			}
+			if (file_exists($dir)) {
+				if (!dol_delete_dir_recursive($dir)) {
+					$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+					return 0;
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
