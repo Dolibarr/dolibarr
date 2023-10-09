@@ -1014,9 +1014,9 @@ class Facture extends CommonInvoice
 						// If margin module defined on costprice, we try the costprice
 						// If not defined or if module margin defined and pmp and stock module enabled, we try pmp price
 						// else we get the best supplier price
-						if ($conf->global->MARGIN_TYPE == 'costprice' && !empty($producttmp->cost_price)) {
+						if (getDolGlobalString('MARGIN_TYPE') == 'costprice' && !empty($producttmp->cost_price)) {
 							$buyprice = $producttmp->cost_price;
-						} elseif (isModEnabled('stock') && ($conf->global->MARGIN_TYPE == 'costprice' || $conf->global->MARGIN_TYPE == 'pmp') && !empty($producttmp->pmp)) {
+						} elseif (isModEnabled('stock') && (getDolGlobalString('MARGIN_TYPE') == 'costprice' || getDolGlobalString('MARGIN_TYPE') == 'pmp') && !empty($producttmp->pmp)) {
 							$buyprice = $producttmp->pmp;
 						} else {
 							if ($producttmp->find_min_price_product_fournisseur($_facrec->lines[$i]->fk_product) > 0) {
@@ -4569,9 +4569,9 @@ class Facture extends CommonInvoice
 			// Clean parameters (if not defined or using deprecated value)
 			if (empty($conf->global->FACTURE_ADDON)) {
 				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
-			} elseif ($conf->global->FACTURE_ADDON == 'terre') {
+			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {
 				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
-			} elseif ($conf->global->FACTURE_ADDON == 'mercure') {
+			} elseif (getDolGlobalString('FACTURE_ADDON') == 'mercure') {
 				$conf->global->FACTURE_ADDON = 'mod_facture_mercure';
 			}
 

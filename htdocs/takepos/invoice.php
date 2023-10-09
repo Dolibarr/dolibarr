@@ -543,10 +543,10 @@ if (empty($reshook)) {
 
 			/* setup of margin calculation */
 			if (isset($conf->global->MARGIN_TYPE)) {
-				if ($conf->global->MARGIN_TYPE == 'pmp' && !empty($prod->pmp)) {
+				if (getDolGlobalString('MARGIN_TYPE') == 'pmp' && !empty($prod->pmp)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->pmp;
-				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && !empty($prod->cost_price)) {
+				} elseif (getDolGlobalString('MARGIN_TYPE') == 'costprice' && !empty($prod->cost_price)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->cost_price;
 				} else {
@@ -764,7 +764,7 @@ if (empty($reshook)) {
 
 	if ($action == "order" and $placeid != 0) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 			$printer = new dolReceiptPrinter($db);
 		}
@@ -809,7 +809,7 @@ if (empty($reshook)) {
 				$order_receipt_printer1 .= '</td></tr>';
 			}
 		}
-		if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
+		if ((getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0) {
 			$invoice->fetch($placeid); //Reload object before send to printer
 			$printer->orderprinter = 1;
 			echo "<script>";
@@ -841,7 +841,7 @@ if (empty($reshook)) {
 				$order_receipt_printer2 .= '</td></tr>';
 			}
 		}
-		if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
+		if ((getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0) {
 			$invoice->fetch($placeid); //Reload object before send to printer
 			$printer->orderprinter = 2;
 			echo "<script>";
@@ -873,7 +873,7 @@ if (empty($reshook)) {
 				$order_receipt_printer3 .= '</td></tr>';
 			}
 		}
-		if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
+		if ((getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0) {
 			$invoice->fetch($placeid); //Reload object before send to printer
 			$printer->orderprinter = 3;
 			echo "<script>";

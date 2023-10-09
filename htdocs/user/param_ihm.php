@@ -342,7 +342,7 @@ if ($action == 'edit') {
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
 	print $s ? $s.' ' : '';
-	print ($conf->global->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print (getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
 	print '</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -447,7 +447,7 @@ if ($action == 'edit') {
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
 	print ($s ? $s.' ' : '');
-	print (isset($conf->global->MAIN_LANG_DEFAULT) && $conf->global->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print (getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';

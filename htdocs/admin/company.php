@@ -753,7 +753,7 @@ print "</tr>\n";
 
 if ($mysoc->useLocalTax(1)) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="lt1" value="localtax1on"'.(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "").'> <label for="lt1">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="lt1" value="localtax1on"'.((getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == "localtax1on") ? " checked" : "").'> <label for="lt1">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	print '<div class="nobordernopadding">';
 	$tooltiphelp = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
@@ -771,7 +771,7 @@ if ($mysoc->useLocalTax(1)) {
 	print "</div>";
 	print "</td></tr>\n";
 
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="nolt1" value="localtax1off"'.((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "").'> <label for="nolt1">'.$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="nolt1" value="localtax1off"'.((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == "localtax1off") ? " checked" : "").'> <label for="nolt1">'.$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	$tooltiphelp = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
 	$tooltiphelp = ($tooltiphelp != "LocalTax1IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
@@ -797,7 +797,7 @@ print "</tr>\n";
 
 if ($mysoc->useLocalTax(2)) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="lt2" value="localtax2on"'.(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "").'> <label for="lt2">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="lt2" value="localtax2on"'.((getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == "localtax2on") ? " checked" : "").'> <label for="lt2">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	print '<div class="nobordernopadding">';
 	print '<label for="lt2">'.$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label>";
@@ -812,7 +812,7 @@ if ($mysoc->useLocalTax(2)) {
 	print "</div>";
 	print "</td></tr>\n";
 
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="nolt2" value="localtax2off"'.((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "").'> <label for="nolt2">'.$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="nolt2" value="localtax2off"'.((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == "localtax2off") ? " checked" : "").'> <label for="nolt2">'.$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	print "<div>";
 	$tooltiphelp = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);

@@ -234,7 +234,7 @@ function dol_hash($chain, $type = '0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
@@ -255,9 +255,9 @@ function dol_hash($chain, $type = '0')
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
 		return password_hash($chain, PASSWORD_DEFAULT);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') {
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1') {
 		return sha1($chain);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') {
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1md5') {
 		return sha1(md5($chain));
 	}
 
@@ -281,7 +281,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
 {
 	global $conf;
 
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
