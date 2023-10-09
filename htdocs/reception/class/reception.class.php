@@ -1664,18 +1664,22 @@ class Reception extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror;
+			$this->db->rollback();
+			return -1;
+		}
+
+		{
 			$this->billed = 1;
 
 			// Call trigger
 			$result = $this->call_trigger('RECEPTION_BILLED', $user);
 			if ($result < 0) {
 				$this->billed = 0;
-				$error++;
+				$this->db->rollback();
+				return -1;
 			}
-		} else {
-			$error++;
-			$this->errors[] = $this->db->lasterror;
 		}
 
 		if (empty($error)) {
