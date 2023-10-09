@@ -1827,7 +1827,12 @@ class Reception extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		if ($this->db->query($sql)) {
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+		{
 			// If stock increment is done on closing
 			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
@@ -1933,10 +1938,6 @@ class Reception extends CommonObject
 				$this->db->commit();
 				return 1;
 			}
-		} else {
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -1;
 		}
 	}
 
