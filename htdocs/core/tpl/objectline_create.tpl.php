@@ -329,7 +329,7 @@ if ($nolinesbefore) {
 					$tmpbacktopagejsfields = 'addproduct:id,search_id';
 					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
 				} else {
-					print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
 				}
 			}
 			if (isModEnabled('service') && $user->hasRight('service', 'creer')) {
@@ -339,7 +339,7 @@ if ($nolinesbefore) {
 					$tmpbacktopagejsfields = 'addproduct:id,search_id';
 					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
 				} else {
-					print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
 				}
 			}
 		}
