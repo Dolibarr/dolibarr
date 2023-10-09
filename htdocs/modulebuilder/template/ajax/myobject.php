@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,26 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+$res = 0;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
+	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+}
+// Try main.inc.php in all parent folders (cope with symlinks)
+if (!$res) {
+	$dolipath = dirname($_SERVER['SCRIPT_FILENAME']);
+	while (!file_exists($dolipath."/main.inc.php")) {
+		$abspath = $dolipath;
+		$dolipath = dirname($dolipath);
+		if ($abspath == $dolipath) { // cope with no main.inc.php all the way to filesystem root
+			break;
+		}
+	}
+	$res = @include($dolipath."/main.inc.php");
+}
+if (!$res) {
+	die("Include of main fails");
+}
 
 $mode = GETPOST('mode', 'aZ09');
 

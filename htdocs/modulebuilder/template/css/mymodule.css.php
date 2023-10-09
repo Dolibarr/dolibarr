@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2023 Noé Cendrier         <noe.cendrier@altairis.fr>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,23 +54,17 @@ $res = 0;
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 }
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/../main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/../main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
+// Try main.inc.php in all parent folders (cope with symlinks)
+if (!$res) {
+	$dolipath = dirname($_SERVER['SCRIPT_FILENAME']);
+	while (!file_exists($dolipath."/main.inc.php")) {
+		$abspath = $dolipath;
+		$dolipath = dirname($dolipath);
+		if ($abspath == $dolipath) { // cope with no main.inc.php all the way to filesystem root
+			break;
+		}
+	}
+	$res = @include($dolipath."/main.inc.php");
 }
 if (!$res) {
 	die("Include of main fails");
