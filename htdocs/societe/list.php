@@ -13,6 +13,7 @@
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2037,6 +2038,9 @@ while ($i < $imaxinloop) {
 	}
 	$i++;
 }
+
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
 $formcompany->selectProspectStatus('status_prospect', $prospectstatic, null, null, "js");
