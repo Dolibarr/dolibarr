@@ -871,7 +871,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 			$res = 0;
 			$num = count($row);
 			for ($i = 0; $i < $num; $i++) {
-				if ($conf->global->MAIN_FEATURES_LEVEL == 2) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) {
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
@@ -982,7 +982,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 			$res = 0;
 			for ($i = 0; $i < $num; $i++) {
-				if ($conf->global->MAIN_FEATURES_LEVEL == 2) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) {
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
@@ -4373,8 +4373,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if ($conf->global->MAIN_MENU_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENU_SMARTPHONE == 'auguria_menu'
-		|| $conf->global->MAIN_MENUFRONT_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENUFRONT_SMARTPHONE == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
+		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 

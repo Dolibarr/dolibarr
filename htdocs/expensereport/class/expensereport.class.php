@@ -709,7 +709,7 @@ class ExpenseReport extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Classify the expense report as paid
+	 *  Classify the expense report as paid
 	 *
 	 *	@deprecated
 	 *  @see setPaid()
@@ -742,7 +742,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
 		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
-		dol_syslog(get_class($this)."::set_paid", LOG_DEBUG);
+		dol_syslog(get_class($this)."::setPaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
