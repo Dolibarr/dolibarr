@@ -1784,7 +1784,8 @@ class Reception extends CommonObject
 			// Call trigger
 			$result = $this->call_trigger('RECEPTION_REOPEN', $user);
 			if ($result < 0) {
-				$error++;
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
@@ -1793,9 +1794,10 @@ class Reception extends CommonObject
 			$commande->fetch($this->origin_id);
 			$result = $commande->setStatus($user, 4);
 			if ($result < 0) {
-				$error++;
 				$this->error = $commande->error;
 				$this->errors = $commande->errors;
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
