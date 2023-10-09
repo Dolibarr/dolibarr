@@ -98,7 +98,7 @@ $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaul
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
  $soc = new Societe($db);
  if ($invoice->socid > 0) $soc->fetch($invoice->socid);
- else $soc->fetch($conf->global->$constforcompanyid);
+ else $soc->fetch(getDolGlobalInt($constforcompanyid));
  */
 
 // Security check
@@ -1218,8 +1218,8 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 			}
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
-			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-			if ( !empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+			//var_dump($constantforkey.' '.getDolGlobalInt($constantforkey));
+			if ( !empty($conf->global->$constantforkey) && getDolGlobalInt($constantforkey) > 0) {
 				array_push($paiementsModes, $obj);
 			}
 		}

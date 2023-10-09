@@ -294,7 +294,7 @@ if ($action == "change") {	// Change customer for TakePOS
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
 		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-		$invoice->socid = $conf->global->$constforthirdpartyid;
+		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
 		$invoice->date = dol_now();
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
