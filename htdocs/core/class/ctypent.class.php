@@ -21,42 +21,22 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary type of thirdparty (used by imports)
  */
-class Ctypent // extends CommonObject
+class Ctypent extends CommonDict
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var int ID of country
 	 */
-	public $db;
+	public $country_id;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	//var $element='ctypent';			//!< Id that identify managed objects
-	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	public $code;
 	public $libelle;
-	public $active;
 	public $module;
-
-
-
 
 	/**
 	 *  Constructor

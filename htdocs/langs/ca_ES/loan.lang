@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = No es pot generar un calendari per a un p
 CantModifyInterestIfScheduleIsUsed = No pots modificar l’interès si fas servir la programació
 # Admin
 ConfigLoan=Configuració del mòdul de préstecs
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte (del pla comptable) que s'utilitzarà per defecte per al capital (mòdul de préstec)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte (del pla comptable) que s'utilitzarà per defecte per als interessos (mòdul de préstec)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte (del pla comptable) que s'utilitzarà per defecte per a l'assegurança (mòdul de préstec)
 CreateCalcSchedule=Edita el compromís financer

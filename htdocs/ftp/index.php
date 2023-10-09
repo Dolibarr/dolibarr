@@ -287,9 +287,7 @@ if ($action == 'download') {
 
 
 		if ($result) {
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($localfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($localfile);
 
 			// Define mime type
 			$type = 'application/octet-stream';
@@ -660,7 +658,7 @@ if (!function_exists('ftp_connect')) {
 		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (!empty($conf->global->$paramkey)) {
+			if (getDolGlobalString($paramkey)) {
 				$foundsetup = true;
 				break;
 			}

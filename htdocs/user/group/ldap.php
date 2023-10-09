@@ -42,7 +42,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $object->fetch($id);
 $object->getrights();
 

@@ -21,10 +21,10 @@ LoanPaid=Empréstito pagado
 ListLoanAssociatedProject=Listaxe de empréstitos asociados ao proxecto
 AddLoan=Crear empréstito
 FinancialCommitment=Compromiso financieiro
-InterestAmount=Xuro
+InterestAmount=Importe xuro
 CapitalRemain=Capital restante
 TermPaidAllreadyPaid = Este prazo xa está pago
-CantUseScheduleWithLoanStartedToPaid = Non se pode xerar un cronograma para un rmpréstito cun pagamento iniciado
+CantUseScheduleWithLoanStartedToPaid = Non se pode xerar un cronograma para un empréstito cun pagamento iniciado
 CantModifyInterestIfScheduleIsUsed = Non pode modificar os xuros se xa está planificado
 # Admin
 ConfigLoan=Configuración do módulo empréstitos

@@ -9,7 +9,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,9 +98,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 
-llxHeader("", $langs->trans("AccountancyTreasuryArea"));
+llxHeader("", $langs->trans("InvoicesArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
+print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -111,7 +111,7 @@ if (isModEnabled('facture')) {
 }
 
 if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
-	print getNumberInvoicesPieChart('fourn');
+	print getNumberInvoicesPieChart('suppliers');
 	print '<br>';
 }
 
@@ -129,7 +129,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -270,7 +270,7 @@ if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 				$colspan++;
 			}
-			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		}
 		print '</table></div><br>';
 		$db->free($resql);
@@ -397,7 +397,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 				$colspan++;
 			}
-			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		}
 		print '</table></div><br>';
 	} else {
@@ -408,7 +408,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 // Latest donations
-if (isModEnabled('don') && !empty($user->rights->don->lire)) {
+if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
@@ -441,6 +441,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
+
 		if ($num) {
 			$total_ttc = $totalam = $total_ht = 0;
 
@@ -487,7 +488,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 				print "</tr>\n";
 			}
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table></div><br>';
 	} else {
@@ -577,7 +578,7 @@ if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
 			} else {
-				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			print "</table></div><br>";
 			$db->free($resql);

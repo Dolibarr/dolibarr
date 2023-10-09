@@ -45,16 +45,16 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 
-// List of statut
-static $tmpstatut2label = array(
+// List of status
+static $tmpstatus2label = array(
 		'0' => 'OpenFiscalYear',
 		'1' => 'CloseFiscalYear'
 );
-$statut2label = array(
+$status2label = array(
 		''
 );
-foreach ($tmpstatut2label as $key => $val) {
-	$statut2label[$key] = $langs->trans($val);
+foreach ($tmpstatus2label as $key => $val) {
+	$status2label[$key] = $langs->trans($val);
 }
 
 $object = new Fiscalyear($db);
@@ -82,7 +82,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		$object->date_start = $date_start;
 		$object->date_end = $date_end;
 		$object->label = GETPOST('label', 'alpha');
-		$object->statut = GETPOST('statut', 'int');
+		$object->status = GETPOST('status', 'int');
 		$object->datec = dol_now();
 
 		if (empty($object->date_start) && empty($object->date_end)) {
@@ -125,7 +125,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
 		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
-		$object->statut = GETPOST('statut', 'int');
+		$object->status = GETPOST('status', 'int');
 
 		$result = $object->update($user);
 
@@ -180,11 +180,11 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	/*
-	// Statut
+	// Status
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
-	print $form->selectarray('statut', $statut2label, GETPOST('statut', 'int'));
+	print $form->selectarray('status', $status2label, GETPOST('status', 'int'));
 	print '</td></tr>';
 	*/
 
@@ -235,9 +235,8 @@ if ($action == 'create') {
 			print $form->selectDate($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
 			print '</td></tr>';
 
-			// Statut
-			print '<tr><td>'.$langs->trans("Statut").'</td><td>';
-			// print $form->selectarray('statut', $statut2label, $object->statut);
+			// Status
+			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print $object->getLibStatut(4);
 			print '</td></tr>';
 
@@ -290,7 +289,7 @@ if ($action == 'create') {
 			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
 			print '</td></tr>';
 
-			// Statut
+			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$object->getLibStatut(4).'</td></tr>';
 
 			print "</table>";

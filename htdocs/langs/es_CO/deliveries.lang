@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Entrega
 DeliveryRef=Ref de entrega
-DeliveryCard=Tarjeta de recibo
 DeliveryOrder=Recibo de entrega
 CreateDeliveryOrder=Generar recibo de entrega
 SetDeliveryDate=Establecer fecha de envío

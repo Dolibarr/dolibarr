@@ -93,13 +93,13 @@ $morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $us
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
-	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if (!empty($object->fk_project)) {
+		$morehtmlref .= '<br>';
 		$proj = new Project($db);
 		$proj->fetch($object->fk_project);
-		$morehtmlref .= ' : '.$proj->getNomUrl(1);
+		$morehtmlref .= $proj->getNomUrl(1);
 		if ($proj->title) {
-			$morehtmlref .= ' - '.$proj->title;
+			$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 		}
 	} else {
 		$morehtmlref .= '';

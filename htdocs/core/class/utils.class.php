@@ -61,7 +61,8 @@ class Utils
 	 */
 	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
 	{
-		global $conf, $langs, $dolibarr_main_data_root;
+		global $conf, $langs, $user;
+		global $dolibarr_main_data_root;
 
 		$langs->load("admin");
 
@@ -75,6 +76,14 @@ class Utils
 		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
+
+		// For dangerous action, we check the user is admin
+		if (in_array($choices, array('allfiles', 'allfilesold'))) {
+			if (empty($user->admin)) {
+				$this->output = 'Error: to erase data files, user running the batch (currently '.$user->login.') must be an admin user';
+				return 1;
+			}
+		}
 
 		$count = 0;
 		$countdeleted = 0;
@@ -121,7 +130,7 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
-				if (!empty($conf->syslog->enabled)) {
+				if (isModEnabled('syslog')) {
 					$filelog = $conf->global->SYSLOG_FILE;
 					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 
@@ -186,7 +195,7 @@ class Utils
 		}
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
-		if (!empty($conf->api->enabled)) {
+		if (isModEnabled('api')) {
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
@@ -417,13 +426,16 @@ class Utils
 				}
 
 
-				// TODO Replace with Utils->executeCLI() function but
-				// we must first introduce the variant with $lowmemorydump into this method.
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
 
 					exec($fullcommandclear, $output_arr, $retval);
+					// TODO Replace this exec with Utils->executeCLI() function.
+					// We must check that the case for $lowmemorydump works too...
+					//$utils = new Utils($db);
+					//$outputfile = $conf->admin->dir_temp.'/dump.tmp';
+					//$utils->executeCLI($fullcommandclear, $outputfile, 0);
 
 					if ($retval != 0) {
 						$langs->load("errors");
@@ -438,6 +450,8 @@ class Utils
 								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
 									continue;
 								}
+								// Now check into the result file, that the file end with "-- Dump completed"
+								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
@@ -489,9 +503,7 @@ class Utils
 					}
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($outputfile);
 			} else {
 				$langs->load("errors");
 				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
@@ -734,9 +746,7 @@ class Utils
 				pclose($handlein);
 				fclose($handle);
 			}
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 
 		// Update with result
@@ -1046,7 +1056,7 @@ class Utils
 					fclose($sourcehandle);
 					gzclose($gzfilehandle);
 
-					@chmod($logpath.'/'.$logname.'.1.gz', octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+					dolChmod($logpath.'/'.$logname.'.1.gz');
 				}
 
 				dol_delete_file($logpath.'/'.$logname, 0, 0, 0, null, false, 0);
@@ -1056,7 +1066,7 @@ class Utils
 				fclose($newlog);
 
 				//var_dump($logpath.'/'.$logname." - ".octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));
-				@chmod($logpath.'/'.$logname, octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+				dolChmod($logpath.'/'.$logname);
 			}
 		}
 
@@ -1264,6 +1274,7 @@ class Utils
 	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
+		global $dolibarr_main_url_root;
 
 		$filepath = '';
 		$output = '';

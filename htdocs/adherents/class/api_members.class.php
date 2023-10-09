@@ -55,10 +55,10 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $id ID of member
-	 * @return    array|mixed data without useless information
+	 * @param   int     $id				ID of member
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
@@ -88,9 +88,9 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $thirdparty 	ID of third party
+	 * @param     int     $thirdparty	ID of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/{thirdparty}
 	 *
@@ -123,7 +123,7 @@ class Members extends DolibarrApi
 	 *
 	 * @param  string $email            Email of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/email/{email}
 	 *
@@ -160,9 +160,9 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param  string $barcode      	Barcode of third party
+	 * @param  string $barcode			Barcode of third party
 	 *
-	 * @return Object 					Data without useless information
+	 * @return Object					Data without useless information
 	 *
 	 * @url GET thirdparty/barcode/{barcode}
 	 *
@@ -204,14 +204,15 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param int    	$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -222,7 +223,7 @@ class Members extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent AS t LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
 		}
@@ -238,11 +239,10 @@ class Members extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -264,7 +264,7 @@ class Members extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$member = new Adherent($this->db);
 				if ($member->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($member);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($member), $properties);
 				}
 				$i++;
 			}
@@ -484,11 +484,11 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int 		$id             ID of member
-	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
-	 * @param string 	$end_date       End date {@from body} {@type timestamp}
-	 * @param float 	$amount         Amount (may be 0) {@from body}
-	 * @param string 	$label         	Label {@from body}
+	 * @param int		$id             ID of member
+	 * @param string	$start_date     Start date {@from body} {@type timestamp}
+	 * @param string	$end_date       End date {@from body} {@type timestamp}
+	 * @param float		$amount         Amount (may be 0) {@from body}
+	 * @param string	$label			Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions

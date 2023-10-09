@@ -32,6 +32,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 class DataPolicy
 {
 	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $error;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -44,7 +52,7 @@ class DataPolicy
 	/**
 	 * getAllContactNotInformed
 	 *
-	 * @return number
+	 * @return integer
 	 */
 	public function getAllContactNotInformed()
 	{
@@ -75,12 +83,14 @@ class DataPolicy
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
 	 * getAllCompaniesNotInformed
 	 *
-	 * @return number
+	 * @return integer
 	 */
 	public function getAllCompaniesNotInformed()
 	{
@@ -110,12 +120,14 @@ class DataPolicy
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
 	 * getAllAdherentsNotInformed
 	 *
-	 * @return number
+	 * @return integer
 	 */
 	public function getAllAdherentsNotInformed()
 	{
@@ -145,6 +157,8 @@ class DataPolicy
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -208,11 +222,13 @@ class DataPolicy
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
 
+		$resultmasssend = '';
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {
-			$result4 = $mailfile->sendfile();
-			if (!$error) {
+			$resultmail = $mailfile->sendfile();
+
+			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$contact->array_options['options_datapolicy_send'] = date('Y-m-d', time());
 				$contact->update($contact->id);
@@ -280,12 +296,14 @@ class DataPolicy
 		// Send mail
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
+
+		$resultmasssend = '';
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {
-			$result4 = $mailfile->sendfile();
+			$resultmail = $mailfile->sendfile();
 
-			if (!$error) {
+			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$societe->array_options['options_datapolicy_send'] = date('Y-m-d', time());
 				$societe->update($societe->id);
@@ -357,9 +375,9 @@ class DataPolicy
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {
-			$result4 = $mailfile->sendfile();
+			$resultmail = $mailfile->sendfile();
 
-			if (!$error) {
+			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$adherent->array_options['options_datapolicy_send'] = date('Y-m-d', time());
 				$adherent->update($user);

@@ -20,7 +20,8 @@
 
 /**
  * 	\defgroup   api     Module Api
- *  \brief      Descriptor file for Api modulee
+ *  \brief      Module for API (REST) management
+ *
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for the module Api
@@ -141,7 +142,7 @@ class modApi extends DolibarrModules
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Générer / modifier la clé API des utilisateurs';	// Permission label
+		$this->rights[$r][1] = 'Generate/modify users API key';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -162,7 +163,6 @@ class modApi extends DolibarrModules
 			'langs'=>'modulebuilder',
 			'position'=>100,
 			'perms'=>'1',
-			//'enabled'=>'isModEnabled("api") && preg_match(\'/^(devtools)/\',$leftmenu)',
 			'enabled'=>'isModEnabled("api")',
 			'target'=>'_apiexplorer',
 			'user'=>0);

@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ create table llx_prelevement_demande
   sourcetype          varchar(32),
   amount              double(24,8) NOT NULL,
   date_demande        datetime NOT NULL,
-  traite              smallint DEFAULT 0,
+  traite              smallint DEFAULT 0,		-- 1 means a file for direct-debit or credit-transfer has been created and is in process or finished. Note: can be detected by fk_prelevement_bons IS NOT NULL too.
   date_traite         datetime,
   fk_prelevement_bons integer,
   fk_user_demande     integer NOT NULL,
@@ -36,6 +37,8 @@ create table llx_prelevement_demande
   code_guichet        varchar(6),
   number              varchar(255),
   cle_rib             varchar(5),
+  
+  type                varchar(12) DEFAULT '',
   ext_payment_id      varchar(255),
   ext_payment_site    varchar(128)
 )ENGINE=innodb;

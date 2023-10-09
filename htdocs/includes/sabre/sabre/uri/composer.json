@@ -9,7 +9,7 @@
     "homepage": "http://sabre.io/uri/",
     "license": "BSD-3-Clause",
     "require": {
-        "php": ">=5.4.7"
+        "php": "^7.1 || ^8.0"
     },
     "authors": [
         {
@@ -31,11 +31,30 @@
             "Sabre\\Uri\\" : "lib/"
         }
     },
-    "require-dev": {
-        "sabre/cs": "~1.0.0",
-        "phpunit/phpunit" : "*"
+    "autoload-dev": {
+        "psr-4": {
+            "Sabre\\Uri\\": "tests/Uri"
+        }
     },
-    "config" : {
-        "bin-dir" : "bin/"
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "~2.19.3",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit" : "^7.5 || ^8.5 || ^9.0"
+    },
+    "scripts": {
+        "phpstan": [
+            "phpstan analyse lib tests"
+        ],
+        "cs-fixer": [
+            "php-cs-fixer fix"
+        ],
+        "phpunit": [
+            "phpunit --configuration tests/phpunit.xml"
+        ],
+        "test": [
+            "composer phpstan",
+            "composer cs-fixer",
+            "composer phpunit"
+        ]
     }
 }

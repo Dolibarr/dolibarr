@@ -31,8 +31,9 @@ OAUTH_GITHUB_SECRET=OAuth GitHub noslēpums
 OAUTH_URL_FOR_CREDENTIAL=Dodieties uz <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> šo lapu <span class="fas fa-external-link-alt paddingleft"> </span> </a>, lai izveidotu vai iegūtu savu OAuth ID un noslēpumu
 OAUTH_STRIPE_TEST_NAME=OAuth svītras tests
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
-OAUTH_ID=OAuth ID
+OAUTH_ID=OAuth Client ID
 OAUTH_SECRET=OAuth noslēpums
+OAUTH_TENANT=OAuth tenant
 OAuthProviderAdded=Pievienots OAuth nodrošinātājs
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=OAuth ieraksts šim nodrošinātājam un iezīmei jau pastāv
 URLOfServiceForAuthorization=URL, ko nodrošina OAuth pakalpojums autentifikācijai

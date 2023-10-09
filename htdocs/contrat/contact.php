@@ -54,14 +54,14 @@ $object = new Contrat($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 /*
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->contrat->creer) {
+if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -86,7 +86,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->contrat->creer) {
+if ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
@@ -95,7 +95,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer) {
 }
 
 // Delete contact
-if ($action == 'deletecontact' && $user->rights->contrat->creer) {
+if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
@@ -110,7 +110,10 @@ if ($action == 'deletecontact' && $user->rights->contrat->creer) {
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

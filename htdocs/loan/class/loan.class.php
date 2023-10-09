@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2023  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,9 @@ class Loan extends CommonObject
 	public $account_capital;
 	public $account_insurance;
 	public $account_interest;
+	public $accountancy_account_capital;
+	public $accountancy_account_insurance;
+	public $accountancy_account_interest;
 
 	/**
 	 * @var integer|string date_creation
@@ -383,22 +386,6 @@ class Loan extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Tag loan as paid completely
-	 *
-	 *	@deprecated
-	 *  @see setPaid()
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function set_paid($user)
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		return $this->setPaid($user);
-	}
-
 	/**
 	 *  Tag loan as paid completely
 	 *
@@ -410,8 +397,11 @@ class Loan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paid = $this::STATUS_PAID;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -446,8 +436,11 @@ class Loan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paid = $this::STATUS_STARTED;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -455,23 +448,8 @@ class Loan extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag loan as payement as unpaid
-	 *	@deprecated
-	 *  @see setUnpaid()
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function set_unpaid($user)
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
-		return $this->setUnpaid($user);
-	}
-
-	/**
-	 *  Tag loan as payement as unpaid
+	 *  Tag loan as payment as unpaid
 	 *
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
@@ -481,8 +459,11 @@ class Loan extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paid = $this::STATUS_UNPAID;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -578,7 +559,7 @@ class Loan extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -641,7 +622,6 @@ class Loan extends CommonObject
 		$this->fk_bank = 1;
 		$this->label = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->socid = 1;
 		$this->account_capital = 16;
 		$this->account_insurance = 616;
 		$this->account_interest = 518;
@@ -726,18 +706,23 @@ class Loan extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string		HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'capital')) {
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->capital).'</span>';
 		}
@@ -749,7 +734,7 @@ class Loan extends CommonObject
 		}
 
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->totalpaid, 5, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

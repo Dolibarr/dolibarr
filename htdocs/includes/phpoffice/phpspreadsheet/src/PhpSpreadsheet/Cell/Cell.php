@@ -67,7 +67,7 @@ class Cell
     /**
      * Update the cell into the cell collection.
      *
-     * @return self
+     * @return $this
      */
     public function updateInCollection()
     {
@@ -177,7 +177,7 @@ class Cell
      *
      * @throws Exception
      *
-     * @return Cell
+     * @return $this
      */
     public function setValue($pValue)
     {
@@ -217,7 +217,10 @@ class Cell
 
                 break;
             case DataType::TYPE_NUMERIC:
-                $this->value = (float) $pValue;
+                if (is_string($pValue) && !is_numeric($pValue)) {
+                    throw new Exception('Invalid numeric value for datatype Numeric');
+                }
+                $this->value = 0 + $pValue;
 
                 break;
             case DataType::TYPE_FORMULA:
@@ -263,7 +266,7 @@ class Cell
                 //    We don't yet handle array returns
                 if (is_array($result)) {
                     while (is_array($result)) {
-                        $result = array_pop($result);
+                        $result = array_shift($result);
                     }
                 }
             } catch (Exception $ex) {
@@ -511,7 +514,7 @@ class Cell
     {
         if ($mergeRange = $this->getMergeRange()) {
             $mergeRange = Coordinate::splitRange($mergeRange);
-            list($startCell) = $mergeRange[0];
+            [$startCell] = $mergeRange[0];
             if ($this->getCoordinate() === $startCell) {
                 return true;
             }
@@ -569,7 +572,7 @@ class Cell
      */
     public function isInRange($pRange)
     {
-        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($pRange);
+        [$rangeStart, $rangeEnd] = Coordinate::rangeBoundaries($pRange);
 
         // Translate properties
         $myColumn = Coordinate::columnIndexFromString($this->getColumn());
@@ -669,7 +672,7 @@ class Cell
      *
      * @param mixed $pAttributes
      *
-     * @return Cell
+     * @return $this
      */
     public function setFormulaAttributes($pAttributes)
     {

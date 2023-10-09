@@ -29,6 +29,7 @@
  *       For installation:
  *         It creates the login admin and set the MAIN_SECURITY_SALT to a random value.
  *         It set the value for MAIN_VERSION_LAST_INSTALL
+ *         It activates some modules
  *         It creates the install.lock and shows the final message.
  *       For upgrade:
  *         It updates the value for MAIN_VERSION_LAST_UPGRADE.
@@ -42,6 +43,7 @@ if (file_exists($conffile)) {
 }
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
+require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
 
 global $langs;
 
@@ -158,7 +160,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
 	$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -287,6 +289,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					*/
 				}
 
+				// List of modules to enable
+				$tmparray = array();
+
 				// If we ask to force some modules to be enabled
 				if (!empty($force_install_module)) {
 					if (!defined('DOL_DOCUMENT_ROOT') && !empty($dolibarr_main_document_root)) {
@@ -294,9 +299,53 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					}
 
 					$tmparray = explode(',', $force_install_module);
+				}
+
+				$modNameLoaded = array();
+
+				// Search modules dirs
+				$modulesdir[] = $dolibarr_main_document_root.'/core/modules/';
+
+				foreach ($modulesdir as $dir) {
+					// Load modules attributes in arrays (name, numero, orders) from dir directory
+					//print $dir."\n<br>";
+					dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+					$handle = @opendir($dir);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = substr($file, 0, dol_strlen($file) - 10);
+								if ($modName) {
+									if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
+										$mesg = "Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
+										setEventMessages($mesg, null, 'warnings');
+										dol_syslog($mesg, LOG_ERR);
+										continue;
+									}
+
+									try {
+										$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+										if (class_exists($modName)) {
+											$objMod = new $modName($db);
+											$modNameLoaded[$modName] = $dir;
+											if (!empty($objMod->enabled_bydefault) && !in_array($file, $tmparray)) {
+												$tmparray[] = $file;
+											}
+										}
+									} catch (Exception $e) {
+										dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Loop on each modules to activate it
+				if (!empty($tmparray)) {
 					foreach ($tmparray as $modtoactivate) {
 						$modtoactivatenew = preg_replace('/\.class\.php$/i', '', $modtoactivate);
-						print $langs->trans("ActivateModule", $modtoactivatenew).'<br>';
+						//print $langs->trans("ActivateModule", $modtoactivatenew).'<br>';
 
 						$file = $modtoactivatenew.'.class.php';
 						dolibarr_install_syslog('step5: activate module file='.$file);
@@ -307,8 +356,10 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 							print 'ERROR: failed to activateModule() file='.$file;
 						}
 					}
+					//print '<br>';
 				}
 
+				// Now delete the flag that say installation is not complete
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
 				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
 				if (!$resql) {
@@ -355,17 +406,25 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				$conf->global->MAIN_VERSION_LAST_UPGRADE = $targetversion;
 			} else {
 				dolibarr_install_syslog('step5: we run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.');
+
+				// Force the delete of the flag that say installation is not complete
+				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const after upgrade process (should not exists but this is a security)');
+				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
+				if (!$resql) {
+					dol_print_error($db, 'Error in setup program');
+				}
 			}
+
+			// May fail if parameter already defined
+			dolibarr_install_syslog('step5: set the default language');
+			$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
+			//if (! $resql) dol_print_error($db,'Error in setup program');
 		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
 	} else {
 		dol_print_error('', 'step5.php: unknown choice of action');
 	}
-
-	// May fail if parameter already defined
-	$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
-	//if (! $resql) dol_print_error($db,'Error in setup program');
 
 	$db->close();
 }
@@ -392,11 +451,12 @@ if ($action == "set") {
 				$fp = @fopen($lockfile, "w");
 				if ($fp) {
 					if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
-						$force_install_lockinstall = 444; // For backward compatibility
+						$force_install_lockinstall = '444'; // For backward compatibility
 					}
 					fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 					fclose($fp);
-					@chmod($lockfile, octdec($force_install_lockinstall));
+					dolChmod($lockfile, $force_install_lockinstall);
+
 					$createlock = 1;
 				}
 			}
@@ -439,11 +499,12 @@ if ($action == "set") {
 			$fp = @fopen($lockfile, "w");
 			if ($fp) {
 				if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
-					$force_install_lockinstall = 444; // For backward compatibility
+					$force_install_lockinstall = '444'; // For backward compatibility
 				}
 				fwrite($fp, "This is a lock file to prevent use of install or upgrade pages (set with permission ".$force_install_lockinstall.")");
 				fclose($fp);
-				@chmod($lockfile, octdec($force_install_lockinstall));
+				dolChmod($lockfile, $force_install_lockinstall);
+
 				$createlock = 1;
 			}
 		}

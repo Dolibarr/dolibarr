@@ -92,7 +92,7 @@ print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToTransfer").'</td>';
-print '<td class="right"><span class="amount">';
+print '<td class="right"><span class="amount nowraponall">';
 print price($bprev->SommeAPrelever('bank-transfer'), '', '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
@@ -101,7 +101,7 @@ print '</span></td></tr></table></div><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
 $sql .= " pfd.date_demande, pfd.amount,";
 $sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -134,16 +134,20 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
+	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$num.')</span></th></tr>';
 	if ($num) {
 		while ($i < $num && $i < 20) {
 			$obj = $db->fetch_object($resql);
 
 			$invoicestatic->id = $obj->rowid;
 			$invoicestatic->ref = $obj->ref;
-			$invoicestatic->statut = $obj->fk_statut;
+			$invoicestatic->status = $obj->fk_statut;
+			$invoicestatic->statut = $obj->fk_statut;	// For backward comaptibility
 			$invoicestatic->paye = $obj->paye;
 			$invoicestatic->type = $obj->type;
+			$invoicestatic->date = $db->jdate($obj->datef);
+			$invoicestatic->date_echeance = $db->jdate($obj->date_lim_reglement);
+			$invoicestatic->total_ttc = $obj->total_ttc;
 			$alreadypayed = $invoicestatic->getSommePaiement();
 
 			$thirdpartystatic->id = $obj->socid;

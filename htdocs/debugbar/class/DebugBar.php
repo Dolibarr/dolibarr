@@ -23,8 +23,7 @@
 
 dol_include_once('/debugbar/class/autoloader.php');
 
-use \DebugBar\DebugBar;
-use \DebugBar\DataCollector\PhpInfoCollector;
+use DebugBar\DebugBar;
 
 dol_include_once('/debugbar/class/DataCollector/DolMessagesCollector.php');
 dol_include_once('/debugbar/class/DataCollector/DolRequestDataCollector.php');
@@ -71,7 +70,7 @@ class DolibarrDebugBar extends DebugBar
 	/**
 	 * Returns a JavascriptRenderer for this instance
 	 *
-	 * @return string      String content
+	 * @return \DebugBar\JavascriptRenderer      String content
 	 */
 	public function getRenderer()
 	{
@@ -80,6 +79,7 @@ class DolibarrDebugBar extends DebugBar
 		$renderer->disableVendor('fontawesome');	// We already have fontawesome loaded globally by the main.inc.php
 		$renderer->disableVendor('highlightjs');	// We don't need this
 		$renderer->setEnableJqueryNoConflict(false);	// We don't need no conflict
+
 		return $renderer;
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +91,10 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var LoanSchedule[]
+	 * @see LoanSchedule::fetchAll()
+	 */
 	public $lines = array();
 
 	/**

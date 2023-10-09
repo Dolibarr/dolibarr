@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 $includecustom=0;
 $includeconstants=array();
+$buildzip=0;
 
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
@@ -55,7 +56,7 @@ if (empty($argv[1])) {
 
 
 $i=0;
-$result=array();
+$result = array();
 while ($i < $argc) {
 	if (!empty($argv[$i])) {
 		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
@@ -68,6 +69,9 @@ while ($i < $argc) {
 	}
 	if (!empty($result["includeconstant"])) {
 		$includeconstants[$i] = $result["includeconstant"];
+	}
+	if (!empty($result["buildzip"])) {
+		$buildzip=1;
 	}
 	if (preg_match('/includeconstant=/', strval($argv[$i]))) {
 		$tmp=explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()

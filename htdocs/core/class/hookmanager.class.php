@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int							    Always 1
+	 *	@return	int								0 or 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -85,7 +85,7 @@ class HookManager
 
 		// Test if there is hooks to manage
 		if (!is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) {
-			return;
+			return 0;
 		}
 
 		// For backward compatibility
@@ -127,6 +127,7 @@ class HookManager
 				}
 			}
 		}
+		// Log the init of hook but only for hooks thare are declared to be managed
 		if (count($arraytolog) > 0) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
@@ -147,7 +148,7 @@ class HookManager
 	 *  @param		array	$parameters		Array of parameters
 	 *  @param		Object	$object			Object to use hooks on
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-	 *  @return		mixed					For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *  @return		int						For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
@@ -156,6 +157,10 @@ class HookManager
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
+		}
+		if (!is_array($parameters)) {
+			dol_syslog('executeHooks was called with a non array $parameters. Surely a bug.', LOG_WARNING);
+			$parameters = array();
 		}
 
 		$parameters['context'] = join(':', $this->contextarray);
@@ -166,37 +171,36 @@ class HookManager
 		// TODO Remove hooks with type 'output' (exemple createFrom). All hooks must be converted into 'addreplace' hooks.
 		if (in_array($method, array(
 			'createFrom',
-			'dashboardMembers',
-			'dashboardEmailings',
-			'dashboardPropals',
-			'dashboardPropals',
-			'dashboardCommercials',
-			'dashboardOrders',
-			'dashboardSpecialBills',
 			'dashboardAccountancy',
+			'dashboardActivities',
+			'dashboardCommercials',
 			'dashboardContracts',
 			'dashboardDonation',
-			'dashboardWarehouseSendings',
+			'dashboardEmailings',
 			'dashboardExpenseReport',
-			'dashboardInterventions',
-			'dashboardOrdersSuppliers',
 			'dashboardHRM',
+			'dashboardInterventions',
 			'dashboardMRP',
+			'dashboardMembers',
 			'dashboardOpensurvey',
-			'dashboardWarehouse',
+			'dashboardOrders',
+			'dashboardOrdersSuppliers',
 			'dashboardProductServices',
-			'dashboardActivities',
 			'dashboardProjects',
-			'dashboardWarehouseReceptions',
-			'dashboardThirdparties',
+			'dashboardPropals',
+			'dashboardSpecialBills',
 			'dashboardSupplierProposal',
+			'dashboardThirdparties',
 			'dashboardTickets',
 			'dashboardUsersGroups',
+			'dashboardWarehouse',
+			'dashboardWarehouseReceptions',
+			'dashboardWarehouseSendings',
 			'insertExtraHeader',
 			'insertExtraFooter',
 			'printLeftBlock',
 			'formAddObjectLine',
-			'formBuilddocOption',
+			'formBuilddocOptions',
 			'showSocinfoOnPrint'
 		))) {
 			$hooktype = 'output';
@@ -237,7 +241,10 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
+						// This his too much verbose, enabled if const enabled only
+						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					}
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					// Note: The hook can use the $currentcontext in its code to avoid to be ran twice or be ran for one given context only
@@ -276,7 +283,10 @@ class HookManager
 							continue;
 						}
 
-						//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
+						if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
+							dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
+						}
+
 						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						$resaction += $resactiontmp;
 

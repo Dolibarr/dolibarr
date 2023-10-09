@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
+NewAsset=New asset
+AccountancyCodeAsset=Accounting code (asset)
+AccountancyCodeDepreciationAsset=Accounting code (depreciation asset account)
+AccountancyCodeDepreciationExpense=Accounting code (depreciation expense account)
 AssetsLines=Assets
 DeleteType=ลบ
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=แสดงชนิด '% s'
+DeleteAnAssetType=Delete an asset model
+ConfirmDeleteAssetType=Are you sure you want to delete this asset model?
+ShowTypeCard=Show model '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=Assets
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=Assets description
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=Assets setup
+AssetSetupPage=Assets setup page
+ExtraFieldsAssetModel=Complementary attributes (Asset's model)
+
+AssetsType=Asset model
+AssetsTypeId=Asset model id
+AssetsTypeLabel=Asset model label
+AssetsTypes=Assets models
+ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = รายการ
-MenuNewTypeAssets = ใหม่
-MenuListTypeAssets = รายการ
+MenuAssets=Assets
+MenuNewAsset=New asset
+MenuAssetModels=Model assets
+MenuListAssets=รายการ
+MenuNewAssetModel=New asset's model
+MenuListAssetModels=รายการ
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=Do you really want to remove this asset?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Depreciation options
+AssetAccountancyCodes=บัญชีการบัญชี
+AssetDepreciation=Depreciation
+
+#
+# Asset
+#
+Asset=Asset
+Assets=Assets
+AssetReversalAmountHT=Reversal amount (without taxes)
+AssetAcquisitionValueHT=Acquisition amount (without taxes)
+AssetRecoveredVAT=Recovered VAT
+AssetReversalDate=Reversal date
+AssetDateAcquisition=Acquisition date
+AssetDateStart=Date of start-up
+AssetAcquisitionType=Type of acquisition
+AssetAcquisitionTypeNew=ใหม่
+AssetAcquisitionTypeOccasion=Used
+AssetType=Type of asset
+AssetTypeIntangible=Intangible
+AssetTypeTangible=Tangible
+AssetTypeInProgress=In progress
+AssetTypeFinancial=Financial
+AssetNotDepreciated=Not depreciated
+AssetDisposal=Disposal
+AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
+AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=In progress
+AssetDisposed=Disposed
+AssetRecorded=Accounted
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Date of disposal
+AssetDisposalAmount=Disposal value
+AssetDisposalType=Type of disposal
+AssetDisposalDepreciated=Depreciate the year of transfer
+AssetDisposalSubjectToVat=Disposal subject to VAT
+
+#
+# Asset model
+#
+AssetModel=Asset's model
+AssetModels=Asset's models
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Economic depreciation
+AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionDepreciationType=Depreciation type
+AssetDepreciationOptionDepreciationTypeLinear=Linear
+AssetDepreciationOptionDepreciationTypeDegressive=Degressive
+AssetDepreciationOptionDepreciationTypeExceptional=Exceptional
+AssetDepreciationOptionDegressiveRate=Degressive rate
+AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionDuration=ระยะเวลา
+AssetDepreciationOptionDurationType=Type duration
+AssetDepreciationOptionDurationTypeAnnual=Annual
+AssetDepreciationOptionDurationTypeMonthly=Monthly
+AssetDepreciationOptionDurationTypeDaily=Daily
+AssetDepreciationOptionRate=Rate (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Depreciation base (excl. VAT)
+AssetDepreciationOptionAmountBaseDeductibleHT=Deductible base (excl. VAT)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Economic depreciation
+AssetAccountancyCodeAsset=Asset
+AssetAccountancyCodeDepreciationAsset=Depreciation
+AssetAccountancyCodeDepreciationExpense=Depreciation expense
+AssetAccountancyCodeValueAssetSold=Value of asset disposed
+AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
+AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
+AssetAccountancyCodeVatCollected=Collected VAT
+AssetAccountancyCodeVatDeductible=Recovered VAT on assets
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetAccountancyCodeAcceleratedDepreciation=บัญชี
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Depreciation expense
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
+AssetDepreciationBeginDate=Start of depreciation on
+AssetDepreciationDuration=ระยะเวลา
+AssetDepreciationRate=Rate (%%)
+AssetDepreciationDate=Depreciation date
+AssetDepreciationHT=Depreciation (excl. VAT)
+AssetCumulativeDepreciationHT=Cumulative depreciation (excl. VAT)
+AssetResidualHT=Residual value (excl. VAT)
+AssetDispatchedInBookkeeping=Depreciation recorded
+AssetFutureDepreciationLine=Future depreciation
+AssetDepreciationReversal=Reversal
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
+AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
+AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
+AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
+AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
+AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
+AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
+AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
+AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
+AssetErrorAddDepreciationLine=Error when adding a depreciation line
+AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
+AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
+AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
+AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
+AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount

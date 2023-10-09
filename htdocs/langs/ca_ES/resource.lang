@@ -22,7 +22,7 @@ ResourceElementPage=Elements de recursos
 ResourceCreatedWithSuccess=Recurs creat correctament
 RessourceLineSuccessfullyDeleted=Línia de recurs eliminada correctament
 RessourceLineSuccessfullyUpdated=Línia de recurs actualitzada correctament
-ResourceLinkedWithSuccess=Recurs enllaçat correntament
+ResourceLinkedWithSuccess=Recurs vinculat correctament
 
 ConfirmDeleteResource=Estàs segur de voler eliminar aquest element?
 RessourceSuccessfullyDeleted=Recurs eliminat correctament
@@ -35,5 +35,5 @@ AssetNumber=Número de sèrie
 ResourceTypeCode=Codi de tipus de recurs
 ImportDataset_resource_1=Recursos
 
-ErrorResourcesAlreadyInUse=Alguns recursos estan en us
+ErrorResourcesAlreadyInUse=Alguns recursos estan en ús
 ErrorResourceUseInEvent=%s usat en %s esdeveniment

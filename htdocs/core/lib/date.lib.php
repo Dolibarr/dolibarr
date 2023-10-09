@@ -219,7 +219,8 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *      Can be used to show a duration.
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
+ *    	@param      string	$format		    Output format
+ *    										- 'all': total delay days hour:min like "2 days 12:30",
  *                                          - 'allwithouthour': total delay days without hour part like "2 days",
  *                                          - 'allhourmin': total delay with format hours:min like "60:30",
  *                                          - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",
@@ -286,7 +287,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay > 1) {
 				$dayTranslate = $langs->trans("Days");
 			}
-			$sTime .= $sDay.' '.strtolower(dol_substr($dayTranslate, 0, 1)).'. ';
+			$sTime .= $sDay.' '.$langs->trans("d").' ';
 		}
 
 		if ($format == 'all') {

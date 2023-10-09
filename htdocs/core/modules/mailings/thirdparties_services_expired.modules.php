@@ -36,11 +36,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public $picto = 'company';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $arrayofproducts = array();
 
 
@@ -116,6 +111,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$this->db->escape($product)."'";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		$sql .= " ORDER BY s.email";
 
 		// Stocke destinataires dans cibles
@@ -201,6 +199,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
 		$sql .= " AND p.ref IN (".$this->db->sanitize("'".join("','", $this->arrayofproducts)."'", 1).")";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		$a = parent::getNbOfRecipients($sql);
 
@@ -217,7 +218,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = '<select id="filter_services_expired" name="filter" class="flat">';
+		$s = img_picto('', 'product', 'class="pictofixedwidth"').'<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
 			$langs->loadLangs(array("products"));
 			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
