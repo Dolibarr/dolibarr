@@ -49,6 +49,7 @@ class UserRightsToFunction extends AbstractRector
 			Node\Expr\PropertyFetch::class,
 			Node\Expr\BooleanNot::class,
 			Node\Expr\Empty_::class,
+			Node\Expr\Isset_::class,
 			Node\Stmt\ClassMethod::class
 		];
 	}
@@ -64,7 +65,8 @@ class UserRightsToFunction extends AbstractRector
 			/** @var \PHPStan\Analyser\MutatingScope $scope */
 			$scope = $node->getAttribute('scope');
 			$class = $scope->getClassReflection();
-			if (isset($class) && $class->getName() == 'User') {
+			$classes = ['UserGroup', 'User'];
+			if (isset($class) && in_array($class->getName(), $classes)) {
 				if (in_array($this->getName($node), $excludeMethods)) {
 					return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
 				}
@@ -83,6 +85,9 @@ class UserRightsToFunction extends AbstractRector
 		if ($node instanceof Node\Expr\Empty_) {
 			$node = $node->expr;
 			$isInverse = true;
+		}
+		if ($node instanceof Node\Expr\Isset_) {
+			$node = $node->vars[0];
 		}
 		if (!$node instanceof Node\Expr\PropertyFetch) {
 			return;

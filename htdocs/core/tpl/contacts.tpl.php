@@ -67,10 +67,8 @@ if ($module == 'propal') {
 	$permission = $user->hasRight('reception', 'creer');
 } elseif ($module == 'project_task') {
 	$permission = $user->hasRight('projet', 'creer');
-} elseif (!isset($permission) && isset($user->hasRight($module, 'creer'))) {
-	$permission = $user->hasRight($module, 'creer');
-} elseif (!isset($permission) && isset($user->hasRight($module, 'write'))) {
-	$permission = $user->hasRight($module, 'write');
+} elseif (!isset($permission)) {
+	$permission = $user->hasRight($module, 'creer') || $user->hasRight($module, 'write');
 }
 
 $formcompany = new FormCompany($db);
