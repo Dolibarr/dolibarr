@@ -93,7 +93,7 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 	$height = 297;
 	$unit = 'mm';
 
-	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || $conf->global->MAIN_PDF_FORMAT == 'auto') {
+	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || getDolGlobalString('MAIN_PDF_FORMAT') == 'auto') {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat = dol_getDefaultFormat($outputlangs);
 	} else {
@@ -1577,9 +1577,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				if ($ref_supplier) {
 					$ref_prodserv .= ($prodser->ref ? ' (' : '').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref ? ')' : '');
 				}
-			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1) {
+			} elseif (getDolGlobalInt('PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES') == 1) {
 				$ref_prodserv = $ref_supplier;
-			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2) {
+			} elseif (getDolGlobalInt('PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES') == 2) {
 				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
 			}
 		} else {
