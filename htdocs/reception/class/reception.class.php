@@ -1651,7 +1651,6 @@ class Reception extends CommonObject
 	public function setBilled()
 	{
 		global $user;
-		$error = 0;
 
 		$this->db->begin();
 
@@ -1670,25 +1669,18 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		{
-			$this->billed = 1;
+		$this->billed = 1;
 
-			// Call trigger
-			$result = $this->call_trigger('RECEPTION_BILLED', $user);
-			if ($result < 0) {
-				$this->billed = 0;
-				$this->db->rollback();
-				return -1;
-			}
-		}
-
-		if (empty($error)) {
-			$this->db->commit();
-			return 1;
-		} else {
+		// Call trigger
+		$result = $this->call_trigger('RECEPTION_BILLED', $user);
+		if ($result < 0) {
+			$this->billed = 0;
 			$this->db->rollback();
 			return -1;
 		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
