@@ -1905,7 +1905,8 @@ class Reception extends CommonObject
 				// Call trigger
 				$result = $this->call_trigger('RECEPTION_UNVALIDATE', $user);
 				if ($result < 0) {
-					$error++;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 			if ($this->origin == 'order_supplier') {
