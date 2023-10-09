@@ -20,39 +20,56 @@ use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * Class with Rector custom rule to fix code
+ */
 class GlobalToFunction extends AbstractRector
 {
-
 	/**
 	 * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
 	 */
 	private BinaryOpManipulator $binaryOpManipulator;
 
+	/**
+	 * Constructor
+	 *
+	 * @param BinaryOpManipulator $binaryOpManipulator 	The $binaryOpManipulator
+	 */
 	public function __construct(BinaryOpManipulator $binaryOpManipulator)
 	{
 		$this->binaryOpManipulator = $binaryOpManipulator;
 	}
 
 	/**
+	 * getRuleDefinition
+	 *
+	 * @return RuleDefinition
 	 * @throws PoorDocumentationException
 	 */
 	public function getRuleDefinition(): RuleDefinition
 	{
 		return new RuleDefinition(
 			'Change $conf->global to getDolGlobal',
-			[new CodeSample('$conf->global->CONSTANT'
-				, 'getDolGlobalInt(\'CONSTANT\')'
+			[new CodeSample('$conf->global->CONSTANT',
+				 'getDolGlobalInt(\'CONSTANT\')'
 			)]);
 	}
 
+	/**
+	 * getNodeTypes
+	 *
+	 * @return array
+	 */
 	public function getNodeTypes(): array
 	{
 		return [Equal::class, BooleanAnd::class];
 	}
 
 	/**
-	 * @param Node $node
-	 * @return Equal|void
+	 * refactor
+	 *
+	 * @param 	Node 		$node	A node
+	 * @return 	Equal|void
 	 */
 	public function refactor(Node $node)
 	{
@@ -82,7 +99,6 @@ class GlobalToFunction extends AbstractRector
 				break;
 			default:
 				return;
-
 		}
 		$constName = $this->getName($node->left);
 		if (empty($constName)) {
@@ -99,8 +115,9 @@ class GlobalToFunction extends AbstractRector
 
 	/**
 	 * Get nodes with check empty
-	 * @param BooleanAnd $booleanAnd
-	 * @return TwoNodeMatch|null
+	 *
+	 * @param	BooleanAnd 	$booleanAnd		A BooleandAnd
+	 * @return 	TwoNodeMatch|null
 	 */
 	private function resolveTwoNodeMatch(BooleanAnd $booleanAnd): ?TwoNodeMatch
 	{
@@ -128,7 +145,8 @@ class GlobalToFunction extends AbstractRector
 
 	/**
 	 * Check node is global access
-	 * @param $node
+	 *
+	 * @param $node		A node
 	 * @return bool
 	 */
 	private function isGlobalVar($node)
