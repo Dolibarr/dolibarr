@@ -1692,8 +1692,6 @@ class Reception extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		$error = 0;
-
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1, billed=0';
@@ -1711,7 +1709,7 @@ class Reception extends CommonObject
 		$this->billed = 0;
 
 		// If stock increment is done on closing
-		if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+		if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 			$numref = $this->ref;
 			$langs->load("agenda");
@@ -1780,7 +1778,7 @@ class Reception extends CommonObject
 			}
 		}
 
-		if (!$error) {
+		{
 			// Call trigger
 			$result = $this->call_trigger('RECEPTION_REOPEN', $user);
 			if ($result < 0) {
@@ -1789,7 +1787,7 @@ class Reception extends CommonObject
 			}
 		}
 
-		if (!$error && $this->origin == 'order_supplier') {
+		if ($this->origin == 'order_supplier') {
 			$commande = new CommandeFournisseur($this->db);
 			$commande->fetch($this->origin_id);
 			$result = $commande->setStatus($user, 4);
@@ -1799,11 +1797,6 @@ class Reception extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-		}
-
-		if ($error) {
-			$this->db->rollback();
-			return -1;
 		}
 
 		$this->db->commit();
