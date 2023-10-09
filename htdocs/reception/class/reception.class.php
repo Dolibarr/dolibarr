@@ -1733,58 +1733,53 @@ class Reception extends CommonObject
 				return -1;
 			}
 
-			{
-				$cpt = $this->db->num_rows($resql);
-				for ($i = 0; $i < $cpt; $i++) {
-					$obj = $this->db->fetch_object($resql);
+			$cpt = $this->db->num_rows($resql);
+			for ($i = 0; $i < $cpt; $i++) {
+				$obj = $this->db->fetch_object($resql);
 
-					$qty = $obj->qty;
+				$qty = $obj->qty;
 
-					if ($qty <= 0) {
-						continue;
-					}
+				if ($qty <= 0) {
+					continue;
+				}
 
-					dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
+				dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
-					//var_dump($this->lines[$i]);
-					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = &$this;
-					$mouvS->setOrigin($this->element, $this->id);
+				//var_dump($this->lines[$i]);
+				$mouvS = new MouvementStock($this->db);
+				$mouvS->origin = &$this;
+				$mouvS->setOrigin($this->element, $this->id);
 
-					$inventorycode = '';
-					$date_eatby = '';
-					$date_sellby = '';
-					$batch = '';
-					$fk_origin_stock = 0;
+				$inventorycode = '';
+				$date_eatby = '';
+				$date_sellby = '';
+				$batch = '';
+				$fk_origin_stock = 0;
 
-					if (!empty($obj->batch))
-					{
-						$date_eatby = $this->db->jdate($obj->eatby);
-						$date_sellby = $this->db->jdate($obj->sellby);
-						$batch = $obj->batch;
-						$fk_origin_stock = $obj->fk_origin_stock;
-					}
+				if (!empty($obj->batch)) {
+					$date_eatby = $this->db->jdate($obj->eatby);
+					$date_sellby = $this->db->jdate($obj->sellby);
+					$batch = $obj->batch;
+					$fk_origin_stock = $obj->fk_origin_stock;
+				}
 
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
-						$langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $date_eatby, $date_sellby, $batch, $fk_origin_stock, $inventorycode);
+				$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
+					$langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $date_eatby, $date_sellby, $batch, $fk_origin_stock, $inventorycode);
 
-					if ($result < 0) {
-						$this->error = $mouvS->error;
-						$this->errors = $mouvS->errors;
-						$this->db->rollback();
-						return -1;
-					}
+				if ($result < 0) {
+					$this->error = $mouvS->error;
+					$this->errors = $mouvS->errors;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 		}
 
-		{
-			// Call trigger
-			$result = $this->call_trigger('RECEPTION_REOPEN', $user);
-			if ($result < 0) {
-				$this->db->rollback();
-				return -1;
-			}
+		// Call trigger
+		$result = $this->call_trigger('RECEPTION_REOPEN', $user);
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
 		}
 
 		if ($this->origin == 'order_supplier') {
