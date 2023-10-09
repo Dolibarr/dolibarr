@@ -1438,7 +1438,7 @@ if ($resql) {
 		}
 		if ($oldref != $obj->product_ref && $sortfield == 'pr.ref') {
 			// TODO make new /core/tpl/list_print_sub_total.php
-			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
 			$oldref = $obj->product_ref;
 		}
 
@@ -1533,16 +1533,19 @@ if ($resql) {
 		// Product QtyOrdered
 		if (!empty($arrayfields['cdet.qty']['checked'])) {
 			print '<td class="nowrap right">'.$obj->qty.'</td>';
-			if (isset($totalarray['val']['cdet.qty'])) {
+			if (isset($totalarray['val']['cdet.qty']) || isset($subtotalarray['val']['cdet.qty']) ) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
+				$subtotalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
 				$totalarray['val']['cdet.qty'] = $obj->qty;
+				$subtotalarray['val']['cdet.qty'] = $obj->qty;
 			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.qty';
 			}
 		}
 
@@ -1736,11 +1739,14 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ht';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.total_ht';
 			}
-			if (isset($totalarray['val']['cdet.total_ht'])) {
+			if (isset($totalarray['val']['cdet.total_ht']) || isset($subtotalarray['val']['cdet.total_ht'])) {
 				$totalarray['val']['cdet.total_ht'] += $obj->total_ht;
+				$subtotalarray['val']['cdet.total_ht'] += $obj->total_ht;
 			} else {
 				$totalarray['val']['cdet.total_ht'] = $obj->total_ht;
+				$subtotalarray['val']['cdet.total_ht'] = $obj->total_ht;
 			}
 		}
 		// Amount VAT
@@ -1751,8 +1757,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_tva';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.total_tva';
 			}
 			$totalarray['val']['cdet.total_tva'] += $obj->total_tva;
+			$subtotalarray['val']['cdet.total_tva'] += $obj->total_tva;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
@@ -1762,8 +1770,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
+				$subtotalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
 			}
 			$totalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
+			$subtotalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
 		}
 		// Warehouse
 		if (!empty($arrayfields['c.fk_warehouse']['checked'])) {
@@ -1906,8 +1916,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'total_margin';
 			}
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+			$subtotalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
@@ -1924,12 +1936,15 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'total_mark_rate';
 			}
 			if ($i >= $imaxinloop - 1) {
 				if (!empty($total_ht)) {
 					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+					$subtotalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 				} else {
 					$totalarray['val']['total_mark_rate'] = '';
+					$subtotalarray['val']['total_mark_rate'] = '';
 				}
 			}
 		}
