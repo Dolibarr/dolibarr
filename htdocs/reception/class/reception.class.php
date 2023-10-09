@@ -1609,29 +1609,28 @@ class Reception extends CommonObject
 						$mouvS->origin = &$this;
 						$mouvS->setOrigin($this->element, $this->id);
 
-						if (empty($obj->batch)) {
-							// line without batch detail
+						$inventorycode = '';
+						$date_eatby = '';
+						$date_sellby = '';
+						$batch = '';
 
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$inventorycode = '';
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionClassifyClosedInDolibarr", $this->ref), '', '', '', '', 0, $inventorycode);
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++; break;
-							}
-						} else {
+						if (!empty($obj->batch)) {
 							// line with batch detail
-
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$inventorycode = '';
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionClassifyClosedInDolibarr", $this->ref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
+							$date_eatby = $this->db->jdate($obj->eatby);
+							$date_sellby = $this->db->jdate($obj->sellby);
+							$batch = $obj->batch;
+						}
 
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++; break;
-							}
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
+							$langs->trans("ReceptionClassifyClosedInDolibarr", $this->ref), $date_eatby, $date_sellby, $batch, '', 0, $inventorycode);
+
+						if ($result < 0) {
+							$this->error = $mouvS->error;
+							$this->errors = $mouvS->errors;
+							$this->db->rollback();
+							return -1;
 						}
 					}
 				}
