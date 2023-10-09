@@ -3868,13 +3868,13 @@ if ($module == 'initmodule') {
 						print '<tr>';
 					}
 					if ($key == 'propname' || $key == 'proplabel') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'proptype') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
 					} elseif ($key == 'propvalidate') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} else {
-						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate maxwidth"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					}
 					$counter++;
 					if ($counter % 2 === 0) {
@@ -4269,11 +4269,9 @@ if ($module == 'initmodule') {
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
-							print '<th class="none">';
-
+							print '<th class="tdsticky tdstickygray">';
 							$htmltext = $langs->trans("PropertyDesc").'<br><br><a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>';
 							print $form->textwithpicto($langs->trans("Code"), $htmltext, 1, 'help', 'extracss', 0, 3, 'propertyhelp');
-
 							print '</th>';
 							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
@@ -4299,7 +4297,7 @@ if ($module == 'initmodule') {
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
 							print '<th>'.$form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")).'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
-							print '<th class="none"></th>';
+							print '<th class="tdstickyright tdstickyghostwhite"></th>';
 							print '</tr>';
 
 							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobject->fields may have been
@@ -4425,7 +4423,7 @@ if ($module == 'initmodule') {
 										print '<td>';
 										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
-										print '<td class="center tdstickyright tdstickyghostwhite">';
+										print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 										print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
 										print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 										print '</td>';
@@ -4515,7 +4513,7 @@ if ($module == 'initmodule') {
 										print dol_escape_htmltag($propcomment);
 										print '</span>';
 										print '</td>';
-										print '<td class="center tdstickyright tdstickyghostwhite">';
+										print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 										if ($propname != 'rowid') {
 											print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
 											print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
@@ -4787,7 +4785,7 @@ if ($module == 'initmodule') {
 								print '<input type="text" name="tabcond"  value="'.dol_escape_htmltag((empty($dicts['tabcond'][$i]) ? 'disabled' : 'enabled')).'" readonly class="tdstickygray">';
 								print '</td>';
 
-								print '<td class="center tdstickyright tdstickyghostwhite">';
+								print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 								print '<input id ="updatedict" class="reposition button smallpaddingimp" type="submit" name="updatedict" value="'.$langs->trans("Modify").'"/>';
 								print '<br>';
 								print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
@@ -4838,7 +4836,7 @@ if ($module == 'initmodule') {
 								print $dicts['tabcond'][$i];
 								print '</td>';
 
-								print '<td class="center tdstickyright tdstickyghostwhite">';
+								print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_edit().'</a>';
 								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletedict&token='.newToken().'&dictionnarykey='.urlencode($i+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_delete().'</a>';
 								print '</td>';
@@ -5052,7 +5050,7 @@ if ($module == 'initmodule') {
 				print '<tr>';
 				print '<td class="center"><input type="hidden" readonly class="center maxwidth50" name="propenabled" value="#"></td>';
 				print '<td class="center">';
-				print '<select class="center maxwidth50" name="type">';
+				print '<select class="maxwidth50" name="type">';
 				print '<option value="">'.$langs->trans("........").'</option><option value="'.dol_escape_htmltag("left").'">left</option><option value="'.dol_escape_htmltag("top").'">top</option>';
 				print '</select></td>';
 				print '<td class="left"><input type="text" class="left maxwidth100" name="titre" value="'.dol_escape_htmltag(GETPOST('titre', 'alpha')).'"></td>';
@@ -5066,35 +5064,49 @@ if ($module == 'initmodule') {
 				}
 				print '</select>';
 				print '</td>';
-				print '<td class="left"><input type="text" class="left maxwidth" name="mainmenu" value="'.(empty(GETPOST('mainmenu')) ? strtolower($module) : dol_escape_htmltag(GETPOST('mainmenu', 'alpha'))).'" readonly></td>';
-				print '<td class="center"><input id="leftmenu" type="text" class="left maxwidth" name="leftmenu" value="'.dol_escape_htmltag(GETPOST('leftmenu', 'alpha')).'"></td>';
-				print '<td class="left"><input id="url" type="text" class="left maxwidth" name="url" value="'.dol_escape_htmltag(GETPOST('url', 'alpha')).'"></td>';
-				print '<td class="left"><input type="text" class="left maxwidth" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
+				print '<td class="left"><input type="text" class="left maxwidth50" name="mainmenu" value="'.(empty(GETPOST('mainmenu')) ? strtolower($module) : dol_escape_htmltag(GETPOST('mainmenu', 'alpha'))).'"></td>';
+				print '<td class="center"><input id="leftmenu" type="text" class="left maxwidth50" name="leftmenu" value="'.dol_escape_htmltag(GETPOST('leftmenu', 'alpha')).'"></td>';
+				print '<td class="left"><input id="url" type="text" class="left maxwidth50" name="url" value="'.dol_escape_htmltag(GETPOST('url', 'alpha')).'"></td>';
+				print '<td class="left"><input type="text" class="left maxwidth75" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
+				// Position
 				print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.(1000+$r).'" readonly></td>';
+				// Enabled
 				print '<td class="center">';
-				print '<select class="center maxwidth" name="enabled">';
+				print '<input type="enabled" class="maxwidth125" value="'.dol_escape_htmltag(GETPOSTISSET('enabled') ? GETPOST('enabled') : 'isModEnabled(\''.$module.'\')').'">';
+				$htmltext = '<u>'.$langs->trans("Examples").':</u><br>';
+				$htmltext .= '1 <span class="opacitymedium">(always enabled)</span><br>';
+				$htmltext .= '0 <span class="opacitymedium">(always disabled)</span><br>';
+				$htmltext .= 'isModEnabled(\''.dol_escape_htmltag($module).'\') <span class="opacitymedium">(enabled when module is enabled)</span><br>';
+				print $form->textwithpicto('', $htmltext);
+				/*
+				print '<select class="maxwidth" name="enabled">';
 				print '<option value="1" selected>'.$langs->trans("Show").'</option>';
 				print '<option value="0">'.$langs->trans("Hide").'</option>';
 				print '</select>';
+				*/
 				print '</td>';
+				// Perms
 				print '<td class="left">';
-				print '<select class="center maxwidth" name="objects" id="objects">';
+				print '<select class="maxwidth" name="objects" id="objects">';
 				print '<option value=""></option>';
 				foreach ($objects as $value) {
 					print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
 				}
 				print '</select>';
-				print '<select class="center maxwidth hideobject" name="perms" id="perms">';
+				print '<select class="maxwidth hideobject" name="perms" id="perms">';
 				print '</select>';
 				print '</td>';
 				print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag(GETPOST('target', 'alpha')).'"></td>';
-				print '<td class="center"><select class="center maxwidth10" name="user"><option value="2">'.$langs->trans("AllMenus").'</option><option value="0">'.$langs->trans("Internal").'</option><option value="1">'.$langs->trans("External").'</option></select></td>';
+				print '<td class="center"><select class="maxwidth10" name="user"><option value="2">'.$langs->trans("AllMenus").'</option><option value="0">'.$langs->trans("Internal").'</option><option value="1">'.$langs->trans("External").'</option></select></td>';
 
-				print '<td class="center tdstickyright tdstickyghostwhite">';
+				print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 				print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 				print '</td>';
 				print '</tr>';
 				// end form for add menu
+
+				//var_dump($menus);
+
 				if (count($menus)) {
 					$i = 0;
 					foreach ($menus as $menu) {
@@ -5113,10 +5125,14 @@ if ($module == 'initmodule') {
 						$propTarget = !empty($menu['target']) ? $menu['target'] : GETPOST('target');
 						$propEnabled = !empty($menu['enabled']) ? $menu['enabled'] : GETPOST('enabled');
 
-						//Perms
+						// Perms
+						$propPerms = str_replace(array('$user->hasRight(', ')'), '', $propPerms);
 						$arguments = explode(",", $propPerms);
-						$valPerms = trim($arguments[2], '  " "\)');
-						$objPerms = trim($arguments[1], '  " "\)');
+
+						$objPerms = (empty($arguments[1]) ? '' : trim($arguments[1]));
+						$valPerms = (empty($arguments[2]) ? '' : trim($arguments[2]));
+
+						//$tabobject = '';	// We can't know what is $tabobject in most cases
 
 						if ($action == 'editmenu' && GETPOST('menukey', 'int') == $i) {
 							//var_dump($propPerms);exit;
@@ -5126,7 +5142,7 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="action" value="modify_menu">';
 							print '<input type="hidden" name="tab" value="menus">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-							print '<input type="hidden" name="tabobject" value="'.dol_escape_htmltag($tabobject).'">';
+							//print '<input type="hidden" name="tabobject" value="'.dol_escape_htmltag($tabobject).'">';
 							print '<td class="tdsticky tdstickygray">';
 							print $i;
 							print '</td>';
@@ -5154,50 +5170,61 @@ if ($module == 'initmodule') {
 							}
 							print '</select>';
 							print '</td>';
-							print '<td class="left"><input type="text" class="left maxwidth75" name="mainmenu" value="'.dol_escape_htmltag($propMainmenu).'" readonly></td>';
-							print '<td class="left"><input type="text" class="left maxwidth" name="leftmenu" value="'.dol_escape_htmltag($propLeftmenu).'" readonly></td>';
-							print '<td class="left"><input type="text" class="left maxwidth" name="url" value="'.dol_escape_htmltag($propUrl).'"></td>';
-							print '<td class="left"><input type="text" class="left maxwidth" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
-							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.(1000+$r-1).'" readonly></td>';
-							print '<td class="left">';
-							print '<select class="center maxwidth" name="enabled">';
-							print '<option selected value="'.dol_escape_htmltag($propEnabled).'">'.(dol_escape_htmltag($propEnabled) == '' ? $langs->trans('Hide') : $langs->trans('Show')).'</option>';
-							if ($propEnabled == '') {
-								print '<option value="1" >'.$langs->trans("Show").'</option>';
-							} else {
-								print '<option value="0">'.$langs->trans("Hide").'</option>';
-							}
+							print '<td class="left"><input type="text" class="left maxwidth50" name="mainmenu" value="'.dol_escape_htmltag($propMainmenu).'" readonly></td>';
+							print '<td class="left"><input type="text" class="left maxwidth50" name="leftmenu" value="'.dol_escape_htmltag($propLeftmenu).'" readonly></td>';
+							print '<td class="left"><input type="text" class="left maxwidth50" name="url" value="'.dol_escape_htmltag($propUrl).'"></td>';
+							print '<td class="left"><input type="text" class="left maxwidth50" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
+							// Position
+							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.($menu['position']).'" readonly></td>';
+							// Enabled
+							print '<td class="nowraponall">';
+							print '<input type="text" class="maxwidth125" named="enabled" value="'.dol_escape_htmltag($propEnabled).'">';
+							$htmltext = '<u>'.$langs->trans("Examples").':</u><br>';
+							$htmltext .= '1 <span class="opacitymedium">(always enabled)</span><br>';
+							$htmltext .= '0 <span class="opacitymedium">(always disabled)</span><br>';
+							$htmltext .= 'isModEnabled(\''.dol_escape_htmltag($module).'\') <span class="opacitymedium">(enabled when module is enabled)</span><br>';
+							print $form->textwithpicto('', $htmltext);
+							/*
+							print '<select class="maxwidth50" name="enabledselect">';
+							print '<option value="1">1 (always enabled)</option>';
+							print '<option value="0">0 (always disabled)</option>';
+							print '<option value="isModEnabled(\''.dol_escape_htmltag($module).'\')" >isModEnabled(\''.dol_escape_htmltag($module).'\')</option>';
 							print '</select>';
+							*/
 							print '</td>';
-							print '<td class="center">';
+							// Permissions
+							print '<td class="center nowraponall">';
+							print '<input type="text" name="perms" value="'.dol_escape_htmltag($propPerms).'">';
+							/*
 							if (!empty($objPerms)) {
 								print '<input type="hidden" name="objects" value="'.$objPerms.'" />';
-								print '<select class="center maxwidth" name="perms">';
-								print '<option selected value="'.dol_escape_htmltag($valPerms).'">'.dol_escape_htmltag($langs->trans($crud[$valPerms])).'</option>';
-								foreach ($crud as $key => $val) {
-									if ($valPerms != $key) {
-										print '<option value="'.dol_escape_htmltag($key).'">'.dol_escape_htmltag($langs->trans($val)).'</option>';
+								print '<select class="center maxwidth50" name="perms">';
+								if (!empty($valPerms)) {
+									print '<option selected value="'.dol_escape_htmltag($valPerms).'">'.dol_escape_htmltag($langs->trans($crud[$valPerms])).'</option>';
+									foreach ($crud as $key => $val) {
+										if ($valPerms != $key) {
+											print '<option value="'.dol_escape_htmltag($key).'">'.dol_escape_htmltag($langs->trans($val)).'</option>';
+										}
 									}
 								}
 								print '</select>';
 							} else {
-								print '<select class="center maxwidth" name="objects">';
+								print '<select class="center maxwidth50" name="objects">';
 								print '<option></option>';
 								foreach ($objects as $obj) {
 									print '<option value="'.dol_escape_htmltag(strtolower($obj)).'">'.dol_escape_htmltag($obj).'</option>';
 								}
 								print '</select>';
-								print '<select class="center maxwidth" name="perms">';
+								print '<select class="center maxwidth50" name="perms">';
 								foreach ($crud as $key => $val) {
 									print '<option value="'.dol_escape_htmltag($key).'">'.dol_escape_htmltag($key).'</option>';
 								}
 								print '</select>';
-							}
-
+							}*/
 							print '</td>';
 							print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag($propTarget).'"></td>';
 							print '<td class="center"><select class="center maxwidth10" name="user"><option value="2">'.$langs->trans("AllMenus").'</option><option value="0">'.$langs->trans("Internal").'</option><option value="1">'.$langs->trans("External").'</option></select></td>';
-							print '<td class="center tdstickyright tdstickyghostwhite maxwidth50">';
+							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite maxwidth75">';
 							print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Modify").'">';
 							print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 							print '</td>';
@@ -5238,13 +5265,17 @@ if ($module == 'initmodule') {
 							print dol_escape_htmltag($menu['langs']);
 							print '</td>';
 
+							// Position
 							print '<td class="center">';
 							print dol_escape_htmltag($menu['position']);
 							print '</td>';
 
+							// Enabled
 							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
-							print (dol_escape_htmltag($menu['enabled']) == '0' ? $langs->trans("Hide") : $langs->trans("Show"));
+							print dol_escape_htmltag($menu['enabled']);
 							print '</td>';
+
+							// Perms
 							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
 							if (strpos($menu['perms'], "\$user->hasRight") !== 0) {
 								print '';
@@ -5268,7 +5299,7 @@ if ($module == 'initmodule') {
 								print $menu['user']; // should not happen
 							}
 							print '</td>';
-							print '<td class="center tdstickyright tdstickyghostwhite">';
+							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 							if ($menu['titre'] != 'Module'.$module.'Name') {
 									print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
 									print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletemenu&token='.newToken().'&menukey='.urlencode($i-1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
@@ -5442,7 +5473,7 @@ if ($module == 'initmodule') {
 				}
 				print '</select></td>';
 
-				print '<td><select class="maxwidth" name="crud" id="crud">';
+				print '<td><select class="maxwidth50" name="crud" id="crud">';
 				print '<option value=""></option>';
 				foreach ($crud as $key => $val) {
 					print '<option value="'.$key.'">'.$langs->trans($val).'</option>';
@@ -5453,7 +5484,7 @@ if ($module == 'initmodule') {
 				print '<input type="text" name="label" id="label" class="minwidth200">';
 				print '</td>';
 
-				print '<td class="center tdstickyright tdstickyghostwhite">';
+				print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 				print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 				print '</td>';
 				print '</tr>';
@@ -5499,7 +5530,7 @@ if ($module == 'initmodule') {
 							print '<input type="text" name="label"  value="'.dol_escape_htmltag($perm[1]).'">';
 							print '</td>';
 
-							print '<td class="center tdstickyright tdstickyghostwhite">';
+							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 							print '<input id ="modifyPerm" class="reposition button smallpaddingimp" type="submit" name="modifyright" value="'.$langs->trans("Modify").'"/>';
 							print '<br>';
 							print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
@@ -5535,7 +5566,7 @@ if ($module == 'initmodule') {
 							print $langs->trans($perm[1]);
 							print '</td>';
 
-							print '<td class="center tdstickyright tdstickyghostwhite">';
+							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 							print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_right&token='.newToken().'&permskey='.urlencode($perm[0]).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
 							print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteright&token='.newToken().'&permskey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
 
