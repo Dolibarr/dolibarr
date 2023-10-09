@@ -135,7 +135,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var int ID
 	 * @deprecated
-	 * @see $fk_uesr_modif
+	 * @see $fk_user_modif
 	 */
 	public $user_modification;
 
