@@ -262,7 +262,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_modif_endyear = "";
 	$search_date_modif_endday = "";
 	$search_date_modif_end = "";
-	$sall = "";
 	$search_status = "";
 	$toselect = array();
 	$search_type_thirdparty = '';
