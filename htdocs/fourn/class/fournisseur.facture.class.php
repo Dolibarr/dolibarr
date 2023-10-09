@@ -1565,7 +1565,7 @@ class FactureFournisseur extends CommonInvoice
 
 			$now = dol_now();
 
-			dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
+			dol_syslog("FactureFournisseur::setPaid", LOG_DEBUG);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET';
 			$sql .= ' fk_statut = '.self::STATUS_CLOSED;
