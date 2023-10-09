@@ -1538,110 +1538,105 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		{
-			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
-			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
-				$order = new CommandeFournisseur($this->db);
-				$order->fetch($this->origin_id);
+		// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
+		if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
+			$order = new CommandeFournisseur($this->db);
+			$order->fetch($this->origin_id);
 
-				$order->loadReceptions(self::STATUS_CLOSED); // Fill $order->receptions = array(orderlineid => qty)
-
-				$receptions_match_order = 1;
-				foreach ($order->lines as $line) {
-					$lineid = $line->id;
-					$qty = $line->qty;
-					if (($line->product_type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && $order->receptions[$lineid] < $qty) {
-						$receptions_match_order = 0;
-						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the receptions with status Reception::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->receptions[$lineid].', so we can t close order';
-						dol_syslog($text);
-						break;
-					}
-				}
-				if ($receptions_match_order) {
-					dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for receptions with status Reception::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
-					$order->Livraison($user, dol_now(), 'tot', 'Reception '.$this->ref);
+			$order->loadReceptions(self::STATUS_CLOSED); // Fill $order->receptions = array(orderlineid => qty)
+			$receptions_match_order = 1;
+			foreach ($order->lines as $line) {
+				$lineid = $line->id;
+				$qty = $line->qty;
+				if (($line->product_type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && $order->receptions[$lineid] < $qty) {
+					$receptions_match_order = 0;
+					$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the receptions with status Reception::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->receptions[$lineid].', so we can t close order';
+					dol_syslog($text);
+					break;
 				}
 			}
-
-			$this->statut = self::STATUS_CLOSED;
-			$this->status = self::STATUS_CLOSED;
-
-			// If stock increment is done on closing
-			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
-				$langs->load("agenda");
-
-				// Loop on each product line to add a stock movement
-				// TODO possibilite de receptionner a partir d'une propale ou autre origine ?
-				$sql = "SELECT cd.fk_product, cd.subprice,";
-				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql .= " ed.eatby, ed.sellby, ed.batch,";
-				$sql .= " ed.cost_price";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
-
-				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -1;
-				}
-
-				{
-					$cpt = $this->db->num_rows($resql);
-					for ($i = 0; $i < $cpt; $i++) {
-						$obj = $this->db->fetch_object($resql);
-
-						$qty = $obj->qty;
-
-						if ($qty <= 0) {
-							continue;
-						}
-						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
-
-						$mouvS = new MouvementStock($this->db);
-						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
-
-						$inventorycode = '';
-						$date_eatby = '';
-						$date_sellby = '';
-						$batch = '';
-
-						if (!empty($obj->batch)) {
-							// line with batch detail
-							$inventorycode = '';
-							$date_eatby = $this->db->jdate($obj->eatby);
-							$date_sellby = $this->db->jdate($obj->sellby);
-							$batch = $obj->batch;
-						}
-
-						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
-							$langs->trans("ReceptionClassifyClosedInDolibarr", $this->ref), $date_eatby, $date_sellby, $batch, '', 0, $inventorycode);
-
-						if ($result < 0) {
-							$this->error = $mouvS->error;
-							$this->errors = $mouvS->errors;
-							$this->db->rollback();
-							return -1;
-						}
-					}
-				}
+			if ($receptions_match_order) {
+				dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for receptions with status Reception::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
+				$order->Livraison($user, dol_now(), 'tot', 'Reception '.$this->ref);
 			}
+		}
 
-			// Call trigger
-			$result = $this->call_trigger('RECEPTION_CLOSED', $user);
-			if ($result < 0) {
-				$this->error = $mouvS->error;
-				$this->errors = $mouvS->errors;
+		$this->statut = self::STATUS_CLOSED;
+		$this->status = self::STATUS_CLOSED;
+
+		// If stock increment is done on closing
+		if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			$langs->load("agenda");
+
+			// Loop on each product line to add a stock movement
+			// TODO possibilite de receptionner a partir d'une propale ou autre origine ?
+			$sql = "SELECT cd.fk_product, cd.subprice,";
+			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+			$sql .= " ed.eatby, ed.sellby, ed.batch,";
+			$sql .= " ed.cost_price";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
+			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
+
+			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
 			}
+
+			$cpt = $this->db->num_rows($resql);
+			for ($i = 0; $i < $cpt; $i++) {
+				$obj = $this->db->fetch_object($resql);
+
+				$qty = $obj->qty;
+
+				if ($qty <= 0) {
+					continue;
+				}
+				dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+				$mouvS = new MouvementStock($this->db);
+				$mouvS->origin = &$this;
+				$mouvS->setOrigin($this->element, $this->id);
+
+				$inventorycode = '';
+				$date_eatby = '';
+				$date_sellby = '';
+				$batch = '';
+
+				if (!empty($obj->batch)) {
+					// line with batch detail
+					$inventorycode = '';
+					$date_eatby = $this->db->jdate($obj->eatby);
+					$date_sellby = $this->db->jdate($obj->sellby);
+					$batch = $obj->batch;
+				}
+
+				// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+				$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
+					$langs->trans("ReceptionClassifyClosedInDolibarr", $this->ref), $date_eatby, $date_sellby, $batch, '', 0, $inventorycode);
+
+				if ($result < 0) {
+					$this->error = $mouvS->error;
+					$this->errors = $mouvS->errors;
+					$this->db->rollback();
+					return -1;
+				}
+			}
+		}
+
+		// Call trigger
+		$result = $this->call_trigger('RECEPTION_CLOSED', $user);
+		if ($result < 0) {
+			$this->error = $mouvS->error;
+			$this->errors = $mouvS->errors;
+			$this->db->rollback();
+			return -1;
 		}
 
 		$this->db->commit();
