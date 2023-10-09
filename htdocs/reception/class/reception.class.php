@@ -1832,113 +1832,108 @@ class Reception extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		{
-			// If stock increment is done on closing
-			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
-				$langs->load("agenda");
-
-				// Loop on each product line to add a stock movement
-				// TODO possibilite de receptionner a partir d'une propale ou autre origine
-				$sql = "SELECT cd.fk_product, cd.subprice,";
-				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql .= " ed.eatby, ed.sellby, ed.batch,";
-				$sql .= " ed.cost_price";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
-
-				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -1;
-				}
-
-				{
-					$cpt = $this->db->num_rows($resql);
-					for ($i = 0; $i < $cpt; $i++) {
-						$obj = $this->db->fetch_object($resql);
-
-						$qty = $obj->qty;
 
 
-						if ($qty <= 0) {
-							continue;
-						}
-						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+		// If stock increment is done on closing
+		if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
-						//var_dump($this->lines[$i]);
-						$mouvS = new MouvementStock($this->db);
-						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+			$langs->load("agenda");
 
-						$inventorycode = '';
-						$date_eatby = '';
-						$date_sellby = '';
-						$batch = '';
+			// Loop on each product line to add a stock movement
+			// TODO possibilite de receptionner a partir d'une propale ou autre origine
+			$sql = "SELECT cd.fk_product, cd.subprice,";
+			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+			$sql .= " ed.eatby, ed.sellby, ed.batch,";
+			$sql .= " ed.cost_price";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
+			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
-						if (!empty($obj->batch)) {
-							$date_eatby = $this->db->jdate($obj->eatby);
-							$date_sellby = $this->db->jdate($obj->sellby);
-							$batch = $obj->batch;
-						}
-
-						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
-							$langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), '', $date_eatby, $date_sellby, $batch, 0, $inventorycode);
-
-						if ($result < 0) {
-							$this->error = $mouvS->error;
-							$this->errors = $mouvS->errors;
-							$this->db->rollback();
-							return -1;
-						}
-					}
-				}
+			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
 			}
 
-			{
-				// Call trigger
-				$result = $this->call_trigger('RECEPTION_UNVALIDATE', $user);
+			$cpt = $this->db->num_rows($resql);
+			for ($i = 0; $i < $cpt; $i++) {
+				$obj = $this->db->fetch_object($resql);
+
+				$qty = $obj->qty;
+
+
+				if ($qty <= 0) {
+					continue;
+				}
+				dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+				//var_dump($this->lines[$i]);
+				$mouvS = new MouvementStock($this->db);
+				$mouvS->origin = &$this;
+				$mouvS->setOrigin($this->element, $this->id);
+
+				$inventorycode = '';
+				$date_eatby = '';
+				$date_sellby = '';
+				$batch = '';
+
+				if (!empty($obj->batch)) {
+					$date_eatby = $this->db->jdate($obj->eatby);
+					$date_sellby = $this->db->jdate($obj->sellby);
+					$batch = $obj->batch;
+				}
+
+				$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price,
+					$langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), '', $date_eatby, $date_sellby, $batch, 0, $inventorycode);
+
 				if ($result < 0) {
+					$this->error = $mouvS->error;
+					$this->errors = $mouvS->errors;
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			if ($this->origin == 'order_supplier') {
-				if (!empty($this->origin) && $this->origin_id > 0) {
-					$this->fetch_origin();
-					$origin = $this->origin;
-					if ($this->$origin->statut == 4) {  // If order source of reception is "partially received"
-						// Check if there is no more reception validated.
-						$this->$origin->fetchObjectLinked();
-						$setStatut = 1;
-						if (!empty($this->$origin->linkedObjects['reception'])) {
-							foreach ($this->$origin->linkedObjects['reception'] as $rcption) {
-								if ($rcption->statut > 0) {
-									$setStatut = 0;
-									break;
-								}
-							}
-							//var_dump($this->$origin->receptions);exit;
-							if ($setStatut) {
-								$this->$origin->setStatut(3); // ordered
-							}
-						}
-					}
-				}
-			}
-
-			{
-				$this->statut = self::STATUS_DRAFT;
-				$this->status = self::STATUS_DRAFT;
-				$this->db->commit();
-				return 1;
 			}
 		}
+
+		// Call trigger
+		$result = $this->call_trigger('RECEPTION_UNVALIDATE', $user);
+		if ($result < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		if ($this->origin == 'order_supplier') {
+			if (!empty($this->origin) && $this->origin_id > 0) {
+				$this->fetch_origin();
+				$origin = $this->origin;
+				if ($this->$origin->statut == 4) {  // If order source of reception is "partially received"
+					// Check if there is no more reception validated.
+					$this->$origin->fetchObjectLinked();
+					$setStatut = 1;
+					if (!empty($this->$origin->linkedObjects['reception'])) {
+						foreach ($this->$origin->linkedObjects['reception'] as $rcption) {
+							if ($rcption->statut > 0) {
+								$setStatut = 0;
+								break;
+							}
+						}
+						//var_dump($this->$origin->receptions);exit;
+						if ($setStatut) {
+							$this->$origin->setStatut(3); // ordered
+						}
+					}
+				}
+			}
+		}
+
+		$this->statut = self::STATUS_DRAFT;
+		$this->status = self::STATUS_DRAFT;
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
