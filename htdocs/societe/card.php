@@ -1842,25 +1842,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Categories
 		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
-
-			// Customer
-			print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-			print "</td></tr>";
-
-			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			if ($object->client != 0) {
+				// Customer
+				print '<tr class="visibleifcustomer"><td class="toptd">' . $form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0) . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+				print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
-
-			// Supplier
-			if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-				print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			if ($object->client <= 0) {
+				// Supplier
+				if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+					print '<tr class="visibleifsupplier"><td class="toptd">' . $form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0) . '</td><td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+					print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print "</td></tr>";
+				}
+			}
+			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+				print '<tr class="individualline"><td class="toptd">' . $form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0) . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+				print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 		}
@@ -2584,31 +2585,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
-			$langs->load('categories');
-			if ($object->client != 0) {
-				// Customer
-				print '<tr class="visibleifcustomer"><td class="toptd">' . $form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0) . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-				print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
-			}
-			if ($object->client <= 0) {
-				// Supplier
-				if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-					print '<tr class="visibleifsupplier"><td class="toptd">' . $form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0) . '</td><td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-					print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+				$langs->load('categories');
+				if ($object->client != 0) {
+					// Customer
+					print '<tr class="visibleifcustomer"><td class="toptd">' . $form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0) . '</td><td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+					print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print "</td></tr>";
+				}
+				if ($object->client <= 0) {
+					// Supplier
+					if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+						print '<tr class="visibleifsupplier"><td class="toptd">' . $form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0) . '</td><td colspan="3">';
+						$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+						print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+						print "</td></tr>";
+					}
+				}
+				if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+					print '<tr class="individualline"><td class="toptd">' . $form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0) . '</td><td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+					print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
 				}
 			}
-			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				print '<tr class="individualline"><td class="toptd">' . $form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0) . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
-				print img_picto('', 'category', 'class="pictofixedwidth"') . $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
-			}
-		}
 
 			// Multicurrency
 			if (isModEnabled("multicurrency")) {
