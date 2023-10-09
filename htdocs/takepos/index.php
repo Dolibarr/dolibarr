@@ -85,7 +85,7 @@ if ($conf->browser->layout == 'phone') {
 	$maxcategbydefaultforthisdevice = 8;
 	$maxproductbydefaultforthisdevice = 16;
 	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
-	if ($_SESSION["takeposterminal"] != "" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1) {
+	if ($_SESSION["takeposterminal"] != "" && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
 		$_SESSION["basiclayout"] = 1;
 		header("Location: phone.php?mobilepage=invoice");
 		exit;

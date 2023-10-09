@@ -153,7 +153,8 @@ function getDolGlobalString($key, $default = '')
 }
 
 /**
- * Return dolibarr global constant int value
+ * Return a Dolibarr global constant int value.
+ * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
  * @param string 	$key 		key to return value, return 0 if not set
  * @param int 		$default 	value to return
@@ -2482,7 +2483,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '</div>';
 		}
 	}
-	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
+	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.((int) $object->id);

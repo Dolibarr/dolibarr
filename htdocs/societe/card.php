@@ -1613,7 +1613,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// State
 		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
 			} else {
 				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
@@ -2342,7 +2342,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// State
 			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+				if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 					print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				} else {
 					print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
@@ -2376,7 +2376,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (isModEnabled('mailing')) {
-				if ($conf->use_javascript_ajax && getGolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
+				if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 
 					print '
@@ -3386,7 +3386,7 @@ function GRVAT(a, u, p, myafm) {
 
 		if (obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser) {
 			var firmActUser = obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser;
-			
+
 		if (Array.isArray(firmActUser)) {
 			var primaryFirmAct = firmActUser.find(item => item.firmActKindDescr === "ΚΥΡΙΑ"); // Find primary client activity
 			if (primaryFirmAct) {
