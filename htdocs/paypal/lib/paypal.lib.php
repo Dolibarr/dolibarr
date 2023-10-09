@@ -89,17 +89,17 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 	$solutionType = 'Sole';
 	$landingPage = 'Billing';
 	// For payment with Paypal only
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
 		$solutionType = 'Mark';
 		$landingPage = 'Login';
 	}
 	// For payment with Credit card or Paypal
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
 	// For payment with Credit card
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'cconly') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}

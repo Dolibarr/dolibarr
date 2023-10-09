@@ -1777,7 +1777,7 @@ class Account extends CommonObject
 
 		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
-				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
+				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
 						'BankCode',
 						'DeskCode',

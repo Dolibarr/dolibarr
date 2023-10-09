@@ -8765,7 +8765,7 @@ abstract class CommonObject
 		} else {
 			// Get cost price for margin calculation
 			if (!empty($fk_product) && $fk_product > 0) {
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
+				if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);
@@ -8778,7 +8778,7 @@ abstract class CommonObject
 					} elseif ($product->pmp > 0) {
 						$buyPrice = $product->pmp;
 					}
-				} elseif (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp') {
+				} elseif (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);

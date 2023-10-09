@@ -109,9 +109,9 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  RemiseCheque	$object		Object we need next value for
+	 *  @return string      				Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -127,7 +127,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $object->date_bordereau);
+		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, empty($object) ? dol_now() : $object->date_bordereau);
 
 		return  $numFinal;
 	}

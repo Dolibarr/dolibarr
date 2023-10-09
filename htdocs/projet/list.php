@@ -394,7 +394,7 @@ $title = $langs->trans("LeadsOrProjects");
 if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	$title = $langs->trans("Projects");
 }
-if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
 	$title = $langs->trans("Leads");
 }
 $morejs = array();
@@ -1536,7 +1536,7 @@ while ($i < $imaxinloop) {
 		}
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200" title="'.dol_escape_htmltag($object->ref).'">';
+			print '<td class="nowraponall tdoverflowmax200">';
 			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int'))?'eventorganization':''));
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
