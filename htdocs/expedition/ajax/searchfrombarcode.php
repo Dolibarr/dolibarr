@@ -35,12 +35,9 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 require '../../main.inc.php';
-//require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
-//$warehouse = new Entrepot($db);
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
-//$product = GETPOST("product");
 $response = "";
 
 $fk_entrepot = GETPOST("fk_entrepot", "int");
@@ -54,6 +51,18 @@ $warehousefound = 0;
 $warehouseid = 0;
 $objectreturn = array();
 
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	if (!empty($object->socid) && $socid != $object->socid) {
+		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
+	}
+}
+
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea (module='.$object->module.' table_element='.$object->table_element.')');
+}
 
 /*
  * View
@@ -81,7 +90,6 @@ if ($action == "existbarcode" && !empty($barcode)) {
 		for ($i=0; $i < $nbline; $i++) {
 			$object = $db->fetch_object($result);
 			if (($mode == "barcode" && $barcode == $object->barcode) || ($mode == "lotserial" && $barcode == $object->batch)) {
-				//$warehouse->fetch(0, $product["Warehouse"]);
 				if (!empty($object->fk_entrepot) && $fk_entrepot == $object->fk_entrepot) {
 					$warehousefound++;
 					$warehouseid = $object->fk_entrepot;
@@ -104,31 +112,6 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	}
 } else {
 	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
-}
-
-if ($action == "addnewlineproduct") {
-	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
-	$inventoryline = new InventoryLine($db);
-	if (!empty($fk_inventory)) {
-		$inventoryline->fk_inventory = $fk_inventory;
-
-		$inventoryline->fk_warehouse = $fk_entrepot;
-		$inventoryline->fk_product = $fk_product;
-		$inventoryline->qty_stock = $reelqty;
-		if (!empty($batch)) {
-			$inventoryline->batch = $batch;
-		}
-		$inventoryline->datec = dol_now();
-
-		$result = $inventoryline->create($user);
-		if ($result > 0) {
-			$response = array('status'=>'success','message'=>'Success on creating line','id_line'=>$result);
-		} else {
-			$response = array('status'=>'error','errorcode'=>'ErrorCreation','message'=>"Error on line creation");
-		}
-	} else {
-		$response = array('status'=>'error','errorcode'=>'NoIdForInventory','message'=>"No id for inventory");
-	}
 }
 
 $response = json_encode($response);
