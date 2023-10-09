@@ -185,11 +185,11 @@ if (empty($reshook)) {
 		$error = 0;
 		$deleteChilds = GETPOST('deletechilds', 'boolean');
 
+		// Start the database transaction
+		$db->begin();
+
 		if ($deleteChilds === 'on') {
 			$TMoChildren = $object->getAllMoChilds();
-
-			// Supprimer les objets enfants en utilisant une transaction séparée
-			$db->begin();
 
 			foreach ($TMoChildren as $id => $childObject) {
 				if ($childObject->delete($user) == -1) {
@@ -200,11 +200,6 @@ if (empty($reshook)) {
 						setEventMessages($childObject->error, null, 'errors');
 					}
 				}
-			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
 			}
 		}
 
@@ -230,8 +225,13 @@ if (empty($reshook)) {
 					setEventMessages($object->error, null, 'errors');
 				}
 			}
+		}
 
-			$action = '';
+		// Commit or rollback the database transaction based on whether there was an error
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
 		}
 	}
 

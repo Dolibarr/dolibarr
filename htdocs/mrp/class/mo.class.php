@@ -1662,6 +1662,7 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return all child MOs recursively
 	 *
+	 * @param int $depth   Depth for recursing loop count
 	 * @return Mo[]|int[]  array of MOs if OK, -1 if KO
 	 */
 	public function getAllMoChilds($depth = 0)
