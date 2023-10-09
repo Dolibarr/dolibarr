@@ -137,14 +137,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseSpecificEditorName").'</td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.(isset($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME) ? $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME : "").'">';
+print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME').'">';
 print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseSpecificEditorURL").'</td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.(isset($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL) ? $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL : "").'">';
+print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL').'">';
 print '</td>';
 print '</tr>';
 
@@ -152,21 +152,21 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseSpecificFamily").'</td>';
 	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.(isset($conf->global->MODULEBUILDER_SPECIFIC_FAMILY) ? $conf->global->MODULEBUILDER_SPECIFIC_FAMILY : "").'">';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_FAMILY').'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseSpecificAuthor").'</td>';
 	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.(isset($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR) ? $conf->global->MODULEBUILDER_SPECIFIC_AUTHOR : "").'">';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR').'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseSpecificVersion").'</td>';
 	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.(isset($conf->global->MODULEBUILDER_SPECIFIC_VERSION) ? $conf->global->MODULEBUILDER_SPECIFIC_VERSION : "").'">';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.getDolGlobalString('MODULEBUILDER_SPECIFIC_VERSION').'">';
 	print '</td>';
 	print '</tr>';
 }
@@ -174,14 +174,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseSpecificReadme").'</td>';
 print '<td>';
-print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.(isset($conf->global->MODULEBUILDER_SPECIFIC_README) ? $conf->global->MODULEBUILDER_SPECIFIC_README : "").'</textarea>';
+print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.getDolGlobalString('MODULEBUILDER_SPECIFIC_README').'</textarea>';
 print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AsciiToHtmlConverter").'</td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.(isset($conf->global->MODULEBUILDER_ASCIIDOCTOR) ? $conf->global->MODULEBUILDER_ASCIIDOCTOR : "").'">';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR').'">';
 print ' '.$langs->trans("Example").': asciidoc, asciidoctor';
 print '</td>';
 print '</tr>';
@@ -189,7 +189,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AsciiToPdfConverter").'</td>';
 print '<td>';
-print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.(isset($conf->global->MODULEBUILDER_ASCIIDOCTORPDF) ? $conf->global->MODULEBUILDER_ASCIIDOCTORPDF : "").'">';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF').'">';
 print ' '.$langs->trans("Example").': asciidoctor-pdf';
 print '</td>';
 print '</tr>';
