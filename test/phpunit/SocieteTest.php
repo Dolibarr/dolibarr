@@ -500,4 +500,33 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 
 		return $localobjectadd->id;
 	}
+
+	public function testSocieteMerge()
+	{
+		global $conf,$user,$langs,$db;
+
+		$soc1 = new Societe($db);
+		$soc1->initAsSpecimen();
+		$soc1_id = $soc1->create($user);
+		$this->assertLessThanOrEqual($soc1_id, 0);
+
+		$soc2 = new Societe($db);
+		$soc2->entity = 1;
+		$soc2->name = "Copy of ".$soc1->name;
+		$soc2->code_client = 'CC-0002';
+		$soc2->code_fournisseur = 'SC-0002';
+		$soc2_id = $soc2->create($user);
+		$this->assertLessThanOrEqual($soc2_id, 0, implode('\n', $soc2->errors));
+
+		$result = $soc1->mergeCompany($user, $soc2_id);
+		$this->assertLessThanOrEqual($result, 0, implode('\n', $soc1->errors));
+
+		$result = $soc1->fetch($soc1_id);
+		$this->assertLessThanOrEqual($result, 0);
+
+		print __METHOD__." result=".$result."\n";
+
+		return $result;
+
+	}
 }
