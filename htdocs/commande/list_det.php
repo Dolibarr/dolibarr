@@ -449,8 +449,7 @@ if ($search_refProduct) {
 	$sql .= natural_search('pr.ref', $search_refProduct);
 }
 if ($search_descProduct) {
-	$sql .= natural_search('pr.label', $search_descProduct);
-	$sql .= natural_search('cdet.description', $search_descProduct);
+	$sql .= natural_search(array('pr.label','cdet.description'), $search_descProduct);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -461,6 +460,7 @@ if ($search_ref_customer) {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
+var_dump($fieldstosearchall);
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
 }
