@@ -35,6 +35,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 require '../../main.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
@@ -50,13 +51,13 @@ $mode = GETPOST("mode", "aZ");
 $warehousefound = 0;
 $warehouseid = 0;
 $objectreturn = array();
+$usesublevelpermission = '';
+
+$object= new Product($db);
 
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	if (!empty($object->socid) && $socid != $object->socid) {
-		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
-	}
 }
 
 $result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
@@ -88,13 +89,13 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	if ($result) {
 		$nbline = $db->num_rows($result);
 		for ($i=0; $i < $nbline; $i++) {
-			$object = $db->fetch_object($result);
-			if (($mode == "barcode" && $barcode == $object->barcode) || ($mode == "lotserial" && $barcode == $object->batch)) {
-				if (!empty($object->fk_entrepot) && $fk_entrepot == $object->fk_entrepot) {
+			$obj = $db->fetch_object($result);
+			if (($mode == "barcode" && $barcode == $obj->barcode) || ($mode == "lotserial" && $barcode == $obj->batch)) {
+				if (!empty($obj->fk_entrepot) && $fk_entrepot == $obj->fk_entrepot) {
 					$warehousefound++;
-					$warehouseid = $object->fk_entrepot;
-					$fk_product = $object->fk_product;
-					$reelqty = $object->reel;
+					$warehouseid = $obj->fk_entrepot;
+					$fk_product = $obj->fk_product;
+					$reelqty = $obj->reel;
 
 					$objectreturn = array('fk_warehouse'=>$warehouseid,'fk_product'=>$fk_product,'reelqty'=>$reelqty);
 				}
