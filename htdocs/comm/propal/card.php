@@ -726,7 +726,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
-					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
+					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1498,7 +1498,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOST('lineid', 'int')) {
 						$fournprice = $line->fk_fournprice;
@@ -2213,7 +2213,7 @@ if ($action == 'create') {
 			// It may also break step of creating an order when invoicing must be done from orders and not from proposal
 			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 				$object->fetchObjectLinked();
@@ -3078,7 +3078,7 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
 
 		$compatibleImportElementsList = false;
-		if ($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $object->statut == Propal::STATUS_DRAFT) {
 			$compatibleImportElementsList = array('commande', 'propal', 'facture'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);

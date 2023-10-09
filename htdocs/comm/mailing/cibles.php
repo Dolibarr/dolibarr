@@ -401,7 +401,7 @@ if ($object->fetch($id) >= 0) {
 	$allowaddtarget = ($object->statut == $object::STATUS_DRAFT);
 
 	// Show email selectors
-	if ($allowaddtarget && $user->rights->mailing->creer) {
+	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
 
 		print '<div class="div-table-responsive">';
@@ -776,7 +776,7 @@ if ($object->fetch($id) >= 0) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
-						if (!empty($user->rights->mailing->creer)) {
+						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}
 					}
@@ -853,7 +853,7 @@ if ($object->fetch($id) >= 0) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
-						if (!empty($user->rights->mailing->creer)) {
+						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}
 					}
