@@ -496,7 +496,7 @@ class FormOther
 		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
 		$sql_usr .= " FROM ".$this->db->prefix()."user as u";
 
-		if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 			if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 				$sql_usr .= " WHERE u.entity IS NOT NULL"; // Show all users
 			} else {
@@ -525,7 +525,7 @@ class FormOther
 			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".$this->db->prefix()."user as u2, ".$this->db->prefix()."societe_commerciaux as sc";
 
-			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql_usr .= " WHERE u2.entity IS NOT NULL"; // Show all users
 				} else {

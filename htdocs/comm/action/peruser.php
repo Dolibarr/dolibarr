@@ -902,7 +902,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		/* Use this list to have for all users */
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
-		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= " WHERE u.rowid IN (";
 			$sql .= " SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";

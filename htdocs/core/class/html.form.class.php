@@ -2009,7 +2009,7 @@ class Form
 	 * @return array|string                    HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = 0, $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2056,18 +2056,16 @@ class Form
 		$sql .= " FROM " . $this->db->prefix() . "user as u";
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid = u.entity";
-			if ($force_entity) {
+			if (!empty($force_entity)) {
 				$sql .= " WHERE u.entity IN (0, " . $this->db->sanitize($force_entity) . ")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
 		} else {
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " LEFT JOIN " . $this->db->prefix() . "usergroup_user as ug";
-				$sql .= " ON ug.fk_user = u.rowid";
-				$sql .= " WHERE ug.entity = " . (int) $conf->entity;
+			if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
+				$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 			} else {
-				$sql .= " WHERE u.entity IN (0, " . ((int) $conf->entity) . ")";
+				$sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
 			}
 		}
 		if (!empty($user->socid)) {
@@ -2173,8 +2171,8 @@ class Form
 							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . $langs->trans('Disabled');
 						}
 					}
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
-						if (!$obj->entity) {
+					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity)) {
+						if (empty($obj->entity)) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (') . $langs->trans("AllEntities");
 							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . $langs->trans("AllEntities");
 						} else {
@@ -2184,9 +2182,9 @@ class Form
 							}
 						}
 					}
-					$moreinfo .= ($moreinfo ? ')' : '');
-					$moreinfohtml .= ($moreinfohtml ? ')</span>' : '');
-					if ($disableline && $disableline != '1') {
+					$moreinfo .= (!empty($moreinfo) ? ')' : '');
+					$moreinfohtml .= (!empty($moreinfohtml) ? ')</span>' : '');
+					if (!empty($disableline) && $disableline != '1') {
 						// Add text from $enableonlytext parameter
 						$moreinfo .= ' - ' . $disableline;
 						$moreinfohtml .= ' - ' . $disableline;
@@ -2195,7 +2193,7 @@ class Form
 					$labeltoshowhtml .= $moreinfohtml;
 
 					$out .= '<option value="' . $obj->rowid . '"';
-					if ($disableline) {
+					if (!empty($disableline)) {
 						$out .= ' disabled';
 					}
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
@@ -9929,7 +9927,7 @@ class Form
 					$out .= '>';
 
 					$out .= $obj->name;
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 						$out .= " (" . $obj->label . ")";
 					}
 
