@@ -1021,9 +1021,7 @@ class Reception extends CommonObject
 		global $conf, $langs, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$error = 0;
 		$this->error = '';
-
 
 		$this->db->begin();
 
