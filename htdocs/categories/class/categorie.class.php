@@ -110,7 +110,7 @@ class Categorie extends CommonObject
 		11 => 'website_page',
 		12 => 'ticket',
 		13 => 'knowledgemanagement',
-		14 => 'task',
+		14 => 'task'
 	);
 
 	/**
