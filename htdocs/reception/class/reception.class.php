@@ -1809,8 +1809,6 @@ class Reception extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		$error = 0;
-
 		// Protection
 		if ($this->statut <= self::STATUS_DRAFT) {
 			return 0;
@@ -1831,7 +1829,7 @@ class Reception extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
+			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -1897,7 +1895,7 @@ class Reception extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			{
 				// Call trigger
 				$result = $this->call_trigger('RECEPTION_UNVALIDATE', $user);
 				if ($result < 0) {
@@ -1929,14 +1927,11 @@ class Reception extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			{
 				$this->statut = self::STATUS_DRAFT;
 				$this->status = self::STATUS_DRAFT;
 				$this->db->commit();
 				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
 			}
 		} else {
 			$this->error = $this->db->error();
