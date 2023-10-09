@@ -125,10 +125,10 @@ $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) {
+	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -137,7 +137,7 @@ if ($object->id > 0) {
 }
 
 $candelete = 0;
-if (!empty($user->rights->expensereport->supprimer)) {
+if ($user->hasRight('expensereport', 'supprimer')) {
 	$candelete = 1;
 }
 if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->expensereport->creer) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('expensereport', 'creer')) {
 		if (1 == 0 && !GETPOST('clone_content', 'alpha') && !GETPOST('clone_receivers', 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'add' && $user->rights->expensereport->creer) {
+	if ($action == 'add' && $user->hasRight('expensereport', 'creer')) {
 		$error = 0;
 
 		$object = new ExpenseReport($db);
@@ -265,13 +265,13 @@ if (empty($reshook)) {
 		}
 
 		// Check that expense report is for a user inside the hierarchy, or that advanced permission for all is set
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('expensereport', 'creer'))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('expensereport', 'creer') && !$user->hasRight('expensereport', 'writeall_advance'))) {
 			$error++;
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 		}
 		if (!$error) {
-			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || !$user->hasRight('expensereport', 'writeall_advance')) {
 				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
@@ -325,7 +325,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $user->rights->expensereport->creer) {
+	if ($action == 'update' && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -373,7 +373,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$error = 0;
 
 		$db->begin();
@@ -488,7 +488,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_save_from_refuse" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_save_from_refuse" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		$result = $object->set_save_from_refuse($user);
@@ -597,7 +597,7 @@ if (empty($reshook)) {
 	}
 
 	// Approve
-	if ($action == "confirm_approve" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->approve) {
+	if ($action == "confirm_approve" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'approve')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -710,7 +710,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->approve) {
+	if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'approve')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -820,7 +820,7 @@ if (empty($reshook)) {
 	}
 
 	//var_dump($user->id == $object->fk_user_validator);exit;
-	if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		if (!GETPOST('detail_cancel', 'alpha')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 		} else {
@@ -937,7 +937,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
@@ -976,7 +976,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_unpaid' && $id > 0 && $user->rights->expensereport->to_paid) {
+	if ($action == 'set_unpaid' && $id > 0 && $user->hasRight('expensereport', 'to_paid')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1005,7 +1005,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid) {
+	if ($action == 'set_paid' && $id > 0 && $user->hasRight('expensereport', 'to_paid')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1102,7 +1102,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "addline" && $user->rights->expensereport->creer) {
+	if ($action == "addline" && $user->hasRight('expensereport', 'creer')) {
 		$error = 0;
 
 		// First save uploaded file
@@ -1226,7 +1226,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
+	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1266,7 +1266,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "updateline" && $user->rights->expensereport->creer) {
+	if ($action == "updateline" && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1440,7 +1440,7 @@ if ($action == 'create') {
 		$defaultselectuser = GETPOST('fk_user_author', 'int');
 	}
 	$include_users = 'hierarchyme';
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expensereport->writeall_advance)) {
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expensereport', 'writeall_advance')) {
 		$include_users = array();
 	}
 	$s = $form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users, '', '0,'.$conf->entity);
@@ -1525,8 +1525,8 @@ if ($action == 'create') {
 
 	if ($result > 0) {
 		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
-			if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-				&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+			if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+				&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || !$user->hasRight('expensereport', 'writeall_advance'))) {
 					print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
 
 					print '<div class="tabBar">';
@@ -1649,7 +1649,7 @@ if ($action == 'create') {
 			if ($action == 'clone') {
 				// Create an array for form
 				$criteriaforfilter = 'hierarchyme';
-				if (!empty($user->rights->expensereport->readall)) {
+				if ($user->hasRight('expensereport', 'readall')) {
 					$criteriaforfilter = '';
 				}
 				$formquestion = array(
@@ -2068,7 +2068,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Ajout des boutons de modification/suppression
-				if (($object->status < 2 || $object->status == 99) && $user->rights->expensereport->creer) {
+				if (($object->status < 2 || $object->status == 99) && $user->hasRight('expensereport', 'creer')) {
 					print '<td class="right"></td>';
 				}
 				print '</tr>';
@@ -2230,7 +2230,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
-						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
+						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->hasRight('expensereport', 'creer')) {
 							print '<td class="nowrap right linecolaction">';
 
 							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
@@ -2392,7 +2392,7 @@ if ($action == 'create') {
 			}
 
 			 // Add a new line
-			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer) {
+			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->hasRight('expensereport', 'creer')) {
 				$colspan = 12;
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
@@ -2698,8 +2698,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	*	ET fk_user_author == user courant
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
-	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_DRAFT) {
-		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance)) {
+	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || $user->hasRight('expensereport', 'writeall_advance')) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
@@ -2715,7 +2715,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	 *	ET fk_user_author == user courant
 	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	 */
-	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_REFUSED) {
+	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
@@ -2727,7 +2727,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'to_paid') && $object->status == ExpenseReport::STATUS_APPROVED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// setdraft
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
@@ -2746,7 +2746,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	if ($user->rights->expensereport->approve && $object->status == ExpenseReport::STATUS_VALIDATED) {
+	if ($user->hasRight('expensereport', 'approve') && $object->status == ExpenseReport::STATUS_VALIDATED) {
 		//if($object->fk_user_validator==$user->id)
 		//{
 			// Validate
@@ -2765,12 +2765,12 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	// If status is Approved
 	// ---------------------
 
-	if ($user->rights->expensereport->approve && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'approve') && $object->status == ExpenseReport::STATUS_APPROVED) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 	}
 
 	// If bank module is used
-	if ($user->rights->expensereport->to_paid && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'to_paid') && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Pay
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
@@ -2780,36 +2780,36 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if (($user->hasRight('expensereport', 'to_paid') || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
 		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 	}
 
-	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'creer') && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Cancel
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
 
 	// TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
-	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->status == ExpenseReport::STATUS_CLOSED) {
+	if (($user->hasRight('expensereport', 'approve') || $user->hasRight('expensereport', 'to_paid')) && $object->status == ExpenseReport::STATUS_CLOSED) {
 		// Cancel
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->paid && $object->status == ExpenseReport::STATUS_CLOSED) {
+	if ($user->hasRight('expensereport', 'to_paid') && $object->paid && $object->status == ExpenseReport::STATUS_CLOSED) {
 		// Set unpaid
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=set_unpaid&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ClassifyUnPaid').'</a></div>';
 	}
 
 	// Clone
-	if ($user->rights->expensereport->creer) {
+	if ($user->hasRight('expensereport', 'creer')) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
-	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'creer') && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
 		// Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	} elseif ($candelete && $object->status != ExpenseReport::STATUS_CLOSED) {
@@ -2837,7 +2837,7 @@ if ($action != 'presend') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 
-	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit') {
+	if ($user->hasRight('expensereport', 'creer') && $action != 'create' && $action != 'edit') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

@@ -1252,7 +1252,7 @@ class User extends CommonObject
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
 							}
-							if (!empty($subperms)) {
+						if (!empty($subperms)) {
 								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 									$this->rights->$module->$perms = new stdClass();
 								}
@@ -3004,7 +3004,7 @@ class User extends CommonObject
 		$linkend = '</a>';
 
 		//Check user's rights to see an other user
-		if ((!$user->rights->user->user->lire && $this->id != $user->id)) {
+		if ((!$user->hasRight('user', 'user', 'lire') && $this->id != $user->id)) {
 			$option = 'nolink';
 		}
 

@@ -303,7 +303,7 @@ $coldisplay++;
 	}
 
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
+		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++;
 			?>
 		<td class="margininfos right">
@@ -316,7 +316,7 @@ $coldisplay++;
 		</td>
 		<?php }
 
-		if ($user->rights->margins->creer) {
+		if ($user->hasRight('margins', 'creer')) {
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
@@ -404,7 +404,7 @@ $coldisplay++;
 <script>
 
 <?php
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {

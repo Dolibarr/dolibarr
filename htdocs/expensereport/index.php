@@ -88,8 +88,8 @@ $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km"
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensereport_det as de, ".MAIN_DB_PREFIX."c_type_fees as tf";
 $sql .= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
@@ -198,8 +198,8 @@ $sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_cre
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";

@@ -8058,7 +8058,7 @@ table.jPicker {
 	}
 }
 
- 
+
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {

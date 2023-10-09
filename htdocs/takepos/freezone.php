@@ -54,7 +54,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place 
 $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'aZ09');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 

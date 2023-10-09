@@ -504,27 +504,27 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif (($feature == 'societe' && (!empty($feature2) && in_array('contact', $feature2))) || $feature == 'contact') {
-			if (empty($user->rights->societe->contact->lire)) {
+			if (!$user->hasRight('societe', 'contact', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'produit|service') {
-			if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+			if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'prelevement') {
-			if (empty($user->rights->prelevement->bons->lire)) {
+			if (!$user->hasRight('prelevement', 'bons', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'cheque') {
-			if (empty($user->rights->banque->cheque)) {
+			if (!$user->hasRight('banque', 'cheque')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (empty($user->rights->projet->lire) && empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'lire') && !$user->hasRight('projet', 'all', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -534,12 +534,12 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_supplier') {
-			if (empty($user->rights->fournisseur->facture->lire)) {
+			if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_sc') {
-			if (empty($user->rights->tax->charges->lire)) {
+			if (!$user->hasRight('tax', 'charges', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -554,9 +554,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$tmpreadok = 1;
 					continue;
 				}
-				if (!empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) {
+				if (!empty($subfeature) && !$user->hasRight($feature, $subfeature, 'lire') && !$user->hasRight($feature, $subfeature, 'read')) {
 					$tmpreadok = 0;
-				} elseif (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) {
+				} elseif (empty($subfeature) && !$user->hasRight($feature, 'lire') && !$user->hasRight($feature, 'read')) {
 					$tmpreadok = 0;
 				} else {
 					$tmpreadok = 1;
@@ -568,9 +568,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level (module->read)
-			if (empty($user->rights->$feature->lire)
-				&& empty($user->rights->$feature->read)
-				&& empty($user->rights->$feature->run)) {
+			if (!$user->hasRight($feature, 'lire')
+				&& !$user->hasRight($feature, 'read')
+				&& !$user->hasRight($feature, 'run')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -600,22 +600,22 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
 		foreach ($featuresarray as $feature) {
 			if ($feature == 'contact') {
-				if (empty($user->rights->societe->contact->creer)) {
+				if (!$user->hasRight('societe', 'contact', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'produit|service') {
-				if (empty($user->rights->produit->creer) && empty($user->rights->service->creer)) {
+				if (!$user->hasRight('produit', 'creer') && !$user->hasRight('service', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'prelevement') {
-				if (!$user->rights->prelevement->bons->creer) {
+				if (!$user->hasRight('prelevement', 'bons', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (empty($user->rights->fournisseur->commande->creer) || empty($user->rights->supplier_order->creer)) {
+				if (!$user->hasRight('fournisseur', 'commande', 'creer') || !$user->hasRight('supplier_order', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -625,17 +625,17 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$nbko++;
 				}
 			} elseif ($feature == 'cheque') {
-				if (empty($user->rights->banque->cheque)) {
+				if (!$user->hasRight('banque', 'cheque')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'import') {
-				if (empty($user->rights->import->run)) {
+				if (!$user->hasRight('import', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'ecm') {
-				if (!$user->rights->ecm->upload) {
+				if (!$user->hasRight('ecm', 'upload')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -656,9 +656,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 						continue; // User can edit another user's password
 					}
 
-					if (empty($user->rights->$feature->$subfeature->creer)
-					&& empty($user->rights->$feature->$subfeature->write)
-					&& empty($user->rights->$feature->$subfeature->create)) {
+					if (!$user->hasRight($feature, $subfeature, 'creer')
+					&& !$user->hasRight($feature, $subfeature, 'write')
+					&& !$user->hasRight($feature, $subfeature, 'create')) {
 						$createok = 0;
 						$nbko++;
 					} else {
@@ -669,9 +669,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif (!empty($feature)) {												// This is for permissions on 1 levels (module->write)
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
-				if (empty($user->rights->$feature->creer)
-				&& empty($user->rights->$feature->write)
-				&& empty($user->rights->$feature->create)) {
+				if (!$user->hasRight($feature, 'creer')
+				&& !$user->hasRight($feature, 'write')
+				&& !$user->hasRight($feature, 'create')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -716,13 +716,13 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete') {
 		foreach ($featuresarray as $feature) {
 			if ($feature == 'bookmark') {
-				if (!$user->rights->bookmark->supprimer) {
-					if ($user->id != $object->fk_user || empty($user->rights->bookmark->creer)) {
+				if (!$user->hasRight('bookmark', 'supprimer')) {
+					if ($user->id != $object->fk_user || !$user->hasRight('bookmark', 'creer')) {
 						$deleteok = 0;
 					}
 				}
 			} elseif ($feature == 'contact') {
-				if (!$user->rights->societe->contact->supprimer) {
+				if (!$user->hasRight('societe', 'contact', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'produit|service') {
@@ -730,19 +730,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (!$user->rights->fournisseur->commande->supprimer) {
+				if (!$user->hasRight('fournisseur', 'commande', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_supplier') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
-				if (!$user->rights->fournisseur->facture->creer) {
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment') {
-				if (!$user->rights->facture->paiement) {
+				if (!$user->hasRight('facture', 'paiement')) {
 						$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_sc') {
-				if (!$user->rights->tax->charges->creer) {
+				if (!$user->hasRight('tax', 'charges', 'creer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
@@ -750,36 +750,36 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'cheque') {
-				if (empty($user->rights->banque->cheque)) {
+				if (!$user->hasRight('banque', 'cheque')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'ecm') {
-				if (!$user->rights->ecm->upload) {
+				if (!$user->hasRight('ecm', 'upload')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'ftp') {
-				if (!$user->rights->ftp->write) {
+				if (!$user->hasRight('ftp', 'write')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+				if (!$user->hasRight('salaries', 'delete')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'adherent') {
-				if (empty($user->rights->adherent->supprimer)) {
+				if (!$user->hasRight('adherent', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'paymentbybanktransfer') {
-				if (empty($user->rights->paymentbybanktransfer->create)) {	// There is no delete permission
+				if (!$user->hasRight('paymentbybanktransfer', 'create')) {	// There is no delete permission
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'prelevement') {
-				if (empty($user->rights->prelevement->bons->creer)) {		// There is no delete permission
+				if (!$user->hasRight('prelevement', 'bons', 'creer')) {		// There is no delete permission
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
 				foreach ($feature2 as $subfeature) {
-					if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) {
+					if (!$user->hasRight($feature, $subfeature, 'supprimer') && !$user->hasRight($feature, $subfeature, 'delete')) {
 						$deleteok = 0;
 					} else {
 						$deleteok = 1;
@@ -788,9 +788,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif (!empty($feature)) {							// This is used for permissions on 1 level
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
-				if (empty($user->rights->$feature->supprimer)
-					&& empty($user->rights->$feature->delete)
-					&& empty($user->rights->$feature->run)) {
+				if (!$user->hasRight($feature, 'supprimer')
+					&& !$user->hasRight($feature, 'delete')
+					&& !$user->hasRight($feature, 'run')) {
 					$deleteok = 0;
 				}
 			}
@@ -957,7 +957,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -983,7 +983,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1002,7 +1002,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject) && $objectid > 0) {
-			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -1022,7 +1022,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask) && $objectid > 0) {
-			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;
@@ -1056,7 +1056,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
+			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
@@ -1090,7 +1090,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {
 			// Also check owner or attendee for users without allactions->read
-			if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
+			if ($objectid > 0 && !$user->hasRight('agenda', 'allactions', 'read')) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$action = new ActionComm($db);
 				$action->fetch($objectid);
@@ -1113,7 +1113,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
-				if (!$user->rights->expensereport->readall) {
+				if (!$user->hasRight('expensereport', 'readall')) {
 					if (!in_array($useridtocheck, $childids)) {
 						return false;
 					}

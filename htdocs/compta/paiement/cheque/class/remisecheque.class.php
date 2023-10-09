@@ -819,7 +819,7 @@ class RemiseCheque extends CommonObject
 	public function set_date($user, $date)
 	{
 		// phpcs:enable
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -849,7 +849,7 @@ class RemiseCheque extends CommonObject
 	public function set_number($user, $ref)
 	{
 		// phpcs:enable
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET ref = '".$this->db->escape($ref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);

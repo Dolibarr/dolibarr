@@ -619,15 +619,15 @@ class UserGroup extends CommonObject
 							$this->rights->$module = new stdClass();
 						}
 						if ($subperms) {
-							if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+							if (!isset($this->hasRight($module, $perms)) || !is_object($this->hasRight($module, $perms))) {
 								$this->rights->$module->$perms = new stdClass();
 							}
-							if (empty($this->rights->$module->$perms->$subperms)) {
+							if (!$this->hasRight($module, $perms, $subperms)) {
 								$this->nb_rights++;
 							}
 							$this->rights->$module->$perms->$subperms = 1;
 						} else {
-							if (empty($this->rights->$module->$perms)) {
+							if (!$this->hasRight($module, $perms)) {
 								$this->nb_rights++;
 							}
 							$this->rights->$module->$perms = 1;

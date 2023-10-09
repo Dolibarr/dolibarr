@@ -116,7 +116,7 @@ if ($nolinesbefore) {
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			?>
 			<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
-			<?php
+<?php
 		}
 		?>
 		<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
@@ -144,7 +144,7 @@ if ($nolinesbefore) {
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				$colspan++;
 			} else {
 				print '<td class="margininfos linecolmargin1 right">';
@@ -449,7 +449,7 @@ if ($nolinesbefore) {
 		print '<td></td>';
 	}
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
+		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++;
 			?>
 			<td class="nobottom margininfos linecolmargin right">
@@ -563,7 +563,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 
 
 print "<script>\n";
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
@@ -792,13 +792,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 									?>
 									console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
 									new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
-									<?php
+<?php
 								} elseif ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code != $object->thirdparty->state_code) {
 									// We are in India and states differs, we revert the vat code "CS-x" into "I-x"
 									?>
 									console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
 									new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
-									<?php
+<?php
 								}
 								?>
 								if (new_default_vat_code != default_vat_code && jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val()) {
@@ -857,7 +857,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			<?php
 		}
 
-		if (!empty($usemargins) && $user->rights->margins->creer) {
+		if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			$langs->load('stocks');
 			?>
 

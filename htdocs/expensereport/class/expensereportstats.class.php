@@ -75,7 +75,7 @@ class ExpenseReportStats extends Stats
 		}
 
 		// Only me and subordinates
-		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
+		if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
 			$this->where .= " AND e.fk_user_author IN (".$this->db->sanitize(join(',', $childids)).")";

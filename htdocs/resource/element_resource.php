@@ -80,7 +80,7 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -193,7 +193,7 @@ if (empty($reshook)) {
 	}
 
 	// Update ressource
-	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
 		$res = $object->fetch_element_resource($lineid);
 		if ($res) {
 			$object->busy = $busy;
@@ -272,7 +272,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0) {

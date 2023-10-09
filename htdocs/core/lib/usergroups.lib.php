@@ -141,10 +141,10 @@ function user_prepare_head(User $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user');
 
-	if ((isModEnabled('salaries') && !empty($user->rights->salaries->read))
-		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))
-		|| (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
-		|| (isModEnabled('holiday') && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
+	if ((isModEnabled('salaries') && $user->hasRight('salaries', 'read'))
+		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))
+		|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall')))
+		|| (isModEnabled('holiday') && $user->hasRight('holiday', 'read') && ($user->id == $object->id || $user->hasRight('holiday', 'readall')))
 		) {
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;

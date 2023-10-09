@@ -91,7 +91,7 @@ if ($cancel) {
 }
 
 // Action mise a jour d'une categorie
-if ($action == 'update' && $user->rights->categorie->creer) {
+if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
 	$object->oldcopy = dol_clone($object);
 	$object->label = $label;
 	$object->description    = dol_htmlcleanlastbr($description);

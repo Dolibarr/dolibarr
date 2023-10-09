@@ -47,7 +47,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 $action = GETPOST('action', 'aZ09');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0);
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 

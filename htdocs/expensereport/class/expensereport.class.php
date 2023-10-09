@@ -955,7 +955,7 @@ class ExpenseReport extends CommonObject
 
 		$langs->load('trips');
 
-		if ($user->rights->expensereport->lire) {
+		if ($user->hasRight('expensereport', 'lire')) {
 			$sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
 			$sql .= " WHERE de.fk_projet = ".((int) $projectid);
@@ -2491,7 +2491,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
 		$sql .= " WHERE ex.fk_statut > 0";
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2538,7 +2538,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " WHERE ex.fk_statut = ".self::STATUS_APPROVED;
 		}
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
