@@ -901,10 +901,10 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	} else {
 		/* Use this list to have for all users */
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " FROM ".$this->db->prefix()."user as u";
 		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= " WHERE u.rowid IN (";
-			$sql .= " SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= " SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			if ($usergroup > 0)	{
 				$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
@@ -912,7 +912,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			$sql .= ")";
 		} else {
 			if ($usergroup > 0)	{
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."usergroup_user as ug ON u.rowid = ug.fk_user";
 			}
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			if ($usergroup > 0)	{
