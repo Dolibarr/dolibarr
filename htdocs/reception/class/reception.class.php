@@ -1520,8 +1520,6 @@ class Reception extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		$error = 0;
-
 		// Protection. This avoid to move stock later when we should not
 		if ($this->statut == Reception::STATUS_CLOSED) {
 			dol_syslog(get_class($this)."::setClosed already in closed status", LOG_WARNING);
@@ -1569,7 +1567,7 @@ class Reception extends CommonObject
 			$this->status = self::STATUS_CLOSED;
 
 			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -1637,21 +1635,17 @@ class Reception extends CommonObject
 			}
 
 			// Call trigger
-			if (!$error) {
-				$result = $this->call_trigger('RECEPTION_CLOSED', $user);
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->call_trigger('RECEPTION_CLOSED', $user);
+			if ($result < 0) {
+				$this->error = $mouvS->error;
+				$this->errors = $mouvS->errors;
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->db->rollback();
-			return -1;
-		}
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
