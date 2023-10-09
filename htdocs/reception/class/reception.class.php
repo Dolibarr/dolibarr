@@ -1849,7 +1849,13 @@ class Reception extends CommonObject
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
-				if ($resql) {
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+
+				{
 					$cpt = $this->db->num_rows($resql);
 					for ($i = 0; $i < $cpt; $i++) {
 						$obj = $this->db->fetch_object($resql);
@@ -1892,9 +1898,6 @@ class Reception extends CommonObject
 							}
 						}
 					}
-				} else {
-					$this->error = $this->db->lasterror();
-					$error++;
 				}
 			}
 
