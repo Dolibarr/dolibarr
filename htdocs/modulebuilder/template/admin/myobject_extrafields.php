@@ -43,7 +43,7 @@ if (!$res) {
 			break;
 		}
 	}
-	$res = @include($dolipath."/main.inc.php");
+	$res = @include $dolipath."/main.inc.php";
 }
 if (!$res) {
 	die("Include of main fails");
