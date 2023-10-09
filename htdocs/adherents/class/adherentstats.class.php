@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2023      Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +56,6 @@ class AdherentStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
-		global $user, $conf;
-
 		$this->db = $db;
 		$this->socid = $socid;
 		$this->userid = $userid;
@@ -87,8 +86,6 @@ class AdherentStats extends Stats
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -107,8 +104,6 @@ class AdherentStats extends Stats
 	 */
 	public function getNbByYear()
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -128,8 +123,6 @@ class AdherentStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -149,8 +142,6 @@ class AdherentStats extends Stats
 	 */
 	public function getAverageByMonth($year)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -170,8 +161,6 @@ class AdherentStats extends Stats
 	 */
 	public function getAllByYear()
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -180,5 +169,160 @@ class AdherentStats extends Stats
 		$sql .= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
+	}
+
+	/**
+	 *	Return count of member by status group by adh type, total and average
+	 *
+	 *  @param		int		$numberYears    Number of years to scan (0 = all)
+	 * 	@return		array 					Array with total of draft, pending, uptodate, expired, resiliated for each member type
+	 */
+	public function countMembersByTypeAndStatus($numberYears = 0)
+	{
+		global $user;
+
+		$now = dol_now();
+		$endYear = date('Y');
+		$startYear = $endYear - $numberYears;
+
+		$sql = "SELECT t.rowid as fk_adherent_type, t.libelle as label";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT, "'members_draft'", 'NULL').") as members_draft";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1')", "'members_pending'", 'NULL').") as members_pending";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0)", "'members_uptodate'", 'NULL').") as members_uptodate";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin < '".$this->db->idate($now)."' AND t.subscription = 1)", "'members_expired'", 'NULL').") as members_expired";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_EXCLUDED, "'members_excluded'", 'NULL').") as members_excluded";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_RESILIATED, "'members_resiliated'", 'NULL').") as members_resiliated";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type AND d.entity IN (" . getEntity('adherent') . ")";
+		if ($numberYears) {
+			$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
+		}
+		$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
+		$sql .= " AND t.statut = 1";
+		$sql .= " GROUP BY t.rowid, t.libelle";
+
+		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		$MembersCountArray = array();
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			$totalstatus = array(
+				'label' => 'Total',
+				'members_draft' => 0,
+				'members_pending' => 0,
+				'members_uptodate' => 0,
+				'members_expired' => 0,
+				'members_excluded' => 0,
+				'members_resiliated' => 0
+			);
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($result);
+				$MembersCountArray[$objp->fk_adherent_type] = array(
+					'label' => $objp->label,
+					'members_draft' => (int) $objp->members_draft,
+					'members_pending' => (int) $objp->members_pending,
+					'members_uptodate' => (int) $objp->members_uptodate,
+					'members_expired' => (int) $objp->members_expired,
+					'members_excluded' => (int) $objp->members_excluded,
+					'members_resiliated' => (int) $objp->members_resiliated
+				);
+				$totalrow = 0;
+				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key=>$nb) {
+					if ($key!='label') {
+						$totalrow += $nb;
+						$totalstatus[$key] += $nb;
+					}
+				}
+				$MembersCountArray[$objp->fk_adherent_type]['total_adhtype'] = $totalrow;
+				$i++;
+			}
+			$this->db->free($result);
+			$MembersCountArray['total'] = $totalstatus;
+			$MembersCountArray['total']['all'] = array_sum($totalstatus);
+		}
+
+		return $MembersCountArray;
+	}
+
+	/**
+	 *	Return count of member by status group by adh type, total and average
+	 *
+	 * @param		int		$numberYears    Number of years to scan (0 = all)
+	 * @return		array 					Array with total of draft, pending, uptodate, expired, resiliated for each member tag
+	 */
+	public function countMembersByTagAndStatus($numberYears = 0)
+	{
+		global $user;
+
+		$now = dol_now();
+		$endYear = date('Y');
+		$startYear = $endYear - $numberYears;
+
+		$sql = "SELECT c.rowid as fk_categorie, c.label as label";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT, "'members_draft'", 'NULL').") as members_draft";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1')", "'members_pending'", 'NULL').") as members_pending";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0)", "'members_uptodate'", 'NULL').") as members_uptodate";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin < '".$this->db->idate($now)."' AND t.subscription = 1)", "'members_expired'", 'NULL').") as members_expired";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_EXCLUDED, "'members_excluded'", 'NULL').") as members_excluded";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_RESILIATED, "'members_resiliated'", 'NULL').") as members_resiliated";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as ct ON c.rowid = ct.fk_categorie";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = ct.fk_member";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as t ON t.rowid = d.fk_adherent_type";
+		$sql .= " WHERE c.entity IN (".getEntity('member_type').")";
+		$sql .= " AND d.entity IN (" . getEntity('adherent') . ")";
+		$sql .= " AND t.entity IN (" . getEntity('adherent') . ")";
+		if ($numberYears) {
+			$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
+		}
+		$sql .= " AND c.fk_parent = 0";
+		$sql .= " GROUP BY c.rowid, c.label";
+		$sql .= " ORDER BY label ASC";
+
+		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			$MembersCountArray = [];
+			$totalstatus = array(
+				'label' => 'Total',
+				'members_draft' => 0,
+				'members_pending' => 0,
+				'members_uptodate' => 0,
+				'members_expired' => 0,
+				'members_excluded' => 0,
+				'members_resiliated' => 0
+			);
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($result);
+				$MembersCountArray[$objp->fk_categorie] = array(
+					'label' => $objp->label,
+					'members_draft' => (int) $objp->members_draft,
+					'members_pending' => (int) $objp->members_pending,
+					'members_uptodate' => (int) $objp->members_uptodate,
+					'members_expired' => (int) $objp->members_expired,
+					'members_excluded' => (int) $objp->members_excluded,
+					'members_resiliated' => (int) $objp->members_resiliated
+				);
+				$totalrow = 0;
+				foreach ($MembersCountArray[$objp->fk_categorie] as $key=>$nb) {
+					if ($key!='label') {
+						$totalrow += $nb;
+						$totalstatus[$key] += $nb;
+					}
+				}
+				$MembersCountArray[$objp->fk_categorie]['total_adhtag'] = $totalrow;
+				$i++;
+			}
+			$this->db->free($result);
+			$MembersCountArray['total'] = $totalstatus;
+			$MembersCountArray['total']['all'] = array_sum($totalstatus);
+		}
+		return $MembersCountArray;
 	}
 }

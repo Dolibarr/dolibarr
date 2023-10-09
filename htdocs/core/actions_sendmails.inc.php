@@ -190,7 +190,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 		}
 
-		if (trim($_POST['tomail'])) {
+		if (isset($_POST['tomail']) && trim($_POST['tomail'])) {
 			// Recipients are provided into free hidden text field
 			$tmparray[] = trim(GETPOST('tomail', 'alphawithlgt'));
 		}
@@ -296,6 +296,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
+			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+				$sql = 'SELECT rowid, email_from FROM '.MAIN_DB_PREFIX.'c_email_templates';
+				$sql .= ' WHERE rowid = '.(int) $reg[1];
+				$resql = $db->query($sql);
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$from = $obj->email_from;
+				}
 			} else {
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
@@ -346,7 +354,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 			$substitutionarray['__EMAIL__'] = $sendto;
-			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 
 			$parameters = array('mode'=>'formemail');
 			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
@@ -382,6 +390,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $message; // Long text
 						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
+						if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+							$object->actionmsg2		= $subject; // Short text
+						}
 
 						$object->trackid = $trackid;
 						$object->fk_element = $object->id;

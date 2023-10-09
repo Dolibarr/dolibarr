@@ -274,24 +274,27 @@ function getDefaultDatesForTransfer()
 {
 	global $db, $conf;
 
+	$date_start = '';
+	$date_end = '';
 	$pastmonth = 0;
 	$pastmonthyear = 0;
 
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
 	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
-	if ($periodbydefaultontransfer == 2) {
-		$sql = "SELECT date_start, date_end FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	if ($periodbydefaultontransfer == 2) {	// fiscal year
+		$sql = "SELECT date_start, date_end FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
 		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
 		if ($res->num_rows > 0) {
-			$fiscalYear = $db->fetch_object($res);
-			$date_start = strtotime($fiscalYear->date_start);
-			$date_end = strtotime($fiscalYear->date_end);
+			$obj = $db->fetch_object($res);
+
+			$date_start = $db->jdate($obj->date_start);
+			$date_end = $db->jdate($obj->date_end);
 		} else {
-			$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
-			if ($conf->global->SOCIETE_FISCAL_MONTH_START > dol_print_date(dol_now(), '%m')) {
+			if ($month_start > dol_print_date(dol_now(), '%m')) {
 				$year_start = $year_start - 1;
 			}
 			$year_end = $year_start + 1;
@@ -303,17 +306,17 @@ function getDefaultDatesForTransfer()
 			$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
 			$date_end = dol_get_last_day($year_end, $month_end);
 		}
-	} elseif ($periodbydefaultontransfer == 1) {
-		$year_current = strftime("%Y", dol_now());
-		$pastmonth = strftime("%m", dol_now());
+	} elseif ($periodbydefaultontransfer == 1) {	// current month
+		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+		$pastmonth = (int) dol_print_date(dol_now('gmt'), '%m', 'gmt');
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
 			$pastmonthyear--;
 		}
-	} else {
-		$year_current = strftime("%Y", dol_now());
-		$pastmonth = strftime("%m", dol_now()) - 1;
+	} else {	// previous month
+		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+		$pastmonth = (int) dol_print_date(dol_now('gmt'), '%m', 'gmt') - 1;
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
@@ -326,5 +329,58 @@ function getDefaultDatesForTransfer()
 		'date_end' => $date_end,
 		'pastmonthyear' => $pastmonthyear,
 		'pastmonth' => $pastmonth
+	);
+}
+
+/**
+ * Get current period of fiscal year
+ *
+ * @param 	DoliDB		$db				Database handler
+ * @param 	stdClass	$conf			Config
+ * @param 	int 		$from_time		[=null] Get current time or set time to find fiscal period
+ * @return 	array		Period of fiscal year : [date_start, date_end]
+ */
+function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
+{
+	$now = dol_now();
+	$now_arr = dol_getdate($now);
+	if ($from_time === null) {
+		$from_time = $now;
+	}
+	$from_db_time = $db->idate($from_time);
+
+	$sql  = "SELECT date_start, date_end FROM ".$db->prefix()."accounting_fiscalyear";
+	$sql .= " WHERE date_start <= '".$db->escape($from_db_time)."' AND date_end >= '".$db->escape($from_db_time)."'";
+	$sql .= $db->order('date_start', 'DESC');
+	$sql .= $db->plimit(1);
+	$res = $db->query($sql);
+	if ($db->num_rows($res) > 0) {
+		$obj = $db->fetch_object($res);
+
+		$date_start = $db->jdate($obj->date_start);
+		$date_end = $db->jdate($obj->date_end);
+	} else {
+		$month_start = 1;
+		$conf_fiscal_month_start = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
+		if ($conf_fiscal_month_start >= 1 && $conf_fiscal_month_start <= 12) {
+			$month_start = $conf_fiscal_month_start;
+		}
+		$year_start = $now_arr['year'];
+		if ($conf_fiscal_month_start > $now_arr['mon']) {
+			$year_start = $year_start - 1;
+		}
+		$year_end = $year_start + 1;
+		$month_end = $month_start - 1;
+		if ($month_end < 1) {
+			$month_end = 12;
+			$year_end--;
+		}
+		$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+		$date_end = dol_get_last_day($year_end, $month_end);
+	}
+
+	return array(
+		'date_start' => $date_start,
+		'date_end' => $date_end,
 	);
 }

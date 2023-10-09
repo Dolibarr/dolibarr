@@ -28,7 +28,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -54,7 +54,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -83,27 +83,24 @@ if (isModEnabled("reception")) {
 }
 $permissionnote = $user->rights->reception->creer; // Used by the include of actions_setnotes.inc.php
 
+// TODO Test on reception module on only
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
-	if ($origin == 'reception') {
-		$result = restrictedArea($user, $origin, $object->id);
-	} else {
-		if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-			$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
-		} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
-			accessforbidden();
-		}
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
+	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+		accessforbidden();
 	}
 }
-
 
 
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -135,7 +132,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
 		if (0) {    // Do not change on reception
@@ -143,7 +140,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);

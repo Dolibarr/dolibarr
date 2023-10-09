@@ -96,6 +96,9 @@ class FormCron extends Form
 
 			$out .= '</SELECT>';
 		}
+		if (empty($readonly)) {
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}

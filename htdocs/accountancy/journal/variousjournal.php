@@ -90,7 +90,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -165,32 +165,31 @@ if ($reload) {
 $form = new Form($db);
 
 if ($object->nature == 2) {
-	$title = $langs->trans("SellsJournal");
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
 } elseif ($object->nature == 3) {
-	$title = $langs->trans("PurchasesJournal");
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
 } elseif ($object->nature == 4) {
-	$title = $langs->trans("FinanceJournal");
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
-		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
+		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
 } elseif ($object->nature == 5) {
-	$title = $langs->trans("ExpenseReportsJournal");
-	$some_mandatory_steps_of_setup_were_not_done = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
+	$account_accounting_not_defined = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
 } else {
 	$title = $object->getLibType();
 	$some_mandatory_steps_of_setup_were_not_done = false;
 	$account_accounting_not_defined = false;
 }
 
+$title = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 2, 1, '', 1);
 
-$nom = $title . ' | ' . $object->getNomUrl(0, 1, 1, '', 1);
+llxHeader('', dol_string_nohtmltag($title));
+
+$nom = $title;
 $nomlink = '';
 $periodlink = '';
 $exportlink = '';
@@ -212,8 +211,6 @@ $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 
 $period .= ' -  ' . $langs->trans("JournalizationInLedgerStatus") . ' ' . $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 $varlink = 'id_journal=' . $id_journal;
-
-llxHeader('', $title);
 
 journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
@@ -275,9 +272,10 @@ $object_label = $langs->trans("ObjectsRef");
 if ($object->nature == 2 || $object->nature == 3) $object_label = $langs->trans("InvoiceRef");
 if ($object->nature == 5) $object_label = $langs->trans("ExpenseReportRef");
 
-/*
- * Show result array
- */
+
+// Show result array
+$i = 0;
+
 print '<br>';
 
 print '<div class="div-table-responsive">';
@@ -289,8 +287,8 @@ print '<td>' . $langs->trans("AccountAccounting") . '</td>';
 print '<td>' . $langs->trans("SubledgerAccount") . '</td>';
 print '<td>' . $langs->trans("LabelOperation") . '</td>';
 if ($object->nature == 4) print '<td class="center">' . $langs->trans("PaymentMode") . '</td>'; // bank
-print '<td class="right">' . $langs->trans("Debit") . '</td>';
-print '<td class="right">' . $langs->trans("Credit") . '</td>';
+print '<td class="right">' . $langs->trans("AccountingDebit") . '</td>';
+print '<td class="right">' . $langs->trans("AccountingCredit") . '</td>';
 print "</tr>\n";
 
 if (is_array($journal_data) && !empty($journal_data)) {
@@ -307,9 +305,19 @@ if (is_array($journal_data) && !empty($journal_data)) {
 				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
 				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
 				print '</tr>';
+
+				$i++;
 			}
 		}
 	}
+}
+
+if (!$i) {
+	$colspan = 7;
+	if ($object->nature == 4) {
+		$colspan++;
+	}
+	print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 print '</table>';

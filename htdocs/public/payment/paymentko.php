@@ -88,7 +88,7 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 	$paymentmethod = $reg[1];
 }
 if (empty($paymentmethod)) {
-	dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
+	dol_print_error(null, 'The back url does not contain a parameter fulltag that should help us to find the payment method used');
 	exit;
 } else {
 	dol_syslog("paymentmethod=".$paymentmethod);
@@ -131,7 +131,9 @@ dol_syslog("Callback url when an online payment is refused or canceled. query_st
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	if (is_scalar($k) && is_scalar($v)) {
+		$tracepost .= "$k - $v\n";
+	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
@@ -174,7 +176,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$companylangs->setDefaultLang($mysoc->default_lang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
-		$from = $conf->global->MAILING_EMAIL_FROM;
+		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];
@@ -286,7 +288,7 @@ if ($type || $tag) {
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

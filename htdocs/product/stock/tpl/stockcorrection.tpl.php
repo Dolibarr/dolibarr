@@ -122,7 +122,7 @@ if ($object->element == 'stock') {
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td>';
 if ($object->element == 'product' || $object->element == 'stock') {
-	print '<select name="mouvement" id="mouvement" class="minwidth125 valignmiddle">';
+	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';
@@ -181,8 +181,8 @@ if (ismodEnabled('productbatch') &&
 // Purchase price and project
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
-print '<td colspan="'.(!empty($conf->project->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->project->enabled)) {
+print '<td colspan="'.(isModEnabled('project') ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+if (isModEnabled('project')) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');

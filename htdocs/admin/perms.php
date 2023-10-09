@@ -227,7 +227,7 @@ if ($result) {
 		// Tick
 		if ($obj->bydefault == 1) {
 			print '<td class="center">';
-			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">';
+			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&action=remove&token='.newToken().'">';
 			//print img_edit_remove();
 			print img_picto('', 'switch_on');
 			print '</a>';

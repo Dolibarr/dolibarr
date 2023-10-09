@@ -86,7 +86,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
+print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->nbOfInvoiceToPay('direct-debit');
 print '</a>';
 print '</td></tr>';
@@ -184,7 +184,7 @@ if ($resql) {
 		}
 	} else {
 		$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {

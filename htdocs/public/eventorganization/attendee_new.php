@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@ if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retrieve from object ref and not from url.
@@ -56,6 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
@@ -104,14 +107,17 @@ if ($type == 'global') {
 		$errmsg .= $project->error;
 		$errors = array_merge($errors, $project->errors);
 	} else {
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet";
-		$sql .= " WHERE ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee = ".((int) $project->id);
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_project = ".((int) $project->id);
+		$sql .= " AND status IN (0, 1)";
 
-		$resql = $db->query($resql);
+		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$currentnbofattendees = $obj->nb;
+			} else {
+				dol_print_error($db);
 			}
 		}
 	}
@@ -119,7 +125,7 @@ if ($type == 'global') {
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
 // We check if the securekey collected is OK
 if ($securekeytocompare != $securekeyreceived) {
@@ -227,7 +233,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status==2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -257,10 +263,12 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
 
+		$filter = array();
+
 		if ($type == 'global') {
 			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
-		if ($action == 'conf') {
+		if ($type == 'conf') {
 			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 
@@ -279,7 +287,39 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->fk_actioncomm = $id;
 			$confattendee->note_public = $note_public;
 
-			$resultconfattendee = $confattendee->create($user);
+			$confattendee->ip = getUserRemoteIP();
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
+			// Calculate nb of post for IP
+			$nb_post_ip = 0;
+			if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+				$sql = "SELECT COUNT(ref) as nb_attendee";
+				$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+				$sql .= " WHERE ip = '".$db->escape($confattendee->ip)."'";
+				$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$i++;
+						$obj = $db->fetch_object($resql);
+						$nb_post_ip = $obj->nb_attendee;
+					}
+				}
+			}
+
+			$resultconforbooth = -1;
+
+			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+				$error++;
+				$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+				array_push($confattendee->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+				setEventMessage($errmsg, 'errors');
+			} else {
+				$resultconfattendee = $confattendee->create($user);
+			}
 			if ($resultconfattendee < 0) {
 				$error++;
 				$errmsg .= $confattendee->error;
@@ -515,8 +555,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// Add link between invoice and the attendee registration
 				/*if (!$error) {
-					$facture->add_object_linked($confattendee->element, $confattendee->id);
-				}*/
+				 $facture->add_object_linked($confattendee->element, $confattendee->id);
+				 }*/
 			}
 
 			if (!$error) {
@@ -589,7 +629,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			// Get email content from template
 			$arraydefaultmessage = null;
 
-			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+			$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 			}
@@ -643,21 +683,25 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewRegistration"));
 
-print '<br>';
-print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
-
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext">';
 
+// Sub banner
+print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
 // Welcome message
-
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
-print '<span class="eventlabel">'.$project->title . ' '. $conference->label.'</span><br>';
+// Title
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
+print '</div>';
+
+// Help text
+print '<div class="justify subscriptionformhelptext">';
+
 if ($project->date_start_event || $project->date_end_event) {
-	print '<span class="fa fa-calendar pictofixedwidth"></span>';
+	print '<br><span class="fa fa-calendar pictofixedwidth opacitymedium"></span>';
 }
 if ($project->date_start_event) {
 	$format = 'day';
@@ -682,29 +726,34 @@ if ($project->date_start_event || $project->date_end_event) {
 	print '<br>';
 }
 if ($project->location) {
-	print '<span class="fa fa-map-marked-alt pictofixedwidth"></span>'.$project->location.'<br>';
+	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
 }
+if ($project->note_public) {
+	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
+}
+
+print '</div>';
+
 
 $maxattendees = 0;
 if ($conference->id > 0) {
 	/* date of project is not  date of event so commented
-	print $langs->trans("Date").': ';
-	print dol_print_date($conference->datep);
-	if ($conference->date_end) {
-		print ' - ';
-		print dol_print_date($conference->datef);
-	}*/
+	 print $langs->trans("Date").': ';
+	 print dol_print_date($conference->datep);
+	 if ($conference->date_end) {
+	 print ' - ';
+	 print dol_print_date($conference->datef);
+	 }*/
 } else {
 	/* date of project is not  date of event so commented
-	print $langs->trans("Date").': ';
-	print dol_print_date($project->date_start);
-	if ($project->date_end) {
-		print ' - ';
-		print dol_print_date($project->date_end);
-	}*/
+	 print $langs->trans("Date").': ';
+	 print dol_print_date($project->date_start);
+	 if ($project->date_end) {
+	 print ' - ';
+	 print dol_print_date($project->date_end);
+	 }*/
 	$maxattendees = $project->max_attendees;	// Max attendeed for the project/event
 }
-print '</div>';
 
 if ($maxattendees && $currentnbofattendees >= $maxattendees) {
 	print '<br>';
@@ -785,7 +834,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '</td></tr>';
 
 		// Country
-		print '<tr><td><span class="fieldrequired"' . $langs->trans('Country') . '</span></td><td>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('Country').'</span></td><td>';
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
@@ -846,11 +895,14 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print "</form>\n";
 
 		print "<br>";
-		print '</div></div>';
 	}
 } else {
+	print '<br><br>';
 	print $langs->trans("ConferenceIsNotConfirmed");
+	print '<br><br>';
 }
+
+print '</div></div>';
 
 llxFooterVierge();
 

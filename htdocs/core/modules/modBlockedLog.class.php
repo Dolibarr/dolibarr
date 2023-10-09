@@ -183,7 +183,7 @@ class modBlockedLog extends DolibarrModules
 		$result = $b->setObjectData($object, 'MODULE_SET', 0);
 		if ($result < 0) {
 			$this->error = $b->error;
-			$this->errors = $b->erros;
+			$this->errors = $b->errors;
 			return 0;
 		}
 
@@ -226,7 +226,7 @@ class modBlockedLog extends DolibarrModules
 		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
 		if ($result < 0) {
 			$this->error = $b->error;
-			$this->errors = $b->erros;
+			$this->errors = $b->errors;
 			return 0;
 		}
 

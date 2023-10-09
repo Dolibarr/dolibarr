@@ -95,7 +95,7 @@ $filepath = $relativepath.$urlfile;
 $filepathtodocument = $relativetodocument.$urlfile;
 
 // Try to load object from index
-$object = new ECMFiles($db);
+$object = new EcmFiles($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -108,9 +108,9 @@ if ($result < 0) {
 
 $permissionnote = $user->rights->ecm->setup; // Used by the include of actions_setnotes.inc.php
 
-$permtoread = $user->rights->ecm->read;
+$permissiontoread = $user->rights->ecm->read;
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 

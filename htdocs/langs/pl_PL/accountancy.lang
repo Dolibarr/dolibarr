@@ -37,10 +37,11 @@ OtherInfo=Inne informacje
 DeleteCptCategory=Usuń konto księgowe z grupy
 ConfirmDeleteCptCategory=Czy na pewno chcesz usunąć to konto księgowe z grupy kont księgowych?
 JournalizationInLedgerStatus=Status dokumentowania
-AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+AlreadyInGeneralLedger=Już przeniesiony do dzienników księgowych i księgi głównej
 NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Grupa jest pusta, sprawdź konfigurację spersonalizowanej grupy księgowej
 DetailByAccount=Pokaż szczegóły konta
+DetailBy=Detail by
 AccountWithNonZeroValues=Konta z wartościami niezerowymi
 ListOfAccounts=Lista kont
 CountriesInEEC=Kraje UE
@@ -48,16 +49,23 @@ CountriesNotInEEC=Kraje spoza UE
 CountriesInEECExceptMe=Kraje UE oprócz %s
 CountriesExceptMe=Wszystkie kraje oprócz %s
 AccountantFiles=Eksportuj dokumenty źródłowe
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Aby wyeksportować swoje dzienniki, użyj pozycji menu %s - %s.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Wyświetl według konta księgowego
 VueBySubAccountAccounting=Wyświetl według subkonta księgowego
 
-MainAccountForCustomersNotDefined=Główne konto księgowe dla klientów nie zdefiniowane w ustawieniach
-MainAccountForSuppliersNotDefined=Główne konto rozliczeniowe dla dostawców niezdefiniowane w konfiguracji
-MainAccountForUsersNotDefined=Główne konto księgowe dla użytkowników nie zdefiniowane w ustawieniach
-MainAccountForVatPaymentNotDefined=Główne konto księgowe dla płatności VAT nie zdefiniowane w ustawieniach
-MainAccountForSubscriptionPaymentNotDefined=Główne konto księgowe dla płatności za subskrypcję nie zostało zdefiniowane w konfiguracji
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
+UserAccountNotDefined=Kontro księgowe dla użytkownika nie zdefiniowane w ustawieniach
 
 AccountancyArea=Strefa księgowości
 AccountancyAreaDescIntro=Korzystanie z modułu księgowości odbywa się w kilku etapach:
@@ -99,7 +107,8 @@ ShowAccountingAccount=Wyświetl konta księgowe
 ShowAccountingJournal=Wyświetl dziennik konta księgowego
 ShowAccountingAccountInLedger=Pokaż konto księgowe w księdze
 ShowAccountingAccountInJournals=Pokaż konto księgowe w dziennikach
-AccountAccountingSuggest=Zalecane konto rachunkowe
+DataUsedToSuggestAccount=Data used to suggest account
+AccountAccountingSuggest=Account suggested
 MenuDefaultAccounts=Domyślne konta
 MenuBankAccounts=Konta bankowe
 MenuVatAccounts=Konta VAT
@@ -109,6 +118,7 @@ MenuLoanAccounts=Konta kredytowe
 MenuProductsAccounts=Konta produktów
 MenuClosureAccounts=Zamknięte konta
 MenuAccountancyClosure=Zamknięte
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Zatwierdź ruchy
 ProductsBinding=Konta produktów
 TransferInAccounting=Przelew w księgowości
@@ -122,9 +132,10 @@ UpdateMvts=Modyfikacja transakcji
 ValidTransaction=Potwierdź transakcję
 WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Księga główna
-BookkeepingSubAccount=Subledger
+BookkeepingSubAccount=Księga podrzędna
 AccountBalance=Bilans konta
-ObjectsRef=Obiekt źródłowy ref
+AccountBalanceSubAccount=Sub-accounts balance
+ObjectsRef=Referencja obiektu źródłowego
 CAHTF=Łącznie sprzedawca przed opodatkowaniem
 TotalExpenseReport=Raport z całkowitych wydatków
 InvoiceLines=Pozycje faktury do powiązania
@@ -161,42 +172,47 @@ BANK_DISABLE_DIRECT_INPUT=Wyłącz bezpośrednią rejestrację transakcji na kon
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Włącz eksport wersji roboczej w dzienniku
 ACCOUNTANCY_COMBO_FOR_AUX=Włącz listę kombi dla konta pomocniczego (może działać wolno, jeśli masz dużo stron trzecich, przerywa możliwość wyszukiwania części wartości)
 ACCOUNTING_DATE_START_BINDING=Określ datę rozpoczęcia wiązania i przeniesienia w księgowości. Poniżej tej daty transakcje nie zostaną przeniesione do księgowości.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=W przypadku przelewu księgowego wybierz domyślnie pokazany okres
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Dziennik sprzedaży
-ACCOUNTING_PURCHASE_JOURNAL=Dziennik zakupów
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Dziennik różnic
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Dziennik raportów kosztowych
-ACCOUNTING_SOCIAL_JOURNAL=Dziennik społecznościowy
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Dziennik ogólny
 ACCOUNTING_HAS_NEW_JOURNAL=Ma nowy dziennik
+ACCOUNTING_INVENTORY_JOURNAL=Dziennik inwentaryzacji
+ACCOUNTING_SOCIAL_JOURNAL=Dziennik społecznościowy
 
 ACCOUNTING_RESULT_PROFIT=Rachunek wynikowy (zysk)
 ACCOUNTING_RESULT_LOSS=Rachunek wynikowy (strata)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Dziennik zamknięcia
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Rachunek księgowy przelewu przejściowego
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Konto przejściowe do przelewów bankowych
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Konto księgowe dla oczekujących
-DONATION_ACCOUNTINGACCOUNT=Konto księgowe dla zarejestrowanych dotatcji
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto księgowe do rejestracji subskrypcji
+ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
+DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto księgowe domyślnie do rejestracji wpłaty klienta
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto księgowe domyślnie dla kupowanych produktów (używane, jeśli nie zostało zdefiniowane w karcie produktu)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Konto księgowe domyślnie dla zakupionych produktów w EWG (używane, jeśli nie zostało zdefiniowane w karcie produktu)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Konto księgowe domyślnie dla produktów zakupionych i importowanych poza EWG (używane, jeśli nie zostało zdefiniowane w karcie produktu)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Konto księgowe używane domyślnie dla sprzedanych produktów (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Konto księgowe domyślnie dla produktów sprzedawanych w EWG (używane, jeśli nie zostało zdefiniowane w karcie produktu)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Konto księgowe domyślnie dla produktów sprzedanych i wyeksportowanych poza EWG (używane, jeśli nie zostały zdefiniowane w karcie produktu)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Konto księgowe używane domyślnie dla kupionych usług (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Konto księgowe domyślnie dla zakupionych usług w EWG (używane, jeśli nie zostało zdefiniowane w karcie usług)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Konto księgowe domyślnie dla usług zakupionych i importowanych poza EWG (używane, jeśli nie zostało zdefiniowane w karcie usług)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Konto księgowe używane domyślnie dla sprzedanych usług (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Konto księgowe domyślnie dla usług sprzedawanych w EWG (używane, jeśli nie zostało zdefiniowane w arkuszu usług)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Konto księgowe domyślnie dla usług sprzedawanych i eksportowanych poza EWG (używane, jeśli nie zostało zdefiniowane w arkuszu usług)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
 
 Doctype=Rodzaj dokumentu
 Docdate=Data
@@ -211,7 +227,8 @@ Codejournal=Dziennik
 JournalLabel=Etykieta czasopisma
 NumPiece=ilość sztuk
 TransactionNumShort=Numer transakcji
-AccountingCategory=Grupa niestandardowa
+AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Grupuj według konta księgi głównej
 GroupBySubAccountAccounting=Grupuj według konta księgi podrzędnej
 AccountingAccountGroupsDesc=Możesz tutaj zdefiniować kilka grup rachunków księgowych. Będą wykorzystywane do tworzenia spersonalizowanych raportów księgowych.
@@ -228,6 +245,7 @@ ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month an
 ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Dziennik finansów
 ExpenseReportsJournal=Dziennik raportów kosztów
+InventoryJournal=Dziennik inwentaryzacji
 DescFinanceJournal=Dziennik finansów zawiera wszystkie typy płatności wykonane przez konto bankowe
 DescJournalOnlyBindedVisible=To jest widok rekordu, który jest powiązany z kontem księgowym i może być zapisany w dziennikach i księdze.
 VATAccountNotDefined=Konto dla niezdefiniowanego VATu
@@ -236,7 +254,7 @@ ProductAccountNotDefined=Konto dla produktu nie zdefiniowane
 FeeAccountNotDefined=Konto z opłatą nie zostało zdefiniowane
 BankAccountNotDefined=Konto dla banku nie zdefiniowane
 CustomerInvoicePayment=Płatność za fakturę klienta
-ThirdPartyAccount=Konto innej firmy
+ThirdPartyAccount=Konto kontrahenta
 NewAccountingMvt=Nowa transakcja
 NumMvts=Ilość transakcji
 ListeMvts=Lista ruchów
@@ -259,19 +277,20 @@ ShowSubtotalByGroup=Pokaż sumę częściową według poziomu
 
 Pcgtype=Grupa konta
 PcgtypeDesc=Grupa kont jest używana jako predefiniowane kryteria „filtru” i „grupowania” w niektórych raportach księgowych. Na przykład „DOCHÓD” lub „WYDATEK” są używane jako grupy dla kont księgowych produktów w celu utworzenia raportu kosztów / dochodów.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Do pogodzenia
 
 TotalVente=Łączny obrót przed opodatkowaniem
 TotalMarge=Całkowita marża sprzedaży
 
-DescVentilCustomer=Zapoznaj się z listą wierszy faktur klienta powiązanych (lub nie) z kontem księgowym produktu
-DescVentilMore=W większości przypadków, jeśli korzystasz z predefiniowanych produktów lub usług i ustawisz numer konta na karcie produktu / usługi, aplikacja będzie w stanie powiązać wszystkie linie faktury z kontem księgowym planu kont, tylko w jedno kliknięcie przyciskiem <strong> "%s" </strong>. Jeśli konto nie zostało ustawione na kartach produktów / usług lub jeśli nadal masz jakieś linie niepowiązane z kontem, będziesz musiał wykonać ręczne powiązanie z menu „<strong> %s </strong>”.
-DescVentilDoneCustomer=Zapoznaj się z listą wierszy odbiorców faktur i ich kontami księgowymi produktów
-DescVentilTodoCustomer=Powiąż pozycje faktury aktualnie nie związane  z kontem księgowym produktu
-ChangeAccount=Zmień konto księgowe dla zaznaczonych produktów/usług na następujące konto księgowe:
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
+ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Zapoznaj się z listą wierszy faktur od dostawców powiązanych lub jeszcze niezwiązanych z kontem księgowym produktu (widoczne są tylko rekordy, które nie zostały jeszcze przeniesione w księgowości)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Zapoznaj się z listą wierszy faktur od dostawców i ich kontami księgowymi
 DescVentilTodoExpenseReport=Powiązanie wierszy raportu wydatków, które nie są jeszcze powiązane z kontem rozliczeniowym opłat
 DescVentilExpenseReport=Zapoznaj się z listą pozycji raportu wydatków powiązanych (lub nie) z kontem rozliczania opłat
@@ -279,24 +298,25 @@ DescVentilExpenseReportMore=Jeśli ustawisz konto księgowe na typ wierszy rapor
 DescVentilDoneExpenseReport=Zapoznaj się z listą pozycji raportów wydatków i ich kontem księgowym opłat
 
 Closure=Coroczne zamknięcie
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock record...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Jakakolwiek modyfikacja lub usunięcie pisma, napisów i usunięcia będzie zabronione. Wszystkie wpisy do ćwiczenia muszą zostać zatwierdzone, w przeciwnym razie zamknięcie nie będzie możliwe
 
 ValidateHistory=Dowiąż automatycznie
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
-ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balansowy
 FicheVentilation=Karta dowiązania
 GeneralLedgerIsWritten=Transakcje zapisane w księdze głównej
 GeneralLedgerSomeRecordWasNotRecorded=Niektóre transakcje nie mogły zostać zapisane w dzienniku. Jeśli nie ma innego komunikatu o błędzie, jest to prawdopodobnie spowodowane tym, że zostały już zapisane w dzienniku.
 NoNewRecordSaved=No more record to transfer
-ListOfProductsWithoutAccountingAccount=Lista produktów nie dowiązanych do żadnego konta księgowego
+ListOfProductsWithoutAccountingAccount=List of products not bound to any account of chart of account
 ChangeBinding=Zmień dowiązanie
 Accounted=Rozliczone w księdze
 NotYetAccounted=Not yet transferred to accounting
@@ -319,9 +339,10 @@ AccountingJournalType1=Różne operacje
 AccountingJournalType2=Sprzedaż
 AccountingJournalType3=Zakupy
 AccountingJournalType4=Bank
-AccountingJournalType5=Raport kosztów
+AccountingJournalType5=Raporty kosztów
 AccountingJournalType8=Inwentaryzacja
 AccountingJournalType9=Ma nowe
+GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=Ten dziennik jest już w użytku
 AccountingAccountForSalesTaxAreDefinedInto=Uwaga: Konta księgowe dla podatku od sprzedaży są zdefiniowane w menu <b> %s </b> - <b> %s </b>
 NumberOfAccountancyEntries=Liczba wejść
@@ -329,13 +350,23 @@ NumberOfAccountancyMovements=Liczba ruchów
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Wyłącz powiązanie i przeniesienie w księgowości sprzedaży (faktury klientów nie będą brane pod uwagę w księgowości)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Wyłącz powiązanie i przeniesienie w księgowości zakupów (faktury dostawcy nie będą brane pod uwagę w księgowości)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Wyłącz powiązanie i przeniesienie w księgowości na zestawieniach wydatków (zestawienia wydatków nie będą brane pod uwagę w księgowości)
+ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
+ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotExportLettering=Do not export the lettering when generating the file
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Potwierdzenie wygenerowania pliku eksportu księgowości ?
-ExportDraftJournal=Export dziennika projektu
+ExportDraftJournal=Export szkicu dziennika
 Modelcsv=Model eksportu
 Selectmodelcsv=Wybierz model eksportu
 Modelcsv_normal=Standardowy eksport
@@ -363,7 +394,7 @@ ChartofaccountsId=Id planu kont
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rozpocznij księgowość
 InitAccountancyDesc=Ta strona może służyć do inicjowania konta księgowego dla produktów i usług, które nie mają konta księgowego zdefiniowanego dla sprzedaży i zakupów.
-DefaultBindingDesc=Na tej stronie można ustawić konto domyślne, które będzie używane do łączenia rekordów transakcji dotyczących wynagrodzeń, darowizn, podatków i VAT, gdy żadne konto księgowe nie zostało jeszcze ustawione.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Ta strona może służyć do ustawiania parametrów używanych do rozliczania zamknięć.
 Options=Opcje
 OptionModeProductSell=Tryb sprzedaży
@@ -389,7 +420,7 @@ SaleLocal=Sprzedaż lokalna
 SaleExport=Sprzedaż eksportowa
 SaleEEC=Sprzedaż w EWG
 SaleEECWithVAT=Sprzedaż w EWG z podatkiem VAT niezerowym, więc przypuszczamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowane konto to standardowe konto produktu.
-SaleEECWithoutVATNumber=Sprzedaż w EWG bez podatku VAT, ale identyfikator VAT strony trzeciej nie jest zdefiniowany. Wracamy na konto produktu dla sprzedaży standardowej. W razie potrzeby możesz poprawić identyfikator VAT strony trzeciej lub konto produktu.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -398,7 +429,11 @@ Calculated=Przeliczone
 Formula=Formuła
 
 ## Reconcile
+LetteringAuto=Reconcile auto
+LetteringManual=Reconcile manual
 Unlettering=Unreconcile
+UnletteringAuto=Unreconcile auto
+UnletteringManual=Unreconcile manual
 AccountancyNoLetteringModified=No reconcile modified
 AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
 AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
@@ -407,10 +442,11 @@ AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modif
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
+ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Potwierdzenie usuwania zbiorczego
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Niektóre obowiązkowe kroki konfiguracji nie zostały wykonane. Proszę je uzupełnić.
@@ -423,10 +459,12 @@ NoJournalDefined=Nie zdefiniowano dziennika
 Binded=Linie związane
 ToBind=Linie do dowiązania
 UseMenuToSetBindindManualy=Wiersze jeszcze niezwiązane, użyj menu <a href="%s"> %s </a>, aby wykonać powiązanie ręcznie
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorArchiveAddFile=Can't put "%s" file in archive
 
 ## Import
 ImportAccountingEntries=Zapisy księgowe
@@ -451,8 +489,9 @@ FECFormatMulticurrencyAmount=Kwota w wielu walutach (Montantdevise)
 FECFormatMulticurrencyCode=Kod wielowalutowy (Idevise)
 
 DateExport=Eksport daty
-WarningReportNotReliable=Ostrzeżenie, ten raport nie jest oparty na księdze, więc nie zawiera transakcji zmodyfikowanych ręcznie w księdze. Jeśli dziennikarstwo jest aktualne, widok księgowości jest dokładniejszy.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Dziennik wydatków
-InventoryJournal=Dziennik zapasów
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s kont

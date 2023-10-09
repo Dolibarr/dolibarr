@@ -38,48 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_standard extends ModelePDFMovement
 {
 	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
-	 * @var string model description (short text)
-	 */
-	public $description;
-
-	/**
 	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
 	 */
 	public $update_main_doc_field;
-
-	/**
-	 * @var string document type
-	 */
-	public $type;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
-
 
 	public $wref;
 	public $posxidref;
@@ -122,7 +83,6 @@ class pdf_standard extends ModelePDFMovement
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
-		$this->option_codestockservice = 0; // Display stock-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
@@ -242,7 +202,7 @@ class pdf_standard extends ModelePDFMovement
 		$extrafields->fetch_name_optionals_label('movement');
 		$search_array_options = $extrafields->getOptionalsFromPost('movement', '', 'search_');
 
-		$productlot = new ProductLot($this->db);
+		$productlot = new Productlot($this->db);
 		$productstatic = new Product($this->db);
 		$warehousestatic = new Entrepot($this->db);
 		$movement = new MouvementStock($this->db);
@@ -314,7 +274,7 @@ class pdf_standard extends ModelePDFMovement
 			$sql .= natural_search('p.label', $search_product);
 		}
 		if ($search_warehouse > 0) {
-			$sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
+			$sql .= " AND e.rowid = ".((int) $search_warehouse);
 		}
 		if (!empty($search_user)) {
 			$sql .= natural_search('u.login', $search_user);
@@ -337,7 +297,7 @@ class pdf_standard extends ModelePDFMovement
 		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -725,6 +685,14 @@ class pdf_standard extends ModelePDFMovement
 					dol_print_error($this->db);
 				}
 
+				// Display notes
+				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+				// Extrafields in note
+				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+				if (!empty($extranote)) {
+					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+				}
+
 				if ($notetoshow) {
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -791,9 +759,7 @@ class pdf_standard extends ModelePDFMovement
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -941,7 +907,7 @@ class pdf_standard extends ModelePDFMovement
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	void
+	 *  @return	int                         Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
@@ -961,8 +927,8 @@ class pdf_standard extends ModelePDFMovement
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1108,8 +1074,13 @@ class pdf_standard extends ModelePDFMovement
 
 		$posy += 2;
 
+		$top_shift = 0;
 		// Show list of linked objects
+		$current_y = $pdf->getY();
 		//$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
+		//if ($current_y < $pdf->getY()) {
+		//	$top_shift = $pdf->getY() - $current_y;
+		//}
 
 		if ($showaddress) {
 			/*
@@ -1146,6 +1117,7 @@ class pdf_standard extends ModelePDFMovement
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

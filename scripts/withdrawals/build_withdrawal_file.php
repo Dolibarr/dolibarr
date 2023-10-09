@@ -57,10 +57,10 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $datetimeprev = dol_now();
 
-$month = strftime("%m", $datetimeprev);
-$year = strftime("%Y", $datetimeprev);
+$month = dol_print_date($datetimeprev, "%m");
+$year = dol_print_date($datetimeprev, "%Y");
 
-$user = new user($db);
+$user = new User($db);
 $user->fetch($conf->global->PRELEVEMENT_USER);
 
 if (!isset($argv[1])) { // Check parameters

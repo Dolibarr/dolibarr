@@ -65,8 +65,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	int 			$id 		ID of ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	int				$id			ID of ticket
+	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
@@ -82,14 +82,14 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	string  		$track_id 	Tracking ID of ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	string			$track_id	Tracking ID of ticket
+	 * @return	array|mixed					Data without useless information
 	 *
 	 * @url GET track_id/{track_id}
 	 *
-	 * @throws RestException 	401
-	 * @throws RestException 	403
-	 * @throws RestException 	404
+	 * @throws RestException	401
+	 * @throws RestException	403
+	 * @throws RestException	404
 	 */
 	public function getByTrackId($track_id)
 	{
@@ -101,8 +101,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	string  		$ref    	Reference for ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	string			$ref		Reference for ticket
+	 * @return	array|mixed					Data without useless information
 	 *
 	 * @url GET ref/{ref}
 	 *
@@ -112,21 +112,17 @@ class Tickets extends DolibarrApi
 	 */
 	public function getByRef($ref)
 	{
-		try {
-			return $this->getCommon(0, '', $ref);
-		} catch (Exception $e) {
-			   throw $e;
-		}
+		return $this->getCommon(0, '', $ref);
 	}
 
 	/**
 	 * Get properties of a Ticket object
 	 * Return an array with ticket informations
 	 *
-	 * @param	int 			$id 		ID of ticket
-	 * @param	string  		$track_id 	Tracking ID of ticket
-	 * @param	string  		$ref    	Reference for ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	int				$id			ID of ticket
+	 * @param	string			$track_id	Tracking ID of ticket
+	 * @param	string			$ref		Reference for ticket
+	 * @return	array|mixed					Data without useless information
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '')
 	{
@@ -198,11 +194,12 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 *
 	 * @return array Array of ticket objects
 	 *
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -227,7 +224,7 @@ class Tickets extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket AS t LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -251,11 +248,10 @@ class Tickets extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -282,7 +278,7 @@ class Tickets extends DolibarrApi
 						$userStatic->fetch($ticket_static->fk_user_assign);
 						$ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
 					}
-					$obj_ret[] = $this->_cleanObjectDatas($ticket_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($ticket_static), $properties);
 				}
 				$i++;
 			}

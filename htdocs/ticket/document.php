@@ -49,6 +49,9 @@ $track_id = GETPOST('track_id', 'alpha');
 $action   = GETPOST('action', 'alpha');
 $confirm  = GETPOST('confirm', 'alpha');
 
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/ticket/document.php';
+
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -76,8 +79,6 @@ if ($result < 0) {
 	$upload_dir = $conf->ticket->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-$permissiontoadd = $user->rights->ticket->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-
 // Security check - Protection if external user
 $result = restrictedArea($user, 'ticket', $object->id);
 
@@ -90,6 +91,7 @@ if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $
 	accessforbidden();
 }
 
+$permissiontoadd = $user->rights->ticket->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -98,6 +100,15 @@ if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+// Set parent company
+if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
+	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
+		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
+		header("Location: ".$url);
+		exit();
+	}
+}
 
 
 /*
@@ -122,9 +133,9 @@ if ($object->id) {
 	}
 
 	if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-		$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+		$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 	} elseif ($user->socid > 0) {
-		$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+		$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
 	}
 
 	$head = ticket_prepare_head($object);
@@ -154,7 +165,7 @@ if ($object->id) {
 	if (isModEnabled("societe")) {
 		$morehtmlref .= '<br>';
 		$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
-		if ($action != 'editcustomer' && 0) {
+		if ($action != 'editcustomer' && $permissiontoadd) {
 			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 		}
 		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
@@ -169,7 +180,7 @@ if ($object->id) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$morehtmlref .= '<br>';

@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/public/recruitment/view.php
+ *       \file       htdocs/public/recruitment/index.php
  *       \ingroup    recruitment
  *       \brief      Public file to show on job
  */
@@ -104,7 +104,7 @@ if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
+if (!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
@@ -171,6 +171,7 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 
 
 $results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$now = dol_now();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -210,7 +211,7 @@ if (is_array($results)) {
 			// Output payment summary form
 			print '<tr><td class="left">';
 
-			print '<div with="100%" id="tablepublicpayment">';
+			print '<div class="centpercent" id="tablepublicpayment">';
 			print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 			$error = 0;
@@ -251,7 +252,7 @@ if (is_array($results)) {
 				}
 			}
 			print '<b class="wordbreak">';
-			print $tmpuser->getFullName(-1);
+			print $tmpuser->getFullName($langs);
 			print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 			print '</b>';
 			print '</b><br>';
@@ -301,7 +302,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs);
+htmlPrintOnlineFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

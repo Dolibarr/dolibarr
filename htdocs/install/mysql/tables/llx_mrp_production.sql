@@ -33,6 +33,7 @@ CREATE TABLE llx_mrp_production(
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
-	import_key varchar(14)
+	import_key varchar(14),
+	fk_default_workstation integer DEFAULT NULL
 ) ENGINE=innodb;
 

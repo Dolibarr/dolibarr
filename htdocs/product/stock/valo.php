@@ -52,7 +52,7 @@ if ($page < 0) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-$year = strftime("%Y", time());
+$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 
 
 /*

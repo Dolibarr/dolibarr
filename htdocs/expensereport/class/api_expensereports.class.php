@@ -58,10 +58,10 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * Return an array with Expense Report informations
 	 *
-	 * @param       int         $id         ID of Expense Report
-	 * @return 	    array|mixed             Data without useless information
+	 * @param   int         $id         ID of Expense Report
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -91,11 +91,12 @@ class ExpenseReports extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Expense Report objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -109,7 +110,7 @@ class ExpenseReports extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport AS t LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('expensereport').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";
@@ -118,11 +119,10 @@ class ExpenseReports extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -145,7 +145,7 @@ class ExpenseReports extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$expensereport_static = new ExpenseReport($this->db);
 				if ($expensereport_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($expensereport_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($expensereport_static), $properties);
 				}
 				$i++;
 			}

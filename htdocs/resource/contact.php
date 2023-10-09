@@ -41,7 +41,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
@@ -114,10 +114,6 @@ llxHeader('', $langs->trans("Resource"));
 // View and edit mode
 
 if ($id > 0 || !empty($ref)) {
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
-
 	$head = resource_prepare_head($object);
 	print dol_get_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 

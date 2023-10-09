@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
+EnterNameOfObjectDesc=Ingrese el nombre del objeto a crear sin espacios. Use mayúsculas para separar palabras (Por ejemplo: MiObjeto, Estudiante, Profesor...). Se generará el archivo de clase CRUD, las páginas para enumerar/añadir/editar/eliminar el objeto y los archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definido en %s): <strong> %s </strong>
 ModuleBuilderDesc3=Módulos generados / editables encontrados: <strong> %s </strong>
-ModuleBuilderDesc4=Un módulo se detecta como 'editable' cuando el archivo <strong> %s </strong> existe en la raíz del directorio del módulo
 ObjectKey=Clave de objeto
 FilesForObjectInitialized=Archivos para el nuevo objeto '%s' inicializados
 FilesForObjectUpdated=Archivos para el objeto '%s' actualizados (archivos .sql y archivo .class.php)
@@ -32,7 +32,9 @@ PathToModulePackage=Ruta al zip del módulo / paquete de aplicación
 PathToModuleDocumentation=Ruta al archivo del módulo / documentación de la aplicación (%s)
 SpaceOrSpecialCharAreNotAllowed=No se permiten espacios ni caracteres especiales.
 FileNotYetGenerated=Archivo aún no generado
+GenerateCode=Generar codigo
 RegenerateMissingFiles=Generar archivos perdidos
+Property=propiedad
 ConfirmDeleteProperty=¿Está seguro de que desea eliminar la propiedad <strong> %s </strong>? Esto cambiará el código en la clase PHP pero también eliminará la columna de la definición de la tabla del objeto.
 NotNull=No nulo
 SearchAll=Usado para 'buscar todo'
@@ -56,12 +58,12 @@ UseAsciiDocFormat=Puede utilizar el formato Markdown, pero se recomienda utiliza
 DirScanned=Directorio escaneado
 NoTrigger=Sin gatillo
 NoWidget=Sin widget
+ApiExplorer=explorador de API
 ListOfDictionariesEntries=Lista de entradas de diccionarios
 ListOfPermissionsDefined=Lista de permisos definidos
 SeeExamples=Ver ejemplos aquí
-EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=¿El campo es visible? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y crear/actualizar/ver formularios, 2=Visible solo en la lista, 3=Visible en crear/actualizar/ver solo el formulario (no en la lista), 4=Visible en la lista y actualizar/ver solo el formulario (no crear), 5=Visible solo en el formulario de vista final de la lista (no crear, no actualizar). <br><br> Usar un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para su visualización). <br><br>Puede ser una expresión, por ejemplo:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br> Actualmente, los modelos PDF compatibles conocidos son: eratosthene (pedido), espadon (envios), sponge (facturas), cyan (propal/presupuesto), cornas (pedido del proveedor) <br> <br><strong>Para documento:</strong><br>0 = no mostrar <br>1 = mostar<br> 2 = mostrar sólo si no está vacío<br><br><strong> Para lineas de documentos:</strong><br> 0 = no mostradas  <br>1 = mostradas en una columna<br> 3 = mostrar en la columna de descripción de línea después de la descripción<br>  4 = display en la columna de descripción después de la descripción solo si no está vacía
+VisibleDesc=¿Se ve el campo? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y formularios de creación/actualización/vista, 2=Visible solo en la lista, 3=Visible solo en el formulario de creación/actualización/vista (no en la lista), 4=Visible en la lista y actualizar/ver formulario solamente (no crear), 5=Visible solo en el formulario de vista final de la lista (no crear, no actualizar) <br> <br> El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).
+DisplayOnPdf=en PDF
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en la lista? (Ejemplos: 1 o 0)
 SearchAllDesc=¿Se utiliza el campo para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desee proporcionar con su módulo que no esté definida por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -69,6 +71,7 @@ LanguageDefDesc=Ingrese en estos archivos, toda la clave y la traducción para c
 MenusDefDesc=Defina aquí los menús proporcionados por su módulo
 DictionariesDefDesc=Defina aquí los diccionarios proporcionados por su módulo
 PermissionsDefDesc=Defina aquí los nuevos permisos proporcionados por su módulo
+MenusDefDescTooltip=Los menús proporcionados por su módulo/aplicación se definen en la matriz <strong> $this->menus </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o usar el editor incorporado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los menús también son visibles en el editor de menús disponible para los usuarios administradores en %s.
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo / aplicación se definen en la matriz <strong> $ this-> dictionary </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incorporado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
 PermissionsDefDescTooltip=Los permisos proporcionados por su módulo / aplicación se definen en la matriz <strong> $ this-> rights </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incorporado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los permisos son visibles en la configuración de permisos predeterminada %s.
 HooksDefDesc=Defina en la propiedad <b> module_parts['hooks'] </b>, en el descriptor del módulo, el contexto de los ganchos (hooks) que desea administrar (la lista de contextos se puede encontrar mediante una búsqueda en '<b> initHooks (</b>' en el código central). <br>El archivo de gancho (hook) para agregar el código de sus funciones enganchadas (las funciones enganchables se pueden encontrar mediante una búsqueda en '<b> executeHooks </b>' en el código central).
@@ -93,10 +96,11 @@ UseSpecificFamily =Usa una familia específica
 UseSpecificAuthor =Usa un autor específico
 UseSpecificVersion =Utilice una versión inicial específica
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
-ShowOnCombobox=Mostrar valor en el cuadro combinado
 KeyForTooltip=Clave para información sobre herramientas
 ForeignKey=Clave externa
+TypeOfFieldsHelp=Ejemplo: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> ' 1' significa que agregamos un botón + después del combo para crear el registro <br> 'filtro' es una condición sql, ejemplo: 'status=1 AND fk_user=__USER_ID__ AND entidad IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Convertidor de ascii a HTML
 AsciiToPdfConverter=Convertidor de ascii a PDF
 TableNotEmptyDropCanceled=Mesa no vacía. Drop ha sido cancelado.
 ModuleBuilderNotAllowed=El constructor de módulos está disponible pero no está permitido para su usuario.
+TabsDefDescTooltip=Las pestañas proporcionadas por su módulo/aplicación se definen en la matriz <strong> $this->tabs </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o usar el editor integrado.

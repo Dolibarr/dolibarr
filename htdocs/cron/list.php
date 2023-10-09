@@ -53,10 +53,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 't.status,t.priority';
+	$sortfield = 't.priority,t.status';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC,ASC';
+	$sortorder = 'ASC,DESC';
 }
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
@@ -184,7 +184,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($search_label) {
 				$param .= '&search_label='.urlencode($search_label);
@@ -239,6 +239,18 @@ $pagetitle = $langs->trans("CronList");
 
 llxHeader('', $pagetitle);
 
+$TTestNotAllowed = array();
+$sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
+$resultTest = $db->query($sqlTest);
+if ($resultTest) {
+	while ($objTest = $db->fetch_object($resultTest)) {
+		$veriftest = verifCond($objTest->test);
+		if (!$veriftest) {
+			$TTestNotAllowed[$objTest->rowid] = $objTest->rowid;
+		}
+	}
+}
+
 $sql = "SELECT";
 $sql .= " t.rowid,";
 $sql .= " t.tms,";
@@ -273,6 +285,9 @@ $sql .= " t.libname,";
 $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql .= " WHERE entity IN (0,".$conf->entity.")";
+if (!empty($TTestNotAllowed)) {
+	$sql .= ' AND t.rowid NOT IN ('.$db->sanitize(implode(',', $TTestNotAllowed)).')';
+}
 if ($search_status >= 0 && $search_status < 2 && $search_status != '') {
 	$sql .= " AND t.status = ".(empty($search_status) ? '0' : '1');
 }
@@ -299,10 +314,9 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -327,7 +341,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($search_status) {
 	$param .= '&search_status='.urlencode($search_status);
@@ -420,7 +434,7 @@ if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
 	$text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
 }
 print info_admin($text);
-print '<br>';
+//print '<br>';
 
 //$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
@@ -431,6 +445,13 @@ print '<div class="div-table-responsive">';
 print '<table class="noborder">';
 
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre right">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
@@ -447,31 +468,44 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center"><input type="text" class="width50" name="search_lastresult" value="'.$search_lastresult.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1);
-print '</td><td class="liste_titre right">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
+print '<td class="liste_titre center">';
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre right">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>';
 
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100 ');
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronLastResult", $_SERVER["PHP_SELF"], "t.lastresult", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, '', $sortfield, $sortorder, 'right tdoverflowmax50');
+print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("CronLastResult", $_SERVER["PHP_SELF"], "t.lastresult", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("CronLastOutput", $_SERVER["PHP_SELF"], "t.lastoutput", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronDtNextLaunch", $_SERVER["PHP_SELF"], "t.datenextrun", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "t.status,t.priority", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+print_liste_field_titre("CronDtNextLaunch", $_SERVER["PHP_SELF"], "t.datenextrun", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "t.status,t.priority", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 
@@ -485,13 +519,6 @@ if ($num > 0) {
 
 		if (empty($obj)) {
 			break;
-		}
-
-		if (isset($obj->test)) {
-			$veriftest = verifCond($obj->test);
-			if (!$veriftest) {
-				continue; // Discard line with test = false
-			}
 		}
 
 		$reg = array();
@@ -509,11 +536,27 @@ if ($num > 0) {
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
+		$object->params = $obj->params;
+		$object->datelastrun = $db->jdate($obj->datelastrun);
+		$object->datenextrun = $db->jdate($obj->datenextrun);
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
 
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowraponall center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect valignmiddle" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 
 		// Ref
 		print '<td class="nowraponall">';
@@ -560,19 +603,20 @@ if ($num > 0) {
 		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';
 
-		print '<td>';
+		$s = '';
 		if ($obj->unitfrequency == "60") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Minutes');
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('MinuteShort') : $langs->trans('MinuteShort'));
+		} elseif ($obj->unitfrequency == "3600") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('HourShort') : $langs->trans('HourShort'));
+		} elseif ($obj->unitfrequency == "86400") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('DurationDays') : $langs->trans('DurationDay'));
+		} elseif ($obj->unitfrequency == "604800") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('DurationWeeks') : $langs->trans('DurationWeek'));
+		} elseif ($obj->unitfrequency == "2678400") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('DurationMonths') : $langs->trans('DurationMonth'));
 		}
-		if ($obj->unitfrequency == "3600") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Hours');
-		}
-		if ($obj->unitfrequency == "86400") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Days');
-		}
-		if ($obj->unitfrequency == "604800") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Weeks');
-		}
+		print '<td class="tdoverflowmax125 center" title="'.$s.'">';
+		print $s;
 		print '</td>';
 
 		/*
@@ -610,10 +654,10 @@ if ($num > 0) {
 		print '</td>';
 
 		// Duration
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
-			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
-			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
+			$nbseconds = max($datelastresult - $datelastrun, 1);
+			print $nbseconds.' '.($nbseconds > 1 ? $langs->trans("SecondShort") : $langs->trans("SecondShort"));
 		}
 		print '</td>';
 
@@ -689,21 +733,28 @@ if ($num > 0) {
 		} else {
 			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), "playdisabled", '', false, 0, 0, '', 'marginleftonly').'</a>';
 		}
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print ' &nbsp; <input id="cb'.$obj->rowid.'" class="flat checkforselect valignmiddle" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
+
 		print '</td>';
+
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowraponall center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect valignmiddle" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 
 		print '</tr>';
 
 		$i++;
 	}
 } else {
-	print '<tr><td colspan="15" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
+	print '<tr><td colspan="16"><span class="opacitymedium">'.$langs->trans('CronNoJobs').'</span></td></tr>';
 }
 
 print '</table>';

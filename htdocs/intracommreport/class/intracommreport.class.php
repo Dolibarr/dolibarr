@@ -48,15 +48,27 @@ class IntracommReport extends CommonObject
 	public $fk_element = 'fk_intracommreport';
 
 	/**
-	 * @var string declaration number
-	 */
-	public $declaration_number;
-
-	/**
 	 * 0 = No test on entity, 1 = Test with field entity, 2 = Test with link by societe
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
+	public $picto = 'intracommreport';
+
+
+	public $label; 		// ref ???
+
+	public $period;
+
+	public $declaration;
+
+	/**
+	 * @var string declaration number
+	 */
+	public $declaration_number;
+
+	public $type_declaration;		// deb or des
+
 
 	/**
 	 * DEB - Product
@@ -72,6 +84,7 @@ class IntracommReport extends CommonObject
 		'introduction'=>'Introduction',
 		'expedition'=>'Expédition'
 	);
+
 
 	/**
 	 * Constructor
@@ -163,7 +176,7 @@ class IntracommReport extends CommonObject
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
-		$declaration->addChild('declarationTypeCode', $conf->global->{'INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)});
+		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
 		/********************************************************************/
