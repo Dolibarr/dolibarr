@@ -109,6 +109,7 @@ $type = GETPOST("type", "int");
 $mode = GETPOST('mode', 'alpha');
 
 // Show/hide child product variants
+$show_childproducts = 0;
 if (isModEnabled('variants')) {
 	$show_childproducts = GETPOST('search_show_childproducts');
 }

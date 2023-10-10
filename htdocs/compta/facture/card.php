@@ -722,6 +722,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// We check if invoice has payments
+			$totalpaid = 0;
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
