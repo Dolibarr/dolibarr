@@ -694,7 +694,7 @@ if ($action == 'edit') {
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 			$textwarning = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
-			print $form->textwithpicto('', $textwarning, 1, 'warning');
+			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'warning');
 		}
 
 		print '</td></tr>';
@@ -780,7 +780,7 @@ if ($action == 'edit') {
 		print '</td></tr>';
 
 
-		if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE') == 'swiftmailer') {
 			// DKIM
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('swiftmailer'))) {

@@ -76,8 +76,8 @@ function notify_sendMail(
 		case 'BILL_VALIDATE':
 		case 'BILL_PAYED':
 			$bodyKeys = [
-				'BILL_VALIDATE' => 'Validated',
-				'BILL_PAYED'    => 'Payed',
+				'BILL_VALIDATE'	=> 'Validated',
+				'BILL_PAYED'	=> 'Payed',
 			];
 			$link = '<a href="'.$urlWithRoot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
@@ -93,8 +93,8 @@ function notify_sendMail(
 		case 'PROPAL_VALIDATE':
 		case 'PROPAL_CLOSE_SIGNED':
 			$bodyKeys = [
-				'PROPAL_VALIDATE'     => 'Validated',
-				'PROPAL_CLOSE_SIGNED' => 'ClosedSigned',
+				'PROPAL_VALIDATE'		=> 'Validated',
+				'PROPAL_CLOSE_SIGNED'	=> 'ClosedSigned',
 			];
 			$link = '<a href="'.$urlWithRoot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
@@ -102,10 +102,12 @@ function notify_sendMail(
 			$mesg = $outputLangs->transnoentitiesnoconv('EMailTextProposal' . $bodyKeys[$notifCode], $link);
 			break;
 		case 'FICHINTER_ADD_CONTACT':
+		case 'FICHINTER_CLOSE':
 		case 'FICHINTER_VALIDATE':
 			$bodyKeys = [
-				'FICHINTER_ADD_CONTACT' => 'AddedContact',
-				'FICHINTER_VALIDATE'    => 'Validated',
+				'FICHINTER_ADD_CONTACT'	=> 'AddedContact',
+				'FICHINTER_CLOSE'		=> 'Closed',
+				'FICHINTER_VALIDATE'	=> 'Validated',
 			];
 			$link = '<a href="'.$urlWithRoot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->ficheinter->dir_output;
@@ -117,10 +119,10 @@ function notify_sendMail(
 		case 'ORDER_SUPPLIER_SUBMIT':
 		case 'ORDER_SUPPLIER_VALIDATE':
 			$bodyKeys = [
-				'ORDER_SUPPLIER_APPROVE'  => 'EMailTextOrderApproved',
-				'ORDER_SUPPLIER_REFUSE'   => 'EMailTextOrderRefused',
-				'ORDER_SUPPLIER_SUBMIT'   => 'EMailTextSupplierOrderSubmit',
-				'ORDER_SUPPLIER_VALIDATE' => 'EMailTextOrderValidated',
+				'ORDER_SUPPLIER_APPROVE'	=> 'EMailTextOrderApproved',
+				'ORDER_SUPPLIER_REFUSE'		=> 'EMailTextOrderRefused',
+				'ORDER_SUPPLIER_SUBMIT'		=> 'EMailTextSupplierOrderSubmit',
+				'ORDER_SUPPLIER_VALIDATE'	=> 'EMailTextOrderValidated',
 			];
 			$link = '<a href="'.$urlWithRoot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
@@ -138,8 +140,8 @@ function notify_sendMail(
 		case 'EXPENSE_REPORT_VALIDATE':
 		case 'EXPENSE_REPORT_APPROVE':
 			$bodyKeys = [
-				'EXPENSE_REPORT_VALIDATE' => 'Validated',
-				'EXPENSE_REPORT_APPROVE'  => 'Approved',
+				'EXPENSE_REPORT_VALIDATE'	=> 'Validated',
+				'EXPENSE_REPORT_APPROVE'	=> 'Approved',
 			];
 			$link = '<a href="'.$urlWithRoot.'/expensereport/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->expensereport->dir_output;
@@ -149,8 +151,8 @@ function notify_sendMail(
 		case 'HOLIDAY_VALIDATE':
 		case 'HOLIDAY_APPROVE':
 			$bodyKeys = [
-				'HOLIDAY_VALIDATE' => 'Validated',
-				'HOLIDAY_APPROVE'  => 'Approved',
+				'HOLIDAY_VALIDATE'	=> 'Validated',
+				'HOLIDAY_APPROVE'	=> 'Approved',
 			];
 			$link = '<a href="'.$urlWithRoot.'/holiday/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newRef.'</a>';
 			$dir_output = $conf->holiday->dir_output;

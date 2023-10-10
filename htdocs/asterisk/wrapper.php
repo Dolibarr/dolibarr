@@ -97,7 +97,7 @@ if (!isset($conf->global->ASTERISK_INDICATIF)) {
 if (!isset($conf->global->ASTERISK_PORT)) {
 	$conf->global->ASTERISK_PORT = 5038;
 }
-if ($conf->global->ASTERISK_INDICATIF == 'NONE') {
+if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
 if (!isset($conf->global->ASTERISK_CONTEXT)) {

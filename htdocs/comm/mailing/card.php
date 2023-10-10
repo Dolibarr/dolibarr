@@ -86,7 +86,7 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 }
 
 // Security check
-if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 if (empty($action) && empty($object->id)) {
@@ -1076,7 +1076,7 @@ if ($action == 'create') {
 
 				//print '<a class="butAction" href="card.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
 
-				if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
+				if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
 				} else {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&token='.newToken().'&id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
@@ -1085,7 +1085,7 @@ if ($action == 'create') {
 				if ($object->statut == 0) {
 					if ($object->nbemail <= 0) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
-					} elseif (empty($user->rights->mailing->valider)) {
+					} elseif (!$user->hasRight('mailing', 'valider')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valid&amp;id='.$object->id.'">'.$langs->trans("ValidMailing").'</a>';
@@ -1095,7 +1095,7 @@ if ($action == 'create') {
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->hasRight('mailing', 'valider')) {
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
-					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
+					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
@@ -1107,7 +1107,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 2 || $object->statut == 3) && $user->hasRight('mailing', 'valider')) {
-					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
+					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
@@ -1115,7 +1115,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut <= 1 && $user->hasRight('mailing', 'creer')) || $user->hasRight('mailing', 'supprimer')) {
-					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->delete)) {
+					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'delete'))) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
 					} else {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';

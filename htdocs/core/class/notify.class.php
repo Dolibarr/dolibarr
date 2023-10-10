@@ -6,6 +6,7 @@
  * Copyright (C) 2021		Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,7 @@ class Notify
 		'PROPAL_CLOSE_SIGNED',
 		'PROPAL_CLOSE_REFUSED',
 		'FICHINTER_VALIDATE',
+		'FICHINTER_CLOSE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
@@ -511,15 +513,14 @@ class Notify
 					continue;
 				}
 
+				$sendto = $val;
+
 				$threshold = (float) $reg[1];
 				if (!empty($object->total_ht) && $object->total_ht <= $threshold) {
 					dol_syslog("A notification is requested for notifcode = ".$notifcode." but amount = ".$object->total_ht." so lower than threshold = ".$threshold.". We discard this notification");
 					continue;
 				}
 
-				$param = 'NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_'.$reg[1];
-
-				$sendto = $conf->global->$param;
 				$notifcodedefid = dol_getIdFromCode($this->db, $notifcode, 'c_action_trigger', 'code', 'rowid');
 				if ($notifcodedefid <= 0) {
 					dol_print_error($this->db, 'Failed to get id from code');

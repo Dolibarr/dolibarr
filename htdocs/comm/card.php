@@ -1370,7 +1370,7 @@ if ($object->id > 0) {
 				$invoicetemplate->date_when = $objp->date_when;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="tdoverflowmax250">';
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
 
@@ -1571,7 +1571,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
 
-		if (!empty($user->rights->contrat->creer) && $object->status == 1) {
+		if ($user->hasRight('contrat', 'creer') && $object->status == 1) {
 			$langs->load("contracts");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
@@ -1589,7 +1589,7 @@ if ($object->id > 0) {
 			}
 
 			if (isModEnabled('facture') && $object->status == 1) {
-				if (empty($user->rights->facture->creer)) {
+				if (!$user->hasRight('facture', 'creer')) {
 					$langs->load("bills");
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 				} else {
@@ -1618,7 +1618,7 @@ if ($object->id > 0) {
 
 		// Add action
 		if (isModEnabled('agenda') && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
-			if ($user->rights->agenda->myactions->create) {
+			if ($user->hasRight('agenda', 'myactions', 'create')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';

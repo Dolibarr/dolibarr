@@ -62,7 +62,7 @@ if (!isModEnabled('takepos')) {
 if (GETPOSTISSET("key")) {
 	$key = GETPOST('key');
 	$module = new modTcpdfbarcode();
-	$result = $module->buildBarCode($urlwithroot."/takepos/public/auto_order.php?key=".$key, 'QRCODE', 'Y');
+	$result = $module->buildBarCode($urlwithroot."/takepos/public/auto_order.php?key=".urlencode($key), 'QRCODE', 'Y');
 } else {
 	$module = new modTcpdfbarcode();
 	$result = $module->buildBarCode($urlwithroot."/takepos/public/menu.php", 'QRCODE', 'Y');
