@@ -319,6 +319,31 @@ if ($nolinesbefore) {
 					<?php
 				}
 			}
+
+			$parentId = GETPOST('parentId', 'int');
+
+			echo '<div id="dropdownAddProductAndService" class="dropdown inline-block">';
+			echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="dropdownAddProductAndServiceLink" aria-haspopup="true" aria-expanded="false">';
+	        echo '<span class="fa fa-plus-circle valignmiddle paddingleft"> '.$langs->trans("Add").'</span>';
+			echo '</a>';
+	        echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
+			echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewProduct").'</a>';
+			echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewService").'</a>';
+			echo '</div>';
+			echo '</div>';
+
+			?>
+			<script>
+				$(document).ready(function(){
+					$("#dropdownAddProductAndService .dropdown-toggle").on("click", function(event) {
+						console.log("toggle addproduct dropdown");
+						event.preventDefault();
+						$("#dropdownAddProductAndService").toggleClass("open");
+					});
+				});
+			</script>
+			<?php
+
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 
