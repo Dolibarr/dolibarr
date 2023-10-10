@@ -2165,8 +2165,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// $totalarray['nbfield']--;
-		// $totalarray['nbfield']--;
+
 		print "</tr>\n";
 
 		$total += $obj->total_ht;
