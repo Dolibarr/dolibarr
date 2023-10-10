@@ -9529,10 +9529,7 @@ abstract class CommonObject
 
 		// Create lines
 		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
-			$num = (is_array($this->lines) ? count($this->lines) : 0);
-			for ($i = 0; $i < $num; $i++) {
-				$line = $this->lines[$i];
-
+			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
 
