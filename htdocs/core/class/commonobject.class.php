@@ -7273,7 +7273,7 @@ abstract class CommonObject
 					//print $sql;
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
-					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_-,]+$/i', $InfoFieldList[7])) {
+					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
 						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
