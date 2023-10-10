@@ -70,7 +70,7 @@ foreach ($argv as $key => $val) {
 $now = $argv[1];
 
 if (!empty($dolibarr_main_db_readonly)) {
-	print "Error: instance in read-onyl mode\n";
+	print "Error: instance in read-only mode\n";
 	exit(-1);
 }
 

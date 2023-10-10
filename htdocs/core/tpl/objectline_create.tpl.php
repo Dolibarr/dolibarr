@@ -319,29 +319,62 @@ if ($nolinesbefore) {
 					<?php
 				}
 			}
+
+			$parentId = GETPOST('parentId', 'int');
+
+			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
+			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
+			if ($addproducton || $addserviceon) {
+				if ($addproducton && $addserviceon) {
+					echo '<div id="dropdownAddProductAndService" class="dropdown inline-block">';
+					echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="dropdownAddProductAndServiceLink" aria-haspopup="true" aria-expanded="false">';
+					echo '<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+					echo '</a>';
+					echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
+					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewProduct").'</a>';
+					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewService").'</a>';
+					echo '</div>';
+					echo '</div>';
+				} else {
+					if ($addproducton) {
+						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+							// @FIXME Not working yet
+							$tmpbacktopagejsfields = 'addproduct:id,search_id';
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+						} else {
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+						}
+					}
+					if ($addserviceon) {
+						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+							// @FIXME Not working yet
+							$tmpbacktopagejsfields = 'addproduct:id,search_id';
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+						} else {
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+						}
+					}
+				}
+			}
+
+			?>
+			<script>
+				$(document).ready(function(){
+					$("#dropdownAddProductAndService .dropdown-toggle").on("click", function(event) {
+						console.log("toggle addproduct dropdown");
+						event.preventDefault();
+						$("#dropdownAddProductAndService").toggleClass("open");
+					});
+				});
+			</script>
+			<?php
+
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
-
-			if (isModEnabled('product') && $user->hasRight('produit', 'creer')) {
-				$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
-				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-					$tmpbacktopagejsfields = 'addproduct:id,search_id';
-					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
-				} else {
-					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
-				}
-			}
-			if (isModEnabled('service') && $user->hasRight('service', 'creer')) {
-				$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
-				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-					$tmpbacktopagejsfields = 'addproduct:id,search_id';
-					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
-				} else {
-					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
-				}
-			}
 		}
 
 		if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
