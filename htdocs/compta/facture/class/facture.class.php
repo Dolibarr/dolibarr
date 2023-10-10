@@ -3446,6 +3446,7 @@ class Facture extends CommonInvoice
 												if ($result < 0) {
 													$error++;
 													$this->error = $mouvP->error;
+													$this->errors = $mouvP->errors;
 													break;
 												}
 
@@ -3464,6 +3465,7 @@ class Facture extends CommonInvoice
 													if ($result < 0) {
 														$error++;
 														$this->error = $mouvP->error;
+														$this->errors = $mouvP->errors;
 													}
 												} else {
 													$error++;
@@ -3482,6 +3484,7 @@ class Facture extends CommonInvoice
 									if ($result < 0) {
 										$error++;
 										$this->error = $mouvP->error;
+										$this->errors = $mouvP->errors;
 									}
 								}
 							}

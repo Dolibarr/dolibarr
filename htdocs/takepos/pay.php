@@ -329,6 +329,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 
 	function Validate(payment)
 	{
+		console.log("Launch Validate");
+
 		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var accountid = $("#selectaccountid").val();
 		var amountpayed = $("#change1").val();
