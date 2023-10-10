@@ -187,15 +187,23 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			// We fall back on the instance_unique_id
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 
+	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
-				return 'Error dolDecrypt decrypt key is empty';
+				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
+				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
@@ -204,7 +212,8 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
-			$newchain = 'Error dolDecrypt function openssl_decrypt() not available';
+			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
+			return $chain;
 		}
 		return $newchain;
 	} else {
