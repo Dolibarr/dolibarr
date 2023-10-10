@@ -9,40 +9,40 @@ if (!empty($subtotalarray['totalizable']) && is_array($subtotalarray['totalizabl
 // Show total line
 if (isset($totalarray['pos'])) {
 	print '<tr class="liste_total">';
-	$i = 0;
-	while ($i < $totalarray['nbfield']) {
-		$i++;
-		if (!empty($totalarray['pos'][$i])) {
-			switch ($totalarray['pos'][$i]) {
+	$j = 0;
+	while ($j < $totalarray['nbfield']) {
+		$j++;
+		if (!empty($totalarray['pos'][$j])) {
+			switch ($totalarray['pos'][$j]) {
 				case 'duration';
 					print '<td class="right">';
-					print (!empty($subtotalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($subtotalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
+					print (!empty($subtotalarray['val'][$totalarray['pos'][$j]]) ? convertSecondToTime($subtotalarray['val'][$totalarray['pos'][$j]], 'allhourmin') : 0);
 					print '</td>';
 					break;
 				case 'string';
 					print '<td class="left">';
-					print (!empty($subtotalarray['val'][$totalarray['pos'][$i]]) ? $subtotalarray['val'][$totalarray['pos'][$i]] : '');
+					print (!empty($subtotalarray['val'][$totalarray['pos'][$j]]) ? $subtotalarray['val'][$totalarray['pos'][$j]] : '');
 					print '</td>';
 					break;
 				case 'stock';
 					print '<td class="right">';
-					print price2num(!empty($subtotalarray['val'][$totalarray['pos'][$i]]) ? $subtotalarray['val'][$totalarray['pos'][$i]] : 0, 'MS');
+					print price2num(!empty($subtotalarray['val'][$totalarray['pos'][$j]]) ? $subtotalarray['val'][$totalarray['pos'][$j]] : 0, 'MS');
 					print '</td>';
 					break;
 				default;
 					print '<td class="right">';
-					print price(!empty($subtotalarray['val'][$totalarray['pos'][$i]]) ? $subtotalarray['val'][$totalarray['pos'][$i]] : 0);
+					print price(!empty($subtotalarray['val'][$totalarray['pos'][$j]]) ? $subtotalarray['val'][$totalarray['pos'][$j]] : 0);
 					print '</td>';
 					break;
 			}
 		} else {
-			if ($i == 1) {
+			if ($j == 1) {
 				print '<td>'.$langs->trans("SubTotal").'</td>';
 			} else {
 				print '<td></td>';
 			}
 		}
-		$subtotalarray['val'][$totalarray['pos'][$i]] = 0;
+		$subtotalarray['val'][$totalarray['pos'][$j]] = 0;
 	}
 	print '</tr>';
 }
