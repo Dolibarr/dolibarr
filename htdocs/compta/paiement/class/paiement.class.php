@@ -635,17 +635,18 @@ class Paiement extends CommonObject
 	 *
 	 *      @param	User	$user               Object of user making payment
 	 *      @param  string	$mode               'payment', 'payment_supplier'
-	 *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
+	 *      @param  string	$label              Label to use in bank record
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
 	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *      @param	string	$addbankurl			'direct-debit' or 'credit-transfer': Add another entry into bank_url.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '', $addbankurl = '')
 	{
-		global $conf, $langs, $user;
+		global $conf, $user;
 
 		$error = 0;
 		$bank_line_id = 0;
@@ -737,7 +738,6 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-				//if (! $error && $label != '(WithdrawalPayment)')
 				if (!$error) {
 					$linkaddedforthirdparty = array();
 					foreach ($this->amounts as $key => $value) {  // We should have invoices always for same third party but we loop in case of.
@@ -780,18 +780,18 @@ class Paiement extends CommonObject
 					}
 				}
 
-				// Add link 'WithdrawalPayment' in bank_url
-				if (!$error && $label == '(WithdrawalPayment)') {
+				// Add a link to the Direct Debit ('direct-debit') or Credit transfer ('credit-transfer') file in bank_url
+				if (!$error && $addbankurl && in_array($addbankurl, array('direct-debit', 'credit-transfer'))) {
 					$result = $acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
-						'withdraw'
+						$addbankurl
 						);
 				}
 
-				// Add link 'InvoiceRefused' in bank_url
+				// Add link to the Direct Debit if invoice redused ('InvoiceRefused') in bank_url
 				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
@@ -1114,9 +1114,9 @@ class Paiement extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->PAYMENT_ADDON)) {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
-		} elseif ($conf->global->PAYMENT_ADDON == 'ant') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'ant') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_ant';
-		} elseif ($conf->global->PAYMENT_ADDON == 'cicada') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'cicada') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		}
 

@@ -98,6 +98,9 @@ class UserGroup extends CommonObject
 	 */
 	public $note;
 
+	/**
+	 * @var User[]
+	 */
 	public $members = array(); // Array of users
 
 	public $nb_rights; // Number of rights granted to the user
@@ -830,7 +833,7 @@ class UserGroup extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

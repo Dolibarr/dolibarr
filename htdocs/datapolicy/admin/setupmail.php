@@ -155,14 +155,14 @@ print '<tr class"oddeven"><td class="fieldrequired">';
 
 print $langs->trans('DATAPOLICYACCEPT').'</td><td>';
 
-$doleditor = new DolEditor($acc, $conf->global->$acc, '', 250, 'Full', '', false, true, 1, 200, 70);
+$doleditor = new DolEditor($acc, getDolGlobalString($acc), '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICYREFUSE').'</td><td>';
 
 print $langs->trans('');
-$doleditor = new DolEditor($ref, $conf->global->$ref, '', 250, 'Full', '', false, true, 1, 200, 70);
+$doleditor = new DolEditor($ref, getDolGlobalString($ref), '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
 print '</table>';
@@ -172,11 +172,6 @@ print '<br><center><input type="submit" class="button button-edit" value="'.$lan
 print '</form>';
 
 print dol_get_fiche_end();
-
-print '<br><br>';
-
-print $langs->trans('SendAgreementText');
-print '<a class="button" href="'.DOL_URL_ROOT.'/datapolicy/admin/mailing.php">'.$langs->trans('SendAgreementRequestByEmail').'</a>';
 
 llxFooter();
 $db->close();

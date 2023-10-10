@@ -261,12 +261,42 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
-			$result = $object->delete($user);
-			if ($result > 0) {
-				header('Location: list.php?restore_lastsearch_values=1');
-				exit;
-			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+			$revertstock = GETPOST('revertstock');
+
+			if ($revertstock) {
+				$idwarehouse = GETPOST('idwarehouse');
+
+				$qualified_for_stock_change = 0;
+				if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$qualified_for_stock_change = $object->hasProductsOrServices(2);
+				} else {
+					$qualified_for_stock_change = $object->hasProductsOrServices(1);
+				}
+
+				// Check parameters
+				if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+					$langs->load("stocks");
+					if (!$idwarehouse || $idwarehouse == -1) {
+						$error++;
+						setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+						$action = 'delete';
+					} else {
+						$result = $object->setDraft($user, $idwarehouse);
+						if ($result < 0) {
+							$error++;
+						}
+					}
+				}
+			}
+
+			if (!$error) {
+				$result = $object->delete($user);
+				if ($result > 0) {
+					header('Location: list.php?restore_lastsearch_values=1');
+					exit;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
@@ -758,7 +788,8 @@ if (empty($reshook)) {
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOST('socid', 'int');
-				$object->libelle = GETPOST('label', 'alphanohtml');
+				$object->libelle = GETPOST('label', 'alphanohtml');	// deprecated
+				$object->label = GETPOST('label', 'alphanohtml');
 				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -3012,7 +3043,53 @@ if ($action == 'create') {
 
 		// Confirmation de la suppression de la facture fournisseur
 		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
+			$formquestion = array();
+
+			$qualified_for_stock_change = 0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$qualified_for_stock_change = $object->hasProductsOrServices(2);
+			} else {
+				$qualified_for_stock_change = $object->hasProductsOrServices(1);
+			}
+
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+				$langs->load("stocks");
+				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+				$formproduct = new FormProduct($db);
+				$warehouse = new Entrepot($db);
+				$warehouse_array = $warehouse->list_array();
+
+				$selectwarehouse = '<span class="questionrevertstock hidden">';
+				if (count($warehouse_array) == 1) {
+					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+					$selectwarehouse .= '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
+				} else {
+					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+					$selectwarehouse .= $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+				}
+				$selectwarehouse .= '</span>';
+
+				$selectyesno = array(0 => $langs->trans('No'), 1 => $langs->trans('Yes'));
+
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					$("#revertstock").change(function() {
+						if(this.value > 0) {
+							$(".questionrevertstock").removeClass("hidden");
+						} else {
+							$(".questionrevertstock").addClass("hidden");
+						}
+					});
+				});
+				</script>';
+
+				$formquestion = array(
+					array('type' => 'select', 'name' => 'revertstock', 'label' => $langs->trans("RevertProductsToStock"), 'select_show_empty' => 0, 'values' => $selectyesno),
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $selectwarehouse, 'tdclass' => 'questionrevertstock hidden')
+				);
+			}
+
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', $formquestion, 1, 1);
 		}
 		if ($action == 'deletepayment') {
 			$payment_id = GETPOST('paiement_id');
@@ -3094,8 +3171,8 @@ if ($action == 'create') {
 			print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-			$facusing = new FactureFournisseur($db);
 			if ($object->fk_facture_source > 0) {
+				$facusing = new FactureFournisseur($db);
 				$facusing->fetch($object->fk_facture_source);
 				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 			} else {

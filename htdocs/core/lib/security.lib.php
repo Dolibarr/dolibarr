@@ -111,8 +111,8 @@ function dolGetRandomBytes($length)
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
- *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$chain		String to encode
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
  *	@return  string					encoded string
@@ -187,15 +187,21 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 
+	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
-				return 'Error dolDecrypt decrypt key is empty';
+				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
+				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
@@ -204,7 +210,8 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
-			$newchain = 'Error dolDecrypt function openssl_decrypt() not available';
+			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
+			return $chain;
 		}
 		return $newchain;
 	} else {
@@ -227,7 +234,7 @@ function dol_hash($chain, $type = '0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
@@ -248,9 +255,9 @@ function dol_hash($chain, $type = '0')
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
 		return password_hash($chain, PASSWORD_DEFAULT);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') {
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1') {
 		return sha1($chain);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') {
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1md5') {
 		return sha1(md5($chain));
 	}
 
@@ -274,7 +281,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
 {
 	global $conf;
 
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
@@ -375,7 +382,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	print ", perm: user->right->".$features.($feature2 ? "->".$feature2 : "")."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	print ", perm: user->hasRight(".$features.($feature2 ? ",".$feature2 : "").", lire) = ".($feature2 ? $user->hasRight($features, $feature2, 'lire') : $user->hasRight($features, 'lire'))."<br>";
 	*/
 
 	$parentfortableentity = '';
@@ -442,19 +449,21 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
-	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
+	if (!empty($hookmanager)) {
+		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
-	if (isset($hookmanager->resArray['result'])) {
-		if ($hookmanager->resArray['result'] == 0) {
-			if ($mode) {
-				return 0;
-			} else {
-				accessforbidden(); // Module returns 0, so access forbidden
+		if (isset($hookmanager->resArray['result'])) {
+			if ($hookmanager->resArray['result'] == 0) {
+				if ($mode) {
+					return 0;
+				} else {
+					accessforbidden(); // Module returns 0, so access forbidden
+				}
 			}
 		}
-	}
-	if ($reshook > 0) {		// No other test done.
-		return 1;
+		if ($reshook > 0) {		// No other test done.
+			return 1;
+		}
 	}
 
 	// Features/modules to check
@@ -627,6 +636,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'ecm') {
 				if (!$user->rights->ecm->upload) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -1183,7 +1197,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		$langs->setDefaultLang();
 	}
 
-	$langs->load("errors");
+	$langs->loadLangs(array("main", "errors"));
 
 	if ($printheader) {
 		if (function_exists("llxHeader")) {
@@ -1191,6 +1205,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		} elseif (function_exists("llxHeaderVierge")) {
 			llxHeaderVierge('');
 		}
+		print '<div style="padding: 20px">';
 	}
 	print '<div class="error">';
 	if (empty($message)) {
@@ -1223,6 +1238,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	if ($printfooter && function_exists("llxFooter")) {
+		print '</div>';
 		llxFooter();
 	}
 

@@ -54,7 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
 if (!isModEnabled('adherent')) {
-	httponly_accessforbidden('Module Memebership no enabled');
+	httponly_accessforbidden('Module Membership not enabled');
 }
 
 

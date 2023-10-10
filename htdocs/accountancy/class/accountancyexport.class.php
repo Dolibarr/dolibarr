@@ -103,7 +103,7 @@ class AccountancyExport
 
 		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
+		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -2477,7 +2477,7 @@ class AccountancyExport
 	{
 		$retVal = dol_string_nohtmltag($str, 1, 'Windows-1251');
 		if ($retVal >= 0 && $size >= 0) {
-			$retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
+			$retVal = dol_substr($retVal, 0, $size, 'Windows-1251');
 		}
 		return $retVal;
 	}

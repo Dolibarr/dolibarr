@@ -214,7 +214,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$Tickettatic = new Ticket($db);
-		$nbTicket = count($Tickettatic->getAllItemsLinkedByObjectID($project->id, '*', 'fk_project', 'ticket'));
+		$nbTicket = $Tickettatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'ticket');
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
 		$head[$h][1] = $langs->trans("Ticket");
 		if ($nbTicket > 0) {
@@ -1111,13 +1111,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 		// Check if Extrafields is totalizable
-		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
-			if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
-				print '<td class="right">';
-				if ($value == 1) {
-					print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+		if (!empty($extrafields->attributes['projet_task']['totalizable'])) {
+			foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
+				if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+					print '<td class="right">';
+					if ($value == 1) {
+						print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+					}
+					print '</td>';
 				}
-				print '</td>';
 			}
 		}
 

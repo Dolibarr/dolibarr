@@ -379,6 +379,21 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</td>';
 	print '</tr>';
 
+	// show footer for company
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowCompanyFooter").'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_SHOW_COMPANY_FOOTER');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_SHOW_COMPANY_FOOTER", $arrval, $conf->global->TICKET_SHOW_COMPANY_FOOTER);
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketsShowCompanyFooterHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
 	// Show progression
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowProgression").'</td>';
 	print '<td class="left">';

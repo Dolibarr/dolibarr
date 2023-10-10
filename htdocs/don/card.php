@@ -78,7 +78,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('doncard', 'globalcard'));
+$hookmanager->initHooks(array($object->element.'card', 'globalcard'));
 
 $upload_dir = $conf->don->dir_output;
 
@@ -912,7 +912,7 @@ if (!empty($id) && $action != 'edit') {
 		if ($object->statut == $object::STATUS_CANCELED || $object->statut == $object::STATUS_DRAFT) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";
 		}
 	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";

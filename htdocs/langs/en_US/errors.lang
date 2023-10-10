@@ -4,7 +4,7 @@
 NoErrorCommitIsDone=No error, we commit
 # Errors
 ErrorButCommitIsDone=Errors found but we validate despite this
-ErrorBadEMail=Email %s is incorrect
+ErrorBadEMail=Email address %s is incorrect
 ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
 ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
@@ -32,6 +32,7 @@ ErrorBadThirdPartyName=Bad value for third-party name
 ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
+ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
@@ -131,7 +132,7 @@ ErrorLoginDoesNotExists=User with login <b>%s</b> could not be found.
 ErrorLoginHasNoEmail=This user has no email address. Process aborted.
 ErrorBadValueForCode=Bad value for security code. Try again with new value...
 ErrorBothFieldCantBeNegative=Fields %s and %s can't be both negative
-ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in thirdparty card) and apply it to the invoice.
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in third-party card) and apply it to the invoice.
 ErrorLinesCantBeNegativeForOneVATRate=Total of lines (net of tax) can't be negative for a given not null VAT rate (Found a negative total for VAT rate <b>%s</b>%%).
 ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=Quantity for line into customer invoices can't be negative
@@ -240,7 +241,7 @@ ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
-ErrorSearchCriteriaTooSmall=Search criteria too small.
+ErrorSearchCriteriaTooSmall=Search criteria too short.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
@@ -296,16 +297,16 @@ ErrorAjaxRequestFailed=Request failed
 ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
 ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorQuantityIsLimitedTo=Quantity is limited to %s
-ErrorFailedToLoadThirdParty=Failed to find/load thirdparty from id=%s, email=%s, name=%s
+ErrorFailedToLoadThirdParty=Failed to find/load third party from id=%s, email=%s, name=%s
 ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account
-ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
+ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this third party (or set to a value deleted on Stripe side). Create (or re-attach) it first.
 ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character +
 ErrorTableNotFound=Table <b>%s</b> not found
 ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
-ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, status or dates of validity. Please relogin.
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
 ErrorExistingPermission = Permission <b>%s</b> for object <b>%s</b> already exists
 ErrorFieldExist=The value for <b>%s</b> already exist 
 ErrorEqualModule=Module invalid in <b>%s</b>
@@ -318,8 +319,14 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you 
 ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
-ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s 
+ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
+ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 
+ErrorTableExist=Table <b>%s</b> already exist
+ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s 
+ErrorCheckTheCommandInsideTheAdvancedOptions=Check the command used for the export into the Advanced options of the export
+ 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
@@ -361,6 +368,7 @@ WarningModuleNeedRefrech = Module <b>%s</b> has been disabled. Don't forget to e
 WarningPermissionAlreadyExist=Existing permissions for this object
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.  
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
+WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
@@ -389,3 +397,4 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+ErrorTooManyAttempts= Too many attempts, please try again later

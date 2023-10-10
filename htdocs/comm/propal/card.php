@@ -101,6 +101,9 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
 		$ret = $object->fetch_thirdparty();
+		if ($ret > 0 && isset($object->fk_project)) {
+			$ret = $object->fetch_project();
+		}
 	}
 	if ($ret <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -489,9 +492,10 @@ if (empty($reshook)) {
 				if ($origin && $originid) {
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = $origin;
+					$regs = array();
 					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-						$element = $regs [1];
-						$subelement = $regs [2];
+						$element = $regs[1];
+						$subelement = $regs[2];
 					}
 
 					// For compatibility
@@ -542,7 +546,7 @@ if (empty($reshook)) {
 							$num = count($lines);
 							for ($i = 0; $i < $num; $i++) {
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
 
 								// Positive line
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
@@ -722,7 +726,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
-					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
+					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1092,7 +1096,7 @@ if (empty($reshook)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-					$prodcustprice = new Productcustomerprice($db);
+					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
 
@@ -1494,7 +1498,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOST('lineid', 'int')) {
 						$fournprice = $line->fk_fournprice;
@@ -2010,7 +2014,7 @@ if ($action == 'create') {
 		print '<tr class="field_currency">';
 		print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="valuefieldcreate maxwidthonsmartphone">';
-		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency($currency_code, 'multicurrency_code', 0);
+		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0);
 		print '</td></tr>';
 	}
 
@@ -2209,7 +2213,7 @@ if ($action == 'create') {
 			// It may also break step of creating an order when invoicing must be done from orders and not from proposal
 			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 				$object->fetchObjectLinked();
@@ -2802,35 +2806,35 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($object->total_tva, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	print '<td class="nowrap amountcard right">' . price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) {
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
 			print '<tr>';
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 		}
@@ -2838,9 +2842,9 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td>' . $langs->trans('AmountTTC') . '</td>';
-	print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+	print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
 	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 	}
 	print '</tr>';
 
@@ -3074,13 +3078,13 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
 
 		$compatibleImportElementsList = false;
-		if ($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $object->statut == Propal::STATUS_DRAFT) {
 			$compatibleImportElementsList = array('commande', 'propal', 'facture'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 		// Show online signature link
-		$useonlinesignature = 1;
+		$useonlinesignature = getDolGlobalInt('PROPOSAL_ALLOW_ONLINESIGN');
 
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';

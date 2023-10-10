@@ -130,7 +130,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			}
 		}*/
 	} elseif ($type == 'contract') {
-		$securekeyseed = isset($conf->global->CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=contract&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'contract_ref';
@@ -145,7 +145,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
 	} elseif ($type == 'fichinter') {
-		$securekeyseed = isset($conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'fichinter_ref';
@@ -158,6 +158,21 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
+		}
+	} else {
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= $type.'_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
 		}
 	}
 

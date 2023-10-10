@@ -780,7 +780,7 @@ if ($action == 'edit') {
 		print '</td></tr>';
 
 
-		if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE') == 'swiftmailer') {
 			// DKIM
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('swiftmailer'))) {

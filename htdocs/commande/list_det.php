@@ -76,6 +76,7 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_e
 $search_product_category = GETPOST('search_product_category', 'int');
 
 // Détail commande
+$search_id = GETPOST('search_id', 'alpha');
 $search_refProduct = GETPOST('search_refProduct', 'alpha');
 $search_descProduct = GETPOST('search_descProduct', 'alpha');
 
@@ -172,6 +173,7 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	// Détail commande
+	'rowid'=> array('label'=>'TechnicalID', 'checked'=>1, 'position'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0)),
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
 	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
@@ -213,7 +215,7 @@ $arrayfields = array(
 	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled('expedition')), 'position'=>990),
-	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
+	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
@@ -256,6 +258,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$search_id = '';
 		$search_refProduct = '';
 		$search_descProduct = '';
 		$search_ref = '';
@@ -445,12 +448,14 @@ if ($socid > 0) {
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+if ($search_id) {
+	$sql .= natural_search('cdet.rowid', $search_id);
+}
 if ($search_refProduct) {
 	$sql .= natural_search('pr.ref', $search_refProduct);
 }
 if ($search_descProduct) {
-	$sql .= natural_search('pr.label', $search_descProduct);
-	$sql .= natural_search('cdet.description', $search_descProduct);
+	$sql .= natural_search(array('pr.label','cdet.description'), $search_descProduct);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -941,7 +946,12 @@ if ($resql) {
 		print $searchpicto;
 		print '</td>';
 	}
-
+	// ID
+	if (!empty($arrayfields['rowid']['checked'])) {
+		print '<td class="liste_titre" data-key="id">';
+		print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+		print '</td>';
+	}
 	// Détail commande
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1203,13 +1213,13 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
 		$liststatus = array(
-			Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
-			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
-			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
-			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
+			Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraftShort"),
+			Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+			Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSentShort"),
+			-2 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+			-3 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
+			Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+			Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceledShort")
 		);
 		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125', 1);
 		print '</td>';
@@ -1231,6 +1241,9 @@ if ($resql) {
 	}
 
 	// Détail commande
+	if (!empty($arrayfields['rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1439,7 +1452,7 @@ if ($resql) {
 		}
 		if ($oldref != $obj->product_ref && $sortfield == 'pr.ref') {
 			// TODO make new /core/tpl/list_print_sub_total.php
-			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
 			$oldref = $obj->product_ref;
 		}
 
@@ -1503,6 +1516,12 @@ if ($resql) {
 		}
 
 		// Détail commande
+		// ID
+		if (!empty($arrayfields['rowid']['checked'])) {
+			print '<td class="nowrap right">'.$obj->rowid.'</td>';
+			$totalarray['nbfield']++;
+		}
+
 		// Product Ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
 			if (!empty($obj->product_rowid)) {
@@ -1534,16 +1553,19 @@ if ($resql) {
 		// Product QtyOrdered
 		if (!empty($arrayfields['cdet.qty']['checked'])) {
 			print '<td class="nowrap right">'.$obj->qty.'</td>';
-			if (isset($totalarray['val']['cdet.qty'])) {
+			if (isset($totalarray['val']['cdet.qty']) || isset($subtotalarray['val']['cdet.qty']) ) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
+				$subtotalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
 				$totalarray['val']['cdet.qty'] = $obj->qty;
+				$subtotalarray['val']['cdet.qty'] = $obj->qty;
 			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.qty';
 			}
 		}
 
@@ -1737,11 +1759,14 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ht';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.total_ht';
 			}
-			if (isset($totalarray['val']['cdet.total_ht'])) {
+			if (isset($totalarray['val']['cdet.total_ht']) || isset($subtotalarray['val']['cdet.total_ht'])) {
 				$totalarray['val']['cdet.total_ht'] += $obj->total_ht;
+				$subtotalarray['val']['cdet.total_ht'] += $obj->total_ht;
 			} else {
 				$totalarray['val']['cdet.total_ht'] = $obj->total_ht;
+				$subtotalarray['val']['cdet.total_ht'] = $obj->total_ht;
 			}
 		}
 		// Amount VAT
@@ -1752,8 +1777,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_tva';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.total_tva';
 			}
 			$totalarray['val']['cdet.total_tva'] += $obj->total_tva;
+			$subtotalarray['val']['cdet.total_tva'] += $obj->total_tva;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
@@ -1763,8 +1790,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
+				$subtotalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
 			}
 			$totalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
+			$subtotalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
 		}
 		// Warehouse
 		if (!empty($arrayfields['c.fk_warehouse']['checked'])) {
@@ -1907,8 +1936,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'total_margin';
 			}
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+			$subtotalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
@@ -1925,12 +1956,15 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'total_mark_rate';
 			}
 			if ($i >= $imaxinloop - 1) {
 				if (!empty($total_ht)) {
 					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+					$subtotalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 				} else {
 					$totalarray['val']['total_mark_rate'] = '';
+					$subtotalarray['val']['total_mark_rate'] = '';
 				}
 			}
 		}

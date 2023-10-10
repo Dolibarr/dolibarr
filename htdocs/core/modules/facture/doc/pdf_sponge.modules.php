@@ -77,42 +77,6 @@ class pdf_sponge extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
-	/**
 	 * @var int heightforinfotot
 	 */
 	public $heightforinfotot;
@@ -136,12 +100,6 @@ class pdf_sponge extends ModelePDFFactures
 	 * @var int tab_top_newpage
 	 */
 	public $tab_top_newpage;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
 
 	/**
 	 * @var bool Situation invoice type
@@ -1354,7 +1312,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
+				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 

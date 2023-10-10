@@ -8,7 +8,7 @@ dist: focal
 
 language: generic
 
-scan_logs: false
+#scan_logs: false
 
 git:
   depth: 1
@@ -325,22 +325,24 @@ script:
     echo
 
   - |
-    echo "Checking coding style (only for Pull Requests builds and 1 version to not overload travis and avoid duplicate tests)"
+    echo "Checking coding style (only for 1 version to not overload travis and avoid duplicate tests)"
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
     fi
     set +e
     echo
 
   - |
-    echo "Checking missing debug"
+    echo "Checking missing debug (only for 1 version to not overload travis and avoid duplicate tests)"
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
     set +e
@@ -371,6 +373,7 @@ script:
     echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
     echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
     #cat $INSTALL_FORCED_FILE
+    echo
   
   - |
     echo "Upgrading Dolibarr"
@@ -436,15 +439,22 @@ script:
     php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
     php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
     php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
+    php upgrade.php 18.0.0 19.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade18001900.log || cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    php upgrade2.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-2.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-2.log
+    php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-3.log
+    set +e
+    echo
 
-    #show table content and log
+  - |
+    echo Show some debug info like table content or log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    #cat $TRAVIS_BUILD_DIR/upgrade500600.log
+    cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    echo
 
   - |
     echo Result of migration scripts
     ls -alrt $TRAVIS_BUILD_DIR/
-        
+
     echo Show content of last file
     cat $TRAVIS_BUILD_DIR/"$(ls -rt $TRAVIS_BUILD_DIR/ | tail -n1)"
 
@@ -463,6 +473,7 @@ script:
     echo
     #cat /tmp/dolibarr_install.log
     cat $TRAVIS_BUILD_DIR/enablemodule.log
+    echo
 
   - |
     echo "Unit testing"
@@ -472,6 +483,7 @@ script:
     phpunitresult=$?
     echo "Phpunit return code = $phpunitresult"
     set +e
+    echo
 
 after_script:
   - |

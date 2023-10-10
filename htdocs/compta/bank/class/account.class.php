@@ -701,7 +701,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		// Chargement librairie pour acces fonction controle RIB
+		// Load librairies to check BAN
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$now = dol_now();
@@ -778,13 +778,13 @@ class Account extends CommonObject
 			$result = $this->update($user, 1);
 			if ($result > 0) {
 				$accline = new AccountLine($this->db);
-				$accline->datec = $this->db->idate($now);
+				$accline->datec = $now;
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
 				$accline->amount = price2num($this->solde);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
-				$accline->datev = $this->db->idate($this->date_solde);
-				$accline->dateo = $this->db->idate($this->date_solde);
+				$accline->datev = $this->date_solde;
+				$accline->dateo = $this->date_solde;
 				$accline->fk_type = 'SOLD';
 
 				if ($accline->insert() < 0) {
@@ -1505,7 +1505,7 @@ class Account extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1563,25 +1563,19 @@ class Account extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$this->error_number = 0;
+		$error = 0;
 
-		// Call function to check BAN
-
+		// Call functions to check BAN
 		if (!checkIbanForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'IBANNotValid';
 		}
 		if (!checkSwiftForAccount($this)) {
-			$this->error_number = 12;
+			$error++;
 			$this->error_message = 'SwiftNotValid';
 		}
-		/*if (! checkBanForAccount($this))
-		{
-			$this->error_number = 12;
-			$this->error_message = 'BANControlError';
-		}*/
 
-		if ($this->error_number == 0) {
+		if (! $error) {
 			return 1;
 		} else {
 			return 0;
@@ -1783,7 +1777,7 @@ class Account extends CommonObject
 
 		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
-				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
+				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
 						'BankCode',
 						'DeskCode',
@@ -2041,8 +2035,6 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function fetch($rowid, $ref = '', $num = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($rowid) && empty($ref) && empty($num)) {
 			return -1;
@@ -2058,9 +2050,9 @@ class AccountLine extends CommonObjectLine
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) {
-			$sql .= " AND b.num_chq='".$this->db->escape($num)."'";
+			$sql .= " AND b.num_chq = '".$this->db->escape($num)."'";
 		} elseif ($ref) {
-			$sql .= " AND b.rowid='".$this->db->escape($ref)."'";
+			$sql .= " AND b.rowid = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " AND b.rowid = ".((int) $rowid);
 		}
@@ -2076,9 +2068,9 @@ class AccountLine extends CommonObjectLine
 				$this->rowid = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->datec = $obj->datec;
-				$this->datev = $obj->datev;
-				$this->dateo = $obj->dateo;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datev = $this->db->jdate($obj->datev);
+				$this->dateo = $this->db->jdate($obj->dateo);
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
 				$this->note = $obj->note;
@@ -2155,6 +2147,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
 		$sql .= ")";
 
+
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2182,10 +2175,11 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *      Delete bank transaction record
 	 *
-	 *		@param	User|null	$user	User object that delete
-	 *      @return	int 				<0 if KO, >0 if OK
+	 * @param	User|null	$user		User object that delete
+	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * @return	int 					<0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -2198,6 +2192,16 @@ class AccountLine extends CommonObjectLine
 		}
 
 		$this->db->begin();
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNTLINE_DELETE', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+		}
 
 		// Protection to avoid any delete of accounted lines. Protection on by default
 		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING)) {

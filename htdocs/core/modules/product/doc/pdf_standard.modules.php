@@ -63,12 +63,6 @@ class pdf_standard extends ModelePDFProduct
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 
 	/**
 	 *	Constructor
@@ -77,7 +71,7 @@ class pdf_standard extends ModelePDFProduct
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "companies"));

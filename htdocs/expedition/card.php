@@ -334,6 +334,7 @@ if (empty($reshook)) {
 					$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
 
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
+					$subtotalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 
 					$j++;
 					$stockLocation = "ent1".$i."_".$j;
@@ -343,7 +344,15 @@ if (empty($reshook)) {
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty, 'int') > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
+					$subtotalqty = price2num(GETPOST($qty, 'alpha'), 'MS');
 				}
+			}
+
+			// check qty shipped not greater than ordered
+			if (getDolGlobalInt("MAIN_DONT_SHIP_MORE_THAN_ORDERED") && $subtotalqty > $objectsrc->lines[$i]->qty) {
+				setEventMessages($langs->trans("ErrorTooMuchShipped", $i+1), null, 'errors');
+				$error++;
+				continue;
 			}
 
 			// Extrafields
@@ -1841,7 +1850,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
@@ -1868,7 +1877,7 @@ if ($action == 'create') {
 
 	// Delivery date planned
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
 
@@ -1999,7 +2008,7 @@ if ($action == 'create') {
 
 	// Sending method
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
@@ -2411,7 +2420,7 @@ if ($action == 'create') {
 
 				// Warehouse source
 				if (isModEnabled('stock')) {
-					print '<td class="linecolwarehousesource left">';
+					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
@@ -2568,7 +2577,6 @@ if ($action == 'create') {
 			}
 
 			// 0=draft, 1=validated/delivered, 2=closed/delivered
-			// If WORKFLOW_BILL_ON_SHIPMENT: 0=draft, 1=validated, 2=billed (no status delivered)
 			if ($object->statut == Expedition::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id, '');
@@ -2576,11 +2584,7 @@ if ($action == 'create') {
 			}
 			if ($object->statut == Expedition::STATUS_CLOSED) {
 				if ($user->hasRight('expedition', 'creer')) {
-					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-						print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
-					} else {
-						print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
-					}
+					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
@@ -2598,9 +2602,9 @@ if ($action == 'create') {
 			// Create bill
 			if (isModEnabled('facture') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
 				if ($user->hasRight('facture', 'creer')) {
-					// TODO show button only   if (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
-					// If we do that, we must also make this option official.
-					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
+					if (getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
+						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
+					}
 				}
 			}
 
@@ -2609,28 +2613,26 @@ if ($action == 'create') {
 			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery'])) {
 				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
-			// Close
+
+			// Set Billed and Closed
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
-				if ($user->rights->expedition->creer && $object->statut > 0 && !$object->billed) {
-					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
-					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-						$label = "ClassifyBilled";
-						$paramaction = 'classifybilled';
+				if ($user->hasRight('expedition', 'creer') && $object->statut > 0) {
+					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
+						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
-					print dolGetButtonAction('', $langs->trans($label), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
 			// Cancel
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
-				if ($user->rights->expedition->supprimer) {
+				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 
 			// Delete
-			if ($user->rights->expedition->supprimer) {
+			if ($user->hasRight('expedition', 'supprimer')) {
 				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 			}
 		}

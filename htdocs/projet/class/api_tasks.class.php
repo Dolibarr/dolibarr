@@ -61,9 +61,9 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int         $id                     ID of task
 	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
-	 * @return 	array|mixed                         data without useless information
+	 * @return	array|mixed                         data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $includetimespent = 0)
 	{
@@ -97,14 +97,15 @@ class Tasks extends DolibarrApi
 	 *
 	 * Get a list of tasks
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of project objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -177,7 +178,7 @@ class Tasks extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$task_static = new Task($this->db);
 				if ($task_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($task_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($task_static), $properties);
 				}
 				$i++;
 			}
@@ -268,7 +269,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int   $id           Id of task
 	 * @param   int   $userid       Id of user (0 = connected user)
-	 * @return 	array				Array of roles
+	 * @return	array				Array of roles
 	 *
 	 * @url	GET {id}/roles
 	 *

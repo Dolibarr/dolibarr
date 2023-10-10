@@ -148,7 +148,7 @@ if ($nolinesbefore) {
 				$colspan++;
 			} else {
 				print '<td class="margininfos linecolmargin1 right">';
-				if ($conf->global->MARGIN_TYPE == "1") {
+				if (getDolGlobalString('MARGIN_TYPE') == "1") {
 					echo $langs->trans('BuyingPrice');
 				} else {
 					echo $langs->trans('CostPrice');
@@ -321,6 +321,27 @@ if ($nolinesbefore) {
 			}
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
+
+			if (isModEnabled('product') && $user->hasRight('produit', 'creer')) {
+				$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					$tmpbacktopagejsfields = 'addproduct:id,search_id';
+					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+				} else {
+					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+				}
+			}
+			if (isModEnabled('service') && $user->hasRight('service', 'creer')) {
+				$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					$tmpbacktopagejsfields = 'addproduct:id,search_id';
+					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+				} else {
+					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+				}
+			}
 		}
 
 		if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
@@ -818,7 +839,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 						<?php
-						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+						if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 							if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
 								<?php
@@ -880,13 +901,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					/* setup of margin calculation */
 					var defaultbuyprice = '<?php
 					if (isset($conf->global->MARGIN_TYPE)) {
-						if ($conf->global->MARGIN_TYPE == '1') {
+						if (getDolGlobalString('MARGIN_TYPE') == '1') {
 							print 'bestsupplierprice';
 						}
-						if ($conf->global->MARGIN_TYPE == 'pmp') {
+						if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 							print 'pmp';
 						}
-						if ($conf->global->MARGIN_TYPE == 'costprice') {
+						if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 							print 'costprice';
 						}
 					} ?>';

@@ -213,7 +213,7 @@ class ExportCsv extends ModeleExports
 	 *	Output record line into file
 	 *
 	 *  @param     	array		$array_selected_sorted      Array with list of field to export
-	 *  @param     	resource	$objp                       A record from a fetch with all fields from select
+	 *  @param     	Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param     	Translate	$outputlangs    			Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
@@ -325,7 +325,7 @@ class ExportCsv extends ModeleExports
 		$newvalue = str_replace("\n", '\n', $newvalue);
 		if (!empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue) {
 			// If we must use enclusure on text with CR/LF)
-			if ($conf->global->USE_STRICT_CSV_RULES == 1) {
+			if (getDolGlobalInt('USE_STRICT_CSV_RULES') == 1) {
 				// If we use strict CSV rules (original value must remain but we add quote)
 				$newvalue = $oldvalue;
 			}

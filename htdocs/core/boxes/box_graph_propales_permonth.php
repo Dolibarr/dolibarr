@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last propals
+ * Class to manage the box to show proposals per month graph
  */
 class box_graph_propales_permonth extends ModeleBoxes
 {
-	public $boxcode = "propalpermonth";
-	public $boximg = "object_propal";
+	public $boxcode  = "propalpermonth";
+	public $boximg   = "object_propal";
 	public $boxlabel = "BoxProposalsPerMonth";
-	public $depends = array("propal");
+	public $depends  = array("propal");
 
 	/**
 	 * @var DoliDB Database handler.

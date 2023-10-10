@@ -70,12 +70,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxdate;
 	public $posxreffacturefourn;
 	public $posxreffacture;
