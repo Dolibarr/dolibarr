@@ -1543,7 +1543,7 @@ if ($resql) {
 		if (!empty($arrayfields['pr.desc']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
-			print '<td class="nowrap tdoverflowmax200">'.dol_escape_htmltag($labelproduct).'</td>';
+			print '<td class="nowrap tdoverflowmax200">'.dol_string_nohtmltag($labelproduct).'</td>';
 
 			if (!$i) {
 				$totalarray['nbfield']++;
