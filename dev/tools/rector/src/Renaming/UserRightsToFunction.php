@@ -12,10 +12,13 @@ use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * Class to refactor User rights
+ */
 class UserRightsToFunction extends AbstractRector
 {
 	/**
-	 * @param \Rector\Core\PhpParser\Node\NodeFactory $nodeFactory
+	 * @param \Rector\Core\PhpParser\Node\NodeFactory $nodeFactory node factory
 	 */
 	public function __construct(NodeFactory $nodeFactory)
 	{
@@ -30,8 +33,9 @@ class UserRightsToFunction extends AbstractRector
 	{
 		return new RuleDefinition(
 			'Change \$user->rights->module->permission to \$user->hasRight(\'module\', \'permission\')',
-			[new CodeSample('$user->rights->module->permission'
-				, '$user->hasRight(\'module\', \'permission\')'
+			[new CodeSample(
+				'$user->rights->module->permission',
+				'$user->hasRight(\'module\', \'permission\')'
 			)]);
 	}
 
@@ -51,7 +55,7 @@ class UserRightsToFunction extends AbstractRector
 	}
 
 	/**
-	 * @param \PhpParser\Node $node
+	 * @param \PhpParser\Node $node node to be changed
 	 * @return \PhpParser\Node|\PhpParser\Node[]|\PhpParser\Node\Expr\MethodCall|void|null| int
 	 */
 	public function refactor(Node $node)
@@ -105,6 +109,10 @@ class UserRightsToFunction extends AbstractRector
 		return $method;
 	}
 
+	/**
+	 * @param \PhpParser\Node\Expr\PropertyFetch $node node
+	 * @return array|null
+	 */
 	private function getRights(Node\Expr\PropertyFetch $node)
 	{
 		$perm2 = '';
