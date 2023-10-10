@@ -1518,7 +1518,9 @@ if ($resql) {
 		// ID
 		if (!empty($arrayfields['rowid']['checked'])) {
 			print '<td class="nowrap right">'.$obj->rowid.'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Product Ref
