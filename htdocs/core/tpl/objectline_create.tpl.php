@@ -321,6 +321,27 @@ if ($nolinesbefore) {
 			}
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
+
+			if (isModEnabled('product') && $user->hasRight('produit', 'creer')) {
+				$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					$tmpbacktopagejsfields = 'addproduct:id,search_id';
+					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+				} else {
+					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+				}
+			}
+			if (isModEnabled('service') && $user->hasRight('service', 'creer')) {
+				$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					$tmpbacktopagejsfields = 'addproduct:id,search_id';
+					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+				} else {
+					//print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+				}
+			}
 		}
 
 		if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
