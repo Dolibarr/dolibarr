@@ -20,3 +20,9 @@ composer install
 ```shell
 ./vendor/bin/rector process
 ```
+
+##### Run only for a directory
+
+```shell
+./vendor/bin/rector process ../../../htdocs/core/
+```
