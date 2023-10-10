@@ -76,6 +76,7 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_e
 $search_product_category = GETPOST('search_product_category', 'int');
 
 // Détail commande
+$search_id = GETPOST('search_id', 'alpha');
 $search_refProduct = GETPOST('search_refProduct', 'alpha');
 $search_descProduct = GETPOST('search_descProduct', 'alpha');
 
@@ -172,6 +173,7 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	// Détail commande
+	'rowid'=> array('label'=>'TechnicalID', 'checked'=>1, 'position'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0)),
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
 	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
@@ -256,6 +258,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$search_id = '';
 		$search_refProduct = '';
 		$search_descProduct = '';
 		$search_ref = '';
@@ -444,6 +447,9 @@ if ($socid > 0) {
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+if ($search_id) {
+	$sql .= natural_search('cdet.rowid', $search_id);
 }
 if ($search_refProduct) {
 	$sql .= natural_search('pr.ref', $search_refProduct);
@@ -940,7 +946,12 @@ if ($resql) {
 		print $searchpicto;
 		print '</td>';
 	}
-
+	// ID
+	if (!empty($arrayfields['rowid']['checked'])) {
+		print '<td class="liste_titre" data-key="id">';
+		print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+		print '</td>';
+	}
 	// Détail commande
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1230,6 +1241,9 @@ if ($resql) {
 	}
 
 	// Détail commande
+	if (!empty($arrayfields['rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1502,6 +1516,12 @@ if ($resql) {
 		}
 
 		// Détail commande
+		// ID
+		if (!empty($arrayfields['rowid']['checked'])) {
+			print '<td class="nowrap right">'.$obj->rowid.'</td>';
+			$totalarray['nbfield']++;
+		}
+
 		// Product Ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
 			if (!empty($obj->product_rowid)) {
