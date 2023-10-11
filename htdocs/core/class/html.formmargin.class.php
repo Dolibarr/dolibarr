@@ -98,7 +98,8 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			// We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
@@ -207,6 +208,7 @@ class FormMargin
 	public function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user, $hookmanager;
+		global $action;
 
 		if (!empty($user->socid)) {
 			return;
@@ -245,7 +247,7 @@ class FormMargin
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">' . $langs->trans('Margins') . '</td>';
 			print '<td class="liste_titre right">' . $langs->trans('SellingPrice') . '</td>';
-			if ($conf->global->MARGIN_TYPE == "1") {
+			if (getDolGlobalString('MARGIN_TYPE') == "1") {
 				print '<td class="liste_titre right">' . $langs->trans('BuyingPrice') . '</td>';
 			} else {
 				print '<td class="liste_titre right">' . $langs->trans('CostPrice') . '</td>';

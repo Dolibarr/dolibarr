@@ -42,7 +42,7 @@ if ($action == 'test' || $action == 'send') {
 
 $substitutionarrayfortest = array(
 	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 	'__USER_LOGIN__' => $user->login,
 	'__USER_EMAIL__' => $user->email,
 	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
@@ -334,7 +334,7 @@ if ($action == 'edit') {
 	// Host server
 
 	print '<tr class="oddeven hideifdefault">';
-	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail') {
+	if (!$conf->use_javascript_ajax && $linuxlike && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail') {
 		print '<td>';
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
@@ -369,7 +369,7 @@ if ($action == 'edit') {
 	// Port
 
 	print '<tr class="oddeven hideifdefault"><td>';
-	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail') {
+	if (!$conf->use_javascript_ajax && $linuxlike && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail') {
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
@@ -536,14 +536,14 @@ if ($action == 'edit') {
 
 	if (!empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default') {
 		// Host server
-		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail')) {
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail')) {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_SERVER_EMAILING) ? $conf->global->MAIN_MAIL_SMTP_SERVER_EMAILING : '').'</td></tr>';
 		}
 
 		// Port
-		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail')) {
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail')) {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ?ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_PORT_EMAILING) ? $conf->global->MAIN_MAIL_SMTP_PORT_EMAILING : '').'</td></tr>';
@@ -598,7 +598,7 @@ if ($action == 'edit') {
 				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 			}
 		} else {
-			print yn(0).' ('.$langs->trans("NotSupported").')';
+			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 		}
 		print '</td></tr>';
 
@@ -611,7 +611,7 @@ if ($action == 'edit') {
 				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 			}
 		} else {
-			print yn(0).' ('.$langs->trans("NotSupported").')';
+			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -622,7 +622,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_end();
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) {
 		print '<br>';
 		/*
 		// Warning 1
@@ -662,7 +662,7 @@ if ($action == 'edit') {
 	print '</div>';
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && !in_array($action, array('testconnect', 'test', 'testhtml'))) {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'mail' && !in_array($action, array('testconnect', 'test', 'testhtml'))) {
 		$text = $langs->trans("WarningPHPMail");
 		print info_admin($text);
 	}

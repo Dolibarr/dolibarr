@@ -82,8 +82,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/model/" . $object->id;
 }
 
-$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->read) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->read)));
-$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->write) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->write))); // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'model_advance', 'read')));
+$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();
@@ -168,7 +168,7 @@ if ($object->id > 0) {
 	$out = '&origin=' . urlencode($object->element . '@' . $object->module) . '&originid=' . urlencode($object->id);
 	$urlbacktopage = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
 	$out .= '&backtopage=' . urlencode($urlbacktopage);
-	$permok = $user->rights->agenda->myactions->create;
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') {
@@ -184,7 +184,7 @@ if ($object->id > 0) {
 	print '<div class="tabsAction">';
 
 	//  if (isModEnabled('agenda')) {
-	//      if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+	//      if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 	//          print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '">' . $langs->trans("AddAction") . '</a>';
 	//      } else {
 	//          print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AddAction") . '</a>';
@@ -193,7 +193,7 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	//  if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	//  if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	//      $param = '&id=' . $object->id . '&socid=' . $socid;
 	//      if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	//          $param .= '&contextpage=' . urlencode($contextpage);

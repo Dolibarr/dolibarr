@@ -40,7 +40,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -122,7 +122,7 @@ if ($object->ldap_sid) {
 }
 print '</tr>';
 
-if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
 	$result = $ldap->connect_bind();
 	if ($result > 0) {

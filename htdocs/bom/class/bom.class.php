@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,13 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+if (isModEnabled('workstation')) {
+	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+}
+
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -35,6 +41,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class BOM extends CommonObject
 {
+
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'bom';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -60,6 +72,10 @@ class BOM extends CommonObject
 	 */
 	public $picto = 'bom';
 
+	/**
+	 * @var Product	Object product of the BOM
+	 */
+	public $product;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -152,6 +168,10 @@ class BOM extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_valid
+	 */
+	public $date_valid;
 
 	public $tms;
 
@@ -164,6 +184,16 @@ class BOM extends CommonObject
 	 * @var int Id User modifying
 	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_user_valid;
+
+	/**
+	 * @var int Id User modifying
+	 */
+	public $fk_warehouse;
 
 	/**
 	 * @var string import key
@@ -180,6 +210,7 @@ class BOM extends CommonObject
 	 */
 	public $fk_product;
 	public $qty;
+	public $duration;
 	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 
@@ -677,9 +708,10 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @param	int		$fk_unit				Unit of line
 	 * @param	array	$array_options			extrafields array
+	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0, $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -757,6 +789,9 @@ class BOM extends CommonObject
 				foreach ($array_options as $key => $value) {
 					$line->array_options[$key] = $array_options[$key];
 				}
+			}
+			if ($fk_default_workstation > 0 && $line->fk_default_workstation != $fk_default_workstation) {
+				$line->fk_default_workstation = $fk_default_workstation;
 			}
 
 			$result = $line->update($user);
@@ -882,7 +917,7 @@ class BOM extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1141,7 +1176,7 @@ class BOM extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1300,7 +1335,7 @@ class BOM extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			$modele = '';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
@@ -1310,8 +1345,11 @@ class BOM extends CommonObject
 		}
 
 		$modelpath = "core/modules/bom/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if (!empty($modele)) {
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -1324,7 +1362,7 @@ class BOM extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
-		$this->date = $this->date_creation;
+		$this->date_creation = dol_now() - 20000;
 	}
 
 
@@ -1579,16 +1617,13 @@ class BOM extends CommonObject
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$prod = new Product($db);
-		$prod->fetch($this->fk_product);
-
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
@@ -1598,7 +1633,8 @@ class BOM extends CommonObject
 				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
 			}
 		}
-		if (property_exists($this, 'fk_product') && !is_null($this->fk_product)) {
+		if (!empty($arraydata['prod'])) {
+			$prod = $arraydata['prod'];
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
@@ -1947,7 +1983,7 @@ class BOMLine extends CommonObjectLine
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

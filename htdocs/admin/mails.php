@@ -49,7 +49,7 @@ if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
 
 $substitutionarrayfortest = array(
 	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
+	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 	'__USER_LOGIN__' => $user->login,
 	'__USER_EMAIL__' => $user->email,
 	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
@@ -502,11 +502,11 @@ if ($action == 'edit') {
 		print '</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="'.$mainsmtppw.'" autocomplete="off">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="off">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW, $htmltext, 1, 'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$mainsmtppw.'">';
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '">';
 		}
 		print '</td></tr>';
 	}
@@ -664,7 +664,7 @@ if ($action == 'edit') {
 	if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 		// Force e-mail recipient
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
-		if (!empty(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
 				print img_warning($langs->trans("ErrorBadEMail"));
 			} else {
@@ -694,7 +694,7 @@ if ($action == 'edit') {
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 			$textwarning = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
-			print $form->textwithpicto('', $textwarning, 1, 'warning');
+			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'warning');
 		}
 
 		print '</td></tr>';
@@ -780,7 +780,7 @@ if ($action == 'edit') {
 		print '</td></tr>';
 
 
-		if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE') == 'swiftmailer') {
 			// DKIM
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('swiftmailer'))) {

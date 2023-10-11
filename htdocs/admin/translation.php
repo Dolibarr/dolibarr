@@ -117,7 +117,7 @@ if ($action == 'update') {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".((int) GETPOST('rowid', 'int'));
 		$result = $db->query($sql);
-		if ($result > 0) {
+		if ($result) {
 			$db->commit();
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
@@ -155,7 +155,7 @@ if ($action == 'add') {
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".((int) $conf->entity).")";
 		$result = $db->query($sql);
-		if ($result > 0) {
+		if ($result) {
 			$db->commit();
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
@@ -177,7 +177,7 @@ if ($action == 'add') {
 if ($action == 'delete') {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".((int) $id);
 	$result = $db->query($sql);
-	if ($result >= 0) {
+	if ($result) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
@@ -297,7 +297,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 
 		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
 		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
-		if ($result < 0) {
+		if (!$result) {
 			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
 		} else {
 			$listoffiles[$langkey] = $tmpfile;
@@ -463,7 +463,11 @@ if ($mode == 'searchkey') {
 	} else {
 		// Now search into translation array
 		foreach ($newlang->tab_translate as $key => $val) {
-			if ($transkey && !preg_match('/'.preg_quote($transkey, '/').'/i', $key)) {
+			$newtranskey = preg_replace('/\$$/', '', preg_replace('/^\^/', '', $transkey));
+			$newtranskeystart = preg_match('/^\^/', $transkey);
+			$newtranskeyend = preg_match('/\$$/', $transkey);
+			$regexstring = ($newtranskeystart ? '^' : '').preg_quote($newtranskey, '/').($newtranskeyend ? '$' : '');
+			if ($transkey && !preg_match('/'.$regexstring.'/i', $key)) {
 				continue;
 			}
 			if ($transvalue && !preg_match('/'.preg_quote($transvalue, '/').'/i', $val)) {
@@ -615,6 +619,10 @@ if ($mode == 'searchkey') {
 			print '<td>'.$val.'</td>';
 		}*/
 		print '</td></tr>'."\n";
+	}
+
+	if (empty($recordtoshow)) {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';

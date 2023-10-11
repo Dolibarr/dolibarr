@@ -208,7 +208,7 @@ class Fiscalyear extends CommonObject
 		$sql .= " SET label = '".$this->db->escape($this->label)."'";
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", statut = '".$this->db->escape($this->statut ? $this->statut : 0)."'";
+		$sql .= ", statut = '".$this->db->escape($this->status ? $this->status : 0)."'";
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -354,7 +354,7 @@ class Fiscalyear extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -446,6 +446,7 @@ class Fiscalyear extends CommonObject
 				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
 			}
 		}
+		return "";
 	}
 
 	/**

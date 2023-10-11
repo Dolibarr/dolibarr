@@ -75,7 +75,7 @@ $socid = 0;
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-$permissiontoadd = $user->rights->projet->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->hasRight('projet', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -142,7 +142,7 @@ if ($object->id > 0) {
 
 		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
-		$param = ($mode == 'mine' ? '&mode=mine' : '');
+		$param = (isset($mode) && $mode == 'mine' ? '&mode=mine' : '');
 
 		// Project card
 
@@ -152,7 +152,7 @@ if ($object->id > 0) {
 		// Title
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
-		if ($projectstatic->thirdparty->id > 0) {
+		if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 			$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
@@ -160,7 +160,7 @@ if ($object->id > 0) {
 		// Define a complementary filter for search of next/prev ref.
 		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -284,9 +284,9 @@ if ($object->id > 0) {
 
 	if (!GETPOST('withproject') || empty($projectstatic->id)) {
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-		$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
+		$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 	} else {
-		$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+		$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
 	}
 
 	$morehtmlref = '';
@@ -330,8 +330,8 @@ if ($object->id > 0) {
 		$param .= '&withproject=1';
 	}
 	$modulepart = 'project_task';
-	$permissiontoadd = $user->rights->projet->creer;
-	$permtoedit = $user->rights->projet->creer;
+	$permissiontoadd = $user->hasRight('projet', 'creer');
+	$permtoedit = $user->hasRight('projet', 'creer');
 	$relativepathwithnofile = dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

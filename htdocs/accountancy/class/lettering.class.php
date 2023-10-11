@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,8 +97,8 @@ class Lettering extends BookKeeping
 		$object->fetch($socid);
 
 
-		if ($object->code_compta == '411CUSTCODE') {
-			$object->code_compta = '';
+		if ($object->code_compta_client == '411CUSTCODE') {
+			$object->code_compta_client = '';
 		}
 
 		if ($object->code_compta_fournisseur == '401SUPPCODE') {
@@ -106,7 +106,7 @@ class Lettering extends BookKeeping
 		}
 
 		/**
-		 * Prise en charge des lettering complexe avec prelevment , virement
+		 * Support for complex lettering with debit, credit transfer
 		 */
 		$sql = "SELECT DISTINCT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.subledger_account, ";
 		$sql .= " bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant ";
@@ -114,10 +114,10 @@ class Lettering extends BookKeeping
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
 		$sql .= " WHERE ( ";
-		if ($object->code_compta != "") {
-			$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+		if ($object->code_compta_client != "") {
+			$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 		}
-		if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+		if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 			$sql .= " OR ";
 		}
 		if ($object->code_compta_fournisseur != "") {
@@ -149,10 +149,10 @@ class Lettering extends BookKeeping
 					$sql .= " AND facf.entity = ".$conf->entity;
 					$sql .= " AND code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND ( ";
-					if ($object->code_compta != "") {
-						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+					if ($object->code_compta_client != "") {
+						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 					}
-					if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+					if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 						$sql .= "  OR  ";
 					}
 					if ($object->code_compta_fournisseur != "") {
@@ -178,10 +178,10 @@ class Lettering extends BookKeeping
 						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
 						$sql .= " AND facf.entity = ".$conf->entity;
 						$sql .= " AND ( ";
-						if ($object->code_compta != "") {
-							$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+						if ($object->code_compta_client != "") {
+							$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 						}
-						if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+						if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 							$sql .= " OR ";
 						}
 						if ($object->code_compta_fournisseur != "") {
@@ -210,10 +210,10 @@ class Lettering extends BookKeeping
 					$sql .= " AND bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 					$sql .= " AND ( ";
-					if ($object->code_compta != "") {
-						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+					if ($object->code_compta_client != "") {
+						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 					}
-					if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+					if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 						$sql .= "  OR  ";
 					}
 					if ($object->code_compta_fournisseur != "") {
@@ -238,10 +238,10 @@ class Lettering extends BookKeeping
 						$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
 						$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 						$sql .= " AND ( ";
-						if ($object->code_compta != "") {
-							$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+						if ($object->code_compta_client != "") {
+							$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 						}
-						if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+						if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 							$sql .= "  OR  ";
 						}
 						if ($object->code_compta_fournisseur != "") {
@@ -288,7 +288,9 @@ class Lettering extends BookKeeping
 	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
-		$lettre = 'AAA';
+
+		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...)
+		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
 
 		$sql = "SELECT DISTINCT ab2.lettering_code";
 		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
@@ -327,7 +329,6 @@ class Lettering extends BookKeeping
 		}
 
 		// Update request
-
 		$now = dol_now();
 		$affected_rows = 0;
 
@@ -692,6 +693,9 @@ class Lettering extends BookKeeping
 
 		// Clean parameters
 		$document_ids = is_array($document_ids) ? $document_ids : array();
+		//remove empty entries
+		$document_ids = array_filter($document_ids);
+
 		$doc_type = trim($doc_type);
 
 		if (empty($document_ids)) {
@@ -742,10 +746,13 @@ class Lettering extends BookKeeping
 		// Clean parameters
 		$document_ids = is_array($document_ids) ? $document_ids : array();
 		$doc_type = trim($doc_type);
+		//remove empty entries
+		$document_ids = array_filter($document_ids);
 
 		if (empty($document_ids)) {
 			return array();
 		}
+
 		if (!is_array(self::$doc_type_infos[$doc_type])) {
 			$langs->load('errors');
 			$this->errors[] = $langs->trans('ErrorBadParameters');

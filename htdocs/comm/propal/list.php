@@ -245,10 +245,10 @@ $arrayfields = array(
 	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>isModEnabled("multicurrency") && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>-1),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
@@ -285,17 +285,17 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Permissions
-$permissiontoread = $user->rights->propal->lire;
-$permissiontoadd = $user->rights->propal->creer;
-$permissiontodelete = $user->rights->propal->supprimer;
+$permissiontoread = $user->hasRight('propal', 'lire');
+$permissiontoadd = $user->hasRight('propal', 'creer');
+$permissiontodelete = $user->hasRight('propal', 'supprimer');
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$permissiontovalidate = $user->rights->propal->propal_advance->validate;
-	$permissiontoclose = $user->rights->propal->propal_advance->close;
-	$permissiontosendbymail = $user->rights->propal->propal_advance->send;
+	$permissiontovalidate = $user->hasRight('propal', 'propal_advance', 'validate');
+	$permissiontoclose = $user->hasRight('propal', 'propal_advance', 'close');
+	$permissiontosendbymail = $user->hasRight('propal', 'propal_advance', 'send');
 } else {
-	$permissiontovalidate = $user->rights->propal->creer;
-	$permissiontoclose = $user->rights->propal->creer;
-	$permissiontosendbymail = $user->rights->propal->lire;
+	$permissiontovalidate = $user->hasRight('propal', 'creer');
+	$permissiontoclose = $user->hasRight('propal', 'creer');
+	$permissiontosendbymail = $user->hasRight('propal', 'lire');
 }
 
 
@@ -574,7 +574,7 @@ $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.deposit_percent,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
@@ -614,7 +614,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale == -2) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = p.fk_soc)";
-} elseif ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+} elseif ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -629,7 +629,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
-if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -1082,7 +1082,7 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->rights->propal->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1129,7 +1129,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1137,21 +1137,21 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
 		$searchCategoryProductOperator = -1;
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, array($search_product_category), 'maxwidth300', $searchCategoryProductOperator, 0, 0, $tmptitle);
 	}
-	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -1185,7 +1185,7 @@ if ($resql) {
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 
@@ -1715,7 +1715,7 @@ if ($resql) {
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
-				print '<tr><td colspan="12">';
+				print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
@@ -1834,8 +1834,8 @@ if ($resql) {
 
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td class="nocellnopadd">';
-				print $obj->town;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2130,7 +2130,7 @@ if ($resql) {
 
 			if (!empty($arrayfields['sale_representative']['checked'])) {
 				// Sales representatives
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->socid > 0) {
 					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 					if ($listsalesrepresentatives < 0) {
@@ -2335,8 +2335,8 @@ if ($resql) {
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->propal->lire;
-	$delallowed = $user->rights->propal->creer;
+	$genallowed = $user->hasRight('propal', 'lire');
+	$delallowed = $user->hasRight('propal', 'creer');
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,11 +89,12 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return SecurityTest
+	 * @param 	string	$name		Name
+	 * @return WebsiteTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -223,5 +225,28 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		$result = checkPHPCode('', $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+	}
+
+	/**
+	 * testDolKeepOnlyPhpCode
+	 *
+	 * @return void
+	 */
+	public function testDolKeepOnlyPhpCode()
+	{
+		$s = 'HTML content <?php exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <? exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <?php test() <?php test2(); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
 	}
 }

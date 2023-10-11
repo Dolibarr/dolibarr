@@ -74,7 +74,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
-if (!$user->rights->produit->lire) accessforbidden();
+if (!$user->hasRight('produit', 'lire')) accessforbidden();
 
 
 /*
@@ -88,7 +88,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
-	$object = new ProductLot($db);
+	$object = new Productlot($db);
 	if ($ref) {
 		$tmp = explode('_', $ref);
 		$objectid = $tmp[0];

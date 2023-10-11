@@ -42,18 +42,6 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	/**
 	 * @var string Code of driver
 	 */
@@ -408,7 +396,7 @@ class ImportXlsx extends ModeleImports
 						if ($obj) {
 							$tablewithentity_cache[$tablename] = 1; // table contains entity field
 						} else {
-							$tablewithentity_cache[$tablename] = 0; // table does not contains entity field
+							$tablewithentity_cache[$tablename] = 0; // table does not contain entity field
 						}
 					} else {
 						dol_print_error($this->db);

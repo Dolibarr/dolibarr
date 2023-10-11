@@ -52,6 +52,11 @@ class RssParser
 	private $_rssarray = array();
 
 	private $current_namespace;
+	public $items = array();
+	public $current_item = array();
+	public $channel = array();
+	public $textinput = array();
+	public $image = array();
 
 	private $initem;
 	private $intextinput;
@@ -211,7 +216,7 @@ class RssParser
 		}
 
 		$this->_urlRSS = $urlRSS;
-		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contains special chars)
+		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
 		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -679,6 +684,7 @@ class RssParser
 			$str1 = "";
 		}
 		$str1 .= $str2;
+		return $str1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

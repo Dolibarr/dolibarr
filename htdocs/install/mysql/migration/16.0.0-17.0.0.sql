@@ -33,6 +33,9 @@
 
 
 -- Missing in v16 or lower
+
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accounting_system (pcg_version);
@@ -99,6 +102,7 @@ UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_u
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+ALTER TABLE llx_user ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';

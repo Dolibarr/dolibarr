@@ -46,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -277,6 +279,7 @@ if (empty($reshook)) {
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
 				$object->halfday = $halfday;
+				$object->entity = $conf->entity;
 
 				$result = $object->create($user);
 				if ($result <= 0) {
@@ -362,52 +365,61 @@ if (empty($reshook)) {
 
 				$description = trim(GETPOST('description', 'restricthtml'));
 
-				// If no start date
-				if (!GETPOST('date_debut_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatedebut');
-					exit;
-				}
-
 				// If no end date
 				if (!GETPOST('date_fin_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatefin');
-					exit;
+					setEventMessages($langs->trans('NoDateFin'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If start date after end date
 				if ($date_debut > $date_fin) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=datefin');
-					exit;
+					setEventMessages($langs->trans('ErrorEndDateCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If no validator designated
 				if ($approverid < 1) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=Valideur');
-					exit;
+					setEventMessages($langs->trans('InvalidValidatorCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
 				// If there is no Business Days within request
 				$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 				if ($nbopenedday < 0.5) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=DureeHoliday');
-					exit;
+					setEventMessages($langs->trans('ErrorDureeCP'), null, 'warnings');
+					$error++;
+					$action = 'edit';
 				}
 
-				$object->description = $description;
-				$object->date_debut = $date_debut;
-				$object->date_fin = $date_fin;
-				$object->fk_validator = $approverid;
-				$object->halfday = $halfday;
+				$db->begin();
 
-				// Update
-				$verif = $object->update($user);
+				if (!$error) {
+					$object->description = $description;
+					$object->date_debut = $date_debut;
+					$object->date_fin = $date_fin;
+					$object->fk_validator = $approverid;
+					$object->halfday = $halfday;
 
-				if ($verif <= 0) {
-					setEventMessages($object->error, $object->errors, 'warnings');
-					$action = 'edit';
-				} else {
+					// Update
+					$verif = $object->update($user);
+
+					if ($verif <= 0) {
+						setEventMessages($object->error, $object->errors, 'warnings');
+						$error++;
+						$action = 'edit';
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 					exit;
+				} else {
+					$db->rollback();
 				}
 			} else {
 				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
@@ -511,11 +523,29 @@ if (empty($reshook)) {
 					}
 				}
 
+				$typeleaves = $object->getTypes(1, -1);
+				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+
+				if ($object->halfday == 2) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == -1) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Afternoon";
+				} elseif ($object->halfday == 1) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == 0 || $object->halfday == 2) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Afternoon";
+				}
+
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
 
 				$message .= "<ul>";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Type")." : ".(empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow)."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv($starthalfdaykey)." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')." ".$langs->transnoentitiesnoconv($endhalfdaykey)."</li>\n";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
 				$message .= "</ul>\n";
 
@@ -628,7 +658,7 @@ if (empty($reshook)) {
 						$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 					}
 
-					$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
+					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
 
 					// Content
 					$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",</p>\n";
@@ -793,15 +823,15 @@ if (empty($reshook)) {
 		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) &&
 			(!empty($user->admin) || $user->id == $object->fk_validator || $cancreate || $cancreateall)) {
-			$db->begin();
+				$db->begin();
 
-			$oldstatus = $object->statut;
-			$object->date_cancel = dol_now();
-			$object->fk_user_cancel = $user->id;
-			$object->statut = Holiday::STATUS_CANCELED;
-			$object->status = Holiday::STATUS_CANCELED;
+				$oldstatus = $object->statut;
+				$object->date_cancel = dol_now();
+				$object->fk_user_cancel = $user->id;
+				$object->statut = Holiday::STATUS_CANCELED;
+				$object->status = Holiday::STATUS_CANCELED;
 
-			$result = $object->update($user);
+				$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
 				// Call trigger
@@ -834,7 +864,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 
-			// If no SQL error, we redirect to the request form
+				// If no SQL error, we redirect to the request form
 			if (!$error && $result > 0) {
 				// To
 				$destinataire = new User($db);
@@ -891,20 +921,20 @@ if (empty($reshook)) {
 	}
 
 	/*
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+	 // Actions when printing a doc from card
+	 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	// Actions to send emails
-	$triggersendname = 'HOLIDAY_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
-	$trackid='leav'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	 // Actions to send emails
+	 $triggersendname = 'HOLIDAY_SENTBYMAIL';
+	 $autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
+	 $trackid='leav'.$object->id;
+	 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	// Actions to build doc
-	$upload_dir = $conf->holiday->dir_output;
-	$permissiontoadd = $user->rights->holiday->creer;
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	*/
+	 // Actions to build doc
+	 $upload_dir = $conf->holiday->dir_output;
+	 $permissiontoadd = $user->rights->holiday->creer;
+	 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	 */
 }
 
 
@@ -1089,9 +1119,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<td class="fieldrequired">';
 		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
-		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');;
-		// Si la demande ne vient pas de l'agenda
-		if (!GETPOST('date_debut_')) {
+		print '<td>'.img_picto('', 'action', 'class="pictofixedwidth"');
+		if (!GETPOST('date_debut_')) {	// If visitor does not come from agenda
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
 			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
@@ -1167,13 +1196,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '</from>'."\n";
 	}
 } else {
-	if ($error) {
+	if ($error && $action != 'edit') {
 		print '<div class="tabBar">';
 		print $error;
 		print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
 		print '</div>';
 	} else {
-		// Affichage de la fiche d'une demande de congés payés
+		// Show page in view or edit mode
 		if (($id > 0) || $ref) {
 			$result = $object->fetch($id, $ref);
 
@@ -1285,7 +1314,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
 					print '</td>';
 					print '<td>';
-					print $form->selectDate($object->date_debut, 'date_debut_');
+					$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
+					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
 					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
 					print '</td>';

@@ -434,7 +434,7 @@ if ($result) {
 					print img_object($langs->trans('Donation'), 'payment').' ';
 					print $langs->trans("DonationPayment");
 					print '</a>';
-				} elseif ($links[$key]['type'] == 'banktransfert') {
+				} elseif ($links[$key]['type'] == 'banktransfert') {	// transfert between 1 local account and another local account
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('Transaction'), 'payment').' ';
 					print $langs->trans("TransactionOnTheOtherAccount");
@@ -450,6 +450,7 @@ if ($result) {
 					print $langs->trans("VariousPayment");
 					print '</a>';
 				} else {
+					// Example type = 'direct-debit', or 'credit-transfer', ....
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 					print img_object('', 'generic').' ';
 					print $links[$key]['label'];
@@ -588,7 +589,7 @@ if ($result) {
 		print "</tr>";
 
 		// Categories
-		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 			$langs->load('categories');
 
 			// Bank line

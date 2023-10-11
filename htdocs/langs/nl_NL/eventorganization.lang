@@ -53,16 +53,17 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In het formulier om een deelnemer aan t
 #
 # Object
 #
+OrganizedEvent=Georganiseerd evenement
 EventOrganizationConfOrBooth= Conferentie of stand
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferenties of stands
 ManageOrganizeEvent = Beheer de organisatie van een evenement
 ConferenceOrBooth = Conferentie of stand
 ConferenceOrBoothTab = Conferentie of stand
 AmountPaid = Betaald bedrag
 DateOfRegistration = Registratie datum
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
-ApplicantOrVisitor=Applicant or visitor
-Speaker=Speaker
+ApplicantOrVisitor=Aanvrager of bezoeker
+Speaker=Spreker
 
 #
 # Template Mail
@@ -115,15 +116,15 @@ EvntOrgRegistrationHelpMessage = Hier kunt u stemmen op een conferentie of een n
 EvntOrgRegistrationConfHelpMessage = Hier kunt u een nieuwe conferentie voorstellen om tijdens het evenement te animeren.
 EvntOrgRegistrationBoothHelpMessage = Hier kunt u zich aanmelden voor een stand tijdens het evenement.
 ListOfSuggestedConferences = Lijst met voorgestelde conferenties
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Voorgestelde cabines
+ListOfConferencesOrBooths=Conferenties of stands van evenementenproject
 SuggestConference = Een nieuwe conferentie voorstellen
 SuggestBooth = Stel een stand voor
 ViewAndVote = Bekijk en stem op voorgestelde evenementen
 PublicAttendeeSubscriptionGlobalPage = Openbare link voor registratie voor het evenement
 PublicAttendeeSubscriptionPage = Openbare link voor registratie alleen voor dit evenement
 MissingOrBadSecureKey = De beveiligingssleutel is ongeldig of ontbreekt
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Met dit formulier kunt u zich aanmelden als nieuwe deelnemer aan het evenement
 EvntOrgDuration = Deze conferentie begint op %s en eindigt op %s.
 ConferenceAttendeeFee = Conferentiebezoekerstarief voor het evenement: '%s' variërend van %s tot %s.
 BoothLocationFee = Standplaats voor het evenement : '%s' van %s tot %s
@@ -133,7 +134,7 @@ LabelOfconference=Conferentie label
 ConferenceIsNotConfirmed=Registratie niet beschikbaar, conferentie is nog niet bevestigd
 DateMustBeBeforeThan=%s moet vóór %s zijn
 DateMustBeAfterThan=%s moet na %s
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
+MaxNbOfAttendeesReached=Het maximum aantal deelnemers is bereikt
 NewSubscription=Registratie
 OrganizationEventConfRequestWasReceived=Uw suggestie voor een conferentie is ontvangen
 OrganizationEventBoothRequestWasReceived=Uw aanvraag voor een stand is ontvangen
@@ -142,10 +143,10 @@ OrganizationEventPaymentOfRegistrationWasReceived=Uw betaling voor uw evenementr
 OrganizationEventBulkMailToAttendees=Dit is een herinnering aan uw deelname aan het evenement als deelnemer
 OrganizationEventBulkMailToSpeakers=Dit is een herinnering aan je deelname aan het evenement als spreker
 OrganizationEventLinkToThirdParty=Link naar derde partij (klant, leverancier of partner)
-OrganizationEvenLabelName=Public name of the conference or booth
+OrganizationEvenLabelName=Openbare naam van de conferentie of stand
 
 NewSuggestionOfBooth=Aanvraag voor een stand
-NewSuggestionOfConference=Aanvraag voor een conferentie
+NewSuggestionOfConference=Aanvraag om een conferentie te houden
 
 #
 # Vote page
@@ -158,7 +159,7 @@ VoteOk = Uw stem is geaccepteerd.
 AlreadyVoted = Je hebt al op dit evenement gestemd.
 VoteError = Er is een fout opgetreden tijdens het stemmen, probeer het opnieuw.
 
-SubscriptionOk=Your registration has been recorded
+SubscriptionOk=Uw aanmelding is geregistreerd
 ConfAttendeeSubscriptionConfirmation = Bevestiging van uw inschrijving op een evenement
 Attendee = deelnemer
 PaymentConferenceAttendee = Conferentie deelnemer betaling
@@ -166,9 +167,17 @@ PaymentBoothLocation = Standplaats betaling
 DeleteConferenceOrBoothAttendee=Deelnemer verwijderen
 RegistrationAndPaymentWereAlreadyRecorder=Een registratie en een betaling waren al geregistreerd voor de e-mail <b> %s </b>
 EmailAttendee=E-mailadres van deelnemer
-EmailCompany=Company email
+EmailCompany=Bedrijfs e-mail
 EmailCompanyForInvoice=Bedrijfse-mail (voor factuur, indien anders dan e-mailadres van deelnemer)
 ErrorSeveralCompaniesWithEmailContactUs=Er zijn verschillende bedrijven met dit e-mailadres gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
 ErrorSeveralCompaniesWithNameContactUs=Er zijn verschillende bedrijven met deze naam gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
 NoPublicActionsAllowedForThisEvent=Er zijn geen openbare acties voor dit evenement toegankelijk
 MaxNbOfAttendees=Max aantal deelnemers
+DateStartEvent=Startdatum evenement
+DateEndEvent=Einddatum evenement
+ModifyStatus=Status wijzigen
+ConfirmModifyStatus=Bevestig statuswijziging
+ConfirmModifyStatusQuestion=Weet u zeker dat u de <span class='notranslate'>%s</span>\n geselecteerde record(s) wilt wijzigen?
+RecordsUpdated = %s Records bijgewerkt
+RecordUpdated = Record bijgewerkt
+NoRecordUpdated = Geen record bijgewerkt

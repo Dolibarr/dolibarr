@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
- require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 /**
  * API class for projects
@@ -29,7 +30,6 @@
  */
 class Tasks extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -61,9 +61,9 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int         $id                     ID of task
 	 * @param   int         $includetimespent       0=Return only task. 1=Include a summary of time spent, 2=Include details of time spent lines
-	 * @return 	array|mixed                         data without useless information
+	 * @return	array|mixed                         data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $includetimespent = 0)
 	{
@@ -97,14 +97,15 @@ class Tasks extends DolibarrApi
 	 *
 	 * Get a list of tasks
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of project objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -177,7 +178,7 @@ class Tasks extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$task_static = new Task($this->db);
 				if ($task_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($task_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($task_static), $properties);
 				}
 				$i++;
 			}
@@ -268,7 +269,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int   $id           Id of task
 	 * @param   int   $userid       Id of user (0 = connected user)
-	 * @return 	array				Array of roles
+	 * @return	array				Array of roles
 	 *
 	 * @url	GET {id}/roles
 	 *
@@ -372,7 +373,7 @@ class Tasks extends DolibarrApi
 	*/
 
 	// /**
-	//  * Update a task to given project
+	//  * Update a task of a given project
 	//  *
 	//  * @param int   $id             Id of project to update
 	//  * @param int   $taskid         Id of task to update
@@ -570,7 +571,7 @@ class Tasks extends DolibarrApi
 	 * { "date": "2016-12-31 23:15:00", "duration": 1800, "user_id": 1, "note": "My time test" }
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
@@ -619,7 +620,7 @@ class Tasks extends DolibarrApi
 	 * Delete time spent for a task of a project.
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 *
 	 * @url DELETE    {id}/timespent/{timespent_id}
 	 *
@@ -653,7 +654,7 @@ class Tasks extends DolibarrApi
 	 * Loads the selected task & timespent records.
 	 *
 	 * @param   int         $id                 Task ID
-	 * @param   int         $timespent_id       Time spent ID (llx_projet_task_time.rowid)
+	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 *
 	 * @return void
 	 */

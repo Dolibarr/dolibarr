@@ -162,9 +162,9 @@ if ($socid > 0) {
 }
 
 if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+	$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 } elseif ($user->socid > 0) {
-	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+	$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
 }
 $head = ticket_prepare_head($object);
 
@@ -264,7 +264,6 @@ if (!empty($object->id)) {
 	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
 	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep=now&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
-
 
 	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 

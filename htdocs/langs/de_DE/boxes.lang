@@ -49,6 +49,7 @@ BoxOldestActions=Älteste zu erledigende Ereignisse
 BoxLastExpiredServices=Neueste Verträge mit abgelaufenen Leistungen (maximal %s)
 BoxTitleLastActionsToDo=Anstehende Termine/Aufgaben (maximal %s)
 BoxTitleOldestActionsToDo=Älteste %s zu erledigende Ereignisse, die nicht abgeschlossen sind
+BoxTitleFutureActions=Die nächsten %s bevorstehenden Aufgaben
 BoxTitleLastContracts=Zuletzt bearbeitete Verträge (maximal %s)
 BoxTitleLastModifiedDonations=Letzte %s Spenden, die geändert wurden
 BoxTitleLastModifiedExpenses=Neueste %s Spesenabrechnungen, die geändert wurden
@@ -112,6 +113,7 @@ NumberOfLinesInSuspenseAccount=Zeilenanzahl im Zwischenkonto
 SuspenseAccountNotDefined=Zwischenkonto ist nicht definiert
 BoxLastCustomerShipments=Letzte Kundenlieferungen
 BoxTitleLastCustomerShipments=Neueste %s Kundensendungen
+BoxTitleLastLeaveRequests=Zuletzt bearbeitete Urlaubsanträge (maximal %s)
 NoRecordedShipments=Keine erfasste Kundensendung
 BoxCustomersOutstandingBillReached=Kunden mit erreichtem Aussenstände-Limit
 # Pages

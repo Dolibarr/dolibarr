@@ -207,6 +207,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="warehouse">';
 
 // Title rule for stock decrease
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
@@ -215,6 +216,7 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
@@ -236,6 +238,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 
+print '<!-- STOCK_CALCULATE_ON_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
@@ -259,6 +262,7 @@ $found++;
 //if (isModEnabled('expedition'))
 //{
 
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
@@ -275,7 +279,7 @@ if (isModEnabled("expedition")) {
 print "</td>\n</tr>\n";
 $found++;
 
-
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT_CLOSE -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
@@ -293,12 +297,13 @@ print "</td>\n</tr>\n";
 $found++;
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
 
 // Title rule for stock increase
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
@@ -307,6 +312,7 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
@@ -328,7 +334,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 
-
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
@@ -350,6 +356,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 if (isModEnabled("reception")) {
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -378,6 +385,7 @@ if (isModEnabled("reception")) {
 	print "</td>\n</tr>\n";
 	$found++;
 } else {
+	print '<!-- STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
@@ -396,9 +404,11 @@ if (isModEnabled("reception")) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockAvailability")."</td>\n";
@@ -461,6 +471,7 @@ if (isModEnabled("expedition")) {
 	print "</tr>\n";
 }
 print '</table>';
+print '</div>';
 
 print '<br>';
 
@@ -475,6 +486,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 }
 
 if ($virtualdiffersfromphysical) {
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
@@ -495,6 +507,7 @@ if ($virtualdiffersfromphysical) {
 	print "</td>\n";
 	print "</tr>\n";
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 }
@@ -533,8 +546,9 @@ if ($resql) {
 }
 
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -646,6 +660,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 
@@ -658,6 +673,7 @@ print '<input type="hidden" name="action" value="warehouse">';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -804,6 +820,7 @@ if (isModEnabled('productbatch')) {
 */
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

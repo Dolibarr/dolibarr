@@ -67,16 +67,16 @@ print '<script type="text/javascript">
 				init_price();
 			});
 			jQuery("#nbpiece").keyup(function(event) {
-				console.log("We enter a qty on "+event.which);
-				if ( event.which == 54 ) {  /* char - */
+				console.log("We enter a qty on "+event.key);
+				if ( event.key == "-" ) {  /* char - */
 					console.log("We set direction to value 1");
 					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("-", ""));
-
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
-				} else if ( event.which == 187 ) {  /* char + */
+				} else if ( event.key == "+" ) {  /* char + */
 					console.log("We set direction to value 0");
+					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("+", ""));
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
@@ -181,8 +181,8 @@ if (ismodEnabled('productbatch') &&
 // Purchase price and project
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
-print '<td colspan="'.(!empty($conf->project->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->project->enabled)) {
+print '<td colspan="'.(isModEnabled('project') ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+if (isModEnabled('project')) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');
