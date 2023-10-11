@@ -123,3 +123,5 @@ ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
 ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 
+-- Product/service not managed in stock
+ALTER TABLE llx_product ADD COLUMN not_managed_in_stock integer DEFAULT NULL;
