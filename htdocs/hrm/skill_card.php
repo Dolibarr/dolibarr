@@ -678,7 +678,7 @@ if ($action != "create" && $action != "edit") {
 			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, (!empty($cssforfield) ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, (!empty($cssforfield) ? $cssforfield . ' ' : '')) . "\n";
 		}
 	}
-	print '<td></td>';
+	//print '<td></td>';
 	print '<td></td>';
 	print '</tr>' . "\n";
 
