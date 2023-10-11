@@ -88,6 +88,7 @@ create table llx_product
   surface_units                 tinyint      DEFAULT NULL,
   volume                        float        DEFAULT NULL,
   volume_units                  tinyint      DEFAULT NULL,
+  not_managed_in_stock          integer      DEFAULT NULL,
   stock                         real,                               -- Current physical stock (dernormalized field)
   pmp                           double(24,8) DEFAULT 0 NOT NULL,    -- To store valuation of stock calculated using average price method, for this product
   fifo                          double(24,8),                       -- To store valuation of stock calculated using fifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
