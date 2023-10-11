@@ -25,6 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
@@ -248,10 +249,10 @@ if (isset($current_fiscal_period)) {
 			'label' => $langs->trans('DateEnd'),
 			'value' => $current_fiscal_period['date_end']
 		);
-
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
 			$langs->trans('AccountancyClosureAccountingReversal'), $langs->trans('AccountancyClosureConfirmAccountingReversal'),
-			'confirm_step_3', $form_question, '', 1, 300);
+			'confirm_step_3', $form_question, '', 1, 300
+		);
 	}
 }
 
