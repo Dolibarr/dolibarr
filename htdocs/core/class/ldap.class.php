@@ -528,7 +528,7 @@ class Ldap
 	 */
 	public function add($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::add dn=".$dn." info=".json_encode($info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".print_r($info, true));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -576,7 +576,7 @@ class Ldap
 	 */
 	public function modify($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::modify dn=".$dn." info=".print_r($info, true));
 
 		// Check parameters
 		if (!$this->connection) {
