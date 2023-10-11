@@ -161,7 +161,8 @@ class Odf
 	 */
 	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
 	{
-		$value = $encode ? htmlspecialchars($value) : $value;
+        $value = dol_html_entity_decode($value, ENT_COMPAT);
+//		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 		$convertedValue = $value;
 
@@ -182,7 +183,8 @@ class Odf
 
 			$convertedValue = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
 
-			foreach ($customStyles as $key => $val) {
+
+            foreach ($customStyles as $key => $val) {
 				array_push($automaticStyles, '<style:style style:name="customStyle' . $key . '" style:family="text">' . $val . '</style:style>');
 			}
 
@@ -220,17 +222,20 @@ class Odf
 	 */
 	private function _replaceHtmlWithOdtTag($tags, &$customStyles, &$fontDeclarations)
 	{
+
 		if ($customStyles == null) $customStyles = array();
 		if ($fontDeclarations == null) $fontDeclarations = array();
 
 		$odtResult = '';
 
-		foreach ((array) $tags as $tag) {
-			// Check if the current item is a tag or just plain text
-			if (isset($tag['text'])) {
-				$odtResult .= $tag['text'];
+        foreach ((array) $tags as $tag) {
+            // Check if the current item is a tag or just plain text
+            if (isset($tag['text'])) {
+                $tag['text'] = preg_replace('/(<br *\/?>\n*)/i', '<text:line-break/>', $tag['text']);
+                $odtResult .= $tag['text'];
 			} elseif (isset($tag['name'])) {
-				switch ($tag['name']) {
+                $tag['innerText'] = str_replace('&', '&amp;', $tag['innerText']);
+                switch ($tag['name']) {
 					case 'br':
 						$odtResult .= '<text:line-break/>';
 						break;
@@ -309,7 +314,7 @@ class Odf
 	 */
 	private function _isHtmlTag($text)
 	{
-		return preg_match('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $text);
+		return preg_match('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/s', $text);
 	}
 
 	/**
@@ -319,7 +324,7 @@ class Odf
 	 */
 	private function _hasHtmlTag($text)
 	{
-		$result = preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $text);
+		$result = preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/s', $text);
 		return is_numeric($result) && $result > 0;
 	}
 
@@ -336,7 +341,7 @@ class Odf
 		while (strlen($tempHtml) > 0) {
 			$matches = array();
 			// Check if the string includes a html tag
-			if (preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $tempHtml, $matches)) {
+			if (preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/s', $tempHtml, $matches)) {
 				$tagOffset = strpos($tempHtml, $matches[0][0]);
 				// Check if the string starts with the html tag
 				if ($tagOffset > 0) {
