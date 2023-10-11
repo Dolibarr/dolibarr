@@ -798,7 +798,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</tr>';
 
 	// Other options
-	$parameters = array();
+	$parameters = array('arrayfields' => &$arrayfields);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -962,7 +962,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	// progress resume not searchable
-	print '<td class="liste_titre right"></td>';
+	if (!empty($arrayfields['t.progress_summary']['checked'])) {
+		print '<td class="liste_titre right"></td>';
+	}
 
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
@@ -1072,7 +1074,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$j = 0; $level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields);
 	} else {
-		$colspan = 11;
+		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {
 			$colspan += 2;
 		}

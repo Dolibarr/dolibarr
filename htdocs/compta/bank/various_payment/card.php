@@ -214,6 +214,22 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'setaccountancy_code') {
+		$db->begin();
+
+		$result = $object->fetch($id);
+
+		$object->accountancy_code = GETPOST('accountancy_code', 'alphanohtml');
+
+		$res = $object->update($user);
+		if ($res > 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == 'setsubledger_account') {
 		$db->begin();
 
@@ -574,7 +590,7 @@ if ($id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -623,18 +639,26 @@ if ($id) {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
 	// Accountancy code
-	print '<tr><td class="nowrap">';
-	print $langs->trans("AccountAccounting");
-	print '</td><td>';
 	if (isModEnabled('accounting')) {
-		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('', $object->accountancy_code, 1);
+		print '<tr><td class="nowrap">';
+		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+		print '</td><td>';
+		if ($action == 'editaccountancy_code') {
+			print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+		} else {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('', $object->accountancy_code, 1);
 
-		print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+		}
+		print '</td></tr>';
 	} else {
+		print '<tr><td class="nowrap">';
+		print $langs->trans("AccountAccounting");
+		print '</td><td>';
 		print $object->accountancy_code;
+		print '</td></tr>';
 	}
-	print '</td></tr>';
 
 	// Subledger account
 	print '<tr><td class="nowrap">';

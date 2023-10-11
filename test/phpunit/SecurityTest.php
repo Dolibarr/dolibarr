@@ -202,6 +202,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0c');
 
+		$test='/user/perms.php?id=1&action=addrights&entity=1&rights=123&confirm=yes&token=123456789&updatedmodulename=lmscoursetracking';
+		$result=testSqlAndScriptInject($test, 1);
+		print "test=".$test." result=".$result."\n";
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with a valid url');
+
 		// Should detect attack
 		$expectedresult=1;
 

@@ -141,7 +141,6 @@ if (!empty($socid)) {
 	$module = 'societe';
 	$dbtable = '&societe';
 }
-$result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->supplier_proposal->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -198,6 +197,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$result = restrictedArea($user, $module, $objectid, $dbtable);
+
+$permissiontoread = $user->rights->supplier_proposal->lire;
+$permissiontodelete = $user->rights->supplier_proposal->supprimer;
 
 
 /*
@@ -205,7 +208,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -217,69 +221,64 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-// Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$search_categ = '';
-	$search_user = '';
-	$search_sale = '';
-	$search_ref = '';
-	$search_societe = '';
-	$search_societe_alias = '';
-	$search_montant_ht = '';
-	$search_montant_vat = '';
-	$search_montant_ttc = '';
-	$search_multicurrency_code = '';
-	$search_multicurrency_tx = '';
-	$search_multicurrency_montant_ht = '';
-	$search_multicurrency_montant_vat = '';
-	$search_multicurrency_montant_ttc = '';
-	$search_login = '';
-	$search_product_category = '';
-	$search_town = '';
-	$search_zip = "";
-	$search_state = "";
-	$search_type = '';
-	$search_country = '';
-	$search_type_thirdparty = '';
-	$search_date_startday = '';
-	$search_date_startmonth = '';
-	$search_date_startyear = '';
-	$search_date_endday = '';
-	$search_date_endmonth = '';
-	$search_date_endyear = '';
-	$search_date_start = '';
-	$search_date_end = '';
-	$search_date_valid_startday = '';
-	$search_date_valid_startmonth = '';
-	$search_date_valid_startyear = '';
-	$search_date_valid_endday = '';
-	$search_date_valid_endmonth = '';
-	$search_date_valid_endyear = '';
-	$search_date_valid_start = '';
-	$search_date_valid_end = '';
-	$search_status = '';
-	$object_statut = '';
-}
-
 if (empty($reshook)) {
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_categ = '';
+		$search_user = '';
+		$search_sale = '';
+		$search_ref = '';
+		$search_societe = '';
+		$search_societe_alias = '';
+		$search_montant_ht = '';
+		$search_montant_vat = '';
+		$search_montant_ttc = '';
+		$search_multicurrency_code = '';
+		$search_multicurrency_tx = '';
+		$search_multicurrency_montant_ht = '';
+		$search_multicurrency_montant_vat = '';
+		$search_multicurrency_montant_ttc = '';
+		$search_login = '';
+		$search_product_category = '';
+		$search_town = '';
+		$search_zip = "";
+		$search_state = "";
+		$search_type = '';
+		$search_country = '';
+		$search_type_thirdparty = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_date_valid_startday = '';
+		$search_date_valid_startmonth = '';
+		$search_date_valid_startyear = '';
+		$search_date_valid_endday = '';
+		$search_date_valid_endmonth = '';
+		$search_date_valid_endyear = '';
+		$search_date_valid_start = '';
+		$search_date_valid_end = '';
+		$search_status = '';
+		$object_statut = '';
+	}
+
 	$objectclass = 'SupplierProposal';
 	$objectlabel = 'SupplierProposals';
-	$permissiontoread = $user->rights->supplier_proposal->lire;
-	$permissiontodelete = $user->rights->supplier_proposal->supprimer;
 	$uploaddir = $conf->supplier_proposal->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
-
 /*
  * View
  */
-
-
-$now = dol_now();
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -288,14 +287,17 @@ $formpropal = new FormPropal($db);
 $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 
+$now = dol_now();
+
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $title = $langs->trans('ListOfSupplierProposals');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 
-llxHeader('', $title, $help_url);
 
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -463,7 +465,7 @@ if (!empty($searchCategoryProductList)) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -505,9 +507,13 @@ if ($resql) {
 		$id = $obj->rowid;
 
 		header("Location: ".DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$id);
-
 		exit;
 	}
+
+	// Output page
+	// --------------------------------------------------------------------
+
+	llxHeader('', $title, $help_url);
 
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -701,18 +707,18 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
-	if ($massactionbutton) {
-		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-	}
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
+	// Fields title search
+	// --------------------------------------------------------------------
 	print '<tr class="liste_titre_filter">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre middle">';
+		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
@@ -857,7 +863,7 @@ if ($resql) {
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre middle">';
+		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
 		print '</td>';

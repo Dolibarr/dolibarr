@@ -1213,7 +1213,7 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
 			$this->timespent_datehour = $this->timespent_date;
 		}
 

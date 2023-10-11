@@ -97,6 +97,9 @@ $error = 0;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
 
+if ($id > 0) {
+	$res = $object->fetch($id, '', '', 1);
+}
 
 // Security check
 $socid = 0;

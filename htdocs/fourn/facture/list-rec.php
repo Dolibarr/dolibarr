@@ -66,7 +66,6 @@ $objecttype = 'facture_fourn_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
-$result = restrictedArea($user, 'facture', $id, $objecttype);
 
 $search_ref = GETPOST('search_ref');
 $search_societe = GETPOST('search_societe');
@@ -169,7 +168,7 @@ if ($socid > 0) {
 }
 $objecttype = 'facture_fourn_rec';
 
-$result = restrictedArea($user, 'facture', $object->id, $objecttype);
+$result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
 
 
 /*

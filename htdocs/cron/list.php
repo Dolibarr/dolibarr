@@ -239,6 +239,18 @@ $pagetitle = $langs->trans("CronList");
 
 llxHeader('', $pagetitle);
 
+$TTestNotAllowed = array();
+$sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
+$resultTest = $db->query($sqlTest);
+if ($resultTest) {
+	while ($objTest = $db->fetch_object($resultTest)) {
+		$veriftest = verifCond($objTest->test);
+		if (!$veriftest) {
+			$TTestNotAllowed[$objTest->rowid] = $objTest->rowid;
+		}
+	}
+}
+
 $sql = "SELECT";
 $sql .= " t.rowid,";
 $sql .= " t.tms,";
@@ -273,6 +285,9 @@ $sql .= " t.libname,";
 $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql .= " WHERE entity IN (0,".$conf->entity.")";
+if (!empty($TTestNotAllowed)) {
+	$sql .= ' AND t.rowid NOT IN ('.$db->sanitize(implode(',', $TTestNotAllowed)).')';
+}
 if ($search_status >= 0 && $search_status < 2 && $search_status != '') {
 	$sql .= " AND t.status = ".(empty($search_status) ? '0' : '1');
 }
@@ -299,7 +314,6 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -485,13 +499,6 @@ if ($num > 0) {
 
 		if (empty($obj)) {
 			break;
-		}
-
-		if (isset($obj->test)) {
-			$veriftest = verifCond($obj->test);
-			if (!$veriftest) {
-				continue; // Discard line with test = false
-			}
 		}
 
 		$reg = array();

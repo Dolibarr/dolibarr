@@ -101,8 +101,8 @@ class mymodulewidget1 extends ModeleBoxes
 
 		$this->param = $param;
 
-		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
-		//$this->hidden = ! ($user->rights->mymodule->myobject->read);   // Condition when module is visible by user (test on permission)
+		//$this->enabled = getDolGlobalInt(FEATURES_LEVEL) > 0;         // Condition when module is enabled or not
+		//$this->hidden = ! ($user->hasRight('mymodule,'myobject','read');   // Condition when module is visible by user (test on permission)
 	}
 
 	/**

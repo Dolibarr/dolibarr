@@ -3301,7 +3301,7 @@ class Commande extends CommonOrder
 				}
 
 				// Mise a jour info denormalisees
-				$this->update_price(1);
+				$this->update_price(1, 'auto');
 
 				$this->db->commit();
 				return $result;
@@ -4120,7 +4120,7 @@ class Commande extends CommonOrder
 
 		$now = dol_now();
 
-		return max($this->date, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+		return max($this->date, $this->delivery_date) < ($now - $conf->commande->client->warning_delay);
 	}
 
 	/**
@@ -4132,7 +4132,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (empty($this->date_livraison)) {
+		if (empty($this->delivery_date)) {
 			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		} else {
 			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');

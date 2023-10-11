@@ -1251,6 +1251,8 @@ if ($id > 0) {
 		$sql .= natural_search("f.code", $search_code);
 	} elseif ($search_code != '' && $id == 2) {
 		$sql .= natural_search("d.code_departement", $search_code);
+	} elseif ($search_code != '' && $id == 14) {
+		$sql .= natural_search("e.code", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}
@@ -1672,6 +1674,9 @@ if ($id > 0) {
 			}
 
 			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabcomplete[$tabname[$id]]['help'][$value])) {
+				if (!is_array($tabcomplete[$tabname[$id]]['help'])) {	// protection when $tabcomplete[$tabname[$id]]['help'] is a an empty string, we must force it into an array
+					$tabcomplete[$tabname[$id]]['help'] = array();
+				}
 				$tabcomplete[$tabname[$id]]['help'][$value] = $langs->trans('LabelUsedByDefault');
 			}
 

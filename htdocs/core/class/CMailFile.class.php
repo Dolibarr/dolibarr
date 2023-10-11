@@ -1227,8 +1227,8 @@ class CMailFile
 			$encoded = chunk_split(base64_encode($contents), 76, $this->eol); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
 		} else {
-			$this->error = "Error: Can't read file '".$sourcefile."' into _encode_file";
-			dol_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
+			$this->error = "Error in _encode_file() method: Can't read file '".$sourcefile."'";
+			dol_syslog("CMailFile::_encode_file: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
