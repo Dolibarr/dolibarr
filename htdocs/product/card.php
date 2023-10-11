@@ -2601,8 +2601,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// View not_managed_in_stock
 			if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && !empty($conf->stock->enabled)) {
 				print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("NotManagedInStock"), $langs->trans('NotManagedInStockDescription')) . '</td>';
-				$checked = $object->not_managed_in_stock == 1 ? $langs->trans('Yes') : $langs->trans('No');
-				print '<td>'. $checked .'</td></tr>';
+				print '<td><input type="checkbox" readonly disabled '.($object->not_managed_in_stock == 1 ? 'checked' : '').'></td></tr>';
 			}
 
 			// Parent product.
