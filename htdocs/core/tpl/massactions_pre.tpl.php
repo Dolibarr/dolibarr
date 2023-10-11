@@ -73,7 +73,7 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	$formquestion = array();
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
-			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 2);
+			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], '', 'parent', 0, null, 2);
 			$formquestion[] = array(
 				'type' => 'other',
 				'name' => 'affecttag_'.$categ_type['code'],
