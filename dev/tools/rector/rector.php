@@ -14,7 +14,7 @@ return static function (RectorConfig $rectorConfig): void {
 		__DIR__ . '/../../../test/phpunit/',
 	]);
 	$rectorConfig->skip([
-		__DIR__ . '*/includes/*',
+		__DIR__ . '/../../../htdocs/custom/**/includes/*',
 		__DIR__ . '/../../../htdocs/includes/*',
 		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
