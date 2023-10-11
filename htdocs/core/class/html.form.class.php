@@ -5546,7 +5546,7 @@ class Form
 				$formconfirm .= '
 				$(document).ready(function () {
 					$(".confirmvalidatebutton").on("click", function() {
-						console.log("We click on button");
+						console.log("We click on button confirmvalidatebutton");
 						$(this).attr("disabled", "disabled");
 						setTimeout(\'$(".confirmvalidatebutton").removeAttr("disabled")\', 3000);
 						//console.log($(this).closest("form"));
