@@ -217,9 +217,10 @@ function isModEnabled($module)
 
 	// Fix special cases
 	$arrayconv = array(
-		'project' => 'projet',
+		'bank' => 'banque',
+		'category' => 'categorie',
 		'contract' => 'contrat',
-		'bank' => 'banque'
+		'project' => 'projet'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
