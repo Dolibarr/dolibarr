@@ -1450,7 +1450,6 @@ if ($resql) {
 			$oldref = $obj->product_ref;
 		}
 		if ($oldref != $obj->product_ref && $sortfield == 'pr.ref') {
-			// TODO make new /core/tpl/list_print_sub_total.php
 			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
 			$oldref = $obj->product_ref;
 		}
@@ -2166,15 +2165,16 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// $totalarray['nbfield']--;
-		// $totalarray['nbfield']--;
+
 		print "</tr>\n";
 
 		$total += $obj->total_ht;
 		$subtotal += $obj->total_ht;
 		$i++;
 	}
-
+	if ($sortfield == 'pr.ref') {
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
+	}
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
