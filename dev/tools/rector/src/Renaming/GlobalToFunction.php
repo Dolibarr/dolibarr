@@ -4,7 +4,9 @@ namespace Dolibarr\Rector\Renaming;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
+use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\BinaryOp\Equal;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Empty_;
@@ -28,12 +30,12 @@ class GlobalToFunction extends AbstractRector
 	/**
 	 * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
 	 */
-	private BinaryOpManipulator $binaryOpManipulator;
+	private $binaryOpManipulator;
 
 	/**
 	 * Constructor
 	 *
-	 * @param BinaryOpManipulator $binaryOpManipulator 	The $binaryOpManipulator
+	 * @param BinaryOpManipulator $binaryOpManipulator The $binaryOpManipulator
 	 */
 	public function __construct(BinaryOpManipulator $binaryOpManipulator)
 	{
@@ -51,7 +53,7 @@ class GlobalToFunction extends AbstractRector
 		return new RuleDefinition(
 			'Change $conf->global to getDolGlobal',
 			[new CodeSample('$conf->global->CONSTANT',
-				 'getDolGlobalInt(\'CONSTANT\')'
+				'getDolGlobalInt(\'CONSTANT\')'
 			)]);
 	}
 
@@ -62,17 +64,61 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [Equal::class, BooleanAnd::class];
+		return [Equal::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
 	}
 
 	/**
 	 * refactor
 	 *
-	 * @param 	Node 		$node	A node
-	 * @return 	Equal|void
+	 * @param Node $node A node
+	 * @return    Equal|Concat|ArrayDimFetch|void
 	 */
 	public function refactor(Node $node)
 	{
+		if ($node instanceof Node\Expr\ArrayDimFetch) {
+			if (!isset($node->dim)) {
+				return;
+			}
+			if ($this->isGlobalVar($node->dim)) {
+				$constName = $this->getConstName($node->dim);
+				if (empty($constName)) {
+					return;
+				}
+				$node->dim = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+				);
+			}
+			return $node;
+		}
+		if ($node instanceof Concat) {
+			if ($this->isGlobalVar($node->left)) {
+				$constName = $this->getConstName($node->left);
+				if (empty($constName)) {
+					return;
+				}
+				$leftConcat = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+				);
+				$rightConcat = $node->right;
+			}
+			if ($this->isGlobalVar($node->right)) {
+				$constName = $this->getConstName($node->right);
+				if (empty($constName)) {
+					return;
+				}
+				$rightConcat = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+				);
+				$leftConcat = $node->left;
+			}
+			if (!isset($leftConcat, $rightConcat)) {
+				return;
+			}
+			return new Concat($leftConcat, $rightConcat);
+		}
 		if ($node instanceof BooleanAnd) {
 			$nodes = $this->resolveTwoNodeMatch($node);
 			if (!isset($nodes)) {
@@ -100,14 +146,14 @@ class GlobalToFunction extends AbstractRector
 			default:
 				return;
 		}
-		$constName = $this->getName($node->left);
+		$constName = $this->getConstName($node->left);
 		if (empty($constName)) {
 			return;
 		}
 		return new Equal(
 			new FuncCall(
 				new Name($funcName),
-				[new Arg(new String_($constName))]
+				[new Arg($constName)]
 			),
 			$node->right
 		);
@@ -116,8 +162,8 @@ class GlobalToFunction extends AbstractRector
 	/**
 	 * Get nodes with check empty
 	 *
-	 * @param	BooleanAnd 	$booleanAnd		A BooleandAnd
-	 * @return 	TwoNodeMatch|null
+	 * @param BooleanAnd $booleanAnd A BooleandAnd
+	 * @return    TwoNodeMatch|null
 	 */
 	private function resolveTwoNodeMatch(BooleanAnd $booleanAnd): ?TwoNodeMatch
 	{
@@ -146,7 +192,7 @@ class GlobalToFunction extends AbstractRector
 	/**
 	 * Check node is global access
 	 *
-	 * @param $node		A node
+	 * @param Node $node A node
 	 * @return bool
 	 */
 	private function isGlobalVar($node)
@@ -165,5 +211,21 @@ class GlobalToFunction extends AbstractRector
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @param Node $node node to be parsed
+	 * @return Node|void
+	 */
+	private function getConstName($node)
+	{
+		if ($node instanceof PropertyFetch && $node->name instanceof Node\Expr) {
+			return $node->name;
+		}
+		$name = $this->getName($node);
+		if (empty($name)) {
+			return;
+		}
+		return new String_($name);
 	}
 }
