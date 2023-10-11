@@ -261,7 +261,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					$label = $head['text'];
 					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
-						$label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
+						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
 					}
 					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
 					//$out.= '</td></tr></table>';

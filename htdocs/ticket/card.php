@@ -236,7 +236,8 @@ if (empty($reshook)) {
 			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
 			$object->severity_code = GETPOST("severity_code", 'alpha');
 			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
-			$object->email_from = $object->origin_email = $user->email;
+			$object->email_from = $user->email;
+			$object->origin_email = null;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 			$fk_user_assign = GETPOST("fk_user_assign", 'int');
@@ -876,7 +877,7 @@ if ($action == 'create' || $action == 'presend') {
 				// Define a complementary filter for search of next/prev ref.
 				if (empty($user->rights->projet->all->lire)) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
-					$projectstat->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+					$projectstat->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 				}
 				print $form->showrefnav($projectstat, 'ref', $linkback, 1, 'ref', 'ref', '');
 				print '</td></tr>';
@@ -926,9 +927,9 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+			$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);

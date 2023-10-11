@@ -183,21 +183,24 @@ class Contact extends CommonObject
 	public $town;
 
 	/**
-	 * @var int // Id of department
+	 * @var int  Id of department
 	 */
 	public $state_id;
 
 	/**
-	 * @var string // Code of department
+	 * @var string  Code of department
 	 */
 	public $state_code;
 
 	/**
-	 * @var string // Label of department
+	 * @var string  Label of department
 	 */
 	public $state;
 
-	public $poste; // Position
+	/**
+	 * @var string  Job Position
+	 */
+	public $poste;
 
 	/**
 	 * @var int Thirdparty ID
@@ -206,12 +209,12 @@ class Contact extends CommonObject
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
-	 * @var string thirdparty name
+	 * @var string Thirdparty name
 	 */
 	public $socname;
 
 	/**
-	 * @var int 0=inactive, 1=active
+	 * @var int  Status 0=inactive, 1=active
 	 */
 	public $statut;
 
@@ -238,13 +241,14 @@ class Contact extends CommonObject
 	public $url;
 
 	/**
-	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
+	 * Unsubscribe all : 1 = contact has globally unsubscribed of all mass emailing
 	 * @var int
 	 */
 	public $no_email;
 
 	/**
-	 * @var array array of socialnetworks
+	 * Array of social-networks
+	 * @var array
 	 */
 	public $socialnetworks;
 
@@ -254,12 +258,12 @@ class Contact extends CommonObject
 	public $photo;
 
 	/**
-	 * @var string phone pro
+	 * @var string phone pro (professional/business)
 	 */
 	public $phone_pro;
 
 	/**
-	 * @var string phone perso
+	 * @var string phone perso (personal/private)
 	 */
 	public $phone_perso;
 
@@ -279,7 +283,14 @@ class Contact extends CommonObject
 	 */
 	public $priv;
 
+	/**
+	 * @var date
+	 */
 	public $birthday;
+
+	/**
+	 * @var string language for contact communication  -- only with multilanguage enabled
+	 */
 	public $default_lang;
 
 	/**
@@ -729,7 +740,7 @@ class Contact extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *	Return DN string complete in the LDAP directory for the object
 	 *
 	 *	@param		array	$info		Info string loaded by _load_ldap_info
 	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
@@ -756,9 +767,9 @@ class Contact extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Initialise tableau info (tableau des attributs LDAP)
+	 *	Initialize info table (LDAP attributes table)
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Attributes info table
 	 */
 	public function _load_ldap_info()
 	{
@@ -832,7 +843,7 @@ class Contact extends CommonObject
 			$info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 		}
 
-		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware') {
+		if (getDolGlobalString('LDAP_SERVER_TYPE') == 'egroupware') {
 			$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
 
 			$info['uidnumber'] = $this->id;
@@ -1013,36 +1024,36 @@ class Contact extends CommonObject
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
-				$this->entity = $obj->entity;
-				$this->ref = $obj->rowid;
-				$this->ref_ext = $obj->ref_ext;
+				$this->id		= $obj->rowid;
+				$this->entity	= $obj->entity;
+				$this->ref		= $obj->rowid;
+				$this->ref_ext	= $obj->ref_ext;
 
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
-				$this->lastname = $obj->lastname;
-				$this->firstname = $obj->firstname;
-				$this->address = $obj->address;
-				$this->zip = $obj->zip;
-				$this->town = $obj->town;
+				$this->lastname		= $obj->lastname;
+				$this->firstname	= $obj->firstname;
+				$this->address		= $obj->address;
+				$this->zip			= $obj->zip;
+				$this->town			= $obj->town;
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->state_id = $obj->state_id;
-				$this->state_code = $obj->state_code;
-				$this->state = $obj->state;
+				$this->state_id		= $obj->state_id;
+				$this->state_code	= $obj->state_code;
+				$this->state		= $obj->state;
 
-				$this->country_id = $obj->country_id;
-				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country = $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country_id	= $obj->country_id;
+				$this->country_code	= $obj->country_id ? $obj->country_code : '';
+				$this->country		= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
-				$this->fk_soc = $obj->fk_soc;		// Both fk_soc and socid are used
-				$this->socid = $obj->fk_soc;		// Both fk_soc and socid are used
-				$this->socname = $obj->socname;
-				$this->poste = $obj->poste;
-				$this->statut = $obj->statut;
+				$this->fk_soc		= $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socname		= $obj->socname;
+				$this->poste		= $obj->poste;
+				$this->statut		= $obj->statut;
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -1052,25 +1063,25 @@ class Contact extends CommonObject
 				$this->statut_commercial = $libelle; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
-				$this->phone_pro = trim($obj->phone);
-				$this->fax = trim($obj->fax);
-				$this->phone_perso = trim($obj->phone_perso);
-				$this->phone_mobile = trim($obj->phone_mobile);
+				$this->phone_pro	= trim($obj->phone);
+				$this->fax			= trim($obj->fax);
+				$this->phone_perso	= trim($obj->phone_perso);
+				$this->phone_mobile	= trim($obj->phone_mobile);
 
-				$this->email = $obj->email;
-				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
-				$this->photo = $obj->photo;
-				$this->priv = $obj->priv;
-				$this->mail = $obj->email;
+				$this->email			= $obj->email;
+				$this->socialnetworks	= ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
+				$this->photo			= $obj->photo;
+				$this->priv				= $obj->priv;
+				$this->mail				= $obj->email;
 
-				$this->birthday = $this->db->jdate($obj->birthday);
-				$this->note = $obj->note_private; // deprecated
-				$this->note_private = $obj->note_private;
-				$this->note_public = $obj->note_public;
-				$this->default_lang = $obj->default_lang;
-				$this->user_id = $obj->user_id;
-				$this->user_login = $obj->user_login;
-				$this->canvas = $obj->canvas;
+				$this->birthday		= $this->db->jdate($obj->birthday);
+				$this->note			= $obj->note_private; // deprecated
+				$this->note_private	= $obj->note_private;
+				$this->note_public	= $obj->note_public;
+				$this->default_lang	= $obj->default_lang;
+				$this->user_id		= $obj->user_id;
+				$this->user_login	= $obj->user_login;
+				$this->canvas		= $obj->canvas;
 
 				$this->import_key = $obj->import_key;
 
@@ -1170,7 +1181,7 @@ class Contact extends CommonObject
 	public function load_ref_elements()
 	{
 		// phpcs:enable
-		// Compte les elements pour lesquels il est contact
+		// Count the elements for which it is contact
 		$sql = "SELECT tc.element, count(ec.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql .= " WHERE ec.fk_c_type_contact = tc.rowid";
@@ -1274,18 +1285,6 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
-			// Remove Roles
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".((int) $this->id);
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->error .= $this->db->lasterror();
-				$errorflag = -1;
-			}
-		}
-
-		if (!$error) {
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1308,7 +1307,7 @@ class Contact extends CommonObject
 			}
 		}
 
-		// Removed extrafields
+		// Remove extrafields
 		if (!$error) {
 			// For avoid conflicts if trigger used
 			$result = $this->deleteExtraFields();
@@ -1329,9 +1328,9 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Charge les informations sur le contact, depuis la base
+	 *  Load contact information from the database
 	 *
-	 *  @param		int		$id      Id du contact a charger
+	 *  @param		int		$id      Id of the contact to load
 	 *  @return		void
 	 */
 	public function info($id)
@@ -1371,7 +1370,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *  Return number of mass Emailing received by this contacts with its email
+	 *  Return number of mass Emailing received by these contacts with its email
 	 *
 	 *  @return       int     Number of EMailings
 	 */
@@ -1521,7 +1520,7 @@ class Contact extends CommonObject
 
 		if ($withpicto) {
 			if ($withpicto < 0) {
-				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+				$result .= '<!-- picto photo contact --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 				if ($withpicto != 2 && $withpicto != -2) {
 					$result .= ' ';
 				}
@@ -1706,9 +1705,10 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		// Desactive utilisateur
+		// User disable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 
@@ -1955,9 +1955,9 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *	Return prostect level
+	 *	Return prospect level
 	 *
-	 *  @return     string        Libelle
+	 *  @return     string        Label
 	 */
 	public function getLibProspLevel()
 	{
@@ -1986,7 +1986,7 @@ class Contact extends CommonObject
 	/**
 	 *  Set prospect level
 	 *
-	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *  @param  User	$user		User who defines the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
@@ -2078,7 +2078,7 @@ class Contact extends CommonObject
 	/**
 	 *  Set "blacklist" mailing status
 	 *
-	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to receive mailing
 	 *  @return int					<0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
@@ -2158,7 +2158,7 @@ class Contact extends CommonObject
 
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

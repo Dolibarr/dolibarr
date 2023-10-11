@@ -975,8 +975,8 @@ class StockTransfer extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'eagle';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFER_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
 			}

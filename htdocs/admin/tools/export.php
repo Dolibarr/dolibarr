@@ -127,7 +127,9 @@ if ($what == 'mysql') {
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
 		$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 		if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+			$langs->load("errors");
 			$errormsg = $langs->trans('CommandIsNotInsideAllowedCommands');
+			$errormsg .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
 		}
 	}
 

@@ -66,8 +66,8 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with jobposition informations
 	 *
-	 * @param 	int 		$id 	ID of jobposition
-	 * @return  Object             	Object with cleaned properties
+	 * @param	int			$id		ID of jobposition
+	 * @return  Object				Object with cleaned properties
 	 *
 	 * @url	GET jobposition/{id}
 	 *
@@ -97,7 +97,7 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Return an array with candidature informations
 	 *
-	 * @param 	int 	$id 	ID of candidature
+	 * @param	int		$id		ID of candidature
 	 * @return  Object          Object with cleaned properties
 	 *
 	 * @url	GET candidature/{id}
@@ -129,18 +129,19 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Get a list of jobpositions
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /jobposition/
 	 */
-	public function indexJobPosition($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function indexJobPosition($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -218,7 +219,7 @@ class Recruitment extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new RecruitmentJobPosition($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
@@ -236,10 +237,10 @@ class Recruitment extends DolibarrApi
 	 *
 	 * Get a list of candidatures
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array                               Array of order objects
 	 *
@@ -405,9 +406,9 @@ class Recruitment extends DolibarrApi
 	/**
 	 * Update jobposition
 	 *
-	 * @param int   $id             		Id of jobposition to update
-	 * @param array $request_data   		Datas
-	 * @return  	Object              	Object with cleaned properties
+	 * @param int   $id						Id of jobposition to update
+	 * @param array $request_data			Datas
+	 * @return		Object					Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *
@@ -448,9 +449,9 @@ class Recruitment extends DolibarrApi
 	/**
 	 * Update candidature
 	 *
-	 * @param 	int   	$id             Id of candidature to update
-	 * @param 	array 	$request_data   Datas
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id             Id of candidature to update
+	 * @param	array	$request_data   Datas
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *

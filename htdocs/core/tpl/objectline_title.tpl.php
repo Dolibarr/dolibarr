@@ -133,7 +133,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 // Purchase price
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if (!empty($user->rights->margins->creer)) {
-		if ($conf->global->MARGIN_TYPE == "1") {
+		if (getDolGlobalString('MARGIN_TYPE') == "1") {
 			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('BuyingPrice').'</th>';
 		} else {
 			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('CostPrice').'</th>';

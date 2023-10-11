@@ -122,7 +122,7 @@ if ($object->ldap_sid) {
 }
 print '</tr>';
 
-if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
 	$result = $ldap->connect_bind();
 	if ($result > 0) {

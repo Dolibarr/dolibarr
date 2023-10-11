@@ -1,7 +1,7 @@
 --
--- Be carefull to requests order.
--- This file must be loaded by calling /install/index.php page
+-- This file is executed by calling /install/index.php page
 -- when current version is 19.0.0 or higher.
+-- Be carefull in the position of each SQL request.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -28,7 +28,7 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
--- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
+-- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
@@ -57,6 +57,7 @@ UPDATE llx_societe_rib SET frstrecur = 'RCUR' WHERE frstrecur = 'RECUR';
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_CREATE','Third party payment information created','Executed when a third party payment information is created','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_MODIFY','Third party payment information updated','Executed when a third party payment information is updated','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_DELETE','Third party payment information deleted','Executed when a third party payment information is deleted','societe',1);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLOSE','Intervention is done','Executed when a intervention is done','ficheinter',36);
 
 UPDATE llx_bank_url SET type = 'direct-debit' WHERE type = 'withdraw' AND url like '%compta/prelevement/card%';
 
@@ -113,3 +114,12 @@ UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AN
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
+
+-- Drop the composite unique index that exists on llx_links to rebuild a new one with objecttype included.
+-- The old design did not allow same label on different objects with same id.
+-- VMYSQL4.1 DROP INDEX uk_links on llx_links;
+-- VPGSQL8.2 DROP INDEX uk_links;
+ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
+
+ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
+
