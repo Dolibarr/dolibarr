@@ -111,7 +111,7 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("main_size_liste_limit", 'int');
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int');
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
@@ -307,8 +307,8 @@ if ($action == 'edit') {
                 if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
 
-                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#main_size_liste_limit").removeAttr(\'disabled\'); }
-        		else { jQuery("#main_size_liste_limit").attr(\'disabled\',\'disabled\'); }
+                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_LISTE_LIMIT").removeAttr(\'disabled\'); }
+        		else { jQuery("#MAIN_SIZE_LISTE_LIMIT").attr(\'disabled\',\'disabled\'); }
 
                 if (jQuery("#check_AGENDA_DEFAULT_VIEW").prop("checked")) { jQuery("#AGENDA_DEFAULT_VIEW").removeAttr(\'disabled\'); }
         		else { jQuery("#AGENDA_DEFAULT_VIEW").attr(\'disabled\',\'disabled\'); }
@@ -382,7 +382,7 @@ if ($action == 'edit') {
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
-	print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
+	print '<td><input class="flat" name="MAIN_SIZE_LISTE_LIMIT" id="MAIN_SIZE_LISTE_LIMIT" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
 
 	print '</table><br>';
 

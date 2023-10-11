@@ -62,9 +62,10 @@ class FormOther
 	 *
 	 * @param	string	$jstoexecuteonadd	Name of javascript function to call once the barcode scanning session is complete and user has click on "Add".
 	 * @param	string	$mode				'all' (both product and lot barcode) or 'product' (product barcode only) or 'lot' (lot number only)
+	 * @param	int		$warehouseselect	0 (disable warehouse select) or 1 (enable warehouse select)
 	 * @return	string						HTML component
 	 */
-	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs', $mode = 'all')
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs', $mode = 'all', $warehouseselect = 0)
 	{
 		global $langs;
 
@@ -87,7 +88,14 @@ class FormOther
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
-		$out .= '<br>';
+		if ($warehouseselect > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($this->db);
+			$formproduct->loadWarehouses();
+			$out .= $formproduct->selectWarehouses('', "warehousenew", '', 0, 0, 0, '', 0, 1);
+			$out .= '<br>';
+			$out .= '<br>';
+		}
 		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYourBarCodes")).'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
@@ -496,7 +504,7 @@ class FormOther
 		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
 		$sql_usr .= " FROM ".$this->db->prefix()."user as u";
 
-		if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 			if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 				$sql_usr .= " WHERE u.entity IS NOT NULL"; // Show all users
 			} else {
@@ -525,7 +533,7 @@ class FormOther
 			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".$this->db->prefix()."user as u2, ".$this->db->prefix()."societe_commerciaux as sc";
 
-			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql_usr .= " WHERE u2.entity IS NOT NULL"; // Show all users
 				} else {
