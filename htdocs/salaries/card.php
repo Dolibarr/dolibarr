@@ -960,7 +960,6 @@ if ($id > 0) {
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
-
 	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {

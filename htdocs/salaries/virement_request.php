@@ -545,7 +545,6 @@ if ($type == 'salaire') {
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.type = 'ban'";
 	$sql .= " ORDER BY pfd.date_demande DESC";
-
 	$resql = $db->query($sql);
 
 	$num = 0;
@@ -642,13 +641,124 @@ if ($resql) {
 			print "</tr>\n";
 			$i++;
 		}
-	} else {
-		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	$db->free($resql);
 } else {
 	dol_print_error($db);
+}
+
+	// Past requests when bon prelevement
+
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
+	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+if ($type == 'salaire') {
+	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
+} else {
+	$sql .= " WHERE fk_facture = ".((int) $object->id);
+}
+	$sql .= " AND pfd.traite = 1";
+	$sql .= " AND pfd.type = 'ban'";
+	$sql .= " ORDER BY pfd.date_demande DESC";
+
+	$resql = $db->query($sql);
+if ($resql) {
+	$numOfBp = $db->num_rows($resql);
+	$i = 0;
+	$tmpuser = new User($db);
+	if ($numOfBp > 0) {
+		while ($i < $numOfBp) {
+			$obj = $db->fetch_object($resql);
+
+			$tmpuser->id = $obj->user_id;
+			$tmpuser->login = $obj->login;
+			$tmpuser->ref = $obj->login;
+			$tmpuser->email = $obj->email;
+			$tmpuser->lastname = $obj->lastname;
+			$tmpuser->firstname = $obj->firstname;
+			$tmpuser->statut = $obj->user_status;
+			$tmpuser->status = $obj->user_status;
+
+			print '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td>&nbsp;</td>';
+			}
+
+			// Date
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
+
+			// User
+			print '<td class="tdoverflowmax125">';
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
+			print '</td>';
+
+			// Amount
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
+
+			// Date process
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
+
+			// Link to payment request done
+			print '<td class="center minwidth75">';
+			if ($obj->fk_prelevement_bons > 0) {
+				$withdrawreceipt = new BonPrelevement($db);
+				$withdrawreceipt->id = $obj->fk_prelevement_bons;
+				$withdrawreceipt->ref = $obj->ref;
+				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
+				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
+				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
+				$withdrawreceipt->statut = $obj->status;
+				$withdrawreceipt->status = $obj->status;
+				$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
+				$withdrawreceipt->amount = $obj->pb_amount;
+				//$withdrawreceipt->credite = $db->jdate($obj->credite);
+
+				print $withdrawreceipt->getNomUrl(1);
+				print ' ';
+				print $withdrawreceipt->getLibStatut(2);
+
+				// Show the bank account
+				$fk_bank_account = $withdrawreceipt->fk_bank_account;
+				if (empty($fk_bank_account)) {
+					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				}
+				if ($fk_bank_account > 0) {
+					$bankaccount = new Account($db);
+					$result = $bankaccount->fetch($fk_bank_account);
+					if ($result > 0) {
+						print ' - ';
+						print $bankaccount->getNomUrl(1);
+					}
+				}
+			}
+			print "</td>\n";
+
+			//
+			print '<td>&nbsp;</td>';
+
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td>&nbsp;</td>';
+			}
+
+			print "</tr>\n";
+			$i++;
+		}
+	}
+	$db->free($resql);
+} else {
+	dol_print_error($db);
+}
+
+if ($num == 0 && $numOfBp == 0) {
+	print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 
 	print "</table>";
