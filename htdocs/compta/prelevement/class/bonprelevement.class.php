@@ -1317,8 +1317,23 @@ class BonPrelevement extends CommonObject
 			 * Update total defined after generation of file
 			 */
 			if (!$error) {
+				if (!empty($sourcetype)) {
+					$numOfSalaryInv = count($factures);
+					if ($numOfSalaryInv > 0) {
+						$i =0;
+						$som = 0;
+						while ($i < $numOfSalaryInv) {
+							$som = $som+(float) $factures[$i][7];
+							$i++;
+						}
+					}
+				}
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-				$sql .= " SET amount = ".price2num($this->total);
+				if (empty($sourcetype)) {
+					$sql .= " SET amount = ".price2num($this->total);
+				} else {
+					$sql .= " SET amount = ".price2num($som);
+				}
 				$sql .= " WHERE rowid = ".((int) $this->id);
 				$sql .= " AND entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
