@@ -2035,6 +2035,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 
 		$ltrdirection = 'L';
