@@ -207,7 +207,8 @@ if ($type == 'bank-transfer') {
 
 llxHeader('', $title);
 
-$head = bon_prelevement_prepare_head($bprev);
+
+$head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
 if ($type) {
 	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
 } else {

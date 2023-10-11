@@ -109,24 +109,26 @@ function prelevement_check_config($type = 'direct-debit')
  *  Return array head with list of tabs to view object informations
  *
  *  @param	object	$object         Member
+ *  @param  int     $nbOfInvoices   No of invoices
+ *  @param  int     $nbOfSalaryInvoice  No of salary invoices
  *  @return array           		head
  */
-function bon_prelevement_prepare_head(BonPrelevement $object)
+function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer';
-	$head[$h][1] = $langs->trans("Invoices");
+	$head[$h][1] = ($nbOfInvoices <= 0 ? $langs->trans("Invoices") : $langs->trans("Invoices").' <span class="badge">'.$nbOfInvoices.'</span>');
 	$head[$h][2] = 'invoice';
 	$h++;
 
 	// Salaries
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/prelevement/create.php?type=bank-transfer&sourcetype=salary";
-	$head[$h][1] = $langs->trans("Salaries");
+	$head[$h][1] = ($nbOfSalaryInvoice <= 0 ? $langs->trans("Salaries") : $langs->trans("Salaries").' <span class="badge">'.$nbOfSalaryInvoice.'</span>');
 	$head[$h][2] = 'salary';
 	$h++;
 
