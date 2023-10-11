@@ -501,9 +501,17 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		return $localobjectadd->id;
 	}
 
+	/**
+	 * testSocieteMerge
+	 *
+	 * Check that we can merge two companies together. In this test,
+	 * no other object is referencing the companies.
+	 *
+	 * @return int the result of the merge and fetch operation
+	 */
 	public function testSocieteMerge()
 	{
-		global $conf,$user,$langs,$db;
+		global $user, $db;
 
 		$soc1 = new Societe($db);
 		$soc1->initAsSpecimen();
@@ -518,7 +526,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$soc2_id = $soc2->create($user);
 		$this->assertLessThanOrEqual($soc2_id, 0, implode('\n', $soc2->errors));
 
-		$result = $soc1->mergeCompany($user, $soc2_id);
+		$result = $soc1->mergeCompany($soc2_id);
 		$this->assertLessThanOrEqual($result, 0, implode('\n', $soc1->errors));
 
 		$result = $soc1->fetch($soc1_id);
@@ -527,6 +535,5 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 
 		return $result;
-
 	}
 }
