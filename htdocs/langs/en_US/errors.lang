@@ -320,6 +320,7 @@ ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s 
 ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet 
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
+ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found

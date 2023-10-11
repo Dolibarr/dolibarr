@@ -182,7 +182,7 @@ if ($action == 'setlabel' && $user->rights->salaries->write) {
 // Classify paid
 if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == 'yes') {
 	$object->fetch($id);
-	$result = $object->set_paid($user);
+	$result = $object->setPaid($user);
 }
 
 if ($action == 'setfk_user' && $user->rights->salaries->write) {

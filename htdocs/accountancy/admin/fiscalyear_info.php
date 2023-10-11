@@ -56,7 +56,7 @@ if ($id) {
 
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'calendar');
 
 	print '<table width="100%"><tr><td>';
 	dol_print_object_info($object);

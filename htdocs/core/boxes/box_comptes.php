@@ -165,7 +165,7 @@ class box_comptes extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total nowraponall right amount"',
-						'text' => price($solde, 0, $langs, 0, -1, -1, $key)
+						'text' => '<span class="amount">'.price($solde, 0, $langs, 0, -1, -1, $key).'</span>'
 					);
 					$line++;
 				}

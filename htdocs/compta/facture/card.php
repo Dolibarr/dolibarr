@@ -722,6 +722,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// We check if invoice has payments
+			$totalpaid = 0;
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
@@ -1943,6 +1944,8 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 				$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
 				$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+				$object->fk_account = GETPOST('fk_account', 'int');
+
 
 				// Proprietes particulieres a facture de remplacement
 
@@ -5477,7 +5480,7 @@ if ($action == 'create') {
 	}
 
 	// Form to add new line
-	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline') {
+	if ($object->statut == 0 && $usercancreate && $action != 'valid') {
 		if ($action != 'editline' && $action != 'selectlines') {
 			// Add free products/services
 
@@ -5486,6 +5489,9 @@ if ($action == 'create') {
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			if (empty($reshook))
 				$object->formAddObjectLine(1, $mysoc, $soc);
+		} else {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 	}
 

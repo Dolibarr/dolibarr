@@ -119,21 +119,21 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1') {
+if (getDolGlobalString('MARGIN_TYPE') == '1') {
 	print 'checked ';
 }
 print '/> ';
 print $langs->trans('MargeType1');
 print '<br>';
 print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp') {
+if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 	print 'checked ';
 }
 print '/> ';
 print $langs->trans('MargeType2');
 print '<br>';
 print ' <input type="radio" name="MARGIN_TYPE" value="costprice" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
+if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 	print 'checked ';
 }
 print '/> ';
