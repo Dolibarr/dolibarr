@@ -72,7 +72,7 @@ $soc = new Societe($db);
 if ($invoice->socid > 0) {
 	$soc->fetch($invoice->socid);
 } else {
-	$soc->fetch($conf->global->$constforcompanyid);
+	$soc->fetch(getDolGlobalInt($constforcompanyid));
 }
 $vatRateDefault = get_default_tva($mysoc, $soc);
 

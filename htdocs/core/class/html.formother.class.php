@@ -62,9 +62,10 @@ class FormOther
 	 *
 	 * @param	string	$jstoexecuteonadd	Name of javascript function to call once the barcode scanning session is complete and user has click on "Add".
 	 * @param	string	$mode				'all' (both product and lot barcode) or 'product' (product barcode only) or 'lot' (lot number only)
+	 * @param	int		$warehouseselect	0 (disable warehouse select) or 1 (enable warehouse select)
 	 * @return	string						HTML component
 	 */
-	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs', $mode = 'all')
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs', $mode = 'all', $warehouseselect = 0)
 	{
 		global $langs;
 
@@ -87,7 +88,14 @@ class FormOther
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
-		$out .= '<br>';
+		if ($warehouseselect > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($this->db);
+			$formproduct->loadWarehouses();
+			$out .= $formproduct->selectWarehouses('', "warehousenew", '', 0, 0, 0, '', 0, 1);
+			$out .= '<br>';
+			$out .= '<br>';
+		}
 		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYourBarCodes")).'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
@@ -362,7 +370,7 @@ class FormOther
 	public function select_percent($selected = 0, $htmlname = 'percent', $disabled = 0, $increment = 5, $start = 0, $end = 100, $showempty = 0)
 	{
 		// phpcs:enable
-		$return = '<select class="flat" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
+		$return = '<select class="flat maxwidth75" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
 		if ($showempty) {
 			$return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
 		}
@@ -825,11 +833,11 @@ class FormOther
 	/**
 	 *  Output a HTML code to select a color. Field will return an hexa color like '334455'.
 	 *
-	 *  @param	string		$set_color				Pre-selected color
+	 *  @param	string		$set_color				Pre-selected color with format '#......'
 	 *  @param	string		$prefix					Name of HTML field
 	 *  @param	string		$form_name				Deprecated. Not used.
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors			Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
 	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
 	 *  @param	string		$default				Default color
@@ -917,7 +925,8 @@ class FormOther
 	             </script>';
 				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
 			} else {
-				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat input-nobottom colorselector valignmiddle '.($morecss ? ' '.$morecss : '').'" type="color" value="#'.dol_escape_htmltag($set_color !== '' ? $set_color : $default).'" />';
+				$color = ($set_color !== '' ? $set_color : ($default !== '' ? $default : 'FFFFFF'));
+				$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat input-nobottom colorselector valignmiddle '.($morecss ? ' '.$morecss : '').'" type="color" data-default="'.$default.'" value="'.dol_escape_htmltag(preg_match('/^#/', $color) ? $color : '#'.$color).'" />';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 	             jQuery(document).ready(function(){
 					var originalhex = null;
@@ -1230,7 +1239,7 @@ class FormOther
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
-					$label = $label.' <span class="fa fa-bar-chart"></span>';
+					$label = $label.' <span class="fas fa-chart-bar"></span>';
 				}
 				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}

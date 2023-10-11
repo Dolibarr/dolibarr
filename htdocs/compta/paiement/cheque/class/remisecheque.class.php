@@ -401,9 +401,9 @@ class RemiseCheque extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
-		} elseif ($conf->global->CHEQUERECEIPTS_ADDON == 'thyme') {
+		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'thyme') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_thyme';
-		} elseif ($conf->global->CHEQUERECEIPTS_ADDON == 'mint') {
+		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'mint') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		}
 
@@ -915,7 +915,7 @@ class RemiseCheque extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

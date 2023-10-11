@@ -85,7 +85,7 @@ if ($conf->browser->layout == 'phone') {
 	$maxcategbydefaultforthisdevice = 8;
 	$maxproductbydefaultforthisdevice = 16;
 	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
-	if ($_SESSION["takeposterminal"] != "" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1) {
+	if ($_SESSION["takeposterminal"] != "" && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
 		$_SESSION["basiclayout"] = 1;
 		header("Location: phone.php?mobilepage=invoice");
 		exit;
@@ -98,7 +98,7 @@ $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaul
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
  $soc = new Societe($db);
  if ($invoice->socid > 0) $soc->fetch($invoice->socid);
- else $soc->fetch($conf->global->$constforcompanyid);
+ else $soc->fetch(getDolGlobalInt($constforcompanyid));
  */
 
 // Security check
@@ -331,7 +331,7 @@ function LoadProducts(position, issubcat) {
 		limit = maxproduct-1;
 	}
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log(data);
 		while (ishow < maxproduct) {
@@ -570,7 +570,7 @@ function Refresh() {
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	invoiceid = $("#invoiceid").val();
+	invoiceid = $("#invoiceid").val();		// This is a hidden field added by invoice.php
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
@@ -644,7 +644,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -1218,8 +1218,8 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 			}
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
-			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-			if ( !empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+			//var_dump($constantforkey.' '.getDolGlobalInt($constantforkey));
+			if ( !empty($conf->global->$constantforkey) && getDolGlobalInt($constantforkey) > 0) {
 				array_push($paiementsModes, $obj);
 			}
 		}

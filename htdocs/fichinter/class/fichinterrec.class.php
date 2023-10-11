@@ -302,8 +302,7 @@ class FichinterRec extends Fichinter
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= !empty($obj->model_pdf) ? $obj->model_pdf : "";
-				$this->modelpdf				= !empty($obj->model_pdf) ? $obj->model_pdf : ""; // deprecated
+				$this->model_pdf			= empty($obj->model_pdf) ? "" : $obj->model_pdf;
 				$this->rang = !empty($obj->rang) ? $obj->rang : "";
 				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
 				$this->frequency			= $obj->frequency;

@@ -109,6 +109,7 @@ $type = GETPOST("type", "int");
 $mode = GETPOST('mode', 'alpha');
 
 // Show/hide child product variants
+$show_childproducts = 0;
 if (isModEnabled('variants')) {
 	$show_childproducts = GETPOST('search_show_childproducts');
 }
@@ -189,7 +190,7 @@ $fieldstosearchall = array(
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
-
+	'pfp.ref_fourn'=>'RefSupplier'
 );
 // multilang
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -199,6 +200,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 }
 if (isModEnabled('barcode')) {
 	$fieldstosearchall['p.barcode'] = 'Gencod';
+	$fieldstosearchall['pfp.barcode'] = 'GencodBuyPrice';
 }
 // Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
 if (!empty($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS)) {
@@ -219,7 +221,7 @@ $alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ?
 // Definition of array of fields for columns
 $arrayfields = array(
 	'p.rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
-	'p.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
+	'p.ref'=>array('label'=>'ProductRef', 'checked'=>1, 'position'=>10),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
@@ -467,7 +469,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (isModEnabled('workstation')) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation ws ON (p.fk_default_workstation = ws.rowid)";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation as ws ON (p.fk_default_workstation = ws.rowid)";
 }
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -490,8 +492,13 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
+	// Clean $fieldstosearchall
+	$newfieldstosearchall = $fieldstosearchall;
+	unset($newfieldstosearchall['pfp.ref_fourn']);
+	unset($newfieldstosearchall['pfp.barcode']);
+
 	$sql .= ' AND (';
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall, 0, 1);
+	$sql .= natural_search(array_keys($newfieldstosearchall), $sall, 0, 1);
 	// Search also into a supplier reference 'pfp.ref_fourn'="RefSupplier"
 	$sql .= ' OR EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid';
 	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $sall, 0, 1);
@@ -648,6 +655,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -812,20 +820,19 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-
-if ($user->hasRight($rightskey, 'supprimer')) {
-	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-}
 if ($user->hasRight($rightskey, 'creer')) {
+	$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
 	$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 	$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
-	$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
 }
 if (isModEnabled('category') && $user->hasRight($rightskey, 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields', 'preupdateprice'))) {
 	$arrayofmassactions = array();
+}
+if ($user->hasRight($rightskey, 'supprimer')) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -845,16 +852,15 @@ if ($type === "") {
 if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
-if ($type === "") {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
-	$type = Product::TYPE_SERVICE;
-}
-	$label = 'NewProduct';
-if ($type == Product::TYPE_SERVICE) {
-	$label = 'NewService';
-}
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', $perm, $params);
 
+if ($type === "" || $type == Product::TYPE_PRODUCT) {
+	$label = 'NewProduct';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
+}
+if ($type === "" || $type == Product::TYPE_SERVICE) {
+	$label = 'NewService';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', $perm, $params);
+}
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 if ($optioncss != '') {

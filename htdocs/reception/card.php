@@ -143,13 +143,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// TODO Test on reception module on only
 if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
-	$result = restrictedArea($user, 'reception', $id);
+	$result = restrictedArea($user, 'reception', $object->id);
 } else {
 	// We do not use the reception module, so we test permission on the supplier orders
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
 		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
-	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
 	}
 }
@@ -1338,774 +1339,779 @@ if ($action == 'create') {
 
 	$num_prod = count($lines);
 	$indiceAsked = 0;
-	if ($object->id > 0) {
-		if (!empty($object->origin) && $object->origin_id > 0) {
-			$object->origin = 'CommandeFournisseur';
-			$typeobject = $object->origin;
-			$origin = $object->origin;
-			$origin_id = $object->origin_id;
-			$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+
+	if ($object->id <= 0) {
+		print $langs->trans("NoRecordFound");
+		llxFooter();
+		exit;
+	}
+
+	if (!empty($object->origin) && $object->origin_id > 0) {
+		$object->origin = 'CommandeFournisseur';
+		$typeobject = $object->origin;
+		$origin = $object->origin;
+		$origin_id = $object->origin_id;
+		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+	}
+
+	$soc = new Societe($db);
+	$soc->fetch($object->socid);
+
+	$res = $object->fetch_optionals();
+
+	$head = reception_prepare_head($object);
+	print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
+
+	$formconfirm = '';
+
+	// Confirm deleteion
+	if ($action == 'delete') {
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteReception'), $langs->trans("ConfirmDeleteReception", $object->ref), 'confirm_delete', '', 0, 1);
+	}
+
+	// Confirmation validation
+	if ($action == 'valid') {
+		$objectref = substr($object->ref, 1, 4);
+		if ($objectref == 'PROV') {
+			$numref = $object->getNextNumRef($soc);
+		} else {
+			$numref = $object->ref;
 		}
 
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
-		$res = $object->fetch_optionals();
-
-		$head = reception_prepare_head($object);
-		print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
-
-		$formconfirm = '';
-
-		// Confirm deleteion
-		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteReception'), $langs->trans("ConfirmDeleteReception", $object->ref), 'confirm_delete', '', 0, 1);
+		$text = $langs->trans("ConfirmValidateReception", $numref);
+		if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')) {
+			$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementWillBeRecorded").'.';
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
+			$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementNotYetRecorded").'.';
 		}
 
-		// Confirmation validation
-		if ($action == 'valid') {
-			$objectref = substr($object->ref, 1, 4);
-			if ($objectref == 'PROV') {
-				$numref = $object->getNextNumRef($soc);
-			} else {
-				$numref = $object->ref;
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('RECEPTION_VALIDATE', $object->socid, $object);
+		}
+
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1, 250);
+	}
+
+	// Confirm cancelation
+	if ($action == 'annuler') {
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelReception'), $langs->trans("ConfirmCancelReception", $object->ref), 'confirm_cancel', '', 0, 1);
+	}
+
+	if (!$formconfirm) {
+		$parameters = array('formConfirm' => $formconfirm);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
+		}
+	}
+
+	// Print form confirm
+	print $formconfirm;
+
+
+	// Calculate totalWeight and totalVolume for all products
+	// by adding weight and volume of each product line.
+	$tmparray = $object->getTotalWeightVolume();
+	$totalWeight = $tmparray['weight'];
+	$totalVolume = $tmparray['volume'];
+
+
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+		$objectsrc = new Commande($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+		$objectsrc = new Propal($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+	if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("supplier_order")) {
+		$objectsrc = new CommandeFournisseur($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+	// Reception card
+	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$morehtmlref = '<div class="refidno">';
+	// Ref customer reception
+
+	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+
+	// Thirdparty
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+	// Project
+	if (isModEnabled('project')) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>';
+		if (0) {    // Do not change on reception
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+			if ($action != 'classify' && $permissiontoadd) {
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-
-			$text = $langs->trans("ConfirmValidateReception", $numref);
-			if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')) {
-				$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementWillBeRecorded").'.';
-			} elseif (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-				$text .= '<br>'.img_picto('', 'movement', 'class="pictofixedwidth"').$langs->trans("StockMovementNotYetRecorded").'.';
-			}
-
-			if (isModEnabled('notification')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-				$notify = new Notify($db);
-				$text .= '<br>';
-				$text .= $notify->confirmMessage('RECEPTION_VALIDATE', $object->socid, $object);
-			}
-
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateReception'), $text, 'confirm_valid', '', 0, 1, 250);
-		}
-
-		// Confirm cancelation
-		if ($action == 'annuler') {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelReception'), $langs->trans("ConfirmCancelReception", $object->ref), 'confirm_cancel', '', 0, 1);
-		}
-
-		if (!$formconfirm) {
-			$parameters = array('formConfirm' => $formconfirm);
-			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				$formconfirm .= $hookmanager->resPrint;
-			} elseif ($reshook > 0) {
-				$formconfirm = $hookmanager->resPrint;
-			}
-		}
-
-		// Print form confirm
-		print $formconfirm;
-
-
-		// Calculate totalWeight and totalVolume for all products
-		// by adding weight and volume of each product line.
-		$tmparray = $object->getTotalWeightVolume();
-		$totalWeight = $tmparray['weight'];
-		$totalVolume = $tmparray['volume'];
-
-
-		if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
-			$objectsrc = new Commande($db);
-			$objectsrc->fetch($object->$typeobject->id);
-		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
-			$objectsrc = new Propal($db);
-			$objectsrc->fetch($object->$typeobject->id);
-		}
-		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("supplier_order")) {
-			$objectsrc = new CommandeFournisseur($db);
-			$objectsrc->fetch($object->$typeobject->id);
-		}
-		// Reception card
-		$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
-		$morehtmlref = '<div class="refidno">';
-		// Ref customer reception
-
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
-
-		// Thirdparty
-		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
-		// Project
-		if (isModEnabled('project')) {
-			$langs->load("projects");
-			$morehtmlref .= '<br>';
-			if (0) {    // Do not change on reception
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-				if ($action != 'classify' && $permissiontoadd) {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		} else {
+			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($objectsrc->fk_project);
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-			} else {
-				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
-					$morehtmlref .= $proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
-					}
-				}
 			}
 		}
-		$morehtmlref .= '</div>';
+	}
+	$morehtmlref .= '</div>';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
-		print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">';
 
-		// Linked documents
-		if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
-			print '<tr><td>';
-			print $langs->trans("RefOrder").'</td>';
-			print '<td colspan="3">';
-			print $objectsrc->getNomUrl(1, 'commande');
-			print "</td>\n";
-			print '</tr>';
-		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
-			print '<tr><td>';
-			print $langs->trans("RefProposal").'</td>';
-			print '<td colspan="3">';
-			print $objectsrc->getNomUrl(1, 'reception');
-			print "</td>\n";
-			print '</tr>';
-		}
-		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("propal")) {
-			print '<tr><td>';
-			print $langs->trans("SupplierOrder").'</td>';
-			print '<td colspan="3">';
-			print $objectsrc->getNomUrl(1, 'reception');
-			print "</td>\n";
-			print '</tr>';
-		}
-
-		// Date creation
-		print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
-		print '<td colspan="3">'.dol_print_date($object->date_creation, "dayhour", "tzuserrel")."</td>\n";
-		print '</tr>';
-
-		// Delivery date planned
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DateDeliveryPlanned');
-		print '</td>';
-
-		if ($action != 'editdate_livraison') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="2">';
-		if ($action == 'editdate_livraison') {
-			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print '</form>';
-		} else {
-			print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Weight
+	// Linked documents
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 		print '<tr><td>';
-		print $form->editfieldkey("Weight", 'trueWeight', $object->trueWeight, $object, $user->rights->reception->creer);
-		print '</td><td colspan="3">';
-
-		if ($action == 'edittrueWeight') {
-			print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input name="action" value="settrueWeight" type="hidden">';
-			print '<input name="id" value="'.$object->id.'" type="hidden">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
-			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-			print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-			print '</form>';
-		} else {
-			print $object->trueWeight;
-			print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
-		}
-
-		// Calculated
-		if ($totalWeight > 0) {
-			if (!empty($object->trueWeight)) {
-				print ' ('.$langs->trans("SumOfProductWeights").': ';
-			}
-			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
-			if (!empty($object->trueWeight)) {
-				print ')';
-			}
-		}
-		print '</td></tr>';
-
-		// Width
-		print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer);
-		print ($object->trueWidth && $object->width_units != '') ? ' '.measuringUnitString(0, "size", $object->width_units) : '';
-		print '</td></tr>';
-
-		// Height
-		print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		if ($action == 'edittrueHeight') {
-			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input name="action" value="settrueHeight" type="hidden">';
-			print '<input name="id" value="'.$object->id.'" type="hidden">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
-			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-			print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-			print '</form>';
-		} else {
-			print $object->trueHeight;
-			print ($object->trueHeight && $object->height_units != '') ? ' '.measuringUnitString(0, "size", $object->height_units) : '';
-		}
-
-		print '</td></tr>';
-
-		// Depth
-		print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer);
-		print ($object->trueDepth && $object->depth_units != '') ? ' '.measuringUnitString(0, "size", $object->depth_units) : '';
-		print '</td></tr>';
-
-		// Volume
-		print '<tr><td>';
-		print $langs->trans("Volume");
-		print '</td>';
+		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
-		$calculatedVolume = 0;
-		$volumeUnit = 0;
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
-			$volumeUnit = $object->size_units * 3;
-		}
-		// If reception volume not defined we use sum of products
-		if ($calculatedVolume > 0) {
-			if ($volumeUnit < 50) {
-				print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
-			} else {
-				print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
-			}
-		}
-		if ($totalVolume > 0) {
-			if ($calculatedVolume) {
-				print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			}
-			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
-			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
-			if ($calculatedVolume) {
-				print ')';
-			}
-		}
+		print $objectsrc->getNomUrl(1, 'commande');
 		print "</td>\n";
 		print '</tr>';
-
-		// Other attributes
-		$cols = 2;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
-		print '</table>';
-
-		print '</div>';
-		print '<div class="fichehalfright">';
-		print '<div class="underbanner clearboth"></div>';
-
-		print '<table class="border centpercent tableforfield">';
-
-		// Reception method
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('ReceptionMethod');
-		print '</td>';
-
-		if ($action != 'editshipping_method_id') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="2">';
-		if ($action == 'editshipping_method_id') {
-			print '<form name="setshipping_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="setshipping_method_id">';
-			$object->fetch_delivery_methods();
-			print $form->selectarray("shipping_method_id", $object->meths, $object->shipping_method_id, 1, 0, 0, "", 1);
-			if ($user->admin) {
-				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			}
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print '</form>';
-		} else {
-			if ($object->shipping_method_id > 0) {
-				// Get code using getLabelFromKey
-				$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
-				print $langs->trans("SendingMethod".strtoupper($code));
-			}
-		}
-		print '</td>';
+	}
+	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+		print '<tr><td>';
+		print $langs->trans("RefProposal").'</td>';
+		print '<td colspan="3">';
+		print $objectsrc->getNomUrl(1, 'reception');
+		print "</td>\n";
 		print '</tr>';
+	}
+	if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("propal")) {
+		print '<tr><td>';
+		print $langs->trans("SupplierOrder").'</td>';
+		print '<td colspan="3">';
+		print $objectsrc->getNomUrl(1, 'reception');
+		print "</td>\n";
+		print '</tr>';
+	}
 
-		// Tracking Number
-		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->reception->creer, 'safehtmlstring', $object->tracking_number);
+	// Date creation
+	print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
+	print '<td colspan="3">'.dol_print_date($object->date_creation, "dayhour", "tzuserrel")."</td>\n";
+	print '</tr>';
+
+	// Delivery date planned
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('DateDeliveryPlanned');
+	print '</td>';
+
+	if ($action != 'editdate_livraison') {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($action == 'editdate_livraison') {
+		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setdate_livraison">';
+		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Weight
+	print '<tr><td>';
+	print $form->editfieldkey("Weight", 'trueWeight', $object->trueWeight, $object, $user->rights->reception->creer);
+	print '</td><td colspan="3">';
+
+	if ($action == 'edittrueWeight') {
+		print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+		print '<input name="action" value="settrueWeight" type="hidden">';
+		print '<input name="id" value="'.$object->id.'" type="hidden">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
+		print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
+		print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+		print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+		print '</form>';
+	} else {
+		print $object->trueWeight;
+		print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
+	}
+
+	// Calculated
+	if ($totalWeight > 0) {
+		if (!empty($object->trueWeight)) {
+			print ' ('.$langs->trans("SumOfProductWeights").': ';
+		}
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		if (!empty($object->trueWeight)) {
+			print ')';
+		}
+	}
+	print '</td></tr>';
+
+	// Width
+	print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer);
+	print ($object->trueWidth && $object->width_units != '') ? ' '.measuringUnitString(0, "size", $object->width_units) : '';
+	print '</td></tr>';
+
+	// Height
+	print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->rights->reception->creer).'</td><td colspan="3">';
+	if ($action == 'edittrueHeight') {
+		print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+		print '<input name="action" value="settrueHeight" type="hidden">';
+		print '<input name="id" value="'.$object->id.'" type="hidden">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
+		print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
+		print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+		print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+		print '</form>';
+	} else {
+		print $object->trueHeight;
+		print ($object->trueHeight && $object->height_units != '') ? ' '.measuringUnitString(0, "size", $object->height_units) : '';
+	}
+
+	print '</td></tr>';
+
+	// Depth
+	print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer);
+	print ($object->trueDepth && $object->depth_units != '') ? ' '.measuringUnitString(0, "size", $object->depth_units) : '';
+	print '</td></tr>';
+
+	// Volume
+	print '<tr><td>';
+	print $langs->trans("Volume");
+	print '</td>';
+	print '<td colspan="3">';
+	$calculatedVolume = 0;
+	$volumeUnit = 0;
+	if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
+		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$volumeUnit = $object->size_units * 3;
+	}
+	// If reception volume not defined we use sum of products
+	if ($calculatedVolume > 0) {
+		if ($volumeUnit < 50) {
+			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		} else {
+			print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
+		}
+	}
+	if ($totalVolume > 0) {
+		if ($calculatedVolume) {
+			print ' ('.$langs->trans("SumOfProductVolumes").': ';
+		}
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
+		if ($calculatedVolume) {
+			print ')';
+		}
+	}
+	print "</td>\n";
+	print '</tr>';
+
+	// Other attributes
+	$cols = 2;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+	print '</table>';
+
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border centpercent tableforfield">';
+
+	// Reception method
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
+	print $langs->trans('ReceptionMethod');
+	print '</td>';
+
+	if ($action != 'editshipping_method_id') {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($action == 'editshipping_method_id') {
+		print '<form name="setshipping_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setshipping_method_id">';
+		$object->fetch_delivery_methods();
+		print $form->selectarray("shipping_method_id", $object->meths, $object->shipping_method_id, 1, 0, 0, "", 1);
+		if ($user->admin) {
+			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		if ($object->shipping_method_id > 0) {
+			// Get code using getLabelFromKey
+			$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			print $langs->trans("SendingMethod".strtoupper($code));
+		}
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Tracking Number
+	print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->reception->creer).'</td><td colspan="3">';
+	print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->reception->creer, 'safehtmlstring', $object->tracking_number);
+	print '</td></tr>';
+
+	// Incoterms
+	if (isModEnabled('incoterm')) {
+		print '<tr><td>';
+		print '<table width="100%" class="nobordernopadding"><tr><td>';
+		print $langs->trans('IncotermLabel');
+		print '<td><td class="right">';
+		if ($user->rights->reception->creer) {
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td colspan="3">';
+		if ($action != 'editincoterm') {
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+		} else {
+			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+		}
 		print '</td></tr>';
+	}
 
-		// Incoterms
-		if (isModEnabled('incoterm')) {
-			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('IncotermLabel');
-			print '<td><td class="right">';
-			if ($user->rights->reception->creer) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
-			} else {
-				print '&nbsp;';
-			}
-			print '</td></tr></table>';
-			print '</td>';
-			print '<td colspan="3">';
-			if ($action != 'editincoterm') {
-				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-			} else {
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
-			}
-			print '</td></tr>';
+	print "</table>";
+
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
+
+	// Lines of products
+	if ($action == 'editline') {
+		print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
+		<input type="hidden" name="token" value="' . newToken().'">
+		<input type="hidden" name="action" value="updateline">
+		<input type="hidden" name="mode" value="">
+		<input type="hidden" name="id" value="' . $object->id.'">';
+	}
+	print '<br><br>';
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelines" class="noborder centpercent">';
+	print '<thead>';
+	print '<tr class="liste_titre">';
+	// #
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		print '<td width="5" class="center">&nbsp;</td>';
+	}
+	// Product/Service
+	print '<td>'.$langs->trans("Products").'</td>';
+	// Comment
+	print '<td>'.$langs->trans("Comment").'</td>';
+	// Qty
+	print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+	if ($origin && $origin_id > 0) {
+		print '<td class="center">'.$langs->trans("QtyInOtherReceptions").'</td>';
+	}
+	if ($action == 'editline') {
+		$editColspan = 3;
+		if (!isModEnabled('stock')) {
+			$editColspan--;
+		}
+		if (empty($conf->productbatch->enabled)) {
+			$editColspan--;
+		}
+		print '<td class="center" colspan="'.$editColspan.'">';
+		if ($object->statut <= 1) {
+			print $langs->trans("QtyToReceive").' - ';
+		} else {
+			print $langs->trans("QtyReceived").' - ';
+		}
+		if (isModEnabled('stock')) {
+			print $langs->trans("WarehouseTarget").' - ';
+		}
+		if (isModEnabled('productbatch')) {
+			print $langs->trans("Batch");
+		}
+		print '</td>';
+	} else {
+		$statusreceived = $object::STATUS_CLOSED;
+		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
+			$statusreceived = $object::STATUS_VALIDATED;
+		}
+		if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
+			$statusreceived = $object::STATUS_CLOSED;
+		}
+		if ($object->statut < $statusreceived) {
+			print '<td class="center">'.$langs->trans("QtyToReceive").'</td>';
+		} else {
+			print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
+		}
+		if (isModEnabled('stock')) {
+			print '<td class="left">'.$langs->trans("WarehouseTarget").'</td>';
 		}
 
-		print "</table>";
-
-		print '</div>';
-		print '</div>';
-
-		print '<div class="clearboth"></div>';
-
-
-		// Lines of products
-		if ($action == 'editline') {
-			print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . newToken().'">
-			<input type="hidden" name="action" value="updateline">
-			<input type="hidden" name="mode" value="">
-			<input type="hidden" name="id" value="' . $object->id.'">';
+		if (isModEnabled('productbatch')) {
+			print '<td class="left">'.$langs->trans("Batch").'</td>';
 		}
-		print '<br><br>';
+	}
+	print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
+	print '<td class="center">'.$langs->trans("CalculatedVolume").'</td>';
+	//print '<td class="center">'.$langs->trans("Size").'</td>';
+	if ($object->statut == 0) {
+		print '<td class="linecoledit"></td>';
+		print '<td class="linecoldelete" width="10"></td>';
+	}
+	print "</tr>\n";
+	print '</thead>';
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder centpercent">';
-		print '<thead>';
-		print '<tr class="liste_titre">';
+	$var = false;
+
+	if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+		$object->fetch_thirdparty();
+		$outputlangs = $langs;
+		$newlang = '';
+		if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		if (empty($newlang)) {
+			$newlang = $object->thirdparty->default_lang;
+		}
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+	}
+
+	// Get list of products already sent for same source object into $alreadysent
+	$alreadysent = array();
+
+	$origin = 'commande_fournisseur';
+
+	if ($origin && $origin_id > 0) {
+		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
+		$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
+		$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";
+		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
+		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
+		$sql .= ', p.description as product_desc';
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+		$sql .= ", ".MAIN_DB_PREFIX."reception as e";
+		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
+		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
+		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+		$sql .= " AND obj.fk_commande = ".((int) $origin_id);
+		$sql .= " AND obj.rowid = ed.fk_commandefourndet";
+		$sql .= " AND ed.fk_reception = e.rowid";
+		$sql .= " AND ed.fk_reception !=".((int) $object->id);
+		//if ($filter) $sql.= $filter;
+		$sql .= " ORDER BY obj.fk_product";
+
+		dol_syslog("get list of reception lines", LOG_DEBUG);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					// $obj->rowid is rowid in $origin."det" table
+					$alreadysent[$obj->rowid][$obj->receptionline_id] = array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty'=>$obj->qty, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
+				}
+				$i++;
+			}
+		}
+		//var_dump($alreadysent);
+	}
+
+	$arrayofpurchaselinealreadyoutput = array();
+
+	// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
+	print '<tbody>';
+	for ($i = 0; $i < $num_prod; $i++) {
+		print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
+		print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'">';
+
 		// #
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-			print '<td width="5" class="center">&nbsp;</td>';
+			print '<td class="center">'.($i + 1).'</td>';
 		}
-		// Product/Service
-		print '<td>'.$langs->trans("Products").'</td>';
-		// Comment
-		print '<td>'.$langs->trans("Comment").'</td>';
-		// Qty
-		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
-		if ($origin && $origin_id > 0) {
-			print '<td class="center">'.$langs->trans("QtyInOtherReceptions").'</td>';
-		}
-		if ($action == 'editline') {
-			$editColspan = 3;
-			if (!isModEnabled('stock')) {
-				$editColspan--;
-			}
-			if (empty($conf->productbatch->enabled)) {
-				$editColspan--;
-			}
-			print '<td class="center" colspan="'.$editColspan.'">';
-			if ($object->statut <= 1) {
-				print $langs->trans("QtyToReceive").' - ';
+
+		// Predefined product or service
+		if ($lines[$i]->fk_product > 0) {
+			// Define output language
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				$prod = new Product($db);
+				$prod->fetch($lines[$i]->fk_product);
+				$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
 			} else {
-				print $langs->trans("QtyReceived").' - ';
-			}
-			if (isModEnabled('stock')) {
-				print $langs->trans("WarehouseTarget").' - ';
-			}
-			if (isModEnabled('productbatch')) {
-				print $langs->trans("Batch");
-			}
-			print '</td>';
-		} else {
-			$statusreceived = $object::STATUS_CLOSED;
-			if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
-				$statusreceived = $object::STATUS_VALIDATED;
-			}
-			if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
-				$statusreceived = $object::STATUS_CLOSED;
-			}
-			if ($object->statut < $statusreceived) {
-				print '<td class="center">'.$langs->trans("QtyToReceive").'</td>';
-			} else {
-				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
-			}
-			if (isModEnabled('stock')) {
-				print '<td class="left">'.$langs->trans("WarehouseTarget").'</td>';
+				$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
 			}
 
-			if (isModEnabled('productbatch')) {
-				print '<td class="left">'.$langs->trans("Batch").'</td>';
-			}
-		}
-		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
-		print '<td class="center">'.$langs->trans("CalculatedVolume").'</td>';
-		//print '<td class="center">'.$langs->trans("Size").'</td>';
-		if ($object->statut == 0) {
-			print '<td class="linecoledit"></td>';
-			print '<td class="linecoldelete" width="10"></td>';
-		}
-		print "</tr>\n";
-		print '</thead>';
-
-		$var = false;
-
-		if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-			$object->fetch_thirdparty();
-			$outputlangs = $langs;
-			$newlang = '';
-			if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-				$newlang = GETPOST('lang_id', 'aZ09');
-			}
-			if (empty($newlang)) {
-				$newlang = $object->thirdparty->default_lang;
-			}
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-		}
-
-		// Get list of products already sent for same source object into $alreadysent
-		$alreadysent = array();
-
-		$origin = 'commande_fournisseur';
-
-		if ($origin && $origin_id > 0) {
-			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
-			$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
-			$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";
-			//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
-			$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
-			$sql .= ', p.description as product_desc';
-			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-			$sql .= ", ".MAIN_DB_PREFIX."reception as e";
-			$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-			//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
-			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
-			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
-			$sql .= " AND obj.rowid = ed.fk_commandefourndet";
-			$sql .= " AND ed.fk_reception = e.rowid";
-			$sql .= " AND ed.fk_reception !=".((int) $object->id);
-			//if ($filter) $sql.= $filter;
-			$sql .= " ORDER BY obj.fk_product";
-
-			dol_syslog("get list of reception lines", LOG_DEBUG);
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					if ($obj) {
-						// $obj->rowid is rowid in $origin."det" table
-						$alreadysent[$obj->rowid][$obj->receptionline_id] = array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty'=>$obj->qty, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
-					}
-					$i++;
-				}
-			}
-			//var_dump($alreadysent);
-		}
-
-		$arrayofpurchaselinealreadyoutput = array();
-
-		// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
-		print '<tbody>';
-		for ($i = 0; $i < $num_prod; $i++) {
-			print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
-			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'">';
-
-			// #
-			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-				print '<td class="center">'.($i + 1).'</td>';
-			}
-
-			// Predefined product or service
-			if ($lines[$i]->fk_product > 0) {
-				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-					$prod = new Product($db);
-					$prod->fetch($lines[$i]->fk_product);
-					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
-				} else {
-					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
-				}
-
-				print '<td class="linecoldescription">';
-				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
-					$text = $lines[$i]->product->getNomUrl(1);
-					$text .= ' - '.$label;
-					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
-					print $form->textwithtooltip($text, $description, 3, '', '', $i);
-					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
-					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
-					}
-				}
-				print "</td>\n";
-			} else {
-				print '<td class="linecoldescription">';
-				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
-					if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
-						$text = img_object($langs->trans('Service'), 'service');
-					} else {
-						$text = img_object($langs->trans('Product'), 'product');
-					}
-
-					if (!empty($lines[$i]->label)) {
-						$text .= ' <strong>'.$lines[$i]->label.'</strong>';
-						print $form->textwithtooltip($text, $lines[$i]->description, 3, '', '', $i);
-					} else {
-						print $text.' '.nl2br($lines[$i]->description);
-					}
-
-					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
-				}
-				print "</td>\n";
-			}
-
-			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td><input name="comment'.$line_id.'" id="comment'.$line_id.'" value="'.dol_escape_htmltag($lines[$i]->comment).'"></td>';
-			} else {
-				print '<td style="white-space: pre-wrap; max-width: 200px;">'.dol_escape_htmltag($lines[$i]->comment).'</td>';
-			}
-
-
-			// Qty ordered
-			print '<td class="center linecolqty">';
+			print '<td class="linecoldescription">';
 			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
-				print $lines[$i]->qty_asked;
+				$text = $lines[$i]->product->getNomUrl(1);
+				$text .= ' - '.$label;
+				$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
+				print $form->textwithtooltip($text, $description, 3, '', '', $i);
+				print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
+				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
+					print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
+				}
 			}
-			print '</td>';
+			print "</td>\n";
+		} else {
+			print '<td class="linecoldescription">';
+			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+				if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
+					$text = img_object($langs->trans('Service'), 'service');
+				} else {
+					$text = img_object($langs->trans('Product'), 'product');
+				}
 
-			// Qty in other receptions (with reception and warehouse used)
-			if ($origin && $origin_id > 0) {
-				print '<td class="center nowrap linecolqtyinotherreceptions">';
-				$htmltooltip = '';
-				$qtyalreadyreceived = 0;
-				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
-					foreach ($alreadysent as $key => $val) {
-						if ($lines[$i]->fk_commandefourndet == $key) {
-							$j = 0;
-							foreach ($val as $receptionline_id => $receptionline_var) {
-								if ($receptionline_var['reception_id'] == $lines[$i]->fk_reception) {
-									continue; // We want to show only "other receptions"
-								}
+				if (!empty($lines[$i]->label)) {
+					$text .= ' <strong>'.$lines[$i]->label.'</strong>';
+					print $form->textwithtooltip($text, $lines[$i]->description, 3, '', '', $i);
+				} else {
+					print $text.' '.nl2br($lines[$i]->description);
+				}
 
-								$j++;
-								if ($j > 1) {
-									$htmltooltip .= '<br>';
-								}
-								$reception_static->fetch($receptionline_var['reception_id']);
-								$htmltooltip .= $reception_static->getNomUrl(1, 0, 0, 0, 1);
-								$htmltooltip .= ' - '.$receptionline_var['qty'];
+				print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
+			}
+			print "</td>\n";
+		}
 
-								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
-								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
-									$warehousestatic->fetch($receptionline_var['warehouse']);
-									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
-								}
-								$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
+		if ($action == 'editline' && $lines[$i]->id == $line_id) {
+			print '<td><input name="comment'.$line_id.'" id="comment'.$line_id.'" value="'.dol_escape_htmltag($lines[$i]->comment).'"></td>';
+		} else {
+			print '<td style="white-space: pre-wrap; max-width: 200px;">'.dol_escape_htmltag($lines[$i]->comment).'</td>';
+		}
 
-								$qtyalreadyreceived += $receptionline_var['qty'];
+
+		// Qty ordered
+		print '<td class="center linecolqty">';
+		if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+			print $lines[$i]->qty_asked;
+		}
+		print '</td>';
+
+		// Qty in other receptions (with reception and warehouse used)
+		if ($origin && $origin_id > 0) {
+			print '<td class="center nowrap linecolqtyinotherreceptions">';
+			$htmltooltip = '';
+			$qtyalreadyreceived = 0;
+			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+				foreach ($alreadysent as $key => $val) {
+					if ($lines[$i]->fk_commandefourndet == $key) {
+						$j = 0;
+						foreach ($val as $receptionline_id => $receptionline_var) {
+							if ($receptionline_var['reception_id'] == $lines[$i]->fk_reception) {
+								continue; // We want to show only "other receptions"
 							}
-							if ($j) {
-								$htmltooltip = $langs->trans("QtyInOtherReceptions").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
+
+							$j++;
+							if ($j > 1) {
+								$htmltooltip .= '<br>';
 							}
+							$reception_static->fetch($receptionline_var['reception_id']);
+							$htmltooltip .= $reception_static->getNomUrl(1, 0, 0, 0, 1);
+							$htmltooltip .= ' - '.$receptionline_var['qty'];
+
+							$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
+							if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
+								$warehousestatic->fetch($receptionline_var['warehouse']);
+								$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
+							}
+							$htmltooltip .= ' '.$form->textwithpicto('', $htmltext, 1);
+
+							$qtyalreadyreceived += $receptionline_var['qty'];
+						}
+						if ($j) {
+							$htmltooltip = $langs->trans("QtyInOtherReceptions").'...<br><br>'.$htmltooltip.'<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
 						}
 					}
 				}
-				print $form->textwithpicto($qtyalreadyreceived, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
-				print '</td>';
+			}
+			print $form->textwithpicto($qtyalreadyreceived, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
+			print '</td>';
+		}
+
+		if ($action == 'editline' && $lines[$i]->id == $line_id) {
+			// edit mode
+			print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
+			if (isModEnabled('stock')) {
+				if ($lines[$i]->fk_product > 0) {
+					print '<!-- case edit 1 -->';
+					print '<tr>';
+					// Qty to receive or received
+					print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
+					// Warehouse source
+					print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
+					// Batch number managment
+					if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
+						print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							print $langs->trans('SellByDate').' : ';
+							print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							print $langs->trans('EatByDate').' : ';
+							print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
+						}
+						print '</td>';
+					}
+					print '</tr>';
+				} else {
+					print '<!-- case edit 2 -->';
+					print '<tr>';
+					// Qty to receive or received
+					print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
+					// Warehouse source
+					print '<td></td>';
+					// Batch number managment
+					print '<td></td>';
+					print '</tr>';
+				}
+			}
+			print '</table></td>';
+		} else {
+			// Qty to receive or received
+			print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
+
+			// Warehouse source
+			if (isModEnabled('stock')) {
+				if ($lines[$i]->fk_entrepot > 0) {
+					$entrepot = new Entrepot($db);
+					$entrepot->fetch($lines[$i]->fk_entrepot);
+
+					print '<td class="left tdoverflowmax150" title="'.dol_escape_htmltag($entrepot->label).'">';
+					print $entrepot->getNomUrl(1);
+					print '</td>';
+				} else {
+					print '<td></td>';
+				}
 			}
 
-			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				// edit mode
-				print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
-				if (isModEnabled('stock')) {
-					if ($lines[$i]->fk_product > 0) {
-						print '<!-- case edit 1 -->';
-						print '<tr>';
-						// Qty to receive or received
-						print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
-						// Warehouse source
-						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
-						// Batch number managment
-						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
+			// Batch number managment
+			if (isModEnabled('productbatch')) {
+				if (isset($lines[$i]->batch)) {
+					print '<!-- Detail of lot -->';
+					print '<td class="linecolbatch nowrap">';
+					$detail = $langs->trans("NA");
+					if ($lines[$i]->product->status_batch > 0 && $lines[$i]->fk_product > 0) {
+						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+						$productlot = new Productlot($db);
+						$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
+						if ($reslot > 0) {
+							$detail = $productlot->getNomUrl(1);
+						} else {
+							// lot is not created and info is only in reception lines
+							$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-								print $langs->trans('SellByDate').' : ';
-								print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+								$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								print $langs->trans('EatByDate').' : ';
-								print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
+								$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
 							}
-							print '</td>';
+							$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
 						}
-						print '</tr>';
-					} else {
-						print '<!-- case edit 2 -->';
-						print '<tr>';
-						// Qty to receive or received
-						print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
-						// Warehouse source
-						print '<td></td>';
-						// Batch number managment
-						print '<td></td>';
-						print '</tr>';
 					}
-				}
-				print '</table></td>';
-			} else {
-				// Qty to receive or received
-				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
-
-				// Warehouse source
-				if (isModEnabled('stock')) {
-					if ($lines[$i]->fk_entrepot > 0) {
-						$entrepot = new Entrepot($db);
-						$entrepot->fetch($lines[$i]->fk_entrepot);
-
-						print '<td class="left tdoverflowmax150" title="'.dol_escape_htmltag($entrepot->label).'">';
-						print $entrepot->getNomUrl(1);
-						print '</td>';
-					} else {
-						print '<td></td>';
-					}
-				}
-
-				// Batch number managment
-				if (isModEnabled('productbatch')) {
-					if (isset($lines[$i]->batch)) {
-						print '<!-- Detail of lot -->';
-						print '<td class="linecolbatch nowrap">';
-						$detail = $langs->trans("NA");
-						if ($lines[$i]->product->status_batch > 0 && $lines[$i]->fk_product > 0) {
-							require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-							$productlot = new Productlot($db);
-							$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
-							if ($reslot > 0) {
-								$detail = $productlot->getNomUrl(1);
-							} else {
-								// lot is not created and info is only in reception lines
-								$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-									$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
-								}
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-									$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
-								}
-								$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
-							}
-						}
-						print $detail . '</td>';
-					} else {
-						print '<td></td>';
-					}
-				}
-			}
-
-			// Weight
-			print '<td class="center linecolweight">';
-			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
-				print $lines[$i]->product->weight * $lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
-
-			// Volume
-			print '<td class="center linecolvolume">';
-			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
-				print $lines[$i]->product->volume * $lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
-
-
-			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td class="center valignmiddle" colspan="2">';
-				print '<input type="submit" class="button small button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
-				print '<input type="submit" class="button small button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
-				print '</td>';
-			} elseif ($object->statut == Reception::STATUS_DRAFT) {
-				// edit-delete buttons
-				print '<td class="linecoledit center">';
-				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
-				print '</td>';
-				print '<td class="linecoldelete" width="10">';
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
-				print '</td>';
-
-				// Display lines extrafields
-				if (!empty($rowExtrafieldsStart)) {
-					print $rowExtrafieldsStart;
-					print $rowExtrafieldsView;
-					print $rowEnd;
-				}
-			}
-			print "</tr>";
-
-			$arrayofpurchaselinealreadyoutput[$lines[$i]->fk_commandefourndet] = $lines[$i]->fk_commandefourndet;
-
-			// Display lines extrafields
-			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
-			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
-				$colspan = 8;
-				if (isModEnabled('stock')) { $colspan++; }
-				if (isModEnabled('productbatch')) { $colspan++; }
-
-				$line = new CommandeFournisseurDispatch($db);
-				$line->id = $lines[$i]->id;
-				$line->fetch_optionals();
-
-				if ($action == 'editline' && $lines[$i]->id == $line_id) {
-					print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
+					print $detail . '</td>';
 				} else {
-					print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
+					print '<td></td>';
 				}
 			}
 		}
-		print '</tbody>';
 
-		// TODO Show also lines ordered but not delivered
+		// Weight
+		print '<td class="center linecolweight">';
+		if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
+			print $lines[$i]->product->weight * $lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
+		} else {
+			print '&nbsp;';
+		}
+		print '</td>';
 
-		print "</table>\n";
-		print '</div>';
+		// Volume
+		print '<td class="center linecolvolume">';
+		if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
+			print $lines[$i]->product->volume * $lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
+		} else {
+			print '&nbsp;';
+		}
+		print '</td>';
+
+
+		if ($action == 'editline' && $lines[$i]->id == $line_id) {
+			print '<td class="center valignmiddle" colspan="2">';
+			print '<input type="submit" class="button small button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
+			print '<input type="submit" class="button small button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+			print '</td>';
+		} elseif ($object->statut == Reception::STATUS_DRAFT) {
+			// edit-delete buttons
+			print '<td class="linecoledit center">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+			print '</td>';
+			print '<td class="linecoldelete" width="10">';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+			print '</td>';
+
+			// Display lines extrafields
+			if (!empty($rowExtrafieldsStart)) {
+				print $rowExtrafieldsStart;
+				print $rowExtrafieldsView;
+				print $rowEnd;
+			}
+		}
+		print "</tr>";
+
+		$arrayofpurchaselinealreadyoutput[$lines[$i]->fk_commandefourndet] = $lines[$i]->fk_commandefourndet;
+
+		// Display lines extrafields
+		$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
+		if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
+			$colspan = 8;
+			if (isModEnabled('stock')) { $colspan++; }
+			if (isModEnabled('productbatch')) { $colspan++; }
+
+			$line = new CommandeFournisseurDispatch($db);
+			$line->id = $lines[$i]->id;
+			$line->fetch_optionals();
+
+			if ($action == 'editline' && $lines[$i]->id == $line_id) {
+				print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
+			} else {
+				print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
+			}
+		}
 	}
+	print '</tbody>';
+
+	// TODO Show also lines ordered but not delivered
+
+	print "</table>\n";
+	print '</div>';
 
 
 	print dol_get_fiche_end();

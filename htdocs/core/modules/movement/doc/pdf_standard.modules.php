@@ -685,6 +685,14 @@ class pdf_standard extends ModelePDFMovement
 					dol_print_error($this->db);
 				}
 
+				// Display notes
+				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+				// Extrafields in note
+				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+				if (!empty($extranote)) {
+					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+				}
+
 				if ($notetoshow) {
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);

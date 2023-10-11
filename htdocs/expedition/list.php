@@ -144,7 +144,7 @@ $arrayfields = array(
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
 	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>'getDolGlobalConst("WORKFLOW_BILL_ON_SHIPMENT") !== "0"')
+	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"')
 );
 
 // Extra fields
@@ -1021,7 +1021,7 @@ while ($i < min($num, $limit)) {
 		}
 		// Date delivery planed
 		if (!empty($arrayfields['e.date_delivery']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			print "</td>\n";
 			if (!$i) {

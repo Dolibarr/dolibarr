@@ -26,7 +26,7 @@
  *	\brief      Page to show a receipt.
  */
 
-// Includes
+// Include main (when fie in included into send.php, $action is set and main was already loaded)
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -279,7 +279,7 @@ if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
 					  } ?></td>
 </tr>
 <?php
-if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
@@ -304,11 +304,13 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 		echo '</td>';
 		echo '</tr>';
 	} else {
-		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num,";
+		$sql .= " f.multicurrency_code,";
+		$sql .= " pf.amount as amount, pf.multicurrency_amount,";
 		$sql .= " cp.code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-		$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
+		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
 		$sql .= " ORDER BY p.datep";
 
 		$resql = $db->query($sql);
@@ -318,25 +320,31 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_object($resql);
+
 				echo '<tr>';
 				echo '<td class="right">';
 				echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 				echo '</td>';
 				echo '<td class="right">';
 				$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
-				if ($row->code == "LIQ") {
-					$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+				//print "xx ".$row->multicurrency_amount." - ".$row->amount." - ".$amount_payment." - ".$object->multicurrency_tx;
+				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
+					$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if it's cash payment
+					$currency = $conf->currency;
+				} else {
+					// We do not show change if payment into a different currency because not yet supported
+					$currency = $row->multicurrency_code;
 				}
-				echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
+				echo price($amount_payment, 1, '', 1, - 1, - 1, $currency);
 				echo '</td>';
 				echo '</tr>';
-				if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
+				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
 					echo '<tr>';
 					echo '<td class="right">';
-					echo $langs->trans("Change");
+					echo $langs->trans("Change");	// ChangeBack ?
 					echo '</td>';
 					echo '<td class="right">';
-					echo price($row->pos_change, 1, '', 1, - 1, - 1, $conf->currency);
+					echo price($row->pos_change, 1, '', 1, - 1, - 1, $currency);
 					echo '</td>';
 					echo '</tr>';
 				}

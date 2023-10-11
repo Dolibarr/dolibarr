@@ -113,6 +113,15 @@ if (empty($reshook)) {
 		}
 	}
 
+	// update national_registration_number
+	if ($action == 'setnational_registration_number') {
+		$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == 'addSkill') {
 		$error = 0;
 
@@ -314,9 +323,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>'."\n";
 
 		// National Registration Number
-		print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
-		print '<td class="error">';
-		print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
+		print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'  <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&objecttype=user&action=editnational_registration_number&token='.newToken().'">'.img_picto($langs->trans("Edit"), 'edit').'</a></td>';
+		print '<td>';
+		if ($action == 'editnational_registration_number') {
+			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&objecttype=user">';
+			$ret .= '<input type="hidden" name="action" value="setnational_registration_number">';
+			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
+			$ret .= '<input type="text" name="national_registration_number" value="'.$object->national_registration_number.'">';
+			$ret .= '<input type="submit" class="button smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"> ';
+			$ret .= '<input type="submit" class="button smallpaddingimp button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '</form>';
+			print $ret;
+		} else {
+			print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
+		}
 		print '</td>';
 		print '</tr>'."\n";
 	}

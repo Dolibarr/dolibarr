@@ -979,7 +979,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 
 			// Total LocalTax1
-			if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION == 'localtax1on' && $object->total_localtax1 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on' && $object->total_localtax1 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code), 0, 'L', 1);
@@ -988,7 +988,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			}
 
 			// Total LocalTax2
-			if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION == 'localtax2on' && $object->total_localtax2 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on' && $object->total_localtax2 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code), 0, 'L', 1);
@@ -1446,7 +1446,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	Object			$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
@@ -1468,24 +1468,6 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			'align' => 'C', // R,C,L
 			'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		);
-
-		/*
-		 * For exemple
-		 $this->cols['theColKey'] = array(
-		 'rank' => $rank, // int : use for ordering columns
-		 'width' => 20, // the column width in mm
-		 'title' => array(
-		 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
-		 'label' => ' ', // the final label : used fore final generated text
-		 'align' => 'L', // text alignement :  R,C,L
-		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-		 ),
-		 'content' => array(
-		 'align' => 'L', // text alignement :  R,C,L
-		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-		 ),
-		 );
-		 */
 
 		$rank = 0; // do not use negative rank
 		$this->cols['desc'] = array(

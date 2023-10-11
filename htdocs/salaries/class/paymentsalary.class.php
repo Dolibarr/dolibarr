@@ -88,6 +88,11 @@ class PaymentSalary extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int ID of bank_line
+	 */
+	public $bank_line;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;
@@ -194,7 +199,7 @@ class PaymentSalary extends CommonObject
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
-								$result = $tmpsalary->set_paid($user);
+								$result = $tmpsalary->setPaid($user);
 							} else {
 								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 							}
@@ -764,7 +769,7 @@ class PaymentSalary extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {

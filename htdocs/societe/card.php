@@ -13,6 +13,8 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023  George Gkantinas	    <info@geowv.eu>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +63,12 @@ if (isModEnabled('accounting')) {
 }
 if (isModEnabled('eventorganization')) {
 	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+}
+
+if ($mysoc->country_code == 'GR') {
+	$u = getDolGlobalString('AADE_WEBSERVICE_USER');
+	$p = getDolGlobalString('AADE_WEBSERVICE_KEY');
+	$myafm = getDolGlobalString('MAIN_INFO_TVAINTRA');
 }
 
 
@@ -385,13 +393,13 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'set_localtax1') {
-		//obtidre selected del combobox
+		//get selected from combobox
 		$value = GETPOST('lt1');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
 	if ($action == 'set_localtax2') {
-		//obtidre selected del combobox
+		//get selected from combobox
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
@@ -441,12 +449,12 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled('mailing') && !empty($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (isModEnabled('mailing') && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
 		}
 
-		if (isModEnabled('mailing') && GETPOST("private", 'int') == 1 && !empty($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (isModEnabled('mailing') && GETPOST("private", 'int') == 1 && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
 		}
@@ -895,7 +903,7 @@ if (empty($reshook)) {
 							break;
 					}
 				}
-				// Gestion du logo de la société
+				// Company logo management
 
 
 				// Update linked member
@@ -1187,7 +1195,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$object->logo = (isset($_FILES['photo']) ?dol_sanitizeFileName($_FILES['photo']['name']) : '');
 
-		// Gestion du logo de la société
+		// Company logo management
 		$dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos";
 		$file_OK = (isset($_FILES['photo']) ?is_uploaded_file($_FILES['photo']['tmp_name']) : false);
 		if ($file_OK) {
@@ -1299,7 +1307,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.action.value="create";
                         	document.formsoc.submit();
                         });';
-				if ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+				if (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print '
 						function init_check_no_email(input) {
 							if (input.val()!="") {
@@ -1605,7 +1613,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// State
 		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
 			} else {
 				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
@@ -1645,7 +1653,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Unsubscribe
 		if (isModEnabled('mailing')) {
-			if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+			if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 				print "\n".'<script type="text/javascript">'."\n";
 				print '$(document).ready(function () {
 							$("#email").keyup(function() {
@@ -1667,7 +1675,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr>';
 			print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 			print '<td>';
-			print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+			print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 			print '</td>';
 			print '</tr>';
 		}
@@ -1728,7 +1736,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print "\n";
 				print '<script type="text/javascript">';
 				print "function CheckVAT(a) {\n";
-				print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+				if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+					print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+				} else {
+					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+				}
 				print "}\n";
 				print '</script>';
 				print "\n";
@@ -1957,7 +1969,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 			$modCodeClient = new $module($db);
-			// We verified if the tag prefix is used
+			// We check if the prefix tag is used
 			if ($modCodeClient->code_auto) {
 				$prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
 			}
@@ -1973,7 +1985,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 			$modCodeFournisseur = new $module($db);
-			// On verifie si la balise prefix est utilisee
+			// We check if the prefix tag is used
 			if ($modCodeFournisseur->code_auto) {
 				$prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
 			}
@@ -2330,7 +2342,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// State
 			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+				if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 					print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				} else {
 					print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
@@ -2364,7 +2376,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (isModEnabled('mailing')) {
-				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+				if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 
 					print '
@@ -2392,7 +2404,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
-				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+				$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
 				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
 				print '</td>';
 				print '</tr>';
@@ -2500,7 +2512,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
-					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} else {
+						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					}
 					print "}\n";
 					print '</script>';
 					print "\n";
@@ -2968,7 +2984,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
-					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} else {
+						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					}
 					print "}\n";
 					print '</script>';
 					print "\n";
@@ -3339,3 +3359,46 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 // End of page
 llxFooter();
 $db->close();
+
+?>
+
+<script>
+// Function to retrieve VAT details from the Greek Ministry of Finance GSIS SOAP web service
+function GRVAT(a, u, p, myafm) {
+  var afm = a.replace(/\D/g, ""); // Remove non-digit characters from 'a'
+
+  $.ajax({
+	type: "GET",
+	url: "/societe/checkvat/checkVatGr.php",
+	data: { afm }, // Set request parameters
+	success: function(data) {
+		var obj = data; // Parse response data as JSON
+
+		// Update form fields based on retrieved data
+		if (obj.RgWsPublicBasicRt_out.afm === null) {
+			alert(obj.pErrorRec_out.errorDescr); // Display error message if AFM is null
+		} else {
+			$("#name").val(obj.RgWsPublicBasicRt_out.onomasia); // Set 'name' field value
+			$("#zipcode").val(obj.RgWsPublicBasicRt_out.postalZipCode); // Set 'zipcode' field value
+			$("#town").val(obj.RgWsPublicBasicRt_out.postalAreaDescription); // Set 'town' field value
+			$("#idprof2").val(obj.RgWsPublicBasicRt_out.doyDescr); // Set 'idprof2' field value
+			$("#name_alias_input").val(obj.RgWsPublicBasicRt_out.commerTitle); // Set 'name_alias' field value
+
+		if (obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser) {
+			var firmActUser = obj.arrayOfRgWsPublicFirmActRt_out.RgWsPublicFirmActRtUser;
+
+		if (Array.isArray(firmActUser)) {
+			var primaryFirmAct = firmActUser.find(item => item.firmActKindDescr === "ΚΥΡΙΑ"); // Find primary client activity
+			if (primaryFirmAct) {
+				$("#idprof1").val(primaryFirmAct.firmActDescr); // Set 'idprof1' field value
+			}
+		} else {
+			$("#idprof1").val(firmActUser.firmActDescr); // Set 'idprof1' field value
+			}
+		}
+		}
+	}
+	});
+}
+
+</script>

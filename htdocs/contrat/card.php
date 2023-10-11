@@ -102,6 +102,7 @@ $permissiondellink = $user->hasRight('contrat', 'creer'); // Used by the include
 $permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->statut == $object::STATUS_DRAFT) || $user->hasRight('contrat', 'supprimer');
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
+$permissiontoactivate = $user->hasRight('contrat', 'activer');
 $error = 0;
 
 
@@ -144,7 +145,7 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be include, not include_once
 
-	if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer) {
+	if ($action == 'confirm_active' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_start = '';
 		$date_end = '';
 		if (GETPOST('startmonth') && GETPOST('startday') && GETPOST('startyear')) {
@@ -162,7 +163,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer) {
+	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $permissiontoactivate) {
 		$date_end = '';
 		if (GETPOST('endmonth') && GETPOST('endday') && GETPOST('endyear')) {
 			$date_end = dol_mktime(GETPOST('endhour'), GETPOST('endmin'), 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
@@ -182,7 +183,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Si ajout champ produit predefini
 	if (GETPOST('mode') == 'predefined') {
 		$date_start = '';
 		$date_end = '';
@@ -889,17 +889,20 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object);
 
+		$attribute = GETPOST('attribute', 'alphanohtml');
+
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
 		if ($ret < 0) {
+			setEventMessages($extrafields->error, $object->errors, 'errors');
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields('CONTRACT_MODIFY');
+			$result = $object->updateExtraField($attribute, 'CONTRACT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -909,7 +912,7 @@ if (empty($reshook)) {
 		if ($error) {
 			$action = 'edit_extras';
 		}
-	} elseif ($action == 'setref_supplier') {
+	} elseif ($action == 'setref_supplier' && $permissiontoadd) {
 		if (!$cancel) {
 			$object->oldcopy = dol_clone($object);
 
@@ -925,7 +928,7 @@ if (empty($reshook)) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setref_customer') {
+	} elseif ($action == 'setref_customer' && $permissiontoadd) {
 		if (!$cancel) {
 			$object->oldcopy = dol_clone($object);
 
@@ -941,7 +944,7 @@ if (empty($reshook)) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setref') {
+	} elseif ($action == 'setref' && $permissiontoadd) {
 		if (!$cancel) {
 			$result = $object->fetch($id);
 			if ($result < 0) {
@@ -969,7 +972,7 @@ if (empty($reshook)) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setdate_contrat') {
+	} elseif ($action == 'setdate_contrat' && $permissiontoadd) {
 		if (!$cancel) {
 			$result = $object->fetch($id);
 			if ($result < 0) {
@@ -1511,7 +1514,7 @@ if ($action == 'create') {
 		print '<div id="contrat-lines-container"  id="contractlines" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
 		while ($cursorline <= $nbofservices) {
 			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
-			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+			print '<form name="update" id="addproduct" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

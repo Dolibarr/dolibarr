@@ -731,7 +731,7 @@ class Form
 	}
 
 	/**
-	 *    Show a text with a picto and a tooltip on picto
+	 * Show a text with a picto and a tooltip on picto
 	 *
 	 * @param 	string 		$text 				Text to show
 	 * @param 	string 		$htmltext 			Content of tooltip
@@ -2840,7 +2840,7 @@ class Form
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			$sql .= " ORDER BY categorie_product_id ";
 			//ASC OR DESC order
-			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .= "ASC" : $sql .= "DESC";
+			(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1) ? $sql .= "ASC" : $sql .= "DESC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -4637,20 +4637,20 @@ class Form
 	}
 
 	/**
-	 *  Return a HTML select list of shipping mode
+	 * Return a HTML select list of shipping mode
 	 *
-	 * @param string $selected Id shipping mode pre-selected
-	 * @param string $htmlname Name of select zone
-	 * @param string $filtre To filter list. This parameter must not come from input of users
-	 * @param int $useempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 * @param string $moreattrib To add more attribute on select
-	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
-	 * @param string $morecss More CSS
-	 * @return    void
+	 * @param string 	$selected 		Id shipping mode pre-selected
+	 * @param string 	$htmlname 		Name of select zone
+	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users
+	 * @param int 		$useempty 		1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 * @param string 	$moreattrib 	To add more attribute on select
+	 * @param int 		$noinfoadmin 	0=Add admin info, 1=Disable admin info
+	 * @param string 	$morecss 		More CSS
+	 * @return void
 	 */
 	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0, $morecss = '')
 	{
-		global $langs, $conf, $user;
+		global $langs, $user;
 
 		$langs->load("admin");
 		$langs->load("deliveries");
@@ -5030,21 +5030,21 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of categories having choosed type
+	 * Return list of categories having choosed type
 	 *
-	 * @param string|int $type Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param string $selected Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
-	 * @param string $htmlname HTML field name
-	 * @param int $maxlength Maximum length for labels
-	 * @param int|string|array $markafterid Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
-	 *                                      $markafterid can be an :
-	 *                                      - int (id of category)
-	 *                                      - string (categories ids seprated by comma)
-	 *                                      - array (list of categories ids)
-	 * @param int $outputmode 0=HTML select string, 1=Array, 2=Array extended
-	 * @param int $include [=0] Removed or 1=Keep only
-	 * @param string $morecss More CSS
-	 * @return    string|array
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param 	string 				$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
+	 * @param 	string 				$htmlname 		HTML field name
+	 * @param 	int 				$maxlength 		Maximum length for labels
+	 * @param 	int|string|array	$markafterid 	Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+	 *                             	    	     	$markafterid can be an :
+	 *                                 	    	 	- int (id of category)
+	 *                                 		 		- string (categories ids seprated by comma)
+	 * 	                                  	 		- array (list of categories ids)
+	 * @param 	int 				$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
+	 * @param 	int 				$include 		[=0] Removed or 1=Keep only
+	 * @param 	string 				$morecss 		More CSS
+	 * @return  string|array						String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -5088,6 +5088,7 @@ class Form
 		}
 
 		$outarray = array();
+		$outarrayrichhtml = array();
 
 		$output = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 		if (is_array($cate_arbo)) {
@@ -5101,13 +5102,19 @@ class Form
 					} else {
 						$add = '';
 					}
+
+					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"');
+					$labeltoshow .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+
+					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
+
+					$outarrayrichhtml[$cate_arbo[$key]['id']] = $labeltoshow;
+
 					$output .= '<option ' . $add . 'value="' . $cate_arbo[$key]['id'] . '"';
-					$output .= ' data-html="' . dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"') . dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle')) . '"';
+					$output .= ' data-html="' . dol_escape_htmltag($labeltoshow) . '"';
 					$output .= '>';
 					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
 					$output .= '</option>';
-
-					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
 				}
 			}
 		}
@@ -5116,8 +5123,10 @@ class Form
 
 		if ($outputmode == 2) {
 			return $cate_arbo;
-		} elseif ($outputmode) {
+		} elseif ($outputmode == 1) {
 			return $outarray;
+		} elseif ($outputmode == 3) {
+			return $outarrayrichhtml;
 		}
 		return $output;
 	}
@@ -6780,7 +6789,7 @@ class Form
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
 		if (!empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
-			$usecalendar = ((empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
+			$usecalendar = ((empty($conf->global->MAIN_POPUP_CALENDAR) || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
 		}
 
 		if ($d) {
@@ -8268,7 +8277,7 @@ class Form
 			if (!is_numeric($show_empty)) {
 				$textforempty = $show_empty;
 			}
-			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . ($show_empty < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
+			$out .= '<option class="optiongrey" ' . ($moreparamonempty ? $moreparamonempty . ' ' : '') . 'value="' . (((int) $show_empty) < 0 ? $show_empty : -1) . '"' . ($id == $show_empty ? ' selected' : '') . '>' . $textforempty . '</option>' . "\n";
 		}
 		if (is_array($array)) {
 			// Translate
@@ -8352,7 +8361,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
+			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', (((int) $show_empty) < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 
@@ -9843,8 +9852,6 @@ class Form
 				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}
-		} else {
-			dol_print_error('', 'Call of showphoto with wrong parameters modulepart=' . $modulepart);
 		}
 
 		return $ret;
@@ -9980,11 +9987,11 @@ class Form
 	{
 		$out = '<div class="nowraponall">';
 		if ($pos == 'left') {
-			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
 		} else {
-			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
 		}
 		$out .= '</div>';
 
@@ -10001,7 +10008,7 @@ class Form
 	 */
 	public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$out = '';
 
@@ -10392,7 +10399,7 @@ class Form
 	 */
 	public function selectInvoiceRec($selected = '', $htmlname = 'facrecid', $maxlength = 24, $option_only = 0, $show_empty = '1', $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500')
 	{
-		global $user, $conf, $langs;
+		global $conf, $langs;
 
 		$out = '';
 

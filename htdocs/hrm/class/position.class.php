@@ -108,7 +108,7 @@ class Position extends CommonObject
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'isModEnabled("contract")', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
 		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
 		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>101, 'notnull'=>1, 'visible'=>1,),
 		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>1,),
@@ -716,7 +716,7 @@ class Position extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

@@ -55,11 +55,11 @@ class Mos extends DolibarrApi
 	 *
 	 * Return an array with MO informations
 	 *
-	 * @param 	int 	$id 			ID of MO
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of MO
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET {id}
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -85,16 +85,17 @@ class Mos extends DolibarrApi
 	 *
 	 * Get a list of MOs
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -172,7 +173,7 @@ class Mos extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Mo($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
@@ -295,8 +296,8 @@ class Mos extends DolibarrApi
 	 *   "arraytoproduce": []
 	 * }
 	 *
-	 * @param int       $id        		ID of state
-	 * @param array 	$request_data   Request datas
+	 * @param int       $id				ID of state
+	 * @param array		$request_data   Request datas
 	 *
 	 * @url     POST {id}/produceandconsume
 	 *
@@ -647,8 +648,8 @@ class Mos extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param   Object  $object			Object to clean
+	 * @return  Object					Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

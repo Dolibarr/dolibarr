@@ -1850,7 +1850,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
@@ -1877,7 +1877,7 @@ if ($action == 'create') {
 
 	// Delivery date planned
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
 
@@ -2008,7 +2008,7 @@ if ($action == 'create') {
 
 	// Sending method
 	print '<tr><td height="10">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
@@ -2420,7 +2420,7 @@ if ($action == 'create') {
 
 				// Warehouse source
 				if (isModEnabled('stock')) {
-					print '<td class="linecolwarehousesource left">';
+					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
@@ -2540,6 +2540,10 @@ if ($action == 'create') {
 	}
 
 	// TODO Show also lines ordered but not delivered
+
+	if (empty($num_prod)) {
+		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")).'</span></td></tr>';
+	}
 
 	print "</table>\n";
 	print '</tbody>';

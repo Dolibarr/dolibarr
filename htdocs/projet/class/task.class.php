@@ -800,7 +800,7 @@ class Task extends CommonObjectLine
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -1598,8 +1598,8 @@ class Task extends CommonObjectLine
 		if ($timespent->id > 0) {
 			$this->timespent_id = $timespent->id;
 			$this->id = $timespent->fk_element;
-			$this->timespent_date = $this->db->jdate($timespent->element_date);
-			$this->timespent_datehour   = $this->db->jdate($timespent->element_datehour);
+			$this->timespent_date = $timespent->element_date;
+			$this->timespent_datehour   = $timespent->element_datehour;
 			$this->timespent_withhour   = $timespent->element_date_withhour;
 			$this->timespent_duration = $timespent->element_duration;
 			$this->timespent_fk_user	= $timespent->fk_user;
@@ -2222,8 +2222,6 @@ class Task extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
 			}
