@@ -490,7 +490,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						>0 if OK, <= 0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
