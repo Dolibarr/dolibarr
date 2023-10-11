@@ -18,6 +18,7 @@
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -930,129 +931,129 @@ class Societe extends CommonObject
 		// Check more parameters (including mandatory setup
 		// If error, this->errors[] is filled
 		$result = $this->verify();
-
-		if ($result >= 0) {
-			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
-			$sql .= "nom";
-			$sql .= ", name_alias";
-			$sql .= ", entity";
-			$sql .= ", datec";
-			$sql .= ", fk_user_creat";
-			$sql .= ", fk_typent";
-			$sql .= ", canvas";
-			$sql .= ", status";
-			$sql .= ", ref_ext";
-			$sql .= ", fk_stcomm";
-			$sql .= ", fk_incoterms";
-			$sql .= ", location_incoterms";
-			$sql .= ", import_key";
-			$sql .= ", fk_multicurrency";
-			$sql .= ", multicurrency_code";
-			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= ", vat_reverse_charge";
-				$sql .= ", accountancy_code_buy";
-				$sql .= ", accountancy_code_sell";
-			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
-			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
-			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
-			$sql .= ", ".((int) $this->status);
-			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
-			$sql .= ", 0";
-			$sql .= ", ".(int) $this->fk_incoterms;
-			$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
-			$sql .= ", ".(int) $this->fk_multicurrency;
-			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
-				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-				$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
-			}
-			$sql .= ")";
-
-			dol_syslog(get_class($this)."::create", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
-
-				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
-
-				// update accountancy for this entity
-				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
-
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
-					$sql .= " fk_soc";
-					$sql .= ", entity";
-					$sql .= ", vat_reverse_charge";
-					$sql .= ", accountancy_code_customer";
-					$sql .= ", accountancy_code_supplier";
-					$sql .= ", accountancy_code_buy";
-					$sql .= ", accountancy_code_sell";
-					$sql .= ") VALUES (";
-					$sql .= $this->id;
-					$sql .= ", ".((int) $conf->entity);
-					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
-					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
-					$sql .= ")";
-					$result = $this->db->query($sql);
-					if (!$result) {
-						$error++;
-						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
-					}
-				}
-
-				// Ajout du commercial affecte
-				if ($this->commercial_id != '' && $this->commercial_id != -1) {
-					$this->add_commercial($user, $this->commercial_id);
-				} elseif (empty($user->rights->societe->client->voir)) {
-					// si un commercial cree un client il lui est affecte automatiquement
-					$this->add_commercial($user, $user->id);
-				}
-
-				if ($ret >= 0 && !$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('COMPANY_CREATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				} else {
-					$error++;
-				}
-
-				if (!$error) {
-					dol_syslog(get_class($this)."::Create success id=".$this->id);
-					$this->db->commit();
-					return $this->id;
-				} else {
-					dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.join(',', $this->errors)), LOG_ERR);
-					$this->db->rollback();
-					return -4;
-				}
-			} else {
-				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name); // duplicate on a field (code or profid or ...)
-					$result = -1;
-				} else {
-					$this->error = $this->db->lasterror();
-					$result = -2;
-				}
-				$this->db->rollback();
-				return $result;
-			}
-		} else {
+		if ($result < 0) {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
+
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
+		$sql .= "nom";
+		$sql .= ", name_alias";
+		$sql .= ", entity";
+		$sql .= ", datec";
+		$sql .= ", fk_user_creat";
+		$sql .= ", fk_typent";
+		$sql .= ", canvas";
+		$sql .= ", status";
+		$sql .= ", ref_ext";
+		$sql .= ", fk_stcomm";
+		$sql .= ", fk_incoterms";
+		$sql .= ", location_incoterms";
+		$sql .= ", import_key";
+		$sql .= ", fk_multicurrency";
+		$sql .= ", multicurrency_code";
+		if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$sql .= ", vat_reverse_charge";
+			$sql .= ", accountancy_code_buy";
+			$sql .= ", accountancy_code_sell";
+		}
+		$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
+		$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
+		$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
+		$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
+		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
+		$sql .= ", 0";
+		$sql .= ", ".(int) $this->fk_incoterms;
+		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ", ".(int) $this->fk_multicurrency;
+		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+		if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+		}
+		$sql .= ")";
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result === false) {
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name); // duplicate on a field (code or profid or ...)
+				$result = -1;
+			} else {
+				$this->error = $this->db->lasterror();
+				$result = -2;
+			}
+			$this->db->rollback();
+			return $result;
+		}
+
+		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
+
+		$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
+
+		// update accountancy for this entity
+		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
+
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
+			$sql .= " fk_soc";
+			$sql .= ", entity";
+			$sql .= ", vat_reverse_charge";
+			$sql .= ", accountancy_code_customer";
+			$sql .= ", accountancy_code_supplier";
+			$sql .= ", accountancy_code_buy";
+			$sql .= ", accountancy_code_sell";
+			$sql .= ") VALUES (";
+			$sql .= $this->id;
+			$sql .= ", ".((int) $conf->entity);
+			$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
+			$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
+			$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
+			$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+			$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+			$sql .= ")";
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
+			}
+		}
+
+		// Ajout du commercial affecte
+		if ($this->commercial_id != '' && $this->commercial_id != -1) {
+			$this->add_commercial($user, $this->commercial_id);
+		} elseif (empty($user->rights->societe->client->voir)) {
+			// si un commercial cree un client il lui est affecte automatiquement
+			$this->add_commercial($user, $user->id);
+		}
+
+		if ($ret >= 0 && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('COMPANY_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		} else {
+			$error++;
+		}
+
+		if ($error) {
+			dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.join(',', $this->errors)), LOG_ERR);
+			$this->db->rollback();
+			return -4;
+		}
+
+		dol_syslog(get_class($this)."::Create success id=".$this->id);
+		$this->db->commit();
+		return $this->id;
 	}
 
 
