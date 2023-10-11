@@ -5013,21 +5013,21 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of categories having choosed type
+	 * Return list of categories having choosed type
 	 *
-	 * @param string|int 		$type 		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param string 			$selected 	Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
-	 * @param string 			$htmlname 	HTML field name
-	 * @param int 				$maxlength 	Maximum length for labels
-	 * @param int|string|array 	$markafterid Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
-	 *                                       $markafterid can be an :
-	 *                                       - int (id of category)
-	 *                                       - string (categories ids seprated by comma)
-	 *                                       - array (list of categories ids)
-	 * @param int 				$outputmode 0=HTML select string, 1=Array, 2=Array extended
-	 * @param int 				$include 	[=0] Removed or 1=Keep only
-	 * @param string 			$morecss 	More CSS
-	 * @return    string|array
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param 	string 				$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
+	 * @param 	string 				$htmlname 		HTML field name
+	 * @param 	int 				$maxlength 		Maximum length for labels
+	 * @param 	int|string|array	$markafterid 	Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+	 *                             	    	     	$markafterid can be an :
+	 *                                 	    	 	- int (id of category)
+	 *                                 		 		- string (categories ids seprated by comma)
+	 * 	                                  	 		- array (list of categories ids)
+	 * @param 	int 				$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
+	 * @param 	int 				$include 		[=0] Removed or 1=Keep only
+	 * @param 	string 				$morecss 		More CSS
+	 * @return  string|array						String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -5071,6 +5071,7 @@ class Form
 		}
 
 		$outarray = array();
+		$outarrayrichhtml = array();
 
 		$output = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 		if (is_array($cate_arbo)) {
@@ -5084,13 +5085,19 @@ class Form
 					} else {
 						$add = '';
 					}
+
+					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"');
+					$labeltoshow .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+
+					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
+
+					$outarrayrichhtml[$cate_arbo[$key]['id']] = $labeltoshow;
+
 					$output .= '<option ' . $add . 'value="' . $cate_arbo[$key]['id'] . '"';
-					$output .= ' data-html="' . dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"') . dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle')) . '"';
+					$output .= ' data-html="' . dol_escape_htmltag($labeltoshow) . '"';
 					$output .= '>';
 					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
 					$output .= '</option>';
-
-					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
 				}
 			}
 		}
@@ -5099,8 +5106,10 @@ class Form
 
 		if ($outputmode == 2) {
 			return $cate_arbo;
-		} elseif ($outputmode) {
+		} elseif ($outputmode == 1) {
 			return $outarray;
+		} elseif ($outputmode == 3) {
+			return $outarrayrichhtml;
 		}
 		return $output;
 	}

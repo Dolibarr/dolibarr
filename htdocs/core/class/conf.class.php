@@ -737,7 +737,7 @@ class Conf
 
 			// conf->liste_limit = constante de taille maximale des listes
 			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 25;
+				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
 			}
 			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 
