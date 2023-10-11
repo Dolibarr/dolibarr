@@ -369,10 +369,10 @@ print '<div class="fichehalfright">';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
-	$sql .= ", ".MAIN_DB_PREFIX."salary as salaire";
+	$sql .= ", ".MAIN_DB_PREFIX."salary as s";
 	$sql .= " WHERE p.fk_salary = ".((int) $id);
-	$sql .= " AND p.fk_salary = salaire.rowid";
-	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
+	$sql .= " AND p.fk_salary = s.rowid";
+	$sql .= " AND s.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
 
 	//print $sql;
@@ -381,6 +381,7 @@ if ($resql) {
 	$totalpaid = 0;
 
 	$num = $db->num_rows($resql);
+
 	$i = 0; $total = 0;
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
@@ -505,255 +506,143 @@ $bprev = new BonPrelevement($db);
 	 * Withdrawals
 	 */
 
-	 print '<div class="div-table-responsive-no-min">';
-	 print '<table class="noborder centpercent">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 
-	 print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td>&nbsp;</td>';
 }
-	 print '<td class="left">'.$langs->trans("DateRequest").'</td>';
-	 print '<td>'.$langs->trans("User").'</td>';
-	 print '<td class="center">'.$langs->trans("Amount").'</td>';
-	 print '<td class="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 if ($type == 'bank-transfer') {
 	print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 } else {
 	print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 }
-	 print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
 	 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td>&nbsp;</td>';
 }
-	 print '</tr>';
+	print '</tr>';
 
-	 $sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
-	 $sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-	 $sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	 $sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
-	 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
+	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 if ($type == 'salaire') {
-	$sql .= " WHERE fk_salary = ".((int) $object->id);
+	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
 } else {
 	$sql .= " WHERE fk_facture = ".((int) $object->id);
 }
-	 $sql .= " AND pfd.traite = 0";
-	 $sql .= " AND pfd.type = 'ban'";
-	 $sql .= " ORDER BY pfd.date_demande DESC";
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.type = 'ban'";
+	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	 $resql = $db->query($sql);
+	$resql = $db->query($sql);
 
-	 $num = 0;
+	$num = 0;
 if ($resql) {
 	$i = 0;
 
 	$tmpuser = new User($db);
 
 	$num = $db->num_rows($result);
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
+	if ($num > 0) {
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
 
-		$tmpuser->id = $obj->user_id;
-		$tmpuser->login = $obj->login;
-		$tmpuser->ref = $obj->login;
-		$tmpuser->email = $obj->email;
-		$tmpuser->lastname = $obj->lastname;
-		$tmpuser->firstname = $obj->firstname;
-		$tmpuser->statut = $obj->user_status;
-		$tmpuser->status = $obj->user_status;
+			$tmpuser->id = $obj->user_id;
+			$tmpuser->login = $obj->login;
+			$tmpuser->ref = $obj->login;
+			$tmpuser->email = $obj->email;
+			$tmpuser->lastname = $obj->lastname;
+			$tmpuser->firstname = $obj->firstname;
+			$tmpuser->statut = $obj->user_status;
+			$tmpuser->status = $obj->user_status;
 
-		print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
-		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
-			print img_delete();
-			print '</a></td>';
-		}
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="right">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+				print img_delete();
+				print '</a></td>';
+			}
 
-		// Date
-		print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
+			// Date
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
-		// User
-		print '<td class="tdoverflowmax125">';
-		print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
-		print '</td>';
+			// User
+			print '<td class="tdoverflowmax125">';
+			print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
+			print '</td>';
 
-		// Amount
-		print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
+			// Amount
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
-		// Date process
-		print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
+			// Date process
+			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
 
-		// Link to make payment now
-		print '<td class="minwidth75">';
-		if ($obj->fk_prelevement_bons > 0) {
-			$withdrawreceipt = new BonPrelevement($db);
-			$withdrawreceipt->id = $obj->fk_prelevement_bons;
-			$withdrawreceipt->ref = $obj->ref;
-			$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
-			$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
-			$withdrawreceipt->date_creation = $db->jdate($obj->datec);
-			$withdrawreceipt->statut = $obj->status;
-			$withdrawreceipt->status = $obj->status;
-			$withdrawreceipt->amount = $obj->pb_amount;
-			//$withdrawreceipt->credite = $db->jdate($obj->credite);
+			// Link to make payment now
+			print '<td class="minwidth75">';
+			if ($obj->fk_prelevement_bons > 0) {
+				$withdrawreceipt = new BonPrelevement($db);
+				$withdrawreceipt->id = $obj->fk_prelevement_bons;
+				$withdrawreceipt->ref = $obj->ref;
+				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
+				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
+				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
+				$withdrawreceipt->statut = $obj->status;
+				$withdrawreceipt->status = $obj->status;
+				$withdrawreceipt->amount = $obj->pb_amount;
+				//$withdrawreceipt->credite = $db->jdate($obj->credite);
 
-			print $withdrawreceipt->getNomUrl(1);
-		}
+				print $withdrawreceipt->getNomUrl(1);
+			}
 
-		if ($type != 'bank-transfer') {
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-				$langs->load("stripe");
-				if ($obj->fk_prelevement_bons > 0) {
-					print ' &nbsp; ';
+			if ($type != 'bank-transfer') {
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
-			}
-		} else {
-			if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
-				$langs->load("stripe");
-				if ($obj->fk_prelevement_bons > 0) {
-					print ' &nbsp; ';
-				}
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
-			}
-		}
-		print '</td>';
-
-		//
-		print '<td class="center">-</td>';
-
-		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
-			print img_delete();
-			print '</a></td>';
-		}
-
-		print "</tr>\n";
-		$i++;
-	}
-
-	$db->free($resql);
-} else {
-	dol_print_error($db);
-}
-
-
-	 // Past requests
-
-	 $sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
-	 $sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
-	 $sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo";
-	 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-if ($type == 'salaire') {
-	$sql .= " WHERE fk_salary = ".((int) $object->id);
-} else {
-	$sql .= " WHERE fk_facture = ".((int) $object->id);
-}
-	 $sql .= " AND pfd.traite = 1";
-	 $sql .= " AND pfd.type = 'ban'";
-	 $sql .= " ORDER BY pfd.date_demande DESC";
-
-	 $resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$numclosed = $num;
-	$i = 0;
-
-	$tmpuser = new User($db);
-
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-
-		$tmpuser->id = $obj->user_id;
-		$tmpuser->login = $obj->login;
-		$tmpuser->ref = $obj->login;
-		$tmpuser->email = $obj->email;
-		$tmpuser->lastname = $obj->lastname;
-		$tmpuser->firstname = $obj->firstname;
-		$tmpuser->statut = $obj->user_status;
-		$tmpuser->status = $obj->user_status;
-		$tmpuser->photo = $obj->user_photo;
-
-		print '<tr class="oddeven">';
-
-		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td>&nbsp;</td>';
-		}
-
-		// Date
-		print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
-
-		// User
-		print '<td class="tdoverflowmax125">';
-		print $tmpuser->getNomUrl(-1, '', 0, 0, 0, 0, 'login');
-		print '</td>';
-
-		// Amount
-		print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
-
-		// Date process
-		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
-
-		// Link to payment request done
-		print '<td class="center minwidth75">';
-		if ($obj->fk_prelevement_bons > 0) {
-			$withdrawreceipt = new BonPrelevement($db);
-			$withdrawreceipt->id = $obj->fk_prelevement_bons;
-			$withdrawreceipt->ref = $obj->ref;
-			$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
-			$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
-			$withdrawreceipt->date_creation = $db->jdate($obj->datec);
-			$withdrawreceipt->statut = $obj->status;
-			$withdrawreceipt->status = $obj->status;
-			$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
-			$withdrawreceipt->amount = $obj->pb_amount;
-			//$withdrawreceipt->credite = $db->jdate($obj->credite);
-
-			print $withdrawreceipt->getNomUrl(1);
-			print ' ';
-			print $withdrawreceipt->getLibStatut(2);
-
-			// Show the bank account
-			$fk_bank_account = $withdrawreceipt->fk_bank_account;
-			if (empty($fk_bank_account)) {
-				$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
-			}
-			if ($fk_bank_account > 0) {
-				$bankaccount = new Account($db);
-				$result = $bankaccount->fetch($fk_bank_account);
-				if ($result > 0) {
-					print ' - ';
-					print $bankaccount->getNomUrl(1);
+			} else {
+				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+					$langs->load("stripe");
+					if ($obj->fk_prelevement_bons > 0) {
+						print ' &nbsp; ';
+					}
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
 			}
+			print '</td>';
+
+			//
+			print '<td class="center">-</td>';
+
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="right">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
+				print img_delete();
+				print '</a></td>';
+			}
+
+			print "</tr>\n";
+			$i++;
 		}
-		print "</td>\n";
-
-		//
-		print '<td>&nbsp;</td>';
-
-		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td>&nbsp;</td>';
-		}
-
-		print "</tr>\n";
-		$i++;
-	}
-
-	if (!$numopen && !$numclosed) {
+	} else {
 		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
@@ -762,8 +651,8 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-	 print "</table>";
-	 print '</div>';
+	print "</table>";
+	print '</div>';
 
 // End of page
 llxFooter();

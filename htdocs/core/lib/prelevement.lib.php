@@ -94,7 +94,6 @@ function prelevement_check_config($type = 'direct-debit')
 			return -1;
 		}
 	} else {
-		var_dump($conf->global->PRELEVEMENT_ID_BANKACCOUNT);exit;
 		if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) {
 			return -1;
 		}

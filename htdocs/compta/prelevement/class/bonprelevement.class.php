@@ -222,16 +222,17 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$number bank 	account number
 	 * @param	string	$number_key 	number key of account number
 	 * @param	string	$type			'debit-order' or 'bank-transfer'
+	 * @param   string  $sourcetype     'salary' for invoice of salary
 	 * @return	int						>0 if OK, <0 if KO
 	 */
-	public function AddFacture($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order')
+	public function AddFacture($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order', $sourcetype = '')
 	{
 		// phpcs:enable
 		$result = 0;
 		$line_id = 0;
 
 		// Add lines
-		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key);
+		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '');
 
 		if ($result == 0) {
 			if ($line_id > 0) {
@@ -239,7 +240,11 @@ class BonPrelevement extends CommonObject
 				if ($type != 'bank-transfer') {
 					$sql .= "fk_facture";
 				} else {
-					$sql .= "fk_facture_fourn";
+					if (!empty($sourcetype) && $sourcetype == 'salary') {
+						$sql .= "fk_salary";
+					} else {
+						$sql .= "fk_facture_fourn";
+					}
 				}
 				$sql .= ",fk_prelevement_lignes";
 				$sql .= ") VALUES (";
@@ -278,9 +283,10 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$code_guichet 	code of bank's office
 	 *	@param	string	$number 		bank account number
 	 *	@param  string	$number_key 	number key of account number
+	 *  @param  string  $sourcetype     check if is salary invoice
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
-	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
+	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '')
 	{
 		$result = -1;
 		$concat = 0;
@@ -292,7 +298,12 @@ class BonPrelevement extends CommonObject
 			$sql = "SELECT rowid";
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
-			$sql .= " AND fk_soc =".((int) $client_id);
+			if (empty($sourcetype)) {
+				$sql .= " AND fk_soc =".((int) $client_id);
+			} else {
+				var_dump($client_id);exit;
+				$sql .= " AND fk_soc =".((int) $client_id);
+			}
 			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
 			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
 			$sql .= " AND number = '".$this->db->escape($number)."'";
@@ -929,10 +940,9 @@ class BonPrelevement extends CommonObject
 		$factures_result = array();
 		$factures_prev_id = array();
 		$factures_errors = array();
-
 		if (!$error) {
 			dol_syslog(__METHOD__." Read invoices for did=".((int) $did), LOG_DEBUG);
-			if ($sourcetype) {
+			if (empty($sourcetype)) {
 				$sql = "SELECT f.rowid, pd.rowid as pfdrowid, f.fk_soc";
 				$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 				$sql .= ", pd.amount";
@@ -957,7 +967,6 @@ class BonPrelevement extends CommonObject
 				if ($did > 0) {
 					$sql .= " AND pd.rowid = ".((int) $did);
 				}
-				print_r($sql);exit;
 			} else {
 				$sql = "SELECT s.rowid, pd.rowid as pfdrowid, s.fk_user";
 				$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
@@ -968,7 +977,9 @@ class BonPrelevement extends CommonObject
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = s.fk_user";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as ur ON s.fk_user = ur.fk_user ";
 				$sql .= " WHERE s.entity IN (".getEntity('salary').')';
-				var_dump($sql);exit;
+				$sql .= " AND pd.amount > 0";
+				$sql .= " AND pd.traite = 0";
+				$sql .= " AND pd.ext_payment_id IS NULL";
 			}
 
 			$resql = $this->db->query($sql);
@@ -979,6 +990,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$factures[$i] = $row; // All fields
+
 					if ($row[7] == 0) {
 						$error++;
 						dol_syslog(__METHOD__." Read invoices error Found a null invoice", LOG_ERR);
@@ -987,6 +999,7 @@ class BonPrelevement extends CommonObject
 					}
 					$i++;
 				}
+
 				$this->db->free($resql);
 				dol_syslog(__METHOD__." Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
 			} else {
@@ -1091,7 +1104,9 @@ class BonPrelevement extends CommonObject
 				print $langs->trans("ModeWarning"); // "Option for real mode was not set, we stop after this simulation\n";
 			}
 		}
-
+		if (!empty($sourcetype)) {
+			$ok = 1;
+		}
 		if ($ok) {
 			/*
 			 * We are in real mode.
@@ -1156,6 +1171,8 @@ class BonPrelevement extends CommonObject
 					$sql .= ")";
 
 					$resql = $this->db->query($sql);
+
+
 					if ($resql) {
 						$prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 						$this->id = $prev_id;
@@ -1169,7 +1186,6 @@ class BonPrelevement extends CommonObject
 					dol_syslog(__METHOD__." Get last withdraw receipt ".$this->db->lasterror(), LOG_ERR);
 				}
 			}
-
 			if (!$error) {
 				/*
 				if ($type != 'bank-transfer') {
@@ -1228,6 +1244,31 @@ class BonPrelevement extends CommonObject
 						}
 					}
 				}
+				// Add lines for the bon for salary
+				if (!empty($sourcetype)) {
+					foreach ($factures as $fac) {
+						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
+
+						if ($ri <> 0) {
+							$error++;
+						}
+
+
+						// Update invoice requests as done
+						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande";
+						$sql .= " SET traite = 1";
+						$sql .= ", date_traite = '".$this->db->idate($now)."'";
+						$sql .= ", fk_prelevement_bons = ".((int) $this->id);
+						$sql .= " WHERE rowid = ".((int) $fac[1]);
+
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							$error++;
+							$this->errors[] = $this->db->lasterror();
+							dol_syslog(__METHOD__." Update Error=".$this->db->lasterror(), LOG_ERR);
+						}
+					}
+				}
 			}
 
 			if (!$error) {
@@ -1237,7 +1278,7 @@ class BonPrelevement extends CommonObject
 
 				dol_syslog(__METHOD__." Init direct debit or credit transfer file for ".count($factures_prev)." invoices", LOG_DEBUG);
 
-				if (count($factures_prev) > 0) {
+				if (count($factures_prev) > 0 || !empty($sourcetype)) {
 					$this->date_echeance = $datetimeprev;
 					$this->reference_remise = $ref;
 
@@ -1258,9 +1299,9 @@ class BonPrelevement extends CommonObject
 
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
-
 					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
+
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
 						//var_dump($this->error);
@@ -1270,7 +1311,7 @@ class BonPrelevement extends CommonObject
 				}
 				dol_syslog(__METHOD__." Bank order file has been generated under filename ".$this->filename, LOG_DEBUG);
 			}
-			//var_dump($this->total);exit;
+
 
 			/*
 			 * Update total defined after generation of file
@@ -1280,8 +1321,8 @@ class BonPrelevement extends CommonObject
 				$sql .= " SET amount = ".price2num($this->total);
 				$sql .= " WHERE rowid = ".((int) $this->id);
 				$sql .= " AND entity = ".((int) $conf->entity);
-
 				$resql = $this->db->query($sql);
+
 				if (!$resql) {
 					$error++;
 					dol_syslog(__METHOD__." Error update total: ".$this->db->error(), LOG_ERR);
@@ -1304,7 +1345,11 @@ class BonPrelevement extends CommonObject
 
 			if (!$error) {
 				$this->db->commit();
-				return count($factures_prev);
+				if (empty($sourcetype)) {
+					return count($factures_prev);
+				} else {
+					return count($factures);
+				}
 			} else {
 				$this->db->rollback();
 				return -1;
@@ -1574,7 +1619,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc, $sourcetype;
 
 		//TODO: Optimize code to read lines in a single function
 
@@ -1743,7 +1788,7 @@ class BonPrelevement extends CommonObject
 				/*
 				 * Section Creditor (sepa Crediteurs bloc lines)
 				 */
-
+				// add condition for traiting sourcetype  TODO
 				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 				$sql .= " f.ref as reffac, pf.fk_facture_fourn as idfac, f.ref_supplier as fac_ref_supplier,";
@@ -1763,7 +1808,6 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND rib.fk_soc = f.fk_soc";
 				$sql .= " AND rib.default_rib = 1";
 				$sql .= " AND rib.type = 'ban'";
-
 				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -1772,7 +1816,6 @@ class BonPrelevement extends CommonObject
 					$num = $this->db->num_rows($resql);
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-
 						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;

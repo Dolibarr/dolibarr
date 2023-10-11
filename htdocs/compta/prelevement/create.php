@@ -127,13 +127,12 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
-			if (GETPOSTISSET('sourcetype')) {
+			if (!empty($sourcetype)) {
 				$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0, $sourcetype);
 				//var_dump($result);exit;
 			} else {
 				$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0);
 			}
-			//var_dump($result);exit;
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -213,9 +212,9 @@ if ($type) {
 	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
 } else {
 	print load_fiche_titre($title);
+	print dol_get_fiche_head();
 }
 
-print load_fiche_titre($title);
 
 if (!GETPOSTISSET('sourcetype')) {
 	$nb = $bprev->nbOfInvoiceToPay($type);
@@ -230,7 +229,7 @@ if ($nb < 0) {
 print '<table class="border centpercent tableforfield">';
 
 $labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
-if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
+if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
 	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 } else {
 	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransferForSalaries");
@@ -255,12 +254,16 @@ if ($mesg) {
 }
 
 print '<div class="tabsAction">'."\n";
-
-print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
+if (!GETPOSTISSET('sourcetype')) {
+	print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
+} else {
+	print '<form action="'.$_SERVER['PHP_SELF'].'?action=create&type='.$type.'&sourcetype='.$sourcetype.'" method="POST">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
-print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
-
+if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+	print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
+}
 if ($nb) {
 	if ($pricetowithdraw) {
 		$title = $langs->trans('BankToReceiveWithdraw').': ';
@@ -387,7 +390,7 @@ if (!GETPOSTISSET('sourcetype')) {
 } else {
 	$sql = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ";
 	$sql .= MAIN_DB_PREFIX."prelevement_demande as pd";
-	$sql .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0";
+	$sql .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
 }
 
 $nbtotalofrecords = '';
@@ -429,7 +432,7 @@ if ($resql) {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
 
-	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
+	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
 		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 	} else {
@@ -438,7 +441,7 @@ if ($resql) {
 	}
 
 	$tradinvoice = "Invoice";
-	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
+	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
 		$tradinvoice = "SupplierInvoice";
 	} else {
 		$tradinvoice = "SalaryInvoice";
@@ -454,7 +457,7 @@ if ($resql) {
 		}
 	}
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
-	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
+	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
 		print '<td>'.$langs->trans("RefSupplier").'</td>';
 	} else {
 		print '<td>'.$langs->trans("RefSalary").'</td>';
@@ -463,7 +466,7 @@ if ($resql) {
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
 	}
 	print '<td>'.$langs->trans("RIB").'</td>';
-	print (!GETPOSTISSET('sourcetype') ? '<td>'.$langs->trans("RUM").'</td>' : '');
+	print (!GETPOSTISSET('sourcetype') || empty($type) ? '<td>'.$langs->trans("RUM").'</td>' : '');
 	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	// Action column
@@ -475,7 +478,7 @@ if ($resql) {
 	print '</tr>';
 
 	if ($num) {
-		if (!GETPOSTISSET('sourcetype')) {
+		if (!GETPOSTISSET('sourcetype') || empty($type)) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
@@ -484,7 +487,7 @@ if ($resql) {
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
-			if (!GETPOSTISSET('sourcetype')) {
+			if (!GETPOSTISSET('sourcetype') || empty($type)) {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 				$bac->fetch(0, $obj->socid);
 
@@ -493,7 +496,7 @@ if ($resql) {
 				$invoicestatic->ref_supplier = $obj->ref_supplier;
 			} else {
 				$bac = new UserBankAccount($db);
-				$bac->fetch($obj->fk_user);
+				$bac->fetch(0, '', $obj->fk_user);
 				$salary = new Salary($db);
 				$salary->fetch($obj->fk_salary);
 			}
@@ -514,21 +517,21 @@ if ($resql) {
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
-			if (!GETPOSTISSET('sourcetype')) {
+			if (!GETPOSTISSET('sourcetype') || empty($type)) {
 				print $invoicestatic->getNomUrl(1, 'withdraw');
 			} else {
 				print $salary->getNomUrl(1, 'withdraw');
 			}
 			print '</td>';
 
-			if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype')) {
+			if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
 				print dol_escape_htmltag($invoicestatic->ref_supplier);
 				print '</td>';
 			}
 
 			// Thirdparty
-			if (!GETPOSTISSET('sourcetype')) {
+			if (!GETPOSTISSET('sourcetype') || empty($type)) {
 				print '<td class="tdoverflowmax100">';
 				$thirdpartystatic->fetch($obj->socid);
 				print $thirdpartystatic->getNomUrl(1, 'ban');
@@ -556,7 +559,7 @@ if ($resql) {
 			print '</td>';
 
 			// RUM
-			if (!GETPOSTISSET('sourcetype')) {
+			if (!GETPOSTISSET('sourcetype') || empty($type)) {
 				print '<td>';
 				$rumtoshow = $thirdpartystatic->display_rib('rum');
 				if ($rumtoshow) {
@@ -597,7 +600,7 @@ if ($resql) {
 		}
 	} else {
 		$colspan = 6;
-		if ($type == 'bank-transfer') {
+		if ($type == 'bank-transfer' || empty($type)) {
 			$colspan++;
 		}
 		if ($massactionbutton || $massaction) {

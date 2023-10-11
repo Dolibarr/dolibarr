@@ -135,7 +135,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-$sqlForSalary = "SELECT * FROM llx_salary as s, llx_prelevement_demande as pd WHERE s.rowid = pd.fk_salary AND s.paye = 0;";
+$sqlForSalary = "SELECT * FROM llx_salary as s, llx_prelevement_demande as pd WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -221,7 +221,7 @@ if ($resql2) {
 
 	if ($numRow) {
 		while ($j < $numRow && $j<10) {
-			$objSalary = $db->fetch_object($resqlForSalry);
+			$objSalary = $db->fetch_object($resql2);
 			$user->fetch($objSalary->fk_user);
 			$salary->fetch($objSalary->fk_salary);
 			$alreadypayedS = $salary->getSommePaiement();
