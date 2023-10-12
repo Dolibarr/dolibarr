@@ -30,6 +30,7 @@ create table llx_prelevement_lignes
   number              varchar(255),
   cle_rib             varchar(5),
 
-  note                text
+  note                text,
+  fk_user             integer
 
 )ENGINE=innodb;
