@@ -123,3 +123,4 @@ ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid, objecttype,label);
 
 ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;

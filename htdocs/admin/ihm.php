@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
