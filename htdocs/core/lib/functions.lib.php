@@ -10212,6 +10212,14 @@ function showSimpleOrderTable($outputlangs, $object)
 
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
+
+	if(!property_exists($object->lines[0], "remise_percent") ||
+		!property_exists($object->lines[0], "fk_unit") || 
+		!property_exists($object->lines[0], "multicurrency_total_ttc") ||
+		!property_exists($object->lines[0], "description") ||
+		!property_exists($object->lines[0], "qty")) {
+			return"";
+	}
 	
 	foreach($object->lines as $order_position) { 
 
