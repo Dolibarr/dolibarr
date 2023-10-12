@@ -418,6 +418,7 @@ Formula=Formule
 ## Lettering
 LetteringAuto=Lettrage auto
 LetteringManual=Lettrage manuel
+LetteringPartial=Lettering partial
 Unlettering=Délettrage
 UnletteringAuto=Délettrage auto
 UnletteringManual=Délettrage manuel
