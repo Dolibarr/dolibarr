@@ -986,7 +986,7 @@ class AccountancyExport
 						$invoice = new FactureFournisseur($this->db);
 						$invoice->fetch($line->fk_doc);
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'),'/');
+						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 					}
 					$arrayofinclusion = array();
 					// If it is a supplier invoice, we want to use last uploaded file
@@ -997,7 +997,7 @@ class AccountancyExport
 						foreach ($fileFoundList as $fileFound) {
 							if (strstr($fileFound['name'], $objectFileName)) {
 								// skip native invoice pdfs (canelle)
-								if ($line->doc_type == 'supplier_invoice'){
+								if ($line->doc_type == 'supplier_invoice') {
 									if ($fileFound['name'] === $objectFileName.'.pdf') continue;
 								} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 									continue;
