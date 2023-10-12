@@ -8481,6 +8481,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__[AnyConstantKey]__'] = $outputlangs->trans('ValueOfConstantKey');
 	}
 
+	// Note: The lazyload variables are replaced only during the call by make_substitutions, and only if necessary
+
 	return $substitutionarray;
 }
 
@@ -8607,6 +8609,19 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
 		}
 	}
+
+	// TODO Implement the lazyload substitution
+	/*
+	add a loop to scan $substitutionarray:
+	For each key ending with '@lazyload', we extract the substitution key 'XXX' and we check inside the $text (the 1st parameter of make_substitutions), if the string XXX exists.
+	If no, we don't need to make replacement, so we do nothing.
+	If yes, we can make the substitution:
+
+	include_once $path;
+	$tmpobj = new $class($db);
+	$valuetouseforsubstitution = $tmpobj->$method($id, '__XXX__');
+	And make the replacement of "__XXX__@lazyload" with $valuetouseforsubstitution
+	*/
 
 	return $text;
 }
