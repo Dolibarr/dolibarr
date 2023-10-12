@@ -131,3 +131,5 @@ ALTER TABLE llx_c_invoice_subtype MODIFY COLUMN code varchar(5) NOT NULL;
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.1', 'Πιστωτικό Τιμολόγιο / Συσχετιζόμενο', 0);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
+
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
