@@ -29,9 +29,10 @@
  * Prepare array with list of tabs
  *
  * @param   BonPrelevement	$object		Object related to tabs
+ * @param   int             $salary     1=salary, 0=invoices
  * @return  array				Array of tabs to show
  */
-function prelevement_prepare_head(BonPrelevement $object)
+function prelevement_prepare_head(BonPrelevement $object, $salary = 0)
 {
 	global $langs, $conf, $user;
 	$langs->load("withdrawals");
@@ -50,7 +51,7 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Bills");
+	$head[$h][1] = ($salary <= 0 ? $langs->trans("Bills") : $langs->trans("Employees"));
 	$head[$h][2] = 'invoices';
 	$h++;
 

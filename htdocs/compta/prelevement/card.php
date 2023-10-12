@@ -71,6 +71,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
+// chek if salary pl
+$salaryBonPl = $object->checkIfSalaryBonPrelevement($id);
 
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
@@ -188,7 +190,7 @@ $form = new Form($db);
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
-	$head = prelevement_prepare_head($object);
+	$head = prelevement_prepare_head($object, $salaryBonPl);
 	print dol_get_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 	if (GETPOST('error', 'alpha') != '') {
@@ -430,7 +432,7 @@ if ($id > 0 || $ref) {
 	/*
 	 * Lines into withdraw request
 	 */
-	if (!$socid) {
+	if ($salaryBonPl) {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount,pl.fk_user";
 		$sql .=" FROM llx_prelevement as p, llx_prelevement_lignes as pl, llx_salary as s";
 		$sql .= " WHERE pl.rowid = p.fk_prelevement_lignes";
@@ -497,7 +499,7 @@ if ($id > 0 || $ref) {
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
-		print_liste_field_titre(($socid ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre((!$salaryBonPl ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
@@ -515,7 +517,7 @@ if ($id > 0 || $ref) {
 			print $ligne->LibStatut($obj->statut, 2);
 			print '<span class="paddingleft">'.$obj->rowid.'</span>';
 			print '</a></td>';
-			if ($socid) {
+			if (!$salaryBonPl) {
 				$thirdparty = new Societe($db);
 				$thirdparty->fetch($obj->socid);
 			} else {
@@ -523,7 +525,7 @@ if ($id > 0 || $ref) {
 				$userSalary->fetch($obj->fk_user);
 			}
 			print '<td>';
-			print ($socid ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(1));
+			print (!$salaryBonPl  ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(1));
 			print "</td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
