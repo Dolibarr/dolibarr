@@ -586,7 +586,6 @@ if ($id > 0 || $ref) {
 			$user = new User($db);
 			while ($i < $numRow) {
 				$obj = $db->fetch($resql);
-				var_dump($obj);exit;
 			}
 		}
 	}

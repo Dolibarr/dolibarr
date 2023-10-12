@@ -301,7 +301,6 @@ class BonPrelevement extends CommonObject
 			if (empty($sourcetype)) {
 				$sql .= " AND fk_soc =".((int) $client_id);
 			} else {
-				var_dump($client_id);exit;
 				$sql .= " AND fk_soc =".((int) $client_id);
 			}
 			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
