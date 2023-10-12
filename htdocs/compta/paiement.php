@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023  		  Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -558,7 +559,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		 * List of unpaid invoices
 		 */
 
-		$sql = 'SELECT f.rowid as facid, f.ref, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
+		$sql = 'SELECT f.rowid as facid, f.ref, f.total_ht, f.total_tva, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc, f.type,';
 		$sql .= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
@@ -615,11 +616,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
 				if (isModEnabled('multicurrency')) {
 					print '<td>'.$langs->trans('Currency').'</td>';
+					print '<td class="right">'.$langs->trans('MulticurrencyAmountHT').'</td>';
+					print '<td class="right">'.$langs->trans('MulticurrencyAmountTVA').'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 					print '<td class="right">'.$multicurrencyalreadypayedlabel.'</td>';
 					print '<td class="right">'.$multicurrencyremaindertopay.'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 				}
+				print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+				print '<td class="right">'.$langs->trans('AmountTVA').'</td>';
 				print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 				print '<td class="right">'.$alreadypayedlabel.'</td>';
 				print '<td class="right">'.$remaindertopay.'</td>';
@@ -698,6 +703,22 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					// Multicurrency Price
 					if (isModEnabled('multicurrency')) {
+
+						// Multicurrency VAT free amount
+						print '<td class="right">';
+						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
+							print price($sign * $objp->multicurrency_total_ht);
+						}
+						print '</td>';
+
+						// Multicurrency VAT amount
+						print '<td class="right">';
+						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
+							print price($sign * $objp->multicurrency_total_tva);
+						}
+						print '</td>';
+
+						// Multicurrency Amount including VAT
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 							print price($sign * $objp->multicurrency_total_ttc);
@@ -745,7 +766,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print "</td>";
 					}
 
-					// Price
+					// VAT free amount
+					print '<td class="right"><span class="amount">'.price($sign * $objp->total_ht).'</span></td>';
+
+					// VAT amount
+					print '<td class="right"><span class="amount">'.price($sign * $objp->total_tva).'</span></td>';
+
+					// Amount including VAT
 					print '<td class="right"><span class="amount">'.price($sign * $objp->total_ttc).'</span></td>';
 
 					// Received + already paid
