@@ -301,7 +301,7 @@ class BonPrelevement extends CommonObject
 			if (empty($sourcetype)) {
 				$sql .= " AND fk_soc =".((int) $client_id);
 			} else {
-				$sql .= " AND fk_soc =".((int) $client_id);
+				$sql .= " AND fk_user =".((int) $client_id);
 			}
 			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
 			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
@@ -326,19 +326,21 @@ class BonPrelevement extends CommonObject
 			$sql .= ", code_guichet";
 			$sql .= ", number";
 			$sql .= ", cle_rib";
+			$sql .= (!empty($sourcetype) ? ", fk_user" : "");
 			$sql .= ") VALUES (";
 			$sql .= $this->id;
-			$sql .= ", ".((int) $client_id);
+			$sql .= ", ".(empty($sourcetype) ? ((int) $client_id) : 0);
 			$sql .= ", '".$this->db->escape($client_nom)."'";
 			$sql .= ", ".((float) price2num($amount));
 			$sql .= ", '".$this->db->escape($code_banque)."'";
 			$sql .= ", '".$this->db->escape($code_guichet)."'";
 			$sql .= ", '".$this->db->escape($number)."'";
 			$sql .= ", '".$this->db->escape($number_key)."'";
+			$sql .= ", ".(!empty($sourcetype) ? ((int) $client_id) : '');
 			$sql .= ")";
-
 			if ($this->db->query($sql)) {
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
+				//print_r($line_id);exit;
 				$result = 0;
 			} else {
 				$this->errors[] = get_class($this)."::addline Error -2 ".$this->db->lasterror;

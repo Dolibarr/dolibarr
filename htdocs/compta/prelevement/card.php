@@ -430,20 +430,26 @@ if ($id > 0 || $ref) {
 	/*
 	 * Lines into withdraw request
 	 */
-	$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
-	$sql .= " s.rowid as socid, s.nom as name";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
-	$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
-	$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
-	$sql .= " AND pl.fk_soc = s.rowid";
-	if ($socid) {
-		$sql .= " AND s.rowid = ".((int) $socid);
+	if (!$socid) {
+		$sql = "SELECT pl.rowid, pl.statut, pl.amount,pl.fk_user";
+		$sql .=" FROM llx_prelevement as p, llx_prelevement_lignes as pl, llx_salary as s";
+		$sql .= " WHERE pl.rowid = p.fk_prelevement_lignes";
+		$sql .= " AND p.fk_salary = s.rowid";
+	} else {
+		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
+		$sql .= " s.rowid as socid, s.nom as name";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
+		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
+		$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
+		$sql .= " AND pl.fk_soc = s.rowid";
+		if ($socid) {
+			$sql .= " AND s.rowid = ".((int) $socid);
+		}
+		$sql .= $db->order($sortfield, $sortorder);
 	}
-	$sql .= $db->order($sortfield, $sortorder);
-
 	// Count total nb of records
 	$nbtotalofrecords = '';
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -491,7 +497,7 @@ if ($id > 0 || $ref) {
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
-		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre(($socid ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
@@ -509,11 +515,15 @@ if ($id > 0 || $ref) {
 			print $ligne->LibStatut($obj->statut, 2);
 			print '<span class="paddingleft">'.$obj->rowid.'</span>';
 			print '</a></td>';
-
-			$thirdparty = new Societe($db);
-			$thirdparty->fetch($obj->socid);
+			if ($socid) {
+				$thirdparty = new Societe($db);
+				$thirdparty->fetch($obj->socid);
+			} else {
+				$userSalary = new User($db);
+				$userSalary->fetch($obj->fk_user);
+			}
 			print '<td>';
-			print $thirdparty->getNomUrl(1);
+			print ($socid ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(1));
 			print "</td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
