@@ -224,7 +224,7 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
 
 // Output html code for logo

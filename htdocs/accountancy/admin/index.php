@@ -59,7 +59,6 @@ $list = array(
 $list_binding = array(
 	'ACCOUNTING_DATE_START_BINDING',
 	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER',
-	'ACCOUNTING_LETTERING_NBLETTERS'
 );
 
 $error = 0;
@@ -98,6 +97,7 @@ if ($action == 'update') {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 
+		// option in section binding
 		foreach ($list_binding as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
@@ -109,6 +109,14 @@ if ($action == 'update') {
 				$error++;
 			}
 		}
+
+		// options in section other
+		if (GETPOSTISSET('ACCOUNTING_LETTERING_NBLETTERS')) {
+			if (!dolibarr_set_const($db, 'ACCOUNTING_LETTERING_NBLETTERS', GETPOST('ACCOUNTING_LETTERING_NBLETTERS'), 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+
 		if ($error) {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
@@ -491,7 +499,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 		}
 	}
 
-	print '<input class="flat" name="ACCOUNTING_LETTERING_NBLETTERS" id="ACCOUNTING_LETTERING_NBLETTERS" value="' . $nbletter . '" type="number" step="1" min="2" max="3" >' . "\n";
+	print '<input class="flat right" name="ACCOUNTING_LETTERING_NBLETTERS" id="ACCOUNTING_LETTERING_NBLETTERS" value="' . $nbletter . '" type="number" step="1" min="2" max="3" >' . "\n";
 	print '</tr>';
 
 	// Auto Lettering when transfer in accountancy is realized

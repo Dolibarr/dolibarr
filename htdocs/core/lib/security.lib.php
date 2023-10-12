@@ -172,7 +172,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
  *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
- *	@param   string		$chain		string to encode
+ *	@param   string		$chain		string to decode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
@@ -188,8 +188,10 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority
 			$key = $conf->file->dolcrypt_key;
 		} else {
+			// We fall back on the instance_unique_id
 			$key = $conf->file->instance_unique_id;
 		}
 	}

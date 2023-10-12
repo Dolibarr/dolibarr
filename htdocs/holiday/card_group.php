@@ -681,7 +681,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 	if ($result) {
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_VALIDATED && $cancreate) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			//if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
 

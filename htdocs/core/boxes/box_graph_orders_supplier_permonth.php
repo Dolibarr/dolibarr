@@ -98,11 +98,11 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (empty($user->rights->societe->client->voir) || $socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$langs->load("orders");
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';

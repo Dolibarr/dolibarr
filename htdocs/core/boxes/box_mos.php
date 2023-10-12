@@ -84,7 +84,7 @@ class box_mos extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedMos", $max));
 
-		if ($user->rights->mrp->read) {
+		if ($user->hasRight('mrp', 'read')) {
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", p.rowid as productid";
 			$sql .= ", p.tosell";
