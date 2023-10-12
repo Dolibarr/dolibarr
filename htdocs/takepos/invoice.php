@@ -533,7 +533,7 @@ if (empty($reshook)) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
 					// check if qty in stock
-					if (!empty(getDolGlobalString("TAKEPOS_QTY_IN_STOCK")) && (($line->qty + $qty) > $prod->stock_reel)) {
+					if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && (($line->qty + $qty) > $prod->stock_reel)) {
 						$invoice->error = $langs->trans('NotEnoughInStock');
 						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 						$err++;
@@ -588,7 +588,7 @@ if (empty($reshook)) {
 				}
 
 				// check if qty in stock
-				if (!empty(getDolGlobalString("TAKEPOS_QTY_IN_STOCK")) && $qty > $prod->stock_reel) {
+				if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && $qty > $prod->stock_reel) {
 					$invoice->error = $langs->trans('NotEnoughInStock');
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 					$err++;
