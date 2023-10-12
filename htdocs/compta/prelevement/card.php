@@ -581,24 +581,6 @@ if ($id > 0 || $ref) {
 	} else {
 		dol_print_error($db);
 	}
-
-	// TODO and complete !!!!!
-	if (empty($sourcetype)) {
-		$sql = "SELECT * FORM llx_prelevement as p, llx_prelevement_lignes as pl, llx_salary as s";
-		$sql .= " WHERE pl.rowid = p.fk_prelevement_lignes";
-		$sql .= " AND p.fk_salary = s.rowid";
-
-		$resql = $db->query($sql);
-
-		if ($resql) {
-			$numRow = $db->num_rows($resql);
-			$i = 0;
-			$user = new User($db);
-			while ($i < $numRow) {
-				$obj = $db->fetch($resql);
-			}
-		}
-	}
 }
 
 // End of page

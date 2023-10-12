@@ -340,7 +340,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ")";
 			if ($this->db->query($sql)) {
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
-				//print_r($line_id);exit;
 				$result = 0;
 			} else {
 				$this->errors[] = get_class($this)."::addline Error -2 ".$this->db->lasterror;
