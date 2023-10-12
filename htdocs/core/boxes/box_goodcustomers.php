@@ -29,14 +29,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last thirdparties
+ * Class to manage the box to show top-selling customers
  */
 class box_goodcustomers extends ModeleBoxes
 {
-	public $boxcode = "goodcustomers";
-	public $boximg = "object_company";
+	public $boxcode  = "goodcustomers";
+	public $boximg   = "object_company";
 	public $boxlabel = "BoxGoodCustomers";
-	public $depends = array("societe");
+	public $depends  = array("societe");
 
 	/**
 	 * @var DoliDB Database handler.

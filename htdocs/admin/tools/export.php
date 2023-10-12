@@ -123,10 +123,13 @@ if ($what == 'mysql') {
 
 	if (!empty($dolibarr_main_restrict_os_commands)) {
 		$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+		$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-		$basenamecmddump = basename($cmddump);
+		$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 		if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+			$langs->load("errors");
 			$errormsg = $langs->trans('CommandIsNotInsideAllowedCommands');
+			$errormsg .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
 		}
 	}
 
@@ -160,8 +163,9 @@ if ($what == 'postgresql') {
 	if (!empty($dolibarr_main_restrict_os_commands))
 	{
 		$arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
+		$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-		$basenamecmddump=basename($cmddump);
+		$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 		if (! in_array($basenamecmddump, $arrayofallowedcommand))	// the provided command $cmddump must be an allowed command
 		{
 			$errormsg=$langs->trans('CommandIsNotInsideAllowedCommands');
@@ -197,7 +201,7 @@ if ($errormsg) {
 		$resultstring = '<div class="ok">';
 		$resultstring .= $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
 		$resultstring .= $langs->trans("YouCanDownloadBackupFile");
-		$resultstring .= '<div>';
+		$resultstring .= '</div>';
 
 		$_SESSION["commandbackupresult"] = $resultstring;
 	}

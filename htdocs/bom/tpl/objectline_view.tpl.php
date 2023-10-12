@@ -34,6 +34,8 @@
  * $type, $text, $description, $line
  */
 
+/** var ObjectLine $line */
+
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Protection to avoid direct call of template
@@ -124,7 +126,7 @@ echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but 
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = $tmpproduct->getLabelOfUnit('long');
 		if ($label !== '') {
@@ -163,9 +165,9 @@ if ($filtertype != 1) {
 	// Work station
 	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+		$res = $workstation->fetch($line->fk_default_workstation);
 
-		print '<td class="linecolunit nowrap right">';
+		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
 		if ($res > 0) echo $workstation->getNomUrl();
 		print '</td>';
@@ -332,8 +334,11 @@ if ($resql) {
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
-
+				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
+					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
+				} else {
+					$line_cost = $obj->min_price;
+				}
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($line_cost, 'MT').'</span></td>';
 				$total_cost+= $line_cost;
 			}

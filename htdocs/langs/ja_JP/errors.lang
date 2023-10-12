@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAPクライアントがエラー "%s" で失敗し
 ErrorGlobalVariableUpdater5=グローバル変数が選択されていない
 ErrorFieldMustBeANumeric=フィールド<b>%s</b>は数値である必要がある
 ErrorMandatoryParametersNotProvided=必須パラメータ (s)が提供されていない
+ErrorOppStatusRequiredIfUsage=このプロジェクトを使用して商談をフォローするように設定したため、商談の初期ステータスも入力する必要がある。
 ErrorOppStatusRequiredIfAmount=このリードの見積もり金額を設定する。したがって、その状態も入力する必要がある。
 ErrorFailedToLoadModuleDescriptorForXXX=%sのモジュール記述子クラスのロードに失敗した
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=モジュール記述子のメニュー配列の定義が正しくない(キーfk_menuの値が正しくない)
@@ -304,12 +305,22 @@ ErrorValueForTooLow=<b> %s </b> の値が低すぎる
 ErrorValueCantBeNull=<b> %s </b> の値は null 不可
 ErrorDateOfMovementLowerThanDateOfFileTransmission=銀行取引の日付は、ファイル送信の日付より前にすることはできない
 ErrorTooMuchFileInForm=フォーム内のファイルが多すぎる。最大数は %s ファイル (s)
-ErrorSessionInvalidatedAfterPasswordChange=パスワード、ステータス、または有効期限が変更されたため、セッションが無効になった。再ログインすること。
+ErrorSessionInvalidatedAfterPasswordChange=パスワード、電子メール、ステータス、または有効期限が変更された後、セッションは無効になった。再ログインすること。
 ErrorExistingPermission = オブジェクト <b> %s </b> に対する権限 <b> %s </b> は既に存在する
 ErrorFieldExist=<b> %s </b> の値は既に存在する
 ErrorEqualModule=<b> %s </b> で無効なモジュール
 ErrorFieldValue=<b> %s </b> の値が正しくない
 ErrorCoherenceMenu= <b> %s </b> は、<b> %s </b> が「左」の場合に必要。
+ErrorUploadFileDragDrop=ファイル(s)のアップロード中にエラーが発生した
+ErrorUploadFileDragDropPermissionDenied=ファイル(s)のアップロード中にエラーが発生した: 許可されない
+ErrorFixThisHere= <a href="%s"> ここを修正すること </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=エラー: 現在のインスタンスの URL (%s) は、OAuth2 ログイン設定に定義されている URL (%s) と一致さない。このような構成で OAuth2 ログインを行うことは許可されていない。
+ErrorMenuExistValue=このタイトルまたは URL のメニューはすでに存在する
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG ファイルは、オプション %s を指定しないと外部リンクとして許可されない。
+ErrorTypeMenu=ナビゲーションバーに同じモジュールの別のメニューを追加することはできない。まだハンドルされていない
+ErrorTableExist=テーブル <b> %s </b> はすでに存在する
+ErrorDictionaryNotFound=辞書 <b> %s </b> が見つからない
+ErrorFailedToCreateSymLinkToMedias= シンボリックリンク  %s その指定先は %s を作成できず
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
@@ -349,6 +360,16 @@ WarningThemeForcedTo=警告、テーマは隠し定数 MAIN_FORCETHEME によっ
 WarningPagesWillBeDeleted=警告、これにより、ウェブサイトの既存のページ/コンテナもすべて削除される。事前にウェブサイトをエクスポートする必要があり、後で再インポートするためのバックアップとなる。
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=「請求書の検証」で在庫を減らすオプションが設定されている場合、自動検証は無効になる。
 WarningModuleNeedRefrech = モジュール <b> %s </b> が無効になった。有効にすることを忘れないこと
+WarningPermissionAlreadyExist=このオブジェクトの既存の権限
+WarningGoOnAccountancySetupToAddAccounts=このリストが空の場合、メニュー %s - %s - %s に移動し、勘定科目表の科目をロードまたは作成する。
+WarningCorrectedInvoiceNotFound=修正された請求書が見つからない
+
+SwissQrOnlyVIR = SwissQR 請求書は、クレジット振替で支払うように設定された請求書にのみ追加できる。
+SwissQrCreditorAddressInvalid = 債権者の住所が無効  (郵便番号と都市は設定されているか? (%s)
+SwissQrCreditorInformationInvalid = 債権者情報が IBAN (%s) に対して無効 : %s
+SwissQrIbanNotImplementedYet = QR-IBANはまだ実装されていない
+SwissQrPaymentInformationInvalid = 支払情報が合計 %s に対して無効  : %s
+SwissQrDebitorAddressInvalid = 債務者情報が無効  (%s)
 
 # Validate
 RequireValidValue = 値が無効.
@@ -370,3 +391,4 @@ BadSetupOfField = フィールドの設定エラー
 BadSetupOfFieldClassNotFoundForValidation = フィールドの設定エラー：検証用のクラスが見つからない
 BadSetupOfFieldFileNotFound = フィールドの設定が正しくない：含めるファイルが見つからない
 BadSetupOfFieldFetchNotCallable = フィールドの設定不正エラー：クラスでフェッチを呼び出せない
+ErrorTooManyAttempts= 試行回数が多すぎます。後でもう一度お試しください

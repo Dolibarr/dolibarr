@@ -48,7 +48,9 @@ if (!defined("NOLOGIN")) {
 if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
-
+if (!defined("NODEFAULTVALUES")) {
+	define("NODEFAULTVALUES", '1');
+}
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
 if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
@@ -389,13 +391,13 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 $usecompression = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 $foundonealgorithm = 0;
 if ($usecompression) {
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress')) {
 		$foundonealgorithm++;
 	}
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		$foundonealgorithm++;
 	}
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		$foundonealgorithm++;
 	}
 	if (!$foundonealgorithm) {
@@ -413,13 +415,13 @@ $result = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
 	// We try to compress the data received data
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress') && defined('BROTLI_TEXT')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress') && defined('BROTLI_TEXT')) {
 		header('Content-Encoding: br');
 		$result = brotli_compress($result, 11, constant('BROTLI_TEXT'));
-	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		header('Content-Encoding: bz');
 		$result = bzcompress($result, 9);
-	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		header('Content-Encoding: gzip');
 		$result = gzencode($result, 9);
 	} else {

@@ -65,15 +65,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $WithoutAmbi = 0;
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
 	public $Maj;
 	public $Min;
 	public $Nb;
@@ -212,7 +203,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		$password_a = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
 		$maj = preg_split('//u', $this->Maj, null, PREG_SPLIT_NO_EMPTY);
-		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);;
+		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);
 		$spe = preg_split('//u', $this->Spe, null, PREG_SPLIT_NO_EMPTY);
 		/*
 		$password_a = str_split($password);

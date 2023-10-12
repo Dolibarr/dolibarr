@@ -189,7 +189,7 @@ print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'categ
 
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = ' type = '.$object->type;
+$object->next_prev_filter = 'type = '.((int) $object->type);
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -233,7 +233,7 @@ print dol_get_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-	if ($user->rights->produit->creer || $user->rights->service->creer) {
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
@@ -309,7 +309,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

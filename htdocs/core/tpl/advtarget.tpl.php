@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -254,7 +254,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '</td></tr>'."\n";
 }
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("CustomersCategoryShort");
 	if (!empty($array_query['cust_categ'])) {
@@ -336,12 +336,7 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 	$std_soc = new Societe($db);
 	$action_search = 'query';
 
-	// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	$hookmanager = new HookManager($db);
-	$hookmanager->initHooks(array('thirdpartycard'));
-
-	$parameters = array();
+	$parameters = array('advtarget'=>1);
 	if (!empty($advTarget->id)) {
 		$parameters = array('array_query' => $advTarget->filtervalue);
 	}
@@ -451,7 +446,7 @@ print '</td></tr></table>';
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("ContactCategoriesShort");
 	if (!empty($array_query['contact_categ'])) {

@@ -17,8 +17,8 @@
 
 /**
  *       \file       htdocs/core/ajax/security.php
- *       \brief      This ajax component is used to generated hash keys for security purposes
- *                   like key to use into URL to protect them.
+ *       \brief      This ajax component is used to generated hash keys for security purposes,
+ *                   like the key to use into URL to protect them.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -36,7 +36,7 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-// We need langs because the getRandomPassword may use user language to define some rules of pass generation
+// We need langs because the getRandomPassword may use the user language to define some rules of pass generation
 /*if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }*/
@@ -45,6 +45,9 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 
 $action = GETPOST('action');
+
+// Security check
+// None. This is public component with no access and effect on data.
 
 
 /*
@@ -62,5 +65,9 @@ if ($action) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$generic = GETPOST('generic') ? true : false;
 		echo getRandomPassword($generic);
+	}
+} else {
+	if (GETPOST('errorcode') == 'InvalidToken') {
+		http_response_code(401);
 	}
 }

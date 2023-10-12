@@ -61,6 +61,8 @@ if (!$user->admin) {
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask') {
 	$maskconstinvoice = GETPOST('maskconstinvoice', 'aZ09');
 	$maskconstcredit = GETPOST('maskconstcredit', 'aZ09');
@@ -244,7 +246,7 @@ foreach ($dirmodels as $reldir) {
 
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module

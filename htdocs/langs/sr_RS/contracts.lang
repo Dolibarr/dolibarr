@@ -2,7 +2,7 @@
 ContractsArea=Oblast ugovora
 ListOfContracts=Lista ugovora
 AllContracts=Svi ugovori
-ContractCard=Kartica ugovora
+ContractCard=Ugovor
 ContractStatusNotRunning=Nije aktvan
 ContractStatusDraft=Draft
 ContractStatusValidated=Odobren

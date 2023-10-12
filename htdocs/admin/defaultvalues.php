@@ -226,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -383,7 +383,12 @@ if (!is_array($result) && $result < 0) {
 			print '</td>';
 		}
 
-		print '<td></td>';
+		// Multicompany
+		print '<td>';
+		if (isModEnabled('multicompany')) {
+			print dol_escape_htmltag($defaultvalue->entity);
+		}
+		print '</td>';
 
 		// Actions
 		print '<td class="center">';

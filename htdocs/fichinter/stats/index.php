@@ -59,7 +59,7 @@ $langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
  */
 
 $form = new Form($db);
-$objectstatic = new FichInter($db);
+$objectstatic = new Fichinter($db);
 
 $title = $langs->trans("InterventionStatistics");
 $dir = $conf->ficheinter->dir_temp;
@@ -220,7 +220,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-$filter = 's.client IN (1,2,3)';
+$filter = '(s.client:IN:1,2,3)';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
@@ -230,10 +230,10 @@ print img_picto('', 'user', 'class="pictofixedwidth"');
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$tmp = $objectstatic->LibStatut(0); // To force load of $this->statuts_short
-$liststatus = $objectstatic->statuts_short;
+$tmp = $objectstatic->LibStatut(0); // To force load of $this->labelStatus
+$liststatus = $objectstatic->labelStatus;
 if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
-	unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+	unset($liststatus[$objectstatic::STATUS_BILLED]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 }
 print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
 print '</td></tr>';
@@ -319,7 +319,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

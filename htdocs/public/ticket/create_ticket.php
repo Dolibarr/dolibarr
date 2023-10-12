@@ -386,8 +386,9 @@ if (empty($reshook)) {
 						$mimetype = $attachedfiles['mimes'];
 
 						// Send email to customer
+						$appli = $mysoc->name;
 
-						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
+						$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
 						$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 						$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
@@ -423,7 +424,9 @@ if (empty($reshook)) {
 						// Send email to TICKET_NOTIFICATION_EMAIL_TO
 						$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 						if ($sendto) {
-							$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
+							$appli = $mysoc->name;
+
+							$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 							$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 							$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 							$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -504,7 +507,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea">';
+print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
@@ -536,8 +539,10 @@ if ($action != "infos_success") {
 
 print '</div>';
 
-// End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

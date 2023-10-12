@@ -483,7 +483,7 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_pass"><b><?php echo $langs->trans("Password"); ?></b></label></td>
 		<td class="label">
-			<input type="password" class="text-security";
+			<input type="password" class="text-security"
 				   id="db_pass" autocomplete="off"
 				   name="db_pass"
 				   value="<?php
@@ -630,7 +630,7 @@ function jscheckparam()
 {
 	console.log("Click on jscheckparam");
 
-	ok=true;
+	var ok = true;
 
 	if (document.forminstall.main_dir.value == '')
 	{

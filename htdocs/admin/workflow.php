@@ -122,7 +122,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
-		'enabled'=>(isModEnabled('supplier_proposal') && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'enabled'=>(isModEnabled('supplier_proposal') && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'supplier_proposal',
 		'warning'=>''
 	),
@@ -131,7 +131,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -139,7 +139,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -147,26 +147,46 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>65,
-		'enabled'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
+		'enabled'=>(isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
 
 	// Automatic classification shipping
+	/* Replaced by next option
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
 		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
+		'picto' => 'shipment',
+		'deprecated' => 1
+	),
+	*/
+
+	'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_shipping',
+		'position' => 91,
+		'enabled' => isModEnabled("expedition") && isModEnabled("facture") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
 		'picto' => 'shipment'
 	),
 
 	// Automatic classification reception
-	'WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE'=>array(
+	/*
+	'WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE'=>array(
 		'family'=>'classify_reception',
 		'position'=>95,
-		'enabled'=>(isModEnabled("reception") && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'enabled'=>(isModEnabled("reception") && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'reception'
 	),
+	*/
+
+	'WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_reception',
+		'position' => 91,
+		'enabled' => isModEnabled("reception") && isModEnabled("supplier_invoice") && getDolGlobalString('WORKFLOW_BILL_ON_RECEPTION') !== '0',
+		'picto' => 'shipment'
+	),
+
 
 	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
 
@@ -283,6 +303,9 @@ foreach ($workflowcodes as $key => $params) {
 
 	if (!empty($params['warning'])) {
 		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
+	}
+	if (!empty($params['deprecated'])) {
+		print ' '.img_warning($langs->transnoentitiesnoconv("Deprecated"));
 	}
 
 	print '</td>';

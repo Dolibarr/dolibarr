@@ -115,9 +115,6 @@ if ($action == 'set') {
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
-		/**
-		 * @var LogHandler
-		 */
 		$module = new $modulename;
 		$error = $module->checkConfiguration();
 	}

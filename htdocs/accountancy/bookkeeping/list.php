@@ -1,9 +1,11 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,27 +29,30 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
+// Get Parameters
 $socid = GETPOST('socid', 'int');
 
+// action+display Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
+
+// Search Parameters
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
@@ -94,15 +99,9 @@ $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_star
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
-//var_dump($search_date_start);exit;
-if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
-	$action = 'delbookkeepingyear';
-}
-if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOST("button_export_file")) {
-	$action = 'export_file';
-}
+$search_account_category = GETPOST('search_account_category', 'int');
 
-$search_accountancy_code = GETPOST("search_accountancy_code");
+$search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
@@ -155,7 +154,7 @@ $hookmanager->initHooks(array('bookkeepinglist'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->hasRight('accounting', 'mouvements', 'export')) {
+if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
@@ -197,20 +196,13 @@ $arrayfields = array(
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
-	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>0, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	unset($arrayfields['t.lettering_code']);
-}
-
-$accountancyexport = new AccountancyExport($db);
-$listofformat = $accountancyexport->getType();
-$formatexportset = getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV');
-if (empty($listofformat[$formatexportset])) {
-	$formatexportset = 1;
 }
 
 $error = 0;
@@ -253,6 +245,7 @@ if (empty($reshook)) {
 		$search_doc_type = '';
 		$search_doc_ref = '';
 		$search_doc_date = '';
+		$search_account_category = '';
 		$search_accountancy_code = '';
 		$search_accountancy_code_start = '';
 		$search_accountancy_code_end = '';
@@ -334,6 +327,20 @@ if (empty($reshook)) {
 	if (!empty($search_doc_ref)) {
 		$filter['t.doc_ref'] = $search_doc_ref;
 		$param .= '&search_doc_ref='.urlencode($search_doc_ref);
+	}
+	if ($search_account_category != '-1' && !empty($search_account_category)) {
+		require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
+		$accountingcategory = new AccountancyCategory($db);
+
+		$listofaccountsforgroup = $accountingcategory->getCptsCat(0, 'fk_accounting_category = '.((int) $search_account_category));
+		$listofaccountsforgroup2 = array();
+		if (is_array($listofaccountsforgroup)) {
+			foreach ($listofaccountsforgroup as $tmpval) {
+				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+			}
+		}
+		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code)) {
 		$filter['t.numero_compte'] = $search_accountancy_code;
@@ -438,55 +445,12 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
-	//if ($action == 'delbookkeepingyearconfirm' && !$user->hasRight('accounting', 'mouvements', 'supprimer_tous')) {
-	//	$delmonth = GETPOST('delmonth', 'int');
-	//	$delyear = GETPOST('delyear', 'int');
-	//	if ($delyear == -1) {
-	//		$delyear = 0;
-	//	}
-	//	$deljournal = GETPOST('deljournal', 'alpha');
-	//	if ($deljournal == -1) {
-	//		$deljournal = 0;
-	//	}
-	//
-	//	if (!empty($delmonth) || !empty($delyear) || !empty($deljournal)) {
-	//		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
-	//		if ($result < 0) {
-	//			setEventMessages($object->error, $object->errors, 'errors');
-	//		} else {
-	//			setEventMessages("RecordDeleted", null, 'mesgs');
-	//		}
-	//
-	//		// Make a redirect to avoid to launch the delete later after a back button
-	//		header("Location: list.php".($param ? '?'.$param : ''));
-	//		exit;
-	//	} else {
-	//		setEventMessages("NoRecordDeleted", null, 'warnings');
-	//	}
-	//}
-	if ($action == 'setreexport') {
-		$setreexport = GETPOST('value', 'int');
-		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) {
-			$error++;
-		}
-
-		if (!$error) {
-			if ($conf->global->ACCOUNTING_REEXPORT == 1) {
-				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
-			} else {
-				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'warnings');
-			}
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
-	}
-
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight('societe', 'creer');
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -642,6 +606,9 @@ $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
 $sql .= " t.date_validated as date_validation,";
 $sql .= " t.import_key";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 // Manage filter
 $sqlwhere = array();
@@ -672,104 +639,24 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
-			$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+			if (is_array($value)) {
+				$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+			} else {
+				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+			}
+		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
+			$sqlwhere[] = 't.numero_compte IN ('.$db->sanitize($value, 1).')';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
 	}
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
-if (empty($conf->global->ACCOUNTING_REEXPORT)) {
-	$sql .= " AND t.date_export IS NULL";
-}
+
 if (count($sqlwhere) > 0) {
 	$sql .= ' AND '.implode(' AND ', $sqlwhere);
 }
-if (!empty($sortfield)) {
-	$sql .= $db->order($sortfield, $sortorder);
-}
 //print $sql;
-
-
-// Export into a file with format defined into setup (FEC, CSV, ...)
-// Must be after definition of $sql
-if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It currently consumes too much memory on large export.
-	// Replace this with the query($sql) and loop on each line to export them.
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
-
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		// Export files then exit
-		$accountancyexport = new AccountancyExport($db);
-
-		$notexportlettering = GETPOST('notexportlettering', 'alpha');
-
-		if (!empty($notexportlettering)) {
-			if (is_array($object->lines)) {
-				foreach ($object->lines as $k => $movement) {
-					unset($object->lines[$k]->lettering_code);
-					unset($object->lines[$k]->date_lettering);
-				}
-			}
-		}
-
-		$mimetype = $accountancyexport->getMimeType($formatexportset);
-
-		top_httphead($mimetype, 1);
-
-		// Output data on screen
-		$accountancyexport->export($object->lines, $formatexportset);
-
-		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
-		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
-
-		if (!empty($accountancyexport->errors)) {
-			dol_print_error('', '', $accountancyexport->errors);
-		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
-			// Specify as export : update field date_export or date_validated
-			$error = 0;
-			$db->begin();
-
-			if (is_array($object->lines)) {
-				foreach ($object->lines as $movement) {
-					$now = dol_now();
-
-					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-					$sql .= " SET";
-					if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
-						$sql .= " date_export = '".$db->idate($now)."'";
-						$sql .= ", date_validated = '".$db->idate($now)."'";
-					} elseif (!empty($notifiedexportdate)) {
-						$sql .= " date_export = '".$db->idate($now)."'";
-					} elseif (!empty($notifiedvalidationdate)) {
-						$sql .= " date_validated = '".$db->idate($now)."'";
-					}
-					$sql .= " WHERE rowid = ".((int) $movement->id);
-
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
-
-					$result = $db->query($sql);
-					if (!$result) {
-						$error++;
-						break;
-					}
-				}
-			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$error++;
-				$db->rollback();
-				dol_print_error('', $langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"));
-			}
-		}
-		exit;
-	}
-}
-
 
 /*
  * View
@@ -782,28 +669,38 @@ $title_page = $langs->trans("Operations").' - '.$langs->trans("Journals");
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
-	$num = $nbtotalofrecords;
-} else {
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -814,99 +711,6 @@ llxHeader('', $title_page);
 
 $formconfirm = '';
 
-if ($action == 'export_file') {
-	$form_question = array();
-
-	$form_question['notexportlettering'] = array(
-		'name' => 'notexportlettering',
-		'type' => 'other',
-		'label' => '',		// TODO  Use Selectmodelcsv and show a select combo
-		'value' => $langs->trans('Modelcsv').' : <b>'.$listofformat[$formatexportset].'</b>'
-	);
-
-	$form_question['separator0'] = array('name'=>'separator0', 'type'=>'separator');
-
-	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
-		// If 1, we check by default.
-		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
-		$form_question['notexportlettering'] = array(
-			'name' => 'notexportlettering',
-			'type' => 'checkbox',
-			'label' => $langs->trans('NotExportLettering'),
-			'value' => $checked,
-		);
-
-		$form_question['separator1'] = array('name'=>'separator1', 'type'=>'separator');
-	}
-
-	// If 1 or not set, we check by default.
-	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE));
-	$form_question['notifiedexportdate'] = array(
-		'name' => 'notifiedexportdate',
-		'type' => 'checkbox',
-		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
-	);
-
-	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
-
-	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
-		// If 0 or not set, we NOT check by default.
-		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
-		$form_question['notifiedvalidationdate'] = array(
-			'name' => 'notifiedvalidationdate',
-			'type' => 'checkbox',
-			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
-			'value' => $checked,
-		);
-
-		$form_question['separator3'] = array('name'=>'separator3', 'type'=>'separator');
-	}
-
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 350, 600);
-}
-
-//if ($action == 'delbookkeepingyear') {
-//	$form_question = array();
-//	$delyear = GETPOST('delyear', 'int');
-//	$deljournal = GETPOST('deljournal', 'alpha');
-//
-//	if (empty($delyear)) {
-//		$delyear = dol_print_date(dol_now(), '%Y');
-//	}
-//	$month_array = array();
-//	for ($i = 1; $i <= 12; $i++) {
-//		$month_array[$i] = $langs->trans("Month".sprintf("%02d", $i));
-//	}
-//	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
-//	$journal_array = $formaccounting->select_journal($deljournal, 'deljournal', '', 1, 1, 1, '', 0, 1);
-//
-//	$form_question['delmonth'] = array(
-//		'name' => 'delmonth',
-//		'type' => 'select',
-//		'label' => $langs->trans('DelMonth'),
-//		'values' => $month_array,
-//		'morecss' => 'minwidth150',
-//		'default' => ''
-//	);
-//	$form_question['delyear'] = array(
-//			'name' => 'delyear',
-//			'type' => 'select',
-//			'label' => $langs->trans('DelYear'),
-//			'values' => $year_array,
-//			'default' => $delyear
-//	);
-//	$form_question['deljournal'] = array(
-//			'name' => 'deljournal',
-//			'type' => 'other', // We don't use select here, the journal_array is already a select html component
-//			'label' => $langs->trans('DelJournal'),
-//			'value' => $journal_array,
-//			'default' => $deljournal
-//	);
-//
-//	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 320);
-//}
-
 // Print form confirm
 print $formconfirm;
 
@@ -915,12 +719,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 
 // List of mass actions available
 $arrayofmassactions = array();
-if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
 	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
 	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
@@ -960,21 +764,6 @@ if ($reshook < 0) {
 $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 if (empty($reshook)) {
-	// Button re-export
-	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("ClickToHideAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
-		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToHideAlreadyExportedLines").'</span>';
-		$newcardbutton .= '</a>';
-	} else {
-		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("DocsAlreadyExportedAreExcluded"), 'switch_on', 'class="warning size15x valignmiddle"');
-		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("DocsAlreadyExportedAreExcluded").'</span>';
-		$newcardbutton .= '</a>';
-	}
-
-	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->hasRight('accounting', 'mouvements', 'export'));
-	}
-
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?type=sub'.$param, '', 1, array('morecss' => 'marginleftonly'));
@@ -1009,14 +798,24 @@ if ($massactionbutton && $contextpage != 'poslist') {
 }
 
 $moreforfilter = '';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('AccountingCategory').': ';
+$moreforfilter .= '<div class="nowrap inline-block">';
+$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
+$moreforfilter .= '</div>';
+$moreforfilter .= '</div>';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
 	$moreforfilter = $hookmanager->resPrint;
 }
+
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+print '</div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
@@ -1293,6 +1092,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Piece number
@@ -1508,11 +1310,11 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
 
 	print "</tr>\n";
 
@@ -1539,13 +1341,6 @@ print $hookmanager->resPrint;
 
 print "</table>";
 print '</div>';
-
-// TODO Replace this with mass delete action
-//if ($user->rights->accounting->mouvements->supprimer_tous) {
-//	print '<div class="tabsAction tabsActionNoBottom">'."\n";
-//	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear&token='.newToken().($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
-//	print '</div>';
-//}
 
 print '</form>';
 
