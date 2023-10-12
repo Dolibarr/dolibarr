@@ -816,9 +816,10 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2023/09/16 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
 	 * @param 	array 		$objectLines 			data
@@ -977,19 +978,30 @@ class AccountancyExport
 					$objectDirPath = '';
 					$objectFileName = dol_sanitizeFileName($line->doc_ref);
 					if ($line->doc_type == 'customer_invoice') {
-						$objectDirPath = !empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->multidir_output[$conf->entity] : $conf->facture->dir_output;
+						$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 					} elseif ($line->doc_type == 'expense_report') {
 						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
 					} elseif ($line->doc_type == 'supplier_invoice') {
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+						$invoice = new FactureFournisseur($this->db);
+						$invoice->fetch($line->fk_doc);
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'),'/');
 					}
 					$arrayofinclusion = array();
-					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
+					// If it is a supplier invoice, we want to use last uploaded file
+					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
 					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
 					if (!empty($fileFoundList)) {
 						$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
 						foreach ($fileFoundList as $fileFound) {
 							if (strstr($fileFound['name'], $objectFileName)) {
+								// skip native invoice pdfs (canelle)
+								if ($line->doc_type == 'supplier_invoice'){
+									if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+								} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+									continue;
+								}
 								$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
 								if (file_exists($fileFoundPath)) {
 									$archiveFileList[$attachmentFileKey] = array(
