@@ -980,7 +980,7 @@ class AccountancyExport
 					if ($line->doc_type == 'customer_invoice') {
 						$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 					} elseif ($line->doc_type == 'expense_report') {
-						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
+						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 					} elseif ($line->doc_type == 'supplier_invoice') {
 						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 						$invoice = new FactureFournisseur($this->db);
