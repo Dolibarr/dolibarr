@@ -9498,7 +9498,7 @@ class Form
 		}
 
 		// Status
-		$parameters = array();
+		$parameters = array('morehtmlstatus' => $morehtmlstatus);
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$morehtmlstatus .= $hookmanager->resPrint;
