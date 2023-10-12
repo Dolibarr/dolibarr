@@ -408,7 +408,7 @@ if (empty($reshook)) {
 	if ($action == 'update_extras') {
 		$object->fetch($socid);
 
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$extrafields->fetch_name_optionals_label($object->table_element);
@@ -1235,7 +1235,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
 		if (!empty($conf->use_javascript_ajax)) {
-			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+			if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
 						id_te_private=8;
@@ -1267,46 +1267,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							}
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
-                        });
-
-						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
-
-						init_customer_categ();
-			  			$("#customerprospect").change(function() {
-								init_customer_categ();
-						});
-						function init_customer_categ() {
-								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
-								{
-									jQuery(".visibleifcustomer").hide();
-								}
-								else
-								{
-									jQuery(".visibleifcustomer").show();
-								}
-						}
-
-						init_supplier_categ();
-			       		$("#fournisseur").change(function() {
-							init_supplier_categ();
-						});
-						function init_supplier_categ() {
-								console.log("is supplier = "+jQuery("#fournisseur").val());
-								if (jQuery("#fournisseur").val() == 0)
-								{
-									jQuery(".visibleifsupplier").hide();
-								}
-								else
-								{
-									jQuery(".visibleifsupplier").show();
-								}
-						}
-
-                        $("#selectcountry_id").change(function() {
-                        	document.formsoc.action.value="create";
-                        	document.formsoc.submit();
                         });';
+
 				if (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print '
 						function init_check_no_email(input) {
@@ -1343,16 +1305,44 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</label>';
 				print '</div>';
 				print "<br>\n";
-			} else {
-				print '<script type="text/javascript">';
-				print '$(document).ready(function () {
-                        $("#selectcountry_id").change(function() {
-                        	document.formsoc.action.value="create";
-                        	document.formsoc.submit();
-                        });
-                     });';
-				print '</script>'."\n";
 			}
+
+			print '<script type="text/javascript">';
+			print '$(document).ready(function () {
+					var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+
+					init_customer_categ();
+			  		$("#customerprospect").change(function() {
+						init_customer_categ();
+					});
+					function init_customer_categ() {
+						console.log("is customer or prospect = "+jQuery("#customerprospect").val());
+						if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier) {
+							jQuery(".visibleifcustomer").hide();
+						} else {
+							jQuery(".visibleifcustomer").show();
+						}
+					}
+
+					init_supplier_categ();
+		       		$("#fournisseur").change(function() {
+						init_supplier_categ();
+					});
+					function init_supplier_categ() {
+						console.log("is supplier = "+jQuery("#fournisseur").val());
+						if (jQuery("#fournisseur").val() == 0) {
+							jQuery(".visibleifsupplier").hide();
+						} else {
+							jQuery(".visibleifsupplier").show();
+						}
+					}
+
+                    $("#selectcountry_id").change(function() {
+                       	document.formsoc.action.value="create";
+                       	document.formsoc.submit();
+                    });
+                   });';
+			print '</script>'."\n";
 		}
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
