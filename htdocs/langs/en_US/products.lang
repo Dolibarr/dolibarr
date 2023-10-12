@@ -437,3 +437,7 @@ AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtu
 ConfirmSetToDraftInventory=Are you sure you want to go back to Draft status?<br>The quantities currently set in the inventory will be reset.
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
 PriceLabel=Price label
+StockableProduct=Stock management
+StockableProductDescription=If this option is enabled, the stock modification for this element is retained. If disabled, the stock modification for this element is not retained.
+StockDisabled=Stock disabled
+StockEnabled=Stock enabled
