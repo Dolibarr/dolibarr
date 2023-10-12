@@ -1597,7 +1597,7 @@ function dol_escape_json($stringtoescape)
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *  When we output string on pages, we use
- *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
+ *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
  *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
  *        - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
  *
