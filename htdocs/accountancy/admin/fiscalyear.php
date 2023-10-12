@@ -127,7 +127,7 @@ if ($result) {
 	}
 
 	$title = $langs->trans('AccountingPeriods');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'calendar', 0, $newcardbutton, '', $limit, 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste centpercent">';

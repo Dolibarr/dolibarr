@@ -54,7 +54,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id		 = GETPOST('id', 'int');
 $ref 	 = GETPOST('ref', 'alpha');
-$fk_job  = GETPOST('fk_job', 'int');
+$fk_job  = (GETPOSTISSET('fk_job') ? GETPOST('fk_job', 'int') : $id);
 $fk_user = GETPOST('fk_user', 'int');
 //$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
 $start_date = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));

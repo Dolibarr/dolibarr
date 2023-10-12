@@ -361,7 +361,7 @@ foreach ($dirmodels as $reldir) {
 
 							print '<td class="center">';
 							//print "> ".$conf->global->FACTURE_ADDON." - ".$file;
-							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file) {
+							if ($conf->global->FACTURE_ADDON == $file || getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -434,7 +434,7 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->FACTURE_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
+							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
 									dol_htmloutput_mesg($module->error, '', 'error', 1);
 								}

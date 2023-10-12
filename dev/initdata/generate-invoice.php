@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
  * Parameters
  */
 
-define(GEN_NUMBER_FACTURE, 1);
+define('GEN_NUMBER_FACTURE', $argv[1] ?? 1);
 $year = 2016;
 $dates = array (mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),

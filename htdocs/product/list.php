@@ -820,20 +820,19 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-
-if ($user->hasRight($rightskey, 'supprimer')) {
-	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-}
 if ($user->hasRight($rightskey, 'creer')) {
+	$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
 	$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 	$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
-	$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
 }
 if (isModEnabled('category') && $user->hasRight($rightskey, 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields', 'preupdateprice'))) {
 	$arrayofmassactions = array();
+}
+if ($user->hasRight($rightskey, 'supprimer')) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 

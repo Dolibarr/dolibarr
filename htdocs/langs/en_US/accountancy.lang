@@ -53,7 +53,7 @@ ExportAccountingSourceDocHelp=With this tool, you can search and export the sour
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 ExportAccountancy=Export accountancy
-WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
@@ -297,7 +297,7 @@ DescVentilDoneExpenseReport=Consult here the list of the lines of expenses repor
 
 Closure=Annual closure
 DescClosure=Consult here the number of movements by month not yet validated & locked
-OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+OverviewOfMovementsNotValidated=Number of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
 ValidateMovements=Validate and lock movements
