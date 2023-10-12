@@ -2136,9 +2136,6 @@ abstract class CommonObject
 		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
-		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".$this->db->prefix()."usergroup_user as ug";
-		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
@@ -2174,12 +2171,11 @@ abstract class CommonObject
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if ($this->element == 'user' && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
+					$sql .= " AND te.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -2210,9 +2206,6 @@ abstract class CommonObject
 
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
-		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".$this->db->prefix()."usergroup_user as ug";
-		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
@@ -2248,12 +2241,11 @@ abstract class CommonObject
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if ($this->element == 'user' && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
+					$sql .= " AND te.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -7273,7 +7265,7 @@ abstract class CommonObject
 					//print $sql;
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
-					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_-,]+$/i', $InfoFieldList[7])) {
+					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
 						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
@@ -9529,10 +9521,7 @@ abstract class CommonObject
 
 		// Create lines
 		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
-			$num = (is_array($this->lines) ? count($this->lines) : 0);
-			for ($i = 0; $i < $num; $i++) {
-				$line = $this->lines[$i];
-
+			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
 
@@ -9542,7 +9531,12 @@ abstract class CommonObject
 					$line = (object) $line;
 				}
 
-				$result = $line->create($user, 1);
+				$result = 0;
+				if (method_exists($line, 'insert')) {
+					$result = $line->insert($user, 1);
+				} elseif (method_exists($line, 'create')) {
+					$result = $line->create($user, 1);
+				}
 				if ($result < 0) {
 					$this->error = $line->error;
 					$this->db->rollback();

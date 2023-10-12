@@ -86,11 +86,11 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "\n";
 print "----- To LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN target=".$conf->global->LDAP_CONTACT_DN."\n";
+print "DN target=" . getDolGlobalString('LDAP_CONTACT_DN')."\n";
 print "\n";
 
 if (!$confirmed) {

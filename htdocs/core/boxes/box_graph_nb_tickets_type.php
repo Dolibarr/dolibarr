@@ -83,7 +83,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
 			$sql .= " WHERE ctt.active = 1";

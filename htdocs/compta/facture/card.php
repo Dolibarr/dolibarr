@@ -722,6 +722,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// We check if invoice has payments
+			$totalpaid = 0;
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
@@ -2888,7 +2889,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
