@@ -431,3 +431,7 @@ ConfirmEditExtrafield = Select the extrafield you want modify
 ConfirmEditExtrafieldQuestion = Are you sure you want to modify this extrafield?
 ModifyValueExtrafields = Modify value of an extrafield
 OrProductsWithCategories=Or products with tags/categories
+StockableProduct=Stock management
+StockableProductDescription=If this option is enabled, the stock modification for this element is retained. If disabled, the stock modification for this element is not retained.
+StockDisabled=Stock disabled
+StockEnabled=Stock enabled
