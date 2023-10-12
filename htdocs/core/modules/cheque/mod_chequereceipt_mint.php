@@ -109,9 +109,9 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  RemiseCheque	$object		Object we need next value for
+	 *  @return string      				Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

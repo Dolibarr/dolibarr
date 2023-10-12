@@ -152,7 +152,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$texte .= $odtPath;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories

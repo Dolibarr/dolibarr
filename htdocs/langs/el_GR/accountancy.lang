@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Προειδοποίηση, αυτή η 
 VueByAccountAccounting=Προβολή ανά λογαριασμό λογιστικής
 VueBySubAccountAccounting=Προβολή ανά λογιστικό υπολογαριασμό
 
-MainAccountForCustomersNotDefined=Ο Κύριος λογαριασμός λογιστικής για πελάτες δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForSuppliersNotDefined=Ο Κύριος λογαριασμός λογιστικής για προμηθευτές δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForUsersNotDefined=Ο Κύριος λογαριασμός λογιστικής για χρήστες δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForVatPaymentNotDefined=Ο Κύριος λογαριασμός λογιστικής για πληρωμή ΦΠΑ δεν έχει οριστεί κατά τη ρύθμιση
-MainAccountForSubscriptionPaymentNotDefined=Ο κύριος λογαριασμός λογιστικής για την πληρωμή συνδρομής δεν έχει οριστεί κατά τη ρύθμιση
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Ο λογαριασμός λογιστικής για τον χρήστη δεν έχει οριστεί κατά τη ρύθμιση
 
 AccountancyArea=Τομέας Λογιστικής 

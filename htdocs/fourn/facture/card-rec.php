@@ -126,7 +126,8 @@ $now = dol_now();
 
 $error = 0;
 
-$result = restrictedArea($user, 'facture', $object->id, $objecttype);
+$result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
+
 
 
 /*
@@ -401,7 +402,7 @@ if (empty($reshook)) {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));

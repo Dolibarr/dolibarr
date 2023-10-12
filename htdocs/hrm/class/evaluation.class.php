@@ -740,7 +740,7 @@ class Evaluation extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1077,19 +1077,16 @@ class Evaluation extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user') && !(empty($this->fk_user))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Employee").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_user.'</span>';
+		if (!empty($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['user'].'</span>';
 		}
-		if (property_exists($this, 'fk_job') && !(empty($this->fk_job))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Job").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_job.'</span>';
+		if (!empty($arraydata['job'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
-
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
-		$return .= '</span>';
+		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;

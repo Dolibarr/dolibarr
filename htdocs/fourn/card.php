@@ -108,6 +108,7 @@ if (empty($reshook)) {
 		$result = $object->update($object->id, $user, 1, 0, 1);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editsupplieraccountancycode';
 		}
 	}
 	// Set vat number accounting account
@@ -158,7 +159,7 @@ if (empty($reshook)) {
 	if ($action == 'update_extras' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));

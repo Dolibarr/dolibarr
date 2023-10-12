@@ -106,11 +106,12 @@ class Productlot extends CommonObject
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
-		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>70),
-		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>1, 'visible'=>1, 'position'=>80),
-		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'getDolGlobalInt("PRODUCT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>90),
-		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
-		//'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_QUALITYCONTROL)?1:0', 'visible'=>5, 'position'=>110),
+		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>70),
+		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>80),
+		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>90),
+		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
+		'qc_frequency'        => array('type'=>'integer', 'label'=>'QCFrequency', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
+		'lifetime'        => array('type'=>'integer', 'label'=>'Lifetime', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
 		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
@@ -141,7 +142,8 @@ class Productlot extends CommonObject
 	public $manufacturing_date = '';
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
-	//public $qc_frequency = '';
+	public $qc_frequency = '';
+	public $lifetime = '';
 	public $datec = '';
 	public $tms = '';
 
@@ -227,7 +229,8 @@ class Productlot extends CommonObject
 		$sql .= 'manufacturing_date,';
 		$sql .= 'scrapping_date,';
 		//$sql .= 'commissionning_date,';
-		//$sql .= 'qc_frequency,';
+		$sql .= 'qc_frequency,';
+		$sql .= 'lifetime,';
 		$sql .= 'datec,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'fk_user_modif,';
@@ -242,7 +245,8 @@ class Productlot extends CommonObject
 		$sql .= ' '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'".$this->db->idate($this->manufacturing_date)."'").',';
 		$sql .= ' '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'".$this->db->idate($this->scrapping_date)."'").',';
 		//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
-		//$sql .= ' '.(!isset($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
 		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
 		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
@@ -316,7 +320,8 @@ class Productlot extends CommonObject
 		$sql .= " t.manufacturing_date,";
 		$sql .= " t.scrapping_date,";
 		//$sql .= " t.commissionning_date,";
-		//$sql .= " t.qc_frequency,";
+		$sql .= " t.qc_frequency,";
+		$sql .= " t.lifetime,";
 		$sql .= " t.model_pdf,";
 		$sql .= " t.last_main_doc,";
 		$sql .= " t.datec,";
@@ -352,7 +357,8 @@ class Productlot extends CommonObject
 				$this->manufacturing_date = $this->db->jdate($obj->manufacturing_date);
 				$this->scrapping_date = $this->db->jdate($obj->scrapping_date);
 				//$this->commissionning_date = $this->db->jdate($obj->commissionning_date);
-				//$this->qc_frequency = $obj->qc_frequency;
+				$this->qc_frequency = $obj->qc_frequency;
+				$this->lifetime = $obj->lifetime;
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
@@ -434,7 +440,8 @@ class Productlot extends CommonObject
 		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
 		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
 		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
-		//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
+		$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
+		$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
 		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
@@ -980,9 +987,7 @@ class Productlot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $hookmanager, $db;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $langs, $conf, $hookmanager;
 
 		$result = '';
 		$params = [
@@ -1005,7 +1010,7 @@ class Productlot extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1039,7 +1044,7 @@ class Productlot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->batch;

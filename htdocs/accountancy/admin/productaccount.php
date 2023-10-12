@@ -85,7 +85,7 @@ if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -199,7 +199,7 @@ if ($action == 'update') {
 					$ko++;
 				} else {
 					$sql = '';
-					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+					if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 						$sql_exists  = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product_perentity";
 						$sql_exists .= " WHERE fk_product = " . ((int) $productid) . " AND entity = " . ((int) $conf->entity);
 						$resql_exists = $db->query($sql_exists);
@@ -309,7 +309,7 @@ if (empty($pcgvercode)) {
 }
 
 $sql = "SELECT p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy, p.tva_tx,";
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 } else {
@@ -319,7 +319,7 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= " p.tms, p.fk_product_type as product_type,";
 $sql .= " aa.rowid as aaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ppe." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 } else {
@@ -386,7 +386,7 @@ $sql .= " GROUP BY p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy, p.
 $sql .= " p.fk_product_type,";
 $sql .= ' p.tms,';
 $sql .= ' aa.rowid,';
-if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export";
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export";
@@ -534,7 +534,7 @@ if ($resql) {
 	}
 
 	// Show/hide child products. Hidden by default
-	if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+	if (isModEnabled('variants') && getDolGlobalInt('PRODUIT_ATTRIBUTES_HIDECHILD')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
 		$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
@@ -570,7 +570,7 @@ if ($resql) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
 
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) {
+	if (getDolGlobalInt('ACCOUNTANCY_SHOW_PROD_DESC')) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	}
 	// On sell
@@ -604,7 +604,7 @@ if ($resql) {
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) {
+	if (getDolGlobalInt('ACCOUNTANCY_SHOW_PROD_DESC')) {
 		print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "p.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -641,30 +641,31 @@ if ($resql) {
 		// Sales
 		if ($obj->product_type == 0) {
 			if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_prodsell;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_prodsell_intra;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_prodsell_export;
 			} else {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_prodsell;
 			}
 		} else {
 			if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_servsell;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_servsell_intra;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT', $langs->trans("CodeNotDef"));
+
 				$compta_prodsell_id = $aarowid_servsell_export;
 			} else {
-				$compta_prodsell = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodsell_id = $aarowid_servsell;
 			}
 		}
@@ -672,30 +673,30 @@ if ($resql) {
 		// Purchases
 		if ($obj->product_type == 0) {
 			if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_prodbuy;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_prodbuy_intra;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_prodbuy_export;
 			} else {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_prodbuy;
 			}
 		} else {
 			if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_servbuy;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_servbuy_intra;
 			} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_servbuy_export;
 			} else {
-				$compta_prodbuy = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_servbuy;
 			}
 		}
@@ -722,11 +723,11 @@ if ($resql) {
 
 		print '<td class="left">'.$obj->label.'</td>';
 
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) {
+		if (getDolGlobalInt('ACCOUNTANCY_SHOW_PROD_DESC')) {
 			// TODO ADJUST DESCRIPTION SIZE
 			// print '<td class="left">' . $obj->description . '</td>';
 			// TODO: we should set a user defined value to adjust user square / wide screen size
-			$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print '<td>'.nl2br(dol_trunc($obj->description, $trunclength)).'</td>';
 		}
 

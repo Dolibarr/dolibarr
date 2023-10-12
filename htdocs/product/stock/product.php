@@ -936,7 +936,7 @@ if (empty($reshook)) {
 
 		if ($user->rights->stock->mouvement->creer) {
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("TransferStock").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
@@ -1069,7 +1069,7 @@ if (!$variants) {
 
 			// Sell price
 			$minsellprice = null; $maxsellprice = null;
-			print '<td class="right">';
+			print '<td class="right nowraponall">';
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				foreach ($object->multiprices as $priceforlevel) {
 					if (is_numeric($priceforlevel)) {
@@ -1179,7 +1179,7 @@ if (!$variants) {
 						}
 						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"></td>';
-						print '<td class="center">';
+						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1191,7 +1191,7 @@ if (!$variants) {
 							//print img_edit().'</a>';
 						}
 						print '</td>';
-						print '<td class="center">';
+						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("CorrectStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=correction&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');

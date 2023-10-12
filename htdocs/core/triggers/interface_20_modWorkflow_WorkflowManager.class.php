@@ -189,6 +189,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
+			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
 			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
@@ -202,6 +203,27 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+
+			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE)) {
+				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
+				if (!empty($object->linkedObjects)) {
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['shipping'] as $element) {
+						if ($element->statut == Expedition::STATUS_VALIDATED || $element->statut == Expedition::STATUS_CLOSED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
+					}
+					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['shipping'] as $element) {
+							$ret = $element->setBilled();
 							if ($ret < 0) {
 								return $ret;
 							}
@@ -246,7 +268,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['supplier_proposal'] as $element) {
-						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) {
+						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_CLOSE) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -262,8 +284,32 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			// Then set reception to "Billed" if WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is set
-			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE)) {
+			// Set reception to "Closed" if WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE is set (deprecated, WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE instead))
+			/*
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE)) {
+				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
+				if (!empty($object->linkedObjects)) {
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['reception'] as $element) {
+						if ($element->statut == Reception::STATUS_VALIDATED || $element->statut == Reception::STATUS_CLOSED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
+					}
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['reception'] as $element) {
+							$ret = $element->setClosed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+			*/
+
+			// Then set reception to "Billed" if WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is set
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE)) {
 				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;

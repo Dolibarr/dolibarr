@@ -229,6 +229,7 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->date_partnership_start = dol_now();
 		$partnership->fk_user_creat          = 0;
 		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		$partnership->url                    = GETPOST('url');
 		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 		$partnership->ip = getUserRemoteIP();
 
@@ -253,16 +254,16 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 		}
-		// test if societe already exist
+		// test if thirdparty already exists
 		$company = new Societe($db);
 		$result = $company->fetch(0, GETPOST('societe'));
-		if ($result == 0) { // si il ya pas d'entree sur le nom  on teste l'email
+		if ($result == 0) { // if entry with name not found, we search using the email
 			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
 			if ($result1 > 0) {
 				$error++;
 				$errmsg = $langs->trans("EmailAlreadyExistsPleaseRewriteYourCompanyName");
 			} else {
-				//create thirdparty
+				// create thirdparty
 				$company = new Societe($db);
 
 				$company->name        = GETPOST('societe');

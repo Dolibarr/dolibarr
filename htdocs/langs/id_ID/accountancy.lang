@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Lihat berdasarkan akun akuntansi
 VueBySubAccountAccounting=Lihat menurut sub-akun akuntansi
 
-MainAccountForCustomersNotDefined=Akun akuntansi utama untuk pelanggan tidak ditentukan dalam pengaturan
-MainAccountForSuppliersNotDefined=Akun akuntansi utama untuk vendor tidak ditentukan dalam pengaturan
-MainAccountForUsersNotDefined=Akun akuntansi utama untuk pengguna tidak ditentukan dalam pengaturan
-MainAccountForVatPaymentNotDefined=Akun akuntansi utama untuk pembayaran PPN tidak ditentukan dalam pengaturan
-MainAccountForSubscriptionPaymentNotDefined=Akun akuntansi utama untuk pembayaran berlangganan tidak ditentukan dalam pengaturan
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Bidang akuntansi

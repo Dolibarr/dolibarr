@@ -70,6 +70,8 @@ class Conf
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
+	public $email_from;
+
 	//! Used to store current menu handler
 	public $standard_menu;
 	// List of activated modules
@@ -138,6 +140,7 @@ class Conf
 	public $agenda;
 	public $commande;
 	public $propal;
+	public $order;
 	/**
 	 * @deprecated Use invoice
 	 */
@@ -284,7 +287,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -374,11 +376,9 @@ class Conf
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
 								} elseif (in_array($partname, array('models', 'theme'))) {
 									$newvalue = '/'.$modulename.'/';
-								} elseif (in_array($partname, array('sms'))) {
-									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
-								} else {
+								} else {	// $partname can be any other value like 'sms', ...
 									$newvalue = $value;
 								}
 
@@ -716,6 +716,10 @@ class Conf
 				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 			}
 
+			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
+			}
+
 			// By default, suppliers objects can be linked to all projects
 			if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) {
 				$this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
@@ -733,7 +737,7 @@ class Conf
 
 			// conf->liste_limit = constante de taille maximale des listes
 			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 25;
+				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
 			}
 			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 

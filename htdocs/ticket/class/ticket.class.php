@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
+ * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1276,7 +1277,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::load_cache_type_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1316,7 +1318,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
-		$sql .= " WHERE active > 0 AND entity = ".((int) $conf->entity);
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
+		$sql .= " AND active > 0";
 		if ($publicgroup > -1) {
 			$sql .= " AND public = ".((int) $publicgroup);
 		}
@@ -1368,7 +1371,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::loadCacheSeveritiesTickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1401,7 +1405,7 @@ class Ticket extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->libStatut($this->fk_statut, $mode, 0, $this->progress);
+		return $this->LibStatut($this->fk_statut, $mode, 0, $this->progress);
 	}
 
 
@@ -1522,9 +1526,7 @@ class Ticket extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1553,7 +1555,7 @@ class Ticket extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1579,7 +1581,7 @@ class Ticket extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1649,7 +1651,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *    Mark a message as read
+	 *    Set an assigned user to a ticket.
 	 *
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
@@ -1658,8 +1660,6 @@ class Ticket extends CommonObject
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$this->oldcopy = dol_clone($this);
@@ -1714,9 +1714,10 @@ class Ticket extends CommonObject
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
 	 * @param boolean	 $send_email      Whether the message is sent by email
+	 * @param boolean	$public_area	  1=Is the public area
 	 * @return int						  <0 if KO, >0 if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false)
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = false)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -1758,6 +1759,20 @@ class Ticket extends CommonObject
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
 		$actioncomm->fk_project = $this->fk_project;
+
+		// add contact id from author email on public interface
+		if ($public_area && !empty($this->origin_email) && !empty($conf->global->TICKET_ASSIGN_CONTACT_TO_MESSAGE)) {
+			$contacts = $this->searchContactByEmail($this->origin_email);
+			if (!empty($contacts)) {
+				// Ensure that contact is active and select first active contact
+				foreach ($contacts as $contact) {
+					if ((int) $contact->statut == 1) {
+						$actioncomm->contact_id = $contact->id;
+						break;
+					}
+				}
+			}
+		}
 
 		$attachedfiles = array();
 		$attachedfiles['paths'] = $filename_list;
@@ -1801,11 +1816,11 @@ class Ticket extends CommonObject
 
 		// Cache already loaded
 
-		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, label, note as message, code";
+		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, datep, label, note as message, code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 		$sql .= " WHERE fk_element = ".(int) $this->id;
 		$sql .= " AND elementtype = 'ticket'";
-		$sql .= " ORDER BY datec DESC";
+		$sql .= " ORDER BY datep DESC";
 
 		dol_syslog(get_class($this)."::load_cache_actions_ticket", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1820,6 +1835,7 @@ class Ticket extends CommonObject
 					$this->cache_msgs_ticket[$i]['fk_contact_author'] = $obj->email_from;
 				}
 				$this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
+				$this->cache_msgs_ticket[$i]['datep'] = $this->db->jdate($obj->datep);
 				$this->cache_msgs_ticket[$i]['subject'] = $obj->label;
 				$this->cache_msgs_ticket[$i]['message'] = $obj->message;
 				$this->cache_msgs_ticket[$i]['private'] = (preg_match('/^TICKET_MSG_PRIVATE/', $obj->code) ? 1 : 0);
@@ -2560,7 +2576,7 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
-			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email);
+			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email, $public_area);
 			if ($id <= 0) {
 				$error++;
 				$this->error = $object->error;
@@ -2628,8 +2644,9 @@ class Ticket extends CommonObject
 						}
 
 						if (!empty($sendto)) {
-							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
+							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2677,8 +2694,8 @@ class Ticket extends CommonObject
 						$sendto = array();
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// Set default subject
-							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$appli = $label_title;
+							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
 							$subject = GETPOST('subject', 'alphanohtml') ? GETPOST('subject', 'alphanohtml') : '['.$appli.' - '.$langs->trans("Ticket").' #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
@@ -2758,8 +2775,8 @@ class Ticket extends CommonObject
 							$sendto = array();
 							if (is_array($external_contacts) && count($external_contacts) > 0) {
 								// Get default subject for email to external contacts
-								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-								$appli = $mysoc->name;
+								$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
 								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$appli.' - '.$langs->trans("Ticket").' #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO');

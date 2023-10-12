@@ -529,14 +529,14 @@ if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 	}
 }
 
-//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
+//dol_syslog("CSRF info: ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
 
 // Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) || defined('CSRFCHECK_WITH_TOKEN')) {
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
-		// All GET actions and mass actions are processed as sensitive.
+		// All GET actions (except the listed exception) and mass actions are processed as sensitive.
 		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude some action that are legitimate
 			$sensitiveget = true;
 		}
@@ -551,8 +551,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
-		// We also match for value with just a simple string that must match
-		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save|sepa)/', GETPOST('action', 'aZ09'))) {
+		// We also need a valid token for actions matching one of these values
+		if (preg_match('/^(confirm_)?(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
 	}
@@ -1085,6 +1085,18 @@ if (!defined('NOLOGIN')) {
 					unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 				}
 			}
+			if (!empty($_GET['save_pageforbacktolist']) && !empty($_SERVER["HTTP_REFERER"])) {    // We must use $_GET here
+				if (empty($_SESSION['pageforbacktolist'])) {
+					$pageforbacktolistarray = array();
+				} else {
+					$pageforbacktolistarray = $_SESSION['pageforbacktolist'];
+				}
+				$tmparray = explode(':', $_GET['save_pageforbacktolist'], 2);
+				if (!empty($tmparray[0]) && !empty($tmparray[1])) {
+					$pageforbacktolistarray[$tmparray[0]] = $tmparray[1];
+					$_SESSION['pageforbacktolist'] = $pageforbacktolistarray;
+				}
+			}
 
 			$action = '';
 			$parameters = array();
@@ -1291,7 +1303,7 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 			) {
 		$conf->dol_optimize_smallscreen = 1;
 
-	if (isset($conf->global->PRODUIT_DESC_IN_FORM) && $conf->global->PRODUIT_DESC_IN_FORM == 1) {
+	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM') == 1) {
 			$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
 	}
 }
@@ -1735,7 +1747,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		}
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').(empty($user->id) ? '' : ('&amp;userid='.$user->id)).'&amp;entity='.$conf->entity;
@@ -1790,8 +1802,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!defined('DISABLE_FONT_AWSOME')) {
 			print '<!-- Includes CSS for font awesome -->'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			$fontawesome_directory = getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', '/theme/common/fontawesome-5');
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1884,7 +1896,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Chart
-			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
+			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || getDolGlobalString('MAIN_JS_GRAPH') == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1924,7 +1936,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!$disablejs && !empty($conf->use_javascript_ajax)) {
 			// CKEditor
-			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || getDolGlobalString('FCKEDITOR_EDITORNAME') == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
 				print '<!-- Includes JS for CKEditor -->'."\n";
 				$pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
 				$jsckeditor = 'ckeditor.js';
@@ -2102,18 +2114,16 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$logouthtmltext = '';
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			//$logouthtmltext=$appli.'<br>';
+			$stringforfirstkey = $langs->trans("KeyboardShortcut");
+			if ($conf->browser->name == 'chrome') {
+				$stringforfirstkey .= ' ALT +';
+			} elseif ($conf->browser->name == 'firefox') {
+				$stringforfirstkey .= ' ALT + SHIFT +';
+			} else {
+				$stringforfirstkey .= ' CTL +';
+			}
 			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
-
-				$stringforfirstkey = $langs->trans("KeyboardShortcut");
-				if ($conf->browser->name == 'chrome') {
-					$stringforfirstkey .= ' ALT +';
-				} elseif ($conf->browser->name == 'firefox') {
-					$stringforfirstkey .= ' ALT + SHIFT +';
-				} else {
-					$stringforfirstkey .= ' CTL +';
-				}
-
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 				$logouttext .= img_picto($langs->trans('Logout').' ('.$stringforfirstkey.' l)', 'sign-out', '', false, 0, 0, '', 'atoplogin valignmiddle');
 				$logouttext .= '</a>';
@@ -2237,7 +2247,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Login name with photo and tooltip
 		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+		$toprightmenu .= '<div class="inline-block login_block_elem login_block_elem_name nowrap centpercent" style="padding: 0px;">';
 
 		if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
 			// Add search dropdown
@@ -2255,7 +2265,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Add user dropdown
 		$toprightmenu .= top_menu_user();
 
-		$toprightmenu .= '</div></div>';
+		$toprightmenu .= '</div>';
 
 		$toprightmenu .= '</div>'."\n";
 
@@ -3225,7 +3235,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		if (!empty($conf->global->MAIN_BUGTRACK_ENABLELINK)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-			if ($conf->global->MAIN_BUGTRACK_ENABLELINK == 'github') {
+			if (getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') == 'github') {
 				$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
 				$bugbaseurl .= '&title=';
 				$bugbaseurl .= urlencode("Bug: ");

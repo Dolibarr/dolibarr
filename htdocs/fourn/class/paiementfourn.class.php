@@ -767,9 +767,9 @@ class PaiementFourn extends Paiement
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'brodator') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'brodator') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'bronan') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'bronan') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		}
 

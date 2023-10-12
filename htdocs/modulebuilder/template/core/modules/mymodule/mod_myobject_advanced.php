@@ -54,22 +54,23 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *  @param      Translate   $langs Translate Object
+	 *  @return     string             Text with description
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $db;
 
 		$langs->load("bills");
 
 		$form = new Form($db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconst" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$text = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+		$text .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$text .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$text .= '<input type="hidden" name="action" value="updateMask">';
+		$text .= '<input type="hidden" name="maskconst" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
+		$text .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -78,15 +79,15 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('MYMODULE_MYOBJECT_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" name="Button"></td>';
-		$texte .= '</tr>';
+		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('MYMODULE_MYOBJECT_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$text .= '</tr>';
 
-		$texte .= '</table>';
-		$texte .= '</form>';
+		$text .= '</table>';
+		$text .= '</form>';
 
-		return $texte;
+		return $text;
 	}
 
 	/**

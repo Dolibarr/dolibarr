@@ -266,7 +266,12 @@ if (empty($reshook)) {
 			$bomline = new BOMLine($db);
 			$bomline->fetch($lineid);
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options);
+			$fk_default_workstation = $bomline->fk_default_workstation;
+			if (isModEnabled('workstation') &&  GETPOSTISSET('idworkstations')) {
+				$fk_default_workstation = GETPOSTINT('idworkstations');
+			}
+
+			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');

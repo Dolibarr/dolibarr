@@ -64,12 +64,12 @@ class ExtraFields
 	public $errors = array();
 
 	/**
-	 * @var string DB Error number
+	 * @var string 	DB Error number
 	 */
 	public $errno;
 
 	/**
-	 * @var array array of type to label
+	 * @var array 	Array of type to label
 	 */
 	public static $type2label = array(
 		'varchar'=>'String1Line',
@@ -96,7 +96,6 @@ class ExtraFields
 		'link' => 'ExtrafieldLink',
 		'separate' => 'ExtrafieldSeparator',
 	);
-
 
 	/**
 	 *	Constructor
@@ -553,7 +552,7 @@ class ExtraFields
 	 */
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
-		global $hookmanager;
+		global $action, $hookmanager;
 
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -596,7 +595,7 @@ class ExtraFields
 				$lengthdb = '11';
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
-				$lengthdb = '50';
+				$lengthdb = '128';
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;
@@ -1194,6 +1193,7 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				// 7 : sort by (to be close to common object)
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
@@ -1365,6 +1365,7 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				// 7 : sort by (to be close to common object)
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
@@ -2077,7 +2078,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $_POST, $langs;
+		global $conf, $_POST, $langs;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
@@ -2141,10 +2142,9 @@ class ExtraFields
 					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
 					// technically non-empty value may be treated as empty functionally).
 					// value can be alpha, int, array, etc...
-					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
-						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
-						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
+					$v = $_POST["options_".$key] ?? null;
+					$type = $this->attributes[$object->table_element]['type'][$key];
+					if (self::isEmptyValue($v, $type)) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 
 						// Field is not defined. We mark this as an error. We may fix it later if there is a default value and $todefaultifmissing is set.
@@ -2350,5 +2350,29 @@ class ExtraFields
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Return if a value is "empty" for a mandatory vision.
+	 *
+	 * @param 	mixed	$v		Value to test
+	 * @param 	string 	$type	Type of extrafield 'sellist', 'link', 'select', ...
+	 * @return 	boolean			True is value is an empty value, not allowed for a mandatory field.
+	 */
+	public static function isEmptyValue($v, string $type)
+	{
+		if ($v === null || $v === '') {
+			return true;
+		}
+		if (is_array($v) || $type == 'select') {
+			return empty($v);
+		}
+		if ($type == 'link') {
+			return ($v == '-1');
+		}
+		if ($type == 'sellist') {
+			return ($v == '0');
+		}
+		return (empty($v) && $v != '0');
 	}
 }

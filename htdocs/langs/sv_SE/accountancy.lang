@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=Visa baserat på redovisningskonto
 VueBySubAccountAccounting=Visa efter redovisning av underkonto
 
-MainAccountForCustomersNotDefined=Huvudsakliga bokföringskonto för kunder som inte definierats i installationen
-MainAccountForSuppliersNotDefined=Huvudkonton för leverantörer som inte definierats i installationen
-MainAccountForUsersNotDefined=Huvudkontonskonto för användare som inte definierats i installationen
-MainAccountForVatPaymentNotDefined=Huvudkonton för momsbetalning som inte definieras i inställningen
-MainAccountForSubscriptionPaymentNotDefined=Huvudkonton för abonnemangsbetalning som inte definieras i inställningen
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Redovisningskonto för användare är inte definierat i konfigurationen
 
 AccountancyArea=Redovisningsområde

@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2021       Anthony Berton      <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -336,14 +336,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$hoverdisabled = '';
 	if (empty($foruserprofile)) {
-		$hoverdisabled = (isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0');
+		$hoverdisabled = (getDolGlobalString('THEME_ELDY_USE_HOVER') == '0');
 	} else {
 		$hoverdisabled = (is_object($fuser) ? (empty($fuser->conf->THEME_ELDY_USE_HOVER) || $fuser->conf->THEME_ELDY_USE_HOVER == '0') : '');
 	}
 
 	$checkeddisabled = '';
 	if (empty($foruserprofile)) {
-		$checkeddisabled = (isset($conf->global->THEME_ELDY_USE_CHECKED) && $conf->global->THEME_ELDY_USE_CHECKED == '0');
+		$checkeddisabled = (getDolGlobalString('THEME_ELDY_USE_CHECKED') == '0');
 	} else {
 		$checkeddisabled = (is_object($fuser) ? (empty($fuser->conf->THEME_ELDY_USE_CHECKED) || $fuser->conf->THEME_ELDY_USE_CHECKED == '0') : '');
 	}
@@ -569,6 +569,23 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
 		} else {
 			print yn($conf->global->THEME_ELDY_USEBORDERONTABLE);
+		}
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+		print '</td>';
+		print '</tr>';
+	}
+
+	// BorderTableActive
+	if ($foruserprofile) {
+	} else {
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("UseCompactRow").'</td>';
+		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+		if ($edit) {
+			print ajax_constantonoff('THEME_ELDY_USECOMOACTROW', array(), null, 0, 0, 1);
+			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
+		} else {
+			print yn($conf->global->THEME_ELDY_USECOMOACTROW);
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
 		print '</td>';
@@ -903,14 +920,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		//print '<input name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit) {
-			if (!empty($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_HOVER') == '1') {
 				$color = colorArrayToHex(colorStringToArray($colorbacklinepairhover));
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_HOVER) ? $conf->global->THEME_ELDY_USE_HOVER : ''), array()), '');
 			}
 			print $formother->selectColor($color, 'THEME_ELDY_USE_HOVER', '', 1, '', '', 'colorbacklinepairhover', $default).' ';
 		} else {
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_HOVER') == '1') {
 				$color = colorArrayToHex(colorStringToArray($colorbacklinepairhover));
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_HOVER) ? $conf->global->THEME_ELDY_USE_HOVER : ''), array()), '');
@@ -951,14 +968,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		//print '<input name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit) {
-			if (!empty($conf->global->THEME_ELDY_USE_CHECKED) && $conf->global->THEME_ELDY_USE_CHECKED == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_CHECKED') == '1') {
 				$color = 'e6edf0';
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_CHECKED) ? $conf->global->THEME_ELDY_USE_CHECKED : ''), array()), '');
 			}
 			print $formother->selectColor($color, 'THEME_ELDY_USE_CHECKED', '', 1, '', '', 'colorbacklinepairchecked', $default).' ';
 		} else {
-			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_CHECKED') == '1') {
 				$color = 'e6edf0';
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_CHECKED) ? $conf->global->THEME_ELDY_USE_CHECKED : ''), array()), '');

@@ -681,7 +681,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 	if ($result) {
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_VALIDATED && $cancreate) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			//if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
 
@@ -757,7 +757,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				} elseif ($object->halfday == 1) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Morning";
-				} elseif ($object->halfday == 2) {
+				} elseif ($object->halfday == 0 || $object->halfday == 2) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Afternoon";
 				}
