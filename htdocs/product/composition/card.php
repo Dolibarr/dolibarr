@@ -668,21 +668,23 @@ if ($id > 0 || !empty($ref)) {
 						$prod_arbo = new Product($db);
 						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
-						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT) {
-							$is_pere = 0;
-							$prod_arbo->get_sousproduits_arbo();
-							// associations sousproduits
-							$prods_arbo = $prod_arbo->get_arbo_each_prod();
-							if (count($prods_arbo) > 0) {
-								foreach ($prods_arbo as $key => $value) {
-									if ($value[1] == $id) {
-										$is_pere = 1;
+						if (getDolGlobalString('PRODUCT_USE_DEPRECATED_ASSEMBLY_AND_STOCK_KIT_TYPE')) {
+							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
+								$is_pere = 0;
+								$prod_arbo->get_sousproduits_arbo();
+								// associations sousproduits
+								$prods_arbo = $prod_arbo->get_arbo_each_prod();
+								if (count($prods_arbo) > 0) {
+									foreach ($prods_arbo as $key => $value) {
+										if ($value[1] == $id) {
+											$is_pere = 1;
+										}
 									}
 								}
-							}
-							if ($is_pere == 1) {
-								$i++;
-								continue;
+								if ($is_pere == 1) {
+									$i++;
+									continue;
+								}
 							}
 						}
 
