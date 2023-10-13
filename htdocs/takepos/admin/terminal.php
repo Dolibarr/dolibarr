@@ -277,11 +277,18 @@ if (isModEnabled('stock')) {
 	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)
+	print '<tr class="oddeven"><td>';
+	if (!$disabled) { print '<span class="fieldrequired">'; }
+	print $langs->trans("CashDeskIdWareHouse");
+	if (!$disabled) { print '</span>'; }
+	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
+		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
+	}
+	print '</td>'; // Force warehouse (this is not a default value)
 	print '<td class="minwidth300">';
 	if (!$disabled) {
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
+		print $formproduct->selectWarehouses(getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal), 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?&terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';

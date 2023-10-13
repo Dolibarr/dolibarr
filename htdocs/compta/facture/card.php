@@ -2896,7 +2896,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));

@@ -80,6 +80,8 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <body>
 <?php
 
+$usestripeterminals = 0;
+
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
@@ -162,39 +164,41 @@ if ($invoiceid > 0) {
 
 ?>
 <script>
-	<?php
-	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
-		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
-		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>}
-  terminal.discoverReaders(config).then(function(discoverResult) {
-	if (discoverResult.error) {
-	  console.log('Failed to discover: ', discoverResult.error);
-	} else if (discoverResult.discoveredReaders.length === 0) {
-	  console.log('No available readers.');
-	} else {
-	  // You should show the list of discoveredReaders to the
-	  // cashier here and let them select which to connect to (see below).
-	  selectedReader = discoverResult.discoveredReaders[0];
-	  //console.log('terminal.discoverReaders', selectedReader); // only active for development
-
-	  terminal.connectReader(selectedReader).then(function(connectResult) {
-		if (connectResult.error) {
-		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
-		  console.log('Failed to connect: ', connectResult.error);
+<?php
+if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
+	if (empty($conf->global->$keyforstripeterminalbank)) { ?>
+		const config = {
+			simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
+			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>
+		}
+		terminal.discoverReaders(config).then(function(discoverResult) {
+		if (discoverResult.error) {
+		  console.log('Failed to discover: ', discoverResult.error);
+		} else if (discoverResult.discoveredReaders.length === 0) {
+		  console.log('No available readers.');
 		} else {
-		document.getElementById("card-present-alert").innerHTML = '';
-		  console.log('Connected to reader: ', connectResult.reader.label);
-		  if (document.getElementById("StripeTerminal")) {
-			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
+		  // You should show the list of discoveredReaders to the
+		  // cashier here and let them select which to connect to (see below).
+		  selectedReader = discoverResult.discoveredReaders[0];
+		  //console.log('terminal.discoverReaders', selectedReader); // only active for development
+
+		  terminal.connectReader(selectedReader).then(function(connectResult) {
+			if (connectResult.error) {
+			document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
+			  console.log('Failed to connect: ', connectResult.error);
+			} else {
+			document.getElementById("card-present-alert").innerHTML = '';
+			  console.log('Connected to reader: ', connectResult.reader.label);
+			  if (document.getElementById("StripeTerminal")) {
+				  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
+				}
 			}
+		  });
+
 		}
 	  });
-
-	}
-  });
-		<?php } else { ?>
-	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
+	<?php } else { ?>
+		terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 		if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';
 			  console.log('Failed to connect: ', connectResult.error);
@@ -207,7 +211,7 @@ if ($invoiceid > 0) {
 		}
 	  });
 
-		<?php } } ?>
+	<?php } } ?>
 </script>
 <?php
 
@@ -325,6 +329,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 
 	function Validate(payment)
 	{
+		console.log("Launch Validate");
+
 		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var accountid = $("#selectaccountid").val();
 		var amountpayed = $("#change1").val();
