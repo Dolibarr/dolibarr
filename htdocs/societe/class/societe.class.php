@@ -4557,6 +4557,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		if (empty($localTaxNum)) {
 			$sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
 		} elseif ($localTaxNum == 1) {
@@ -4584,6 +4585,7 @@ class Societe extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($this->country_code)."'";
 		$sql .= " AND t.active = 1 AND t.recuperableonly = 1";
+		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 
 		dol_syslog("useNPR", LOG_DEBUG);
 		$resql = $this->db->query($sql);

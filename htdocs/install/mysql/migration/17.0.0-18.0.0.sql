@@ -556,3 +556,13 @@ insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_count
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('DIS', 'Άδειες αναπήρων(30 ημέρες με αποδοχές)', 0, 0, 0, 102, 38, 0);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('SE', 'Άδεια εξετάσεων μαθητών, σπουδαστών, φοιτητών(30 ημέρες χωρίς αποδοχές)', 0, 0, 0, 102, 39, 0);
 insert into llx_c_holiday_types(code, label, affect, delay, newbymonth, fk_country, sortorder, active) values ('NOT PAID', 'Άδεια άνευ αποδοχών(έως ένα (1) έτος)', 0, 0, 0, 102, 40, 0);
+
+-- Easya 2024
+-- Backport VAT by entity #24965 - Also available on Easya 2022
+-- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
+-- VPGSQL8.2 DROP INDEX uk_c_tva_id;
+ALTER TABLE llx_c_tva ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
+
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;

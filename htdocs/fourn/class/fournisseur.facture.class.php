@@ -2209,6 +2209,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->info_bits = $info_bits;
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
 
+
 			$supplierinvoiceline->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
 			$supplierinvoiceline->origin = $this->origin;
