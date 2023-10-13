@@ -890,7 +890,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
 	} elseif ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		$attribute = GETPOST('attribute', 'alphanohtml');
 
@@ -914,7 +914,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setref_supplier' && $permissiontoadd) {
 		if (!$cancel) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
@@ -930,7 +930,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setref_customer' && $permissiontoadd) {
 		if (!$cancel) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {

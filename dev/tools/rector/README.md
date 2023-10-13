@@ -10,13 +10,13 @@ composer install
 ```
  #### Usage
 
-##### To see change before apply
+##### To make changes (Add --dry-run for test mode only)
 ```shell
 ./vendor/bin/rector process --dry-run
 ```
 
-##### To apply change
+##### To make changes on a given directory
 
 ```shell
-./vendor/bin/rector process
+./vendor/bin/rector process [--dry-run] ../../../htdocs/core/
 ```

@@ -194,6 +194,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID7", GETPOST("MAIN_INFO_PROFID7", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID8", GETPOST("MAIN_INFO_PROFID8", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID9", GETPOST("MAIN_INFO_PROFID9", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID10", GETPOST("MAIN_INFO_PROFID10", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -678,6 +682,50 @@ if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid6">'.$langs->transcountry("ProfId6", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
 		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId7
+if ($langs->transcountry("ProfId7", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid7">'.$langs->transcountry("profid7", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID7" id="profid7" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID7) ? $conf->global->MAIN_INFO_PROFID7 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId8
+if ($langs->transcountry("ProfId8", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid8">'.$langs->transcountry("profid8", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID8" id="profid8" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID8) ? $conf->global->MAIN_INFO_PROFID8 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId9
+if ($langs->transcountry("ProfId9", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid9">'.$langs->transcountry("profid9", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID9" id="profid9" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID9) ? $conf->global->MAIN_INFO_PROFID9 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId10
+if ($langs->transcountry("ProfId10", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid10">'.$langs->transcountry("profid10", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID10" id="profid10" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID10) ? $conf->global->MAIN_INFO_PROFID10 : '').'">';
 	} else {
 		print $countrynotdefined;
 	}

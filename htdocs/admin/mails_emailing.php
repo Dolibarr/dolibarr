@@ -223,11 +223,11 @@ if ($action == 'edit') {
                         if (jQuery("#MAIN_MAIL_SENDMODE_EMAILING").val()==\'smtps\')
                         {
                             jQuery(".drag").show();
-                            jQuery("#MAIN_MAIL_EMAIL_TLS_EMAILING").val('.$conf->global->MAIN_MAIL_EMAIL_TLS_EMAILING.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS_EMAILING").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_TLS_EMAILING').');
                             jQuery("#MAIN_MAIL_EMAIL_TLS_EMAILING").removeAttr("disabled");
-                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_EMAILING").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS_EMAILING.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_EMAILING").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_EMAILING').');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS_EMAILING").removeAttr("disabled");
-                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING").val('.$conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING.');
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING').');
                             jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER_EMAILING").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT_EMAILING").removeAttr("disabled");
@@ -241,11 +241,11 @@ if ($action == 'edit') {
                         if (jQuery("#MAIN_MAIL_SENDMODE_EMAILING").val()==\'swiftmailer\')
                         {
                             jQuery(".drag").show();
-                            jQuery("#MAIN_MAIL_EMAIL_TLS_EMAILING").val('.$conf->global->MAIN_MAIL_EMAIL_TLS_EMAILING.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS_EMAILING").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_TLS_EMAILING').');
                             jQuery("#MAIN_MAIL_EMAIL_TLS_EMAILING").removeAttr("disabled");
-                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_EMAILING").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS_EMAILING.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_EMAILING").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_EMAILING').');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS_EMAILING").removeAttr("disabled");
-                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING").val('.$conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING.');
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING').');
                             jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER_EMAILING").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT_EMAILING").removeAttr("disabled");
@@ -318,16 +318,16 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 
 	// SuperAdministrator access only
-	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity)) {
+	if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 		print $form->selectarray('MAIN_MAIL_SENDMODE_EMAILING', $listofmethods, $conf->global->MAIN_MAIL_SENDMODE_EMAILING);
 	} else {
-		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE_EMAILING];
+		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
 		if (empty($text)) {
 			$text = $langs->trans("Undefined");
 		}
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
 		print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-		print '<input type="hidden" name="MAIN_MAIL_SENDMODE_EMAILING" value="'.$conf->global->MAIN_MAIL_SENDMODE_EMAILING.'">';
+		print '<input type="hidden" name="MAIN_MAIL_SENDMODE_EMAILING" value="' . getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING').'">';
 	}
 	print '</td></tr>';
 
@@ -450,16 +450,16 @@ if ($action == 'edit') {
 		print '<tr class="oddeven smtp_oauth_service hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td><td>';
 
 		// SuperAdministrator access only
-		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
 			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING', $oauthservices, $conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING);
 		} else {
-			$text = $oauthservices[$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING];
+			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING')];
 			if (empty($text)) {
 				$text = $langs->trans("Undefined");
 			}
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING" value="'.$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING.'">';
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING" value="' . getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING').'">';
 		}
 		print '</td></tr>';
 	}
@@ -568,7 +568,7 @@ if ($action == 'edit') {
 
 		// SMTPS oauth service
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING'), array('smtps', 'swiftmailer')) && getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING') === "XOAUTH2") {
-			$text = $oauthservices[$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING];
+			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING')];
 			if (empty($text)) {
 				$text = $langs->trans("Undefined").img_warning();
 			}
