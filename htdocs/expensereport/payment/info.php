@@ -28,7 +28,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 
 // Load translation files required by the page
@@ -52,7 +52,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 llxHeader('', $langs->trans("Payment"));
 
-$object = new PaymentUser($db);
+$object = new PaymentExpenseReport($db);
 $object->fetch($id);
 $object->info($object->id);
 

@@ -2649,7 +2649,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getSumPayments()
 	{
-		$table = 'payment_expense_report';
+		$table = 'expensereport_payment_expensereport';
 		$field = 'fk_expensereport';
 
 		$sql = 'SELECT sum(amount) as amount';

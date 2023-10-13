@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
@@ -171,7 +171,7 @@ $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new Tva($db);
 $paymentsalstatic = new PaymentSalary($db);
-$paymentexpensereportstatic = new PaymentUser($db);
+$paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $paymentloanstatic = new PaymentLoan($db);
 $accountLinestatic = new AccountLine($db);
@@ -1459,7 +1459,7 @@ function getSourceDocRef($val, $typerecord)
 		$ref = $langs->transnoentitiesnoconv("SupplierInvoice");
 	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expense_report as pe, ".MAIN_DB_PREFIX."expensereport as e";
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."expensereport_payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
 		$sqlmid .= " WHERE pe.fk_paiementuser=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
 	} elseif ($typerecord == 'payment_salary') {

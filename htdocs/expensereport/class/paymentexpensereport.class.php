@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/expensereport/class/paymentuser.class.php
+ *  \file       htdocs/expensereport/class/paymentexpensereport.class.php
  *  \ingroup    Expense Report
  *  \brief      File of class to manage payment of expense report
  */
@@ -29,17 +29,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  *	Class to manage payments of expense report
  */
-class PaymentUser extends CommonObject
+class PaymentExpenseReport extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'paymentuser';
+	public $element = 'payment_expensereport';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'paymentuser';
+	public $table_element = 'payment_expensereport';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -168,7 +168,7 @@ class PaymentUser extends CommonObject
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paymentuser (datec, datep, amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ('".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
@@ -179,12 +179,12 @@ class PaymentUser extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paymentuser");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_expensereport");
 
 				foreach ($this->amounts as $key => $amount) {
 					$expid = $key;
 					$amount = price2num($amount);
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expense_report (fk_expensereport, fk_paiementuser, amount)";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."expensereport_payment_expensereport (fk_expensereport, fk_paiementuser, amount)";
 					// TODO Add multicurrency_code and multicurrency_tx
 					$sql .= " VALUES (".((int) $expid).", ".((int) $this->id).", ".((float) $amount).")";
 
@@ -253,7 +253,7 @@ class PaymentUser extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " pt.code as type_code, pt.libelle as type_label,";
 		$sql .= ' b.fk_account';
-		$sql .= " FROM ".MAIN_DB_PREFIX."paymentuser as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql .= " WHERE t.rowid = ".((int) $id);
@@ -340,7 +340,7 @@ class PaymentUser extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paymentuser SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
 
 //		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
@@ -436,14 +436,14 @@ class PaymentUser extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_expense_report";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expensereport_payment_expensereport";
 			$sql .= " WHERE fk_paiementuser=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paymentuser';
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'payment_expensereport';
 				$sql .= " WHERE rowid = ".((int) $this->id);
 				dol_syslog($sql);
 				$result = $this->db->query($sql);
@@ -486,7 +486,7 @@ class PaymentUser extends CommonObject
 	{
 		$error = 0;
 
-		$object = new PaymentUser($this->db);
+		$object = new PaymentExpenseReport($this->db);
 
 		$this->db->begin();
 
@@ -697,7 +697,7 @@ class PaymentUser extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paymentuser SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -771,7 +771,7 @@ class PaymentUser extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_creat, e.fk_user_modif, e.tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'paymentuser as e';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as e';
 		$sql .= ' WHERE e.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);

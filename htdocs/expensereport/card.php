@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled('accounting')) {
@@ -1397,7 +1397,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $projecttmp = new Project($db);
-$paymentexpensereportstatic = new PaymentUser($db);
+$paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankaccountstatic = new Account($db);
 $ecmfilesstatic = new EcmFiles($db);
 $formexpensereport = new FormExpenseReport($db);
@@ -1931,8 +1931,8 @@ if ($action == 'create') {
 			$sql .= "c.code as payment_code, c.libelle as payment_type,";
 			$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as exp ";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expense_report as pe ON pe.fk_expensereport = exp.rowid ";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paymentuser as p ON pe.fk_paiementuser = p.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_payment_expensereport as pe ON pe.fk_expensereport = exp.rowid ";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON pe.fk_paiementuser = p.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';

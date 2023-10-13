@@ -27,7 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
@@ -110,7 +110,7 @@ if ($action === 'add_payment' || ($action === 'confirm_payment' && $confirm === 
 			$db->begin();
 
 			// Create a line of payments
-			$payment = new PaymentUser($db);
+			$payment = new PaymentExpenseReport($db);
 			$payment->fk_expensereport = $expensereport->id;
 			$payment->datep       = $datepaid;
 			$payment->amounts        = $amounts; // Tableau de montants
@@ -252,7 +252,7 @@ if ($action == 'create' || $action == 'add_payment') {
 
 	$sql = 'SELECT e.rowid, e.total_ttc, e.ref, SUM(pe.amount) as total_amount';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport as e';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_expense_report as pe ON pe.fk_expensereport = e.rowid';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport_payment_expensereport as pe ON pe.fk_expensereport = e.rowid';
 	$sql.= ' WHERE fk_user_author = '.((int) $expensereport->fk_user_author);
 	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 	$sql .= ' AND e.fk_statut = '.ExpenseReport::STATUS_APPROVED;

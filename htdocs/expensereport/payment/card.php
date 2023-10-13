@@ -25,7 +25,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 if (isModEnabled("banque")) {
@@ -46,7 +46,7 @@ if ($user->socid) {
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
-$object = new PaymentUser($db);
+$object = new PaymentExpenseReport($db);
 
 if ($id > 0) {
 	$result = $object->fetch($id);
@@ -161,7 +161,7 @@ print dol_get_fiche_end();
  */
 
 $sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount, er.fk_user_author';
-$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expense_report as per,'.MAIN_DB_PREFIX.'expensereport as er';
+$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql .= ' WHERE per.fk_expensereport = er.rowid';
 $sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
 $sql .= ' AND per.fk_paiementuser = '.((int) $id);

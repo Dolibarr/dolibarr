@@ -1047,8 +1047,8 @@ class pdf_standard extends ModeleExpenseReport
 		$sql .= "c.code as p_code, c.libelle as payment_type,";
 		$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expense_report as p ON p.fk_expensereport = e.rowid";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paymentuser as pu ON p.fk_paiementuser = pu.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_payment_expensereport as p ON p.fk_expensereport = e.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pu ON p.fk_paiementuser = pu.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';

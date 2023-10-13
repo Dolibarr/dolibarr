@@ -571,8 +571,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " pu.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expense_report as p ON p.fk_expensereport = e.rowid ";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paymentuser as pu ON p.fk_paiementuser = pu.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_payment_expensereport as p ON p.fk_expensereport = e.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as pu ON p.fk_paiementuser = pu.rowid ";
 		$sql .= " WHERE e.entity = ".$conf->entity;
 		$sql .= " AND e.fk_statut in (6)";
 		if ($y && $m) {
@@ -1160,8 +1160,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " pu.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expense_report as p ON p.fk_expensereport = e.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paymentuser as pu ON p.fk_paiementuser = pu.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_payment_expensereport as p ON p.fk_expensereport = e.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as pu ON p.fk_paiementuser = pu.rowid ";
 		$sql .= " WHERE e.entity = ".$conf->entity;
 		$sql .= " AND e.fk_statut in (6)";
 		if ($y && $m) {
