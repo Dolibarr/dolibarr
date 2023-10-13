@@ -55,6 +55,10 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contactlist';
 $mode = GETPOST('mode', 'alpha');
 
+if ($contextpage == 'poslist') {
+	$_GET['optioncss'] = 'print';
+}
+
 // Security check
 $id = GETPOST('id', 'int');
 $contactid = GETPOST('id', 'int');
@@ -118,6 +122,7 @@ if ($search_no_email === '') {
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
+$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
 $type = GETPOST("type", 'aZ');
 $view = GETPOST("view", 'alpha');
@@ -278,6 +283,54 @@ if (!$permissiontoread) accessforbidden();
 /*
  * Actions
  */
+
+if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
+	$idcustomer = GETPOST('idcustomer', 'int');
+	$idcontact = GETPOST('idcontact', 'int');
+
+	// Check if draft invoice already exists, if not create it
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
+	$result = $db->query($sql);
+	$num_lines = $db->num_rows($result);
+	if ($num_lines == 0) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$invoice = new Facture($db);
+		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+		$invoice->socid = $conf->global->$constforthirdpartyid;
+		$invoice->date = dol_now();
+		$invoice->module_source = 'takepos';
+		$invoice->pos_source = $_SESSION["takeposterminal"];
+		$placeid = $invoice->create($user);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
+		$db->query($sql);
+	}
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+
+	// set contact on invoice
+	if (!isset($invoice)) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$invoice = new Facture($db);
+		$invoice->fetch(null, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
+		$invoice->delete_linked_contact('external', 'BILLING');
+	}
+	$invoice->add_contact($idcontact, 'BILLING');
+	?>
+		<script>
+		console.log("Reload page invoice.php with place=<?php print $place; ?>");
+		parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
+			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			<?php if (!$resql) { ?>
+				alert('Error failed to update customer on draft invoice.');
+			<?php } ?>
+			parent.$("#idcustomer").val(<?php echo $idcustomer; ?>);
+			parent.$.colorbox.close(); /* Close the popup */
+		});
+		</script>
+	<?php
+	exit;
+}
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -865,10 +918,10 @@ if (!empty($permissiontodelete)) {
 if (isModEnabled('category') && $user->hasRight('societe', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
-$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+if ($contextpage != 'poslist') $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') {
@@ -890,8 +943,13 @@ $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
-
+if ($contextpage != 'poslist') {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
+} elseif ($user->hasRight('societe', 'contact', 'creer')) {
+	$url = DOL_URL_ROOT . '/contact/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?token=' . newToken() . 'type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
+	$label = 'MenuNewCustomer';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+}
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
@@ -959,7 +1017,7 @@ print '</div>';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
-$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+$selectedfields .= count($arrayofmassactions) && $contextpage != 'poslist' ? $form->showCheckAddButtons('checkforselect', 1) : '';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -1346,7 +1404,11 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
+		if ($contextpage == 'poslist') {
+			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
+		}
+		print '>';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1377,7 +1439,11 @@ while ($i < $imaxinloop) {
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
 			print '<td class="middle tdoverflowmax150">';
-			print $contactstatic->getNomUrl(-1);
+			if ($contextpage == 'poslist') {
+				print $contactstatic->lastname;
+			} else {
+				print $contactstatic->getNomUrl(1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1484,7 +1550,13 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
+			print '<td class="nowraponall tdoverflowmax300">';
+			if ($contextpage == 'poslist') {
+				print $obj->email;
+			} else {
+				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1);
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1526,7 +1598,11 @@ while ($i < $imaxinloop) {
 				if ($objsoc->client == 0 && $objsoc->fournisseur > 0) {
 					$option_link = 'supplier';
 				}
-				print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				if ($contextpage == 'poslist') {
+					print $objsoc->name;
+				} else {
+					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				}
 			} else {
 				print '&nbsp;';
 			}
