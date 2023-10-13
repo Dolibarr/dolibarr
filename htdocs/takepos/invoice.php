@@ -50,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $hookmanager->initHooks(array('takeposinvoice'));
 
@@ -533,7 +534,7 @@ if (empty($reshook)) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
 					// check if qty in stock
-					if (!empty(getDolGlobalString("TAKEPOS_QTY_IN_STOCK")) && (($line->qty + $qty) > $prod->stock_reel)) {
+					if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && (($line->qty + $qty) > $prod->stock_reel)) {
 						$invoice->error = $langs->trans('NotEnoughInStock');
 						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 						$err++;
@@ -588,7 +589,7 @@ if (empty($reshook)) {
 				}
 
 				// check if qty in stock
-				if (!empty(getDolGlobalString("TAKEPOS_QTY_IN_STOCK")) && $qty > $prod->stock_reel) {
+				if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && $qty > $prod->stock_reel) {
 					$invoice->error = $langs->trans('NotEnoughInStock');
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 					$err++;
@@ -1172,13 +1173,26 @@ $( document ).ready(function() {
 	$s = $langs->trans("Customer");
 	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
 		$s = $soc->name;
+		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
+			$contactids = $invoice->getIdContact('external', 'BILLING');
+			$contactid = $contactids[0];
+			if ($contactid > 0) {
+				$contact = new Contact($db);
+				$contact->fetch($contactid);
+				$s .= " - " . $contact->getFullName($langs);
+			}
+		}
 	}
 	?>
 
 	$("#customerandsales").html('');
 	$("#shoppingcart").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax125 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT') == 0) { ?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php } else { ?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php } ?>
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
