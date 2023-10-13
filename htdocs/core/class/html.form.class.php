@@ -1376,7 +1376,7 @@ class Form
 	 * @param string 	$selected 		Preselected type
 	 * @param string 	$htmlname 		Name of field in form
 	 * @param string 	$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
-	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:(1,3))'
+	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 									Do not use a filter coming from input of users.
 	 * @param string 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 		Show third party type in combolist (customer, prospect or supplier)
@@ -9498,7 +9498,7 @@ class Form
 		}
 
 		// Status
-		$parameters = array();
+		$parameters = array('morehtmlstatus' => $morehtmlstatus);
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$morehtmlstatus .= $hookmanager->resPrint;

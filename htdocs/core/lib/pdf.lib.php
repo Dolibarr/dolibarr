@@ -1146,6 +1146,38 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
 	}
+	// Prof Id 7
+	if (!empty($fromcompany->idprof7) &&  $fromcompany->idprof7) {
+		$field = $outputlangs->transcountrynoentities("ProfId7", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof7);
+	}
+	// Prof Id 8
+	if (!empty($fromcompany->idprof8) &&  $fromcompany->idprof8) {
+		$field = $outputlangs->transcountrynoentities("ProfId8", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof8);
+	}
+	// Prof Id 9
+	if (!empty($fromcompany->idprof9) &&  $fromcompany->idprof9) {
+		$field = $outputlangs->transcountrynoentities("ProfId9", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof9);
+	}
+	// Prof Id 10
+	if (!empty($fromcompany->idprof10) &&  $fromcompany->idprof10) {
+		$field = $outputlangs->transcountrynoentities("ProfId10", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof10);
+	}
 	// IntraCommunautary VAT
 	if (!empty($fromcompany->tva_intra)  && $fromcompany->tva_intra != '') {
 		$line4 .= ($line4 ? " - " : "").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
