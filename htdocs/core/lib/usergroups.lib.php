@@ -576,6 +576,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 	// Table line height
+	/* removed. height of column must use padding of td and not lineheight that has bad side effect
 	if ($foruserprofile) {
 	} else {
 		$listoftopmenumodes = array(
@@ -595,6 +596,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</td>';
 		print '</tr>';
 	}
+	*/
 
 	// Background color THEME_ELDY_BACKBODY
 	if ($foruserprofile) {
