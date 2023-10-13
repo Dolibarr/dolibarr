@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2021       Anthony Berton      <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -569,6 +569,23 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
 		} else {
 			print yn($conf->global->THEME_ELDY_USEBORDERONTABLE);
+		}
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+		print '</td>';
+		print '</tr>';
+	}
+
+	// BorderTableActive
+	if ($foruserprofile) {
+	} else {
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("UseCompactRow").'</td>';
+		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+		if ($edit) {
+			print ajax_constantonoff('THEME_ELDY_USECOMOACTROW', array(), null, 0, 0, 1);
+			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
+		} else {
+			print yn($conf->global->THEME_ELDY_USECOMOACTROW);
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
 		print '</td>';
