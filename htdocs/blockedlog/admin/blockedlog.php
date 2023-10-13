@@ -104,6 +104,7 @@ print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br
 
 print '<br>';
 
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Key").'</td>';
@@ -176,6 +177,7 @@ print '</td></tr>';
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 if ($withtab) {
 	print dol_get_fiche_end();
