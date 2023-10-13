@@ -200,6 +200,19 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') {
+			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+			$this->supplier_invoice = new FactureFournisseur($this->db);
+			$result = $this->supplier_invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			if (!$result) {
+				throw new RestException(404, 'Supplier invoice not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $this->supplier_invoice->model_pdf;
+			$result = $this->supplier_invoice->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) {
+				throw new RestException(500, 'Error generating document');
+			}
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$this->order = new Commande($this->db);

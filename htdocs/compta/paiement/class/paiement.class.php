@@ -12,6 +12,7 @@
  * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +77,7 @@ class Paiement extends CommonObject
 	public $multicurrency_amount; // Total amount of payment (in the currency of the bank account)
 	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)
 	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)
+	public $multicurrency_tx = array(); // array: invoice ID => currency tx for that invoice
 	public $multicurrency_code = array(); // array: invoice ID => currency code for that invoice
 
 	public $pos_change = 0; // Excess received in TakePOS cash payment
@@ -262,6 +264,7 @@ class Paiement extends CommonObject
 		}
 
 		$currencyofpayment = '';
+		$currencytxofpayment = '';
 
 		foreach ($amounts as $key => $value) {	// How payment is dispatch
 			if (empty($value)) {
@@ -281,6 +284,9 @@ class Paiement extends CommonObject
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
+			}
+			if (empty($currencytxofpayment)) {
+				$currencytxofpayment = isset($this->multicurrency_tx[$key]) ? $this->multicurrency_tx[$key] : "";
 			}
 
 			$totalamount_converted += $value_converted;
@@ -351,9 +357,8 @@ class Paiement extends CommonObject
 				$facid = $key;
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)";
-					// TODO Add multicurrency_code and multicurrency_tx
-					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
+					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($this->multicurrency_code ? $this->db->escape($currencyofpayment) : 'NULL').", ".(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);

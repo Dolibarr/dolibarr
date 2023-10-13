@@ -149,7 +149,7 @@ class box_members_by_tags extends ModeleBoxes
 				);
 				$line++;
 				foreach ($sumMembers as $key => $data) {
-					$adhtag = new Categorie($db);
+					$adhtag = new Categorie($this->db);
 					$adhtag->id = $key;
 
 					if ($key=='total') {

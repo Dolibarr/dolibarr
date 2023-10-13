@@ -1537,7 +1537,7 @@ class Contact extends CommonObject
 			$linkend = '</a>';
 		}
 
-		$result .= $linkstart;
+		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpicto) {
 			if ($withpicto < 0) {
 				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
@@ -1548,7 +1548,7 @@ class Contact extends CommonObject
 		if ($withpicto != 2 && $withpicto != -2) {
 			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
-		$result .= $linkend;
+		$result .= (($option == 'nolink') ? '' : $linkend);
 
 		global $action;
 		$hookmanager->initHooks(array('contactdao'));

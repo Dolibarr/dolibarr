@@ -336,8 +336,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$object->fetchObjectLinked('', '', '', '');
 				//print_r($object->linkedObjects['propal']); exit;
 
-				if (isset($object->linkedObjects['propal'][0])) {
-					$propal_object = $object->linkedObjects['propal'][0];
+				$array_propal_object = $object->linkedObjects['propal'];
+				if (isset($array_propal_object) && is_array($array_propal_object) && count($array_propal_object) > 0) {
+					$tmparrayofvalue = array_values($array_propal_object);
+					$propal_object = $tmparrayofvalue[0];
 				} else {
 					$propal_object = null;
 				}
