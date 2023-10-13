@@ -17,7 +17,7 @@
 --
 -- ===================================================================
 
-create table llx_paymentuser
+create table llx_payment_expensereport
 (
     rowid                   integer AUTO_INCREMENT PRIMARY KEY,
     fk_expensereport        integer,

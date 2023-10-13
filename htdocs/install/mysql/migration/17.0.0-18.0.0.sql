@@ -460,9 +460,9 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN norsh integer DEFAULT 0 AFTER imap_encryption;
 
 -- payments on several expense reports
-ALTER TABLE llx_payment_expensereport RENAME TO llx_paymentuser;
+ALTER TABLE llx_payment_expensereport;
 
-create table llx_payment_expense_report
+create table llx_expensereport_payment_expensereport
 (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     fk_paiementuser INTEGER DEFAULT NULL,
@@ -470,7 +470,7 @@ create table llx_payment_expense_report
     amount double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
-INSERT INTO llx_payment_expense_report (rowid, fk_paiementuser, fk_expensereport, amount) SELECT pu.rowid, pu.rowid, pu.fk_expensereport, pu.amount FROM llx_paymentuser pu WHERE pu.fk_expensereport IS NOT NULL;
+INSERT INTO llx_expensereport_payment_expensereport (rowid, fk_paiementuser, fk_expensereport, amount) SELECT pu.rowid, pu.rowid, pu.fk_expensereport, pu.amount FROM llx_payment_expensereport pu WHERE pu.fk_expensereport IS NOT NULL;
 
 -- VPGSQL8.2 CREATE SEQUENCE llx_paymentuser_rowid_seq OWNED BY llx_paymentuser.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_paymentuser ALTER COLUMN rowid SET DEFAULT nextval('llx_paymentuser_rowid_seq');
