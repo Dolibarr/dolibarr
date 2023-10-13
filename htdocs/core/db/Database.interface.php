@@ -98,7 +98,7 @@ interface Database
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string        SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl');
+	public function convertSQLFromMysql($line, $type = 'ddl');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -190,7 +190,8 @@ interface Database
 	public function escape($stringtoencode);
 
 	/**
-	 *	Escape a string to insert data into a like
+	 *	Escape a string to insert data into a like.
+	 *  Can be used this way: LIKE '%".dbhandler->escapeforlike(dbhandler->escape(...))."%'
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped

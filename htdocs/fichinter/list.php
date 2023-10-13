@@ -366,7 +366,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id);
+	header("Location: ".dol_buildpath('/fichinter/card.php', 1).'?id='.$id);
 	exit;
 }
 
@@ -720,7 +720,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
 	$objectstatic->ref_client = $obj->ref_client;
-	$objectstatic->statut = $obj->status;
+	$objectstatic->statut = $obj->status;	// deprecated
 	$objectstatic->status = $obj->status;
 
 	$companystatic->name = $obj->name;

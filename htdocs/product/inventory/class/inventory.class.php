@@ -256,11 +256,12 @@ class Inventory extends CommonObject
 	/**
 	 * Validate inventory (start it)
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  	User 	$user      				User that creates
+	 * @param	bool 	$notrigger 				false=launch triggers after, true=disable triggers
+	 * @param	int		$include_sub_warehouse	Include sub warehouses
+	 * @return 	int             				<0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = false)
+	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
 		global $conf;
 		$this->db->begin();
@@ -292,7 +293,13 @@ class Inventory extends CommonObject
 				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				if (!empty($include_sub_warehouse) && getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE')) {
+					$TChildWarehouses = array();
+					$this->getChildWarehouse($this->fk_warehouse, $TChildWarehouses);
+					$sql .= " OR ps.fk_entrepot IN (".$this->db->sanitize(join(',', $TChildWarehouses)).")";
+				}
+				$sql .= ')';
 			}
 			if (!empty($this->categories_product)) {
 				$sql .= " AND EXISTS (";
@@ -300,6 +307,13 @@ class Inventory extends CommonObject
 				$sql .= " FROM ".$this->db->prefix()."categorie_product AS cp";
 				$sql .= " WHERE cp.fk_product = ps.fk_product";
 				$sql .= " AND cp.fk_categorie IN (".$this->db->sanitize($this->categories_product).")";
+				$sql .= ")";
+			}
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				$sql .= " AND NOT EXISTS (";
+				$sql .= " SELECT pa.rowid";
+				$sql .= " FROM ".$this->db->prefix()."product_association as pa";
+				$sql .= " WHERE pa.fk_product_pere = ps.fk_product";
 				$sql .= ")";
 			}
 
@@ -744,6 +758,30 @@ class Inventory extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 		$this->title = '';
+	}
+
+	/**
+	 * Return the child warehouse of the current one
+	 *
+	 * @param int 	$id 				Id of warehouse
+	 * @param array	$TChildWarehouse  	Array of child warehouses
+	 * @return int             			<0 if KO, >0 if OK
+	 */
+	public function getChildWarehouse($id, &$TChildWarehouse)
+	{
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
+		$sql.= ' WHERE fk_parent='.(int) $id;
+		$sql.= ' ORDER BY rowid';
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->num_rows($resql)>0) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$TChildWarehouse[] = $obj->rowid;
+				$this->getChildWarehouse($obj->rowid, $TChildWarehouse);
+			}
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 }
 

@@ -10,6 +10,13 @@ class OdfException extends Exception
 }
 
 /**
+ * Class of ODT Exception
+ */
+class OdfExceptionSegmentNotFound extends Exception
+{
+}
+
+/**
  * Templating class for odt file
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
@@ -173,7 +180,7 @@ class Odf
 
 		// Check if the value includes html tags
 		if ($this->_hasHtmlTag($value) === true) {
-			$value = strip_tags($value, '<br><strong><b><i><em><u><s><sub><sup><span>');
+			$value = strip_tags($value, '<br><strong><b><i><em><u><s><sub><sup><span>');	// remove html tags except the one into the list in second parameter
 
 			// Default styles for strong/b, i/em, u, s, sub & sup
 			$automaticStyles = array(
@@ -662,7 +669,7 @@ IMG;
 	 * Extract the segment and store it into $this->segments[]. Return it for next call.
 	 *
 	 * @param  string      $segment        Segment
-	 * @throws OdfException
+	 * @throws OdfExceptionSegmentNotFound
 	 * @return Segment
 	 */
 	public function setSegment($segment)
@@ -674,7 +681,7 @@ IMG;
 		$reg = "#\[!--\sBEGIN\s$segment\s--\](.*)\[!--\sEND\s$segment\s--\]#sm";
 		$m = array();
 		if (preg_match($reg, html_entity_decode($this->contentXml), $m) == 0) {
-			throw new OdfException("'".$segment."' segment not found in the document. The tag [!-- BEGIN xxx --] or [!-- END xxx --] is not present into content file.");
+			throw new OdfExceptionSegmentNotFound("'".$segment."' segment not found in the document. The tag [!-- BEGIN xxx --] or [!-- END xxx --] is not present into content file.");
 		}
 		$this->segments[$segment] = new Segment($segment, $m[1], $this);
 		return $this->segments[$segment];

@@ -387,6 +387,10 @@ $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
 
 
+// Set $appli for emails title
+$appli = $mysoc->name;
+
+
 // Make complementary actions
 $ispostactionok = 0;
 $postactionmessages = array();
@@ -567,11 +571,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled("banque")) {
+				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled("banque")) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -1006,7 +1010,9 @@ if ($ispaymentok) {
 
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
 									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
@@ -1129,7 +1135,8 @@ if ($ispaymentok) {
 					}
 
 					if ($bankaccountid > 0) {
-						$result = $paiement->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $bankaccountid, '', '');
+						$label = '(DonationPayment)';
+						$result = $paiement->addPaymentToBank($user, 'payment_donation', $label, $bankaccountid, '', '');
 						if ($result < 0) {
 							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
@@ -1319,7 +1326,7 @@ if ($ispaymentok) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
 							} else {
-								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration");
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
 
@@ -1496,7 +1503,7 @@ if ($ispaymentok) {
 							$error++;
 							setEventMessages(null, $booth->errors, "errors");
 						} else {
-							$booth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
+							$booth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
 							if ($resultboothupdate<0) {
 								// Finding the thirdparty by getting the invoice
@@ -1663,7 +1670,9 @@ if ($ispaymentok) {
 
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+								}
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
 									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
@@ -1711,10 +1720,6 @@ if ($ispaymentok) {
 }
 
 
-// Set $appli for emails title
-$appli = $mysoc->name;
-
-
 if ($ispaymentok) {
 	// Get on url call
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
@@ -1759,7 +1764,7 @@ if ($ispaymentok) {
 
 	dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
 
-	// Send an email to admins
+	// Send an email to the admins
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);

@@ -110,7 +110,7 @@ if (empty($reshook)) {
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
-		$bank->fetch($conf->global->{$default_account});
+		$bank->fetch(getDolGlobalInt($default_account));
 		// ICS is not mandatory with payment by bank transfer
 		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
@@ -128,6 +128,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type);
+
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -418,6 +419,12 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		}
+	}
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
 	if ($type == 'bank-transfer') {
 		print '<td>'.$langs->trans("RefSupplier").'</td>';
@@ -427,8 +434,11 @@ if ($resql) {
 	print '<td>'.$langs->trans("RUM").'</td>';
 	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
-	if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		}
 	}
 	print '</tr>';
 
@@ -446,6 +456,19 @@ if ($resql) {
 			$invoicestatic->ref_supplier = $obj->ref_supplier;
 
 			print '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($obj->request_row_id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
+				}
+			}
 
 			// Ref invoice
 			print '<td class="tdoverflowmax150">';
@@ -504,20 +527,29 @@ if ($resql) {
 			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			// Action column
-			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				print '<td class="nowrap center">';
-				$selected = 0;
-				if (in_array($obj->request_row_id, $arrayofselected)) {
-					$selected = 1;
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					print '<td class="nowrap center">';
+					$selected = 0;
+					if (in_array($obj->request_row_id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
 				}
-				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
-				print '</td>';
 			}
 			print '</tr>';
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		$colspan = 6;
+		if ($type == 'bank-transfer') {
+			$colspan++;
+		}
+		if ($massactionbutton || $massaction) {
+			$colspan++;
+		}
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print "</div>";

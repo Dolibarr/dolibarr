@@ -646,6 +646,15 @@ if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 }
 print '<br>';
 
+
+if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
+	print 'MAIN_CACHE_COUNT = '.getDolGlobalInt('MAIN_CACHE_COUNT').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_CACHE_COUNT = '.getDolGlobalInt('MAIN_CACHE_COUNT', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
 // End of page
 llxFooter();
 $db->close();

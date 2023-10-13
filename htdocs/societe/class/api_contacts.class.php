@@ -62,12 +62,12 @@ class Contacts extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
-	 * @param 	int    $id                  ID of contact
+	 * @param	int    $id                  ID of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return 	array|mixed data without useless information
+	 * @return	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
@@ -107,10 +107,10 @@ class Contacts extends DolibarrApi
 	/**
 	 * Get properties of a contact object by Email
 	 *
-	 * @param 	string 	$email 					Email of contact
+	 * @param	string	$email					Email of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @param   int    $includeroles        Includes roles of the contact
-	 * @return 	array|mixed data without useless information
+	 * @return	array|mixed data without useless information
 	 *
 	 * @url GET email/{email}
 	 *
@@ -157,20 +157,21 @@ class Contacts extends DolibarrApi
 	 *
 	 * Get a list of contacts
 	 *
-	 * @param string	$sortfield	        Sort field
-	 * @param string	$sortorder	        Sort order
-	 * @param int		$limit		        Limit for list
-	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param int    	$category   Use this param to filter list by category
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$thirdparty_ids		Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
-	 * @param int    	$includeroles        Includes roles of the contact
+	 * @param int		$includeroles        Includes roles of the contact
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '')
 	{
 		global $db, $conf;
 
@@ -261,7 +262,7 @@ class Contacts extends DolibarrApi
 						$contact_static->getNoEmail();
 					}
 
-					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($contact_static), $properties);
 				}
 
 				$i++;
@@ -372,7 +373,7 @@ class Contacts extends DolibarrApi
 	/**
 	 * Create an user account object from contact (external user)
 	 *
-	 * @param   int   	$id   Id of contact
+	 * @param   int		$id   Id of contact
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of user
 	 *

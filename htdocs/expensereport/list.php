@@ -798,6 +798,9 @@ if ($resql) {
 						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 				// Ref
 				if (!empty($arrayfields['d.ref']['checked'])) {
@@ -953,16 +956,18 @@ if ($resql) {
 						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
-				}
-				if (!$i) {
-					$totalarray['nbfield']++;
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 
 				print "</tr>\n";
 			}
-				$total_total_ht = $total_total_ht + $obj->total_ht;
-				$total_total_tva = $total_total_tva + $obj->total_tva;
-				$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+
+			$total_total_ht = $total_total_ht + $obj->total_ht;
+			$total_total_tva = $total_total_tva + $obj->total_tva;
+			$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+
 			$i++;
 		}
 	} else {

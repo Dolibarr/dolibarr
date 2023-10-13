@@ -126,6 +126,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->rollback();
 
+		// Restore value to a neutral value (it was set to a test value by some tests)
+		unset($_SERVER["PHP_SELF"]);
+
 		print __METHOD__."\n";
 	}
 
@@ -340,6 +343,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="<a onpointerdown=alert(document.domain)>XSS</a>";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
+
+		$test='<a onscrollend=alert(1) style="display:block;overflow:auto;border:1px+dashed;width:500px;height:100px;"><br><br><br><br><br><span+id=x>test</span></a>';	// Add the char %F6 into the variable
+		$result=testSqlAndScriptInject($test, 0);
+		//print "test=".$test." result=".$result."\n";
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject mmm');
+
 
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
@@ -567,8 +576,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');	// With some PHP and libxml version, we got this when parsong invalid HTML
-		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');		// On other we got a HTML that has been cleaned
+		$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');					// With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
+		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
@@ -934,11 +943,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		$result=dol_eval('1==1', 1, 0);
-		print "result = ".$result."\n";
+		print "result1 = ".$result."\n";
 		$this->assertTrue($result);
 
 		$result=dol_eval('1==2', 1, 0);
-		print "result = ".$result."\n";
+		print "result2 = ".$result."\n";
 		$this->assertFalse($result);
 
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -946,44 +955,48 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
 		$result=dol_eval($s, 1, 1, '2');
-		print "result = ".$result."\n";
+		print "result3 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
-		$result=dol_eval($s, 1, 1, '2');
-		print "result = ".$result."\n";
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result4 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1, '');
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '0');
+		print "result5 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a=exec("ls");', 1, 1);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '1');
+		print "result6 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a=exec ("ls")', 1, 1);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval('$a=exec("ls");', 1, 1);
+		print "result7 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('$a="test"; $$a;', 1, 0);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval('$a=exec ("ls")', 1, 1);
+		print "result8 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval('`ls`', 1, 0);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
+		print "result9 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval("('ex'.'ec')('echo abc')", 1, 0);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval('`ls`', 1, 0);
+		print "result10 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$result = (string) dol_eval("('ex'.'ec')('echo abc')", 1, 0);
+		print "result11 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+
+		$result = (string) dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
+		print "result12 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
 		$result=dol_eval("90402.38+267678+0", 1, 1, 1);
-		print "result = ".$result."\n";
+		print "result13 = ".$result."\n";
 		$this->assertEquals('358080.38', $result);
 
 		global $leftmenu;	// Used into strings to eval
@@ -993,22 +1006,40 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
-		// Same with syntax error
+		// Same with a value that does not match
 		$leftmenu = 'XXX';
 		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
-		print "result = ".$result."\n";
+		print "result14 = ".$result."\n";
 		$this->assertFalse($result);
 
+		$leftmenu = 'AAA';
+		$result=dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		print "result15 = ".$result."\n";
+		$this->assertTrue($result);
 
-		// Case with param onlysimplestring = 1
+		$leftmenu = 'XXX';
+		$result=dol_eval('$conf->currency && isStringVarMatching(\'leftmenu\', \'(AAA|BBB)\')', 1, 1, '1');
+		print "result16 = ".$result."\n";
+		$this->assertFalse($result);
+
+		$string = '(isModEnabled("agenda") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
+		$result=dol_eval($string, 1, 1, '1');
+		print "result17 = ".$result."\n";
+		$this->assertTrue($result);
 
 		$result=dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
-		print "result = ".$result."\n";
+		print "result18 = ".$result."\n";
 		$this->assertFalse($result);
 
-		$result=dol_eval("(\$a.'aa')", 1, 0);
-		print "result = ".$result."\n";
-		$this->assertContains('Bad string syntax to evaluate', $result);
+		$a='ab';
+		$result = (string) dol_eval("(\$a.'s')", 1, 0);
+		print "result19 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+
+		$leftmenu='abs';
+		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
+		print "result20 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 	}
 
 
