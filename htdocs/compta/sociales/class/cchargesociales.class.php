@@ -34,6 +34,10 @@
  */
 class Cchargesociales
 {
+	public $db;
+
+	public $id;
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -70,6 +74,10 @@ class Cchargesociales
 	public $module;
 	public $accountancy_code;
 
+	/**
+	 * @var array array of errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -501,6 +509,7 @@ class Cchargesociales
 				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+		return "";
 	}
 
 

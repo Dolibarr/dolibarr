@@ -69,48 +69,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe object that emits
-	 */
-	public $emetteur;
-
-
 
 	/**
 	 *	Constructor
@@ -649,12 +607,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf            Object PDF
-	 *	@param  Object		$object         Object invoice
-	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
+	 *	@param	TCPDF				$pdf            Object PDF
+	 *	@param  FactureFournisseur	$object         Object invoice
+	 *	@param  int					$deja_regle     Amount already paid (in the currency of invoice)
+	 *	@param	int					$posy			Position depart
+	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@return int									Position of cursor after output
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -728,7 +686,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva, 0, $outputlangs), 0, 'R', 1);
 
 			// Total LocalTax1
-			if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION == 'localtax1on' && $object->total_localtax1 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on' && $object->total_localtax1 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code), 0, 'L', 1);
@@ -737,7 +695,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 
 			// Total LocalTax2
-			if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION == 'localtax2on' && $object->total_localtax2 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on' && $object->total_localtax2 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code), 0, 'L', 1);
@@ -1057,6 +1015,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

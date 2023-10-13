@@ -1289,7 +1289,7 @@ if ($num == 0) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

@@ -103,6 +103,10 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	public $mode_reglement_id;
+	public $mode_reglement_code;
+	public $mode_reglement;
+
 	/**
 	 * @var int ID
 	 */
@@ -119,6 +123,7 @@ class ChargeSociales extends CommonObject
 	public $total;
 
 	public $totalpaid;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -428,7 +433,7 @@ class ChargeSociales extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Tag social contribution as paid completely
+	 *  Tag social contribution as paid completely
 	 *
 	 *	@deprecated
 	 *  @see setPaid()
@@ -593,7 +598,7 @@ class ChargeSociales extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -730,8 +735,10 @@ class ChargeSociales extends CommonObject
 			}
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -782,6 +789,9 @@ class ChargeSociales extends CommonObject
 		if (property_exists($this, 'label')) {
 			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
+		if (!empty($arraydata['project']) && $arraydata['project']->id > 0) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
+		}
 		if (property_exists($this, 'date_ech')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
 		}
@@ -790,7 +800,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

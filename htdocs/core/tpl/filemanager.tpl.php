@@ -208,7 +208,7 @@ if ($action == 'confirmconvertimgwebp') {
 	$param = '';
 	if (!empty($sortfield)) $param .= '&sortfield='.urlencode($sortfield);
 	if (!empty($sortorder)) $param .= '&sortorder='.urlencode($sortorder);
-	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp'), 'convertimgwebp', $formquestion, "yes", 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 

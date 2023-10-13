@@ -55,7 +55,7 @@ class FormCompany extends Form
 
 		$effs = array();
 
-		$sql = "SELECT id, code, libelle";
+		$sql = "SELECT id, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_typent";
 		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = " . (empty($mysoc->country_id) ? '0' : $mysoc->country_id) . ")";
 		if ($filter) {
@@ -78,7 +78,7 @@ class FormCompany extends Form
 				if ($langs->trans($objp->code) != $objp->code) {
 					$effs[$key] = $langs->trans($objp->code);
 				} else {
-					$effs[$key] = $objp->libelle;
+					$effs[$key] = $objp->label;
 				}
 				if ($effs[$key] == '-') {
 					$effs[$key] = '';
@@ -104,7 +104,7 @@ class FormCompany extends Form
 		// phpcs:enable
 		$effs = array();
 
-		$sql = "SELECT id, code, libelle";
+		$sql = "SELECT id, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_effectif";
 		$sql .= " WHERE active = 1";
 		if ($filter) {
@@ -125,7 +125,7 @@ class FormCompany extends Form
 					$key = $objp->code;
 				}
 
-				$effs[$key] = $objp->libelle != '-' ? $objp->libelle : '';
+				$effs[$key] = $objp->label != '-' ? $objp->label : '';
 				$i++;
 			}
 			$this->db->free($resql);
@@ -329,15 +329,15 @@ class FormCompany extends Form
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 						if (
 							!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
-							($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
+							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
 						) {
-							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
 								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							} else {
 								$out .= $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 						} else {
-							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
 								$out .= $obj->region_name . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							} else {
 								$out .= ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
@@ -368,6 +368,32 @@ class FormCompany extends Form
 		return $out;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *   Returns the drop-down list of departments/provinces/cantons for all countries or for a given country.
+	 *   In the case of an all-country list, the display breaks on the country.
+	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
+	 *   Thus the links with the departments are done on a department independently of its name.
+	 *
+	 *    @param	string		$parent_field_id        Parent select name to monitor
+	 *    @param	integer		$selected        	Code state preselected (mus be state id)
+	 *    @param    integer		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
+	 *    @param	string		$morecss			Add more css
+	 * 	  @return	string						String with HTML select
+	 *    @see select_country()
+	 */
+	public function select_state_ajax($parent_field_id = 'country_id', $selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
+	{
+		$html = '<script>';
+		$html.='$("select[name=\"'.$parent_field_id.'\"]").change(function(){
+				$.ajax( "'.dol_buildpath('/core/ajax/ziptown.php', 2).'", { data:{ selected: $("select[name=\"'.$htmlname.'\"]").val(), country_codeid: $(this).val(), htmlname:"'.$htmlname.'", morecss:"'.$morecss.'" } } )
+				.done(function(msg) {
+					$("span#target_'.$htmlname.'").html(msg);
+				})
+			});';
+		return $html.'</script><span id="target_'.$htmlname.'">'.$this->select_state($selected, $country_codeid, $htmlname, $morecss).'</span>';
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -753,14 +779,14 @@ class FormCompany extends Form
 							if ($disabled) {
 								print ' disabled';
 							}
-							print ' selected>' . dol_trunc($obj->name, 24) . '</option>';
+							print ' selected>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
 							$firstCompany = $obj->rowid;
 						} else {
 							print '<option value="' . $obj->rowid . '"';
 							if ($disabled) {
 								print ' disabled';
 							}
-							print '>' . dol_trunc($obj->name, 24) . '</option>';
+							print '>' . dol_escape_htmltag($obj->name, 0, 0, '', 0, 1) . '</option>';
 						}
 						$i++;
 					}

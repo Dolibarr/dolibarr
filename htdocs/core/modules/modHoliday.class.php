@@ -23,7 +23,8 @@
 
 /**
  * 	  \defgroup   holiday 	Module holiday
- *    \brief      Module de gestion des congés
+ *    \brief      Module for leave/vacation management
+ *
  *    \file       htdocs/core/modules/modHoliday.class.php
  *    \ingroup    holiday
  *    \brief      Description and activation file for the module holiday
