@@ -787,26 +787,30 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 
 
 /**
- * Delete property and permissions from documentation if we delete object
+ * Delete property and permissions from documentation ascii file if we delete an object
+ *
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
  * @return void
  */
 function deletePropsAndPermsFromDoc($file, $objectname)
 {
+	if (dol_is_file($file)) {
+		$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+		$end = "__ end table for object ".ucfirst($objectname);
 
-	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
-	$end = "__ end table for object ".ucfirst($objectname);
-	$str = file_get_contents($file);
-	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
-	$new_contents = preg_replace($search, '', $str);
-	file_put_contents($file, $new_contents);
+		$str = file_get_contents($file);
 
-	//perms If Exist
-	$perms = "|*".strtolower($objectname)."*|";
-	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
-	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
-	file_put_contents($file, $new_contents);
+		$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+		$new_contents = preg_replace($search, '', $str);
+		file_put_contents($file, $new_contents);
+
+		//perms If Exist
+		$perms = "|*".strtolower($objectname)."*|";
+		$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
+		$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
+		file_put_contents($file, $new_contents);
+	}
 }
 
 
@@ -1090,13 +1094,15 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 		//prepare each menu and stock them in string
 		$str_menu = "";
-		foreach ($menus as $index =>$menu) {
+		foreach ($menus as $index => $menu) {
 			$menu['position'] = "1000 + \$r";
 			if ($menu['type'] === 'left') {
 				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
 				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+
 				$val_actuel = $menu;
-				$next_val = $menus[$index + 1];
+				$next_val = empty($menus[$index + 1]) ? null : $menus[$index + 1];
+
 				$str_menu .= $start."\n";
 				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
 				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
@@ -1113,7 +1119,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
 				$str_menu.= "\t\t);\n";
 
-				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {
 					$str_menu .= $end."\n";
 				}
 			}

@@ -282,7 +282,7 @@ class FormWebsite
 				}
 				if ($website->fk_default_home && $key == $website->fk_default_home) {
 					//$valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
-					$valueforoption .= ' <span class="opacitymedium fa fa-home"></span>';
+					$valueforoption .= ' <span class="opacitymedium fas fa-home"></span>';
 				}
 
 				$out .= '<option value="'.$key.'"';

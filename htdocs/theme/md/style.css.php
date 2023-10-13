@@ -192,7 +192,7 @@ $butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 $textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE1) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE2) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE2) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
-$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '300%' : '155%') : (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '300%' : '155%');
+$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%') : (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%');
 
 // Hover color
 $colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_HOVER));
@@ -2981,36 +2981,44 @@ div.mainmenu.menu {
 		}
 		//print "XXX".$val;
 
-		// Search img file in module dir
 		$found = 0; $url = '';
-		foreach ($conf->file->dol_document_root as $dirroot) {
-			if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-				$found = 1;
-				break;
+		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+		$iconformodule = getDolGlobalString($constformoduleicon);
+		if ($iconformodule) {
+			if (preg_match('/^fa\-/', $iconformodule)) {
+				// This is a fa icon
+			} else {
+				$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+			}
+			$found = 1;
+		} else {
+			// Search img file in module dir
+			foreach ($conf->file->dol_document_root as $dirroot) {
+				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+					$found = 1;
+					break;
+				}
 			}
 		}
-		// Img file not found
+
+		// Output entry for menu icon in CSS
 		if (!$found) {
-			if (!defined('DISABLE_FONT_AWSOME')) {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-				print 'div.mainmenu.'.$val.'::before {
-	                    content: "\f249";
-	                }'."\n";
-			} else {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-				print "div.mainmenu.".$val." {\n";
-				print "	background-image: url(".$url.");\n";
-				print "}\n";
-			}
+			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+			print 'div.mainmenu.'.$val.' span::before {'."\n";
+			print 'content: "\f249";'."\n";
+			print '}'."\n";
 			$generic++;
 		} else {
-			print "div.mainmenu.".$val." {\n";
-			print "	background-image: url(".$url.");\n";
-			print " filter: saturate(0);\n";
-			print "}\n";
+			if ($url) {
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print " background-position-y: 3px;\n";
+				print " filter: saturate(0);\n";
+				print "}\n";
+			} else {
+				print '/* icon for module '.$val.' is a fa icon */'."\n";
+			}
 		}
 	}
 	// End of part to add more div class css
