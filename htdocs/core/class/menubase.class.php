@@ -730,7 +730,7 @@ class Menubase
 						}
 					}
 					$tabMenu[$b]['titre']       = $title;
-					$tabMenu[$b]['prefix'] = $menu['prefix'];
+					$tabMenu[$b]['prefix']      = $menu['prefix'];
 					$tabMenu[$b]['target']      = $menu['target'];
 					$tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
 					$tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
