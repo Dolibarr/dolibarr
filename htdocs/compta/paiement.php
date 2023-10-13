@@ -703,7 +703,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					// Multicurrency Price
 					if (isModEnabled('multicurrency')) {
-
 						// Multicurrency VAT free amount
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
