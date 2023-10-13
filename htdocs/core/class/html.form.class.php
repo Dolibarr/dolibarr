@@ -1376,7 +1376,7 @@ class Form
 	 * @param string 	$selected 		Preselected type
 	 * @param string 	$htmlname 		Name of field in form
 	 * @param string 	$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
-	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:(1,3))'
+	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 									Do not use a filter coming from input of users.
 	 * @param string 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 		Show third party type in combolist (customer, prospect or supplier)
@@ -2009,7 +2009,7 @@ class Form
 	 * @return array|string                    HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = 0, $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2056,18 +2056,16 @@ class Form
 		$sql .= " FROM " . $this->db->prefix() . "user as u";
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid = u.entity";
-			if ($force_entity) {
+			if (!empty($force_entity)) {
 				$sql .= " WHERE u.entity IN (0, " . $this->db->sanitize($force_entity) . ")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
 		} else {
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " LEFT JOIN " . $this->db->prefix() . "usergroup_user as ug";
-				$sql .= " ON ug.fk_user = u.rowid";
-				$sql .= " WHERE ug.entity = " . (int) $conf->entity;
+			if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
+				$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 			} else {
-				$sql .= " WHERE u.entity IN (0, " . ((int) $conf->entity) . ")";
+				$sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
 			}
 		}
 		if (!empty($user->socid)) {
@@ -2173,8 +2171,8 @@ class Form
 							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . $langs->trans('Disabled');
 						}
 					}
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
-						if (!$obj->entity) {
+					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity)) {
+						if (empty($obj->entity)) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (') . $langs->trans("AllEntities");
 							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(') . $langs->trans("AllEntities");
 						} else {
@@ -2184,9 +2182,9 @@ class Form
 							}
 						}
 					}
-					$moreinfo .= ($moreinfo ? ')' : '');
-					$moreinfohtml .= ($moreinfohtml ? ')</span>' : '');
-					if ($disableline && $disableline != '1') {
+					$moreinfo .= (!empty($moreinfo) ? ')' : '');
+					$moreinfohtml .= (!empty($moreinfohtml) ? ')</span>' : '');
+					if (!empty($disableline) && $disableline != '1') {
 						// Add text from $enableonlytext parameter
 						$moreinfo .= ' - ' . $disableline;
 						$moreinfohtml .= ' - ' . $disableline;
@@ -2195,7 +2193,7 @@ class Form
 					$labeltoshowhtml .= $moreinfohtml;
 
 					$out .= '<option value="' . $obj->rowid . '"';
-					if ($disableline) {
+					if (!empty($disableline)) {
 						$out .= ' disabled';
 					}
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
@@ -2353,28 +2351,28 @@ class Form
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param int $selected Preselected products
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param int|string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $price_level Level of price to show
-	 * @param int $status Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int $finished 2=all, 1=finished, 0=raw material
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param int $hidepriceinlabel 1=Hide prices in label
-	 * @param string $warehouseStatus Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
-	 *                                'warehouseopen' = count products from open warehouses,
-	 *                                'warehouseclosed' = count products from closed warehouses,
-	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param string $nooutput No print, return the output into a string
-	 * @param int $status_purchase Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
+	 * @param int 			$selected 				Preselected products
+	 * @param string 		$htmlname 				Name of HTML select field (must be unique in page).
+	 * @param int|string 	$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param int 			$limit 					Limit on number of returned lines
+	 * @param int 			$price_level 			Level of price to show
+	 * @param int 			$status 				Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
+	 * @param int 			$finished 				2=all, 1=finished, 0=raw material
+	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param int 			$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param array 		$ajaxoptions 			Options for ajax_autocompleter
+	 * @param int 			$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param int 			$forcecombo 			Force to use combo box
+	 * @param string 		$morecss 				Add more css on select
+	 * @param int 			$hidepriceinlabel 		1=Hide prices in label
+	 * @param string 		$warehouseStatus 		Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
+	 *                                				'warehouseopen' = count products from open warehouses,
+	 *                                				'warehouseclosed' = count products from closed warehouses,
+	 *                               				'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 * @param array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param string 		$nooutput 				No print, return the output into a string
+	 * @param int 			$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 * @return        void|string
 	 */
 	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
@@ -2831,7 +2829,7 @@ class Form
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			$sql .= " ORDER BY categorie_product_id ";
 			//ASC OR DESC order
-			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .= "ASC" : $sql .= "DESC";
+			(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1) ? $sql .= "ASC" : $sql .= "DESC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -3307,16 +3305,16 @@ class Form
 	/**
 	 *    Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
-	 * @param int $socid Id third party
-	 * @param string $selected Preselected product
-	 * @param string $htmlname Name of HTML Select
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string $filtre For a SQL filter
-	 * @param array $ajaxoptions Options for ajax_autocompleter
-	 * @param int $hidelabel Hide label (0=no, 1=yes)
-	 * @param int $alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string $morecss More CSS
-	 * @param string $placeholder Placeholder
+	 * @param int 		$socid 			Id third party
+	 * @param string 	$selected 		Preselected product
+	 * @param string 	$htmlname 		Name of HTML Select
+	 * @param string 	$filtertype 	Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param string 	$filtre 		For a SQL filter
+	 * @param array 	$ajaxoptions 	Options for ajax_autocompleter
+	 * @param int 		$hidelabel 		Hide label (0=no, 1=yes)
+	 * @param int 		$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param string 	$morecss 		More CSS
+	 * @param string 	$placeholder 	Placeholder
 	 * @return    void
 	 */
 	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '')
@@ -5015,21 +5013,21 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of categories having choosed type
+	 * Return list of categories having choosed type
 	 *
-	 * @param string|int 		$type 		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param string 			$selected 	Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
-	 * @param string 			$htmlname 	HTML field name
-	 * @param int 				$maxlength 	Maximum length for labels
-	 * @param int|string|array 	$markafterid Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
-	 *                                       $markafterid can be an :
-	 *                                       - int (id of category)
-	 *                                       - string (categories ids seprated by comma)
-	 *                                       - array (list of categories ids)
-	 * @param int 				$outputmode 0=HTML select string, 1=Array, 2=Array extended
-	 * @param int 				$include 	[=0] Removed or 1=Keep only
-	 * @param string 			$morecss 	More CSS
-	 * @return    string|array
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param 	string 				$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
+	 * @param 	string 				$htmlname 		HTML field name
+	 * @param 	int 				$maxlength 		Maximum length for labels
+	 * @param 	int|string|array	$markafterid 	Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+	 *                             	    	     	$markafterid can be an :
+	 *                                 	    	 	- int (id of category)
+	 *                                 		 		- string (categories ids seprated by comma)
+	 * 	                                  	 		- array (list of categories ids)
+	 * @param 	int 				$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
+	 * @param 	int 				$include 		[=0] Removed or 1=Keep only
+	 * @param 	string 				$morecss 		More CSS
+	 * @return  string|array						String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -5073,6 +5071,7 @@ class Form
 		}
 
 		$outarray = array();
+		$outarrayrichhtml = array();
 
 		$output = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 		if (is_array($cate_arbo)) {
@@ -5086,13 +5085,19 @@ class Form
 					} else {
 						$add = '';
 					}
+
+					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"');
+					$labeltoshow .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+
+					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
+
+					$outarrayrichhtml[$cate_arbo[$key]['id']] = $labeltoshow;
+
 					$output .= '<option ' . $add . 'value="' . $cate_arbo[$key]['id'] . '"';
-					$output .= ' data-html="' . dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"') . dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle')) . '"';
+					$output .= ' data-html="' . dol_escape_htmltag($labeltoshow) . '"';
 					$output .= '>';
 					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
 					$output .= '</option>';
-
-					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
 				}
 			}
 		}
@@ -5101,8 +5106,10 @@ class Form
 
 		if ($outputmode == 2) {
 			return $cate_arbo;
-		} elseif ($outputmode) {
+		} elseif ($outputmode == 1) {
 			return $outarray;
+		} elseif ($outputmode == 3) {
+			return $outarrayrichhtml;
 		}
 		return $output;
 	}
@@ -5539,7 +5546,7 @@ class Form
 				$formconfirm .= '
 				$(document).ready(function () {
 					$(".confirmvalidatebutton").on("click", function() {
-						console.log("We click on button");
+						console.log("We click on button confirmvalidatebutton");
 						$(this).attr("disabled", "disabled");
 						setTimeout(\'$(".confirmvalidatebutton").removeAttr("disabled")\', 3000);
 						//console.log($(this).closest("form"));
@@ -6765,7 +6772,7 @@ class Form
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
 		if (!empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
-			$usecalendar = ((empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
+			$usecalendar = ((empty($conf->global->MAIN_POPUP_CALENDAR) || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
 		}
 
 		if ($d) {
@@ -9491,7 +9498,7 @@ class Form
 		}
 
 		// Status
-		$parameters = array();
+		$parameters = array('morehtmlstatus' => $morehtmlstatus);
 		$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$morehtmlstatus .= $hookmanager->resPrint;
@@ -9828,8 +9835,6 @@ class Form
 				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}
-		} else {
-			dol_print_error('', 'Call of showphoto with wrong parameters modulepart=' . $modulepart);
 		}
 
 		return $ret;
@@ -9931,7 +9936,7 @@ class Form
 					$out .= '>';
 
 					$out .= $obj->name;
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+					if (isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 						$out .= " (" . $obj->label . ")";
 					}
 
@@ -9965,11 +9970,11 @@ class Form
 	{
 		$out = '<div class="nowraponall">';
 		if ($pos == 'left') {
-			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
 		} else {
-			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
 		}
 		$out .= '</div>';
 

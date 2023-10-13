@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 
 
 /**
- *       \class 		mod_codeproduct_elephant
- *       \brief 		Class to manage product code with elephant rule
+ *  Class to manage product code with elephant rule
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {

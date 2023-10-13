@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,7 @@ if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKG
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	$logofile = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
+	$logofile = $conf->mycompany->dir_output.'/logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND');
 	dol_delete_file($logofile);
 	dolibarr_del_const($db, "MAIN_LOGIN_BACKGROUND", $conf->entity);
 	$mysoc->logo = '';
@@ -244,9 +244,12 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
-		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOST("MAIN_CHECKBOX_LEFT_COLUMN", 'int'), 'chaine', 0, '', $conf->entity);
+
+		if (GETPOSTISSET("MAIN_CHECKBOX_LEFT_COLUMN")) {
+			dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOST("MAIN_CHECKBOX_LEFT_COLUMN", 'int'), 'chaine', 0, '', $conf->entity);
+		}
 
 		//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -415,11 +418,11 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Max size of lists
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat" name="MAIN_SIZE_LISTE_LIMIT" size="4" value="' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') . '"></td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT') . '"></td>';
 	print '</tr>';
 
 	// Max size of lists
@@ -678,9 +681,9 @@ if ($mode == 'login') {
 	}
 	if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'&mode=login">' . img_delete($langs->trans("Delete")) . '</a>';
-		if (file_exists($conf->mycompany->dir_output . '/logos/' . $conf->global->MAIN_LOGIN_BACKGROUND)) {
+		if (file_exists($conf->mycompany->dir_output . '/logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND'))) {
 			print ' &nbsp; ';
-			print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . $conf->global->MAIN_LOGIN_BACKGROUND) . '">';
+			print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND')) . '">';
 		}
 	} else {
 		print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/public/theme/common/nophoto.png">';

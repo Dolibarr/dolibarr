@@ -722,6 +722,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// We check if invoice has payments
+			$totalpaid = 0;
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
@@ -1657,7 +1658,7 @@ if (empty($reshook)) {
 									}
 
 									$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
-									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->label);
+									$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 									if ($object->situation_counter == 1) {
 										$lines[$i]->situation_percent = 0;
 									}
@@ -1943,6 +1944,8 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 				$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
 				$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+				$object->fk_account = GETPOST('fk_account', 'int');
+
 
 				// Proprietes particulieres a facture de remplacement
 
@@ -2886,7 +2889,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -3165,6 +3168,7 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" id="formtocreateaction" value="add">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	if ($soc->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
@@ -3234,6 +3238,7 @@ if ($action == 'create') {
 
    					// For company change, we must submit page with action=create instead of action=add
 					console.log("We have changed the company - Resubmit page");
+					jQuery("input[name=changecompany]").val("1");
 					jQuery("#formtocreateaction").val("create");
 					jQuery("#formtocreate").submit();
 				});
@@ -3827,7 +3832,7 @@ if ($action == 'create') {
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
 		print img_picto('', 'currency', 'class="pictofixedwidth"');
-		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code');
 		print '</td></tr>';
 	}
 
@@ -5475,7 +5480,7 @@ if ($action == 'create') {
 	}
 
 	// Form to add new line
-	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline') {
+	if ($object->statut == 0 && $usercancreate && $action != 'valid') {
 		if ($action != 'editline' && $action != 'selectlines') {
 			// Add free products/services
 
@@ -5484,6 +5489,9 @@ if ($action == 'create') {
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			if (empty($reshook))
 				$object->formAddObjectLine(1, $mysoc, $soc);
+		} else {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 	}
 

@@ -108,7 +108,7 @@ class Dolistore
 			} elseif ($trace[0]['args'][0] == 401) {
 				die('Bad auth key');
 			} else {
-				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print 'Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV').'<br>';
 				print $e->getMessage();
 			}
 		}
@@ -147,7 +147,7 @@ class Dolistore
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
+				$opt2['url'] = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV') . '/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
 
 				// Call
 				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
@@ -191,7 +191,7 @@ class Dolistore
 			} elseif ($trace[0]['args'][0] == 401) {
 				die('Bad auth key');
 			} else {
-				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print 'Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV').'<br>';
 				print $e->getMessage();
 			}
 		}

@@ -699,7 +699,7 @@ if (empty($reshook) && $action == 'update') {
 		$object->fetch($id);
 		$object->fetch_optionals();
 		$object->fetch_userassigned();
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Clean parameters
 		if ($fulldayevent) {
@@ -968,10 +968,10 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 
 	if ($user->hasRight('agenda', 'myactions', 'delete')
-		|| $user->rights->agenda->allactions->delete) {
+		|| $user->hasRight('agenda', 'allactions', 'delete')) {
 		$result = $object->delete();
 
 		if ($result >= 0) {
@@ -2030,7 +2030,7 @@ if ($id > 0) {
 		// Reminders
 		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 			$filteruserid = $user->id;
-			if ($user->rights->agenda->allactions->read) {
+			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
 			}
 			$object->loadReminders('', $filteruserid, false);
@@ -2424,7 +2424,7 @@ if ($id > 0) {
 		// Reminders
 		if (!empty($conf->global->AGENDA_REMINDER_EMAIL) || !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 			$filteruserid = $user->id;
-			if ($user->rights->agenda->allactions->read) {
+			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
 			}
 			$object->loadReminders('', $filteruserid, false);
@@ -2490,7 +2490,7 @@ if ($id > 0) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
-			if ($user->rights->agenda->allactions->delete ||
+			if ($user->hasRight('agenda', 'allactions', 'delete') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'delete'))) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			} else {

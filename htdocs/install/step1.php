@@ -335,12 +335,16 @@ if (!$error && $db->connected) {
 
 		$defaultCharacterSet = $db->forcecharset;
 		$defaultDBSortingCollation = $db->forcecollate;
-	} else // If already created, we take current value
-	{
+	} else { // If already created, we take current value
 		$defaultCharacterSet = $db->getDefaultCharacterSetDatabase();
 		$defaultDBSortingCollation = $db->getDefaultCollationDatabase();
 	}
 
+	// It seems some PHP driver mysqli does not support utf8mb3
+	if ($defaultCharacterSet == 'utf8mb3' || $defaultDBSortingCollation == 'utf8mb3_unicode_ci') {
+		$defaultCharacterSet = 'utf8';
+		$defaultDBSortingCollation = 'utf8_unicode_ci';
+	}
 	// Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
 	// TODO Remove this when utf8mb4 is supported
 	if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci') {
@@ -578,14 +582,14 @@ if (!$error && $db->connected && $action == "set") {
 							print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 						} else {
 							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
-							|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
-							|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
-								dolibarr_install_syslog("step1: user already exists");
-								print '<tr><td>';
-								print $langs->trans("UserCreation").' : ';
-								print $dolibarr_main_db_user;
-								print '</td>';
-								print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+								|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+								|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
+									dolibarr_install_syslog("step1: user already exists");
+									print '<tr><td>';
+									print $langs->trans("UserCreation").' : ';
+									print $dolibarr_main_db_user;
+									print '</td>';
+									print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
 							} else {
 								dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
 								print '<tr><td>';
@@ -920,7 +924,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan, clamscan.exe\';');
+		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');

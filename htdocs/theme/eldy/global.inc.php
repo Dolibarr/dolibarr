@@ -59,6 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--heightrow: <?php print $heightrow; ?>;
 }
 
 <?php
@@ -425,8 +426,11 @@ a.butStatus {
 	margin: 0 0.45em !important;
 }
 
-span.userimg.notfirst {
+span.userimg.notfirst, div.userimg.notfirst {
 	margin-left: -5px;
+}
+div.userimg.notfirst {
+	display: block-inline;
 }
 
 /* Used by timesheets */
@@ -1195,7 +1199,7 @@ div.divsearchfield {
 	content: "\f080";
 }
 .a-filter:before, .a-mesure:before {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 600;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -1529,7 +1533,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	min-height: 0.01%;
 }
 .div-table-responsive {
-	line-height: 120%;
+	line-height: var(--heightrow);
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -1732,11 +1736,11 @@ maxscreenheightless200 {
 	.minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -3147,6 +3151,13 @@ img.userphoto {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 }
+span.userimg div.userphoto {
+	background-color: #eee;
+	border-radius: 0.72em;
+	width: 1.4em;
+	height: 1.4em;
+	padding-top: 1px;
+}
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;
 	width: 1.2em;
@@ -3460,7 +3471,7 @@ div.tabsElem {
 /*
 div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 	content: "\f0da";
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	padding-right: 2px;
 	font-weight: 900;
 }
@@ -5121,7 +5132,7 @@ table.valid {
 }
 
 div.ui-tooltip {
-	max-width: <?php print dol_size(600, 'width'); ?>px !important;
+	max-width: <?php print dol_size(700, 'width'); ?>px !important;
 }
 div.ui-tooltip.mytooltip {
 	border: none !important;
@@ -7516,7 +7527,7 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	font-weight: 600 !important;
 }
 .phpdebugbar-fa-tags, .phpdebugbar-fa-tasks, .phpdebugbar-indicator .fa {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 600;
 }
 div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
@@ -7534,7 +7545,7 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
-	font-family: "Font Awesome 5 Free" !important;
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>" !important;
 }
 
 /* ============================================================================== */
@@ -8089,7 +8100,5 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+
 }
-
-
-

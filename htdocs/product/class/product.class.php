@@ -15,6 +15,7 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -558,7 +559,7 @@ class Product extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
-		'mandatory_period' => array('type'=>'integer', 'label'=>'mandatory_period', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
+		'mandatory_period' => array('type'=>'integer', 'label'=>'mandatoryperiod', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
 	);
 
 	/**
@@ -569,14 +570,6 @@ class Product extends CommonObject
 	 * Service
 	 */
 	const TYPE_SERVICE = 1;
-	/**
-	 * Advanced feature: assembly kit
-	 */
-	const TYPE_ASSEMBLYKIT = 2;
-	/**
-	 * Advanced feature: stock kit
-	 */
-	const TYPE_STOCKKIT = 3;
 
 
 	/**
@@ -4262,10 +4255,13 @@ class Product extends CommonObject
 	 * @param  int $id_fils Id of child product/service
 	 * @param  int $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
+	 * @param  int $notrigger	Disable triggers
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
@@ -4304,6 +4300,17 @@ class Product extends CommonObject
 					dol_print_error($this->db);
 					return -1;
 				} else {
+					if (!$notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('PRODUCT_SUBPRODUCT_ADD', $user);
+						if ($result < 0) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::addSubproduct error='.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+						// End call triggers
+
 					return 1;
 				}
 			} else {
@@ -4321,10 +4328,13 @@ class Product extends CommonObject
 	 * @param  int $id_fils Id of child product/service
 	 * @param  int $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
+	 * @param  int $notrigger	Disable triggers
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
@@ -4349,6 +4359,17 @@ class Product extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('PRODUCT_SUBPRODUCT_UPDATE', $user);
+				if ($result < 0) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(get_class($this).'::updateSubproduct error='.$this->error, LOG_ERR);
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		}
 	}
@@ -4359,10 +4380,13 @@ class Product extends CommonObject
 	 *
 	 * @param  int $fk_parent Id of parent product (child will no more be linked to it)
 	 * @param  int $fk_child  Id of child product
+	 * @param  int $notrigger	Disable triggers
 	 * @return int            < 0 if KO, > 0 if OK
 	 */
-	public function del_sousproduit($fk_parent, $fk_child)
+	public function del_sousproduit($fk_parent, $fk_child, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		if (!is_numeric($fk_parent)) {
 			$fk_parent = 0;
@@ -4399,6 +4423,18 @@ class Product extends CommonObject
 				}
 			}
 		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_SUBPRODUCT_DELETE', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delSubproduct error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
+		}
+
 		return 1;
 	}
 
@@ -5080,6 +5116,9 @@ class Product extends CommonObject
 		if (!empty($this->label)) {
 			$datas['label']= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
 		}
+		if (!empty($this->description)) {
+			$datas['description']= '<br><b>'.$langs->trans('ProductDescription').':</b> '.dolGetFirstLineofText($this->description, 5);
+		}
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
@@ -5240,7 +5279,7 @@ class Product extends CommonObject
 				$result .= (img_object(($notooltip ? '' : $label), 'service', 'class="paddingright"', 0, 0, $notooltip ? 0 : 1));
 			}
 		}
-		$result .= dol_escape_htmltag($newref);
+		$result .= '<span class="aaa">'.dol_escape_htmltag($newref).'</span>';
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
@@ -6267,7 +6306,8 @@ class Product extends CommonObject
 			1 => $baseprice
 		);
 
-		for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+		$nbofproducts = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+		for ($i = 1; $i <= $nbofproducts; $i++) {
 			$price = $baseprice;
 			$price_min = $baseprice;
 

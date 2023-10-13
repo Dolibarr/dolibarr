@@ -51,6 +51,12 @@ class PaymentTerm // extends CommonObject
 	 */
 	public $id;
 
+
+	/**
+	 * @var int Entity ID
+	 */
+	public $entity;
+
 	public $code;
 	public $sortorder;
 	public $active;
@@ -397,11 +403,6 @@ class PaymentTerm // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
-		$object->status = 0;
-
-		// Clear fields
-		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

@@ -279,6 +279,7 @@ if (empty($reshook)) {
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
 				$object->halfday = $halfday;
+				$object->entity = $conf->entity;
 
 				$result = $object->create($user);
 				if ($result <= 0) {
@@ -303,7 +304,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
 		$object->fetch($id);
 
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		$object->fk_validator = GETPOST('valideur', 'int');
 
@@ -462,7 +463,7 @@ if (empty($reshook)) {
 
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			$object->statut = Holiday::STATUS_VALIDATED;
 
@@ -570,7 +571,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -598,7 +599,7 @@ if (empty($reshook)) {
 
 		// If status is waiting approval and approver is also user
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			$object->date_approval = dol_now();
 			$object->fk_user_approve = $user->id;
@@ -657,7 +658,7 @@ if (empty($reshook)) {
 						$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 					}
 
-					$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
+					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
 
 					// Content
 					$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",</p>\n";

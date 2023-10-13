@@ -198,7 +198,7 @@ print '<td class="left">';
 if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) {
 	$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS = 0;
 }
-print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS.'" class="width50"></td>';
+print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="' . getDolGlobalString('PAYMENTBYBANKTRANSFER_ADDDAYS').'" class="width50"></td>';
 print '</td></tr>';
 print '</table>';
 

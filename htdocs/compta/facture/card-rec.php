@@ -70,6 +70,7 @@ $projectid = GETPOST('projectid', 'int');
 
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
+$selectedLines = GETPOST('toselect', 'array');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -242,7 +243,9 @@ if (empty($reshook)) {
 			$oldinvoice = new Facture($db);
 			$oldinvoice->fetch(GETPOST('facid', 'int'));
 
-			$result = $object->create($user, $oldinvoice->id);
+			$onlylines = GETPOST('toselect', 'array');
+
+			$result = $object->create($user, $oldinvoice->id, 0, $onlylines);
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
 				if ($result < 0) {
@@ -402,7 +405,7 @@ if (empty($reshook)) {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -1148,13 +1151,11 @@ if ($action == 'create') {
 		 * Invoice lines
 		 */
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
+
 		// Show object lines
 		if (!empty($object->lines)) {
-			$disableedit = 1;
-			$disablemove = 1;
-			$disableremove = 1;
-			$object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printOriginLinesList('', $selectedLines);
 		}
 
 		print "</table>\n";
@@ -1162,7 +1163,7 @@ if ($action == 'create') {
 
 		print '</td></tr>';
 
-		if ($flag_price_may_change) {
+		if (!empty($flag_price_may_change)) {
 			print '<tr><td colspan="3" class="left">';
 			print '<select name="usenewprice" class="flat">';
 			print '<option value="0">'.$langs->trans("AlwaysUseFixedPrice").'</option>';

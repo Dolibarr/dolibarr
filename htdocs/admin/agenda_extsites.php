@@ -235,7 +235,7 @@ print "</tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
 print '<td class="center">';
-print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="'.$conf->global->AGENDA_EXT_NB.'">';
+print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="' . getDolGlobalString('AGENDA_EXT_NB').'">';
 print "</td>";
 print "</tr>";
 
@@ -274,7 +274,6 @@ while ($i <= $MAXAGENDA) {
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ' . $key . '" value="' . (GETPOST('AGENDA_EXT_OFFSETTZ' . $key) ? GETPOST('AGENDA_EXT_OFFSETTZ' . $key) : getDolGlobalString($offsettz)) . '" size="2"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowrap right">';
-	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
 	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR" . $key) ? GETPOST("AGENDA_EXT_COLOR" . $key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR" . $key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';
 	// Calendar active by default
