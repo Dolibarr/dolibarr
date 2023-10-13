@@ -814,7 +814,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<!-- Add line to consume -->'."\n";
 			print '<tr class="liste_titre">';
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			// Allow to show only quantity from manufacturing warehouse
+			$warehouseStatus = '';
+			if ($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) {
+				if (!empty($tmpwarehouse)) {
+					$warehouseStatus = $tmpwarehouse->id;
+				}
+			}
+			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300', 0, $warehouseStatus);
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
@@ -1249,7 +1256,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			// Allow to show only quantity from manufacturing warehouse
+			$warehouseStatus = '';
+			if ($conf->global->STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE) {
+				if (!empty($tmpwarehouse)) {
+					$warehouseStatus = $tmpwarehouse->id;
+				}
+			}
+			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300', 0, $warehouseStatus);
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
