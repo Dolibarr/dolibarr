@@ -521,6 +521,11 @@ function Customer() {
 	$.colorbox({href:"../societe/list.php?type=t&contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
 }
 
+function Contact() {
+	console.log("Open box to select the contact place="+place);
+	$.colorbox({href:"../contact/list.php?type=c&contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Contact"); ?>"});
+}
+
 function History()
 {
 	console.log("Open box to select the history");
@@ -1253,7 +1258,11 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 }
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
-	$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+	if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) {
+		$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Contact").'</div>', 'action'=>'Contact();');
+	} else {
+		$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+	}
 }
 if ( ! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
