@@ -121,74 +121,75 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		if (count($object->fields)) {
 			foreach ($object->fields as $key => $val) {
 				$i++;
-				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
-				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				$texttoinsert .= "\t\t".'"'.$key.'" => array(';
+				$texttoinsert .= '"type"=>"'.dol_escape_php($val['type']).'",';
+				$texttoinsert .= ' "label"=>"'.dol_escape_php($val['label']).'",';
 				if (!empty($val['picto'])) {
-					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+					$texttoinsert .= ' "picto"=>"'.dol_escape_php($val['picto']).'",';
 				}
 				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
-				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
-				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
+				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? (int) $val['position'] : 50).",";
+				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 :(int) $val['notnull']).",";
 				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
+					$texttoinsert .= ' "noteditable"=>"'.dol_escape_php($val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= " 'alwayseditable'=>'".$val['alwayseditable']."',";
+					$texttoinsert .= ' "alwayseditable"=>"'.dol_escape_php($val['alwayseditable']).'",';
 				}
 				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
-					$texttoinsert .= " 'default'=>'".$val['default']."',";
+					$texttoinsert .= ' "default"=>"'.dol_escape_php($val['default']).'",';
 				}
 				if (!empty($val['index'])) {
-					$texttoinsert .= " 'index'=>".$val['index'].",";
+					$texttoinsert .= ' "index"=>"'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
+					$texttoinsert .= ' "foreignkey"=>"'.(int) $val['foreignkey'].'",';
 				}
 				if (!empty($val['searchall'])) {
-					$texttoinsert .= " 'searchall'=>".$val['searchall'].",";
+					$texttoinsert .= ' "searchall"=>"'.(int) $val['searchall'].'",';
 				}
 				if (!empty($val['isameasure'])) {
-					$texttoinsert .= " 'isameasure'=>'".$val['isameasure']."',";
+					$texttoinsert .= ' "isameasure"=>"'.(int) $val['isameasure'].'",';
 				}
 				if (!empty($val['css'])) {
-					$texttoinsert .= " 'css'=>'".$val['css']."',";
+					$texttoinsert .= ' "css"=>"'.dol_escape_php($val['css']).'",';
 				}
 				if (!empty($val['cssview'])) {
-					$texttoinsert .= " 'cssview'=>'".$val['cssview']."',";
+					$texttoinsert .= ' "cssview"=>"'.dol_escape_php($val['cssview']).'",';
 				}
 				if (!empty($val['csslist'])) {
-					$texttoinsert .= " 'csslist'=>'".$val['csslist']."',";
+					$texttoinsert .= ' "csslist"=>"'.dol_escape_php($val['csslist']).'",';
 				}
 				if (!empty($val['help'])) {
-					$texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
+					$texttoinsert .= ' "help"=>"'.dol_escape_php($val['help']).'",';
 				}
 				if (!empty($val['showoncombobox'])) {
-					$texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
+					$texttoinsert .= ' "showoncombobox"=>"'.(int) $val['showoncombobox'].'",';
 				}
 				if (!empty($val['disabled'])) {
-					$texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
+					$texttoinsert .= ' "disabled"=>"'.(int) $val['disabled'].'",';
 				}
 				if (!empty($val['autofocusoncreate'])) {
-					$texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
+					$texttoinsert .= ' "autofocusoncreate"=>"'.(int) $val['autofocusoncreate'].'",';
 				}
 				if (!empty($val['arrayofkeyval'])) {
-					$texttoinsert .= " 'arrayofkeyval'=>array(";
+					$texttoinsert .= ' "arrayofkeyval"=>array(';
 					$i = 0;
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						if ($i) {
 							$texttoinsert .= ", ";
 						}
-						$texttoinsert .= "'".$key2."'=>'".$val2."'";
+						$texttoinsert .= '"'.dol_escape_php($key2).'" => "'.dol_escape_php($val2).'"';
 						$i++;
 					}
-					$texttoinsert .= "),";
+					$texttoinsert .= '),';
 				}
 				if (!empty($val['validate'])) {
-					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
+					$texttoinsert .= ' "validate"=>"'.(int) $val['validate'].'",';
 				}
 				if (!empty($val['comment'])) {
-					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
+					$texttoinsert .= ' "comment"=>"'.dol_escape_php($val['comment']).'"';
 				}
 
 				$texttoinsert .= "),\n";

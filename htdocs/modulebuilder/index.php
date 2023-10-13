@@ -1718,7 +1718,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'name'=>GETPOST('propname', 'aZ09'),
 				'label'=>GETPOST('proplabel', 'alpha'),
 				'type'=>strtolower(GETPOST('proptype', 'alpha')),
-				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'alphawithlgt'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'alphanohtml'),
 				'enabled'=>GETPOST('propenabled', 'alphanohtml'),
 				'position'=>GETPOST('propposition', 'int'),
@@ -1736,14 +1736,21 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				//'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
 			);
+
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
+				$tmpdecode = json_decode($addfieldentry['arrayofkeyval'], true);
+				if ($tmpdecode) {	// If string is already a json
+					$addfieldentry['arrayofkeyval'] = $tmpdecode;
+				} else {			// If string is a list of lines with "key,value"
+					$tmparray = dolExplodeIntoArray($addfieldentry['arrayofkeyval'], "\n", ",");
+					$addfieldentry['arrayofkeyval'] = $tmparray;
+				}
 			}
 		}
 	} else {
 		$addfieldentry = array();
 	}
-	var_dump($addfieldentry);
+
 	/*if (GETPOST('regeneratemissing'))
 	{
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
@@ -3883,7 +3890,9 @@ if ($module == 'initmodule') {
 					} elseif ($key == 'propvisible') {
 						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "1").'"></td>';
 					} elseif ($key == 'propenabled') {
-						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "isModEnabled('".strtolower($module)."')").'"></td>';
+						//$default = "isModEnabled('".strtolower($module)."')";
+						$default = 1;
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $default).'"></td>';
 					} elseif ($key == 'proparrayofkeyval') {
 						print '<td class="titlefieldcreate tdproparrayofkeyval">'.$attribute.'</td><td class="valuefieldcreate"><textarea class="maxwidth200" name="'.$key.'">'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "").'</textarea></td>';
 					} else {
