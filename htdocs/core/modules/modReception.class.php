@@ -16,11 +16,12 @@
  */
 
 /**
- *	\defgroup   reception     Module reception
- *	\brief      Module pour gerer les réceptions de produits
- *	\file       htdocs/core/modules/modReception.class.php
- *	\ingroup    reception
- *	\brief      Description and activation file for the module Reception
+ *  \defgroup   reception     Module Reception
+ *  \brief      Module to manage receptions of products
+ *
+ *  \file       htdocs/core/modules/modReception.class.php
+ *  \ingroup    reception
+ *  \brief      Description and activation file for the module Reception
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
