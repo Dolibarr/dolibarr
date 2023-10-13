@@ -21,21 +21,21 @@
 /**
  *	\file       htdocs/core/boxes/box_members_last_subscriptions.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of last members subscriptions
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show last members subscriptions
  */
 class box_members_last_subscriptions extends ModeleBoxes
 {
-	public $boxcode = "box_members_last_subscriptions";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_last_subscriptions";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxLastMembersSubscriptions";
-	public $depends = array("adherent");
+	public $depends  = array("adherent");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -92,7 +92,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("LastSubscriptionsModified", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.gender, a.email, a.photo, a.morphy,";
 			$sql .= " a.datefin as date_end_subscription,";

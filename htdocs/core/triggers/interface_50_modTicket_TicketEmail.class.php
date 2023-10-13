@@ -60,6 +60,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $mysoc;
+
 		$ok = 0;
 
 		if (empty($conf->ticket) || !isModEnabled('ticket')) {
@@ -82,8 +84,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$filename = array();
 								$mimetype = array();
 
+								$appli = $mysoc->name;
+
 								// Send email to assigned user
-								$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketAssignedToYou');
+								$subject = '['.$appli.'] '.$langs->transnoentities('TicketAssignedToYou');
 								$message = '<p>'.$langs->transnoentities('TicketAssignedEmailBody', $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
 								$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 								$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -307,8 +311,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$filename = array();
 		$mimetype = array();
 
+		$appli = $mysoc->name;
+
 		/* Send email to admin */
-		$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities($base_subject, $object->ref, $object->track_id);
+		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject, $object->ref, $object->track_id);
 		$message_admin = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_admin .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
@@ -377,7 +383,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$filename = array();
 		$mimetype = array();
 
-		$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities($base_subject);
+		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
 		$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';

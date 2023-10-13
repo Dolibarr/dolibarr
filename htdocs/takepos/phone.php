@@ -115,7 +115,7 @@ if ($action == "productinfo") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
-		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]});
+		$printer->initPrinter(getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
 		$printer->printer->feed();
 		$printer->printer->feed();
 		$printer->printer->text($langs->trans('IM'));

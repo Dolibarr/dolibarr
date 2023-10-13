@@ -61,7 +61,8 @@ class Utils
 	 */
 	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
 	{
-		global $conf, $langs, $dolibarr_main_data_root;
+		global $conf, $langs, $user;
+		global $dolibarr_main_data_root;
 
 		$langs->load("admin");
 
@@ -75,6 +76,14 @@ class Utils
 		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
+
+		// For dangerous action, we check the user is admin
+		if (in_array($choices, array('allfiles', 'allfilesold'))) {
+			if (empty($user->admin)) {
+				$this->output = 'Error: to erase data files, user running the batch (currently '.$user->login.') must be an admin user';
+				return 1;
+			}
+		}
 
 		$count = 0;
 		$countdeleted = 0;
@@ -186,7 +195,7 @@ class Utils
 		}
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
-		if (!empty($conf->api->enabled)) {
+		if (isModEnabled('api')) {
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
@@ -1265,6 +1274,7 @@ class Utils
 	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
+		global $dolibarr_main_url_root;
 
 		$filepath = '';
 		$output = '';

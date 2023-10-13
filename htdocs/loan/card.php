@@ -1,7 +1,5 @@
 <?php
-use Stripe\BankAccount;
-
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
@@ -21,28 +19,32 @@ use Stripe\BankAccount;
  */
 
 /**
- *  \file       htdocs/loan/card.php
- *  \ingroup    loan
- *  \brief      Loan card
+ *   \file       htdocs/loan/card.php
+ *   \ingroup    loan
+ *   \brief      Loan card
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "loan"));
+$langs->loadLangs(array("bills", "compta", "loan"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -240,6 +242,9 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -249,6 +254,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
+$morehtmlright = '';
+$outputlangs = $langs;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -267,7 +274,7 @@ if ($action == 'create') {
 
 	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-	print '<form name="loan" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+	print '<form name="loan" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -418,10 +425,9 @@ if ($id > 0) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', 1);
 
 		// Loan card
-
 		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';

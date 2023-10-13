@@ -70,20 +70,22 @@ jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
 	print '
+    /* for standard tooltip */
 	jQuery(".classfortooltip").tooltip({
+		tooltipClass: "mytooltip",
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
-		tooltipClass: "mytooltip",
 		content: function () {
 			console.log("Return title for popup");
 			return $(this).prop("title");		/* To force to get title as is */
 		}
 	});
 
-	var opendelay = 80;
+	var opendelay = 100;
 	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
 	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 
+	/* for ajax tooltip */
 	target = jQuery(".classforajaxtooltip");
 	target.tooltip({
 		tooltipClass: "mytooltip",
@@ -128,7 +130,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 print '
 	jQuery(".classfortooltiponclicktext").dialog({
 		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
+		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
 		modal: true,
 		autoOpen: false
 	}).css("z-index: 5000");

@@ -79,7 +79,7 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 }
 
-$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -240,8 +240,8 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'facture_fournisseur';
-	$permission = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
-	$permtoedit = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$permission = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
+	$permtoedit = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 	$param = '&facid='.$object->id;
 
 	$defaulttpldir = '/core/tpl';

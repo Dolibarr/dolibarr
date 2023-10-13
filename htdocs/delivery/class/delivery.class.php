@@ -349,7 +349,6 @@ class Delivery extends CommonObject
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->origin               = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
@@ -786,7 +785,7 @@ class Delivery extends CommonObject
 		//{
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -851,17 +850,16 @@ class Delivery extends CommonObject
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
-				$line->description		= $obj->description;
-				$line->fk_product = $obj->fk_product;
-				$line->qty_asked = $obj->qty_asked;
-				$line->qty_shipped		= $obj->qty_shipped;
+				$line->description	= $obj->description;
+				$line->fk_product 	= $obj->fk_product;
+				$line->qty_asked 	= $obj->qty_asked;
+				$line->qty_shipped	= $obj->qty_shipped;
 
-				$line->ref = $obj->product_ref; // deprecated
-				$line->libelle = $obj->product_label; // deprecated
 				$line->product_label	= $obj->product_label; // Product label
-				$line->product_ref = $obj->product_ref; // Product ref
+				$line->product_ref 		= $obj->product_ref; // Product ref
 				$line->product_desc		= $obj->product_desc; // Product description
 				$line->product_type		= $obj->fk_product_type;
+
 				$line->fk_origin_line = $obj->fk_origin_line;
 
 				$line->price = $obj->subprice;
@@ -986,7 +984,7 @@ class Delivery extends CommonObject
 
 		$i = 0;
 		$line = new DeliveryLine($this->db);
-		$line->fk_product     = $prodids[0];
+		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
 		$line->ref            = 'REFPROD';

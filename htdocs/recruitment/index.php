@@ -333,7 +333,7 @@ $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Last modified job position
-if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status, COUNT(rc.rowid) as nbapplications";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc ON rc.fk_recruitmentjobposition = s.rowid";
@@ -404,7 +404,7 @@ if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobpos
 }
 
 // Last modified job position
-if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";

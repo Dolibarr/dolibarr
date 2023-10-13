@@ -91,13 +91,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (empty($user->rights->agenda->myactions->read)) {
+if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
-if (empty($user->rights->agenda->allactions->read)) {
+if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
-if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -542,7 +542,7 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 
 $newcardbutton = '';
 $newparam = '';
-if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
+if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
@@ -557,6 +557,34 @@ if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allac
 $s = ''; $link = '';
 
 $showextcals = $listofextcals;
+$bookcalcalendars = array();
+
+// Load Bookcal Calendars
+if (isModEnabled("bookcal")) {
+	$sql = "SELECT ba.rowid, bc.label, bc.ref, bc.rowid as id_cal";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
+	$sql .= " JOIN ".MAIN_DB_PREFIX."bookcal_calendar as bc";
+	$sql .= " ON bc.rowid = ba.fk_bookcal_calendar";
+	$sql .= " WHERE bc.status = 1";
+	$sql .= " AND ba.status = 1";
+	if (!empty($filtert) && $filtert != -1) {
+		$sql .= " AND bc.visibility = ".(int) $filtert ;
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$objp = $db->fetch_object($resql);
+			$label = !empty($objp->label) ? $objp->label : $objp->ref;
+			$bookcalcalendars["calendars"][] = array("id" => $objp->id_cal, "label" => $label);
+			$bookcalcalendars["availabilitieslink"][$objp->rowid] = $objp->id_cal;
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
 
 if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
@@ -564,6 +592,11 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthdays"); jQuery(".family_birthday").toggle(); });'."\n";
 	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle holidays"); jQuery(".family_holiday").toggle(); });'."\n";
+	if (isModEnabled("bookcal")) {
+		foreach ($bookcalcalendars["calendars"] as $key => $value) {
+			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
+		}
+	}
 	if ($mode == "show_week" || $mode == "show_month" || empty($mode)) {
 		// Code to enable drag and drop
 		$s .= 'jQuery( "div.sortable" ).sortable({connectWith: ".sortable", placeholder: "ui-state-highlight", items: "div.movable", receive: function( event, ui ) {'."\n";
@@ -584,7 +617,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	// Local calendar
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 
-	if ($user->rights->holiday->read) {
+	if ($user->hasRight("holiday", "read")) {
 		// Holiday calendar
 		$s .= '
             <div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"' . ($check_holiday
@@ -631,6 +664,14 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	// Birthdays
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
+	// Bookcal Calendar
+	if (isModEnabled("bookcal")) {
+		foreach ($bookcalcalendars["calendars"] as $key => $value) {
+			$label = $value['label'];
+			$s .= '<div class="nowrap inline-block minheight30"><input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'"><label for="check_bookcal_calendar_'.$value['id'].'"> <span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span></label> &nbsp; </div>';
+		}
+	}
+
 	// Calendars from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
@@ -673,11 +714,11 @@ $sql .= ' a.datep2,';
 $sql .= ' a.percent,';
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql .= ' a.fk_soc, a.fk_contact, a.fk_project,';
+$sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_availability,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
 // We must filter on resource table
@@ -728,7 +769,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
@@ -862,6 +903,10 @@ if ($resql) {
 
 		$event->socid = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
+		$event->fk_bookcal_availability = $obj->fk_bookcal_availability;
+		if (!empty($event->fk_bookcal_availability)) {
+			$event->type = "bookcal_calendar";
+		}
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
 		// They are date start and end of action but modified to not be outside calendar view.
@@ -1011,7 +1056,7 @@ if ($showbirthday) {
 	}
 }
 
-if ($user->rights->holiday->read) {
+if ($user->hasRight("holiday", "read")) {
 	// LEAVE-HOLIDAY CALENDAR
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
@@ -1505,7 +1550,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 				}
 				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
+				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
 				echo "</td>\n";
 			} else {
 				/* Show days after the current month (next month) */
@@ -1540,9 +1585,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
 	$newparam .= '&viewweek=1';
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div></div>';
+	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
 	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
@@ -1578,7 +1623,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		}
 
 		echo '  <td class="'.$style.'" width="14%" valign="top">';
-		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
+		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 		echo "  </td>\n";
 	}
 	echo " </tr>\n";
@@ -1607,9 +1652,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$timestamp = dol_mktime(12, 0, 0, $month, $day, $year);
 	$arraytimestamp = dol_getdate($timestamp);
 
-	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-	print '</div></div>';
+	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
 	echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
@@ -1668,13 +1713,13 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		echo '</div></div>';
 
-		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1);
+		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1, $bookcalcalendars);
 
 		print '</div>';
 	} else {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
-		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0);
+		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 
 		print '</div>';
 	}
@@ -1703,9 +1748,10 @@ $db->close();
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	string	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
+ * @param	string	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
 {
 	global $user, $conf, $langs;
 	global $action, $mode, $filter, $filtert, $status, $actioncode, $usergroup; // Filters used into search form
@@ -1725,7 +1771,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
 	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
 	$urltocreate = '';
-	if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
+	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 		$hourminsec = '100000';
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
@@ -1744,7 +1790,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		}
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
-		if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
@@ -1817,6 +1863,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$colorindex = 2;
 						$cssclass = 'family_birthday ';
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+					} elseif ($event->type == 'bookcal_calendar') {
+						$numbirthday++;
+						$colorindex = 3;
+						$cssclass = 'family_bookcal_calendar_'.(!empty($bookcalcalendarsarray["availabilitieslink"]) ? $bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability] : "");
+						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					} else {
 						$numother++;
 						$color = ($event->icalcolor ? $event->icalcolor : -1);
@@ -1875,7 +1926,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						}
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
-							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
+							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 								$cssclass .= " movable cursormove";
 						} else {
 							$cssclass .= " unmovable";
@@ -1904,6 +1955,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($event->type == 'holiday' && !GETPOST('check_holiday')) {
 						$morecss = 'hidden';
 					}
+					if ($event->type == 'bookcal_calendar' && !GETPOST('check_bookcal_calendar_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability])) {
+						$morecss = 'hidden';
+					}
 					if ($morecss != 'hidden') {
 						$itoshow++;
 					}
@@ -1911,8 +1965,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$ireallyshown++;
 					}
 					//var_dump($event->type.' - '.$morecss.' - '.$cssclass.' - '.$i.' - '.$ireallyshown.' - '.$itoshow);
-
-					print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
+					if (isModEnabled("bookcal") && $event->type == 'bookcal_calendar') {
+						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.'_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability].' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
+					} else {
+						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
+					}
 					//print ' style="height: 100px;';
 					//print ' position: absolute; top: 40px; width: 50%;';
 					//print '"';

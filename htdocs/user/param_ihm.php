@@ -39,6 +39,10 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 if ($id) {
 	// $user est le user qui edite, $id est l'id de l'utilisateur edite
 	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
@@ -107,7 +111,7 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("main_size_liste_limit", 'int');
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int');
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
@@ -193,7 +197,7 @@ $tmparray['index.php'] = array('label'=>'Dashboard', 'picto'=>'graph');
 if (isModEnabled("societe")) {
 	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = array('label'=>'ThirdPartiesArea', 'picto'=>'company');
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = array('label'=>'ProjectsArea', 'picto'=>'project');
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		$tmparray['projet/list.php?mainmenu=project&leftmenu=&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead'] = array('label'=>'ListOpenLeads', 'picto'=>'project');
@@ -208,8 +212,11 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
 }
+if (isModEnabled('facture')) {
+	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label'=>'InvoicesArea', 'picto'=>'bill');
+}
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
-	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
+	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
 }
 if (isModEnabled('adherent')) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
@@ -221,7 +228,7 @@ if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = array('label'=>'Tickets', 'picto'=>'ticket');
 }
 // add bookmarks to available landing pages
-if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
+if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
 	$sql = "SELECT b.rowid, b.fk_user, b.url, b.title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 	$sql .= " WHERE b.entity IN (".getEntity('bookmark').")";
@@ -234,7 +241,7 @@ if (empty($conf->global->MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES)) {
 		$i = 0;
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0) {
-			$tmparray['sep'.$i] = '<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>';
+			$tmparray['sep'.$i] = array('data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>', 'label'=>'--- '.$langs->trans("Bookmarks"));
 			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
@@ -255,6 +262,7 @@ if ($reshook < 0) {
 } elseif ($reshook == 0) {
 	$tmparray = array_merge($tmparray, $hookmanager->resArray);
 }
+
 foreach ($tmparray as $key => $val) {
 	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
@@ -299,8 +307,8 @@ if ($action == 'edit') {
                 if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
 
-                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#main_size_liste_limit").removeAttr(\'disabled\'); }
-        		else { jQuery("#main_size_liste_limit").attr(\'disabled\',\'disabled\'); }
+                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_LISTE_LIMIT").removeAttr(\'disabled\'); }
+        		else { jQuery("#MAIN_SIZE_LISTE_LIMIT").attr(\'disabled\',\'disabled\'); }
 
                 if (jQuery("#check_AGENDA_DEFAULT_VIEW").prop("checked")) { jQuery("#AGENDA_DEFAULT_VIEW").removeAttr(\'disabled\'); }
         		else { jQuery("#AGENDA_DEFAULT_VIEW").attr(\'disabled\',\'disabled\'); }
@@ -334,7 +342,7 @@ if ($action == 'edit') {
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
 	print $s ? $s.' ' : '';
-	print ($conf->global->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print (getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
 	print '</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -374,7 +382,7 @@ if ($action == 'edit') {
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
-	print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
+	print '<td><input class="flat" name="MAIN_SIZE_LISTE_LIMIT" id="MAIN_SIZE_LISTE_LIMIT" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
 
 	print '</table><br>';
 
@@ -439,7 +447,7 @@ if ($action == 'edit') {
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
 	print ($s ? $s.' ' : '');
-	print (isset($conf->global->MAIN_LANG_DEFAULT) && $conf->global->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print (getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
@@ -456,7 +464,7 @@ if ($action == 'edit') {
 	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
-	print '<td>';
+	print '<td class="tdoverflowmax300">';
 	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
 		$urltoshow = '';
 		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
@@ -468,10 +476,17 @@ if ($action == 'edit') {
 		} else {
 			$urltoshow = $object->conf->MAIN_LANDING_PAGE;
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
-		print img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
+		print '<a href="'.DOL_URL_ROOT.'/'.$object->conf->MAIN_LANDING_PAGE.'" target="_blank" rel="noopener">';
+		$s = '';
+		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'])) {
+			$s = img_picto($urltoshow, $tmparray[$object->conf->MAIN_LANDING_PAGE]['picto'], 'class="pictofixedwidth"');
+		}
+		if (empty($s)) {
+			print img_picto($urltoshow, 'globe', 'class="pictofixedwidth"');
+		} else {
+			print $s;
+		}
 		print $urltoshow;
-		print img_picto($urltoshow, 'globe', 'class="paddingleft"');
 		print '</a>';
 	}
 	print '</td></tr>';

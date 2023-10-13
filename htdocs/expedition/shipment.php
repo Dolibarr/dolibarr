@@ -188,7 +188,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -378,10 +378,6 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 		print '</td>';
-		// Note on several rows
-		//print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-		//print nl2br($object->note_public);
-		//print '</td>';
 		print '</tr>';
 
 		// Delivery delay

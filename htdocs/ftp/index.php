@@ -658,7 +658,7 @@ if (!function_exists('ftp_connect')) {
 		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (!empty($conf->global->$paramkey)) {
+			if (getDolGlobalString($paramkey)) {
 				$foundsetup = true;
 				break;
 			}

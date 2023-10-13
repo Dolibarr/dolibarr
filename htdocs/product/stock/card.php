@@ -6,7 +6,7 @@
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -56,6 +56,8 @@ $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -199,7 +201,7 @@ if (empty($reshook)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->fk_project = GETPOST('projectid');
-			$object->description = GETPOST("desc");
+			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut      = GETPOST("statut");
 			$object->lieu        = GETPOST("lieu");
 			$object->address     = GETPOST("address");
@@ -235,7 +237,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -278,7 +280,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -316,7 +318,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -328,7 +330,7 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('desc', (!empty($object->description) ? $object->description : ''), '', 180, 'dolibarr_notes', 'In', false, true, empty($conf->fckeditor->enabled) ? '' : $conf->fckeditor->enabled, ROWS_5, '90%');
+	$doleditor = new DolEditor('desc', (!empty($object->description) ? $object->description : ''), '', 180, 'dolibarr_notes', 'In', false, true, isModEnabled('fckeditor'), ROWS_5, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -413,7 +415,10 @@ if ($action == 'create') {
 
 			// Confirm delete warehouse
 			if ($action == 'delete') {
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", '', 0, 2);
+				$formquestion = array(
+					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss'=>'warning')
+				);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", $formquestion, 0, 2);
 			}
 
 			// Call Hook formConfirm
@@ -435,7 +440,7 @@ if ($action == 'create') {
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
@@ -629,6 +634,8 @@ if ($action == 'create') {
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+			$totalarray['type'][$totalarray['nbfield']] = '';
+
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -638,6 +645,7 @@ if ($action == 'create') {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
+				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
 			if ($user->rights->stock->mouvement->creer) {
 				print_liste_field_titre('');
@@ -879,7 +887,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$projectid = $object->fk_project;
 				$langs->load('projects');
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
@@ -892,7 +900,7 @@ if ($action == 'create') {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('desc', $object->description, '', 180, 'dolibarr_notes', 'In', false, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+			$doleditor = new DolEditor('desc', $object->description, '', 180, 'dolibarr_notes', 'In', false, true, isModEnabled('fckeditor'), ROWS_5, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 

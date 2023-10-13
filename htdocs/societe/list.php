@@ -13,6 +13,7 @@
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,17 +56,15 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm 	= GETPOST('confirm', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 $optioncss 	= GETPOST('optioncss', 'alpha');
-
 if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
-
 $mode = GETPOST("mode", 'alpha');
 
 // search fields
-$search_all = trim(GETPOST('search_all', 'alphanohtml') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
 $search_id = trim(GETPOST("search_id", "int"));
@@ -106,6 +105,24 @@ $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
+
+$search_date_creation_startmonth = GETPOST('search_date_creation_startmonth', 'int');
+$search_date_creation_startyear = GETPOST('search_date_creation_startyear', 'int');
+$search_date_creation_startday = GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
+$search_date_creation_endmonth = GETPOST('search_date_creation_endmonth', 'int');
+$search_date_creation_endyear = GETPOST('search_date_creation_endyear', 'int');
+$search_date_creation_endday = GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
+
+$search_date_modif_startmonth = GETPOST('search_date_modif_startmonth', 'int');
+$search_date_modif_startyear = GETPOST('search_date_modif_startyear', 'int');
+$search_date_modif_startday = GETPOST('search_date_modif_startday', 'int');
+$search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
+$search_date_modif_endmonth = GETPOST('search_date_modif_endmonth', 'int');
+$search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
+$search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
+$search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
 
 $type = GETPOST('type', 'alpha');
@@ -163,8 +180,8 @@ if ($type == 'f') {
 
 // Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
-$hookmanager->initHooks(array('thirdpartylist'));
 $extrafields = new ExtraFields($db);
+$hookmanager->initHooks(array($contextpage));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -296,7 +313,7 @@ if ($action == "change") {	// Change customer for TakePOS
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
 		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-		$invoice->socid = $conf->global->$constforthirdpartyid;
+		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
 		$invoice->date = dol_now();
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
@@ -374,6 +391,22 @@ if (empty($reshook)) {
 		$search_price_level = '';
 		$search_type_thirdparty = '';
 		$search_staff = '';
+		$search_date_creation_startmonth = "";
+		$search_date_creation_startyear = "";
+		$search_date_creation_startday = "";
+		$search_date_creation_start = "";
+		$search_date_creation_endmonth = "";
+		$search_date_creation_endyear = "";
+		$search_date_creation_endday = "";
+		$search_date_creation_end = "";
+		$search_date_modif_startmonth = "";
+		$search_date_modif_startyear = "";
+		$search_date_modif_startday = "";
+		$search_date_modif_start = "";
+		$search_date_modif_endmonth = "";
+		$search_date_modif_endyear = "";
+		$search_date_modif_endday = "";
+		$search_date_modif_end = "";
 		$search_status = -1;
 		$search_stcomm = '';
 		$search_level = '';
@@ -445,9 +478,8 @@ if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) {
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
 	$title = $langs->trans("Suppliers");
 }
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 // Select every potentiels, and note each potentiels which fit in search parameters
 $tab_level = array();
@@ -497,6 +529,8 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
+//$sql .= ", COUNT(rc.rowid) as anotherfield";
 
 $sqlfields = $sql; // $sql fields to remove for count totall
 
@@ -722,6 +756,20 @@ if ($search_stcomm) {
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
 }
+if ($search_date_creation_start) {
+	$sql .= " AND s.datec >= '".$db->idate($search_date_creation_start)."'";
+}
+if ($search_date_creation_end) {
+	$sql .= " AND s.datec <= '".$db->idate($search_date_creation_end)."'";
+}
+
+if ($search_date_modif_start) {
+	$sql .= " AND s.tms >= '".$db->idate($search_date_modif_start)."'";
+}
+if ($search_date_modif_end) {
+	$sql .= " AND s.tms <= '".$db->idate($search_date_modif_end)."'";
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -733,12 +781,13 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
+
 // Add GroupBy from hooks
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-// Count total nb of records with no order and no limits
+// Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -752,7 +801,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -773,8 +822,6 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-
-$arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Direct jump if only one record found
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && $action != 'list') {
@@ -798,8 +845,10 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 // Output page
 // --------------------------------------------------------------------
 
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
+
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if (!empty($mode)) {
@@ -811,8 +860,11 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
 if ($search_all != '') {
-	$param = "&sall=".urlencode($search_all);
+	$param = "&search_all=".urlencode($search_all);
 }
 if ($search_categ_cus > 0) {
 	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
@@ -929,11 +981,61 @@ if ($search_import_key != '') {
 if ($type != '') {
 	$param .= '&type='.urlencode($type);
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+if ($search_date_creation_startmonth) {
+	$param .= '&search_date_creation_startmonth='.urlencode($search_date_creation_startmonth);
 }
+if ($search_date_creation_startyear) {
+	$param .= '&search_date_creation_startyear='.urlencode($search_date_creation_startyear);
+}
+if ($search_date_creation_startday) {
+	$param .= '&search_date_creation_startday='.urlencode($search_date_creation_startday);
+}
+if ($search_date_creation_start) {
+	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
+}
+if ($search_date_creation_endmonth) {
+	$param .= '&search_date_creation_endmonth='.urlencode($search_date_creation_endmonth);
+}
+if ($search_date_creation_endyear) {
+	$param .= '&search_date_creation_endyear='.urlencode($search_date_creation_endyear);
+}
+if ($search_date_creation_endday) {
+	$param .= '&search_date_creation_endday='.urlencode($search_date_creation_endday);
+}
+if ($search_date_creation_end) {
+	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
+}
+if ($search_date_modif_startmonth) {
+	$param .= '&search_date_modif_startmonth='.urlencode($search_date_modif_startmonth);
+}
+if ($search_date_modif_startyear) {
+	$param .= '&search_date_modif_startyear='.urlencode($search_date_modif_startyear);
+}
+if ($search_date_modif_startday) {
+	$param .= '&search_date_modif_startday='.urlencode($search_date_modif_startday);
+}
+if ($search_date_modif_start) {
+	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
+}
+if ($search_date_modif_endmonth) {
+	$param .= '&search_date_modif_endmonth='.urlencode($search_date_modif_endmonth);
+}
+if ($search_date_modif_endyear) {
+	$param .= '&search_date_modif_endyear='.urlencode($search_date_modif_endyear);
+}
+if ($search_date_modif_endday) {
+	$param .= '&search_date_modif_endday='.urlencode($search_date_modif_endday);
+}
+if ($search_date_modif_end) {
+	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // Show delete result message
 if (GETPOST('delsoc')) {
@@ -1000,7 +1102,7 @@ if ($contextpage != 'poslist') {
 } elseif ($user->hasRight('societe', 'creer')) {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
 	$label = 'MenuNewCustomer';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";
@@ -1014,10 +1116,16 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
+}
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if (empty($arrayfields['customerorsupplier']['checked'])) {
 	print '<input type="hidden" name="type" value="'.$type.'">';
+}
+if (!empty($place)) {
+	print '<input type="hidden" name="place" value="'.$place.'">';
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -1043,13 +1151,15 @@ $trackid = 'thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
+	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
 	}
+	print '<!-- Search done like if SOCIETE_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
-// Filter on categories
 $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
 	if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
@@ -1092,18 +1202,17 @@ if (!empty($moreforfilter)) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
-// Show the massaction checkboxes only when this page is not opend from the Extended POS
-if ($massactionbutton && $contextpage != 'poslist') {
-	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-}
+//$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch center actioncolumn">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1317,14 +1426,26 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Date creation
+// Creation date
 if (!empty($arrayfields['s.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_creation_end ? $search_date_creation_end : -1, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
-// Date modification
+// Modification date
 if (!empty($arrayfields['s.tms']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // Status
@@ -1338,9 +1459,9 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-	// Action column
-	print '<td class="liste_titre maxwidthsearch center actioncolumn">';
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -1354,8 +1475,9 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre(($mode != 'kanban' ? $selectedfields : ''), $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.rowid']['checked'])) {
@@ -1510,12 +1632,14 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre(($mode != 'kanban' ? $selectedfields : ''), $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
-	$totalarray['nbfield']++;	// For the column action
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
 
+// Loop on record
+// --------------------------------------------------------------------
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
@@ -1560,7 +1684,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -1570,7 +1694,9 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr class="oddeven"';
+		// Show line of result
+		$j = 0;
+		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
 		if ($contextpage == 'poslist') {
 			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
@@ -1723,10 +1849,12 @@ while ($i < $imaxinloop) {
 		// Staff
 		if (!empty($arrayfields['staff.code']['checked'])) {
 			print '<td class="center">';
-			if (!is_array($staffArray) || count($staffArray) == 0) {
-				$staffArray = $formcompany->effectif_array(1);
+			if (!empty($obj->staff_code)) {
+				if (empty($conf->cache['staffArray'])) {
+					$conf->cache['staffArray'] = $formcompany->effectif_array(1);
+				}
+				print $conf->cache['staffArray'][$obj->staff_code];
 			}
-			print $staffArray[$obj->staff_code];
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1816,7 +1944,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 			// Prospect level
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print $companystatic->getLibProspLevel();
 			print "</td>";
 			if (!$i) {
@@ -1826,7 +1954,7 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 			// Prospect status
-			print '<td class="center nowrap">';
+			print '<td class="center nowraponall">';
 
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;
@@ -1911,6 +2039,9 @@ while ($i < $imaxinloop) {
 	$i++;
 }
 
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 // Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
 $formcompany->selectProspectStatus('status_prospect', $prospectstatic, null, null, "js");
 
@@ -1931,10 +2062,10 @@ $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print "</table>";
-print "</div>";
+print '</table>'."\n";
+print '</div>'."\n";
 
-print '</form>';
+print '</form>'."\n";
 
 // End of page
 llxFooter();

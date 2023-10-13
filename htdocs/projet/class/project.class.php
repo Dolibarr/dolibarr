@@ -68,6 +68,11 @@ class Project extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'project';
@@ -217,6 +222,16 @@ class Project extends CommonObject
 	public $weekWorkLoadPerTask; // Used to store workload details of tasks of a projet
 
 	/**
+	 * @var array Used to store workload details of a projet
+	 */
+	public $monthWorkLoad;
+
+	/**
+	 * @var array Used to store workload details of tasks of a projet
+	 */
+	public $monthWorkLoadPerTask;
+
+	/**
 	 * @var int Creation date
 	 * @deprecated
 	 * @see $date_c
@@ -239,6 +254,11 @@ class Project extends CommonObject
 	 * @var int Modification date
 	 */
 	public $date_m;
+
+	/**
+	 * @var string Ip address
+	 */
+	public $ip;
 
 	/**
 	 * @var Task[]
@@ -490,7 +510,6 @@ class Project extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			$this->errno = $this->db->lasterrno();
 			$error++;
 		}
 
@@ -566,6 +585,8 @@ class Project extends CommonObject
 			$sql .= ", dateo = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 			$sql .= ", datee = ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
 			$sql .= ", date_close = ".($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
+			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
+			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
@@ -666,7 +687,7 @@ class Project extends CommonObject
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo as date_start, datee as date_end, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
 		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid,";
-		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth, max_attendees, date_start_event, date_end_event, location";
+		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth, max_attendees, date_start_event, date_end_event, location, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id)) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -715,7 +736,6 @@ class Project extends CommonObject
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
@@ -729,6 +749,7 @@ class Project extends CommonObject
 				$this->date_end_event = $this->db->jdate($obj->date_end_event);
 				$this->location = $obj->location;
 				$this->email_msgid = $obj->email_msgid;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->db->free($resql);
 
@@ -783,8 +804,8 @@ class Project extends CommonObject
 			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'element_time') {	// Case we want to duplicate line foreach user
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
-		} elseif ($type == 'stock_mouvement') {
-			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
+		} elseif ($type == 'stocktransfer_stocktransfer') {
+			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize($ids).")";
 		} else {
@@ -1305,9 +1326,10 @@ class Project extends CommonObject
 	 *  @param	int   	$notooltip		          1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	string	$morecss				  More css on a link
+	 *  @param	string	$save_pageforbacktolist		  Back to this page 'context:url'
 	 * 	@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '', $save_pageforbacktolist = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -1350,11 +1372,15 @@ class Project extends CommonObject
 			}
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
+			}
+			$add_save_backpagefor = ($save_pageforbacktolist ? 1 : 0);
+			if ($add_save_backpagefor) {
+				$url .= "&save_pageforbacktolist=".urlencode($save_pageforbacktolist);
 			}
 		}
 
@@ -1428,7 +1454,7 @@ class Project extends CommonObject
 		$this->date_start = $now;
 		$this->date_end = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->fk_ele = 20000;
+		$this->fk_element = 20000;
 		$this->opp_amount = 20000;
 		$this->budget_amount = 10000;
 
@@ -1792,7 +1818,7 @@ class Project extends CommonObject
 
 				// Loop on each task, to clone it
 				foreach ($tasksarray as $tasktoclone) {
-					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_task_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0) {
 						$this->error .= $taskstatic->error;
 						$error++;
@@ -1916,7 +1942,7 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif ($tableName == "entrepot") {
+		} elseif (in_array($tableName, ["entrepot","mrp_mo","stocktransfer_stocktransfer"])) {
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		} else {
@@ -2420,8 +2446,23 @@ class Project extends CommonObject
 			}
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
+			$return .= '</div><div class="inline-block valignmiddle">';
+			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone');
+			$return .='</div>';
+		}
 		if (!empty($arraydata['assignedusers'])) {
-			$return .= '<br><span class="small">'.$arraydata['assignedusers'].'</span>';
+			$return .= '<br>';
+			if ($this->public) {
+				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('SharedProject'), 'world', 'class="paddingrightonly valignmiddle"');
+				//print $langs->trans('SharedProject');
+			} else {
+				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('PrivateProject'), 'private', 'class="paddingrightonly valignmiddle"');
+				//print $langs->trans('PrivateProject');
+			}
+
+			$return .= ' <span class="small valignmiddle">'.$arraydata['assignedusers'].'</span>';
 		}
 		/*if (property_exists($this, 'user_author_id')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';
@@ -2432,9 +2473,11 @@ class Project extends CommonObject
 			$return .= '<br><span class="info-box-label small">'.$langs->trans("OppStatus".$this->opp_status_code).'</span>';
 			$return .= ' <span class="opacitymedium small">('.round($this->opp_percent).'%)</span>';
 			$return .= '<br><span class="amount small">'.price($this->opp_amount).'</span>';
+		} else {
+			$return .= '<br>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status small">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status small marginleftonly inline-block">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

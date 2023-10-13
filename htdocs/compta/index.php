@@ -98,9 +98,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
 
-llxHeader("", $langs->trans("AccountancyTreasuryArea"));
+llxHeader("", $langs->trans("InvoicesArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
+print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -129,7 +129,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -270,7 +270,7 @@ if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 				$colspan++;
 			}
-			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		}
 		print '</table></div><br>';
 		$db->free($resql);
@@ -397,7 +397,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 				$colspan++;
 			}
-			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		}
 		print '</table></div><br>';
 	} else {
@@ -488,7 +488,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				print "</tr>\n";
 			}
 		} else {
-			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table></div><br>';
 	} else {
@@ -578,7 +578,7 @@ if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
 			} else {
-				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			print "</table></div><br>";
 			$db->free($resql);

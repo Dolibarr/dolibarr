@@ -42,17 +42,22 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 $langs->loadLangs(array('hrm', 'other'));
 
 // Get Parameters
-$id = GETPOST('id', 'int');
-$TSkillsToAdd = GETPOST('fk_skill', 'array');
-$objecttype = GETPOST('objecttype', 'alpha');
-$TNote = GETPOST('TNote', 'array');
-$lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'skillcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$id = GETPOST('id', 'int');
+$TSkillsToAdd = GETPOST('fk_skill', 'array');
+$objecttype = GETPOST('objecttype', 'alpha');
+$TNote = GETPOST('TNote', 'array');
+$lineid = GETPOST('lineid', 'int');
+
+if (empty($objecttype)) {
+	$objecttype = 'job';
+}
 
 $TAuthorizedObjects = array('job', 'user');
 $skill = new SkillRank($db);
@@ -105,6 +110,15 @@ if (empty($reshook)) {
 			} else {
 				$backtopage = DOL_URL_ROOT.'/hrm/skill_list.php?id=' . ($id > 0 ? $id : '__ID__');
 			}
+		}
+	}
+
+	// update national_registration_number
+	if ($action == 'setnational_registration_number') {
+		$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -249,7 +263,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// table of skillRank linked to current object
-	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . ((int) $id) . " AND objecttype='" . $db->escape($objecttype) . "'"));
+	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0);
 
 	$TAlreadyUsedSkill = array();
 	if (is_array($TSkillsJob) && !empty($TSkillsJob)) {
@@ -309,9 +323,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>'."\n";
 
 		// National Registration Number
-		print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
-		print '<td class="error">';
-		print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
+		print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'  <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&objecttype=user&action=editnational_registration_number&token='.newToken().'">'.img_picto($langs->trans("Edit"), 'edit').'</a></td>';
+		print '<td>';
+		if ($action == 'editnational_registration_number') {
+			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&objecttype=user">';
+			$ret .= '<input type="hidden" name="action" value="setnational_registration_number">';
+			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
+			$ret .= '<input type="text" name="national_registration_number" value="'.$object->national_registration_number.'">';
+			$ret .= '<input type="submit" class="button smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"> ';
+			$ret .= '<input type="submit" class="button smallpaddingimp button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '</form>';
+			print $ret;
+		} else {
+			print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
+		}
 		print '</td>';
 		print '</tr>'."\n";
 	}

@@ -148,8 +148,6 @@ class Salary extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		// Clean parameters
@@ -226,10 +224,8 @@ class Salary extends CommonObject
 	 */
 	public function fetch($id, $user = null)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " s.rowid,";
-
 		$sql .= " s.tms,";
 		$sql .= " s.fk_user,";
 		$sql .= " s.datep,";
@@ -246,7 +242,6 @@ class Salary extends CommonObject
 		$sql .= " s.fk_user_author,";
 		$sql .= " s.fk_user_modif,";
 		$sql .= " s.fk_account";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql .= " WHERE s.rowid = ".((int) $id);
@@ -531,7 +526,7 @@ class Salary extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -557,7 +552,7 @@ class Salary extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.' pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -640,18 +635,38 @@ class Salary extends CommonObject
 	/**
 	 *    Tag social contribution as payed completely
 	 *
+	 *	  @deprecated
+	 *    @see setPaid()
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					<0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user);
+	}
+
+	/**
+	 *    Tag social contribution as payed completely
+	 *
+	 *    @param    User    $user       Object user making change
+	 *    @return   int					<0 if KO, >0 if OK
+	 */
+	public function setPaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+
+		if ($return) {
+			$this->paye = 1;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -667,9 +682,15 @@ class Salary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+
+		if ($return) {
+			$this->paye = 0;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 

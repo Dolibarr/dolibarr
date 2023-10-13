@@ -103,7 +103,7 @@ class AccountancyExport
 
 		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
+		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -816,9 +816,10 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2023/01/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
 	 * @param 	array 		$objectLines 			data
@@ -839,10 +840,16 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			// Clean some data
 			$line->doc_ref = dol_string_unaccent($line->doc_ref);
+
+			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+			$line->label_operation = str_replace(array("- ", "…", "..."), "", $line->label_operation);
 			$line->label_operation = dol_string_unaccent($line->label_operation);
+
 			$line->numero_compte = dol_string_unaccent($line->numero_compte);
 			$line->label_compte = dol_string_unaccent($line->label_compte);
 			$line->subledger_account = dol_string_unaccent($line->subledger_account);
+
+			$line->subledger_label = str_replace(array("- ", "…", "..."), "", $line->subledger_label);
 			$line->subledger_label = dol_string_unaccent($line->subledger_label);
 
 			$code_compta = $line->numero_compte;
@@ -858,11 +865,11 @@ class AccountancyExport
 				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
 				if ($line->doc_type == 'customer_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 6));
+					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 6));
+					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
 				} else {
@@ -971,19 +978,31 @@ class AccountancyExport
 					$objectDirPath = '';
 					$objectFileName = dol_sanitizeFileName($line->doc_ref);
 					if ($line->doc_type == 'customer_invoice') {
-						$objectDirPath = !empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->multidir_output[$conf->entity] : $conf->facture->dir_output;
+						$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
 					} elseif ($line->doc_type == 'expense_report') {
-						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
+						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 					} elseif ($line->doc_type == 'supplier_invoice') {
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+						$invoice = new FactureFournisseur($this->db);
+						$invoice->fetch($line->fk_doc);
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 					}
 					$arrayofinclusion = array();
-					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
+					// If it is a supplier invoice, we want to use last uploaded file
+					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
 					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
 					if (!empty($fileFoundList)) {
 						$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
 						foreach ($fileFoundList as $fileFound) {
 							if (strstr($fileFound['name'], $objectFileName)) {
+								// skip native invoice pdfs (canelle)
+								// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+								if ($line->doc_type == 'supplier_invoice') {
+									if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+								} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+									continue;
+								}
 								$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
 								if (file_exists($fileFoundPath)) {
 									$archiveFileList[$attachmentFileKey] = array(
@@ -2471,7 +2490,7 @@ class AccountancyExport
 	{
 		$retVal = dol_string_nohtmltag($str, 1, 'Windows-1251');
 		if ($retVal >= 0 && $size >= 0) {
-			$retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
+			$retVal = dol_substr($retVal, 0, $size, 'Windows-1251');
 		}
 		return $retVal;
 	}

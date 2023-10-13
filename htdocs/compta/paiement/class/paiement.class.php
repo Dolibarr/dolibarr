@@ -266,12 +266,12 @@ class Paiement extends CommonObject
 		$currencyofpayment = '';
 		$currencytxofpayment = '';
 
-		foreach ($amounts as $key => $value) {	// How payment is dispatch
+		foreach ($amounts as $key => $value) {	// How payment is dispatched
 			if (empty($value)) {
 				continue;
 			}
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
+			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -300,8 +300,13 @@ class Paiement extends CommonObject
 			}
 		}
 
+		if (empty($currencyofpayment)) {	// Should not happen. For the case the multicurrency_code was not saved into invoices
+			$currencyofpayment = $conf->currency;
+		}
+
 		if (!empty($currencyofpayment)) {
 			// We must check that the currency of invoices is the same than the currency of the bank
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$bankaccount = new Account($this->db);
 			$bankaccount->fetch($this->fk_account);
 			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
@@ -358,7 +363,7 @@ class Paiement extends CommonObject
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
-					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($this->multicurrency_code ? $this->db->escape($currencyofpayment) : 'NULL').", ".(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).")";
+					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -630,17 +635,18 @@ class Paiement extends CommonObject
 	 *
 	 *      @param	User	$user               Object of user making payment
 	 *      @param  string	$mode               'payment', 'payment_supplier'
-	 *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
+	 *      @param  string	$label              Label to use in bank record
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
 	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *      @param	string	$addbankurl			'direct-debit' or 'credit-transfer': Add another entry into bank_url.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '', $addbankurl = '')
 	{
-		global $conf, $langs, $user;
+		global $conf, $user;
 
 		$error = 0;
 		$bank_line_id = 0;
@@ -732,7 +738,6 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-				//if (! $error && $label != '(WithdrawalPayment)')
 				if (!$error) {
 					$linkaddedforthirdparty = array();
 					foreach ($this->amounts as $key => $value) {  // We should have invoices always for same third party but we loop in case of.
@@ -775,18 +780,18 @@ class Paiement extends CommonObject
 					}
 				}
 
-				// Add link 'WithdrawalPayment' in bank_url
-				if (!$error && $label == '(WithdrawalPayment)') {
+				// Add a link to the Direct Debit ('direct-debit') or Credit transfer ('credit-transfer') file in bank_url
+				if (!$error && $addbankurl && in_array($addbankurl, array('direct-debit', 'credit-transfer'))) {
 					$result = $acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
-						'withdraw'
+						$addbankurl
 						);
 				}
 
-				// Add link 'InvoiceRefused' in bank_url
+				// Add link to the Direct Debit if invoice redused ('InvoiceRefused') in bank_url
 				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
@@ -1109,9 +1114,9 @@ class Paiement extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->PAYMENT_ADDON)) {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
-		} elseif ($conf->global->PAYMENT_ADDON == 'ant') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'ant') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_ant';
-		} elseif ($conf->global->PAYMENT_ADDON == 'cicada') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'cicada') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		}
 

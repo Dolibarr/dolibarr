@@ -464,10 +464,10 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'propal' && empty($user->rights->propal->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'order' && empty($user->rights->commande->lire)) {
+			if ($graphfiles == 'order' && !$user->hasRight('commande', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'invoices' && empty($user->rights->facture->lire)) {
+			if ($graphfiles == 'invoices' && !$user->hasRight('facture', 'lire')) {
 				continue;
 			}
 			if ($graphfiles == 'proposals_suppliers' && empty($user->rights->supplier_proposal->lire)) {

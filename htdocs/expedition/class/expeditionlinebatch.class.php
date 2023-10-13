@@ -44,7 +44,8 @@ class ExpeditionLineBatch extends CommonObject
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;
-	public $fk_origin_stock;		// rowid in llx_product_batch table
+	public $fk_origin_stock;		// rowid in llx_product_batch table (not usefull)
+	public $fk_warehouse;			// warehouse ID
 	public $fk_expeditiondet;
 
 
@@ -62,7 +63,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * Fill object based on a product-warehouse-batch's record
 	 *
 	 * @param	int		$id_stockdluo	Rowid in product_batch table
-	 * @return	int      		   	 -1 if KO, 1 if OK
+	 * @return	int      		   	 	-1 if KO, 1 if OK
 	 */
 	public function fetchFromStock($id_stockdluo)
 	{
@@ -71,7 +72,6 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " pl.sellby,";
 		$sql .= " pl.eatby,";
 		$sql .= " ps.fk_entrepot";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
 		$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps on pb.fk_product_stock=ps.rowid";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."product_lot as pl on pl.batch = pb.batch AND pl.fk_product = ps.fk_product";
@@ -123,13 +123,15 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= ", batch";
 		$sql .= ", qty";
 		$sql .= ", fk_origin_stock";
+		$sql .= ", fk_warehouse";
 		$sql .= ") VALUES (";
-		$sql .= $id_line_expdet.",";
-		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : ("'".$this->db->idate($this->sellby))."'").",";
-		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : ("'".$this->db->idate($this->eatby))."'").",";
-		$sql .= " ".(!isset($this->batch) ? 'NULL' : ("'".$this->db->escape($this->batch)."'")).",";
-		$sql .= " ".(!isset($this->qty) ? ((!isset($this->dluo_qty)) ? 'NULL' : $this->dluo_qty) : $this->qty).","; // dluo_qty deprecated, use qty
-		$sql .= " ".(!isset($this->fk_origin_stock) ? 'NULL' : $this->fk_origin_stock);
+		$sql .= $id_line_expdet;
+		$sql .= ", ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : ("'".$this->db->idate($this->sellby))."'");
+		$sql .= ", ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : ("'".$this->db->idate($this->eatby))."'");
+		$sql .= ", ".(!isset($this->batch) ? 'NULL' : ("'".$this->db->escape($this->batch)."'"));
+		$sql .= ", ".(!isset($this->qty) ? ((!isset($this->dluo_qty)) ? 'NULL' : $this->dluo_qty) : $this->qty); // dluo_qty deprecated, use qty
+		$sql .= ", ".(!isset($this->fk_origin_stock) ? 'NULL' : $this->fk_origin_stock);
+		$sql .= ", ".(!isset($this->fk_warehouse) ? 'NULL' : $this->fk_warehouse);
 		$sql .= ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -199,7 +201,8 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " eb.eatby as oldeatby,"; // deprecated
 		$sql .= " eb.batch,";
 		$sql .= " eb.qty,";
-		$sql .= " eb.fk_origin_stock";
+		$sql .= " eb.fk_origin_stock,";
+		$sql .= " eb.fk_warehouse";
 		if ($fk_product > 0) {
 			$sql .= ", pl.sellby";
 			$sql .= ", pl.eatby";
@@ -226,6 +229,7 @@ class ExpeditionLineBatch extends CommonObject
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;
 				$tmp->fk_expeditiondet = $obj->fk_expeditiondet;
+				$tmp->fk_warehouse = $obj->fk_warehouse;
 				$tmp->dluo_qty = $obj->qty; // dluo_qty deprecated, use qty
 				$tmp->qty = $obj->qty;
 
