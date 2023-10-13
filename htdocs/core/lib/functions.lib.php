@@ -4658,7 +4658,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 	} else {
 		$path = DOL_URL_ROOT.'/theme/common/'.$picto;
 
-		if (!empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS)) {
+		if (getDolGlobalInt('MAIN_MODULE_CAN_OVERWRITE_COMMONICONS')) {
 			$themepath = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto;
 
 			if (file_exists($themepath)) {

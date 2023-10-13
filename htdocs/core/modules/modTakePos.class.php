@@ -217,7 +217,7 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
-								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
 								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
