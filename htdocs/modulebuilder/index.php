@@ -5091,8 +5091,10 @@ if ($module == 'initmodule') {
 				print '<td class="left">';
 				print '<select class="maxwidth" name="objects" id="objects">';
 				print '<option value=""></option>';
-				foreach ($objects as $value) {
-					print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
+				if (is_array($objects)) {
+					foreach ($objects as $value) {
+						print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
+					}
 				}
 				print '</select>';
 				print '<select class="maxwidth hideobject" name="perms" id="perms">';
