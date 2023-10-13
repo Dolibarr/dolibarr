@@ -580,7 +580,7 @@ class EmailCollector extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1105,8 +1105,8 @@ class EmailCollector extends CommonObject
 		$searchfilterisanswer = 0;
 		$searchfilterisnotanswer = 0;
 		$searchfilterreplyto = 0;
-		$searchfilterexcludebody = '';
-		$searchfilterexcludesubject = '';
+		$searchfilterexcludebodyarray = array();
+		$searchfilterexcludesubjectarray = array();
 		$operationslog = '';
 
 		$now = dol_now();
@@ -1131,6 +1131,8 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
+				$supportedoauth2array = array();
+
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 				$keyforsupportedoauth2array = $this->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -1298,7 +1300,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'subject') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//array_push($criteria, array("NOT SUBJECT" => $rule['rulevalue']));
-						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						array_push($criteria, array("SUBJECT" => $rule['rulevalue']));
 					}
@@ -1306,7 +1308,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'body') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//array_push($criteria, array("NOT BODY" => $rule['rulevalue']));
-						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						array_push($criteria, array("BODY" => $rule['rulevalue']));
 					}
@@ -1429,7 +1431,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'subject') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludesubject = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludesubjectarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						$search .= ($search ? ' ' : '').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
 					}
@@ -1437,7 +1439,7 @@ class EmailCollector extends CommonObject
 				if ($rule['type'] == 'body') {
 					if (strpos($rule['rulevalue'], '!') === 0) {
 						//$search .= ($search ? ' ' : '').'NOT BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-						$searchfilterexcludebody = preg_replace('/^!/', '', $rule['rulevalue']);
+						$searchfilterexcludebodyarray[] = preg_replace('/^!/', '', $rule['rulevalue']);
 					} else {
 						// Warning: Google doesn't implement IMAP properly, and only matches whole words,
 						$search .= ($search ? ' ' : '').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
@@ -1630,8 +1632,15 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
-				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+					/** @var Webklex\PHPIMAP\Message $imapemail */
+					// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+				} else {
+					$operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
+				}
+				$operationslog .= " - References: ".dol_escape_htmltag($headers['References']??'')." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				dol_syslog("** Process email ".$iforemailloop." References: ".($headers['References']??'')." Subject: ".$headers['Subject']);
 
 
 				$trackidfoundintorecipienttype = '';
@@ -1735,10 +1744,10 @@ class EmailCollector extends CommonObject
 					$overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
 				}
 				// GET IMAP email structure/content
-
 				global $htmlmsg, $plainmsg, $charset, $attachments;
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+					/** @var Webklex\PHPIMAP\Message $imapemail */
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
@@ -1769,12 +1778,14 @@ class EmailCollector extends CommonObject
 					continue; // Exclude email
 				}
 
-				if ($searchfilterexcludebody) {
-					if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
-						$nbemailprocessed++;
-						$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
-						dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
-						continue; // Exclude email
+				if (!empty($searchfilterexcludebodyarray)) {
+					foreach ($searchfilterexcludebodyarray as $searchfilterexcludebody) {
+						if (preg_match('/'.preg_quote($searchfilterexcludebody, '/').'/ms', $messagetext)) {
+							$nbemailprocessed++;
+							$operationslog .= '<br>Discarded - Email body contains string '.$searchfilterexcludebody;
+							dol_syslog(" Discarded - Email body contains string ".$searchfilterexcludebody);
+							continue 2; // Exclude email
+						}
 					}
 				}
 
@@ -1861,12 +1872,14 @@ class EmailCollector extends CommonObject
 					//var_dump($msgid);exit;
 				}
 
-				if ($searchfilterexcludesubject) {
-					if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
-						$nbemailprocessed++;
-						$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
-						dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
-						continue; // Exclude email
+				if (!empty($searchfilterexcludesubjectarray)) {
+					foreach ($searchfilterexcludesubjectarray as $searchfilterexcludesubject) {
+						if (preg_match('/'.preg_quote($searchfilterexcludesubject, '/').'/ms', $subject)) {
+							$nbemailprocessed++;
+							$operationslog .= '<br>Discarded - Email subject contains string '.$searchfilterexcludesubject;
+							dol_syslog(" Discarded - Email subject contains string ".$searchfilterexcludesubject);
+							continue 2; // Exclude email
+						}
 					}
 				}
 
@@ -2041,7 +2054,7 @@ class EmailCollector extends CommonObject
 								}
 
 								if (get_class($objectemail) != 'Societe') {
-									$thirdpartyid = $objectemail->fk_soc;
+									$thirdpartyid = $objectemail->fk_soc ?? $objectemail->socid;
 								} else {
 									$thirdpartyid = $objectemail->id;
 								}
@@ -2270,12 +2283,16 @@ class EmailCollector extends CommonObject
 												}
 											} else {
 												// Regex not found
-												$idtouseforthirdparty = null;
-												$nametouseforthirdparty = null;
-												$emailtouseforthirdparty = null;
-												$namealiastouseforthirdparty = null;
+												if (in_array($propertytooverwrite, array('id', 'email', 'name', 'name_alias'))) {
+													$idtouseforthirdparty = null;
+													$nametouseforthirdparty = null;
+													$emailtouseforthirdparty = null;
+													$namealiastouseforthirdparty = null;
 
-												$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found. Property searched is critical so we cancel the search.';
+												} else {
+													$operationslog .= '<br>propertytooverwrite='.$propertytooverwrite.' Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtoupper($sourcefield).' -> Not found';
+												}
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
@@ -2317,7 +2334,7 @@ class EmailCollector extends CommonObject
 
 								if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty || $namealiastouseforthirdparty)) {
 									// We make another search on thirdparty
-									$operationslog .= '<br>We have this data to search thirdparty: '.$idtouseforthirdparty.' '.$emailtouseforthirdparty.' '.$nametouseforthirdparty.' '.$namealiastouseforthirdparty;
+									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
 
 									$tmpobject = new stdClass();
 									$tmpobject->element == 'generic';
@@ -2598,15 +2615,25 @@ class EmailCollector extends CommonObject
 								}
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
-							$pj = getAttachments($imapemail, $connection);
-							foreach ($pj as $key => $val) {
-								$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+							$data = [];
+							if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+								foreach ($attachments as $attachment) {
+									if ($attachment->getName() === 'undefined') {
+										continue;
+									}
+									$data[$attachment->getName()] = $attachment->getContent();
+								}
+							} else {
+								$pj = getAttachments($imapemail, $connection);
+								foreach ($pj as $key => $val) {
+									$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+								}
 							}
-							if (count($pj) > 0) {
+							if (count($data) > 0) {
 								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($from)."%'";
 								$resql = $this->db->query($sql);
 								if ($this->db->num_rows($resql) == 0) {
-									$this->errors[] = 'User Not allowed to add documents';
+									$this->errors[] = "User Not allowed to add documents ({$from})";
 								}
 								$arrayobject = array(
 									'propale' => array('table' => 'propal',
@@ -2749,9 +2776,8 @@ class EmailCollector extends CommonObject
 									}
 								}
 								foreach ($dirs as $target) {
+									$prefix = $this->actions[$this->id]['actionparam'];
 									foreach ($data as $filename => $content) {
-										$prefix = $this->actions[$this->id]['actionparam'];
-
 										$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 										if ($resr == -1) {
 											$this->errors[] = 'Doc not saved';
@@ -2877,7 +2903,11 @@ class EmailCollector extends CommonObject
 												}
 												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 													foreach ($attachments as $attachment) {
-														$attachment->save($destdir.'/');
+														// $attachment->save($destdir.'/');
+														$typeattachment = (string) $attachment->getDisposition();
+														$filename = $attachment->getFilename();
+														$content = $attachment->getContent();
+														$this->saveAttachment($destdir, $filename, $content);
 													}
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
@@ -2936,7 +2966,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->fk_user_create = $user->id;
 								$tickettocreate->datec = dol_now();
 								$tickettocreate->fk_project = $projectstatic->id;
-								$tickettocreate->notify_tiers_at_create = 0;
+								$tickettocreate->notify_tiers_at_create = getDolGlobalInt('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
 								$tickettocreate->note_private = $descriptionfull;
 								$tickettocreate->entity = $conf->entity;
 								$tickettocreate->email_msgid = $msgid;
@@ -3007,7 +3037,11 @@ class EmailCollector extends CommonObject
 												}
 												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 													foreach ($attachments as $attachment) {
-														$attachment->save($destdir.'/');
+														// $attachment->save($destdir.'/');
+														$typeattachment = (string) $attachment->getDisposition();
+														$filename = $attachment->getFilename();
+														$content = $attachment->getContent();
+														$this->saveAttachment($destdir, $filename, $content);
 													}
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
@@ -3119,6 +3153,7 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
+								$hookmanager->initHooks(['emailcolector']);
 							}
 
 							$parameters = array(
@@ -3222,6 +3257,7 @@ class EmailCollector extends CommonObject
 		} else {
 			$langs->load("admin");
 			$output = $langs->trans('NoNewEmailToProcess');
+			$output .= ' (defaultlang='.$langs->defaultlang.')';
 		}
 
 		// Disconnect
@@ -3293,7 +3329,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    UID email
-	 * @param 	string $destdir	    Target dir for attachments
+	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
@@ -3346,7 +3382,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
-	 * @param 	string 		$destdir	    Target dir for attachments
+	 * @param 	string 		$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
@@ -3373,7 +3409,7 @@ class EmailCollector extends CommonObject
 				$params[strtolower($x->attribute)] = $x->value;
 			}
 		}
-		if ($p->dparameters) {
+		if (!empty($p->dparameters)) {
 			foreach ($p->dparameters as $x) {
 				$params[strtolower($x->attribute)] = $x->value;
 			}
@@ -3382,44 +3418,46 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if ($params['filename'] || $params['name']) {
+		if (!empty($params['filename']) || !empty($params['name'])) {
 			// filename may be given as 'Filename' or 'Name' or both
-			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
+			$filename = $params['filename'] ?? $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			// Get file name (with extension)
-			$file_name_complete =  $params['filename'];
+			if (strlen($destdir)) {
+				if (substr($destdir, -1) != '/') $destdir .= '/';
 
+				// Get file name (with extension)
+				$file_name_complete = $params['filename'];
+				$destination = $destdir.$file_name_complete;
 
-			$destination = $destdir.'/'.$file_name_complete;
+				// Extract file extension
+				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
 
-			// Extract file extension
-			$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+				// Extract file name without extension
+				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
 
-			// Extract file name without extension
-			$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+				// Save an original file name variable to track while renaming if file already exists
+				$file_name_original = $file_name;
 
-			// Save an original file name variable to track while renaming if file already exists
-			$file_name_original = $file_name;
+				// Increment file name by 1
+				$num = 1;
 
-			// Increment file name by 1
-			$num = 1;
+				/**
+				 * Check if the same file name already exists in the upload folder,
+				 * append increment number to the original filename
+				 */
+				while (file_exists($destdir.$file_name.".".$extension)) {
+					$file_name = $file_name_original . ' (' . $num . ')';
+					$file_name_complete = $file_name . "." . $extension;
+					$destination = $destdir.$file_name_complete;
+					$num++;
+				}
 
-			/**
-			 * Check if the same file name already exists in the upload folder,
-			 * append increment number to the original filename
-			 */
-			while (file_exists($destdir."/".$file_name.".".$extension)) {
-				$file_name = $file_name_original . ' (' . $num . ')';
-				$file_name_complete = $file_name . "." . $extension;
-				$destination = $destdir.'/'.$file_name_complete;
-				$num++;
+				$destination = dol_sanitizePathName($destination);
+
+				file_put_contents($destination, $data);
 			}
-
-			$destination = dol_sanitizePathName($destination);
-
-			file_put_contents($destination, $data);
 		}
 
 		// TEXT
@@ -3448,9 +3486,9 @@ class EmailCollector extends CommonObject
 		}
 
 		// SUBPART RECURSION
-		if ($p->parts) {
+		if (!empty($p->parts)) {
 			foreach ($p->parts as $partno0 => $p2) {
-				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1), $destdir); // 1.2, 1.2.1, etc.
 			}
 		}
 	}
@@ -3533,5 +3571,34 @@ class EmailCollector extends CommonObject
 		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
 
 		return $text;
+	}
+
+	/**
+	 * saveAttachment
+	 *
+	 * @param  string $destdir	destination
+	 * @param  string $filename filename
+	 * @param  string $content  content
+	 * @return void
+	 */
+	private function saveAttachment($destdir, $filename, $content)
+	{
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+
+		$tmparraysize = getDefaultImageSizes();
+		$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+		$maxheightsmall = $tmparraysize['maxheightsmall'];
+		$maxwidthmini = $tmparraysize['maxwidthmini'];
+		$maxheightmini = $tmparraysize['maxheightmini'];
+		$quality = $tmparraysize['quality'];
+
+		file_put_contents($destdir.'/'.$filename, $content);
+		if (image_format_supported($filename) == 1) {
+			// Create thumbs
+			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
+			// Create mini thumbs for image (Ratio is near 16/9)
+			vignette($destdir.'/'.$filename, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
+		}
+		addFileIntoDatabaseIndex($destdir, $filename);
 	}
 }

@@ -27,8 +27,6 @@ class ProjectStats extends Stats
 	private $project;
 	public $userid;
 	public $socid;
-	public $year;
-	public $yearmonth;
 	public $status;
 	public $opp_status;
 

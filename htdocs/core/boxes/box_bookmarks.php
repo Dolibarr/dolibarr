@@ -84,7 +84,7 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}
 
-		if ($user->rights->bookmark->lire) {
+		if ($user->hasRight('bookmark', 'lire')) {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql .= " WHERE fk_user = ".((int) $user->id);

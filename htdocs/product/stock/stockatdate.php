@@ -487,7 +487,7 @@ if (!empty($search_fk_warehouse)) {
 
 // Lines of title
 print '<tr class="liste_titre">';
-print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
+print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
 
 if ($mode == 'future') {
@@ -502,16 +502,18 @@ if ($mode == 'future') {
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 }
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
+print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+
 print "</tr>\n";
 
 $totalbuyingprice = 0;
+$totalsellingprice = 0;
 $totalcurrentstock = 0;
 $totalvirtualstock = 0;
 
@@ -586,8 +588,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		// Product label
-		print '<td>'.$objp->label;
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+		print '<td>';
+		print dol_escape_htmltag($objp->label);
 		print '</td>';
 
 		if ($mode == 'future') {
@@ -620,12 +622,17 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			// Selling value
 			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($objp->sellvalue, 'MT'), 1);
+				print '<span class="amount">';
+				if ($stock || (float) ($stock * $objp->price)) {
+					print price(price2num($stock * $objp->price, 'MT'), 1);
+				}
+				print '</span>';
+				$totalsellingprice += $stock * $objp->price;
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
 				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 			}
-			print'</td>';
+			print '</td>';
 
 			print '<td class="right">';
 			if ($nbofmovement > 0) {
@@ -643,13 +650,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalcurrentstock += $currentstock;
 		}
 
-		// Action
-		print '<td class="right"></td>';
-
 		// Fields from hook
 		$parameters = array('objp'=>$objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
+		// Action
+		print '<td class="right"></td>';
 
 		print '</tr>'."\n";
 	}
@@ -680,7 +687,11 @@ if (empty($date) || !$dateIsValid) {
 	} else {
 		print '<td></td>';
 		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
-		print '<td></td>';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
+		} else {
+			print '<td></td>';
+		}
 		print '<td></td>';
 		print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
 	}

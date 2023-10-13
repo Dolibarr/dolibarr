@@ -334,11 +334,11 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
 	$liststatus = array(
-		Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
-		Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-		Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
-		Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-		Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+		Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraft"),
+		Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+		Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSent"),
+		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceled")
 	);
 	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 }

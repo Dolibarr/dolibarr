@@ -226,4 +226,27 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
 	}
+
+	/**
+	 * testDolKeepOnlyPhpCode
+	 *
+	 * @return void
+	 */
+	public function testDolKeepOnlyPhpCode()
+	{
+		$s = 'HTML content <?php exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <? exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <?php test() <?php test2(); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+	}
 }

@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - intracommreport
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivel de obligación sobre los envíos
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoría de servicio del tipo "Gastos de envío"
 MenuIntracommReportList=Lista

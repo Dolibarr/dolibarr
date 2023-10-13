@@ -82,14 +82,14 @@ if (!empty($useragent)) {
 
 
 // Check PHP version min
-$arrayphpminversionerror = array(5, 6, 0);
+$arrayphpminversionerror = array(7, 0, 0);
 $arrayphpminversionwarning = array(7, 1, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
 } elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {    // Minimum supported (warning if lower)
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
-	$checksok = 0; // 0=error, 1=warning
+	$checksok = 1; // 0=error, 1=warning
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
@@ -154,7 +154,6 @@ if (!function_exists("imagecreate")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
 }
 
-
 // Check if Curl is supported
 if (!function_exists("curl_init")) {
 	$langs->load("errors");
@@ -189,7 +188,7 @@ if (!function_exists("utf8_encode")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
 }
 
-// Check if intl methods are supported
+// Check if intl methods are supported if install is not from DoliWamp. TODO Why ?
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
 		$langs->load("errors");

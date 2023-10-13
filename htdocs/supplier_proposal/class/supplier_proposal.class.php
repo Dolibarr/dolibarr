@@ -634,8 +634,6 @@ class SupplierProposal extends CommonObject
 					$this->db->commit();
 					return $this->line->id;
 				} else {
-					$this->error = $this->error();
-					$this->errors = $this->errors();
 					$this->db->rollback();
 					return -1;
 				}
@@ -1253,7 +1251,6 @@ class SupplierProposal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_project;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
@@ -1290,10 +1287,6 @@ class SupplierProposal extends CommonObject
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-
-				if ($obj->fk_statut == 0) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -1492,10 +1485,11 @@ class SupplierProposal extends CommonObject
 				}
 
 				$this->ref = $num;
-				$this->brouillon = 0;
-				$this->statut = 1;
+				$this->statut = self::STATUS_VALIDATED;
+				$this->status = self::STATUS_VALIDATED;
 				$this->user_valid_id = $user->id;
 				$this->datev = $now;
+				$this->date_validation = $now;
 
 				$this->db->commit();
 				return 1;
@@ -1916,8 +1910,8 @@ class SupplierProposal extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_DRAFT;
-				$this->brouillon = 1;
+				$this->status = self::STATUS_DRAFT;
+				$this->statut = self::STATUS_DRAFT;	// dperecated
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2222,7 +2216,7 @@ class SupplierProposal extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param          User	$user   Object user
-	 *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
+	 *      @param          string	$mode   "opened" for askprice to close, "signed" for proposal to invoice
 	 *      @return         WorkboardResponse|int	<0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
@@ -2232,7 +2226,6 @@ class SupplierProposal extends CommonObject
 
 		$now = dol_now();
 
-		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.date_cloture as datefin";
@@ -2555,7 +2548,7 @@ class SupplierProposal extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -2579,7 +2572,7 @@ class SupplierProposal extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

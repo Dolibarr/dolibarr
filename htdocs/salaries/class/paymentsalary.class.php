@@ -88,6 +88,11 @@ class PaymentSalary extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int ID of bank_line
+	 */
+	public $bank_line;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;
@@ -194,7 +199,7 @@ class PaymentSalary extends CommonObject
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
-								$result = $tmpsalary->set_paid($user);
+								$result = $tmpsalary->setPaid($user);
 							} else {
 								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 							}
@@ -726,16 +731,102 @@ class PaymentSalary extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 * 	@param	int		$maxlen			Longueur max libelle
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 * 	@param	int		$maxlen						Longueur max libelle
+	 *  @param  int     $notooltip      			1=Disable tooltip
+	 *  @param  string  $morecss                    Add more css on link
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $conf, $langs, $hookmanager;
+
+		$option = '';
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			//'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
+		$url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id;
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($url && $add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("SalaryPayment");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
+
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
+
+		if (empty($this->showphoto_on_popup)) {
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
+			}
+		}
+
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
+
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element.'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
+		/*
 		if (empty($this->ref)) $this->ref = $this->lib;
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SalaryPayment").'</u>';
@@ -758,11 +849,45 @@ class PaymentSalary extends CommonObject
 			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend = '</a>';
 
-			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip pictofixedwidth"').$linkend);
+			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend);
 			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 		}
-
+		*/
 		return $result;
+	}
+
+	/**
+	 * getTooltipContentArray
+	 *
+	 * @param array $params params to construct tooltip data
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $user;
+
+		$langs->load('salaries');
+		$datas = [];
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return ['optimize' => $langs->trans("SalaryPayment")];
+		}
+
+		if ($user->hasRight('salaries', 'read')) {
+			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SalaryPayment").'</u>';
+			if (isset($this->status)) {
+				$datas['status'] = ' '.$this->getLibStatut(5);
+			}
+			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			if (!empty($this->total_ttc)) {
+				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->datep)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
+			}
+		}
+
+		return $datas;
 	}
 
 	/**
