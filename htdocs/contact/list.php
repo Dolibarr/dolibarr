@@ -282,7 +282,7 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if ($action == "change") {	// Change customer for TakePOS
+if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
 	$idcustomer = GETPOST('idcustomer', 'int');
 	$idcontact = GETPOST('idcontact', 'int');
 
