@@ -1601,8 +1601,8 @@ while ($i < $imaxinloop) {
 				if ($contextpage == 'poslist') {
 					print $objsoc->name;
 				} else {
-  				print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
-        }
+					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				}
 			} else {
 				print '&nbsp;';
 			}
