@@ -87,8 +87,6 @@ ALTER TABLE llx_bank_account ADD COLUMN owner_country_id integer DEFAULT NULL;
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_bank_account integer DEFAULT NULL;
 
-ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER last_main_doc;
-  
 
 ALTER TABLE llx_supplier_proposal ADD UNIQUE INDEX uk_supplier_proposal_ref (ref, entity);
 
