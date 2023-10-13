@@ -2919,16 +2919,11 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 			$propertyToUpdate = 'description';
 			break;
 		case 'version':
-			$propertyToUpdate = 'version';
-			break;
 		case 'family':
-			$propertyToUpdate = 'family';
-			break;
+		case 'picto':
 		case 'editor_name':
-			$propertyToUpdate = 'editor_name';
-			break;
 		case 'editor_url':
-			$propertyToUpdate = 'editor_url';
+			$propertyToUpdate = $keydescription;
 			break;
 		default:
 			$error = GETPOST('keydescription');
@@ -3490,7 +3485,7 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'version') {
 						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->getVersion()).'">';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyversion" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						print $moduleobj->getVersion();
@@ -3525,7 +3520,7 @@ if ($module == 'initmodule') {
 							}
 						}
 						print '</select>';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyfamily" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						print $moduleobj->family;
@@ -3536,8 +3531,15 @@ if ($module == 'initmodule') {
 					print '<tr><td>';
 					print $langs->trans("Picto");
 					print '</td><td>';
-					print $moduleobj->picto;
-					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+					if ($action == 'edit_modulepicto' && GETPOST('keydescription', 'alpha') === 'picto') {
+						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'">';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifypicto" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						print $moduleobj->picto;
+						print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_modulepicto&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=picto">'.img_edit().'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -3545,7 +3547,7 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_name') {
 						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'">';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyname" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						print $moduleobj->editor_name;
@@ -3558,7 +3560,7 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_url') {
 						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'">';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyeditorurl" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						if (!empty($moduleobj->editor_url)) {
