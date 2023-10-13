@@ -900,22 +900,26 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		}
 	} else {
 		/* Use this list to have for all users */
-		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+		$sql .= " FROM ".$db->prefix()."user as u";
+		if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
+			$sql .= " WHERE u.rowid IN (";
+			$sql .= " SELECT ug.fk_user FROM ".$db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
-			$sql .= " AND ug.fk_user = u.rowid ";
+			if ($usergroup > 0)	{
+				$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
+			}
+			$sql .= ")";
 		} else {
 			if ($usergroup > 0)	{
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
+				$sql .= " LEFT JOIN ".$db->prefix()."usergroup_user as ug ON u.rowid = ug.fk_user";
 			}
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+			if ($usergroup > 0)	{
+				$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
+			}
 		}
 		$sql .= " AND u.statut = 1";
-		if ($usergroup > 0)	{
-			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
-		}
 		if ($user->socid > 0) {
 			// External users should see only contacts of their company
 			$sql .= " AND u.fk_soc = ".((int) $user->socid);

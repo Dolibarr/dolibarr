@@ -209,7 +209,7 @@ class modAgenda extends DolibarrModules
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'TMenuAgenda',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
 			'mainmenu'=>'agenda',
 			'url'=>'/comm/action/index.php',
 			'langs'=>'agenda',

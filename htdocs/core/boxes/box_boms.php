@@ -84,7 +84,7 @@ class box_boms extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-		if ($user->rights->bom->read) {
+		if ($user->hasRight('bom', 'read')) {
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", p.rowid as productid";
 			$sql .= ", p.tosell";

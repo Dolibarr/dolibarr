@@ -218,9 +218,9 @@ if ($action == 'edit') {
                         if (jQuery("#MAIN_MAIL_SENDMODE_TICKET").val()==\'smtps\')
                         {
                             jQuery(".drag").show();
-                            jQuery("#MAIN_MAIL_EMAIL_TLS_TICKET").val('.$conf->global->MAIN_MAIL_EMAIL_TLS_TICKET.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS_TICKET").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_TLS_TICKET').');
                             jQuery("#MAIN_MAIL_EMAIL_TLS_TICKET").removeAttr("disabled");
-                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_TICKET").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS_TICKET.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_TICKET").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_TICKET').');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS_TICKET").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER_TICKET").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT_TICKET").removeAttr("disabled");
@@ -234,9 +234,9 @@ if ($action == 'edit') {
                         if (jQuery("#MAIN_MAIL_SENDMODE_TICKET").val()==\'swiftmailer\')
                         {
                             jQuery(".drag").show();
-                            jQuery("#MAIN_MAIL_EMAIL_TLS_TICKET").val('.$conf->global->MAIN_MAIL_EMAIL_TLS_TICKET.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS_TICKET").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_TLS_TICKET').');
                             jQuery("#MAIN_MAIL_EMAIL_TLS_TICKET").removeAttr("disabled");
-                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_TICKET").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS_TICKET.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS_TICKET").val(' . getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_TICKET').');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS_TICKET").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER_TICKET").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT_TICKET").removeAttr("disabled");
@@ -307,16 +307,16 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 
 	// SuperAdministrator access only
-	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity)) {
+	if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
 		print $form->selectarray('MAIN_MAIL_SENDMODE_TICKET', $listofmethods, $conf->global->MAIN_MAIL_SENDMODE_TICKET);
 	} else {
-		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE_TICKET];
+		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET')];
 		if (empty($text)) {
 			$text = $langs->trans("Undefined");
 		}
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
 		print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-		print '<input type="hidden" name="MAIN_MAIL_SENDMODE_TICKET" value="'.$conf->global->MAIN_MAIL_SENDMODE_TICKET.'">';
+		print '<input type="hidden" name="MAIN_MAIL_SENDMODE_TICKET" value="' . getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET').'">';
 	}
 	print '</td></tr>';
 
@@ -437,16 +437,16 @@ if ($action == 'edit') {
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_TICKET) && in_array($conf->global->MAIN_MAIL_SENDMODE_TICKET, array('smtps', 'swiftmailer')))) {
 		print '<tr class="oddeven smtp_oauth_service hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td><td>';
 		// SuperAdministrator access only
-		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
 			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET', $oauthservices, $conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET);
 		} else {
-			$text = $oauthservices[$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET];
+			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET')];
 			if (empty($text)) {
 				$text = $langs->trans("Undefined");
 			}
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-			print '<input type="hidden" name="MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET" value="'.$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET.'">';
+			print '<input type="hidden" name="MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET" value="' . getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET').'">';
 		}
 		print '</td></tr>';
 	}
@@ -532,7 +532,7 @@ if ($action == 'edit') {
 
 		// SMTPS ID
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_TICKET) && in_array($conf->global->MAIN_MAIL_SENDMODE_TICKET, array('smtps', 'swiftmailer'))) {
-			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID_TICKET.'</td></tr>';
+			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>' . getDolGlobalString('MAIN_MAIL_SMTPS_ID_TICKET').'</td></tr>';
 		}
 
 		// SMTPS PW
@@ -542,7 +542,7 @@ if ($action == 'edit') {
 
 		// SMTPS oauth service
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET'), array('smtps', 'swiftmailer')) && getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE_TICKET') === "XOAUTH2") {
-			$text = $oauthservices[$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET];
+			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_TICKET')];
 			if (empty($text)) {
 				$text = $langs->trans("Undefined").img_warning();
 			}

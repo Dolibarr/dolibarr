@@ -699,7 +699,7 @@ if (empty($reshook) && $action == 'update') {
 		$object->fetch($id);
 		$object->fetch_optionals();
 		$object->fetch_userassigned();
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Clean parameters
 		if ($fulldayevent) {
@@ -968,7 +968,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 
 	if ($user->hasRight('agenda', 'myactions', 'delete')
 		|| $user->hasRight('agenda', 'allactions', 'delete')) {
