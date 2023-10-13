@@ -203,7 +203,7 @@ function ClearSearch() {
 	$("#search").val('');
 	$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 	$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
-	$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+	$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
@@ -759,7 +759,7 @@ function Edit(number) {
 		Refresh();
 		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 		return;
 	} else if (number=='qty') {
 		if (editaction=='qty' && editnumber != '') {
@@ -794,7 +794,7 @@ function Edit(number) {
 			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -811,16 +811,16 @@ function Edit(number) {
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Qty").": "; ?>";
 		$("#qty").html("OK").addClass("clicked");
 		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='p'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Price").": "; ?>";
 		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 		$("#price").html("OK").addClass("clicked");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='r'){
-		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("ReductionShort").": "; ?>";
+		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("LineDiscountShort").": "; ?>";
 		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
 		$("#reduction").html("OK").addClass("clicked");
@@ -1189,7 +1189,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<button type="button" class="calcbutton" onclick="Edit(1);">1</button>
 			<button type="button" class="calcbutton" onclick="Edit(2);">2</button>
 			<button type="button" class="calcbutton" onclick="Edit(3);">3</button>
-			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r')"><?php echo $langs->trans("ReductionShort"); ?></button>
+			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r')"><?php echo $langs->trans("LineDiscountShort"); ?></button>
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
 			<button type="button" class="calcbutton" onclick="Edit('.')">.</button>
 			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c')">C</button>
@@ -1259,7 +1259,7 @@ if ( ! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
-$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
+$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {

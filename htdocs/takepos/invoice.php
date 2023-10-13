@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright (C) 2018    Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
+ * Copyright (C) 2018    	Andreu Bisquerra   	<jove@bisquerra.com>
+ * Copyright (C) 2021    	Nicolas ZABOURI    	<info@inovea-conseil.com>
+ * Copyright (C) 2022-2023	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -525,11 +526,19 @@ if (empty($reshook)) {
 		}
 
 		$idoflineadded = 0;
+		$err = 0;
 		// Group if enabled. Skip group if line already sent to the printer
 		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
+					// check if qty in stock
+					if (!empty(getDolGlobalString("TAKEPOS_QTY_IN_STOCK")) && (($line->qty + $qty) > $prod->stock_reel)) {
+						$invoice->error = $langs->trans('NotEnoughInStock');
+						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+						$err++;
+						break;
+					}
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty + $qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 					if ($result < 0) {
 						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
@@ -540,7 +549,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($idoflineadded <= 0) {
+		if ($idoflineadded <= 0 && empty($err)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
@@ -578,7 +587,16 @@ if (empty($reshook)) {
 					$line = $hookmanager->resArray;
 				}
 
-				$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
+				// check if qty in stock
+				if (!empty(getDolGlobalString("TAKEPOS_QTY_IN_STOCK")) && $qty > $prod->stock_reel) {
+					$invoice->error = $langs->trans('NotEnoughInStock');
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+					$err++;
+				}
+
+				if (empty($err)) {
+					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
+				}
 			}
 
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
@@ -1653,7 +1671,7 @@ if ($placeid > 0) {
 				}
 
 				$htmlforlines .= '</td>';
-				if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
+				if (getDolGlobalInt('TAKEPOS_SHOW_HT')) {
 					$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 					$htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
 					if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {

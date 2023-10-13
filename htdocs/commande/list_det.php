@@ -175,7 +175,7 @@ $arrayfields = array(
 	// Détail commande
 	'rowid'=> array('label'=>'TechnicalID', 'checked'=>1, 'position'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0)),
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
-	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1),
+	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>-1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
@@ -1544,7 +1544,9 @@ if ($resql) {
 		if (!empty($arrayfields['pr.desc']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
-			print '<td class="nowrap tdoverflowmax200">'.dol_escape_htmltag($labelproduct).'</td>';
+			print '<td class="nowrap tdoverflowmax200">';
+			print dolGetFirstLineOfText(dolPrintHTML($labelproduct), 5);
+			print '</td>';
 
 			if (!$i) {
 				$totalarray['nbfield']++;
