@@ -232,6 +232,7 @@ class Odf
             // Check if the current item is a tag or just plain text
             if (isset($tag['text'])) {
                 $tag['text'] = preg_replace('/(<br *\/?>\n*)/i', '<text:line-break/>', $tag['text']);
+                $tag['text'] = str_replace('&', '&amp;', $tag['text']);
                 $odtResult .= $tag['text'];
 			} elseif (isset($tag['name'])) {
                 $tag['innerText'] = str_replace('&', '&amp;', $tag['innerText']);
