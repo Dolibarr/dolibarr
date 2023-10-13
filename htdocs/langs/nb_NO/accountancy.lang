@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Advarsel, denne listen inneholder kun re
 VueByAccountAccounting=Vis etter regnskapskonto
 VueBySubAccountAccounting=Vis etter regnskaps-subkonto
 
-MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
-MainAccountForSuppliersNotDefined=Hovedregnskapskonto for leverandører som ikke er definert i oppsettet
-MainAccountForUsersNotDefined=Hoved regnskapskonto for brukere som ikke er definert i oppsettet
-MainAccountForVatPaymentNotDefined=Hoved regnskapskonto for MVA-betaling ikke definert i oppsettet
-MainAccountForSubscriptionPaymentNotDefined=Hovedregnskapskonto for abonnementsbetaling ikke definert i oppsettet
+MainAccountForCustomersNotDefined=Hovedkonto (fra Kontoplan) for kunder som ikke er definert i oppsett
+MainAccountForSuppliersNotDefined=Hovedkonto (fra kontoplanen) for leverandører som ikke er definert i oppsett
+MainAccountForUsersNotDefined=Hovedkonto (fra kontoplanen) for brukere som ikke er definert i oppsett
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Regnskapskonto for bruker ikke definert i oppsett
 
 AccountancyArea=Regnskapsområde

@@ -95,7 +95,7 @@ NoTypeDefinedGoToSetup=Δεν έχουν οριστεί τύποι μελών. �
 NewMemberType=Νέος τύπος μέλους
 WelcomeEMail=Email καλωσορίσματος
 SubscriptionRequired=Απαιτείται συνδρομή
-SubscriptionRequiredDesc=If subscription is required, a subscription with a start or end date must be recorded to have the member up to date (whatever is subscription amount, even if subscription is free).
+SubscriptionRequiredDesc=Εάν απαιτείται συνδρομή, πρέπει να καταγραφεί μια συνδρομή με ημερομηνία έναρξης ή λήξης για να ενημερωθεί το μέλος (όποιο και αν είναι το ποσό της συνδρομής, ακόμα κι αν η συνδρομή είναι δωρεάν).
 DeleteType=Διαγραφή
 VoteAllowed=Δικαίωμα ψήφου
 Physical=Ιδιώτης
@@ -162,7 +162,7 @@ DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Πρότυπο email που θα �
 DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Πρότυπο email που θα χρησιμοποιηθεί για την αποστολή email σε ένα μέλος κατά την ακύρωση της συνδρομής του
 DescADHERENT_EMAIL_TEMPLATE_EXCLUSION=Πρότυπο email που θα χρησιμοποιηθεί για την αποστολή email σε ένα μέλος σε περίπτωση αποκλεισμού του
 DescADHERENT_MAIL_FROM=Email αποστολέα για αυτόματα μηνύματα ηλεκτρονικού ταχυδρομείου
-DescADHERENT_CC_MAIL_FROM=Send automatic email copy to
+DescADHERENT_CC_MAIL_FROM=Αποστολή αυτόματου αντιγράφου email σε
 DescADHERENT_ETIQUETTE_TYPE=Μορφή σελίδας ετικετών
 DescADHERENT_ETIQUETTE_TEXT=Κείμενο τυπωμένο σε καταστάσεις διευθύνσεων μέλους
 DescADHERENT_CARD_TYPE=Σελίδα της μορφής των καρτών μέλους
@@ -206,7 +206,7 @@ LastMemberDate=Ημερομηνία εγγραφής τελευταίου μέλ
 LatestSubscriptionDate=Ημερομηνία τελευταίας συνδρομής
 MemberNature=Φύση του μέλους
 MembersNature=Φύση των μελών
-Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
+Public=%s μπορώ να δημοσιεύσω τη συνδρομή μου στο <a target="_blank" href="%s"> δημόσιο μητρώο </a> 
 NewMemberbyWeb=Προστέθηκε νέο μέλος. Εν αναμονή έγκρισης
 NewMemberForm=Φόρμα νέου μέλους
 SubscriptionsStatistics=Στατιστικά στοιχεία συνδρομών

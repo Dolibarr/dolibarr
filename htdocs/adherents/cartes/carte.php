@@ -125,26 +125,26 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__'=>$objp->rowid,
-				'__REF__'=>$objp->ref,
-				'__LOGIN__'=>$objp->login,
-				'__FIRSTNAME__'=>$objp->firstname,
-				'__LASTNAME__'=>$objp->lastname,
-				'__FULLNAME__'=>$adherentstatic->getFullName($langs),
-				'__COMPANY__'=>$objp->company,
-				'__ADDRESS__'=>$objp->address,
-				'__ZIP__'=>$objp->zip,
-				'__TOWN__'=>$objp->town,
-				'__COUNTRY__'=>$objp->country,
-				'__COUNTRY_CODE__'=>$objp->country_code,
-				'__EMAIL__'=>$objp->email,
-				'__BIRTH__'=>dol_print_date($objp->birth, 'day'),
-				'__TYPE__'=>$objp->type,
-				'__YEAR__'=>$year,
-				'__MONTH__'=>$month,
-				'__DAY__'=>$day,
-				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__SERVER__'=>"https://".$_SERVER["SERVER_NAME"]."/"
+				'__ID__' => $objp->rowid,
+				'__REF__' => $objp->ref,
+				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
+				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
+				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
+				'__FULLNAME__' => $adherentstatic->getFullName($langs),
+				'__COMPANY__' => empty($objp->company) ? '' : $objp->company,
+				'__ADDRESS__' => empty($objp->address) ? '' : $objp->address,
+				'__ZIP__' => empty($objp->zip) ? '' : $objp->zip,
+				'__TOWN__' => empty($objp->town) ? '' : $objp->town,
+				'__COUNTRY__' => empty($objp->country) ? '' : $objp->country,
+				'__COUNTRY_CODE__' => empty($objp->country_code) ? '' : $objp->country_code,
+				'__EMAIL__' => empty($objp->email) ? '' : $objp->email,
+				'__BIRTH__' => dol_print_date($objp->birth, 'day'),
+				'__TYPE__' => empty($objp->type) ? '' : $objp->type,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 

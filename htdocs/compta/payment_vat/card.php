@@ -102,7 +102,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
+				$fac->generateDocument($fac->model_pdf, $outputlangs);
 			}
 		}
 
@@ -124,7 +124,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 llxHeader();
 
-$tva = new TVA($db);
+$tva = new Tva($db);
 $form = new Form($db);
 
 $h = 0;

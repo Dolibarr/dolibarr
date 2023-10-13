@@ -68,7 +68,7 @@ $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
 $socialcontribstatic = new ChargeSociales($db);
 $salarystatic = new Salary($db);
-$vatstatic = new TVA($db);
+$vatstatic = new Tva($db);
 
 $form = new Form($db);
 

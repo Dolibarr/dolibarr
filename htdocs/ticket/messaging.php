@@ -162,9 +162,9 @@ if ($socid > 0) {
 }
 
 if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+	$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 } elseif ($user->socid > 0) {
-	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+	$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
 }
 $head = ticket_prepare_head($object);
 

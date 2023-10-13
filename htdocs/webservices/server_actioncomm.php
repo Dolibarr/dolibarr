@@ -347,7 +347,7 @@ function getActionComm($authentication, $id)
 					'actioncomm'=>$actioncomm_result_fields);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
 			}
 		} else {
 			$error++;
@@ -402,7 +402,7 @@ function getListActionCommType($authentication)
 					'actioncommtypes'=>$resultarray);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND'; $errorlabel = 'Failed to execute liste_array';
 			}
 		} else {
 			$error++;

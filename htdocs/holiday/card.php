@@ -279,6 +279,7 @@ if (empty($reshook)) {
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
 				$object->halfday = $halfday;
+				$object->entity = $conf->entity;
 
 				$result = $object->create($user);
 				if ($result <= 0) {
@@ -303,7 +304,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
 		$object->fetch($id);
 
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		$object->fk_validator = GETPOST('valideur', 'int');
 
@@ -462,7 +463,7 @@ if (empty($reshook)) {
 
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			$object->statut = Holiday::STATUS_VALIDATED;
 
@@ -522,11 +523,29 @@ if (empty($reshook)) {
 					}
 				}
 
+				$typeleaves = $object->getTypes(1, -1);
+				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+
+				if ($object->halfday == 2) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == -1) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Afternoon";
+				} elseif ($object->halfday == 1) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == 0 || $object->halfday == 2) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Afternoon";
+				}
+
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
 
 				$message .= "<ul>";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Type")." : ".(empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow)."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv($starthalfdaykey)." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')." ".$langs->transnoentitiesnoconv($endhalfdaykey)."</li>\n";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
 				$message .= "</ul>\n";
 
@@ -552,7 +571,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -580,7 +599,7 @@ if (empty($reshook)) {
 
 		// If status is waiting approval and approver is also user
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			$object->date_approval = dol_now();
 			$object->fk_user_approve = $user->id;
@@ -639,7 +658,7 @@ if (empty($reshook)) {
 						$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 					}
 
-					$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");
+					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
 
 					// Content
 					$message = "<p>".$langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",</p>\n";
@@ -804,15 +823,15 @@ if (empty($reshook)) {
 		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) &&
 			(!empty($user->admin) || $user->id == $object->fk_validator || $cancreate || $cancreateall)) {
-			$db->begin();
+				$db->begin();
 
-			$oldstatus = $object->statut;
-			$object->date_cancel = dol_now();
-			$object->fk_user_cancel = $user->id;
-			$object->statut = Holiday::STATUS_CANCELED;
-			$object->status = Holiday::STATUS_CANCELED;
+				$oldstatus = $object->statut;
+				$object->date_cancel = dol_now();
+				$object->fk_user_cancel = $user->id;
+				$object->statut = Holiday::STATUS_CANCELED;
+				$object->status = Holiday::STATUS_CANCELED;
 
-			$result = $object->update($user);
+				$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
 				// Call trigger
@@ -845,7 +864,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 
-			// If no SQL error, we redirect to the request form
+				// If no SQL error, we redirect to the request form
 			if (!$error && $result > 0) {
 				// To
 				$destinataire = new User($db);
@@ -902,20 +921,20 @@ if (empty($reshook)) {
 	}
 
 	/*
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+	 // Actions when printing a doc from card
+	 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	// Actions to send emails
-	$triggersendname = 'HOLIDAY_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
-	$trackid='leav'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	 // Actions to send emails
+	 $triggersendname = 'HOLIDAY_SENTBYMAIL';
+	 $autocopy='MAIN_MAIL_AUTOCOPY_HOLIDAY_TO';
+	 $trackid='leav'.$object->id;
+	 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	// Actions to build doc
-	$upload_dir = $conf->holiday->dir_output;
-	$permissiontoadd = $user->rights->holiday->creer;
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	*/
+	 // Actions to build doc
+	 $upload_dir = $conf->holiday->dir_output;
+	 $permissiontoadd = $user->rights->holiday->creer;
+	 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	 */
 }
 
 

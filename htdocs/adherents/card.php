@@ -119,6 +119,10 @@ if ($id) {
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
+if (!$user->hasRight('adherent', 'creer') && $action == 'edit') {
+	accessforbidden('Not enough permission');
+}
+
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
 
 
@@ -285,7 +289,7 @@ if (empty($reshook)) {
 		}
 		// Create new object
 		if ($result > 0 && !$error) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			// Change values
 			$object->civility_id = trim(GETPOST("civility_id", 'alphanohtml'));
@@ -293,7 +297,9 @@ if (empty($reshook)) {
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
-			$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+			if (GETPOSTISSET('pass')) {
+				$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+			}
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
 			$object->company     = trim(GETPOST("societe", 'alphanohtml'));
@@ -329,6 +335,7 @@ if (empty($reshook)) {
 
 			// Get status and public property
 			$object->statut = GETPOST("statut", 'alpha');
+			$object->status = GETPOST("statut", 'alpha');
 			$object->public = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
@@ -346,10 +353,19 @@ if (empty($reshook)) {
 			}
 
 			// Check if we need to also synchronize password information
-			$nosyncuserpass = 0;
-			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'password')) {
-					$nosyncuserpass = 1; // Disable synchronizing
+			$nosyncuserpass = 1;	// no by default
+			if (GETPOSTISSET('pass')) {
+				if ($object->user_id) {	// If member is linked to a user
+					$nosyncuserpass = 0;	// We may try to sync password
+					if ($user->id == $object->user_id) {
+						if (!$user->hasRight('user', 'self', 'password')) {
+							$nosyncuserpass = 1; // Disable synchronizing
+						}
+					} else {
+						if (!$user->hasRight('user', 'user', 'password')) {
+							$nosyncuserpass = 1; // Disable synchronizing
+						}
+					}
 				}
 			}
 
@@ -447,10 +463,6 @@ if (empty($reshook)) {
 		$phone = GETPOST("phone", 'alpha');
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
-		// $skype=GETPOST("member_skype", 'alpha');
-		// $twitter=GETPOST("member_twitter", 'alpha');
-		// $facebook=GETPOST("member_facebook", 'alpha');
-		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
@@ -568,7 +580,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			// Email about right and login does not exist
+			// Create the member
 			$result = $object->create($user);
 			if ($result > 0) {
 				// Foundation categories
@@ -576,13 +588,15 @@ if (empty($reshook)) {
 				$object->setCategories($memcats);
 
 				$db->commit();
+
 				$rowid = $object->id;
 				$id = $object->id;
 
 				$backtopage = preg_replace('/__ID__/', $id, $backtopage);
 			} else {
-				$error++;
 				$db->rollback();
+
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 
@@ -1215,7 +1229,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : $object->pass).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : '').'"></td></tr>';
 		}
 
 		// Type

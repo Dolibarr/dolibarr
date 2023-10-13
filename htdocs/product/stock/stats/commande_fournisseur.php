@@ -95,7 +95,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
-	$object = new ProductLot($db);
+	$object = new Productlot($db);
 	if ($ref) {
 		$tmp = explode('_', $ref);
 		$objectid = $tmp[0];
@@ -173,7 +173,7 @@ if ($id > 0 || !empty($ref)) {
 		//          print '</tr>';
 		//      }
 		//
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABOLITY)) {
+		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
