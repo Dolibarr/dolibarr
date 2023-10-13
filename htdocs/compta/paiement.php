@@ -617,14 +617,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				if (isModEnabled('multicurrency')) {
 					print '<td>'.$langs->trans('Currency').'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyAmountHT').'</td>';
-					print '<td class="right">'.$langs->trans('MulticurrencyAmountTVA').'</td>';
+					print '<td class="right">'.$langs->trans('MulticurrencyAmountVAT').'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 					print '<td class="right">'.$multicurrencyalreadypayedlabel.'</td>';
 					print '<td class="right">'.$multicurrencyremaindertopay.'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 				}
 				print '<td class="right">'.$langs->trans('AmountHT').'</td>';
-				print '<td class="right">'.$langs->trans('AmountTVA').'</td>';
+				print '<td class="right">'.$langs->trans('AmountVAT').'</td>';
 				print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 				print '<td class="right">'.$alreadypayedlabel.'</td>';
 				print '<td class="right">'.$remaindertopay.'</td>';
@@ -773,7 +773,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					print '<td class="right"><span class="amount">'.price($sign * $objp->total_tva).'</span></td>';
 
 					// Amount including VAT
-					print '<td class="right"><span class="amount">'.price($sign * $objp->total_ttc).'</span></td>';
+					print '<td class="right"><span class="fullamount">'.price($sign * $objp->total_ttc).'</span></td>';
 
 					// Received + already paid
 					print '<td class="right"><span class="amount">'.price($sign * $paiement);
