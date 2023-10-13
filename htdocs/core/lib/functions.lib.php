@@ -1595,6 +1595,21 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
+ *  Returns text escaped for inclusion into a php string, build with double quotes "
+ *
+ *  @param      string		$stringtoescape		String to escape
+ *  @return     string     		 				Escaped string for json content.
+ */
+function dol_escape_php($stringtoescape)
+{
+	if (is_null($stringtoescape)) {
+		return '';
+	}
+
+	return str_replace('"', "'", $stringtoescape);
+}
+
+/**
  * Return a string label ready to be output on HTML content
  * To use text inside an attribute, use can use only dol_escape_htmltag()
  *

@@ -126,10 +126,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				if (!empty($val['picto'])) {
 					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
 				}
-				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
+				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
-				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
+				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
 					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
 				}
