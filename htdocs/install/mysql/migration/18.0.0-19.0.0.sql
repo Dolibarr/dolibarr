@@ -12,7 +12,7 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
--- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table;
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex ON llx_table;
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
 -- To make pk to be auto increment (mysql):
 -- -- VMYSQL4.3 ALTER TABLE llx_table ADD PRIMARY KEY(rowid);
@@ -40,7 +40,7 @@
 -- v19
 
 -- VAT multientity
--- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
+-- VMYSQL4.1 DROP INDEX uk_c_tva_id ON llx_c_tva;
 -- VPGSQL8.2 DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
