@@ -350,20 +350,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'500000'=>$idmodule
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
-				$arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) {
-				$arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
-			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) {
-				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['modulefamily'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1031,7 +1019,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			setEventMessages($langs->trans("ErrorTableNotFound", $tablename), null, 'errors');
 		} else {
 			/**
-			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'ip', 'url', 'password')
 			 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 			 *  'label' the translation key.
 			 *  'picto' is code of a picto to show before value in forms
@@ -1521,20 +1509,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
-				$arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) {
-				$arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
-			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) {
-				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -3884,7 +3860,34 @@ if ($module == 'initmodule') {
 					if ($key == 'propname' || $key == 'proplabel') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'proptype') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50">';
+						print '<input class="maxwidth200" id="'.$key.'" list="datalist'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'">';
+						//print '<div id="suggestions"></div>';
+						print '<datalist id="datalist'.$key.'">';
+						print '<option>varchar(128)</option>';
+						print '<option>email</option>';
+						print '<option>phone</option>';
+						print '<option>ip</option>';
+						print '<option>url</option>';
+						print '<option>password</option>';
+						print '<option>text</option>';
+						print '<option>html</option>';
+						print '<option>date</option>';
+						print '<option>datetime</option>';
+						print '<option>integer</option>';
+						print '<option>double(28,4)</option>';
+						print '<option>real</option>';
+						print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
+						// Combo with list of fields
+						/*
+						if (empty($formadmin)) {
+							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+							$formadmin = new FormAdmin($db);
+						}
+						print $formadmin->selectTypeOfFields($key, GETPOST($key, 'alpha'));
+						*/
+						print '</datalist>';
+						print '</td>';
 						//} elseif ($key == 'propvalidate') {
 						//	print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'propvisible') {
@@ -3923,68 +3926,10 @@ if ($module == 'initmodule') {
 					window.location.href = url;
 				}
 				$(document).ready(function() {
-					// Tableau de suggestions statiques
-					var suggestions = ["VARCHAR", "DOUBLE", "REAL", "TEXT", "HTML", "DATETIME", "TIMESTAMP", "INTEGER", "INTEGER:CLASSNAME:RELATIVEPATH/TO/CLASSFILE.CLASS.PHP[:1[:FILTER]]"];
-
-					function showSuggestions() {
-						var inputText = $("#proptype").val().toLowerCase();
-						var suggestionsDiv = $("#suggestions");
-
-						var filteredSuggestions = suggestions.filter(function(suggestion) {
-						  return suggestion.toLowerCase().indexOf(inputText) !== -1;
-						});
-
-						//get suggestion on div
-						suggestionsDiv.empty();
-						for (var i = 0; i < filteredSuggestions.length; i++) {
-						  var suggestion = filteredSuggestions[i];
-						  var suggestionItem = $("<div>").text(suggestion).css({ cursor: "pointer", padding: "5px" });
-						  suggestionsDiv.append(suggestionItem);
-						}
-
-
-						if (inputText === "" || filteredSuggestions.length === 0) {
-						  suggestionsDiv.hide();
-						} else {
-						  suggestionsDiv.show();
-						}
-					}
-
-					$("#proptype").on("input", showSuggestions);
-
-					$("#suggestions").on("click", "div", function() {
-						var selectedValue = $(this).text();
-						$("#proptype").val(selectedValue);
-						$("#suggestions").hide();
-					});
-					// when we click outside the input
-					$(document).on("click", function(event) {
-						if (!$(event.target).closest("#proptype, #suggestions").length) {
-						  $("#suggestions").hide();
-						}
-					});
-					// when we delete the content input
-					$("#proptype").on("keyup", function() {
-						if ($(this).val() === "") {
-						  $("#suggestions").hide();
-						}
-					});
-
 					$("#proplabel").on("keyup", function() {
 						console.log("key up on label");
 						s = cleanString($("#proplabel").val());
 						$("#propname").val(s);
-					});
-
-					// when hover in suggestion
-					$("#suggestions").on("mouseenter", "div", function() {
-						console.log("enter suggestion");
-						$(this).css("background-color", "#e0e0e0");
-					});
-
-					$("#suggestions").on("mouseleave", "div", function() {
-						console.log("leave suggestion");
-						$(this).css("background-color", "#fff");
 					});
 
 					function cleanString( stringtoclean )
@@ -4001,7 +3946,7 @@ if ($module == 'initmodule') {
 						if (stringtoclean.length > 28) {
 							stringtoclean = stringtoclean.substring(0, 27);
 						}
-						return stringtoclean
+						return stringtoclean;
 					}
 
 				  });';

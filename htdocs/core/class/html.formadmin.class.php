@@ -363,8 +363,6 @@ class FormAdmin
 	public function select_timezone($selected, $htmlname)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
 
@@ -471,6 +469,43 @@ class FormAdmin
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
 		}
+
+		return $out;
+	}
+
+
+	/**
+	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
+	 *
+	 * @param	string	$htmlname				Name of HTML select component
+	 * @param	string	$type					Type preselected
+	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @return 	string							The combo HTML select component
+	 */
+	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
+	{
+		global $type2label;	// TODO Remove this
+
+		$out = '';
+
+		$out .= '<select class="flat type" id="'.$htmlname.'" name="'.$htmlname.'">';
+		foreach ($type2label as $key => $val) {
+			$selected = '';
+			if ($key == $type) {
+				$selected = ' selected="selected"';
+			}
+
+			// Set $valhtml with the picto for the type
+			$valhtml = ($key ? getPictoForType($key) : '').$val;
+
+			if (empty($typewecanchangeinto) || in_array($key, $typewecanchangeinto[$type])) {
+				$out .= '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+			} else {
+				$out .= '<option value="'.$key.'" disabled="disabled"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+			}
+		}
+		$out .= '</select>';
+		$out .= ajax_combobox('type');
 
 		return $out;
 	}

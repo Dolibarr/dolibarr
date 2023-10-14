@@ -337,7 +337,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'mail') {
+				$type = 'varchar(128)';
+			} elseif ($type == 'phone') {
+				$type = 'varchar(20)';
+			} elseif ($type == 'ip') {
+				$type = 'varchar(32)';
 			}
+
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid') {
 				$texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
