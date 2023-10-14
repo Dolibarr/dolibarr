@@ -1589,13 +1589,13 @@ class Project extends CommonObject
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
 			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
+			$sql .= " AND ( ec.fk_socpeople = ".((int) $user->id)." ) OR ( ec.fk_socpeople = ".((int) $user->contact_id)." ))";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
 			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
+			$sql .= " AND ( ec.fk_socpeople = ".((int) $user->id)." ) OR ( ec.fk_socpeople = ".((int) $user->contact_id)." ))";
 			$sql .= " )";
 		} elseif ($mode == 2) {
 			// No filter. Use this if user has permission to see all project
