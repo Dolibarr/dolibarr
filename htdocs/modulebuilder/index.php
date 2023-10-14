@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2023      Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1743,7 +1744,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 	} else {
 		$addfieldentry = array();
 	}
-	var_dump($addfieldentry);
+	//var_dump($addfieldentry);
 	/*if (GETPOST('regeneratemissing'))
 	{
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
