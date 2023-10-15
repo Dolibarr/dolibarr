@@ -3700,7 +3700,7 @@ class Commande extends CommonOrder
 	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf, $hookmanager;
+		global $langs, $hookmanager;
 
 		$billedtext = '';
 		if (empty($donotshowbilled)) {
