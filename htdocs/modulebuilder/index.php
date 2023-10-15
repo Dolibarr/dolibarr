@@ -351,7 +351,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
+				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1510,7 +1510,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
+				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);

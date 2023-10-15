@@ -128,7 +128,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -243,7 +243,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 // Link to create task
 $linktocreatetaskParam = array();
 $linktocreatetaskUserRight = false;
-if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
+if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'creer')) {
 	if ($object->public || $userWrite > 0) {
 		$linktocreatetaskUserRight = true;
 	} else {

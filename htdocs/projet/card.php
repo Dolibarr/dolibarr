@@ -542,7 +542,7 @@ if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) { // 2 = leads only
 	$titlenew = $langs->trans("NewLead");
 }
 
-if ($action == 'create' && $user->rights->projet->creer) {
+if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	/*
 	 * Create
 	 */
@@ -1249,7 +1249,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -1551,7 +1551,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
+			if ($object->statut == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1560,7 +1560,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Reopen
-			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer) {
+			if ($object->statut == Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
