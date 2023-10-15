@@ -64,7 +64,7 @@ $mobilepage = GETPOST('mobilepage', 'alpha');
 
 // Terminal is stored into $_SESSION["takeposterminal"];
 
-if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
 
@@ -701,7 +701,7 @@ if (empty($reshook)) {
 	if ($action == "updateqty") {
 		foreach ($invoice->lines as $line) {
 			if ($line->id == $idline) {
-				if (!$user->rights->takepos->editlines || (!$user->rights->takepos->editorderedlines && $line->special_code == "4")) {
+				if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
 					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 				} else {
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -730,7 +730,7 @@ if (empty($reshook)) {
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 					//echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
-					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
+					if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 					} elseif (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')  == 1) {
 						$result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -767,7 +767,7 @@ if (empty($reshook)) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
-					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
+					if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 					} else {
 						$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -965,7 +965,7 @@ $form = new Form($db);
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -1651,7 +1651,7 @@ if ($placeid > 0) {
 
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
-				if (isModEnabled('stock') && !empty($user->rights->stock->mouvement->lire)) {
+				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (getDolGlobalString($constantforkey) && $line->fk_product > 0 && empty($conf->global->TAKEPOS_HIDE_STOCK_ON_LINE)) {
 						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";

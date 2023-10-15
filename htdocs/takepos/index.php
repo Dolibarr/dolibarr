@@ -125,7 +125,7 @@ if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1082,7 +1082,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 						<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
 					<?php }?>
 					</div>
-					<?php
+<?php
 				}?>
 				<div class="login_block_user">
 				<?php
