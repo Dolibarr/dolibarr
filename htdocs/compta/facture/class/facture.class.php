@@ -5954,25 +5954,32 @@ class Facture extends CommonInvoice
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $langs;
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'socid')) {
-			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
+		if (!empty($arraydata['thirdparty'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['thirdparty'].'</span>';
 		}
-		if (property_exists($this, 'fk_user_author')) {
-			$return .= '<br><span class="info-box-label">'.$this->fk_user_author.'</span>';
+		if (property_exists($this, 'date')) {
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date, 'day').'</span>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= ' &nbsp; <span class="info-box-label amount" title="'.dol_escape_htmltag($langs->trans("AmountHT")).'">'.price($this->total_ht);
+			$return .= ' '.$langs->trans("HT");
+			$return .= '</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$alreadypaid = (empty($arraydata['alreadypaid']) ? 0 : $arraydata['alreadypaid']);
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
