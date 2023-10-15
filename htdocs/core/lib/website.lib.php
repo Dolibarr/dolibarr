@@ -425,7 +425,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	}
 
 	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
-		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite ' . getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY'), $content);
 	}
 
 	$content = dolReplaceSmileyCodeWithUTF8($content);

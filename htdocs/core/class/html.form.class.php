@@ -1446,7 +1446,7 @@ class Form
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
@@ -1458,7 +1458,7 @@ class Form
 			// if not, by testSqlAndScriptInject() only.
 			$sql .= " AND (" . $filter . ")";
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
 		}
 		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
@@ -3162,7 +3162,7 @@ class Form
 			$opt .= ' pbq="' . $objp->price_by_qty_rowid . '" data-pbq="' . $objp->price_by_qty_rowid . '" data-pbqup="' . $objp->price_by_qty_unitprice . '" data-pbqbase="' . $objp->price_by_qty_price_base_type . '" data-pbqqty="' . $objp->price_by_qty_quantity . '" data-pbqpercent="' . $objp->price_by_qty_remise_percent . '"';
 		}
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-			if (!empty($user->rights->stock->lire)) {
+			if ($user->hasRight('stock', 'lire')) {
 				if ($objp->stock > 0) {
 					$opt .= ' class="product_line_stock_ok"';
 				} elseif ($objp->stock <= 0) {
@@ -3319,7 +3319,7 @@ class Form
 		}
 
 		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-			if (!empty($user->rights->stock->lire)) {
+			if ($user->hasRight('stock', 'lire')) {
 				$opt .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
 
 				if ($objp->stock > 0) {
@@ -3745,7 +3745,7 @@ class Form
 				if (isModEnabled('stock') && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 					$novirtualstock = ($showstockinlist == 2);
 
-					if (!empty($user->rights->stock->lire)) {
+					if ($user->hasRight('stock', 'lire')) {
 						$outvallabel .= ' - ' . $langs->trans("Stock") . ': ' . price(price2num($objp->stock, 'MS'));
 
 						if ($objp->stock > 0) {
@@ -8159,7 +8159,7 @@ class Form
 				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
 				}
 			}
@@ -8193,7 +8193,7 @@ class Form
 					}
 				}
 				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-					if (empty($user->rights->societe->client->voir) && !$user->socid) {
+					if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
 					}
 				}
@@ -10338,7 +10338,7 @@ class Form
 		}
 
 		if (empty($projectsListId)) {
-			if (empty($usertofilter->rights->projet->all->lire)) {
+			if (!$usertofilter->hasRight('projet', 'all', 'lire')) {
 				$projectstatic = new Project($this->db);
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
 			}
@@ -10386,7 +10386,7 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire)) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$usertofilter->hasRight('societe', 'lire')) {
 						// Do nothing
 					} else {
 						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {

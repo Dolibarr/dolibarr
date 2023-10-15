@@ -1158,7 +1158,7 @@ if ($mode == 'marketplace') {
 				</table>
 			</div>
 
-		<?php
+<?php
 	}
 }
 
