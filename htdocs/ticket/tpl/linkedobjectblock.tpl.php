@@ -71,7 +71,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			?>
 		</td>
 </tr>
-<?php
+	<?php
 }
 if (count($linkedObjectBlock) > 1) {
 	?>

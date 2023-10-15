@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
 // Security check
-if (!$user->rights->website->read) {
+if (!$user->hasRight('website', 'read')) {
 	accessforbidden();
 }
 
@@ -588,7 +588,7 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $userca
 			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
 		}
 		setEventMessages($message, null, 'errors');
-	} elseif (empty($user->rights->website->writephp)) {
+	} elseif (!$user->hasRight('website', 'writephp')) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
 	} elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
@@ -2357,7 +2357,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 }
 
 // Export site
-if ($action == 'exportsite' && !empty($user->rights->website->export)) {
+if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 	$fileofzip = $object->exportWebSite();
 
 	if ($fileofzip) {
@@ -2817,11 +2817,11 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 
 if (!GETPOST('hide_websitemenu')) {
 	$disabled = '';
-	if (empty($user->rights->website->write)) {
+	if (!$user->hasRight('website', 'write')) {
 		$disabled = ' disabled="disabled"';
 	}
 	$disabledexport = '';
-	if (empty($user->rights->website->export)) {
+	if (!$user->hasRight('website', 'export')) {
 		$disabledexport = ' disabled="disabled"';
 	}
 
@@ -3201,7 +3201,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite') {
 			$disabled = '';
-			if (empty($user->rights->website->write)) {
+			if (!$user->hasRight('website', 'write')) {
 				$disabled = ' disabled="disabled"';
 			}
 
@@ -4814,7 +4814,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<td class="tdwebsitesearchresult right nowraponall">';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
-					if (empty($user->rights->website->write)) {
+					if (!$user->hasRight('website', 'write')) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
@@ -4822,7 +4822,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
-					if (empty($user->rights->website->write)) {
+					if (!$user->hasRight('website', 'write')) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}

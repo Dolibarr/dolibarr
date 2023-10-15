@@ -1082,7 +1082,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 						<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
 					<?php }?>
 					</div>
-<?php
+					<?php
 				}?>
 				<div class="login_block_user">
 				<?php
