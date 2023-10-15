@@ -194,6 +194,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID7", GETPOST("MAIN_INFO_PROFID7", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID8", GETPOST("MAIN_INFO_PROFID8", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID9", GETPOST("MAIN_INFO_PROFID9", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID10", GETPOST("MAIN_INFO_PROFID10", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("socialobject", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -684,6 +688,50 @@ if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 	print '</td></tr>';
 }
 
+// ProfId7
+if ($langs->transcountry("ProfId7", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid7">'.$langs->transcountry("profid7", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID7" id="profid7" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID7) ? $conf->global->MAIN_INFO_PROFID7 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId8
+if ($langs->transcountry("ProfId8", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid8">'.$langs->transcountry("profid8", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID8" id="profid8" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID8) ? $conf->global->MAIN_INFO_PROFID8 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId9
+if ($langs->transcountry("ProfId9", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid9">'.$langs->transcountry("profid9", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID9" id="profid9" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID9) ? $conf->global->MAIN_INFO_PROFID9 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
+// ProfId10
+if ($langs->transcountry("ProfId10", $mysoc->country_code) != '-') {
+	print '<tr class="oddeven"><td><label for="profid10">'.$langs->transcountry("profid10", $mysoc->country_code).'</label></td><td>';
+	if (!empty($mysoc->country_code)) {
+		print '<input name="MAIN_INFO_PROFID10" id="profid10" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID10) ? $conf->global->MAIN_INFO_PROFID10 : '').'">';
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
+}
+
 // Intra-community VAT number
 print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
@@ -753,7 +801,7 @@ print "</tr>\n";
 
 if ($mysoc->useLocalTax(1)) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="lt1" value="localtax1on"'.(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "").'> <label for="lt1">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="lt1" value="localtax1on"'.((getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == "localtax1on") ? " checked" : "").'> <label for="lt1">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	print '<div class="nobordernopadding">';
 	$tooltiphelp = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
@@ -771,7 +819,7 @@ if ($mysoc->useLocalTax(1)) {
 	print "</div>";
 	print "</td></tr>\n";
 
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="nolt1" value="localtax1off"'.((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "").'> <label for="nolt1">'.$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="nolt1" value="localtax1off"'.((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == "localtax1off") ? " checked" : "").'> <label for="nolt1">'.$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	$tooltiphelp = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
 	$tooltiphelp = ($tooltiphelp != "LocalTax1IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
@@ -797,7 +845,7 @@ print "</tr>\n";
 
 if ($mysoc->useLocalTax(2)) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="lt2" value="localtax2on"'.(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "").'> <label for="lt2">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="lt2" value="localtax2on"'.((getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == "localtax2on") ? " checked" : "").'> <label for="lt2">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	print '<div class="nobordernopadding">';
 	print '<label for="lt2">'.$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label>";
@@ -812,7 +860,7 @@ if ($mysoc->useLocalTax(2)) {
 	print "</div>";
 	print "</td></tr>\n";
 
-	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="nolt2" value="localtax2off"'.((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "").'> <label for="nolt2">'.$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</label></td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="nolt2" value="localtax2off"'.((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == "localtax2off") ? " checked" : "").'> <label for="nolt2">'.$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</label></td>";
 	print '<td colspan="2">';
 	print "<div>";
 	$tooltiphelp = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);

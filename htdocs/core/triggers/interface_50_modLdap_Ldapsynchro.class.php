@@ -134,7 +134,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($result > 0 && !empty($object->context['newgroupid'])) {      // We are in context of adding a new group to user
 						$usergroup = new UserGroup($this->db);
 
-						$usergroup->fetch($object->context['newgroupid']);
+						$usergroup->fetch($object->context['newgroupid'], '', true);
 
 						$oldinfo = $usergroup->_load_ldap_info();
 						$olddn = $usergroup->_load_ldap_dn($oldinfo);
@@ -156,7 +156,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($result > 0 && !empty($object->context['oldgroupid'])) {      // We are in context of removing a group from user
 						$usergroup = new UserGroup($this->db);
 
-						$usergroup->fetch($object->context['oldgroupid']);
+						$usergroup->fetch($object->context['oldgroupid'], '', true);
 
 						$oldinfo = $usergroup->_load_ldap_info();
 						$olddn = $usergroup->_load_ldap_dn($oldinfo);
@@ -215,7 +215,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (intval($conf->global->LDAP_SYNCHRO_ACTIVE) === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && $conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+			if (getDolGlobalInt("LDAP_SYNCHRO_ACTIVE") === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
 				if ($result > 0) {

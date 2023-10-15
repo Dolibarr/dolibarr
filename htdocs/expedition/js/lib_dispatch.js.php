@@ -98,7 +98,7 @@ function addDispatchLine(index, type, mode) {
 	}
 	console.log("expedition/js/lib_dispatch.js.php qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered+ " qty=" + qty);
 
-	if (qty <= 1) {
+	if ((mode === 'lessone' && qty <= 1) || (qtyOrdered - qtyDispatched < 1)) {
 		window.alert("Remain quantity to dispatch is too low to be split");
 	} else {
 		var oldlineqty = qtyDispatched;

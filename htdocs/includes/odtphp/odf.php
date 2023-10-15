@@ -180,7 +180,7 @@ class Odf
 
 		// Check if the value includes html tags
 		if ($this->_hasHtmlTag($value) === true) {
-			$value = strip_tags($value, '<br><strong><b><i><em><u><s><sub><sup><span>');
+			$value = strip_tags($value, '<br><strong><b><i><em><u><s><sub><sup><span>');	// remove html tags except the one into the list in second parameter
 
 			// Default styles for strong/b, i/em, u, s, sub & sup
 			$automaticStyles = array(

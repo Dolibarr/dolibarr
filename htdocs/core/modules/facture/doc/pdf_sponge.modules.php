@@ -1164,10 +1164,10 @@ class pdf_sponge extends ModelePDFFactures
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$y += 3;
+			$maxY = $y;
 			while ($i < $num) {
-				$y += 3;
 				$row = $this->db->fetch_object($resql);
-
 				$pdf->SetXY($tab3_posx, $tab3_top + $y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), 'day', false, $outputlangs, true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);
@@ -1176,11 +1176,12 @@ class pdf_sponge extends ModelePDFFactures
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
+				$maxY = max($pdf->GetY() - $tab3_top - 3, $maxY);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
 				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
-
+				$y = $maxY = max($pdf->GetY() - 3 - $tab3_top, $maxY);
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
-
+				$y += 3;
 				$i++;
 			}
 
@@ -1312,7 +1313,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
+				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
@@ -2034,6 +2035,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 
 		$ltrdirection = 'L';

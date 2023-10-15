@@ -588,8 +588,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		// Product label
-		print '<td>'.$objp->label;
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+		print '<td>';
+		print dol_escape_htmltag($objp->label);
 		print '</td>';
 
 		if ($mode == 'future') {

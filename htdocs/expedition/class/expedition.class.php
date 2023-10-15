@@ -729,6 +729,8 @@ class Expedition extends CommonObject
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$numref = $this->getNextNumRef($soc);
+		} elseif (!empty($this->ref)) {
+			$numref = $this->ref;
 		} else {
 			$numref = "EXP".$this->id;
 		}

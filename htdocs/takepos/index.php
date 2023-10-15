@@ -85,7 +85,7 @@ if ($conf->browser->layout == 'phone') {
 	$maxcategbydefaultforthisdevice = 8;
 	$maxproductbydefaultforthisdevice = 16;
 	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
-	if ($_SESSION["takeposterminal"] != "" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1) {
+	if ($_SESSION["takeposterminal"] != "" && getDolGlobalInt('TAKEPOS_PHONE_BASIC_LAYOUT') == 1) {
 		$_SESSION["basiclayout"] = 1;
 		header("Location: phone.php?mobilepage=invoice");
 		exit;
@@ -98,7 +98,7 @@ $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaul
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
  $soc = new Societe($db);
  if ($invoice->socid > 0) $soc->fetch($invoice->socid);
- else $soc->fetch($conf->global->$constforcompanyid);
+ else $soc->fetch(getDolGlobalInt($constforcompanyid));
  */
 
 // Security check
@@ -203,7 +203,7 @@ function ClearSearch() {
 	$("#search").val('');
 	$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 	$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
-	$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+	$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
@@ -521,6 +521,11 @@ function Customer() {
 	$.colorbox({href:"../societe/list.php?type=t&contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
 }
 
+function Contact() {
+	console.log("Open box to select the contact place="+place);
+	$.colorbox({href:"../contact/list.php?type=c&contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Contact"); ?>"});
+}
+
 function History()
 {
 	console.log("Open box to select the history");
@@ -759,7 +764,7 @@ function Edit(number) {
 		Refresh();
 		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 		return;
 	} else if (number=='qty') {
 		if (editaction=='qty' && editnumber != '') {
@@ -794,7 +799,7 @@ function Edit(number) {
 			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -811,16 +816,16 @@ function Edit(number) {
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Qty").": "; ?>";
 		$("#qty").html("OK").addClass("clicked");
 		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='p'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Price").": "; ?>";
 		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 		$("#price").html("OK").addClass("clicked");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='r'){
-		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("ReductionShort").": "; ?>";
+		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("LineDiscountShort").": "; ?>";
 		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
 		$("#reduction").html("OK").addClass("clicked");
@@ -1189,7 +1194,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<button type="button" class="calcbutton" onclick="Edit(1);">1</button>
 			<button type="button" class="calcbutton" onclick="Edit(2);">2</button>
 			<button type="button" class="calcbutton" onclick="Edit(3);">3</button>
-			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r')"><?php echo $langs->trans("ReductionShort"); ?></button>
+			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r')"><?php echo $langs->trans("LineDiscountShort"); ?></button>
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
 			<button type="button" class="calcbutton" onclick="Edit('.')">.</button>
 			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c')">C</button>
@@ -1218,8 +1223,8 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 			}
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
-			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-			if ( !empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+			//var_dump($constantforkey.' '.getDolGlobalInt($constantforkey));
+			if ( !empty($conf->global->$constantforkey) && getDolGlobalInt($constantforkey) > 0) {
 				array_push($paiementsModes, $obj);
 			}
 		}
@@ -1253,13 +1258,17 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 }
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
-	$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+	if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) {
+		$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Contact").'</div>', 'action'=>'Contact();');
+	} else {
+		$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+	}
 }
 if ( ! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
-$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
+$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {

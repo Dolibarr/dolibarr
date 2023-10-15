@@ -172,7 +172,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
  *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
- *	@param   string		$chain		string to encode
+ *	@param   string		$chain		string to decode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
@@ -188,8 +188,10 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority
 			$key = $conf->file->dolcrypt_key;
 		} else {
+			// We fall back on the instance_unique_id
 			$key = $conf->file->instance_unique_id;
 		}
 	}
@@ -234,7 +236,7 @@ function dol_hash($chain, $type = '0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
@@ -255,9 +257,9 @@ function dol_hash($chain, $type = '0')
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
 		return password_hash($chain, PASSWORD_DEFAULT);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') {
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1') {
 		return sha1($chain);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') {
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1md5') {
 		return sha1(md5($chain));
 	}
 
@@ -281,7 +283,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
 {
 	global $conf;
 
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {

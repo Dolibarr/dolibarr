@@ -443,7 +443,7 @@ function societe_prepare_head(Societe $object)
  */
 function societe_prepare_head2($object)
 {
-	global $langs, $conf, $user;
+	global $langs;
 	$h = 0;
 	$head = array();
 
@@ -469,7 +469,7 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('societe');
