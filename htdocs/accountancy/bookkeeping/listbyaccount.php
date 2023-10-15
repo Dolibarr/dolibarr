@@ -746,6 +746,40 @@ if ($type == 'sub') {
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }
+$stringforfirstkey = $langs->trans("KeyboardShortcut");
+if ($conf->browser->name == 'chrome') {
+	$stringforfirstkey .= ' ALT +';
+} elseif ($conf->browser->name == 'firefox') {
+	$stringforfirstkey .= ' ALT + SHIFT +';
+} else {
+	$stringforfirstkey .= ' CTL +';
+}
+$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
+$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
+$moreforfilter .= <<<SCRIPT
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		var searchFormList = $('#searchFormList');
+		var searchAccountancyCodeStart = $('#search_accountancy_code_start');
+		var searchAccountancyCodeEnd = $('#search_accountancy_code_end');
+		jQuery('#previous_account').on('click', function() {
+			var previousOption = searchAccountancyCodeStart.find('option:selected').prev('option');
+			if (previousOption.length == 1) searchAccountancyCodeStart.val(previousOption.attr('value'));
+			searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
+			searchFormList.submit();
+		});
+		jQuery('#next_account').on('click', function() {
+			var nextOption = searchAccountancyCodeStart.find('option:selected').next('option');
+			if (nextOption.length == 1) searchAccountancyCodeStart.val(nextOption.attr('value'));
+			searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
+			searchFormList.submit();
+		});
+		jQuery('input[name="search_mvt_num"]').on("keypress", function(event) {
+			console.log(event);
+		});
+	});
+</script>
+SCRIPT;
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
