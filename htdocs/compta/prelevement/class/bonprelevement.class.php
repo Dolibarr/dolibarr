@@ -235,7 +235,7 @@ class BonPrelevement extends CommonObject
 		if (!empty($sourcetype)) {
 			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
 		} else {
-			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key);
+			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, '');
 		}
 
 		if ($result == 0) {
@@ -340,7 +340,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", '".$this->db->escape($code_guichet)."'";
 			$sql .= ", '".$this->db->escape($number)."'";
 			$sql .= ", '".$this->db->escape($number_key)."'";
-			$sql .= ", ".(!empty($sourcetype) ? ((int) $client_id) : '');
+			$sql .= (!empty($sourcetype) ? ", ". ((int) $client_id) : '');
 			$sql .= ")";
 			if ($this->db->query($sql)) {
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
@@ -1226,7 +1226,11 @@ class BonPrelevement extends CommonObject
 						 * $fac[11] : IBAN
 						 * $fac[12] : frstrcur
 						 */
-						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
+						if (!empty($sourcetype)) {
+							$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
+						} else {
+							$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, '');
+						}
 						if ($ri <> 0) {
 							$error++;
 						}
@@ -1337,11 +1341,7 @@ class BonPrelevement extends CommonObject
 
 			if (!$error) {
 				$this->db->commit();
-				if (empty($sourcetype)) {
-					return count($factures_prev);
-				} else {
-					return count($factures);
-				}
+				return count($factures_prev);
 			} else {
 				$this->db->rollback();
 				return -1;
