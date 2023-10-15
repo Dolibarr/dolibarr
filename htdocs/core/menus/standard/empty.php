@@ -178,7 +178,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
+						print '<span class="fas fa-home fa-fw paddingright" aria-hidden="true"></span>';
 					}
 
 					print $val['titre'];
@@ -504,16 +504,17 @@ function print_start_menu_entry_empty($idsel, $classname, $showmode)
 /**
  * Output menu entry
  *
- * @param	string	$text		Text
- * @param	int		$showmode	1 or 2
- * @param	string	$url		Url
- * @param	string	$id			Id
- * @param	string	$idsel		Id sel
- * @param	string	$classname	Class name
- * @param	string	$atarget	Target
+ * @param	string	$text			Text
+ * @param	int		$showmode		1 or 2
+ * @param	string	$url			Url
+ * @param	string	$id				Id
+ * @param	string	$idsel			Id sel
+ * @param	string	$classname		Class name
+ * @param	string	$atarget		Target
+ * @param	array	$menuval		All the $menuval array
  * @return	void
  */
-function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget)
+function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
 {
 	global $conf, $langs;
 
@@ -522,7 +523,9 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
+		print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
+		print '</div>';
 		print '</a>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
 			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
@@ -534,7 +537,9 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 	}
 	if ($showmode == 2) {
 		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled">';
+		print '<span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span>';
+		print '</div>';
 		print '</div>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
 			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';

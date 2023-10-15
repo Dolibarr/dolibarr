@@ -951,7 +951,7 @@ class Availabilities extends CommonObject
 		if (!empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->BOOKCAL_AVAILABILITIES_ADDON.".php";
+			$file = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON') . ".php";
 			$classname = $conf->global->BOOKCAL_AVAILABILITIES_ADDON;
 
 			// Include file with class

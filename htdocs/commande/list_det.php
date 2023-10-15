@@ -175,7 +175,7 @@ $arrayfields = array(
 	// Détail commande
 	'rowid'=> array('label'=>'TechnicalID', 'checked'=>1, 'position'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0)),
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
-	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1),
+	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>-1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
@@ -413,7 +413,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -445,7 +445,7 @@ if ($search_product_category > 0) {
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_id) {
@@ -865,7 +865,7 @@ if ($resql) {
 	$moreforfilter .= '<br>';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -873,7 +873,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
@@ -1544,7 +1544,9 @@ if ($resql) {
 		if (!empty($arrayfields['pr.desc']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
-			print '<td class="nowrap tdoverflowmax200">'.dol_escape_htmltag($labelproduct).'</td>';
+			print '<td class="nowrap tdoverflowmax200">';
+			print dolGetFirstLineOfText(dolPrintHTML($labelproduct), 5);
+			print '</td>';
 
 			if (!$i) {
 				$totalarray['nbfield']++;

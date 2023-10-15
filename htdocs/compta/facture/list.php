@@ -469,7 +469,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 } elseif ($massaction == 'withdrawrequest') {
 	$langs->load("withdrawals");
 
-	if (!$user->rights->prelevement->bons->creer) {
+	if (!$user->hasRight('prelevement', 'bons', 'creer')) {
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	} else {
@@ -643,7 +643,7 @@ if (!empty($search_fac_rec_source_title)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -657,7 +657,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid > 0) {
@@ -1187,11 +1187,11 @@ if ($resql) {
 	if ($user->hasRight('facture', 'paiement')) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if (isModEnabled('prelevement') && !empty($user->rights->prelevement->bons->creer)) {
+	if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer')) {
 		$langs->load("withdrawals");
 		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
-	if (!empty($user->rights->facture->supprimer)) {
+	if ($user->hasRight('facture', 'supprimer')) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
 			$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
 		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation

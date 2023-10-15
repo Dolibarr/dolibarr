@@ -1123,7 +1123,7 @@ class Paiement extends CommonObject
 		if (!empty($conf->global->PAYMENT_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->PAYMENT_ADDON;
 
 			// Include file with class
@@ -1140,8 +1140,8 @@ class Paiement extends CommonObject
 
 			// For compatibility
 			if (!$mybool) {
-				$file = $conf->global->PAYMENT_ADDON.".php";
-				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
+				$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
+				$classname = "mod_payment_" . getDolGlobalString('PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {

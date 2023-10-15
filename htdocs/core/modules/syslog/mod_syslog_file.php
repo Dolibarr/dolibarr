@@ -121,7 +121,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 					$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
 				}
 			} else {
-				$suffixinfilename .= '_'.$conf->global->SYSLOG_FILE_ONEPERSESSION;
+				$suffixinfilename .= '_' . getDolGlobalString('SYSLOG_FILE_ONEPERSESSION');
 			}
 		}
 

@@ -2042,9 +2042,6 @@ while ($i < $imaxinloop) {
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-// Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
-$formcompany->selectProspectStatus('status_prospect', $prospectstatic, null, null, "js");
-
 // If no record found
 if ($num == 0) {
 	$colspan = 1;
@@ -2064,6 +2061,9 @@ print $hookmanager->resPrint;
 
 print '</table>'."\n";
 print '</div>'."\n";
+
+// Line that calls the select_status function by passing it js as the 5th parameter in order to activate the js script
+$formcompany->selectProspectStatus('status_prospect', $prospectstatic, null, null, "js");
 
 print '</form>'."\n";
 

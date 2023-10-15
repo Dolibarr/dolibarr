@@ -1200,7 +1200,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOST('lineid', 'int')) {
 						$fournprice = $line->fk_fournprice;
@@ -1303,7 +1303,7 @@ if (empty($reshook)) {
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
-					&& isModEnabled('facture') && !empty($user->rights->facture->creer)
+					&& isModEnabled('facture') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1445,7 +1445,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -2185,7 +2185,7 @@ if ($action == 'create' && $usercancreate) {
 				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 					$object->fetchObjectLinked();
@@ -2397,7 +2397,7 @@ if ($action == 'create' && $usercancreate) {
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
 		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {

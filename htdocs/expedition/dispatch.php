@@ -772,7 +772,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
 
-						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product";
+						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot,";
+						$sql .= " eb.batch, eb.eatby, eb.sellby, cd.fk_product";
 						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
 						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
@@ -1263,7 +1264,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 									$("#qty_"+(nbrTrs-1)+"_"+idproduct).val(product.Qty);
 									$("#entrepot_"+(nbrTrs-1)+"_"+idproduct).val(product.Warehouse);
-									
+
 									if(modedispatch == "batch"){
 										$("#lot_number_"+(nbrTrs-1)+"_"+idproduct).val(product.Batch);
 									}

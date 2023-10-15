@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
- * Copyright (C) 2023       William Mead         <william.mead@manchenumerique.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -626,7 +626,9 @@ if (empty($reshook)) {
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
-		$objectline->array_options = array_merge($objectline->array_options, $array_options);
+		if (is_array($array_options)) {
+			$objectline->array_options = array_merge($objectline->array_options, $array_options);
+		}
 
 		$result = $objectline->update($user);
 		if ($result < 0) {
@@ -745,7 +747,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));

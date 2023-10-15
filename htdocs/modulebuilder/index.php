@@ -350,20 +350,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'500000'=>$idmodule
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
-				$arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) {
-				$arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
-			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) {
-				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['modulefamily'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1031,7 +1019,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			setEventMessages($langs->trans("ErrorTableNotFound", $tablename), null, 'errors');
 		} else {
 			/**
-			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'ip', 'url', 'password')
 			 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 			 *  'label' the translation key.
 			 *  'picto' is code of a picto to show before value in forms
@@ -1521,20 +1509,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
-				$arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) {
-				$arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
-			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) {
-				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1586,7 +1562,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
-		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
 		exit;
 	}
@@ -1681,10 +1657,10 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
-if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && !empty(GETPOST('obj')) && $tabobj == "createproperty") {
+if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && (!empty($tabobj) || !empty(GETPOST('obj')))) {
 	$error = 0;
 
-	$objectname = GETPOST('obj');
+	$objectname = (GETPOST('obj') ? GETPOST('obj') : $tabobj);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
@@ -1713,14 +1689,14 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
 
-		if (!$error && !GETPOST('regenerateclasssql')&& !GETPOST('regeneratemissing')) {
+		if (!$error && !GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
 			$addfieldentry = array(
 				'name'=>GETPOST('propname', 'aZ09'),
 				'label'=>GETPOST('proplabel', 'alpha'),
 				'type'=>strtolower(GETPOST('proptype', 'alpha')),
-				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-				'visible'=>GETPOST('propvisible', 'int'),
-				'enabled'=>GETPOST('propenabled', 'int'),
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'alphawithlgt'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'visible'=>GETPOST('propvisible', 'alphanohtml'),
+				'enabled'=>GETPOST('propenabled', 'alphanohtml'),
 				'position'=>GETPOST('propposition', 'int'),
 				'notnull'=>GETPOST('propnotnull', 'int'),
 				'index'=>GETPOST('propindex', 'int'),
@@ -1733,11 +1709,18 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'csslist'=>GETPOST('propcsslist', 'alpha'),
 				'default'=>GETPOST('propdefault', 'restricthtml'),
 				'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
-				'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
+				//'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
 			);
+
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
+				$tmpdecode = json_decode($addfieldentry['arrayofkeyval'], true);
+				if ($tmpdecode) {	// If string is already a json
+					$addfieldentry['arrayofkeyval'] = $tmpdecode;
+				} else {			// If string is a list of lines with "key,value"
+					$tmparray = dolExplodeIntoArray($addfieldentry['arrayofkeyval'], "\n", ",");
+					$addfieldentry['arrayofkeyval'] = $tmparray;
+				}
 			}
 		}
 	} else {
@@ -1989,7 +1972,11 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 	}
 
 	$action = '';
-	$tabobj = 'deleteobject';
+	if (! $error) {
+		$tabobj = 'newobject';
+	} else {
+		$tabobj = 'deleteobject';
+	}
 
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
@@ -1998,8 +1985,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
-		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
+		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&tabobj=deleteobject&module='.urlencode($module));
 		exit;
 	}
 }
@@ -2292,7 +2279,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
 	}
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
@@ -2399,7 +2386,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
@@ -2446,7 +2433,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOST('p
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			exit;
 		}
@@ -2591,7 +2578,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 			setEventMessages($result, null, 'errors');
 		}
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 	}
 	// load class and check if menu exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -2650,7 +2637,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			setEventMessages($result, null, 'errors');
 		}
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 	}
 	$error = 0;
 
@@ -2798,7 +2785,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 				setEventMessages($result, null, 'errors');
 			}
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-			setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
 		$error = 0;
 		// for loading class and the menu wants to modify
@@ -2895,7 +2882,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 			setEventMessages($result, null, 'errors');
 		}
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
-		setEventMessages($langs->trans('WarningModuleNeedRefrech', $langs->transnoentities($module)), null, 'warnings');
+		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 	}
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
@@ -2919,16 +2906,11 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 			$propertyToUpdate = 'description';
 			break;
 		case 'version':
-			$propertyToUpdate = 'version';
-			break;
 		case 'family':
-			$propertyToUpdate = 'family';
-			break;
+		case 'picto':
 		case 'editor_name':
-			$propertyToUpdate = 'editor_name';
-			break;
 		case 'editor_url':
-			$propertyToUpdate = 'editor_url';
+			$propertyToUpdate = $keydescription;
 			break;
 		default:
 			$error = GETPOST('keydescription');
@@ -3317,22 +3299,22 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ((!is_array($objects) || count($objects) <= 0) ? $langs->trans("Objects") : $langs->trans("Objects").' <span class="badge">'.count($objects)."</span>");
+		$head2[$h][1] = ((!is_array($objects) || count($objects) <= 0) ? $langs->trans("Objects") : $langs->trans("Objects").'<span class="marginleftonlyshort badge">'.count($objects)."</span>");
 		$head2[$h][2] = 'objects';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countLangs <= 0 ? $langs->trans("Languages") : $langs->trans("Languages").' <span class="badge">'.$countLangs."</span>");
+		$head2[$h][1] = ($countLangs <= 0 ? $langs->trans("Languages") : $langs->trans("Languages").'<span class="marginleftonlyshort badge">'.$countLangs."</span>");
 		$head2[$h][2] = 'languages';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').' <span class="badge">'.$countDictionaries."</span>");
+		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').'<span class="marginleftonlyshort badge">'.$countDictionaries."</span>");
 		$head2[$h][2] = 'dictionaries';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions").' <span class="badge">'.$countRights."</span>");
+		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions").'<span class="marginleftonlyshort badge">'.$countRights."</span>");
 		$head2[$h][2] = 'permissions';
 		$h++;
 
@@ -3342,7 +3324,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countMenus <= 0 ? $langs->trans("Menus") : $langs->trans("Menus").' <span class="badge">'.$countMenus."</span>");
+		$head2[$h][1] = ($countMenus <= 0 ? $langs->trans("Menus") : $langs->trans("Menus").'<span class="marginleftonlyshort badge">'.$countMenus."</span>");
 		$head2[$h][2] = 'menus';
 		$h++;
 
@@ -3352,12 +3334,12 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=triggers&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countTriggers <= 0 ? $langs->trans("Triggers") : $langs->trans("Triggers").' <span class="badge">'.$countTriggers."</span>");
+		$head2[$h][1] = ($countTriggers <= 0 ? $langs->trans("Triggers") : $langs->trans("Triggers").'<span class="marginleftonlyshort badge">'.$countTriggers."</span>");
 		$head2[$h][2] = 'triggers';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets").' <span class="badge">'.$countWidgets."</span>");
+		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets").'<span class="marginleftonlyshort badge">'.$countWidgets."</span>");
 		$head2[$h][2] = 'widgets';
 		$h++;
 
@@ -3372,12 +3354,12 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=js&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countJs <= 0 ? $langs->trans("JS") : $langs->trans("JS").' <span class="badge">'.$countJs."</span>");
+		$head2[$h][1] = ($countJs <= 0 ? $langs->trans("JS") : $langs->trans("JS").'<span class="marginleftonlyshort badge">'.$countJs."</span>");
 		$head2[$h][2] = 'js';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cli&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countCLI <= 0 ? $langs->trans("CLI") : $langs->trans("CLI").' <span class="badge">'.$countCLI."</span>");
+		$head2[$h][1] = ($countCLI <= 0 ? $langs->trans("CLI") : $langs->trans("CLI").'<span class="marginleftonlyshort badge">'.$countCLI."</span>");
 		$head2[$h][2] = 'cli';
 		$h++;
 
@@ -3387,7 +3369,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation").' <span class="badge">'.$hasDoc."</span>");
+		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation").'<span class="paddingleft badge">'.$hasDoc."</span>");
 		$head2[$h][2] = 'specifications';
 		$h++;
 
@@ -3490,7 +3472,7 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'version') {
 						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->getVersion()).'">';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyversion" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						print $moduleobj->getVersion();
@@ -3525,7 +3507,7 @@ if ($module == 'initmodule') {
 							}
 						}
 						print '</select>';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyfamily" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						print $moduleobj->family;
@@ -3536,8 +3518,15 @@ if ($module == 'initmodule') {
 					print '<tr><td>';
 					print $langs->trans("Picto");
 					print '</td><td>';
-					print $moduleobj->picto;
-					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+					if ($action == 'edit_modulepicto' && GETPOST('keydescription', 'alpha') === 'picto') {
+						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'">';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifypicto" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+					} else {
+						print $moduleobj->picto;
+						print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_modulepicto&token='.newToken().'&tab='.urlencode($tab).'&module='.urlencode($module).'&keydescription=picto">'.img_edit().'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -3545,7 +3534,7 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_name') {
 						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'">';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyname" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						print $moduleobj->editor_name;
@@ -3558,7 +3547,7 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_url') {
 						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'">';
-						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
+						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyeditorurl" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
 						if (!empty($moduleobj->editor_url)) {
@@ -3789,7 +3778,8 @@ if ($module == 'initmodule') {
 				print '<div class="tagtr"><div class="tagtd">';
 				print '<span class="opacitymedium">'.$langs->trans("ObjectKey").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
-				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('objectname', 'alpha') ? GETPOST('objectname', 'alpha') : $modulename).'" autofocus><br>';
+				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('objectname', 'alpha') ? GETPOST('objectname', 'alpha') : $modulename).'" autofocus>';
+				print $form->textwithpicto('', $langs->trans("Example").': MyObject, ACamelCaseName, ...');
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';
@@ -3831,8 +3821,8 @@ if ($module == 'initmodule') {
 				print '</form>';
 			} elseif ($tabobj == 'createproperty') {
 				$attributesUnique = array (
-					'propname' => $form->textwithpicto($langs->trans("Code"), $langs->trans("PropertyDesc"), 1, 'help', 'extracss', 0, 3, 'propertyhelp'),
 					'proplabel' => $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey")),
+					'propname' => $form->textwithpicto($langs->trans("Code"), $langs->trans("PropertyDesc"), 1, 'help', 'extracss', 0, 3, 'propertyhelp'),
 					'proptype' => $form->textwithpicto($langs->trans("Type"), $langs->trans("TypeOfFieldsHelpIntro").'<br><br>'.$langs->trans("TypeOfFieldsHelp"), 1, 'help', 'extracss', 0, 3, 'typehelp'),
 					'proparrayofkeyval' => $form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")),
 					'propnotnull' => $form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")),
@@ -3843,7 +3833,7 @@ if ($module == 'initmodule') {
 					'propenabled' => $form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp'),
 					'propvisible' => $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp'),
 					'propnoteditable' => $langs->trans("NotEditable"),
-					'propalwayseditable' => $langs->trans("AlwaysEditable"),
+					//'propalwayseditable' => $langs->trans("AlwaysEditable"),
 					'propsearchall' => $form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")),
 					'propisameasure' => $form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")),
 					'propcss' => $langs->trans("CSSClass"),
@@ -3851,7 +3841,7 @@ if ($module == 'initmodule') {
 					'propcsslist' => $langs->trans("CSSListClass"),
 					'prophelp' => $langs->trans("KeyForTooltip"),
 					'propshowoncombobox' => $langs->trans("ShowOnCombobox"),
-					'propvalidate' => $form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")),
+					//'propvalidate' => $form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")),
 					'propcomment' => $langs->trans("Comment"),
 				);
 				print '<form action="'.$_SERVER["PHP_SELF"].'?tab=objects&module='.urlencode($module).'&tabobj=createproperty&obj='.urlencode(GETPOST('obj')).'" method="POST">';
@@ -3870,11 +3860,46 @@ if ($module == 'initmodule') {
 					if ($key == 'propname' || $key == 'proplabel') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'proptype') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
-					} elseif ($key == 'propvalidate') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50">';
+						print '<input class="maxwidth200" id="'.$key.'" list="datalist'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'">';
+						//print '<div id="suggestions"></div>';
+						print '<datalist id="datalist'.$key.'">';
+						print '<option>varchar(128)</option>';
+						print '<option>email</option>';
+						print '<option>phone</option>';
+						print '<option>ip</option>';
+						print '<option>url</option>';
+						print '<option>password</option>';
+						print '<option>text</option>';
+						print '<option>html</option>';
+						print '<option>date</option>';
+						print '<option>datetime</option>';
+						print '<option>integer</option>';
+						print '<option>double(28,4)</option>';
+						print '<option>real</option>';
+						print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
+						// Combo with list of fields
+						/*
+						if (empty($formadmin)) {
+							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+							$formadmin = new FormAdmin($db);
+						}
+						print $formadmin->selectTypeOfFields($key, GETPOST($key, 'alpha'));
+						*/
+						print '</datalist>';
+						print '</td>';
+						//} elseif ($key == 'propvalidate') {
+						//	print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+					} elseif ($key == 'propvisible') {
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "1").'"></td>';
+					} elseif ($key == 'propenabled') {
+						//$default = "isModEnabled('".strtolower($module)."')";
+						$default = 1;
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $default).'"></td>';
+					} elseif ($key == 'proparrayofkeyval') {
+						print '<td class="titlefieldcreate tdproparrayofkeyval">'.$attribute.'</td><td class="valuefieldcreate"><textarea class="maxwidth200" name="'.$key.'">'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "").'</textarea></td>';
 					} else {
-						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : '').'"></td>';
 					}
 					$counter++;
 					if ($counter % 2 === 0) {
@@ -3901,60 +3926,29 @@ if ($module == 'initmodule') {
 					window.location.href = url;
 				}
 				$(document).ready(function() {
-					// Tableau de suggestions statiques
-					var suggestions = ["VARCHAR", "DOUBLE", "REAL", "TEXT", "HTML", "DATETIME", "TIMESTAMP", "INTEGER", "INTEGER:CLASSNAME:RELATIVEPATH/TO/CLASSFILE.CLASS.PHP[:1[:FILTER]]"];
+					$("#proplabel").on("keyup", function() {
+						console.log("key up on label");
+						s = cleanString($("#proplabel").val());
+						$("#propname").val(s);
+					});
 
-					function showSuggestions() {
-						var inputText = $("#proptype").val().toLowerCase();
-						var suggestionsDiv = $("#suggestions");
-
-						var filteredSuggestions = suggestions.filter(function(suggestion) {
-						  return suggestion.toLowerCase().indexOf(inputText) !== -1;
-						});
-
-						//get suggestion on div
-						suggestionsDiv.empty();
-						for (var i = 0; i < filteredSuggestions.length; i++) {
-						  var suggestion = filteredSuggestions[i];
-						  var suggestionItem = $("<div>").text(suggestion).css({ cursor: "pointer", padding: "5px" });
-						  suggestionsDiv.append(suggestionItem);
+					function cleanString( stringtoclean )
+					{
+						// allow  "a-z", "A-Z", "0-9" and "_"
+						stringtoclean = stringtoclean.replace(/[^a-z0-9_]+/ig, "");
+						stringtoclean = stringtoclean.toLowerCase();
+						if (!isNaN(stringtoclean)) {
+						  return ""
 						}
-
-
-						if (inputText === "" || filteredSuggestions.length === 0) {
-						  suggestionsDiv.hide();
-						} else {
-						  suggestionsDiv.show();
+						while ( stringtoclean.length > 1 && !isNaN( stringtoclean.charAt(0))  ){
+						  stringtoclean = stringtoclean.substr(1)
 						}
-					  }
-
-					  $("#proptype").on("input", showSuggestions);
-
-					  $("#suggestions").on("click", "div", function() {
-						var selectedValue = $(this).text();
-						$("#proptype").val(selectedValue);
-						$("#suggestions").hide();
-					  });
-					// when we click outside the input
-					  $(document).on("click", function(event) {
-						if (!$(event.target).closest("#proptype, #suggestions").length) {
-						  $("#suggestions").hide();
+						if (stringtoclean.length > 28) {
+							stringtoclean = stringtoclean.substring(0, 27);
 						}
-					  });
-					 // when we delete the content input
-					  $("#proptype").on("keyup", function() {
-						if ($(this).val() === "") {
-						  $("#suggestions").hide();
-						}
-					  });
-					// when hover in suggestion
-					$("#suggestions").on("mouseenter", "div", function() {
-						$(this).css("background-color", "#e0e0e0");
-					  });
+						return stringtoclean;
+					}
 
-					  $("#suggestions").on("mouseleave", "div", function() {
-						$(this).css("background-color", "#fff");
-					  });
 				  });';
 				print '</script>';
 			} elseif ($tabobj == 'deleteobject') {
@@ -3963,6 +3957,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="confirm_deleteobject">';
 				print '<input type="hidden" name="tab" value="objects">';
+				print '<input type="hidden" name="tabobj" value="deleteobject">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 
 				print $langs->trans("EnterNameOfObjectToDeleteDesc").'<br><br>';
@@ -4286,7 +4281,7 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp').'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp').'</th>';
 							print '<th class="center">'.$langs->trans("NotEditable").'</th>';
-							print '<th class="center">'.$langs->trans("AlwaysEditable").'</th>';
+							//print '<th class="center">'.$langs->trans("AlwaysEditable").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
@@ -4333,7 +4328,7 @@ if ($module == 'initmodule') {
 									$propenabled = $propval['enabled'];
 									$propvisible = $propval['visible'];
 									$propnoteditable = !empty($propval['noteditable'])?$propval['noteditable']:0;
-									$propalwayseditable = !empty($propval['alwayseditable'])?$propval['alwayseditable']:0;
+									//$propalwayseditable = !empty($propval['alwayseditable'])?$propval['alwayseditable']:0;
 									$propsearchall = !empty($propval['searchall'])?$propval['searchall']:0;
 									$propisameasure = !empty($propval['isameasure'])?$propval['isameasure']:0;
 									$propcss = !empty($propval['css'])?$propval['css']:'';
@@ -4345,6 +4340,7 @@ if ($module == 'initmodule') {
 									$propvalidate = !empty($propval['validate'])?$propval['validate']:0;
 									$propcomment = !empty($propval['comment'])?$propval['comment']:'';
 
+									print '<!-- line for object property -->'."\n";
 									print '<tr class="oddeven">';
 
 									print '<td class="tdsticky tdstickygray">';
@@ -4360,14 +4356,13 @@ if ($module == 'initmodule') {
 										print '<input name="proptype" value="'.dol_escape_htmltag($proptype).'"></input>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
-										print '<input name="proparrayofkeyval" value="';
+										print '<textarea name="proparrayofkeyval">';
 										if (isset($proparrayofkeyval)) {
 											if (is_array($proparrayofkeyval) || $proparrayofkeyval != '') {
 												print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
 											}
 										}
-										print '">';
-										print '</input>';
+										print '</textarea>';
 										print '</td>';
 										print '<td>';
 										print '<input class="center width50" name="propnotnull" value="'.dol_escape_htmltag($propnotnull).'">';
@@ -4385,22 +4380,22 @@ if ($module == 'initmodule') {
 										print '<input class="right width50" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propenabled" size="2" value="'.dol_escape_htmltag($propenabled).'">';
+										print '<input class="center width75" name="propenabled" value="'.dol_escape_htmltag($propenabled).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
+										print '<input class="center width75" name="propvisible" value="'.dol_escape_htmltag($propvisible).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propnoteditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
+										print '<input class="center width50" name="propnoteditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
 										print '</td>';
-										print '<td>';
+										/*print '<td>';
 										print '<input class="center" name="propalwayseditable" size="2" value="'.dol_escape_htmltag($propalwayseditable).'">';
+										print '</td>';*/
+										print '<td>';
+										print '<input class="center width50" name="propsearchall" value="'.dol_escape_htmltag($propsearchall).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
-										print '</td>';
-										print '<td>';
-										print '<input class="center" name="propisameasure" size="2" value="'.dol_escape_htmltag($propisameasure).'">';
+										print '<input class="center width50" name="propisameasure" value="'.dol_escape_htmltag($propisameasure).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="center maxwidth50" name="propcss" value="'.dol_escape_htmltag($propcss).'">';
@@ -4477,9 +4472,9 @@ if ($module == 'initmodule') {
 										print '<td class="center tdoverflowmax100" title="'.($propnoteditable ? dol_escape_htmltag($propnoteditable) : '').'">';
 										print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
 										print '</td>';
-										print '<td class="center">';
+										/*print '<td class="center">';
 										print $propalwayseditable ? dol_escape_htmltag($propalwayseditable) : '';
-										print '</td>';
+										print '</td>';*/
 										print '<td class="center">';
 										print $propsearchall ? '1' : '';
 										print '</td>';
@@ -4516,7 +4511,7 @@ if ($module == 'initmodule') {
 										print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 										if ($propname != 'rowid') {
 											print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
-											print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+											print '<a class="reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
 										}
 										print '</td>';
 									}
@@ -5089,8 +5084,10 @@ if ($module == 'initmodule') {
 				print '<td class="left">';
 				print '<select class="maxwidth" name="objects" id="objects">';
 				print '<option value=""></option>';
-				foreach ($objects as $value) {
-					print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
+				if (is_array($objects)) {
+					foreach ($objects as $value) {
+						print '<option value="'.strtolower($value).'">'.dol_escape_htmltag(strtolower($value)).'</option>';
+					}
 				}
 				print '</select>';
 				print '<select class="maxwidth hideobject" name="perms" id="perms">';
@@ -5178,7 +5175,7 @@ if ($module == 'initmodule') {
 							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.($menu['position']).'" readonly></td>';
 							// Enabled
 							print '<td class="nowraponall">';
-							print '<input type="text" class="maxwidth125" named="enabled" value="'.dol_escape_htmltag($propEnabled).'">';
+							print '<input type="text" class="maxwidth125" named="enabled" value="'.dol_escape_htmltag($propEnabled != '' ? $propEnabled : "isModEnabled('".dol_escape_htmltag($module)."')").'">';
 							$htmltext = '<u>'.$langs->trans("Examples").':</u><br>';
 							$htmltext .= '1 <span class="opacitymedium">(always enabled)</span><br>';
 							$htmltext .= '0 <span class="opacitymedium">(always disabled)</span><br>';
@@ -5442,6 +5439,7 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print load_fiche_titre($langs->trans("ListOfPermissionsDefined"), '', '');
 
+				print '<!-- form to add permissions -->'."\n";
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="addright">';
@@ -5473,7 +5471,7 @@ if ($module == 'initmodule') {
 				}
 				print '</select></td>';
 
-				print '<td><select class="maxwidth50" name="crud" id="crud">';
+				print '<td><select class="maxwidth75" name="crud" id="crud">';
 				print '<option value=""></option>';
 				foreach ($crud as $key => $val) {
 					print '<option value="'.$key.'">'.$langs->trans($val).'</option>';
@@ -5589,7 +5587,7 @@ if ($module == 'initmodule') {
 					value2 = $("#permissionObj").val();
 
 					// Vérifie si les deux sélections sont faites
-					if ($("#label").val() == "" && value1 && value2) {
+					if (value1 && value2) {
 						switch(value1.toLowerCase()){
 							case "read":
 								$("#label").val("Read "+value2+" object of '.ucfirst($module).'")
@@ -5606,8 +5604,11 @@ if ($module == 'initmodule') {
 					}
 				}
 
-				$("#crud, #permissionObj").change(updateInputField);
-				updateInputField();
+				$("#crud, #permissionObj").change(function(){
+					console.log("We change selection");
+					updateInputField();
+				});
+
 				</script>';
 			} else {
 				$fullpathoffile = dol_buildpath($file, 0);
