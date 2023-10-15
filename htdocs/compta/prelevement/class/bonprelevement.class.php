@@ -232,7 +232,11 @@ class BonPrelevement extends CommonObject
 		$line_id = 0;
 
 		// Add lines
-		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
+		if (!empty($sourcetype)) {
+			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
+		} else {
+			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key);
+		}
 
 		if ($result == 0) {
 			if ($line_id > 0) {
@@ -971,6 +975,7 @@ class BonPrelevement extends CommonObject
 				$sql = "SELECT s.rowid, pd.rowid as pfdrowid, s.fk_user";
 				$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 				$sql .= ", pd.amount";
+				$sql .= ", u.firstname as name";
 				$sql .= ", s.ref, ur.bic, ur.iban_prefix, ur.cle_rib";
 				$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON s.rowid = pd.fk_salary";
@@ -1104,9 +1109,6 @@ class BonPrelevement extends CommonObject
 				print $langs->trans("ModeWarning"); // "Option for real mode was not set, we stop after this simulation\n";
 			}
 		}
-		if (!empty($sourcetype)) {
-			$ok = 1;
-		}
 		if ($ok) {
 			/*
 			 * We are in real mode.
@@ -1224,35 +1226,10 @@ class BonPrelevement extends CommonObject
 						 * $fac[11] : IBAN
 						 * $fac[12] : frstrcur
 						 */
-						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type);
-						if ($ri <> 0) {
-							$error++;
-						}
-
-						// Update invoice requests as done
-						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande";
-						$sql .= " SET traite = 1";
-						$sql .= ", date_traite = '".$this->db->idate($now)."'";
-						$sql .= ", fk_prelevement_bons = ".((int) $this->id);
-						$sql .= " WHERE rowid = ".((int) $fac[1]);
-
-						$resql = $this->db->query($sql);
-						if (!$resql) {
-							$error++;
-							$this->errors[] = $this->db->lasterror();
-							dol_syslog(__METHOD__." Update Error=".$this->db->lasterror(), LOG_ERR);
-						}
-					}
-				}
-				// Add lines for the bon for salary
-				if (!empty($sourcetype)) {
-					foreach ($factures as $fac) {
 						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
-
 						if ($ri <> 0) {
 							$error++;
 						}
-
 
 						// Update invoice requests as done
 						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande";
@@ -1318,12 +1295,12 @@ class BonPrelevement extends CommonObject
 			 */
 			if (!$error) {
 				if (!empty($sourcetype)) {
-					$numOfSalaryInv = count($factures);
+					$numOfSalaryInv = count($factures_prev);
 					if ($numOfSalaryInv > 0) {
 						$i =0;
 						$som = 0;
 						while ($i < $numOfSalaryInv) {
-							$som = $som+(float) $factures[$i][7];
+							$som = $som+(float) $factures_prev[$i][7];
 							$i++;
 						}
 					}

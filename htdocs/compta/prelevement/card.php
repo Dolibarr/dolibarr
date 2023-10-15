@@ -437,6 +437,7 @@ if ($id > 0 || $ref) {
 		$sql .=" FROM llx_prelevement as p, llx_prelevement_lignes as pl, llx_salary as s";
 		$sql .= " WHERE pl.rowid = p.fk_prelevement_lignes";
 		$sql .= " AND p.fk_salary = s.rowid";
+		$sql .= " AND pl.fk_prelevement_bons = ".((int) $id);
 	} else {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
 		$sql .= " s.rowid as socid, s.nom as name";
