@@ -67,9 +67,9 @@ if ($module == 'propal') {
 	$permission = $user->hasRight('reception', 'creer');
 } elseif ($module == 'project_task') {
 	$permission = $user->hasRight('projet', 'creer');
-} elseif (!isset($permission) && isset($user->rights->$module->creer)) {
+} elseif (!isset($permission) && $user->hasRight($module, 'creer')) {
 	$permission = $user->hasRight($module, 'creer');
-} elseif (!isset($permission) && isset($user->rights->$module->write)) {
+} elseif (!isset($permission) && $user->hasRight($module, 'write')) {
 	$permission = $user->hasRight($module, 'write');
 }
 
@@ -176,7 +176,7 @@ if ($permission) {
 		</div>
 	</form>
 
-		<?php
+<?php
 	}
 
 	print "</div>";

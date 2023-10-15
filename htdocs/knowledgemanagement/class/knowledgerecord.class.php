@@ -995,7 +995,7 @@ class KnowledgeRecord extends CommonObject
 		if (!empty($conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON.".php";
+			$file = getDolGlobalString('KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON') . ".php";
 			$classname = $conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON;
 
 			// Include file with class

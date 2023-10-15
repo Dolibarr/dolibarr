@@ -948,7 +948,7 @@ class SkillRank extends CommonObject
 		if (!empty($conf->global->hrm_SKILLRANK_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLRANK_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLRANK_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLRANK_ADDON;
 
 			// Include file with class

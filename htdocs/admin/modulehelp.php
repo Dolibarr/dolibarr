@@ -329,10 +329,12 @@ if ($mode == 'desc') {
 		$text .= '<br>'.$moduledesc.'<br><br><br>';
 	}
 
-	$text .= '<span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
-
 	$moduledescriptorfile = get_class($objMod).'.class.php';
-	$text .= '<br><span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
+	$text .= '<span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("IdModule").':</span> '.$objMod->numero;
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
 
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {

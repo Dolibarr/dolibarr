@@ -734,17 +734,17 @@ if (empty($reshook)) {
 
 			if (is_array($ldapusers)) {
 				foreach ($ldapusers as $key => $attribute) {
-					$ldap_lastname = $attribute[$conf->global->LDAP_FIELD_NAME];
-					$ldap_firstname = $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
-					$ldap_login = $attribute[$conf->global->LDAP_FIELD_LOGIN];
-					$ldap_loginsmb = $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
-					$ldap_pass = $attribute[$conf->global->LDAP_FIELD_PASSWORD];
-					$ldap_pass_crypted = $attribute[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
-					$ldap_phone = $attribute[$conf->global->LDAP_FIELD_PHONE];
-					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
-					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
-					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
-					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
+					$ldap_lastname = $attribute[getDolGlobalString('LDAP_FIELD_NAME')];
+					$ldap_firstname = $attribute[getDolGlobalString('LDAP_FIELD_FIRSTNAME')];
+					$ldap_login = $attribute[getDolGlobalString('LDAP_FIELD_LOGIN')];
+					$ldap_loginsmb = $attribute[getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA')];
+					$ldap_pass = $attribute[getDolGlobalString('LDAP_FIELD_PASSWORD')];
+					$ldap_pass_crypted = $attribute[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')];
+					$ldap_phone = $attribute[getDolGlobalString('LDAP_FIELD_PHONE')];
+					$ldap_fax = $attribute[getDolGlobalString('LDAP_FIELD_FAX')];
+					$ldap_mobile = $attribute[getDolGlobalString('LDAP_FIELD_MOBILE')];
+					$ldap_mail = $attribute[getDolGlobalString('LDAP_FIELD_MAIL')];
+					$ldap_sid = $attribute[getDolGlobalString('LDAP_FIELD_SID')];
 
 					if (isModEnabled('socialnetworks')) {
 						$arrayofsocialnetworks = array('skype', 'twitter', 'facebook', 'linkedin');
@@ -790,7 +790,11 @@ if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
 } else {
-	$title = $langs->trans("NewUser");
+	if (GETPOST('employee', 'alphanohtml')) {
+		$title = $langs->trans("NewEmployee");
+	} else {
+		$title = $langs->trans("NewUser");
+	}
 }
 $help_url = '';
 
@@ -798,7 +802,7 @@ llxHeader('', $title, $help_url);
 
 
 if ($action == 'create' || $action == 'adduserldap') {
-	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
+	print load_fiche_titre($title, '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";
@@ -1416,7 +1420,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$ldap = new Ldap();
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
-				$userSearchFilter = '('.$conf->global->LDAP_FILTER_CONNECTION.'('.$ldap->getUserIdentifier().'='.$object->login.'))';
+				$userSearchFilter = '(' . getDolGlobalString('LDAP_FILTER_CONNECTION').'('.$ldap->getUserIdentifier().'='.$object->login.'))';
 				$entries = $ldap->fetch($object->login, $userSearchFilter);
 				if (!$entries) {
 					setEventMessages($ldap->error, $ldap->errors, 'errors');

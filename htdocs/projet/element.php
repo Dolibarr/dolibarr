@@ -101,6 +101,10 @@ if (isModEnabled('supplier_proposal')) {
 if (isModEnabled('tax')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 }
+if (isModEnabled('stocktransfer')) {
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
+}
 
 
 
@@ -139,6 +143,9 @@ if (isModEnabled('mrp')) {
 if (isModEnabled('eventorganization')) {
 	$langs->load("eventorganization");
 }
+//if (isModEnabled('stocktransfer')) {
+//	$langs->load("stockstransfer");
+//}
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -230,7 +237,7 @@ if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -610,10 +617,11 @@ $listofreferent = array(
 	'stock_mouvement'=>array(
 		'name'=>"MouvementStockAssociated",
 		'title'=>"ListMouvementStockProject",
-		'class'=>'MouvementStock',
-		'table'=>'stock_mouvement',
+		'class'=>'StockTransfer',
+		'table'=>'stocktransfer_stocktransfer',
 		'datefieldname'=>'datem',
 		'margin'=>'minus',
+		'project_field'=>'fk_project',
 		'disableamount'=>0,
 		'test'=>isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)
 	),
@@ -1037,7 +1045,7 @@ foreach ($listofreferent as $key => $value) {
 		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) {
 			$idtofilterthirdparty = empty($object->thirdparty->id) ? 0 : $object->thirdparty->id;
 			if (!empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) {
-				$idtofilterthirdparty .= ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
+				$idtofilterthirdparty .= ',' . getDolGlobalString('PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS');
 			}
 		}
 

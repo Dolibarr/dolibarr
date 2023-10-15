@@ -82,7 +82,7 @@ class Translate
 			$more = array();
 			$i = 0;
 			foreach ($conf->file->dol_document_root as $dir) {
-				$newdir = $dir . $conf->global->MAIN_FORCELANGDIR; // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
+				$newdir = $dir . getDolGlobalString('MAIN_FORCELANGDIR'); // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
 				if (!in_array($newdir, $this->dir)) {
 					$more['module_' . $i] = $newdir;
 					$i++; // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
