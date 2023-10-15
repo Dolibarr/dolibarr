@@ -1252,3 +1252,4 @@ ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
 ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
 URLToLink=URL to link
 OverwriteIfExists=Overwrite if file exists
+AmountSalary=Salary amount

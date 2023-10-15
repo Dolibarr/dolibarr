@@ -51,7 +51,7 @@ function prelevement_prepare_head(BonPrelevement $object, $salary = 0)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
-	$head[$h][1] = ($salary <= 0 ? $langs->trans("Bills") : $langs->trans("Employees"));
+	$head[$h][1] = ($salary <= 0 ? $langs->trans("Bills") : $langs->trans("Salaries"));
 	$head[$h][2] = 'invoices';
 	$h++;
 
