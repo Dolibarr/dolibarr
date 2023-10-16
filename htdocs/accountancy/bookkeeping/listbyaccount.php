@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -729,37 +729,40 @@ if ($type == 'sub') {
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }
-if ($type == 'sub') {
-	$previousSubAccountKey = getDolGlobalString('ACCOUNTING_PREVIOUS_SUB_ACCOUNT_KEY', 'a');
-	$nextSubAccountKey = getDolGlobalString('ACCOUNTING_NEXT_SUB_ACCOUNT_KEY', 'z');
-	$moreforfilter .= '&nbsp;<a id="previous_account" accesskey="'. dol_escape_htmltag($previousSubAccountKey) . '" href="#"><i class="fa-solid fa-arrow-left"></i></a>';
-	$moreforfilter .= '&nbsp;<a id="next_account" accesskey="'. dol_escape_htmltag($nextSubAccountKey) . '" href="#"><i class="fa-solid fa-arrow-right"></i></a>';
-	$moreforfilter .= <<<SCRIPT
- 	<script type="text/javascript">
-        jQuery(document).ready(function(){
-            var searchFormList = $('#searchFormList');
-            var searchAccountancyCodeStart = $('#search_accountancy_code_start');
-            var searchAccountancyCodeEnd = $('#search_accountancy_code_end');
-
-            jQuery('#previous_account').on('click', function() {
-                var previousOption = searchAccountancyCodeStart.find('option:selected').prev('option');
-                if (previousOption.length == 1) searchAccountancyCodeStart.val(previousOption.attr('value'));
-                searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
-                searchFormList.submit();
-            });
-            jQuery('#next_account').on('click', function() {
-                var nextOption = searchAccountancyCodeStart.find('option:selected').next('option');
-                if (nextOption.length == 1) searchAccountancyCodeStart.val(nextOption.attr('value'));
-                searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
-                searchFormList.submit();
-            });
-            jQuery('input[name="search_mvt_num"]').on("keypress", function(event) {
-                console.log(event);
-            });
-        });
-    </script>
-SCRIPT;
+$stringforfirstkey = $langs->trans("KeyboardShortcut");
+if ($conf->browser->name == 'chrome') {
+	$stringforfirstkey .= ' ALT +';
+} elseif ($conf->browser->name == 'firefox') {
+	$stringforfirstkey .= ' ALT + SHIFT +';
+} else {
+	$stringforfirstkey .= ' CTL +';
 }
+$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
+$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
+$moreforfilter .= <<<SCRIPT
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		var searchFormList = $('#searchFormList');
+		var searchAccountancyCodeStart = $('#search_accountancy_code_start');
+		var searchAccountancyCodeEnd = $('#search_accountancy_code_end');
+		jQuery('#previous_account').on('click', function() {
+			var previousOption = searchAccountancyCodeStart.find('option:selected').prev('option');
+			if (previousOption.length == 1) searchAccountancyCodeStart.val(previousOption.attr('value'));
+			searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
+			searchFormList.submit();
+		});
+		jQuery('#next_account').on('click', function() {
+			var nextOption = searchAccountancyCodeStart.find('option:selected').next('option');
+			if (nextOption.length == 1) searchAccountancyCodeStart.val(nextOption.attr('value'));
+			searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
+			searchFormList.submit();
+		});
+		jQuery('input[name="search_mvt_num"]').on("keypress", function(event) {
+			console.log(event);
+		});
+	});
+</script>
+SCRIPT;
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
