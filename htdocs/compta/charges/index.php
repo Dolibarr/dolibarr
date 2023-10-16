@@ -86,7 +86,7 @@ if (!$sortorder) {
  */
 
 $tva_static = new Tva($db);
-$ptva_static = new PaymentVat($db);
+$ptva_static = new PaymentVAT($db);
 $socialcontrib = new ChargeSociales($db);
 $payment_sc_static = new PaymentSocialContribution($db);
 $sal_static = new Salary($db);
@@ -134,7 +134,7 @@ if ($year) {
 print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
 print "<br>";
 
-if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	// Social contributions only
 	print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
@@ -267,7 +267,7 @@ if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 }
 
 // VAT
-if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	print "<br>";
 
 	$tva = new Tva($db);

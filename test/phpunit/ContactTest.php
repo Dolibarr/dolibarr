@@ -298,7 +298,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 
 		$result=$localobject->getFullAddress(1);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nBelgium", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nBelgium", $result);
 
 		$localobject->info($localobject->id);
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
@@ -359,7 +359,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nFrance", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nFrance", $result);
 
 		// Belgium
 		unset($localobjectadd->country_code);
@@ -370,7 +370,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nBelgium", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nBelgium", $result);
 
 		// Switzerland
 		unset($localobjectadd->country_code);
@@ -381,7 +381,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nSwitzerland", $result);
 
 		// USA
 		unset($localobjectadd->country_code);
@@ -392,7 +392,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew town, New zip\nUnited States", $result);
+		$this->assertStringContainsString("New address\nNew town, New zip\nUnited States", $result);
 
 		return $localobjectadd->id;
 	}

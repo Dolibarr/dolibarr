@@ -80,7 +80,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }
@@ -223,14 +223,14 @@ if ($localTaxType == 1) {
 	$LTPaid = 'LT1Paid';
 	$LTCustomer = 'LT1Customer';
 	$LTSupplier = 'LT1Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC1;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1');
 } else {
 	$LT = 'LT2';
 	$LTSummary = 'LT2Summary';
 	$LTPaid = 'LT2Paid';
 	$LTCustomer = 'LT2Customer';
 	$LTSupplier = 'LT2Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC2;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2');
 }
 
 $fsearch = '<!-- hidden fields for form -->';
@@ -245,8 +245,6 @@ $name = $langs->transcountry($localTaxType == 1 ? "LT1ReportByMonth" : "LT2Repor
 $description .= $langs->trans($LT);
 $calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-
-//if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
@@ -471,8 +469,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -511,8 +509,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {

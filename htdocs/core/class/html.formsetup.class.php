@@ -77,6 +77,10 @@ class FormSetup
 	 */
 	public $formHiddenInputs = array();
 
+	/**
+	 * @var string[] $errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -88,12 +92,12 @@ class FormSetup
 	{
 		global $langs;
 		$this->db = $db;
+
 		$this->form = new Form($this->db);
 		$this->formAttributes['action'] = $_SERVER["PHP_SELF"];
 
 		$this->formHiddenInputs['token'] = newToken();
 		$this->formHiddenInputs['action'] = 'update';
-
 
 		if ($outputLangs) {
 			$this->langs = $outputLangs;
@@ -243,12 +247,12 @@ class FormSetup
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $conf;
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
-			$this->setErrors($hookmanager->errors);
+			$this->errors = $hookmanager->errors;
 			return -1;
 		}
 
@@ -264,6 +268,10 @@ class FormSetup
 		$this->db->begin();
 		$error = 0;
 		foreach ($this->items as $item) {
+			if ($item->getType() == 'yesno' && !empty($conf->use_javascript_ajax)) {
+				continue;
+			}
+
 			$res = $item->setValueFromPost();
 			if ($res > 0) {
 				$item->saveConfValue();
@@ -615,7 +623,7 @@ class FormSetupItem
 	public $setValueFromPostCallBack;
 
 	/**
-	 * @var string $errors
+	 * @var string[] $errors
 	 */
 	public $errors = array();
 
@@ -656,6 +664,7 @@ class FormSetupItem
 
 	/**
 	 * load conf value from databases
+	 *
 	 * @return bool
 	 */
 	public function loadValueFromConf()
@@ -672,6 +681,7 @@ class FormSetupItem
 
 	/**
 	 * reload conf value from databases is an aliase of loadValueFromConf
+	 *
 	 * @deprecated
 	 * @return bool
 	 */
@@ -732,6 +742,7 @@ class FormSetupItem
 
 	/**
 	 * Set an override function for get data from post
+	 *
 	 * @param callable $callBack a callable function
 	 * @return void
 	 */
@@ -742,7 +753,8 @@ class FormSetupItem
 
 	/**
 	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
-	 *	@return     int         			-1 if KO, 0  nothing to do , 1 if OK
+	 *
+	 * @return     int         			-1 if KO, 0  nothing to do , 1 if OK
 	 */
 	public function setValueFromPost()
 	{
@@ -782,6 +794,7 @@ class FormSetupItem
 
 	/**
 	 * Get help text or generate it
+	 *
 	 * @return int|string
 	 */
 	public function getHelpText()
@@ -792,6 +805,7 @@ class FormSetupItem
 
 	/**
 	 * Get field name text or generate it
+	 *
 	 * @return false|int|string
 	 */
 	public function getNameText()
@@ -802,6 +816,7 @@ class FormSetupItem
 
 	/**
 	 * generate input field
+	 *
 	 * @return bool|string
 	 */
 	public function generateInputField()
@@ -872,6 +887,7 @@ class FormSetupItem
 
 	/**
 	 * generatec default input field
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldText()
@@ -882,6 +898,7 @@ class FormSetupItem
 
 	/**
 	 * generate input field for textarea
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldTextarea()
@@ -894,13 +911,14 @@ class FormSetupItem
 
 	/**
 	 * generate input field for html
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldHtml()
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+		$doleditor = new DolEditor($this->confKey, $this->fieldValue, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 		return $doleditor->Create(1);
 	}
 
@@ -910,14 +928,14 @@ class FormSetupItem
 	 */
 	public function generateInputFieldCategories()
 	{
-		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($this->db);
 
 		$tmp = explode(':', $this->type);
-		$out= img_picto('', 'category', 'class="pictofixedwidth"');
-		$out.= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+		$out = img_picto('', 'category', 'class="pictofixedwidth"');
+		$out .= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+
 		return $out;
 	}
 
@@ -927,7 +945,8 @@ class FormSetupItem
 	 */
 	public function generateInputFieldEmailTemplate()
 	{
-		global $conf, $user;
+		global $user;
+
 		$out = '';
 		if (preg_match('/emailtemplate:/', $this->type)) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -955,6 +974,7 @@ class FormSetupItem
 
 	/**
 	 * generate input field for secure key
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldSecureKey()
@@ -974,6 +994,8 @@ class FormSetupItem
 
 
 	/**
+	 * generateInputFieldMultiSelect
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldMultiSelect()
@@ -988,6 +1010,8 @@ class FormSetupItem
 
 
 	/**
+	 * generateInputFieldSelect
+	 *
 	 * @return string
 	 */
 	public function generateInputFieldSelect()
@@ -1079,9 +1103,9 @@ class FormSetupItem
 			$out.= $this->generateOutputFieldSelect();
 		} elseif ($this->type == 'selectUser') {
 			$out.= $this->generateOutputFieldSelectUser();
-		} elseif ($this->type== 'html') {
+		} elseif ($this->type == 'html') {
 			$out.=  $this->fieldValue;
-		} elseif ($this->type== 'color') {
+		} elseif ($this->type == 'color') {
 			$out.=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {

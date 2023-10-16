@@ -165,7 +165,7 @@ print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object-
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td>'.dol_nl2br($object->note_private).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
 if (isModEnabled("banque")) {
@@ -264,7 +264,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 if ($action == '') {
-	if ($user->rights->salaries->delete) {
+	if ($user->hasRight('salaries', 'delete')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

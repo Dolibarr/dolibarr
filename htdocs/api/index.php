@@ -48,7 +48,9 @@ if (!defined("NOLOGIN")) {
 if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
-
+if (!defined("NODEFAULTVALUES")) {
+	define("NODEFAULTVALUES", '1');
+}
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
 if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
@@ -110,7 +112,7 @@ if (!empty($conf->global->MAIN_NGINX_FIX)) {
 }
 
 // Enable and test if module Api is enabled
-if (empty($conf->global->MAIN_MODULE_API)) {
+if (!isModEnabled('api') ) {
 	$langs->load("admin");
 	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
 	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
@@ -199,7 +201,7 @@ if (!empty($conf->global->API_RESTRICT_ON_IP)) {
 	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
-		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
+		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
 		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
 		//session_destroy();

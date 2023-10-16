@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,12 +52,12 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not the user that read and has no permission to read other users, we stop
-if (($object->id != $user->id) && empty($user->rights->user->user->lire)) {
+if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
@@ -111,7 +111,7 @@ $title = $langs->trans("User");
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
@@ -129,10 +129,6 @@ print '<div class="fichecenter">';
 
 print '<br>';
 
-if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
-	print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
-}
-
 $param = '&id='.((int) $object->id);
 $param .= '&dol_openinpopup=1';
 
@@ -142,6 +138,8 @@ if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setUSER_ENABLE_PUBLIC&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
+
+	$enabledisablehtml .= '<br><br><span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
 } else {
 	// Button on, click to disable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setUSER_ENABLE_PUBLIC&token='.newToken().'&value=0'.$param.'">';
@@ -159,10 +157,6 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-
-
-	print '<br>';
-
 
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('PublicVirtualCardUrl').'</span><br>';
@@ -186,8 +180,9 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	print '<script type="text/javascript">
 	jQuery(document).ready(function() {
-		jQuery("#lnk").click(function() {
-			console.log("We click on link");
+		jQuery("#lnk").click(function(event) {
+			event.preventDefault();
+			console.log("We click on link to show virtual card options");
 			hideoptions(this);
 		});
 	});

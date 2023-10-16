@@ -98,7 +98,7 @@ print '<br>';
 // Module debugbar
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
+$test = !isModEnabled('debugbar');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
@@ -110,7 +110,7 @@ print '<br>';
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
-$test = !empty($conf->memcached->enabled);
+$test = isModEnabled('memcached');
 if ($test) {
 	if (!empty($conf->global->MEMCACHED_SERVER)) {
 		print $langs->trans("MemcachedAvailableAndSetup");
@@ -642,6 +642,15 @@ if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP').' '.img_picto('', 'tick.png');
 } else {
 	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
+
+if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
+	print 'MAIN_CACHE_COUNT = '.getDolGlobalInt('MAIN_CACHE_COUNT').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_CACHE_COUNT = '.getDolGlobalInt('MAIN_CACHE_COUNT', 0);
 	//.' '.img_picto('', 'warning.png');
 }
 print '<br>';

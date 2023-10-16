@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -651,6 +652,16 @@ class FormTicket
 			}
 		}
 
+		if ($subelement != 'contract') {
+			if (isModEnabled('contract') && !$this->ispublic) {
+				$formcontract = new FormContract($this->db);
+				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
+				print img_picto('', 'contract');
+				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
+				print '</td></tr>';
+			}
+		}
+
 		// Other attributes
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
@@ -857,9 +868,9 @@ class FormTicket
 					}
 
 					// If selected is text, we compare with code, otherwise with id
-					if (preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
+					if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
 						print ' selected="selected"';
-					} elseif ($selected == $id) {
+					} elseif (isset($selected) && $selected == $id) {
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
 						print ' selected="selected"';
@@ -903,7 +914,8 @@ class FormTicket
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
-				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
+				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -1194,9 +1206,9 @@ class FormTicket
 				}
 
 				// If text is selected, we compare with code, otherwise with id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
+				if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
 					print ' selected="selected"';
-				} elseif ($selected == $id) {
+				} elseif (isset($selected) && $selected == $id) {
 					print ' selected="selected"';
 				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
@@ -1371,29 +1383,37 @@ class FormTicket
 				}
 				jQuery(".email_line").hide();
 			}
+		';
 
-			jQuery("#send_msg_email").click(function() {
-				if(jQuery(this).is(":checked")) {
-					if (jQuery("#private_message").is(":checked")) {
-						jQuery("#private_message").prop("checked", false).trigger("change");
+		// If constant set, allow to send private messages as email
+		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+			print 'jQuery("#send_msg_email").click(function() {
+					console.log("Click send_msg_email");
+					if(jQuery(this).is(":checked")) {
+						if (jQuery("#private_message").is(":checked")) {
+							jQuery("#private_message").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").show();
 					}
-					jQuery(".email_line").show();
-				}
-				else {
-					jQuery(".email_line").hide();
-				}
-            });
+					else {
+						jQuery(".email_line").hide();
+					}
+				});
 
-            jQuery("#private_message").click(function() {
-				if (jQuery(this).is(":checked")) {
-					if (jQuery("#send_msg_email").is(":checked")) {
-						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+				jQuery("#private_message").click(function() {
+					console.log("Click private_message");
+					if (jQuery(this).is(":checked")) {
+						if (jQuery("#send_msg_email").is(":checked")) {
+							jQuery("#send_msg_email").prop("checked", false).trigger("change");
+						}
+						jQuery(".email_line").hide();
 					}
-					jQuery(".email_line").hide();
-				}
-			});';
+				});';
+		}
+
 		print '});
 		</script>';
+
 
 		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1437,7 +1457,12 @@ class FormTicket
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
-			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
+			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
+			if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2b");
+			} else {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2a", '{s1}');
+			}
 			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
 			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
 			print '</td></tr>';
@@ -1463,10 +1488,20 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
-
-			// Subject
+			// Subject/topic
+			$topic = "";
+			foreach ($formmail->lines_model as $line) {
+				if ($this->param['models_id'] == $line->id) {
+					$topic = $line->topic;
+					break;
+				}
+			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			if (empty($topic)) {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			} else {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+			}
 			print '</td></tr>';
 
 			// Recipients / adressed-to

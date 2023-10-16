@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last manufacturing orders (MO)
  */
 class box_mos extends ModeleBoxes
 {
-	public $boxcode = "lastmos";
-	public $boximg = "object_mrp";
+	public $boxcode  = "lastmos";
+	public $boximg   = "object_mrp";
 	public $boxlabel = "BoxTitleLatestModifiedMos";
-	public $depends = array("mrp");
+	public $depends  = array("mrp");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -84,7 +84,7 @@ class box_mos extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedMos", $max));
 
-		if ($user->rights->mrp->read) {
+		if ($user->hasRight('mrp', 'read')) {
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", p.rowid as productid";
 			$sql .= ", p.tosell";

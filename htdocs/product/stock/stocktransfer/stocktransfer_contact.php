@@ -66,7 +66,7 @@ if (!$error) {
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->stocktransfer->stocktransfer->write) {
+if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 	if ($object->id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$result = $object->add_contact($contactid, !empty($_POST["typecontact"]) ? $_POST["typecontact"] : $_POST["type"], $_POST["source"]);
@@ -83,11 +83,11 @@ if ($action == 'addcontact' && $user->rights->stocktransfer->stocktransfer->writ
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->stocktransfer->stocktransfer->write) { // Toggle the status of a contact
+} elseif ($action == 'swapstatut' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) { // Toggle the status of a contact
 	if ($object->id > 0) {
 		$result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-} elseif ($action == 'deletecontact' && $user->rights->stocktransfer->stocktransfer->write) { // Deletes a contact
+} elseif ($action == 'deletecontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) { // Deletes a contact
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0) {
@@ -134,10 +134,10 @@ if ($object->id > 0) {
 		$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
 	}
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->stocktransfer->stocktransfer->write) {
+		if ($user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 				$morehtmlref .= ' : ';

@@ -39,7 +39,7 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->mailing->mailing_advance->recipient)) {
+	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('mailing', 'mailing_advance', 'recipient'))) {
 		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailRecipients");
 		if ($object->nbemail > 0) {

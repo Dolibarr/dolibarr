@@ -1284,6 +1284,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
+	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
 	}
@@ -2047,7 +2048,7 @@ function dol_buildlogin($lastname, $firstname)
 	global $conf;
 
 	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
-	if (!empty($conf->global->MAIN_BUILD_LOGIN_RULE) && $conf->global->MAIN_BUILD_LOGIN_RULE == 'f.lastname') {	// f.lastname
+	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? '.' : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2376,6 +2377,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
 		return $totalnb;
 	}
+	return -1;
 }
 
 
@@ -2908,4 +2910,43 @@ function acceptLocalLinktoMedia()
 
 	//return 1;
 	return $acceptlocallinktomedia;
+}
+
+
+/**
+ * Remove first and last parenthesis but only if first is the opening and last the closing of the same group
+ *
+ * @param 	string	$string		String to sanitize
+ * @return 	string				String without global parenthesis
+ */
+function removeGlobalParenthesis($string)
+{
+	$string = trim($string);
+
+	// If string does not start and end with parenthesis, we return $string as is.
+	if (! preg_match('/^\(.*\)$/', $string)) {
+		return $string;
+	}
+
+	$nbofchars = dol_strlen($string);
+	$i = 0; $g = 0;
+	$countparenthesis = 0;
+	while ($i < $nbofchars) {
+		$char = dol_substr($string, $i, 1);
+		if ($char == '(') {
+			$countparenthesis++;
+		} elseif ($char == ')') {
+			$countparenthesis--;
+			if ($countparenthesis <= 0) {	// We reach the end of an independent group of parenthesis
+				$g++;
+			}
+		}
+		$i++;
+	}
+
+	if ($g <= 1) {
+		return preg_replace('/^\(/', '', preg_replace('/\)$/', '', $string));
+	}
+
+	return $string;
 }

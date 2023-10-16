@@ -188,7 +188,7 @@ if ($mode == 'vcard') {
 
 $head = '';
 if (!empty($conf->global->MAIN_USER_PROFILE_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_USER_PROFILE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_USER_PROFILE_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -207,15 +207,25 @@ $arrayofcss = array();
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
+print '
+<style>
+@media (prefers-color-scheme: dark) {
+	form {
+		background-color: #CCC !important;
+	}
+}
+</style>
+';
+
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
+
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
-print '<!-- Form to view job -->'."\n";
 
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
@@ -246,7 +256,7 @@ print '</div>';
 
 if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 

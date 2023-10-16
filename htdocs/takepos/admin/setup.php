@@ -188,7 +188,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -480,12 +480,12 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SumupAffiliate");
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
+	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="' . getDolGlobalString('TAKEPOS_SUMUP_AFFILIATE').'"></input>';
 	print "</td></tr>\n";
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SumupAppId");
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
+	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="' . getDolGlobalString('TAKEPOS_SUMUP_APPID').'"></input>';
 	print "</td></tr>\n";
 
 	print '</table>';

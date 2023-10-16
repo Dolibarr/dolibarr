@@ -117,6 +117,7 @@ class Workstation extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
+	public $type;	// HUMAN, MACHINE, ...
 
 	public $date_creation;
 	public $tms;
@@ -621,7 +622,7 @@ class Workstation extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -663,7 +664,7 @@ class Workstation extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -792,7 +793,7 @@ class Workstation extends CommonObject
 		if (!empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->WORKSTATION_WORKSTATION_ADDON.".php";
+			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
 			$classname = $conf->global->WORKSTATION_WORKSTATION_ADDON;
 
 			// Include file with class
@@ -801,7 +802,9 @@ class Workstation extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/workstation/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				if (file_exists($dir.$file)) {
+					$mybool |= @include_once $dir.$file;
+				}
 			}
 
 			if ($mybool === false) {

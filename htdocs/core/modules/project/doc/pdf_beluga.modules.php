@@ -60,11 +60,6 @@ class pdf_beluga extends ModelePDFProjects
 	public $db;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -80,51 +75,10 @@ class pdf_beluga extends ModelePDFProjects
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	 /**
-	  * @var int page_largeur
-	  */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
 
 	/**
 	 * Page orientation
@@ -132,18 +86,12 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	private $orientation;
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxref;
 	public $posxdate;
-	public $posxsociete;
+	public $posxsociety;
 	public $posxamountht;
 	public $posxamountttc;
-	public $posstatut;
+	public $posxstatut;
 
 
 	/**
@@ -208,10 +156,10 @@ class pdf_beluga extends ModelePDFProjects
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxref -= 20;
 			$this->posxdate -= 20;
-			$this->posxsociete -= 20;
+			$this->posxsociety -= 20;
 			$this->posxamountht -= 20;
 			$this->posxamountttc -= 20;
-			$this->posstatut -= 20;
+			$this->posxstatut -= 20;
 		}
 	}
 
@@ -289,7 +237,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -433,7 +381,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>$conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire'),
+						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",
@@ -443,7 +391,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire,
+						'test'=>isModEnabled('deplacement') && $user->rights->deplacement->lire,
 						'lang'=>'trip'),
 					'expensereport'=>array(
 						'name'=>"ExpensesReports",
@@ -453,7 +401,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
+						'test'=>isModEnabled('expensereport') && $user->rights->expensereport->lire,
 						'lang'=>'trip'),
 					'agenda'=>array(
 						'name'=>"Agenda",

@@ -79,7 +79,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * Actions
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	if (empty($taskref)) {
@@ -155,7 +155,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes') {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer) {
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet', 'supprimer')) {
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
@@ -181,7 +181,7 @@ if (!empty($project_ref) && !empty($withproject)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $user->rights->projet->creer) {
+if ($action == 'builddoc' && $user->hasRight('projet', 'creer')) {
 	// Save last template used to generate document
 	if (GETPOST('model')) {
 		$object->setDocModel($user, GETPOST('model', 'alpha'));
@@ -200,7 +200,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer) {
 }
 
 // Delete file in doc form
-if ($action == 'remove_file' && $user->rights->projet->creer) {
+if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
@@ -273,9 +273,9 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
@@ -431,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = task_prepare_head($object);
 
-	if ($action == 'edit' && $user->rights->projet->creer) {
+	if ($action == 'edit' && $user->hasRight('projet', 'creer')) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -498,9 +498,7 @@ if ($id > 0 || !empty($ref)) {
 		// WYSIWYG editor
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE) ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
-		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
-			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
-		}
+		$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 0);
 		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
 		print $doleditor->Create();
 		print '</td></tr>';
@@ -539,9 +537,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -666,7 +664,7 @@ if ($id > 0 || !empty($ref)) {
 		// modified by hook
 		if (empty($reshook)) {
 			// Modify
-			if ($user->rights->projet->creer) {
+			if ($user->hasRight('projet', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
 			} else {
@@ -698,7 +696,7 @@ if ($id > 0 || !empty($ref)) {
 		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire);
-		$delallowed = ($user->rights->projet->creer);
+		$delallowed = ($user->hasRight('projet', 'creer'));
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
@@ -707,8 +705,7 @@ if ($id > 0 || !empty($ref)) {
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
-		$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
+		$formactions->showactions($object, 'project_task', 0, 1, '', 10, 'withproject='.$withproject);
 
 		print '</div></div>';
 	}

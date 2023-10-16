@@ -1057,7 +1057,7 @@ class Cronjob extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1177,7 +1177,7 @@ class Cronjob extends CommonObject
 			return -1;
 		} else {
 			if (empty($user->id)) {
-				$this->error = " User user login:".$userlogin." do not exists";
+				$this->error = "User login: ".$userlogin." does not exist";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$conf->setEntityValues($this->db, $savcurrententity);
 				return -1;
@@ -1270,7 +1270,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;

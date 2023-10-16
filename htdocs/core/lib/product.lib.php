@@ -219,7 +219,7 @@ function product_prepare_head($object)
 	// Log
 	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -615,7 +615,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// MO
-	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
+	if (isModEnabled('mrp') && $user->hasRight('mrp', 'read')) {
 		$nblines++;
 		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) {
@@ -679,7 +679,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('expedition') && !empty($user->rights->expedition->lire)) {
+	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {
@@ -698,7 +698,7 @@ function show_stats_for_batch($batch, $socid)
 		print '</tr>';
 	}
 
-	if (isModEnabled("reception") && !empty($user->rights->reception->lire)) {
+	if (isModEnabled("reception") && $user->hasRight('reception', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsReception($socid);
 		if ($ret < 0) {
@@ -715,7 +715,7 @@ function show_stats_for_batch($batch, $socid)
 		print $batch->stats_reception['qty'];
 		print '</td>';
 		print '</tr>';
-	} elseif (isModEnabled('supplier_order') && !empty($user->rights->fournisseur->commande->lire)) {
+	} elseif (isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsSupplierOrder($socid);
 		if ($ret < 0) {
@@ -734,7 +734,7 @@ function show_stats_for_batch($batch, $socid)
 		print '</tr>';
 	}
 
-	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
+	if (isModEnabled('mrp') && $user->hasRight('mrp', 'read')) {
 		$nblines++;
 		$ret = $batch->loadStatsMo($socid);
 		if ($ret < 0) {
