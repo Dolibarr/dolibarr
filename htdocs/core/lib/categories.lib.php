@@ -25,9 +25,9 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param	string	$type		Type of category
- * @return  array				Array of tabs to show
+ * @param   Categorie	$object		Object related to tabs
+ * @param	string		$type		Type of category
+ * @return  array					Array of tabs to show
  */
 function categories_prepare_head(Categorie $object, $type)
 {

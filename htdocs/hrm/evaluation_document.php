@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_evaluation.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
@@ -135,10 +135,10 @@ if ($object->id) {
 	$morehtmlref .= $langs->trans('Label').' : '.$object->label;
 	$u_position = new User(($db));
 	$u_position->fetch($object->fk_user);
-	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+	$morehtmlref .= '<br>'.$u_position->getNomUrl(1);
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

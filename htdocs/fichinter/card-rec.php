@@ -52,7 +52,12 @@ $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
 $id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$ref = GETPOST('ref', 'alpha');
+$date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -62,12 +67,19 @@ if ($action == "create" || $action == "add") {
 }
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
-if ($page == -1) {
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
-
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -102,6 +114,17 @@ $arrayfields = array(
  * Actions
  */
 
+if ($cancel) {
+	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	$action = '';
+}
 
 // Create predefined intervention
 if ($action == 'add') {
@@ -130,6 +153,8 @@ if ($action == 'add') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
 			$error++;
+		} else {
+			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
 		if ($nb_gen_max === '') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
@@ -151,7 +176,6 @@ if ($action == 'add') {
 		$object->nb_gen_max = $nb_gen_max;
 		$object->auto_validate = GETPOST('auto_validate', 'int');
 
-		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
 
 		if ($object->create($user) > 0) {
@@ -207,25 +231,25 @@ if ($action == 'add') {
 		setEventMessages($newinter->error, $newinter->errors, 'errors');
 		$action = '';
 	}
-} elseif ($action == 'delete' && $user->rights->ficheinter->supprimer) {
+} elseif ($action == 'delete' && $user->hasRight('ficheinter', 'supprimer')) {
 	// delete modele
 	$object->fetch($id);
-	$object->delete();
+	$object->delete($user);
 	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
-} elseif ($action == 'setfrequency' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'setfrequency' && $user->hasRight('ficheinter', 'creer')) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
 	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
-} elseif ($action == 'setdate_when' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'setdate_when' && $user->hasRight('ficheinter', 'creer')) {
 	// Set next date of execution
 	$object->fetch($id);
 	$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 	if (!empty($date)) {
 		$object->setNextDate($date);
 	}
-} elseif ($action == 'setnb_gen_max' && $user->rights->ficheinter->creer) {
+} elseif ($action == 'setnb_gen_max' && $user->hasRight('ficheinter', 'creer')) {
 	// Set max period
 	$object->fetch($id);
 	$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
@@ -268,6 +292,7 @@ if ($action == 'create') {
 		print '<form action="card-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
 
 		print dol_get_fiche_head();
@@ -332,7 +357,7 @@ if ($action == 'create') {
 		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
+			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contract) ? $object->fk_contract : 0) ;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
@@ -357,7 +382,7 @@ if ($action == 'create') {
 
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
-		if ($date_next_execution != "") {
+		if (empty($date_next_execution)) {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		}
 		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
@@ -373,9 +398,9 @@ if ($action == 'create') {
 		print '<br>';
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled("service")) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled("product")) {
 			$title = $langs->trans("Services");
 		}
 
@@ -489,7 +514,7 @@ if ($action == 'create') {
 				$formproject = new FormProjets($db);
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->ficheinter->creer) {
+				if ($user->hasRight('ficheinter', 'creer')) {
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">';
 						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
@@ -502,7 +527,7 @@ if ($action == 'create') {
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -556,7 +581,7 @@ if ($action == 'create') {
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'contrat') {
-					$formcontract = new Formcontract($db);
+					$formcontract = new FormContract($db);
 					$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 				} else {
 					if ($object->fk_contrat) {
@@ -586,7 +611,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Frequency');
 			print '</td>';
-			if ($action != 'editfrequency' && $user->rights->ficheinter->creer) {
+			if ($action != 'editfrequency' && $user->hasRight('ficheinter', 'creer')) {
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&token='.newToken().'&id='.$id.'">';
 				print img_edit($langs->trans('Edit'), 1).'</a></td>';
 			}
@@ -614,29 +639,29 @@ if ($action == 'create') {
 
 			// Date when
 			print '<tr><td>';
-			if ($user->rights->ficheinter->creer && ($action == 'date_when' || $object->frequency > 0)) {
-				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+			if ($user->hasRight('ficheinter', 'creer') && ($action == 'date_when' || $object->frequency > 0)) {
+				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
 			} else {
 				print $langs->trans("NextDateToExecution");
 			}
 			print '</td><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
 			}
 			print '</td>';
 			print '</tr>';
 
 			// Max period / Rest period
 			print '<tr><td>';
-			if ($user->rights->ficheinter->creer && ($action == 'nb_gen_max' || $object->frequency > 0)) {
-				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+			if ($user->hasRight('ficheinter', 'creer') && ($action == 'nb_gen_max' || $object->frequency > 0)) {
+				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
 			} else {
 				print $langs->trans("MaxPeriodNumber");
 			}
 
 			print '</td><td>';
 			if ($action == 'nb_gen_max' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->rights->facture->creer);
+				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->hasRight('facture', 'creer'));
 			} else {
 				print '';
 			}
@@ -684,9 +709,9 @@ if ($action == 'create') {
 			 */
 
 			$title = $langs->trans("ProductsAndServices");
-			if (empty($conf->service->enabled)) {
+			if (!isModEnabled("service")) {
 				$title = $langs->trans("Products");
-			} elseif (empty($conf->product->enabled)) {
+			} elseif (!isModEnabled("product")) {
 				$title = $langs->trans("Services");
 			}
 
@@ -734,15 +759,15 @@ if ($action == 'create') {
 			 */
 			print '<div class="tabsAction">';
 
-			if ($user->rights->ficheinter->creer) {
+			if ($user->hasRight('ficheinter', 'creer')) {
 				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken();
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
 				print $langs->trans("AddIntervention").'</a></div>';
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->ficheinter->supprimer);
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->hasRight('ficheinter', 'supprimer'));
 
 			print '</div>';
 		} else {
@@ -758,27 +783,27 @@ if ($action == 'create') {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.entity = ".$conf->entity;
-		if ($socid) {
+		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		if ($search_ref) {
+		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
-		if ($search_societe) {
+		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}
-		if ($search_frequency == '1') {
+		if (!empty($search_frequency) && $search_frequency == '1') {
 			$sql .= ' AND f.frequency > 0';
 		}
-		if ($search_frequency == '0') {
+		if (isset($search_frequency) && (string) $search_frequency == '0') {
 			$sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 		}
 
@@ -877,10 +902,10 @@ if ($action == 'create') {
 						print '</td>';
 					}
 
-					if ($user->rights->ficheinter->creer) {
+					if ($user->hasRight('ficheinter', 'creer')) {
 						// Action column
 						print '<td class="center">';
-						if ($user->rights->ficheinter->creer) {
+						if ($user->hasRight('ficheinter', 'creer')) {
 							if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
 								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'">';

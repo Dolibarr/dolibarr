@@ -59,14 +59,14 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }
 
@@ -85,7 +85,8 @@ $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -133,13 +134,12 @@ if ($id) {
 	}
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Type").'</td>';
+	print '<td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
-	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-	/*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
-	print $form->showphoto('memberphoto',$member);
-	print '</td>';*/
+	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td>';
+	print '<td class="valeur" >'.$object->getmorphylib('', 1).'</td>';
 	print '</tr>';
 
 	// Company

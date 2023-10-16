@@ -48,7 +48,9 @@ if (!defined("NOLOGIN")) {
 if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
-
+if (!defined("NODEFAULTVALUES")) {
+	define("NODEFAULTVALUES", '1');
+}
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
 if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
@@ -110,7 +112,7 @@ if (!empty($conf->global->MAIN_NGINX_FIX)) {
 }
 
 // Enable and test if module Api is enabled
-if (empty($conf->global->MAIN_MODULE_API)) {
+if (!isModEnabled('api') ) {
 	$langs->load("admin");
 	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
 	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
@@ -199,7 +201,7 @@ if (!empty($conf->global->API_RESTRICT_ON_IP)) {
 	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
-		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
+		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
 		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
 		//session_destroy();
@@ -389,13 +391,13 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 $usecompression = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 $foundonealgorithm = 0;
 if ($usecompression) {
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress')) {
 		$foundonealgorithm++;
 	}
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		$foundonealgorithm++;
 	}
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		$foundonealgorithm++;
 	}
 	if (!$foundonealgorithm) {
@@ -413,13 +415,13 @@ $result = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
 	// We try to compress the data received data
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress') && defined('BROTLI_TEXT')) {
 		header('Content-Encoding: br');
-		$result = brotli_compress($result, 11, BROTLI_TEXT);
-	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+		$result = brotli_compress($result, 11, constant('BROTLI_TEXT'));
+	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		header('Content-Encoding: bz');
 		$result = bzcompress($result, 9);
-	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && function_exists('gzencode')) {
 		header('Content-Encoding: gzip');
 		$result = gzencode($result, 9);
 	} else {

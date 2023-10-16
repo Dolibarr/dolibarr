@@ -34,6 +34,9 @@ class Utils
 	 */
 	public $db;
 
+	public $error;
+	public $errors;
+
 	public $output; // Used by Cron method to return message
 	public $result; // Used by Cron method to return data
 
@@ -58,7 +61,8 @@ class Utils
 	 */
 	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
 	{
-		global $conf, $langs, $dolibarr_main_data_root;
+		global $conf, $langs, $user;
+		global $dolibarr_main_data_root;
 
 		$langs->load("admin");
 
@@ -72,6 +76,14 @@ class Utils
 		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
+
+		// For dangerous action, we check the user is admin
+		if (in_array($choices, array('allfiles', 'allfilesold'))) {
+			if (empty($user->admin)) {
+				$this->output = 'Error: to erase data files, user running the batch (currently '.$user->login.') must be an admin user';
+				return 1;
+			}
+		}
 
 		$count = 0;
 		$countdeleted = 0;
@@ -118,7 +130,7 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
-				if (!empty($conf->syslog->enabled)) {
+				if (isModEnabled('syslog')) {
 					$filelog = $conf->global->SYSLOG_FILE;
 					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 
@@ -173,6 +185,7 @@ class Utils
 		}
 
 		if ($count > 0) {
+			$langs->load("admin");
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) {
 				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
@@ -182,7 +195,7 @@ class Utils
 		}
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
-		if (!empty($conf->api->enabled)) {
+		if (isModEnabled('api')) {
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
@@ -202,9 +215,10 @@ class Utils
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
+	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
+	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
@@ -214,6 +228,9 @@ class Utils
 
 		dol_syslog("Utils::dumpDatabase type=".$type." compression=".$compression." file=".$file, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		// Clean data
+		$file = dol_sanitizeFileName($file);
 
 		// Check compression parameter
 		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
@@ -354,8 +371,6 @@ class Utils
 
 			$handle = '';
 
-			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
-
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
@@ -371,23 +386,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= " > ".$outputfile;
-					$fullcommandcrypted .= " > ".$outputfile;
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= " | gzip > ".$outputfile;
-					$fullcommandcrypted .= " | gzip > ".$outputfile;
-					$paramcrypted.=" | gzip";
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= " | bzip2 > ".$outputfile;
-					$fullcommandcrypted .= " | bzip2 > ".$outputfile;
-					$paramcrypted.=" | bzip2";
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= " | zstd > ".$outputfile;
-					$fullcommandcrypted .= " | zstd > ".$outputfile;
-					$paramcrypted.=" | zstd";
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd';
 					$handle = 1;
 				}
 			}
@@ -411,13 +426,16 @@ class Utils
 				}
 
 
-				// TODO Replace with executeCLI function but
-				// we must first introduce a low memory mode
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
 
 					exec($fullcommandclear, $output_arr, $retval);
+					// TODO Replace this exec with Utils->executeCLI() function.
+					// We must check that the case for $lowmemorydump works too...
+					//$utils = new Utils($db);
+					//$outputfile = $conf->admin->dir_temp.'/dump.tmp';
+					//$utils->executeCLI($fullcommandclear, $outputfile, 0);
 
 					if ($retval != 0) {
 						$langs->load("errors");
@@ -432,6 +450,8 @@ class Utils
 								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
 									continue;
 								}
+								// Now check into the result file, that the file end with "-- Dump completed"
+								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
@@ -471,20 +491,19 @@ class Utils
 					}
 				}
 
-
-				if ($compression == 'none') {
-					fclose($handle);
-				} elseif ($compression == 'gz') {
-					gzclose($handle);
-				} elseif ($compression == 'bz') {
-					bzclose($handle);
-				} elseif ($compression == 'zstd') {
-					fclose($handle);
+				if (!$lowmemorydump) {
+					if ($compression == 'none') {
+						fclose($handle);
+					} elseif ($compression == 'gz') {
+						gzclose($handle);
+					} elseif ($compression == 'bz') {
+						bzclose($handle);
+					} elseif ($compression == 'zstd') {
+						fclose($handle);
+					}
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($outputfile);
 			} else {
 				$langs->load("errors");
 				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
@@ -642,12 +661,14 @@ class Utils
 		if (!$errormsg && $keeplastnfiles > 0) {
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
-			foreach ($tmpfiles as $key => $val) {
-				$i++;
-				if ($i <= $keeplastnfiles) {
-					continue;
+			if (is_array($tmpfiles)) {
+				foreach ($tmpfiles as $key => $val) {
+					$i++;
+					if ($i <= $keeplastnfiles) {
+						continue;
+					}
+					dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 				}
-				dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 			}
 		}
 
@@ -660,11 +681,11 @@ class Utils
 	 * Execute a CLI command.
 	 *
 	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the command. if not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the $command parameter. If not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
@@ -725,9 +746,7 @@ class Utils
 				pclose($handlein);
 				fclose($handle);
 			}
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 		}
 
 		// Update with result
@@ -895,7 +914,7 @@ class Utils
 				$utils = new Utils($this->db);
 
 				// Build HTML doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile = $dirofmoduletmp.'/out.tmp';
 
 				$resarray = $utils->executeCLI($command, $outfile);
@@ -910,7 +929,7 @@ class Utils
 				}
 
 				// Build PDF doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
 				$outfile = $dirofmoduletmp.'/outpdf.tmp';
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
@@ -1037,7 +1056,7 @@ class Utils
 					fclose($sourcehandle);
 					gzclose($gzfilehandle);
 
-					@chmod($logpath.'/'.$logname.'.1.gz', octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+					dolChmod($logpath.'/'.$logname.'.1.gz');
 				}
 
 				dol_delete_file($logpath.'/'.$logname, 0, 0, 0, null, false, 0);
@@ -1047,7 +1066,7 @@ class Utils
 				fclose($newlog);
 
 				//var_dump($logpath.'/'.$logname." - ".octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));
-				@chmod($logpath.'/'.$logname, octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
+				dolChmod($logpath.'/'.$logname);
 			}
 		}
 
@@ -1249,11 +1268,13 @@ class Utils
 	 *	@param 	string	$message             Message
 	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
 	 * 	@param 	string	$filter			     Filter file send
+	 * 	@param 	string	$sizelimit			 Limit size to send file
 	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
+		global $dolibarr_main_url_root;
 
 		$filepath = '';
 		$output = '';
@@ -1285,6 +1306,7 @@ class Utils
 			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
 		}
 
+		$tmpfiles = array();
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if ($filename) {
 			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
@@ -1293,7 +1315,7 @@ class Utils
 		} else {
 			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
 		}
-		if ($tmpfiles) {
+		if ($tmpfiles && is_array($tmpfiles)) {
 			foreach ($tmpfiles as $key => $val) {
 				if ($key  == 'fullname') {
 					$filepath = array($val);
@@ -1309,9 +1331,13 @@ class Utils
 		}
 
 		if ($filepath) {
-			if ($filesize > 100000000) {
-				$output = 'Sorry, last backup file is too large to be send by email';
-				$error++;
+			if ($filesize > $sizelimit) {
+				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
+				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
+				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$filepath = '';
+				$mimetype = '';
+				$filename = '';
 			}
 		} else {
 			$output = 'No backup file found';

@@ -81,13 +81,13 @@ if ($object->id > 0) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+$result = restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 // Permissions
-$permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('bom', 'write'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('bom', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
@@ -187,10 +187,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
-	$viewlink = dolGetButtonTitle($langs->trans('GroupByProduct'), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
-	$viewlink .= dolGetButtonTitle($langs->trans('TreeStructure'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink = dolGetButtonTitle($langs->trans('GroupByX', $langs->transnoentitiesnoconv("Products")), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink .= dolGetButtonTitle($langs->trans('TreeView'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
 
-	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, '');
+	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, 'product');
 
 	/*
 	 * Lines
@@ -214,22 +214,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 	}
 	print '</td>';
+	if ($action == 'treeview') print '<td class="left">'.$langs->trans('ProducedBy').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Quantity').'</td>';
 	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 	print  '</tr>';
+
+	print '</thead>';
+	print '<tbody>';
 	if (!empty($TChildBom)) {
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';
 				if (!empty($TProduct['bom'])) {
+					$prod = new Product($db);
+					$prod->fetch($TProduct['bom']->fk_product);
 					if ($TProduct['parentid'] != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
 					else print '<tr class="oddeven">';
-					print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
+					if ($action == 'treeview') print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
+					else print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
+					if ($action == 'treeview') print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
 					print '<td class="linecolstock right"></td>';
 					print '<td class="linecoltheoricalstock right"></td>';
@@ -244,6 +252,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
 						else print '<tr class="oddeven">';
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
+						if ($action == 'treeview') print '<td></td>';
 						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
 						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
 						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
@@ -266,7 +275,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 	}
-	print '</thead>';
+	print '</tbody>';
 	print '</table>';
 
 
@@ -287,20 +296,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		<script type="text/javascript" language="javascript">
 			$(document).ready(function() {
-				// When clicking on collapse
-				$(".collapse_bom").click(function() {
-					console.log("We click on collapse");
-					var id_bom_line = $(this).attr('id').replace('collapse-', '');
-					console.log($(this).html().indexOf('folder-open'));
-					if($(this).html().indexOf('folder-open') <= 0) {
+
+				function folderManage(element) {
+					var id_bom_line = element.attr('id').replace('collapse-', '');
+					let TSubLines = $('[parentid="'+ id_bom_line +'"]');
+
+					if(element.html().indexOf('folder-open') <= 0) {
 						$('[parentid="'+ id_bom_line +'"]').show();
-						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+						element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
 					}
 					else {
-						$('[parentid="'+ id_bom_line +'"]').hide();
-						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+						for (let i = 0; i < TSubLines.length; i++) {
+							let subBomFolder = $(TSubLines[i]).children('.linecoldescription').children('.collapse_bom');
+							if (subBomFolder.length > 0) {
+								folderManage(subBomFolder);
+							}
+						}
+						TSubLines.hide();
+						element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
 					}
+				}
 
+				// When clicking on collapse
+				$(".collapse_bom").click(function() {
+					folderManage($(this));
 					return false;
 				});
 

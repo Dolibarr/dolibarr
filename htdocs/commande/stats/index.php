@@ -40,12 +40,20 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
-if ($mode == 'customer' && !$user->rights->commande->lire) {
+
+$usercanreadcustumerstatistic = $user->hasRight('commande', 'lire');
+$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'lire');
+if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+	$usercanreadcustumerstatistic = $user->hasRight('commande', 'commande', 'export');
+	$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'export');
+}
+if ($mode == 'customer' && !$usercanreadcustumerstatistic) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && empty($user->rights->fournisseur->commande->lire)) {
+if ($mode == 'supplier' && !$usercanreadsupplierstatistic) {
 	accessforbidden();
 }
+
 if ($mode == 'supplier') {
 	$object_status = GETPOST('object_status', 'array:int');
 	$object_status = implode(',', $object_status);
@@ -65,7 +73,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -119,7 +127,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
@@ -165,7 +173,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
@@ -209,7 +217,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -295,11 +303,12 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+$filter = '';
 if ($mode == 'customer') {
-	$filter = 's.client IN (1,2,3)';
+	$filter = '(s.client:IN:1,2,3)';
 }
 if ($mode == 'supplier') {
-	$filter = 's.fournisseur = 1';
+	$filter = '(s.fournisseur:=:1)';
 }
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300');
@@ -333,11 +342,11 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
 	$liststatus = array(
-		Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
-		Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-		Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
-		Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-		Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+		Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraft"),
+		Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+		Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSent"),
+		Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceled")
 	);
 	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 }
@@ -426,7 +435,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

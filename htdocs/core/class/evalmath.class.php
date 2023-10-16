@@ -113,7 +113,8 @@ class EvalMath
 
 	// constants
 	public $fb = array( // built-in functions
-	'sin', 'sinh', 'arcsin', 'asin', 'arcsinh', 'asinh', 'cos', 'cosh', 'arccos', 'acos', 'arccosh', 'acosh', 'tan', 'tanh', 'arctan', 'atan', 'arctanh', 'atanh', 'sqrt', 'abs', 'ln', 'log', 'intval');
+		'sin', 'sinh', 'arcsin', 'asin', 'arcsinh', 'asinh', 'cos', 'cosh', 'arccos', 'acos', 'arccosh', 'acosh', 'tan', 'tanh', 'arctan', 'atan', 'arctanh', 'atanh', 'sqrt', 'abs', 'ln', 'log', 'intval', 'ceil',
+	);
 
 	/**
 	 * Constructor
@@ -197,9 +198,9 @@ class EvalMath
 	}
 
 	/**
-	 * vars
+	 * Function vars
 	 *
-	 * @return string Output
+	 * @return array	Output
 	 */
 	public function vars()
 	{
@@ -210,9 +211,9 @@ class EvalMath
 	}
 
 	/**
-	 * vars
+	 * Function funcs
 	 *
-	 * @return string Output
+	 * @return array	Output
 	 */
 	private function funcs()
 	{
@@ -228,8 +229,8 @@ class EvalMath
 	/**
 	 * Convert infix to postfix notation
 	 *
-	 * @param string $expr		Expression
-	 * @return string 			Output
+	 * @param 	string 			$expr		Expression
+	 * @return 	boolean|array 				Output
 	 */
 	private function nfx($expr)
 	{
@@ -247,7 +248,7 @@ class EvalMath
 
 		$matches = array();
 		if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
-			return $this->trigger(4, "illegal character '{$matches[0]}'", $matches[0]);
+			return $this->trigger(4, "illegal character '".$matches[0]."'", $matches[0]);
 		}
 
 		while (1) { // 1 Infinite Loop ;)
@@ -366,6 +367,7 @@ class EvalMath
 			}
 			$output[] = $op;
 		}
+
 		return $output;
 	}
 
@@ -479,7 +481,6 @@ class EvalMath
  */
 class EvalMathStack
 {
-
 	public $stack = array();
 
 	public $count = 0;
@@ -487,8 +488,8 @@ class EvalMathStack
 	/**
 	 * push
 	 *
-	 * @param string $val		Val
-	 * @return void
+	 * @param 	string 	$val		Val
+	 * @return 	void
 	 */
 	public function push($val)
 	{
@@ -513,14 +514,15 @@ class EvalMathStack
 	/**
 	 * last
 	 *
-	 * @param int $n	N
-	 * @return mixed 	Stack
+	 * @param 	int 	$n		N
+	 * @return 	mixed 			Stack
 	 */
 	public function last($n = 1)
 	{
 		if (isset($this->stack[$this->count - $n])) {
 			return $this->stack[$this->count - $n];
 		}
-		return;
+
+		return '';
 	}
 }

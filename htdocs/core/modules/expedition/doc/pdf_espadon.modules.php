@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2020	Frédéric France    	<frederic.france@netlogic.fr>
+ * Copyright (C) 2023 		Charlene Benke    	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,57 +63,10 @@ class pdf_espadon extends ModelePdfExpedition
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe object that emits
-	 */
-	public $emetteur;
 
 
 	/**
@@ -122,7 +76,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = "espadon";
@@ -221,7 +175,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$realpath = '';
 
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-					if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
 							$filename = $obj['photo_vignette'];
 						} else {
@@ -295,7 +249,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -368,11 +322,14 @@ class pdf_espadon extends ModelePdfExpedition
 
 				if (!empty($notetoshow) || !empty($object->tracking_number)) {
 					$tab_top -= 2;
+					$tab_topbeforetrackingnumber = $tab_top;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
+						$height_trackingnumber = 4;
+
 						$pdf->SetFont('', 'B', $default_font_size - 2);
-						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
+						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
 
 						$tab_top_alt = $pdf->GetY();
 						$object->getUrlTrackingStatus($object->tracking_number);
@@ -390,19 +347,20 @@ class pdf_espadon extends ModelePdfExpedition
 									$label .= " : ";
 									$label .= $object->tracking_url;
 								}
-								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 
-								$tab_top = $pdf->GetY();
+								$height_trackingnumber += 4;
+								$pdf->SetFont('', 'B', $default_font_size - 2);
+								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 							}
 						}
+						$tab_top = $pdf->GetY();
 					}
 
 
 					// Notes
 					$pagenb = $pdf->getPage();
-					if (!empty($notetoshow)) {
-						$tab_top -= 2;
+					if (!empty($notetoshow) || !empty($object->tracking_number)) {
+						$tab_top -= 1;
 
 						$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 						$pageposbeforenote = $pagenb;
@@ -465,11 +423,21 @@ class pdf_espadon extends ModelePdfExpedition
 								$pdf->SetDrawColor(128, 128, 128);
 								// Draw note frame
 								if ($i > $pageposbeforenote) {
-									$height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
-									$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
+									if (empty($height_trackingnumber)) {
+										$height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
+									} else {
+										$height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter) + $height_trackingnumber + 1;
+										$tab_top_newpage = $tab_topbeforetrackingnumber;
+									}
+									$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 2);
 								} else {
-									$height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
-									$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
+									if (empty($height_trackingnumber)) {
+										$height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
+									} else {
+										$height_note = $this->page_hauteur - ($tab_top + $heightforfooter)+ $height_trackingnumber + 1;
+										$tab_top = $tab_topbeforetrackingnumber;
+									}
+									$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2);
 								}
 
 								// Add footer
@@ -489,8 +457,13 @@ class pdf_espadon extends ModelePdfExpedition
 						{
 							$pdf->commitTransaction();
 							$posyafter = $pdf->GetY();
-							$height_note = $posyafter - $tab_top;
-							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
+							if (empty($height_trackingnumber)) {
+								$height_note = $posyafter - $tab_top + 1;
+							} else {
+								$height_note = $posyafter - $tab_top + $height_trackingnumber + 1;
+								$tab_top = $tab_topbeforetrackingnumber;
+							}
+							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 2);
 
 
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {
@@ -763,9 +736,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -832,7 +803,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$totalToShip = $tmparray['toship'];
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
+			$object->trueVolume = $object->trueWidth * $object->trueHeight * $object->trueDepth;
 			$object->volume_units = $object->size_units * 3;
 		}
 
@@ -846,11 +817,12 @@ class pdf_espadon extends ModelePdfExpedition
 			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
 		}
 		if ($object->trueVolume) {
-			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+			if ($object->volume_units < 50) {
+				$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+			} else {
+				$totalVolumetoshow =  price($object->trueVolume, 0, $outputlangs, 0, 0).' '.measuringUnitString(0, "volume", $object->volume_units);
+			}
 		}
-
-
-
 
 		if ($this->getColumnStatus('desc')) {
 			$this->printStdColumnContent($pdf, $tab2_top, 'desc', $outputlangs->transnoentities("Total"));
@@ -945,7 +917,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	int							<0 if KO, > if OK
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -974,7 +946,7 @@ class pdf_espadon extends ModelePdfExpedition
 			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 				$logodir = $conf->mycompany->multidir_output[$object->entity];
 			}
-			if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 			} else {
 				$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -1078,6 +1050,14 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 		}
 
+		$top_shift = 0;
+		// Show list of linked objects
+		/*$current_y = $pdf->getY();
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+		if ($current_y < $pdf->getY()) {
+			$top_shift = $pdf->getY() - $current_y;
+		}*/
+
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
@@ -1088,7 +1068,14 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
@@ -1183,6 +1170,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1209,7 +1197,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1297,7 +1285,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
-			'status' => !empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT) ? 1 : 0,
+			'status' => !empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'PriceUHT'
 			),
@@ -1308,7 +1296,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT) ? 1 : 0,
+			'status' => !empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'TotalHT'
 			),

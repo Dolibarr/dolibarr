@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,23 +81,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	protected $savuser;
 	protected $savlangs;
 	protected $savdb;
+	protected $savmysoc;
 
 	/**
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return CoreTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$this->savconf=$conf;
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
+		$this->savmysoc=$mysoc;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
@@ -142,17 +146,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * Init phpunit tests
+	 * Init phpunit tests. Restore variables before each test.
 	 *
 	 * @return	void
 	 */
 	protected function setUp(): void
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
+		$mysoc=$this->savmysoc;
 
 		print __METHOD__."\n";
 	}
@@ -167,6 +172,34 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
+
+	/**
+	 * testDolForgeCriteriaCallback
+	 *
+	 * @return boolean
+	 */
+	public function testDolForgeCriteriaCallback()
+	{
+		global $conf, $langs;
+
+		// An attempt for SQL injection
+		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, 'Filter syntax error - Bad syntax of the search string');
+
+		// A real search string
+		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, ' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))');
+
+		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals($sql, " AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))");
+
+		return true;
+	}
+
+
 	/**
 	 * testDolClone
 	 *
@@ -174,20 +207,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolClone()
 	{
-		$newproduct1 = new Product($this->savdb);
+		global $db;
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		$newproduct1 = new Product($db);
+
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned1 = dol_clone($newproduct1);
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
+		$newproductcloned2 = dol_clone($newproduct1, 2);
+		var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}
@@ -440,6 +477,14 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('ios', $tmp['browseros']);
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
+
+		//Lynx
+		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
+		$tmp=getBrowserInfo($user_agent);
+		$this->assertEquals('lynxlinks', $tmp['browsername']);
+		$this->assertEquals('2.8.8', $tmp['browserversion']);
+		$this->assertEquals('unknown', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
 	}
 
 
@@ -547,6 +592,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$input='This is a text with accent &eacute;';
 		$after=dol_textishtml($input);
 		$this->assertTrue($after, 'Test with a &eacute;');
+		$input='<i class="abc">xxx</i>';
+		$after=dol_textishtml($input);
+		$this->assertTrue($after, 'Test with i tag and class;');
 
 		// False
 		$input='xxx < br>';
@@ -628,6 +676,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		return true;
 	}
 
+
+	/**
+	 * testDolStringNoSpecial
+	 *
+	 * @return boolean
+	 */
+	public function testDolStringNoSpecial()
+	{
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 0);
+		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
+
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		return true;
+	}
 
 	/**
 	 * testDolStringNohtmltag
@@ -1009,7 +1075,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testDolFormatAddress
+	 * testDolPrintPhone
 	 *
 	 * @return	void
 	 */
@@ -1051,12 +1117,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		$s=img_picto('title', 'user');
 		print __METHOD__." s=".$s."\n";
-		$this->assertContains('fa-user', $s, 'testImgPicto1');
+		$this->assertStringContainsStringIgnoringCase('fa-user', $s, 'testImgPicto1');
 
 		$s=img_picto('title', 'img.png', 'style="float: right"', 0);
 		print __METHOD__." s=".$s."\n";
-		$this->assertContains('theme', $s, 'testImgPicto2');
-		$this->assertContains('style="float: right"', $s, 'testImgPicto2');
+		$this->assertStringContainsStringIgnoringCase('theme', $s, 'testImgPicto2');
+		$this->assertStringContainsStringIgnoringCase('style="float: right"', $s, 'testImgPicto2');
 
 		$s=img_picto('title', '/fullpath/img.png', '', 1);
 		print __METHOD__." s=".$s."\n";
@@ -1097,10 +1163,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$verifcond=verifCond('1==2');
 		$this->assertFalse($verifcond, 'Test a false comparison');
 
-		$verifcond=verifCond('$conf->facture->enabled');
+		$verifcond=verifCond('isModEnabled("facture")');
 		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
 
-		$verifcond=verifCond('$conf->moduledummy->enabled');
+		$verifcond=verifCond('isModEnabled("moduledummy")');
 		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
 
 		$verifcond=verifCond(0);
@@ -1195,7 +1261,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// We do same tests but with option SERVICE_ARE_ECOMMERCE_200238EC on.
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
 
-
 		// Test RULE 1 (FR-US)
 		$vat=get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 1 ECOMMERCE_200238EC');
@@ -1218,7 +1283,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testGetDefaultTva
+	 * testGetDefaultLocalTax
 	 *
 	 * @return	void
 	 */
@@ -1306,6 +1371,27 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
+	 * testGetLocalTaxByThird
+	 *
+	 * @return	void
+	 */
+	public function testGetLocalTaxByThird()
+	{
+		global $mysoc;
+
+		$mysoc->country_code = 'ES';
+
+		$result = get_localtax_by_third(1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('5.2', $result);
+
+		$result = get_localtax_by_third(2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('-19:-15:-9', $result);
+	}
+
+
+	/**
 	 * testDolExplodeIntoArray
 	 *
 	 * @return	void
@@ -1317,6 +1403,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." tmp=".json_encode($tmp)."\n";
 		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}', json_encode($tmp));
+
+		$stringtoexplode="AA=B/B;CC=\n\rEE=FF\nHH=GG;;;\nII=JJ\n";
+		$tmp=dolExplodeIntoArray($stringtoexplode, "(\r\n|\n|\r|;)", '=');
+
+		print __METHOD__." tmp=".json_encode($tmp)."\n";
+		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG","II":"JJ"}', json_encode($tmp));
 	}
 
 	/**

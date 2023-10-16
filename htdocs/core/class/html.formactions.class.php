@@ -79,7 +79,8 @@ class FormActions
 
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n";
-			print "<script type=\"text/javascript\">
+			print '<script nonce="'.getNonce().'" type="text/javascript">';
+			print "
                 var htmlname = '".$htmlname."';
 
                 $(document).ready(function () {
@@ -115,7 +116,7 @@ class FormActions
                         $('.hideifna').show();
                     }
                     else {
-                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50); }
                     	percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }
@@ -142,7 +143,7 @@ class FormActions
 				$canedit = 0;
 			}
 
-			print ajax_combobox('select'.$htmlname);
+			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
 				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
@@ -165,9 +166,10 @@ class FormActions
 	 *  @param	int		$max					Max number of record
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
+	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
 	 *	@return	int								<0 if KO, >=0 if OK
 	 */
-	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '')
+	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -188,28 +190,14 @@ class FormActions
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice') {
+			if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
 				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'propal') {
-				$title = $langs->trans('ActionsOnPropal');
 			} elseif ($typeelement == 'supplier_proposal') {
 				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order') {
-				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
 				$title = $langs->trans('ActionsOnOrder');
 			} elseif ($typeelement == 'shipping') {
 				$title = $langs->trans('ActionsOnShipping');
-			} elseif ($typeelement == 'fichinter') {
-				$title = $langs->trans('ActionsOnFicheInter');
-			} elseif ($typeelement == 'project') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'task') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'member') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
 			} else {
 				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 			}
@@ -225,9 +213,21 @@ class FormActions
 				$taskid = $object->id;
 			}
 
+			$usercanaddaction = 0;
+			if (empty($assignedtouser) || $assignedtouser == $user->id) {
+				$usercanaddaction = $user->hasRight('agenda', 'myactions', 'create');
+				$assignedtouser = 0;
+			} else {
+				$usercanaddaction = $user->hasRight('agenda', 'allactions', 'create');
+			}
+
 			$newcardbutton = '';
-			if (isModEnabled('agenda') && !empty($user->rights->agenda->myactions->create)) {
-				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : '')).($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '').'&backtopage='.urlencode($urlbacktopage);
+			if (isModEnabled('agenda') && $usercanaddaction) {
+				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
+				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
+				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
+				$url .= ($assignedtouser > 0 ? '&assignedtouser='.$assignedtouser : '');
+				$url .= '&backtopage='.urlencode($urlbacktopage);
 				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
@@ -258,12 +258,10 @@ class FormActions
 						break;
 					}
 
-					$ref = $actioncomm->getNomUrl(1, -1);
-
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$ref.'</td>';
+					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Onwer
 					print '<td class="nowraponall tdoverflowmax125">';
@@ -282,12 +280,17 @@ class FormActions
 					print '</td>';
 
 					$actionstatic = $actioncomm;
+
+					// Example: Email sent from invoice card
+					//$actionstatic->code = 'AC_BILL_SENTBYMAIL
+					//$actionstatic->type_code = 'AC_OTHER_AUTO'
+
 					// Type
 					$labeltype = $actionstatic->type_code;
 					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 						$labeltype = 'AC_OTH';
 					}
-					if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 						$labeltype = $langs->trans("Message");
 					} else {
 						if (!empty($arraylist[$labeltype])) {
@@ -297,13 +300,13 @@ class FormActions
 							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 						}
 					}
-					print '<td class="tdoverflowmax100" title="'.$labeltype.'">';
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
 					print $actioncomm->getTypePicto();
 					print $labeltype;
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0, 36).'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0).'</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');

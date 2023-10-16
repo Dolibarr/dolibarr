@@ -8,6 +8,7 @@ header('Cache-Control: max-age=3600, public, must-revalidate');
 header('Content-type: application/javascript');
 // END PHP ?>
 /* JS content (all pages) */
+// test
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");
 // END PHP ?>

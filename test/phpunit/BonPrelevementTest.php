@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +58,12 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return BankAccountTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -150,7 +152,7 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
 
 
 		// Create withdraw record and generate SEPA file
-		$localobject=new BonPrelevement($this->savdb);
+		$localobject=new BonPrelevement($db);
 		//$localobject->date_solde=dol_now();
 		$result=$localobject->Create(0, 0, 'simu');
 
@@ -180,7 +182,7 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new BonPrelevement($this->savdb);
+		$localobject=new BonPrelevement($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
 

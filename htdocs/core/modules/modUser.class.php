@@ -18,11 +18,12 @@
  */
 
 /**
- *	\defgroup   user  Module user management
- *	\brief      Module pour gerer les utilisateurs
- *	\file       htdocs/core/modules/modUser.class.php
- *	\ingroup    user
- *	\brief      Description and activation file for the module users
+ *  \defgroup   user  Module user management
+ *  \brief      Module to manage users and usergroups
+ *
+ *  \file       htdocs/core/modules/modUser.class.php
+ *  \ingroup    user
+ *  \brief      Description and activation file for the module users
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -32,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modUser extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -275,7 +275,7 @@ class modUser extends DolibarrModules
 		$keyforelement = 'user';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		if (empty($conf->adherent->enabled)) {
+		if (!isModEnabled('adherent')) {
 			unset($this->export_fields_array[$r]['u.fk_member']);
 			unset($this->export_entities_array[$r]['u.fk_member']);
 		}
@@ -337,7 +337,7 @@ class modUser extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(
 			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'man or woman',
 			'u.pass_crypted'=>'Encrypted password',
-			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
+			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",
 			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note_public'=>"This is an example of public note for record", 'u.note_private'=>"This is an example of private note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
 			'u.statut'=>"0 (closed) or 1 (active)",

@@ -101,6 +101,10 @@ class ActionCommReminder extends CommonObject
 	public $entity;
 
 	public $dateremind;
+
+	/**
+	 * @var string reminder type email, browser, sms
+	 */
 	public $typeremind;
 
 	/**
@@ -108,7 +112,14 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int offset value
+	 */
 	public $offsetvalue;
+
+	/**
+	 * @var string y, m, d, w, h, i
+	 */
 	public $offsetunit;
 
 	/**
@@ -130,10 +141,7 @@ class ActionCommReminder extends CommonObject
 	 * @var int Template Mail
 	 */
 	public $fk_email_template;
-
 	// END MODULEBUILDER PROPERTIES
-
-
 
 	/**
 	 * Constructor

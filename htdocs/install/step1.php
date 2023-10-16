@@ -84,21 +84,33 @@ if (@file_exists($forcedfile)) {
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if ($force_install_noedit) {
 		$main_dir = detect_dolibarr_main_document_root();
-		if (!empty($argv[1])) {
-			$main_dir = $argv[1]; // override when executing the script in command line
+		if (!empty($argv[3])) {
+			$main_dir = $argv[3]; // override when executing the script in command line
 		}
 		if (!empty($force_install_main_data_root)) {
 			$main_data_dir = $force_install_main_data_root;
 		} else {
 			$main_data_dir = detect_dolibarr_main_data_root($main_dir);
 		}
+		if (!empty($argv[4])) {
+			$main_data_dir = $argv[4]; // override when executing the script in command line
+		}
 		$main_url = detect_dolibarr_main_url_root();
+		if (!empty($argv[5])) {
+			$main_url = $argv[5]; // override when executing the script in command line
+		}
 
 		if (!empty($force_install_databaserootlogin)) {
 			$userroot = parse_database_login($force_install_databaserootlogin);
 		}
+		if (!empty($argv[6])) {
+			$userroot = $argv[6]; // override when executing the script in command line
+		}
 		if (!empty($force_install_databaserootpass)) {
 			$passroot = parse_database_pass($force_install_databaserootpass);
+		}
+		if (!empty($argv[7])) {
+			$passroot = $argv[7]; // override when executing the script in command line
 		}
 	}
 	if ($force_install_noedit == 2) {
@@ -240,7 +252,7 @@ if (!$error) {
 				}
 			}
 
-			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, $db_port);
+			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, (int) $db_port);
 
 			dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
 			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
@@ -272,7 +284,7 @@ if (!$error) {
 
 		// If we need simple access
 		if (!$error && (empty($db_create_database) && empty($db_create_user))) {
-			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
+			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, (int) $db_port);
 
 			if ($db->error) {
 				print '<div class="error">'.$db->error.'</div>';
@@ -323,12 +335,16 @@ if (!$error && $db->connected) {
 
 		$defaultCharacterSet = $db->forcecharset;
 		$defaultDBSortingCollation = $db->forcecollate;
-	} else // If already created, we take current value
-	{
+	} else { // If already created, we take current value
 		$defaultCharacterSet = $db->getDefaultCharacterSetDatabase();
 		$defaultDBSortingCollation = $db->getDefaultCollationDatabase();
 	}
 
+	// It seems some PHP driver mysqli does not support utf8mb3
+	if ($defaultCharacterSet == 'utf8mb3' || $defaultDBSortingCollation == 'utf8mb3_unicode_ci') {
+		$defaultCharacterSet = 'utf8';
+		$defaultDBSortingCollation = 'utf8_unicode_ci';
+	}
 	// Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
 	// TODO Remove this when utf8mb4 is supported
 	if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci') {
@@ -529,7 +545,7 @@ if (!$error && $db->connected && $action == "set") {
 
 			// Check database connection
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, $conf->db->port);
+			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, (int) $conf->db->port);
 
 			if ($db->error) {
 				print '<div class="error">'.$db->error.'</div>';
@@ -566,14 +582,14 @@ if (!$error && $db->connected && $action == "set") {
 							print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 						} else {
 							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
-							|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
-							|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
-								dolibarr_install_syslog("step1: user already exists");
-								print '<tr><td>';
-								print $langs->trans("UserCreation").' : ';
-								print $dolibarr_main_db_user;
-								print '</td>';
-								print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
+								|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+								|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
+									dolibarr_install_syslog("step1: user already exists");
+									print '<tr><td>';
+									print $langs->trans("UserCreation").' : ';
+									print $dolibarr_main_db_user;
+									print '</td>';
+									print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
 							} else {
 								dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
 								print '<tr><td>';
@@ -611,7 +627,7 @@ if (!$error && $db->connected && $action == "set") {
 		// If database creation was asked, we create it
 		if (!$error && (isset($db_create_database) && ($db_create_database == "1" || $db_create_database == "on"))) {
 			dolibarr_install_syslog("step1: create database: ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user);
-			$newdb = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, '', $conf->db->port);
+			$newdb = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, '', (int) $conf->db->port);
 			//print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
 
 			if ($newdb->connected) {
@@ -671,7 +687,7 @@ if (!$error && $db->connected && $action == "set") {
 			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
 			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 			if ($db->connected) {
 				dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." ok");
@@ -825,7 +841,7 @@ function write_conf_file($conffile)
 	global $dolibarr_main_distrib;
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow, $conffiletoshowshort;
-	global $force_dolibarr_lib_ADODB_PATH, $force_dolibarr_lib_NUSOAP_PATH;
+	global $force_dolibarr_lib_NUSOAP_PATH;
 	global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
@@ -908,7 +924,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore\';');
+		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
@@ -943,11 +959,6 @@ function write_conf_file($conffile)
 			fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
-		fputs($fp, "\n");
-		if (empty($force_dolibarr_lib_ADODB_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH = '';
-		}
-		fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
 			fputs($fp, '//'); $force_dolibarr_lib_GEOIP_PATH = '';

@@ -78,7 +78,7 @@ $childids[] = $user->id;
 
 $help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 
-llxHeader('', $langs->trans("ListOfFees"), $help_url);
+llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
 $label = $somme = $nb = array();

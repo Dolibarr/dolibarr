@@ -48,29 +48,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
 $id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-
+$backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 $public_donation = (int) GETPOST("public", 'int');
 
 $object = new Don($db);
-$extrafields = new ExtraFields($db);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
 
-// Security check
-$result = restrictedArea($user, 'don', $id);
+if (!empty($socid) && $socid > 0) {
+	$soc = new Societe($db);
+	if ($socid > 0) {
+		$soc->fetch($socid);
+	}
+}
+
+$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('doncard', 'globalcard'));
+$hookmanager->initHooks(array($object->element.'card', 'globalcard'));
 
 $upload_dir = $conf->don->dir_output;
+
+
+// Security check
+$result = restrictedArea($user, 'don', $object->id);
+
 $permissiontoadd = $user->rights->don->creer;
 
 
@@ -263,7 +278,7 @@ if (empty($reshook)) {
 	}
 
 	// Action delete object
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->hasRight('don', 'supprimer')) {
 		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -304,7 +319,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'classin' && $user->rights->don->creer) {
+	} elseif ($action == 'classin' && $user->hasRight('don', 'creer')) {
 		$object->fetch($id);
 		$object->setProject($projectid);
 	}
@@ -391,6 +406,7 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -424,7 +440,8 @@ if ($action == 'create') {
 		} else {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
-			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
+			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
 			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
 				print '<script type="text/javascript">
@@ -487,7 +504,8 @@ if ($action == 'create') {
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$selected = GETPOST('modepayment', 'int');
-	$form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
+	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
 
 	// Public note
@@ -516,7 +534,8 @@ if ($action == 'create') {
 
 	if (isModEnabled('project')) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print "</td></tr>\n";
 	}
 
@@ -563,7 +582,7 @@ if (!empty($id) && $action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
-
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'donation');
 
@@ -707,7 +726,7 @@ if (!empty($id) && $action != 'edit') {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->rights->don->creer) {
+		if ($user->hasRight('don', 'creer')) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
@@ -716,11 +735,12 @@ if (!empty($id) && $action != 'edit') {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -874,7 +894,7 @@ if (!empty($id) && $action != 'edit') {
 	}
 
 	// Create payment
-	if ($object->statut == $object::STATUS_VALIDATED && $object->paid == 0 && $user->rights->don->creer) {
+	if ($object->statut == $object::STATUS_VALIDATED && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 		} else {
@@ -883,16 +903,16 @@ if (!empty($id) && $action != 'edit') {
 	}
 
 	// Classify 'paid'
-	if ($object->statut == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer) {
+	if ($object->statut == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 	}
 
 	// Delete
-	if ($user->rights->don->supprimer) {
+	if ($user->hasRight('don', 'supprimer')) {
 		if ($object->statut == $object::STATUS_CANCELED || $object->statut == $object::STATUS_DRAFT) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantRemovePaymentWithOneInvoicePaid").'">'.$langs->trans("Delete")."</a></div>";
 		}
 	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";

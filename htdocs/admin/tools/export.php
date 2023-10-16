@@ -35,7 +35,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
-$file = GETPOST('filename_template', 'alpha');
+$file = dol_sanitizeFileName(GETPOST('filename_template', 'alpha'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -113,6 +113,9 @@ $outputdir  = $conf->admin->dir_output.'/backup';
 $result = dol_mkdir($outputdir);
 
 
+$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
+
+
 // MYSQL
 if ($what == 'mysql') {
 	$cmddump = GETPOST("mysqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
@@ -120,10 +123,13 @@ if ($what == 'mysql') {
 
 	if (!empty($dolibarr_main_restrict_os_commands)) {
 		$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+		$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-		$basenamecmddump = basename($cmddump);
+		$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 		if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+			$langs->load("errors");
 			$errormsg = $langs->trans('CommandIsNotInsideAllowedCommands');
+			$errormsg .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
 		}
 	}
 
@@ -132,7 +138,7 @@ if ($what == 'mysql') {
 	}
 
 	if (!$errormsg) {
-		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 		$errormsg = $utils->error;
 		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
 		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
@@ -141,7 +147,7 @@ if ($what == 'mysql') {
 
 // MYSQL NO BIN
 if ($what == 'mysqlnobin') {
-	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
 	$errormsg = $utils->error;
 	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
@@ -157,8 +163,9 @@ if ($what == 'postgresql') {
 	if (!empty($dolibarr_main_restrict_os_commands))
 	{
 		$arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
+		$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-		$basenamecmddump=basename($cmddump);
+		$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 		if (! in_array($basenamecmddump, $arrayofallowedcommand))	// the provided command $cmddump must be an allowed command
 		{
 			$errormsg=$langs->trans('CommandIsNotInsideAllowedCommands');
@@ -170,7 +177,7 @@ if ($what == 'postgresql') {
 	}
 
 	if (!$errormsg) {
-		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 		$errormsg = $utils->error;
 		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
 		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
@@ -194,7 +201,7 @@ if ($errormsg) {
 		$resultstring = '<div class="ok">';
 		$resultstring .= $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
 		$resultstring .= $langs->trans("YouCanDownloadBackupFile");
-		$resultstring .= '<div>';
+		$resultstring .= '</div>';
 
 		$_SESSION["commandbackupresult"] = $resultstring;
 	}

@@ -61,8 +61,14 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') {
 			$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
 		}
-		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
-		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+
+		if (!empty($conf->global->COMPANY_AQUARIUM_NO_PREFIX)) {
+			$this->prefixcustomeraccountancycode = '';
+			$this->prefixsupplieraccountancycode = '';
+		} else {
+			$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
+			$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+		}
 	}
 
 
@@ -87,8 +93,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
-		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">', $tooltip, 1, 1);
-		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">', $tooltip, 1, 1);
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_AQUARIUM_MASK_SUPPLIER').'">', $tooltip, 1, 1);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_AQUARIUM_MASK_CUSTOMER').'">', $tooltip, 1, 1);
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}')."<br>\n";
@@ -100,10 +106,14 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		}
 		//if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
 		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX)) {
-			$texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
+			$texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = ' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX')."<br>\n";
+		}
+
+		if (!empty($conf->global->COMPANY_AQUARIUM_NO_PREFIX)) {
+			$texte .= $langs->trans('COMPANY_AQUARIUM_NO_PREFIX').' = ' . getDolGlobalString('COMPANY_AQUARIUM_NO_PREFIX')."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr></table>';
 		$texte .= '</form>';
 
@@ -171,7 +181,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		}
 		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX)) {	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
-			$codetouse = preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
+			$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
 		}
 
 		$codetouse = $prefix.strtoupper($codetouse);

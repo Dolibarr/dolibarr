@@ -25,7 +25,7 @@ create table llx_bank
   datev           date,                      -- date de valeur
   dateo           date,                      -- date operation
   amount          double(24,8) NOT NULL default 0,		-- amount in the currency of the bank account
-  amount_main_currency double(24,8) NULL,				-- amount in the main currency of the company
+  amount_main_currency double(24,8) NULL,				-- amount in the main currency of the company when payment done in a bank account with a different currency
   label           varchar(255),
   fk_account      integer,
   fk_user_author  integer,

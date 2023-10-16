@@ -127,10 +127,10 @@ foreach ($modulesdir as $dir) {
 
 								// We discard modules according to features level (PS: if module is activated we always show it)
 								$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) {
+								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
 									$modulequalified = 0;
 								}
-								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) {
+								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
 									$modulequalified = 0;
 								}
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
@@ -329,10 +329,12 @@ if ($mode == 'desc') {
 		$text .= '<br>'.$moduledesc.'<br><br><br>';
 	}
 
-	$text .= '<span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
-
 	$moduledescriptorfile = get_class($objMod).'.class.php';
-	$text .= '<br><span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
+	$text .= '<span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("IdModule").':</span> '.$objMod->numero;
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
 
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
@@ -369,16 +371,34 @@ if ($mode == 'desc') {
 
 if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-	if (count($objMod->depends)) {
-		$text .= join(',', $objMod->depends);
+	if (is_array($objMod->depends) && count($objMod->depends)) {
+		$i = 0;
+		foreach ($objMod->depends as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
 	} else {
-		$text .= $langs->trans("None");
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
+	$text .= '<br>';
+
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
-	if (count($objMod->requiredby)) {
-		$text .= join(',', $objMod->requiredby);
+	if (is_array($objMod->requiredby) && count($objMod->requiredby)) {
+		$i = 0;
+		foreach ($objMod->requiredby as $modulestringorarray) {
+			if (is_array($modulestringorarray)) {
+				$text .= ($i ? ', ' : '').join(', ', $modulestringorarray);
+			} else {
+				$text .= ($i ? ', ' : '').$modulestringorarray;
+			}
+			$i++;
+		}
 	} else {
-		$text .= $langs->trans("None");
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 
 	$text .= '<br><br>';
@@ -395,7 +415,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -408,7 +428,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -418,7 +438,7 @@ if ($mode == 'feature') {
 	if (dol_is_file($filedata)) {
 		$text .= $langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -437,7 +457,7 @@ if ($mode == 'feature') {
 			}
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -446,7 +466,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models']) {
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -455,7 +475,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions']) {
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -468,7 +488,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -478,7 +498,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers']) {
 		$yesno = 'Yes';
 	} else {
-		$yesno = 'No';
+		$yesno = '<span class="opacitymedium">No</span>';
 	}
 	require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 	$interfaces = new Interfaces($db);
@@ -498,11 +518,14 @@ if ($mode == 'feature') {
 	if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes)) {
 		$i = 0;
 		foreach ($objMod->boxes as $val) {
-			$text .= ($i ? ', ' : '').($val['file'] ? $val['file'] : $val[0]);
+			$boxstring = (empty($val['file']) ? (empty($val[0]) ? '' : $val[0]) : $val['file']);
+			if ($boxstring) {
+				$text .= ($i ? ', ' : '').$boxstring;
+			}
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -531,7 +554,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -544,7 +567,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -553,7 +576,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->menu) && !empty($objMod->menu)) { // objMod can be an array or just an int 1
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -566,7 +589,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -579,13 +602,13 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
-	$text .= $langs->trans("DetectionNotPossible");
+	$text .= '<span class="opacitymedium">'.$langs->trans("DetectionNotPossible").'</span>';
 }
 
 
@@ -594,7 +617,7 @@ if ($mode == 'changelog') {
 	if ($changelog) {
 		$text .= '<div class="moduledesclong">'.$changelog.'<div>';
 	} else {
-		$text .= '<div class="moduledesclong">'.$langs->trans("NotAvailable").'</div>';
+		$text .= '<div class="moduledesclong"><span class="opacitymedium">'.$langs->trans("NotAvailable").'</span></div>';
 	}
 }
 

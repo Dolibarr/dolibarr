@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kullanıcı üçüncü tarafları için kullanılan muhasebe hesabı
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Ücret ödemeleri için varsayılan muhasebe hesabı
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Varsayılan olarak, maaş oluştururken "Otomatik olarak toplam ödeme oluştur" seçeneğini boş bırakın
 Salary=Maaş
@@ -24,3 +24,4 @@ SalariesStatistics=Maaş istatistikleri
 SalariesAndPayments=Maaşlar ve ödemeler
 ConfirmDeleteSalaryPayment=Bu maaş ödemesini silmek istiyor musunuz?
 FillFieldFirst=Önce çalışan alanını doldurun
+UpdateAmountWithLastSalary=Set amount with last salary

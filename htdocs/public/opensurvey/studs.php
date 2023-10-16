@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 // Init vars
@@ -97,8 +98,36 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 		$error++;
 	}
 
+	$user_ip = getUserRemoteIP();
+	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+	$now = dol_now();
+	$minmonthpost = dol_time_plus_duree($now, -1, "m");
+	// Calculate nb of post for IP
+	$nb_post_ip = 0;
+	if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+		$sql = "SELECT COUNT(id_comment) as nb_comments";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_comments";
+		$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
+		$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$i++;
+				$obj = $db->fetch_object($resql);
+				$nb_post_ip = $obj->nb_comments;
+			}
+		}
+	}
+
+	if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+		setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
+		$error++;
+	}
+
 	if (!$error) {
-		$resql = $object->addComment($comment, $comment_user);
+		$resql = $object->addComment($comment, $comment_user, $user_ip);
 
 		if (!$resql) {
 			dol_print_error($db);
@@ -125,6 +154,30 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
+		$user_ip = getUserRemoteIP();
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(id_users) as nb_records";
+			$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+			$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
+			$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_records;
+				}
+			}
+		}
+
+
 		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
@@ -137,12 +190,17 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		}
 
 		$num_rows = $db->num_rows($resql);
+
 		if ($num_rows > 0) {
 			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
+		} elseif ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
+			$error++;
 		} else {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."')";
+			$now = dol_now();
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."', '".$db->idate($now)."')";
 			$resql = $db->query($sql);
 
 			if ($resql) {
@@ -267,32 +325,37 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("°", "'", $toutsujet);
 
 
-
+print '<div class="survey_intro">';
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
-print $langs->trans("OpenSurveyHowTo").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("OpenSurveyHowTo").'</span><br>';
 if (empty($object->allow_spy)) {
 	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
 } else {
 	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
 }
+print '</div>';
 print '<br>';
 
-print '<div class="corps"> '."\n";
+if (empty($object->description)) {
+	print '<div class="corps"> '."\n";
+}
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<strong>'.dol_htmlentities($titre).'</strong>';
+print '<br><div class="survey_title">'.img_picto('', 'poll', 'class="size15x paddingright"').' <strong>'.dol_htmlentities($titre).'</strong></div>';
+
+if (!empty($object->description)) {
+	print '<br><div class="corps"> '."\n";
+}
 
 // show description of survey
 if ($object->description) {
-	print '<br><br>'."\n";
 	print dol_htmlentitiesbr($object->description);
-	print '<br>'."\n";
 }
 
 print '</div>'."\n";
@@ -310,6 +373,7 @@ print '<div class="cadre"> '."\n";
 print '<br><br>'."\n";
 
 // Start to show survey result
+print '<div class="div-table-responsive">';
 print '<table class="resultats">'."\n";
 
 // Show choice titles
@@ -366,10 +430,10 @@ if ($object->format == "D") {
 		} else {
 			$next = intval($toutsujet[$i + 1]);
 		}
-		if ($next && dol_print_date($cur, "%a %e") == dol_print_date($next, "%a %e") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
+		if ($next && dol_print_date($cur, "%a %d") == dol_print_date($next, "%a %d") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
 			$colspan++;
 		} else {
-			print '<td colspan="'.$colspan.'" class="jour">'.dol_print_date($cur, "%a %e").'</td>'."\n";
+			print '<td colspan="'.$colspan.'" class="jour">'.dol_print_date($cur, "%a %d").'</td>'."\n";
 			$colspan = 1;
 		}
 	}
@@ -407,6 +471,7 @@ if ($object->format == "D") {
 
 
 // Loop on each answer
+$currentusername = '';
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
@@ -435,7 +500,7 @@ while ($compteur < $num) {
 	print '<tr>'."\n";
 
 	// Name
-	print '<td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
+	print '<td class="nom">'.img_picto($obj->name, 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (!$testligneamodifier) {
@@ -503,7 +568,7 @@ while ($compteur < $num) {
 			}
 		}
 	} else {
-		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
+		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour saisie
 		if ($compteur == $ligneamodifier) {
 			for ($i = 0; $i < $nbcolonnes; $i++) {
 				$car = substr($ensemblereponses, $i, 1);
@@ -592,7 +657,8 @@ while ($compteur < $num) {
 
 	// Button edit at end of line
 	if ($compteur != $ligneamodifier && $mod_ok) {
-		print '<td class="casevide"><input type="submit" class="button smallpaddingimp" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
+		$currentusername = $obj->name;
+		print '<td class="casevide"><input type="submit" class="button small" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
 	//demande de confirmation pour modification de ligne
@@ -601,7 +667,7 @@ while ($compteur < $num) {
 			if ($compteur == $i) {
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save small" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -618,11 +684,11 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	if (isset($_SESSION['nom'])) {
 		print '<input type=hidden name="nom" value="'.$_SESSION['nom'].'">'.$_SESSION['nom']."\n";
 	} else {
-		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" class=" minwidth175">'."\n";
+		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" class=" minwidth175" value="">'."\n";
 	}
 	print '</td>'."\n";
 
-	// affichage des cases de formulaire checkbox pour un nouveau choix
+	// show cell form checkbox for a new choice
 	for ($i = 0; $i < $nbcolonnes; $i++) {
 		print '<td class="vide">';
 		if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst'))) {
@@ -643,7 +709,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 		print '</td>'."\n";
 	}
 
-	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
+	// Show button to add a new line into database
 	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
@@ -709,6 +775,8 @@ if ($object->allow_spy) {
 print '</table>'."\n";
 print '</div>'."\n";
 
+print '</div>'."\n";
+
 if ($object->allow_spy) {
 	$toutsujet = explode(",", $object->sujet);
 	$toutsujet = str_replace("°", "'", $toutsujet);
@@ -761,7 +829,7 @@ print '<br>';
 $comments = $object->getComments();
 
 if ($comments) {
-	print '<br><u><span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span></u><br>'."\n";
+	print '<br>'.img_picto('', 'note', 'class="pictofixedwidth"').'<span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span><br>'."\n";
 
 	foreach ($comments as $obj) {
 		// ligne d'un usager pré-authentifié
@@ -772,18 +840,18 @@ if ($comments) {
 			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
 		}
 		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
-		print dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
+		print img_picto('', 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }
 
 // Form to add comment
-if ($object->allow_comments) {
+if ($object->allow_comments && $currentusername) {
 	print '<br><div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
 	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'alphanohtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
-	print '<input type="text" name="commentuser" maxlength="64" value="'.dol_escape_htmltag(GETPOST('commentuser', 'alphanohtml')).'"> &nbsp; '."\n";
-	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.dol_escape_htmltag(GETPOSTISSET('commentuser') ? GETPOST('commentuser', 'alphanohtml') : (empty($_SESSION['nom']) ? $currentusername : $_SESSION['nom'])).'"> &nbsp; '."\n";
+	print '<input type="submit" class="button smallpaddingimp" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 
 	print '</div>'."\n"; // div add comment

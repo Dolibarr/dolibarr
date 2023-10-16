@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 $langs->loadLangs(array("admin", "products"));
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
+if (!$user->admin || (!isModEnabled("product") && !isModEnabled("service"))) {
 	accessforbidden();
 }
 
@@ -106,8 +106,8 @@ if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0) {
 }
 if ($action == 'other') {
 	$princingrules = GETPOST('princingrule', 'alpha');
-	foreach ($select_pricing_rules as $rule => $label) { // Loop on each possible mode
-		if ($rule == $princingrules) { // We are on selected rule, we enable it
+	foreach ($select_pricing_rules as $tmprule => $tmplabel) { // Loop on each possible mode
+		if ($tmprule == $princingrules) { // We are on selected rule, we enable it
 			if ($princingrules == 'PRODUCT_PRICE_UNIQ') { // For this case, we disable entries manually
 				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
@@ -119,10 +119,9 @@ if ($action == 'other') {
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
 			}
-		} else // We clear this mode
-		{
-			if (strpos($rule, '&') === false) {
-				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
+		} else { // We clear this mode
+			if (strpos($tmprule, '&') === false) {
+				$res = dolibarr_set_const($db, $tmprule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
 	}
@@ -133,7 +132,7 @@ if ($action == 'other') {
 	/*$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);*/
 
-	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
+	$value = GETPOST('PRODUIT_DESC_IN_FORM', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
 
 	$value = GETPOST('activate_viewProdTextsInThirdpartyLanguage', 'alpha');
@@ -148,11 +147,15 @@ if ($action == 'other') {
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUIT_FOURN_TEXTS')) {
+		$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	}
 
-	$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+		$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 
@@ -200,7 +203,7 @@ if ($action == 'set') {
 if ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->PRODUCT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PRODUCT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PRODUCT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -268,10 +271,10 @@ $formbarcode = new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
-if (empty($conf->product->enabled)) {
+if (!isModEnabled("product")) {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
-} elseif (empty($conf->service->enabled)) {
+} elseif (!isModEnabled("service")) {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');
 }
@@ -457,7 +460,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->PRODUCT_ADDON_PDF == $name) {
+								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -585,7 +588,7 @@ print '</tr>';
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
-	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
+	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="' . getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT').'"></td>';
 	print '</tr>';
 }
 
@@ -598,7 +601,7 @@ print '</td>';
 print '</tr>';
 
 // Use conditionnement in buying
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';
@@ -658,7 +661,7 @@ print '</tr>';
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
-	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
+	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="' . getDolGlobalString('PRODUIT_LIMIT_SIZE').'"></td>';
 	print '</tr>';
 }
 
@@ -689,7 +692,8 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
+$arrayofchoices = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes").' ('.$langs->trans("DesktopsOnly").')', '2' => $langs->trans("Yes").' ('.$langs->trans("DesktopsAndSmartphones").')');
+print $form->selectarray("PRODUIT_DESC_IN_FORM", $arrayofchoices, getDolGlobalInt('PRODUIT_DESC_IN_FORM'), 0);
 print '</td>';
 print '</tr>';
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,16 @@
  */
 class DataPolicyCron
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $error;
+
+	public $output;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -451,8 +461,8 @@ class DataPolicyCron
 		$this->db->begin();
 
 		foreach ($arrayofparameters as $key => $params) {
-			if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
-				$sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
+			if (getDolGlobalInt($key) > 0) {
+				$sql = sprintf($params['sql'], (int) $conf->entity, (int) getDolGlobalInt($key), (int) getDolGlobalInt($key));
 
 				$resql = $this->db->query($sql);
 

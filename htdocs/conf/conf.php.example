@@ -128,6 +128,8 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.  
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.  
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';
@@ -184,7 +186,7 @@ $dolibarr_main_db_readonly=0;
 // dolibarr_main_instance_unique_id
 // ================================
 // An secret ID that is unique for each installation.
-// This value is also visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption (For example to get
+// This value is also never visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption (For example to get
 //  a unique hashed key, application will hash the value concatenated with a string. Example: md5('dolibarr'+dolibarr_main_instance_unique_id)
 // WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
 // Default value: randomly defined during installation
@@ -193,6 +195,17 @@ $dolibarr_main_db_readonly=0;
 //
 $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
+
+// dolibarr_main_dolcrypt_key
+// ==========================
+// An secret key to encrypt/decrypt data with dolcrypt() method, for reversible encryption.
+// This value is also never visible and never propagated outside of Dolibarr, it is used as key for the dolcrypt encryption.
+// WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
+// Default value: ''. When not defined, the $dolibarr_main_instance_unique_id will be used instead.
+// Examples:
+// $dolibarr_main_dolcrypt_key='';
+//
+$dolibarr_main_dolcrypt_key='';
 
 
 //##################
@@ -215,6 +228,8 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 // $dolibarr_main_authentication='ldap,dolibarr';  // You can set several mode using a comma as a separator.
 // $dolibarr_main_authentication='forceuser';      // This need to add also $dolibarr_auto_user='loginforuser';
 // $dolibarr_main_authentication='twofactor';      // To use Google Authenticator. This need the non official external module "Two Factor" available on www.dolistore.com
+// $dolibarr_main_authentication='openid_connect'; // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
+// $dolibarr_main_authentication='googleoauth';    // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
 //
 $dolibarr_main_authentication='dolibarr';
 
@@ -280,11 +295,11 @@ $dolibarr_main_prod='1';
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
-// Default value: 'mysqldump, mysql, pg_dump, pgrestore'
+// Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
 //
-$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
+$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump';
 
 // dolibarr_main_restrict_ip
 // =========================
@@ -302,7 +317,7 @@ $dolibarr_main_restrict_ip='';
 // This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
 // In most cases, you should always keep this to 0.
 // Default value: 0
-// Possible values: 0 or 1
+// Possible values: 0 or 1 (no strict CSRF test, only test on referer) or 2 (no CSRF test at all)
 // Examples:
 // $dolibarr_nocsrfcheck='0';
 //

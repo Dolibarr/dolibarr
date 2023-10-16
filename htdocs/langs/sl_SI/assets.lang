@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+NewAsset=Novo sredstvo
+AccountancyCodeAsset=Knjigovodska oznaka (sredstvo)
+AccountancyCodeDepreciationAsset=Knjigovodska šifra (konto amortizacije sredstev)
+AccountancyCodeDepreciationExpense=Knjigovodska oznaka (konto stroškov amortizacije)
+AssetsLines=Sredstva
 DeleteType=Izbriši
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Prikaži tip '%s'
+DeleteAnAssetType=Izbrišite model sredstva
+ConfirmDeleteAssetType=Ali ste prepričani, da želite izbrisati ta model sredstva?
+ShowTypeCard=Pokaži model '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=Sredstva
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=Opis sredstev
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=Nastavitev sredstev
+AssetSetupPage=Stran za nastavitev sredstev
+ExtraFieldsAssetModel=Dopolnilni atributi (model sredstva)
+
+AssetsType=Model sredstev
+AssetsTypeId=ID modela sredstva
+AssetsTypeLabel=Oznaka modela sredstva
+AssetsTypes=Modeli sredstev
+ASSET_ACCOUNTANCY_CATEGORY=Skupina za knjigovodstvo osnovnih sredstev
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = Seznam
-MenuNewTypeAssets = Nov
-MenuListTypeAssets = Seznam
+MenuAssets=Sredstva
+MenuNewAsset=Novo sredstvo
+MenuAssetModels=Sredstva modela
+MenuListAssets=Seznam
+MenuNewAssetModel=Nov model sredstva
+MenuListAssetModels=Seznam
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=Ali res želite odstraniti to sredstvo?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Možnosti amortizacije
+AssetAccountancyCodes=Računovodski izkazi
+AssetDepreciation=Amortizacija
+
+#
+# Asset
+#
+Asset=Sredstvo
+Assets=Sredstva
+AssetReversalAmountHT=Znesek razveljavitve (brez davkov)
+AssetAcquisitionValueHT=Znesek pridobitve (brez davkov)
+AssetRecoveredVAT=Povrnjen DDV
+AssetReversalDate=Datum razveljavitve
+AssetDateAcquisition=Datum pridobitve
+AssetDateStart=Datum zagona
+AssetAcquisitionType=Vrsta pridobitve
+AssetAcquisitionTypeNew=Nov
+AssetAcquisitionTypeOccasion=Rabljeno
+AssetType=Vrsta sredstva
+AssetTypeIntangible=Nematerialno
+AssetTypeTangible=Oprijemljivo
+AssetTypeInProgress=V postopku
+AssetTypeFinancial=Finančna
+AssetNotDepreciated=Ni amortizirano
+AssetDisposal=Odstranjevanje
+AssetConfirmDisposalAsk=Ali ste prepričani, da želite razpolagati s sredstvom <b> %s </b>?
+AssetConfirmReOpenAsk=Ali ste prepričani, da želite znova odpreti sredstvo <b> %s </b>?
+
+#
+# Asset status
+#
+AssetInProgress=V postopku
+AssetDisposed=Odstranjeno
+AssetRecorded=Obračunano
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Datum odlaganja
+AssetDisposalAmount=Vrednost odlaganja
+AssetDisposalType=Vrsta odlaganja
+AssetDisposalDepreciated=Amortizirajte leto prenosa
+AssetDisposalSubjectToVat=Odtujitev je predmet DDV
+
+#
+# Asset model
+#
+AssetModel=Model sredstva
+AssetModels=Assetovi modeli
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Ekonomska amortizacija
+AssetDepreciationOptionAcceleratedDepreciation=Pospešena amortizacija (davek)
+AssetDepreciationOptionDepreciationType=Vrsta amortizacije
+AssetDepreciationOptionDepreciationTypeLinear=Linearno
+AssetDepreciationOptionDepreciationTypeDegressive=Degresivno
+AssetDepreciationOptionDepreciationTypeExceptional=Izjemen
+AssetDepreciationOptionDegressiveRate=Degresivna stopnja
+AssetDepreciationOptionAcceleratedDepreciation=Pospešena amortizacija (davek)
+AssetDepreciationOptionDuration=Trajanje
+AssetDepreciationOptionDurationType=Trajanje vrste
+AssetDepreciationOptionDurationTypeAnnual=Letna
+AssetDepreciationOptionDurationTypeMonthly=Mesečno
+AssetDepreciationOptionDurationTypeDaily=Dnevno
+AssetDepreciationOptionRate=Oceni (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Amortizacijska osnova (brez DDV)
+AssetDepreciationOptionAmountBaseDeductibleHT=Odbitna osnova (brez DDV)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Skupni znesek zadnje amortizacije (brez DDV)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Ekonomska amortizacija
+AssetAccountancyCodeAsset=Sredstvo
+AssetAccountancyCodeDepreciationAsset=Amortizacija
+AssetAccountancyCodeDepreciationExpense=Stroški amortizacije
+AssetAccountancyCodeValueAssetSold=Vrednost odtujenega sredstva
+AssetAccountancyCodeReceivableOnAssignment=Terjatev ob odtujitvi
+AssetAccountancyCodeProceedsFromSales=Izkupiček od odtujitve
+AssetAccountancyCodeVatCollected=Pobrani DDV
+AssetAccountancyCodeVatDeductible=Povrnjen DDV na sredstva
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Pospešena amortizacija (davek)
+AssetAccountancyCodeAcceleratedDepreciation=Račun
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Stroški amortizacije
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Ponovna posest/oskrba
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Amortizacijska osnova (brez DDV)
+AssetDepreciationBeginDate=Začetek amortizacije dne
+AssetDepreciationDuration=Trajanje
+AssetDepreciationRate=Oceni (%%)
+AssetDepreciationDate=Datum amortizacije
+AssetDepreciationHT=Amortizacija (brez DDV)
+AssetCumulativeDepreciationHT=Kumulativna amortizacija (brez DDV)
+AssetResidualHT=Preostala vrednost (brez DDV)
+AssetDispatchedInBookkeeping=Evidentirana amortizacija
+AssetFutureDepreciationLine=Prihodnja amortizacija
+AssetDepreciationReversal=Preobrat
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=ID sredstva ali zvok modela ni bil naveden
+AssetErrorFetchAccountancyCodesForMode=Napaka pri pridobivanju računovodskih kontov za način amortizacije '%s'
+AssetErrorDeleteAccountancyCodesForMode=Napaka pri brisanju računovodskih kontov iz načina amortizacije '%s'
+AssetErrorInsertAccountancyCodesForMode=Napaka pri vstavljanju računovodskih kontov načina amortizacije '%s'
+AssetErrorFetchDepreciationOptionsForMode=Napaka pri pridobivanju možnosti za način amortizacije '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Napaka pri brisanju možnosti načina amortizacije '%s'
+AssetErrorInsertDepreciationOptionsForMode=Napaka pri vstavljanju možnosti načina amortizacije '%s'
+AssetErrorFetchDepreciationLines=Napaka pri pridobivanju evidentiranih amortizacijskih vrstic
+AssetErrorClearDepreciationLines=Napaka pri čiščenju evidentiranih amortizacijskih vrstic (stornira in prihodnost)
+AssetErrorAddDepreciationLine=Napaka pri dodajanju amortizacijske vrstice
+AssetErrorCalculationDepreciationLines=Napaka pri izračunu amortizacijskih vrstic (izterjava in prihodnost)
+AssetErrorReversalDateNotProvidedForMode=Datum razveljavitve ni naveden za metodo amortiziranja '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Datum razveljavitve mora biti večji ali enak začetku tekočega poslovnega leta za metodo amortiziranja '%s'
+AssetErrorReversalAmountNotProvidedForMode=Znesek razveljavitve ni zagotovljen za način amortiziranja '%s'.
+AssetErrorFetchCumulativeDepreciation=Napaka pri pridobivanju akumuliranega zneska amortizacije iz amortizacijske vrstice
+AssetErrorSetLastCumulativeDepreciation=Napaka pri evidentiranju zadnje akumulirane amortizacije

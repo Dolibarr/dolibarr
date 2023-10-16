@@ -80,7 +80,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruitmentjobposition', 'recruitmentjobposition', '', 'rowid', $isdraft);
 
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 
@@ -131,7 +131,7 @@ if ($object->id) {
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {
@@ -148,7 +148,7 @@ if ($object->id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, !empty($object->socid) ? $object->socid : 0, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -182,8 +182,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'recruitment';
-	$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
-	$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
+	$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
+	$permtoedit = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
 	$param = '&id='.$object->id;
 
 	$relativepathwithnofile = 'recruitmentjobposition/'.dol_sanitizeFileName($object->ref).'/';

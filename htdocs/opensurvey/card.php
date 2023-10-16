@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
 // Security check
-if (empty($user->rights->opensurvey->read)) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 
@@ -85,7 +85,7 @@ if (empty($reshook)) {
 	// Delete
 	if ($action == 'delete_confirm') {
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -110,7 +110,7 @@ if (empty($reshook)) {
 	// Update
 	if ($action == 'update') {
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		$idcomment = GETPOST('idcomment', 'int');
 		if ($idcomment > 0) {
 			// Security check
-			if (!$user->rights->opensurvey->write) {
+			if (!$user->hasRight('opensurvey', 'write')) {
 				accessforbidden();
 			}
 
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 
 	if ($action == 'edit') {
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 	}
@@ -209,7 +209,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -254,7 +254,7 @@ if ($action == 'edit') {
 print '</td></tr>';
 
 // Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
@@ -321,7 +321,7 @@ print '</td></tr>';
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
 if ($object->fk_user_creat > 0) {
-	print $userstatic->getLoginUrl(1);
+	print $userstatic->getLoginUrl(-1);
 } else {
 	if ($action == 'edit') {
 		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
@@ -372,7 +372,7 @@ print '</form>'."\n";
 
 print '<div class="tabsAction">';
 
-if ($action != 'edit' && $user->rights->opensurvey->write) {
+if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
 
@@ -411,7 +411,7 @@ $comments = $object->getComments();
 
 if (!empty($comments)) {
 	foreach ($comments as $comment) {
-		if ($user->rights->opensurvey->write) {
+		if ($user->hasRight('opensurvey', 'write')) {
 			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
 		}
 
@@ -428,7 +428,7 @@ if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll").'<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
 	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.dol_escape_htmltag($user->getFullName($langs)).'"> '."\n";
-	print '<input type="submit" class="button reposition" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	print '<input type="submit" class="button reposition smallpaddingimp" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 }
 
 print '</form>';

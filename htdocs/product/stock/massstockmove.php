@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2021 Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013-2022 Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -77,6 +77,9 @@ if (!$sortorder) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
+if (GETPOST('init')) {
+	unset($_SESSION['massstockmove']);
+}
 $listofdata = array();
 if (!empty($_SESSION['massstockmove'])) {
 	$listofdata = json_decode($_SESSION['massstockmove'], true);
@@ -87,14 +90,13 @@ if (!empty($_SESSION['massstockmove'])) {
  * Actions
  */
 
-if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
-	if (!($id_product > 0)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
-	}
+if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	if (!($id_sw > 0)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+		//$error++;
+		//setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+		if ($id_sw < 0) {
+			$id_sw = 0;
+		}
 	}
 	if (!($id_tw > 0)) {
 		$error++;
@@ -104,6 +106,10 @@ if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorWarehouseMustDiffers"), null, 'errors');
+	}
+	if (!($id_product > 0)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 	}
 	if (!$qty) {
 		$error++;
@@ -132,6 +138,7 @@ if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 		}
 	}
 
+	//var_dump($_SESSION['massstockmove']);exit;
 	if (!$error) {
 		if (count(array_keys($listofdata)) > 0) {
 			$id = max(array_keys($listofdata)) + 1;
@@ -149,7 +156,7 @@ if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 	}
 }
 
-if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'delline' && $idline != '' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	if (!empty($listofdata[$idline])) {
 		unset($listofdata[$idline]);
 	}
@@ -160,7 +167,7 @@ if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvem
 	}
 }
 
-if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$error = 0;
 
 	if (!GETPOST("label")) {
@@ -197,20 +204,22 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-				if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {		// If product does not need lot/serial
-					// Remove stock
-					$result1 = $product->correct_stock(
-						$user,
-						$id_sw,
-						$qty,
-						1,
-						GETPOST("label"),
-						$pricesrc,
-						GETPOST("codemove")
-					);
-					if ($result1 < 0) {
-						$error++;
-						setEventMessages($product->error, $product->errors, 'errors');
+				if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {	// If product does not need lot/serial
+					// Remove stock if source warehouse defined
+					if ($id_sw > 0) {
+						$result1 = $product->correct_stock(
+							$user,
+							$id_sw,
+							$qty,
+							1,
+							GETPOST("label"),
+							$pricesrc,
+							GETPOST("codemove")
+						);
+						if ($result1 < 0) {
+							$error++;
+							setEventMessages($product->error, $product->errors, 'errors');
+						}
 					}
 
 					// Add stock
@@ -244,21 +253,23 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					}
 
 					// Remove stock
-					$result1 = $product->correct_stock_batch(
-						$user,
-						$id_sw,
-						$qty,
-						1,
-						GETPOST("label"),
-						$pricesrc,
-						$dlc,
-						$dluo,
-						$batch,
-						GETPOST("codemove")
-					);
-					if ($result1 < 0) {
-						$error++;
-						setEventMessages($product->error, $product->errors, 'errors');
+					if ($id_sw > 0) {
+						$result1 = $product->correct_stock_batch(
+							$user,
+							$id_sw,
+							$qty,
+							1,
+							GETPOST("label"),
+							$pricesrc,
+							$dlc,
+							$dluo,
+							$batch,
+							GETPOST("codemove")
+						);
+						if ($result1 < 0) {
+							$error++;
+							setEventMessages($product->error, $product->errors, 'errors');
+						}
 					}
 
 					// Add stock
@@ -285,6 +296,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 			}
 		}
 	}
+	//var_dump($_SESSION['massstockmove']);exit;
 
 	if (!$error) {
 		unset($_SESSION['massstockmove']);
@@ -299,7 +311,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 	}
 }
 
-if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	dol_mkdir($conf->stock->dir_temp);
 	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
@@ -465,19 +477,24 @@ llxHeader('', $title, $help_url);
 print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
 $titletoadd = $langs->trans("Select");
-$buttonrecord = $langs->trans("RecordMovement");
+$buttonrecord = $langs->trans("RecordMovements");
 $titletoaddnoent = $langs->transnoentitiesnoconv("Select");
-$buttonrecordnoent = $langs->transnoentitiesnoconv("RecordMovement");
-print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span><br>';
+$buttonrecordnoent = $langs->transnoentitiesnoconv("RecordMovements");
+print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span>';
 
 print '<br>';
+//print '<br>';
 
 // Form to upload a file
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
+if (!empty($conf->dol_optimize_smallscreen)) {
+	print '<br>';
+}
 print '<span class="opacitymedium">';
-print $langs->trans("or").' ';
+print $langs->trans("or");
+print ' ';
 $importcsv = new ImportCsv($db, 'massstocklist');
 print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
@@ -489,7 +506,7 @@ if ($maxmin > 0) {
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 $out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
-print '<input type="submit" class="button small" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
+print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
 if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
@@ -569,25 +586,25 @@ $param = '';
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
-print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('Product'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 if (isModEnabled('productbatch')) {
 	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 }
-print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList('', 0);
 print '</tr>';
 
 print '<tr class="oddeven">';
 // From warehouse
-print '<td>';
+print '<td class="nowraponall">';
 print img_picto($langs->trans("WarehouseSource"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // To warehouse
-print '<td>';
+print '<td class="nowraponall">';
 print img_picto($langs->trans("WarehouseTarget"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Product
-print '<td>';
+print '<td class="nowraponall">';
 $filtertype = 0;
 if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$filtertype = '';
@@ -603,13 +620,13 @@ print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -
 print '</td>';
 // Batch number
 if (isModEnabled('productbatch')) {
-	print '<td>';
+	print '<td class="nowraponall">';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
-	print '<input type="text" name="batch" class="flat maxwidth50" value="'.dol_escape_htmltag($batch).'">';
+	print '<input type="text" name="batch" class="flat maxwidth75" value="'.dol_escape_htmltag($batch).'">';
 	print '</td>';
 }
 // Qty
-print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.price2num((float) $qty, 'MS').'"></td>';
+print '<td class="right"><input type="text" class="flat maxwidth50 right" name="qty" value="'.price2num((float) $qty, 'MS').'"></td>';
 // Button to add line
 print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
@@ -617,18 +634,25 @@ print '</tr>';
 
 foreach ($listofdata as $key => $val) {
 	$productstatic->fetch($val['id_product']);
-	$warehousestatics->fetch($val['id_sw']);
-	$warehousestatict->fetch($val['id_tw']);
+
+	$warehousestatics->id = 0;
+	$warehousestatict->id = 0;
+	if ($val['id_sw'] > 0) {
+		$warehousestatics->fetch($val['id_sw']);
+	}
+	if ($val['id_tw'] > 0) {
+		$warehousestatict->fetch($val['id_tw']);
+	}
 
 	if ($productstatic->id <= 0) {
 		$error++;
 		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 	}
-	if ($warehousestatics->id <= 0) {
+	if ($warehousestatics->id < 0) {	// We accept 0 for source warehouse id
 		$error++;
 		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 	}
-	if ($warehousestatics->id <= 0) {
+	if ($warehousestatict->id <= 0) {
 		$error++;
 		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 	}
@@ -636,7 +660,13 @@ foreach ($listofdata as $key => $val) {
 	if (!$error) {
 		print '<tr class="oddeven">';
 		print '<td>';
-		print $warehousestatics->getNomUrl(1);
+		if ($warehousestatics->id > 0) {
+			print $warehousestatics->getNomUrl(1);
+		} else {
+			print '<span class="opacitymedium">';
+			print $langs->trans("None");
+			print '</span>';
+		}
 		print '</td>';
 		print '<td>';
 		print $warehousestatict->getNomUrl(1);
@@ -649,7 +679,7 @@ foreach ($listofdata as $key => $val) {
 			print dol_escape_htmltag($val['batch']);
 			print '</td>';
 		}
-		print '<td class="center">'.price2num((float) $val['qty'], 'MS').'</td>';
+		print '<td class="right">'.price2num((float) $val['qty'], 'MS').'</td>';
 		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&token='.newToken().'&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 		print '</tr>';
 	}
@@ -670,7 +700,7 @@ if (count($listofdata)) {
 
 	// Button to record mass movement
 	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
-	$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
+	$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("MassStockTransferShort").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
 	print '<div class="center">';
 	print '<span class="fieldrequired">'.$langs->trans("InventoryCode").':</span> ';
@@ -695,6 +725,7 @@ if ($action == 'delete') {
 // End of page
 llxFooter();
 $db->close();
+
 
 /**
  * Verify if $haystack startswith $needle

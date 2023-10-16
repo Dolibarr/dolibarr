@@ -181,6 +181,20 @@ if ($action == "setaccountancycodecustomerinvoicemandatory") {
 	}
 }
 
+//Activate Set vat id unique
+if ($action == "setvatintraunique") {
+	$setvatintraunique = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_VAT_INTRA_UNIQUE", $setvatintraunique, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Set ref in list
 if ($action == "setaddrefinlist") {
 	$setaddrefinlist = GETPOST('value', 'int');
@@ -662,6 +676,12 @@ $profid['IDPROF6'][0] = $langs->trans("ProfId6");
 $profid['IDPROF6'][1] = $langs->transcountry('ProfId6', $mysoc->country_code);
 $profid['EMAIL'][0] = $langs->trans("EMail");
 $profid['EMAIL'][1] = $langs->trans('Email');
+if (isModEnabled('accounting')) {
+	$profid['ACCOUNTANCY_CODE_CUSTOMER'][0] = $langs->trans("CustomerAccountancyCodeShort");
+	$profid['ACCOUNTANCY_CODE_CUSTOMER'][1] = $langs->trans('CustomerAccountancyCodeShort');
+	$profid['ACCOUNTANCY_CODE_SUPPLIER'][0] = $langs->trans("SupplierAccountancyCodeShort");
+	$profid['ACCOUNTANCY_CODE_SUPPLIER'][1] = $langs->trans('SupplierAccountancyCodeShort');
+}
 
 $nbofloop = count($profid);
 foreach ($profid as $key => $val) {
@@ -714,22 +734,21 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if (isModEnabled('accounting')) {
-	print '<tr class="oddeven">';
-	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
-	print '<td colspan="2"></td>';
+// VAT ID
+print '<tr class="oddeven">';
+print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
 
-	if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY)) {
-		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaccountancycodecustomerinvoicemandatory&token='.newToken().'&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaccountancycodecustomerinvoicemandatory&token='.newToken().'&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print "</tr>\n";
+if (!empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
 }
+print '<td colspan="2"></td>';
+print "</tr>\n";
 
 print "</table>\n";
 print '</div>';
@@ -768,7 +787,7 @@ if (!$conf->use_javascript_ajax) {
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, (property_exists($conf->global, 'COMPANY_USE_SEARCH_TO_SELECT')?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:''), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
 	print '<input type="submit" class="button small reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -789,7 +808,7 @@ if (!$conf->use_javascript_ajax) {
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, (property_exists($conf->global, 'CONTACT_USE_SEARCH_TO_SELECT')?$conf->global->CONTACT_USE_SEARCH_TO_SELECT:''), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
 	print '<input type="submit" class="button small eposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -892,7 +911,7 @@ if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
 	print '<td>';
-	print $formcompany->selectProspectCustomerType((property_exists($conf->global, 'THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')?$conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT:''), 'defaultcustomertype', 'defaultcustomertype', 'admin');
+	print $formcompany->selectProspectCustomerType(getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
 	print '<td class="center">';
 	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';

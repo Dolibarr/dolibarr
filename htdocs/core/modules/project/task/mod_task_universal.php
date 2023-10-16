@@ -57,11 +57,12 @@ class mod_task_universal extends ModeleNumRefTask
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("projects", "admin"));
@@ -83,9 +84,9 @@ class mod_task_universal extends ModeleNumRefTask
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masktask" value="'.getDolGlobalString('PROJECT_TASK_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -128,8 +129,7 @@ class mod_task_universal extends ModeleNumRefTask
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// On defini critere recherche compteur
-		$mask = $conf->global->PROJECT_TASK_UNIVERSAL_MASK;
+		$mask = getDolGlobalString('PROJECT_TASK_UNIVERSAL_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

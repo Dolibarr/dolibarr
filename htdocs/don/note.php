@@ -43,17 +43,19 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$hookmanager->initHooks(array('donnote'));
+
+$object = new Don($db);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
 // Security check
 $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$hookmanager->initHooks(array('donnote'));
-
-$result = restrictedArea($user, 'don', $id, '');
-
-$object = new Don($db);
-$object->fetch($id);
+$result = restrictedArea($user, 'don', $object->id, '');
 
 $permissionnote = $user->rights->don->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -70,7 +72,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 }
 
-if ($action == 'classin' && $user->rights->don->creer) {
+if ($action == 'classin' && $user->hasRight('don', 'creer')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -106,7 +108,7 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->rights->don->creer) {
+		if ($user->hasRight('don', 'creer')) {
 			if ($action != 'classify') {
 				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}
@@ -119,7 +121,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {

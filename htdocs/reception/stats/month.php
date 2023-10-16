@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $year = GETPOST("year", 'int');
+$socid = GETPOST("socid", 'int');
+$userid = GETPOST("userid", 'int');
 
 // Security check
 if ($user->socid) {
@@ -49,9 +51,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $mesg = '';
 
 print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.GETPOST("year", 'int'), $mesg);
-
-$stats = new ReceptionStats($db);
-$data = $stats->getNbReceptionByMonth(GETPOST("year", 'int'));
+$stats = new ReceptionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
+$data = $stats->getNbByMonth($year);
 
 dol_mkdir($conf->reception->dir_temp);
 

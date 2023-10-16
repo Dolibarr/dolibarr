@@ -18,7 +18,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "@media (prefers-color-scheme: dark) {";
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
 	}
 	print "
       :root {
@@ -32,9 +34,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 			--textbutaction: rgb(255,255,255);
 
       }\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "}";
-	}
+	print "}";
 }
 ?>
 
@@ -297,8 +297,8 @@ div.pagination li:first-child a.btnTitle {
 
 .btnTitle, a.btnTitle {
 	display: inline-block;
-	padding: 6px 12px;
-	font-size: 14px
+	padding: 4px 12px;
+	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.4;
 	text-align: center;
@@ -342,8 +342,8 @@ a.btnTitle.btnTitleSelected {
 	position: relative;
 	margin: 0 0 0 10px;
 	text-align: center;
-	color: #ffffff;
-	background-color: rgb(<?php print $colortextlink; ?>);
+	color: #000;
+	background-color: #eee;
 	font-size: 12px;
 	text-decoration: none;
 	box-shadow: none;
@@ -373,7 +373,10 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 .paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
-	border: 1px solid var(--colorbackbody);
+	border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover, .titre_right a.btnTitlePlus:hover {
+	border-color: #ddd;
 }
 
 

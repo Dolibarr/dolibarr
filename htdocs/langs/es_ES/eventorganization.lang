@@ -53,7 +53,9 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulario para crear/agregar un 
 #
 # Object
 #
+OrganizedEvent=Evento organizado
 EventOrganizationConfOrBooth= Conferencia o cabina
+EventOrganizationConfOrBoothes=Conferencias o Stands
 ManageOrganizeEvent = Gestionar la organización de eventos
 ConferenceOrBooth = Conferencia o cabina
 ConferenceOrBoothTab = Conferencia o cabina
@@ -114,15 +116,15 @@ EvntOrgRegistrationHelpMessage = Aquí puede votar por una conferencia o sugerir
 EvntOrgRegistrationConfHelpMessage = Aquí, puede sugerir una nueva conferencia para animar durante el evento.
 EvntOrgRegistrationBoothHelpMessage = Aquí, puede postularse para tener un stand durante el evento.
 ListOfSuggestedConferences = Lista de conferencias sugeridas
-ListOfSuggestedBooths = Lista de cabinas sugeridas
-ListOfConferencesOrBooths=Lista de conferencias o stands del proyecto del evento
+ListOfSuggestedBooths=Stands sugeridos
+ListOfConferencesOrBooths=Proyecto de conferencias o stands de evento
 SuggestConference = Sugerir una nueva conferencia
 SuggestBooth = Sugerir un stand
 ViewAndVote = Ver y votar eventos sugeridos
 PublicAttendeeSubscriptionGlobalPage = Enlace público para la inscripción al evento
 PublicAttendeeSubscriptionPage = Enlace público para registrarse solo en este evento
 MissingOrBadSecureKey = La clave de seguridad no es válida o falta
-EvntOrgWelcomeMessage = Este formulario le permite registrarse como nuevo participante del evento: <b>%s</b>
+EvntOrgWelcomeMessage = Este formulario le permite registrarse como nuevo participante del evento
 EvntOrgDuration = Esta conferencia comienza el %s y termina el %s.
 ConferenceAttendeeFee = Cuota de asistente a la conferencia para el evento: '%s' que ocurre desde %s a %s.
 BoothLocationFee = Ubicación del stand para el evento: '%s' que ocurre desde %s a %s
@@ -132,7 +134,7 @@ LabelOfconference=Etiqueta de conferencia
 ConferenceIsNotConfirmed=La inscripción no está disponible, la conferencia aún no está confirmada.
 DateMustBeBeforeThan=%s debe ser anterior a %s
 DateMustBeAfterThan=%s debe ser posterior a %s
-
+MaxNbOfAttendeesReached=Se ha alcanzado el número máximo de participantes
 NewSubscription=Registro
 OrganizationEventConfRequestWasReceived=Se ha recibido su sugerencia para una conferencia
 OrganizationEventBoothRequestWasReceived=Se ha recibido su solicitud de stand
@@ -144,7 +146,7 @@ OrganizationEventLinkToThirdParty=Enlace a un tercero (cliente, proveedor o soci
 OrganizationEvenLabelName=Nombre público de la conferencia o stand
 
 NewSuggestionOfBooth=Solicitud de stand
-NewSuggestionOfConference=Solicitud de conferencia
+NewSuggestionOfConference=Aplicación para realizar una conferencia
 
 #
 # Vote page
@@ -157,7 +159,7 @@ VoteOk = Tu voto ha sido aceptado.
 AlreadyVoted = Ya has votado por este evento.
 VoteError = Se produjo un error durante la votación, inténtelo de nuevo.
 
-SubscriptionOk = Tu registro ha sido validado
+SubscriptionOk=Su registro ha sido registrado
 ConfAttendeeSubscriptionConfirmation = Confirmación de su suscripción a un evento
 Attendee = Asistente
 PaymentConferenceAttendee = Pago de asistentes a la conferencia
@@ -165,8 +167,17 @@ PaymentBoothLocation = Pago por ubicación de stand
 DeleteConferenceOrBoothAttendee=Eliminar asistente
 RegistrationAndPaymentWereAlreadyRecorder=Ya se registró un registro y un pago para el e-mail <b> %s </b>
 EmailAttendee=E-mail del asistente
+EmailCompany=Correo electrónico de la empresa
 EmailCompanyForInvoice=E-mailde la empresa (para la factura, si es diferente del e-mail del asistente)
 ErrorSeveralCompaniesWithEmailContactUs=Se han encontrado varias empresas con este e-mail, por lo que no podemos validar automáticamente su registro. Póngase en contacto con nosotros en %s para una validación manual
 ErrorSeveralCompaniesWithNameContactUs=Se han encontrado varias empresas con este nombre por lo que no podemos validar automáticamente su registro. Póngase en contacto con nosotros en %s para una validación manual
 NoPublicActionsAllowedForThisEvent=No hay acciones públicas abiertas al público para este evento.
 MaxNbOfAttendees=Número máximo de asistentes
+DateStartEvent=Fecha de inicio del evento
+DateEndEvent=Fecha de finalización del evento
+ModifyStatus=Modificar estado
+ConfirmModifyStatus=Confirmar modificación de estado
+ConfirmModifyStatusQuestion=¿Está seguro de que desea modificar el <span class='notranslate'>%s</span>? registro(s) seleccionado(s)?
+RecordsUpdated = %s Registros actualizados
+RecordUpdated = Registro actualizado
+NoRecordUpdated = Sin registro actualizado
