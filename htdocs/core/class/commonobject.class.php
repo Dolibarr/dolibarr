@@ -5874,6 +5874,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
 		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
 			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
 			exit;
