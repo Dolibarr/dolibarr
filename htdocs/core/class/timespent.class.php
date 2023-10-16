@@ -949,7 +949,7 @@ class TimeSpent extends CommonObject
 		if (!empty($conf->global->TIMESPENT_timespent_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->TIMESPENT_timespent_ADDON.".php";
+			$file = getDolGlobalString('TIMESPENT_timespent_ADDON') . ".php";
 			$classname = $conf->global->TIMESPENT_timespent_ADDON;
 
 			// Include file with class

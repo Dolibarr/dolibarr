@@ -199,7 +199,7 @@ if (! empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description.='<br>'.$langs->trans("SupplierDepositsAreNotIncluded");
 }
 */
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('accounting')) {
 	$description .= $langs->trans("ThisIsAnEstimatedValue");
 }
 

@@ -2943,7 +2943,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$mybool = false;
 
-		$file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.".php";
+		$file = getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') . ".php";
 		$classname = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
 
 		// Include file with class

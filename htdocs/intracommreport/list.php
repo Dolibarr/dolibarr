@@ -371,7 +371,7 @@ if (in_array($massaction, array('presend', 'predelete'))) {
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->intracommreport->write) {
+if ($user->hasRight('intracommreport', 'write')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans("NewDeclaration"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/intracommreport/card.php?action=create&amp;type='.$type);
 }
 

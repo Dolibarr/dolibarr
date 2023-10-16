@@ -884,7 +884,7 @@ class Skilldet extends CommonObjectLine
 		if (!empty($conf->global->hrm_SKILLDET_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLDET_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLDET_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLDET_ADDON;
 
 			// Include file with class

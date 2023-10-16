@@ -416,7 +416,7 @@ class Contact extends CommonObject
 
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -754,11 +754,11 @@ class Contact extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
+			$dn = getDolGlobalString('LDAP_KEY_CONTACTS') . "=".$info[getDolGlobalString('LDAP_KEY_CONTACTS')]."," . getDolGlobalString('LDAP_CONTACT_DN');
 		} elseif ($mode == 1) {
 			$dn = $conf->global->LDAP_CONTACT_DN;
 		} elseif ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+			$dn = getDolGlobalString('LDAP_KEY_CONTACTS') . "=".$info[getDolGlobalString('LDAP_KEY_CONTACTS')];
 		}
 		return $dn;
 	}
@@ -785,13 +785,13 @@ class Contact extends CommonObject
 
 		// Fields
 		if ($this->fullname && !empty($conf->global->LDAP_CONTACT_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->fullname;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME')] = $this->fullname;
 		}
 		if ($this->lastname && !empty($conf->global->LDAP_CONTACT_FIELD_NAME)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->lastname;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_NAME')] = $this->lastname;
 		}
 		if ($this->firstname && !empty($conf->global->LDAP_CONTACT_FIELD_FIRSTNAME)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME')] = $this->firstname;
 		}
 
 		if ($this->poste) {
@@ -801,7 +801,7 @@ class Contact extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->name;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COMPANY')] = $soc->name;
 			if ($soc->client == 1) {
 				$info["businessCategory"] = "Customers";
 			}
@@ -813,34 +813,34 @@ class Contact extends CommonObject
 			}
 		}
 		if ($this->address && !empty($conf->global->LDAP_CONTACT_FIELD_ADDRESS)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $this->address;
 		}
 		if ($this->zip && !empty($conf->global->LDAP_CONTACT_FIELD_ZIP)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->zip;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $this->zip;
 		}
 		if ($this->town && !empty($conf->global->LDAP_CONTACT_FIELD_TOWN)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->town;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $this->town;
 		}
 		if ($this->country_code && !empty($conf->global->LDAP_CONTACT_FIELD_COUNTRY)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->country_code;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $this->country_code;
 		}
 		if ($this->phone_pro && !empty($conf->global->LDAP_CONTACT_FIELD_PHONE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')] = $this->phone_pro;
 		}
 		if ($this->phone_perso && !empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE')] = $this->phone_perso;
 		}
 		if ($this->phone_mobile && !empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE')] = $this->phone_mobile;
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FAX')] = $this->fax;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_private, 2);
 		}
 		if ($this->email && !empty($conf->global->LDAP_CONTACT_FIELD_MAIL)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_MAIL')] = $this->email;
 		}
 
 		if (getDolGlobalString('LDAP_SERVER_TYPE') == 'egroupware') {
