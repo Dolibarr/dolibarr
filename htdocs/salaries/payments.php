@@ -237,7 +237,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
-if (empty($user->rights->salaries->readall)) {
+if (!$user->hasRight('salaries', 'readall')) {
 	$sql .= " AND sal.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 

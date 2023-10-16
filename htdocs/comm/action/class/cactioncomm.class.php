@@ -178,7 +178,13 @@ class CActionComm
 		if ($morefilter) {
 			$sql .= " AND ".$morefilter;
 		}
-		$sql .= " ORDER BY type, position, module";
+		// If AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST is defined, we use position as main sort criterion
+		// otherwise we use type as main sort criterion
+		if (!empty($conf->global->AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST)) {
+			$sql .= " ORDER BY position, type, module";
+		} else {
+			$sql .= " ORDER BY type, position, module";
+		}
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);

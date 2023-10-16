@@ -264,7 +264,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 if ($action == '') {
-	if ($user->rights->salaries->delete) {
+	if ($user->hasRight('salaries', 'delete')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {
