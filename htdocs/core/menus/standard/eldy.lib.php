@@ -1370,7 +1370,11 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($user->socid)) {
 				$newmenu->add("/commande/list_det.php?leftmenu=orders", $langs->trans("ListOrderLigne"), 1, $user->hasRight('commande',  'lire'));
 			}
-			$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande',  'lire'));
+			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'commande', 'export'));
+			} else {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande',  'lire'));
+			}
 		}
 
 		// Supplier proposal
@@ -1403,8 +1407,11 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			}
 			// Billed is another field. We should add instead a dedicated filter on list. if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&billed=1", $langs->trans("Billed"), 2, $user->hasRight('fournisseur',  'commande', 'lire'));
 
-
-			$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur',  'commande', 'lire'));
+			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'commande', 'export'));
+			} else {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur',  'commande', 'lire'));
+			}
 		}
 
 		// Contrat
