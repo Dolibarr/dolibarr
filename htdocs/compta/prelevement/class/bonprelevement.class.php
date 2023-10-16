@@ -2693,7 +2693,7 @@ class BonPrelevement extends CommonObject
 	 * @param   int  $id if is empty on class
 	 * @return  int  1 if OK, O if K0
 	 */
-	public function checkIfSalaryBonPrelevement($id)
+	public function checkIfSalaryBonPrelevement($id = '')
 	{
 
 		if (!empty($this->id)) {

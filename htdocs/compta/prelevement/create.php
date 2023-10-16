@@ -230,7 +230,7 @@ if ($nb < 0) {
 print '<table class="border centpercent tableforfield">';
 
 $labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
-if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+if (($type == 'bank-transfer' && !GETPOSTISSET('sourcetype'))  || empty($type)) {
 	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 } else {
 	$labeltoshow = $langs->trans("NbOfInvoiceToPayByBankTransferForSalaries");
@@ -262,7 +262,7 @@ if (!GETPOSTISSET('sourcetype')) {
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
-if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+if (($type == 'bank-transfer' && !GETPOSTISSET('sourcetype'))  || empty($type)) {
 	print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
 }
 if ($nb) {
@@ -433,7 +433,7 @@ if ($resql) {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
 
-	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+	if (($type == 'bank-transfer' && !GETPOSTISSET('sourcetype'))  || empty($type)) {
 		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 	} else {
@@ -442,7 +442,7 @@ if ($resql) {
 	}
 
 	$tradinvoice = "Invoice";
-	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+	if (($type == 'bank-transfer' && !GETPOSTISSET('sourcetype'))  || empty($type)) {
 		$tradinvoice = "SupplierInvoice";
 	} else {
 		$tradinvoice = "SalaryInvoice";
@@ -458,7 +458,7 @@ if ($resql) {
 		}
 	}
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
-	if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+	if (($type == 'bank-transfer' && !GETPOSTISSET('sourcetype'))  || empty($type)) {
 		print '<td>'.$langs->trans("RefSupplier").'</td>';
 	} else {
 		print '<td>'.$langs->trans("RefSalary").'</td>';
@@ -525,7 +525,7 @@ if ($resql) {
 			}
 			print '</td>';
 
-			if ($type == 'bank-transfer' && !GETPOSTISSET('sourcetype') || empty($type)) {
+			if (($type == 'bank-transfer' && !GETPOSTISSET('sourcetype'))  || empty($type)) {
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($invoicestatic->ref_supplier).'">';
 				print dol_escape_htmltag($invoicestatic->ref_supplier);
 				print '</td>';

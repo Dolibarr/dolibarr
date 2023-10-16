@@ -190,7 +190,7 @@ $form = new Form($db);
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
-	$head = prelevement_prepare_head($object, $salaryBonPl);
+	$head = prelevement_prepare_head($object);
 	print dol_get_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 	if (GETPOST('error', 'alpha') != '') {

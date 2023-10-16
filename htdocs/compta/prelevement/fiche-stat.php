@@ -82,8 +82,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
 	if ($object->fetch($id, $ref) >= 0) {
-		$salaryBonPl = $object->checkIfSalaryBonPrelevement($id);
-		$head = prelevement_prepare_head($object, $salaryBonPl);
+		$head = prelevement_prepare_head($object);
 		print dol_get_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';

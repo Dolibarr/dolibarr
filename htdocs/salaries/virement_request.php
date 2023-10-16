@@ -462,35 +462,40 @@ print dol_get_fiche_end();
 
 /**button  */
 print '<div class="tabsAction">'."\n";
-if ($user_perms) {
-	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.newToken().'" />';
-	print '<input type="hidden" name="id" value="'.$object->id.'" />';
-	print '<input type="hidden" name="type" value="'.$type.'" />';
-	print '<input type="hidden" name="action" value="new" />';
-	print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-	print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
-	print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
-	print '</form>';
 
-	if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-		// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
-		print "<br>";
-		//add stripe sepa button
-		$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+if ($resteapayer > 0) {
+	if ($user_perms) {
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'" />';
 		print '<input type="hidden" name="id" value="'.$object->id.'" />';
 		print '<input type="hidden" name="type" value="'.$type.'" />';
 		print '<input type="hidden" name="action" value="new" />';
-		print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 		print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 		print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 		print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 		print '</form>';
+
+		if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+			// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
+			print "<br>";
+			//add stripe sepa button
+			$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="token" value="'.newToken().'" />';
+			print '<input type="hidden" name="id" value="'.$object->id.'" />';
+			print '<input type="hidden" name="type" value="'.$type.'" />';
+			print '<input type="hidden" name="action" value="new" />';
+			print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
+			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+			print '</form>';
+		}
+	} else {
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 	}
 } else {
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
+	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 }
 print '</div>';
 
