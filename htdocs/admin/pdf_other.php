@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 	Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019	   	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2021-2022	Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify

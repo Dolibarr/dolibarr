@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2018 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Pierre Ardoin      	<mapiolca@me.com>
+ * Copyright (C) 2021-2023	Anthony Berton      <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
