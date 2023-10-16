@@ -1102,7 +1102,7 @@ if (empty($reshook)) {
 
 		// Define info_bits
 		$info_bits = 0;
-		if (preg_match('/\*/', $vat_rate)) {
+		if (preg_match('/\*/', GETPOST('tva_tx'))) {
 			$info_bits |= 0x01;
 		}
 
