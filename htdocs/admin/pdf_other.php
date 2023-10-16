@@ -79,14 +79,14 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')) {
 		dolibarr_set_const($db, "MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", GETPOST("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH", 'int'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSTOSALE_PROPAL')) {
-		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSTOSALE_PROPAL", GETPOST("MAIN_PDF_ADD_TERMSTOSALE_PROPAL", 'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_PROPAL", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", 'int'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSTOSALE_ORDER')) {
-		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSTOSALE_ORDER", GETPOST("MAIN_PDF_ADD_TERMSTOSALE_ORDER", 'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_ORDER", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_ORDER", 'int'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSTOSALE_INVOICE')) {
-		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSTOSALE_INVOICE", GETPOST("MAIN_PDF_ADD_TERMSTOSALE_INVOICE", 'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_INVOICE", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", 'int'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_ZATCA_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_ZATCA_QR_CODE", GETPOST("INVOICE_ADD_ZATCA_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
@@ -103,18 +103,17 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", GETPOST("INVOICE_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
-
 	// Terms to sale
-	if ($_FILES['termstosale']["name"]) {
-		if (!preg_match('/(\.pdf)$/i', $_FILES['termstosale']["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
+	if ($_FILES['termsofsale']["name"]) {
+		if (!preg_match('/(\.pdf)$/i', $_FILES['termsofsale']["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 		} else {
 			$dirforterms = $conf->mycompany->dir_output.'/';
-			$original_file = $_FILES['termstosale']["name"];
-			$result = dol_move_uploaded_file($_FILES['termstosale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termstosale']['error']);
+			$original_file = $_FILES['termsofsale']["name"];
+			$result = dol_move_uploaded_file($_FILES['termsofsale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termsofsale']['error']);
 			if ($result) {
-				dolibarr_set_const($db, 'MAIN_INFO_SOCIETE_TERMSTOSALE', $original_file, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, 'MAIN_INFO_SOCIETE_TERMSOFSALE', $original_file, 'chaine', 0, '', $conf->entity);
 			}
 		}
 	}
@@ -127,20 +126,19 @@ if ($action == 'update') {
 
 
 // Terms to sale
-if ($action == 'removetermstosale') {
+if ($action == 'removetermsofsale') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	$filename = $mysoc->termstosale;
+	$filename = $mysoc->termsofsale;
 	$file = $conf->mycompany->dir_output.'/'.$filename;
 
 	if ($filename != '') {
 		dol_delete_file($file);
 	}
-	dolibarr_del_const($db, 'MAIN_INFO_SOCIETE_TERMSTOSALE', $conf->entity);
+	dolibarr_del_const($db, 'MAIN_INFO_SOCIETE_TERMSOFSALE', $conf->entity);
 
-	$mysoc->termstosale = '';
+	$mysoc->termsofsale = '';
 }
-
 
 
 /*
@@ -188,13 +186,13 @@ if (isModEnabled('propal')) {
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSTOSALE_PROPAL"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSTOSALE_PROPAL');
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_PROPAL');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSTOSALE_PROPAL", $arrval, $conf->global->MAIN_PDF_ADD_TERMSTOSALE_PROPAL);
+		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", $arrval, $conf->global->MAIN_PDF_ADD_TERMSOFSALE_PROPAL);
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>';
@@ -219,13 +217,13 @@ if (isModEnabled('commande')) {
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSTOSALE_ORDER"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSTOSALE_ORDER');
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_ORDER');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSTOSALE_ORDER", $arrval, $conf->global->MAIN_PDF_ADD_TERMSTOSALE_ORDER);
+		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, $conf->global->MAIN_PDF_ADD_TERMSOFSALE_ORDER);
 	}
 	print '</td></tr>';
 	print '</table>';
@@ -309,13 +307,13 @@ if (isModEnabled('facture')) {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSTOSALE_INVOICE"), '');
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_INVOICE"), '');
 	print '</td><td>';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSTOSALE_INVOICE');
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_INVOICE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSTOSALE_INVOICE", $arrval, $conf->global->MAIN_PDF_ADD_TERMSTOSALE_INVOICE);
+		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, $conf->global->MAIN_PDF_ADD_TERMSOFSALE_INVOICE);
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>';
@@ -411,9 +409,9 @@ print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Terms to sale
-$tooltiptermstosale = $langs->trans('AvailableFormats').' : pdf';
+$tooltiptermsofsale = $langs->trans('AvailableFormats').' : pdf';
 $maxfilesizearray = getMaxFileSizeArray();
-$tooltiptermstosale .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
+$tooltiptermsofsale .= ($maxfilesizearray['maxmin'] > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
 $documenturl = DOL_URL_ROOT.'/document.php';
 if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 	$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
@@ -421,14 +419,14 @@ if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 $modulepart = 'mycompany';
 $param = '';
 
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TermsToSale"), $tooltiptermstosale).'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TERMSTOSALE"), $tooltiptermsofsale).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
-print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termstosale" id="termstosale" accept="application/pdf">';
+print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termsofsale" id="termsofsale" accept="application/pdf">';
 
-if (!empty($mysoc->termstosale)) {
-	if (file_exists($conf->mycompany->dir_output.'/'.$mysoc->termstosale)) {
-		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($mysoc->termstosale).(!empty($param) ? '&'.$param : '').'">'.$mysoc->termstosale.'</a>'.$formfile->showPreview($mysoc->termstosale, $modulepart, $mysoc->termstosale, 0, $param);
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermstosale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+if (!empty($mysoc->termsofsale)) {
+	if (file_exists($conf->mycompany->dir_output.'/'.$mysoc->termsofsale)) {
+		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($mysoc->termsofsale).(!empty($param) ? '&'.$param : '').'">'.$mysoc->termsofsale.'</a>'.$formfile->showPreview($mysoc->termsofsale, $modulepart, $mysoc->termsofsale, 0, $param);
+		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	}
 }
 print '</div>';

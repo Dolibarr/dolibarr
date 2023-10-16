@@ -4539,7 +4539,7 @@ class Societe extends CommonObject
 		$this->logo_squarred = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED');
 		$this->logo_squarred_small = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL');
 		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
-		$this->termstosale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSTOSALE');
+		$this->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 
 		// Define if company use vat or not
 		$this->tva_assuj = $conf->global->FACTURE_TVAOPTION;

@@ -860,13 +860,13 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Add terms to sale
-				if (!empty($mysoc->termstosale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSTOSALE_INVOICE')) {
-					$termstosale = $conf->mycompany->dir_output.'/'.$mysoc->termstosale;
+				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+					$termsofsale = $conf->mycompany->dir_output.'/'.$mysoc->termsofsale;
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$termstosale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termstosale;
+						$termsofsale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termsofsale;
 					}
-					if (file_exists($termstosale) && is_readable($termstosale)) {
-						$pagecount = $pdf->setSourceFile($termstosale);
+					if (file_exists($termsofsale) && is_readable($termsofsale)) {
+						$pagecount = $pdf->setSourceFile($termsofsale);
 						for ($i = 1; $i <= $pagecount; $i++) {
 							$tplIdx = $pdf->importPage($i);
 							if ($tplIdx!==false) {
@@ -874,7 +874,7 @@ class pdf_crabe extends ModelePDFFactures
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tplIdx);
 							} else {
-								setEventMessages(null, array($termstosale.' cannot be added, probably protected PDF'), 'warnings');
+								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
 							}
 						}
 					}
