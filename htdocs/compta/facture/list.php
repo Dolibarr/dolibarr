@@ -661,7 +661,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND s.rowid = sc.fk_soc AND (sc.fk_user = ".((int) $user->id);
 	$userschilds = $user->getAllChildIds();
 	foreach ($userschilds as $key => $value) {
 		$sql .= ' OR sc.fk_user = '.((int) $value);
