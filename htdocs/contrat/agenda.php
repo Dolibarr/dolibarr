@@ -148,7 +148,9 @@ if ($object->id > 0) {
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -163,8 +165,8 @@ if ($object->id > 0) {
 	if (!empty($modCodeContract->code_auto)) {
 		$morehtmlref .= $object->ref;
 	} else {
-		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 3);
-		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 2);
+		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
+		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 2);
 	}
 
 	$permtoedit = 0;

@@ -119,7 +119,8 @@ class modTicket extends DolibarrModules
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
 			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
 			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
-			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0)
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0),
+			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
 		);
 
 
@@ -147,15 +148,15 @@ class modTicket extends DolibarrModules
 				"TicketDictResolution"
 			),
 			'tabsql' => array(
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_type as f WHERE f.entity IN ('.getEntity('c_ticket_type').')',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f WHERE f.entity IN ('.getEntity('c_ticket_severity').')',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')'
 			),
 			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
 			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
+			'tabfieldinsert' => array("code,label,pos,use_default,entity", "code,label,pos,use_default,entity", "code,label,pos,use_default,public,fk_parent,entity", "code,label,pos,use_default,entity"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
 			'tabcond' => array(isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket") && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
 			'tabhelp' => array(

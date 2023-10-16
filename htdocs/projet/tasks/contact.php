@@ -58,7 +58,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  */
 
 // Add new contact
-if ($action == 'addcontact' && $user->rights->projet->creer) {
+if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
 	$source = 'internal';
 	if (GETPOST("addsourceexternal")) {
 		$source = 'external';
@@ -103,7 +103,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->projet->creer) {
+if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
 	if ($object->fetch($id, $ref)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
@@ -112,7 +112,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer) {
 }
 
 // Efface un contact
-if ($action == 'deleteline' && $user->rights->projet->creer) {
+if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
 	$object->fetch($id, $ref);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
@@ -201,9 +201,9 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -326,9 +326,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';

@@ -131,8 +131,12 @@ print '<table class="border centpercent">';
 // Select the category
 print '<tr><td class="titlefield">'.$langs->trans("AccountingCategory").'</td>';
 print '<td>';
-print $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 0);
-print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
+$s = $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 0);
+if ($formaccounting->nbaccounts_category <= 0) {
+	print '<span class="opacitymedium">'.$s.'</span>';
+} else {
+	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
+}
 print '</td></tr>';
 
 print '</table>';

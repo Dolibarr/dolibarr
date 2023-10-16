@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
-$object = new adherent($db);
+$object = new Adherent($db);
 
 // Fetch object
 if ($id > 0 || !empty($ref)) {
