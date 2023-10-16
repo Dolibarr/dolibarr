@@ -194,7 +194,7 @@ class MenuManager
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
 						print $val['prefix'];
 					} elseif ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 					}
 
 					print $val['titre'];

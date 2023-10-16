@@ -72,7 +72,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 }
 
-if ($action == 'classin' && $user->rights->don->creer) {
+if ($action == 'classin' && $user->hasRight('don', 'creer')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -108,7 +108,7 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->rights->don->creer) {
+		if ($user->hasRight('don', 'creer')) {
 			if ($action != 'classify') {
 				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}

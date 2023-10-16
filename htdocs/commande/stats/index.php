@@ -47,10 +47,10 @@ if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
 	$usercanreadcustumerstatistic = $user->hasRight('commande', 'commande', 'export');
 	$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'export');
 }
-if ($mode == 'customer' && empty($usercanreadcustumerstatistic)) {
+if ($mode == 'customer' && !$usercanreadcustumerstatistic) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && empty($usercanreadsupplierstatistic)) {
+if ($mode == 'supplier' && !$usercanreadsupplierstatistic) {
 	accessforbidden();
 }
 
@@ -127,7 +127,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
@@ -173,7 +173,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
@@ -217,7 +217,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';

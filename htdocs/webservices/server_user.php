@@ -352,10 +352,10 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->user->user->lire
-			|| ($fuser->rights->user->self->creer && $id && $id == $fuser->id)
-			|| ($fuser->rights->user->self->creer && $ref && $ref == $fuser->login)
-			|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext == $fuser->ref_ext)) {
+		if ($fuser->hasRight('user', 'user', 'lire')
+			|| ($fuser->hasRight('user', 'self', 'creer') && $id && $id == $fuser->id)
+			|| ($fuser->hasRight('user', 'self', 'creer') && $ref && $ref == $fuser->login)
+			|| ($fuser->hasRight('user', 'self', 'creer') && $ref_ext && $ref_ext == $fuser->ref_ext)) {
 			$user = new User($db);
 			$result = $user->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
@@ -510,7 +510,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->creer) {
+		if ($fuser->hasRight('societe', 'creer')) {
 			$thirdparty = new Societe($db);
 
 			// If a contact / company already exists with the email, return the corresponding socid
@@ -704,7 +704,7 @@ function setUserPassword($authentication, $shortuser)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password) {
+		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
 			$userstat = new User($db);
 			$res = $userstat->fetch('', $shortuser['login']);
 			if ($res) {

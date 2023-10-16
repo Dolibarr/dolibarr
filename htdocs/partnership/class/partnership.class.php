@@ -1175,7 +1175,7 @@ class Partnership extends CommonObject
 		if (!empty($conf->global->PARTNERSHIP_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->PARTNERSHIP_ADDON.".php";
+			$file = getDolGlobalString('PARTNERSHIP_ADDON') . ".php";
 			$classname = $conf->global->PARTNERSHIP_ADDON;
 
 			// Include file with class

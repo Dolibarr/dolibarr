@@ -974,7 +974,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 
 		dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2273,7 +2273,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$error = 0;
 
-		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+		if (is_array($this->module_parts)) {
+			if (empty($this->module_parts['icon']) && !empty($this->picto) && preg_match('/^fa\-/', $this->picto)) {
+				$this->module_parts['icon'] = $this->picto;
+			}
+
 			foreach ($this->module_parts as $key => $value) {
 				if (is_array($value) && count($value) == 0) {
 					continue; // Discard empty arrays
@@ -2301,32 +2305,34 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 				}
 
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-				$sql .= "name";
-				$sql .= ", type";
-				$sql .= ", value";
-				$sql .= ", note";
-				$sql .= ", visible";
-				$sql .= ", entity";
-				$sql .= ")";
-				$sql .= " VALUES (";
-				$sql .= " ".$this->db->encrypt($this->const_name."_".strtoupper($key));
-				$sql .= ", 'chaine'";
-				$sql .= ", ".$this->db->encrypt($newvalue);
-				$sql .= ", null";
-				$sql .= ", '0'";
-				$sql .= ", ".((int) $entity);
-				$sql .= ")";
+				if (!empty($newvalue)) {
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+					$sql .= "name";
+					$sql .= ", type";
+					$sql .= ", value";
+					$sql .= ", note";
+					$sql .= ", visible";
+					$sql .= ", entity";
+					$sql .= ")";
+					$sql .= " VALUES (";
+					$sql .= " ".$this->db->encrypt($this->const_name."_".strtoupper($key), 1);
+					$sql .= ", 'chaine'";
+					$sql .= ", ".$this->db->encrypt($newvalue, 1);
+					$sql .= ", null";
+					$sql .= ", '0'";
+					$sql .= ", ".((int) $entity);
+					$sql .= ")";
 
-				dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
+					dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
 
-				$resql = $this->db->query($sql, 1);
-				if (!$resql) {
-					if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						 $error++;
-						 $this->error = $this->db->lasterror();
-					} else {
-						 dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
+					$resql = $this->db->query($sql, 1);
+					if (!$resql) {
+						if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							 $error++;
+							 $this->error = $this->db->lasterror();
+						} else {
+							 dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
+						}
 					}
 				}
 			}
@@ -2347,8 +2353,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$err = 0;
 
-		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+		if (is_array($this->module_parts)) {
 			dol_syslog(get_class($this)."::delete_module_parts", LOG_DEBUG);
+
+			if (empty($this->module_parts['icon']) && !empty($this->picto) && preg_match('/^fa\-/', $this->picto)) {
+				$this->module_parts['icon'] = $this->picto;
+			}
 
 			foreach ($this->module_parts as $key => $value) {
 				// If entity is defined
