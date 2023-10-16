@@ -665,6 +665,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 					}
 
+					// Full amount tooltip
+					$tootltiponfullamount = $langs->trans('AmountHT') . ": " . price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tootltiponfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tootltiponfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
 
 					print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
@@ -746,8 +750,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print "</td>";
 					}
 
-					// Price
-					print '<td class="right"><span class="amount">'.price($sign * $objp->total_ttc).'</span></td>';
+					// Full amount
+					print '<td class="right"><span class="amount classfortooltip" title="'.$tootltiponfullamount.'">'.price($sign * $objp->total_ttc).'</span></td>';
 
 					// Received + already paid
 					print '<td class="right"><span class="amount">'.price($sign * $paiement);
