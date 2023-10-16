@@ -419,7 +419,7 @@ if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 $modulepart = 'mycompany';
 $param = '';
 
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TERMSTOSALE"), $tooltiptermsofsale).'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TERMSOFSALE"), $tooltiptermsofsale).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termsofsale" id="termsofsale" accept="application/pdf">';
 
