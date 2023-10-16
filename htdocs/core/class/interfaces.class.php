@@ -84,7 +84,7 @@ class Interfaces
 		if (!is_object($langs)) {	// Warning
 			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
-		if (!is_object($user)) {	// Warning
+		if (!is_object($user)) {	    // Warning
 			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 			$user = new User($this->db);
 		}
@@ -128,8 +128,7 @@ class Interfaces
 						$qualified = true;
 						if (strtolower($reg[2]) != 'all') {
 							$module = preg_replace('/^mod/i', '', $reg[2]);
-							$constparam = 'MAIN_MODULE_'.strtoupper($module);
-							if (!isModEnabled($constparam)) {
+							if (!isModEnabled(strtolower($module))) {
 								$qualified = false;
 							}
 						}
@@ -341,10 +340,9 @@ class Interfaces
 					// Check if trigger file is for a particular module
 					if (preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/i', $files[$key], $reg)) {
 						$module = preg_replace('/^mod/i', '', $reg[2]);
-						$constparam = 'MAIN_MODULE_'.strtoupper($module);
 						if (strtolower($module) == 'all') {
 							$disabledbymodule = 0;
-						} elseif (empty($conf->global->$constparam)) {
+						} elseif (!isModEnabled(strtoupper($module))) {
 							$disabledbymodule = 2;
 						}
 						$triggers[$j]['module'] = strtolower($module);
