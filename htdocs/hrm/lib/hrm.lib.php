@@ -54,13 +54,13 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'establishments';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
-	$head[$h][1] = $langs->trans("EvaluationsExtraFields");
-	$nbExtrafields = $extrafields->attributes['hrm_evaluation']['count'];
+	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
+	$head[$h][1] = $langs->trans("SkillsExtraFields");
+	$nbExtrafields = $extrafields->attributes['hrm_skill']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
-	$head[$h][2] = 'evaluationsAttributes';
+	$head[$h][2] = 'skillsAttributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/job_extrafields.php';
@@ -72,13 +72,13 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'jobsAttributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
-	$head[$h][1] = $langs->trans("SkillsExtraFields");
-	$nbExtrafields = $extrafields->attributes['hrm_skill']['count'];
+	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
+	$head[$h][1] = $langs->trans("EvaluationsExtraFields");
+	$nbExtrafields = $extrafields->attributes['hrm_evaluation']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
-	$head[$h][2] = 'skillsAttributes';
+	$head[$h][2] = 'evaluationsAttributes';
 	$h++;
 
 	// Show more tabs from modules

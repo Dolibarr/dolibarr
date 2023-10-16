@@ -49,13 +49,6 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'don', $id, '');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -74,12 +67,22 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-
 $object = new Don($db);
-$object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
 
-$upload_dir = $conf->don->dir_output.'/'.get_exdir($id, 0, 0, 0, $object, 'donation').'/'.dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->don->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object);
+}
+
 $modulepart = 'don';
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'don', $object->id);
 
 $permissiontoadd = $user->rights->don->creer;	// Used by the include of actions_dellink.inc.php
 
@@ -90,7 +93,7 @@ $permissiontoadd = $user->rights->don->creer;	// Used by the include of actions_
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-if ($action == 'classin' && $user->rights->don->creer) {
+if ($action == 'classin' && $user->hasRight('don', 'creer')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -133,7 +136,7 @@ if ($object->id) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->rights->don->creer) {
+		if ($user->hasRight('don', 'creer')) {
 			if ($action != 'classify') {
 				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}
@@ -146,7 +149,7 @@ if ($object->id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {

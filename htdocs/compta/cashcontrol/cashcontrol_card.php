@@ -96,7 +96,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
@@ -105,10 +105,10 @@ if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
  * Actions
  */
 
-$permissiontoadd = ($user->rights->cashdesk->run || $user->rights->takepos->run);
-$permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
+$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
-	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
 }
 $backurlforlist = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php';
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -295,7 +295,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 	}
 
-	if ($terminalid != '') {
+	if (isset($terminalid) && $terminalid != '') {
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach ($arrayofpaymentmode as $key => $val) {
 			if ($key != 'cash') {
@@ -305,7 +305,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 			// Get the bank account dedicated to this point of sale module/terminal
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
-			$bankid = $conf->global->$vartouse;
+			$bankid = getDolGlobalInt($vartouse);
 
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
@@ -422,7 +422,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 		$selectedposnumber = 0;
 		$showempty = 1;
-		if ($conf->global->TAKEPOS_NUM_TERMINALS == '1') {
+		if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') == '1') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
@@ -671,7 +671,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print "</table>\n";
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

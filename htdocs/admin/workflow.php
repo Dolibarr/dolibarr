@@ -79,7 +79,7 @@ $workflowcodes = array(
 		'picto'=>'ticket'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>'', 'enabled'=>((isModEnabled("propal") && isModEnabled('commande')) || (isModEnabled('commande') && isModEnabled('facture')) || (isModEnabled('ticket') && isModEnabled('ficheinter')))),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
@@ -118,13 +118,11 @@ $workflowcodes = array(
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
 
-	'separator2'=>array('family'=>'separator', 'position'=>50),
-
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
-		'enabled'=>(isModEnabled('supplier_proposal') && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'enabled'=>(isModEnabled('supplier_proposal') && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'supplier_proposal',
 		'warning'=>''
 	),
@@ -133,7 +131,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -141,7 +139,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -149,38 +147,60 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>65,
-		'enabled'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
+		'enabled'=>(isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
 
-	// Automatic classification reception
-	'WORKFLOW_BILL_ON_RECEPTION'=>array(
-		'family'=>'classify_reception',
-		'position'=>80,
-		'enabled'=>(isModEnabled("reception") && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
-		'picto'=>'reception'
-	),
-
 	// Automatic classification shipping
+	/* Replaced by next option
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
 		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
+		'picto' => 'shipment',
+		'deprecated' => 1
+	),
+	*/
+
+	'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_shipping',
+		'position' => 91,
+		'enabled' => isModEnabled("expedition") && isModEnabled("facture") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
 		'picto' => 'shipment'
 	),
+
+	// Automatic classification reception
+	/*
+	'WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE'=>array(
+		'family'=>'classify_reception',
+		'position'=>95,
+		'enabled'=>(isModEnabled("reception") && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'picto'=>'reception'
+	),
+	*/
+
+	'WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_reception',
+		'position' => 91,
+		'enabled' => isModEnabled("reception") && isModEnabled("supplier_invoice") && getDolGlobalString('WORKFLOW_BILL_ON_RECEPTION') !== '0',
+		'picto' => 'shipment'
+	),
+
+
+	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
 
 	// Automatic link ticket -> contract
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
-		'position' => 75,
-		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
+		'position' => 500,
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
-		'position' => 76,
-		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
+		'position' => 501,
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
 		'picto' => 'ticket'
 	),
 );
@@ -235,6 +255,7 @@ foreach ($workflowcodes as $key => $params) {
 		continue;
 	}
 
+	$reg = array();
 	if ($oldfamily != $params['family']) {
 		if ($params['family'] == 'create') {
 			$header = $langs->trans("AutomaticCreation");
@@ -269,7 +290,7 @@ foreach ($workflowcodes as $key => $params) {
 
 		print '<tr class="liste_titre">';
 		print '<th>'.$header.'</th>';
-		print '<th align="center">'.$langs->trans("Status").'</th>';
+		print '<th class="right">'.$langs->trans("Status").'</th>';
 		print '</tr>';
 
 		$oldfamily = $params['family'];
@@ -283,10 +304,13 @@ foreach ($workflowcodes as $key => $params) {
 	if (!empty($params['warning'])) {
 		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
 	}
+	if (!empty($params['deprecated'])) {
+		print ' '.img_warning($langs->transnoentitiesnoconv("Deprecated"));
+	}
 
 	print '</td>';
 
-	print '<td class="center">';
+	print '<td class="right">';
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff($key);

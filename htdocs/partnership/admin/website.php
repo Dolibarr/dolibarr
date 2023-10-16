@@ -37,11 +37,11 @@ $langs->loadLangs(array("admin", "partnership"));
 
 $action = GETPOST('action', 'aZ09');
 
+$error = 0;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$error = 0;
 
 
 /*
@@ -173,13 +173,6 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 	print $langs->trans("DefaultAmount");
 	print '</td><td class="right">';
 	print '<input type="text" class="right width75" id="PARTNERSHIP_NEWFORM_AMOUNT" name="PARTNERSHIP_NEWFORM_AMOUNT" value="'.(!empty($conf->global->PARTNERSHIP_NEWFORM_AMOUNT) ? $conf->global->PARTNERSHIP_NEWFORM_AMOUNT : '').'">';
-	print "</td></tr>\n";
-
-	// Can edit
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
-	print $form->selectyesno("PARTNERSHIP_NEWFORM_EDITAMOUNT", (!empty($conf->global->PARTNERSHIP_NEWFORM_EDITAMOUNT) ? $conf->global->PARTNERSHIP_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page

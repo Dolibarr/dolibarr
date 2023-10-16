@@ -46,6 +46,7 @@ $taskref = GETPOST("taskref", 'alpha'); // task ref
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
+$mode = GETPOST('mode', 'alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
@@ -78,7 +79,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * Actions
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	if (empty($taskref)) {
@@ -100,8 +101,11 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = GETPOST("label", "alphanohtml");
-		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $object->description = GETPOST('description', "alphanohtml");
-		else $object->description = GETPOST('description', "restricthtml");
+		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+			$object->description = GETPOST('description', "alphanohtml");
+		} else {
+			$object->description = GETPOST('description', "restricthtml");
+		}
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
 		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
@@ -151,7 +155,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes') {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer) {
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet', 'supprimer')) {
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
@@ -177,7 +181,7 @@ if (!empty($project_ref) && !empty($withproject)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $user->rights->projet->creer) {
+if ($action == 'builddoc' && $user->hasRight('projet', 'creer')) {
 	// Save last template used to generate document
 	if (GETPOST('model')) {
 		$object->setDocModel($user, GETPOST('model', 'alpha'));
@@ -196,7 +200,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer) {
 }
 
 // Delete file in doc form
-if ($action == 'remove_file' && $user->rights->projet->creer) {
+if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
@@ -264,14 +268,14 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
 		if (!empty($projectstatic->thirdparty->id) &&$projectstatic->thirdparty->id > 0) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+			$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
@@ -325,8 +329,15 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
-		// Date start - end
-		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($projectstatic->budget_amount, '')) {
+			print '<span class="amount">'.price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+		}
+		print '</td></tr>';
+
+		// Date start - end project
+		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 		$start = dol_print_date($projectstatic->date_start, 'day');
 		print ($start ? $start : '?');
 		$end = dol_print_date($projectstatic->date_end, 'day');
@@ -334,13 +345,6 @@ if ($id > 0 || !empty($ref)) {
 		print ($end ? $end : '?');
 		if ($projectstatic->hasDelay()) {
 			print img_warning("Late");
-		}
-		print '</td></tr>';
-
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) {
-			print '<span class="amount">'.price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		print '</td></tr>';
 
@@ -427,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = task_prepare_head($object);
 
-	if ($action == 'edit' && $user->rights->projet->creer) {
+	if ($action == 'edit' && $user->hasRight('projet', 'creer')) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -464,7 +468,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Task parent
 		print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
-		print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin ? 0 : 1), 0, 0, 0, $object->id);
+		$formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin ? 0 : 1), 0, 0, 0, $object->id);
 		print '</td></tr>';
 
 		// Date start
@@ -491,18 +495,12 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 
-		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
-			print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
-		} else {
-			// WYSIWYG editor
-			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
-			if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
-				$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
-			}
-			$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
-			print $doleditor->Create();
-		}
+		// WYSIWYG editor
+		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE) ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
+		$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 0);
+		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+		print $doleditor->Create();
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
@@ -539,9 +537,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -578,7 +576,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
-		// Date start - Date end
+		// Date start - Date end task
 		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td colspan="3">';
 		$start = dol_print_date($object->date_start, 'dayhour');
 		print ($start ? $start : '?');
@@ -633,7 +631,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($object->budget_amount, '')) {
+		if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
 			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		print '</td></tr>';
@@ -666,7 +664,7 @@ if ($id > 0 || !empty($ref)) {
 		// modified by hook
 		if (empty($reshook)) {
 			// Modify
-			if ($user->rights->projet->creer) {
+			if ($user->hasRight('projet', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
 			} else {
@@ -698,7 +696,7 @@ if ($id > 0 || !empty($ref)) {
 		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire);
-		$delallowed = ($user->rights->projet->creer);
+		$delallowed = ($user->hasRight('projet', 'creer'));
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
@@ -707,8 +705,7 @@ if ($id > 0 || !empty($ref)) {
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
-		$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
+		$formactions->showactions($object, 'project_task', 0, 1, '', 10, 'withproject='.$withproject);
 
 		print '</div></div>';
 	}

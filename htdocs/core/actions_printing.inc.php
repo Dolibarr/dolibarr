@@ -28,7 +28,7 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
-if ($action == 'print_file' && $user->rights->printing->read) {
+if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	$langs->load("printing");
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 	$objectprint = new PrintingDriver($db);
@@ -50,7 +50,7 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 			$langs->load($printer::LANGFILE);
 			//print '<pre>'.print_r($printer, true).'</pre>';
 
-			if (!empty($conf->global->{$printer->active})) {
+			if (getDolGlobalString($printer->active)) {
 				$printerfound++;
 
 				$subdir = '';

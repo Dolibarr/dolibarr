@@ -27,7 +27,6 @@
  */
 class Validate
 {
-
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -62,7 +61,7 @@ class Validate
 		}
 
 		if (!is_object($this->outputLang) || !method_exists($this->outputLang, 'load')) {
-			return false;
+			return;
 		}
 
 		$this->outputLang->loadLangs(array('validate', 'errors'));
@@ -72,7 +71,8 @@ class Validate
 
 	/**
 	 * Use to clear errors msg or other ghost vars
-	 * @return null
+	 *
+	 * @return 	void
 	 */
 	protected function clear()
 	{
@@ -82,8 +82,8 @@ class Validate
 	/**
 	 * Use to clear errors msg or other ghost vars
 	 *
-	 * @param string $errMsg your error message
-	 * @return null
+	 * @param 	string $errMsg your error message
+	 * @return 	void
 	 */
 	protected function setError($errMsg)
 	{
@@ -93,9 +93,9 @@ class Validate
 	/**
 	 * Check for e-mail validity
 	 *
-	 * @param string $email e-mail address to validate
-	 * @param int   $maxLength string max length
-	 * @return boolean Validity is ok or not
+	 * @param 	string 	$email 		e-mail address to validate
+	 * @param 	int   	$maxLength 	string max length
+	 * @return 	boolean 			Validity is ok or not
 	 */
 	public function isEmail($email, $maxLength = false)
 	{
@@ -191,7 +191,7 @@ class Validate
 	 */
 	public function isMinLength($string, $length)
 	{
-		if (!strlen($string) < $length) {
+		if (strlen($string) < $length) {
 			$this->error = $this->outputLang->trans('RequireMinLength', $length);
 			return false;
 		}

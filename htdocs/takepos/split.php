@@ -47,7 +47,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 $action = GETPOST('action', 'aZ09');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0);
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -66,7 +66,7 @@ if ($action=="split") {
 			$placeid = $invoice->id;
 		} else {
 			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-			$invoice->socid = $conf->global->$constforcompanyid;
+			$invoice->socid =getDolGlobalInt($constforcompanyid);
 			$invoice->date = dol_now();
 			$invoice->module_source = 'takepos';
 			$invoice->pos_source = $_SESSION["takeposterminal"];
@@ -93,7 +93,7 @@ if ($action=="split") {
 			$placeid = $invoice->id;
 		} else {
 			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-			$invoice->socid = $conf->global->$constforcompanyid;
+			$invoice->socid = getDolGlobalInt($constforcompanyid);
 			$invoice->date = dol_now();
 			$invoice->module_source = 'takepos';
 			$invoice->pos_source = $_SESSION["takeposterminal"];
@@ -125,7 +125,7 @@ if ($action=="split") {
  */
 
 $invoice = new Facture($db);
-if ($invoiceid > 0) {
+if (isset($invoiceid) && $invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
@@ -134,7 +134,7 @@ if ($invoiceid > 0) {
 	if ($obj) {
 		$invoiceid = $obj->rowid;
 	}
-	if (!$invoiceid) {
+	if (!isset($invoiceid)) {
 		$invoiceid = 0; // Invoice does not exist yet
 	} else {
 		$invoice->fetch($invoiceid);

@@ -58,7 +58,7 @@ class Stripe
     /** @var float Initial delay between retries, in seconds */
     private static $initialNetworkRetryDelay = 0.5;
 
-    const VERSION = '7.67.0';
+    const VERSION = '10.7.0';
 
     /**
      * @return string the API key used for requests
@@ -90,7 +90,7 @@ class Stripe
     }
 
     /**
-     * @param Util\LoggerInterface $logger the logger to which the library
+     * @param \Psr\Log\LoggerInterface|Util\LoggerInterface $logger the logger to which the library
      *   will produce messages
      */
     public static function setLogger($logger)
@@ -176,7 +176,7 @@ class Stripe
     }
 
     /**
-     * @return string | null The Stripe account ID for connected account
+     * @return null|string The Stripe account ID for connected account
      *   requests
      */
     public static function getAccountId()
@@ -185,7 +185,7 @@ class Stripe
     }
 
     /**
-     * @param string $accountId the Stripe account ID to set for connected
+     * @param null|string $accountId the Stripe account ID to set for connected
      *   account requests
      */
     public static function setAccountId($accountId)
@@ -194,7 +194,7 @@ class Stripe
     }
 
     /**
-     * @return array | null The application's information
+     * @return null|array The application's information
      */
     public static function getAppInfo()
     {

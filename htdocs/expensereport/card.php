@@ -55,6 +55,7 @@ $langs->loadLangs(array("trips", "bills", "mails"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $id = GETPOST('id', 'int');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
@@ -295,7 +296,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
-			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
 				$error++;
@@ -324,7 +325,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $user->rights->expensereport->creer) {
+	if (($action == 'update' || $action == 'updateFromRefuse') && $user->rights->expensereport->creer) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -350,7 +351,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -418,7 +419,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailTo && $emailFrom) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -525,7 +526,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -641,7 +642,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -749,7 +750,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_refuse);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -863,7 +864,7 @@ if (empty($reshook)) {
 					// FROM
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_user_cancel);
-					$emailFrom = $expediteur->email;
+					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					if ($emailFrom && $emailTo) {
 						$filename = array(); $filedir = array(); $mimetype = array();
@@ -971,7 +972,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 
@@ -1043,7 +1044,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($user->id);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -1190,7 +1191,9 @@ if (empty($reshook)) {
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1210,11 +1213,17 @@ if (empty($reshook)) {
 
 				unset($date);
 			} else {
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
-		$action = '';
+		if (!$error) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+			exit;
+		} else {
+			$action = '';
+		}
 	}
 
 	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
@@ -1399,6 +1408,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -1537,6 +1547,7 @@ if ($action == 'create') {
 			print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
@@ -1694,44 +1705,6 @@ if ($action == 'create') {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref = '<div class="refidno">';
-			/*
-			 // Ref customer
-			 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
-			 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
-			 // Thirdparty
-			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
-			 // Project
-			 if (isModEnabled('project'))
-			 {
-			 $langs->load("projects");
-			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-			 if ($user->rights->commande->creer)
-			 {
-			 if ($action != 'classify')
-			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-			 if ($action == 'classify') {
-			 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-			 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-			 $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-			 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-			 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			 $morehtmlref.='</form>';
-			 } else {
-			 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			 }
-			 } else {
-			 if (!empty($object->fk_project)) {
-			 $proj = new Project($db);
-			 $proj->fetch($object->fk_project);
-			 $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-			 $morehtmlref.=$proj->ref;
-			 $morehtmlref.='</a>';
-			 } else {
-			 $morehtmlref.='';
-			 }
-			 }
-			 }*/
 			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -2057,6 +2030,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder centpercent">';
@@ -2075,7 +2050,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td class="center linecoldescription">'.$langs->trans('Description').'</td>';
+				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
 				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
@@ -2101,7 +2076,7 @@ if ($action == 'create') {
 				foreach ($object->lines as &$line) {
 					$numline = $i + 1;
 
-					if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int')) {
+					if ($action != 'editline' || $line->id != GETPOST('rowid', 'int')) {
 						print '<tr class="oddeven linetr" data-id="'.$line->id.'">';
 
 						// Num
@@ -2114,7 +2089,7 @@ if ($action == 'create') {
 
 						// Project
 						if (isModEnabled('project')) {
-							print '<td class="center dateproject">';
+							print '<td class="lineproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
 								$projecttmp->ref = $line->projet_ref;
@@ -2271,7 +2246,7 @@ if ($action == 'create') {
 						print '</tr>';
 					}
 
-					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
+					if ($action == 'editline' && $line->id == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
 						if (isModEnabled('project')) {
@@ -2335,7 +2310,7 @@ if ($action == 'create') {
 							}
 						}
 
-						$tredited = 'tredited';
+						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 
@@ -2362,7 +2337,7 @@ if ($action == 'create') {
 
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 							print '<td class="fk_c_exp_tax_cat">';
-							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->id, 'date' => $line->date);
 							print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 							print '</td>';
 						}
@@ -2465,12 +2440,14 @@ if ($action == 'create') {
                             } else {
                                 jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
                             }
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 							console.log("We click on toggle of aattachtodoc");
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });'."\n";
 				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
@@ -2493,6 +2470,7 @@ if ($action == 'create') {
 				print '</script>'."\n";
 				print '</td></tr>';
 
+				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 
@@ -2506,7 +2484,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td class="right expensereportcreatedescription">'.$langs->trans('Description').'</td>';
+				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
 				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
 				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
@@ -2555,6 +2533,7 @@ if ($action == 'create') {
 				print '<td class="right inputvat">';
 				$defaultvat = -1;
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
+					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
 				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
@@ -2584,7 +2563,7 @@ if ($action == 'create') {
 				}
 
 				print '<td class="center inputbuttons">';
-				print $form->buttonsSaveCancel("Add", '', '', 1);
+				print $form->buttonsSaveCancel("Add", '', '', 1, 'reposition');
 				print '</td>';
 
 				print '</tr>';
@@ -2592,8 +2571,8 @@ if ($action == 'create') {
 
 			print '</table>';
 			print '</div>';
-			//var_dump($object);
-			print '<script javascript>
+
+			print '<script>
 
 			/* JQuery for product free or predefined select */
 			jQuery(document).ready(function() {
@@ -2609,6 +2588,10 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}
 				});
+			';
+
+			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				print '
 
                 /* unit price coéf calculation */
                 jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
@@ -2637,10 +2620,22 @@ if ($action == 'create') {
 							,async:false
 							,dataType:"json"
 							,success:function(response) {
-                                if (response.response_status == "success"){
-                                jQuery("#value_unit_ht").val(response.data);
-                                jQuery("#value_unit_ht").trigger("change");
-                                jQuery("#value_unit").val("");
+								if (response.response_status == "success"){';
+
+				if (!empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY)) {
+					print '
+									jQuery("#value_unit").val(parseFloat(response.data) * (100 + parseFloat(tva)) / 100);
+									jQuery("#value_unit").trigger("change");
+				                    ';
+				} else {
+					print '
+									jQuery("#value_unit_ht").val(response.data);
+									jQuery("#value_unit_ht").trigger("change");
+									jQuery("#value_unit").val("");
+									';
+				}
+
+				print '
                                 } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ){
                                     $.jnotify(response.errorMessage, "error", {timeout: 0, type: "error"},{ remove: function (){} } );
                                 }
@@ -2654,6 +2649,10 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}*/
 				});
+				';
+			}
+
+			print '
 
 			});
 
@@ -2781,8 +2780,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED) {
-		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+	if (($user->rights->expensereport->to_paid || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}

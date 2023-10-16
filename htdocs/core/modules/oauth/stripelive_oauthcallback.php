@@ -65,7 +65,7 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 $serviceFactory->setHttpClient($httpClient);
 
 // Dolibarr storage
-$storage = new DoliStorage($db, $conf);
+$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_STRIPE_LIVE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
@@ -117,37 +117,28 @@ if ($action == 'delete') {
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
+	if (empty($backtourl)) {
+		$backtourl = DOL_URL_ROOT.'/';
+	}
+
 	header('Location: '.$backtourl);
 	exit();
 }
 
-if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page");
-	//llxHeader('',$langs->trans("OAuthSetup"));
-
-	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
-
-	//print dol_get_fiche_head();
-	// retrieve the CSRF state parameter
-	$state = isset($_GET['state']) ? $_GET['state'] : null;
-	//print '<table>';
+	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
 	try {
-		//var_dump($_GET['code']);
 		//var_dump($state);
-		//var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
+		//var_dump($apiService);      // OAuth\OAuth2\Service\Stripe
 
-		//$token = $apiService->requestAccessToken($_GET['code'], $state);
-		$token = $apiService->requestAccessToken($_GET['code']);
-		// Github is a service that does not need state to be stored.
-		// Into constructor of GitHub, the call
-		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
-		// has not the ending parameter to true like the Google class constructor.
+		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+		$token = $apiService->requestAccessToken(GETPOST('code'));
+		// Stripe is a service that does not need state to be stored as second paramater of requestAccessToken
 
 		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
@@ -172,7 +163,11 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	} else {
 		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
 		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->$keyforparamid.'&scope=read_write';
+		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=' . getDolGlobalString($keyforparamid).'&scope=read_write';
+	}
+
+	if (empty($url)) {
+		$url = DOL_URL_ROOT.'/';
 	}
 
 	// we go on oauth provider authorization page

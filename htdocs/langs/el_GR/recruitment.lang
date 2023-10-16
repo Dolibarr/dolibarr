@@ -27,7 +27,7 @@ ModuleRecruitmentDesc = Διαχειριστείτε και παρακολουθ
 #
 RecruitmentSetup = Ρύθμιση προσλήψεων
 Settings = Ρυθμίσεις
-RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για τη μονάδα προσλήψεων
+RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για την ενότητα προσλήψεων
 RecruitmentArea=Περιοχή προσλήψεων
 PublicInterfaceRecruitmentDesc=Οι δημόσιες σελίδες θέσεων εργασίας είναι δημόσιες διευθύνσεις URL για εμφάνιση και απάντηση σε ανοιχτές θέσεις εργασίας. Υπάρχει ένας διαφορετικός σύνδεσμος για κάθε ανοιχτή θέση εργασίας, που βρίσκεται σε κάθε εγγραφή εργασίας.
 EnablePublicRecruitmentPages=Ενεργοποίηση δημόσιων σελίδων ανοιχτών θέσεων εργασίας
@@ -35,7 +35,7 @@ EnablePublicRecruitmentPages=Ενεργοποίηση δημόσιων σελί�
 #
 # About page
 #
-About = Πληροφορίες
+About = Σχετικά με
 RecruitmentAbout = Σχετικά με τις προσλήψεις
 RecruitmentAboutPage = Σελίδα σχετικά με τις Προσλήψεις 
 NbOfEmployeesExpected=Προσδοκώμενο νούμερο εργαζομένων
@@ -44,7 +44,7 @@ WorkPlace=Χώρος Εργασίας
 DateExpected=Αναμενόμενη ημερομηνία
 FutureManager=Μελλοντικός μάνατζερ
 ResponsibleOfRecruitement=Υπεύθυνος προσλήψεων
-IfJobIsLocatedAtAPartner=Εάν η εργασία βρίσκεται σε μερος συνεργάτη
+IfJobIsLocatedAtAPartner=Εάν η εργασία βρίσκεται σε χώρο συνεργάτη
 PositionToBeFilled=Θέση εργασίας
 PositionsToBeFilled=Θέσεις εργασίας
 ListOfPositionsToBeFilled=Κατάλογος θέσεων εργασίας
@@ -57,15 +57,16 @@ EmailRecruiter=Εmail υπεύθυνου προσλήψεων
 ToUseAGenericEmail=Για να χρησιμοποιήσετε ένα γενικό email. Εάν δεν έχει οριστεί, θα χρησιμοποιηθεί το email του υπεύθυνου πρόσληψης
 NewCandidature=Νέα αίτηση
 ListOfCandidatures=Λίστα αιτήσεων
-RequestedRemuneration=Ζητούμενη αμοιβή
-ProposedRemuneration=Προτεινόμενη αμοιβή
+Remuneration=Μισθός
+RequestedRemuneration=Ζητούμενος μισθός
+ProposedRemuneration=Προτεινόμενος μισθός
 ContractProposed=Προτεινόμενη σύμβαση
 ContractSigned=Υπογεγραμμένη σύμβαση
 ContractRefused=Η σύμβαση απορρίφθηκε
 RecruitmentCandidature=Αίτηση
 JobPositions=Θέσεις εργασίας
 RecruitmentCandidatures=Αιτήσεις
-InterviewToDo=Συνέντευξη για να γίνει
+InterviewToDo=Επαφές για παρακολούθηση
 AnswerCandidature=Απάντηση αίτησης
 YourCandidature=Η αίτηση σου
 YourCandidatureAnswerMessage=Σας ευχαριστούμε για την αίτηση σας. <br> ...

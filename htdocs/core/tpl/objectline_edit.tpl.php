@@ -70,7 +70,7 @@ if (!empty($inputalsopricewithtax)) {
 if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
@@ -120,7 +120,7 @@ $coldisplay++;
 			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
 		} else {
 			if ($senderissupplier) {
-				print $form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+				$form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
 			} else {
 				print $form->select_produits(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
 			}
@@ -145,6 +145,11 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
+	// but in some situations that is required (update legal informations for example)
+	if (!empty($conf->global->INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION)) {
+		$situationinvoicelinewithparent = 0;
+	}
+
 	if (!$situationinvoicelinewithparent) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -196,13 +201,17 @@ $coldisplay++;
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++;
 		?>
-		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
+		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
 	}
 
+	// VAT Rate
 	$coldisplay++;
 	if (!$situationinvoicelinewithparent) {
-		print '<td class="right">'.$form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1).'</td>';
+		print '<td class="right">';
+		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1);
+		print '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
@@ -214,15 +223,19 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
-	if ($inputalsopricewithtax) {
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
-		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($line->pu_ttc) ? price($line->pu_ttc, 0, '', 0) : '')).'"';
-		if ($line->fk_prev_id != null) {
+		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
+		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
+			$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
+		}
+		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
+		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
 		print '></td>';
@@ -266,26 +279,31 @@ $coldisplay++;
 	?>
 
 	<td class="nowraponall right linecoldiscount">
-	<?php $coldisplay++;
+	<?php
+	// Discount
+	$coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : $line->remise_percent).'"';
+		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? $line->remise_percent : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
-		print '>%';
+		print '><span class="hideonsmartphone opacitymedium">%</span>';
 	} else { ?>
 		&nbsp;
 	<?php } ?>
 	</td>
+
 	<?php
-	if ($this->situation_cycle_ref) {
+	// Progession for situation invoices
+	if ($object->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
 		$coldisplay++;
 		print '<td></td>';
 	}
+
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
+		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++;
 			?>
 		<td class="margininfos right">
@@ -298,14 +316,14 @@ $coldisplay++;
 		</td>
 		<?php }
 
-		if ($user->rights->margins->creer) {
+		if ($user->hasRight('margins', 'creer')) {
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0) {
-					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth40" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="opacitymedium hideonsmartphone">%</span></td>';
 				}
 				$coldisplay++;
 			}
@@ -313,9 +331,9 @@ $coldisplay++;
 				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0) {
-					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth40" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="opacitymedium hideonsmartphone">%</span></td>';
 				}
 				$coldisplay++;
 			}
@@ -344,12 +362,12 @@ $coldisplay++;
 	print '<script>';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
-			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
 
 
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
-			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
 		$res = $line->fetch_product();
@@ -361,10 +379,10 @@ $coldisplay++;
 	}
 	if (!$line->date_end) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
-			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
-			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 
 		$res = $line->fetch_product();
@@ -386,7 +404,7 @@ $coldisplay++;
 <script>
 
 <?php
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
@@ -435,11 +453,12 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		}
 
 		var price = 0;
-		remisejs=price2numjs(remise.val());
+		remisejs = price2numjs(remise.val());
 
-		if (remisejs != 100)	// If a discount not 100 or no discount
-		{
-			if (remisejs == '') remisejs=0;
+		if (remisejs != 100) {	// If a discount not 100 or no discount
+			if (remisejs == '') {
+				remisejs = 0;
+			}
 
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
@@ -481,7 +500,7 @@ jQuery(document).ready(function()
 		}
 	});
 
-	<?php if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
+	<?php if (in_array($object->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
 	$("#date_start, #date_end").focusout(function() {
 		if ( $(this).val() == ''  && !$(this).hasClass('inputmandatory') ) {
 			$(this).addClass('inputmandatory');

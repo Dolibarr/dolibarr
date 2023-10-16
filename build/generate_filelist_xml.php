@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 $includecustom=0;
 $includeconstants=array();
+$buildzip=0;
 
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
@@ -55,14 +56,27 @@ if (empty($argv[1])) {
 
 
 $i=0;
+$result = array();
 while ($i < $argc) {
 	if (!empty($argv[$i])) {
-		parse_str($argv[$i]);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
+		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
 	}
-	if (preg_match('/includeconstant=/', $argv[$i])) {
-		$tmp=explode(':', $includeconstant, 3);			// $includeconstant has been set with previous parse_str()
+	if (!empty($result["release"])) {
+		$release = $result["release"];
+	}
+	if (!empty($result["includecustom"])) {
+		$includecustom = $result["includecustom"];
+	}
+	if (!empty($result["includeconstant"])) {
+		$includeconstants[$i] = $result["includeconstant"];
+	}
+	if (!empty($result["buildzip"])) {
+		$buildzip=1;
+	}
+	if (preg_match('/includeconstant=/', strval($argv[$i]))) {
+		$tmp=explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()
 		if (count($tmp) != 3) {
-			print "Error: Bad parameter includeconstant=".$includeconstant."\n";
+			print "Error: Bad parameter includeconstant=".$result['includeconstant'] ."\n";
 			exit -1;
 		}
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
@@ -71,7 +85,7 @@ while ($i < $argc) {
 }
 
 if (empty($release)) {
-	print "Error: Missing release paramater\n";
+	print "Error: Missing release parameter\n";
 	print "Usage: ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
 	exit -1;
 }

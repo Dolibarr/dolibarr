@@ -137,13 +137,13 @@ if ($type != 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 }
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -175,7 +175,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -274,7 +274,9 @@ while ($i < min($num, $limit)) {
 	print '</td>';
 
 	print '<td class="right">';
+	print '<span class="amount">';
 	print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	print '</span>';
 	print '</td>';
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';

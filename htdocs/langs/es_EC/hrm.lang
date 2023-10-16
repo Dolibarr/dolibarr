@@ -3,4 +3,3 @@ HRM_EMAIL_EXTERNAL_SERVICE=Correo electrónico para prevenir el servicio externo
 ConfirmDeleteEstablishment=¿Estás seguro de que deseas eliminar este establecimiento?
 OpenEtablishment=Establecimiento abierto
 HrmSetup=Configuración del módulo de RRHH (Recursos Humanos)
-JobPosition=Trabajo

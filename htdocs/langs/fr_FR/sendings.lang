@@ -48,7 +48,7 @@ DateDeliveryPlanned=Date prévue de livraison
 RefDeliveryReceipt=Ref bon de réception
 StatusReceipt=Status du bon de réception
 DateReceived=Date de réception réelle
-ClassifyReception=Classer la réception
+ClassifyReception=Classer Reçu
 SendShippingByEMail=Envoyer bon d'expédition par email
 SendShippingRef=Envoi du bordereau d'expédition %s
 ActionsOnShipping=Événements sur l'expédition
@@ -76,3 +76,8 @@ DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock à la création d'une expédition pour les numéros de séries et lots
 CreationOptions=Options disponibles à la création d'une expédition
+
+ShipmentDistribution=Répartition des expéditions
+
+ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
+ErrorNoCombinationBatchcode=Pas de répartition pour la ligne %s car aucune combinaison entrepôt, produit, code de lot n'a été trouvée.

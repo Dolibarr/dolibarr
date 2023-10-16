@@ -48,7 +48,7 @@ if ($id > 0) {
 }
 
 // Permissions
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartynote', 'globalcard'));
@@ -65,7 +65,9 @@ $result = restrictedArea($user, 'societe', $object->id, '&societe');
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

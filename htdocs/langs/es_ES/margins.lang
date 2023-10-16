@@ -6,6 +6,7 @@ TotalMargin=Margen total
 MarginOnProducts=Margen / Productos
 MarginOnServices=Margen / Servicios
 MarginRate=Margen sobre coste
+ModifyMarginRates=Modificar tasas de margen
 MarkRate=Margen sobre venta
 DisplayMarginRates=Mostrar el margen sobre costes
 DisplayMarkRates=Mostrar el margen sobre ventas

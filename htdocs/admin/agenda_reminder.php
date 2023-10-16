@@ -150,7 +150,6 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
-
 $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'reminders', $langs->trans("Agenda"), -1, 'action');

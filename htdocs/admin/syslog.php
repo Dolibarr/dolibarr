@@ -115,9 +115,6 @@ if ($action == 'set') {
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
-		/**
-		 * @var LogHandler
-		 */
 		$module = new $modulename;
 		$error = $module->checkConfiguration();
 	}
@@ -182,7 +179,7 @@ if (!$defaultsyslogfile) {
 	$defaultsyslogfile = 'dolibarr.log';
 }
 $optionmc = '';
-if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
+if (isModEnabled('multicompany') && $user->entity) {
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
 	$optionmc = 'disabled';
 }

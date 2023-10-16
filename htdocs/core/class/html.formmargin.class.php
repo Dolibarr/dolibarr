@@ -98,10 +98,16 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			$pa_ht = ($pv < 0 ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
-			if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
-				|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
-				$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
+			// We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
+				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
+					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
+					// We need a compensation relative to $line->situation_percent
+					$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
+				} else {
+					$pa = $line->qty * $pa_ht;
+				}
 			} else {
 				$pa = $line->qty * $pa_ht;
 			}
@@ -202,45 +208,46 @@ class FormMargin
 	public function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user, $hookmanager;
+		global $action;
 
 		if (!empty($user->socid)) {
 			return;
 		}
 
-		if (empty($user->rights->margins->liretous)) {
+		if (!$user->hasRight('margins', 'liretous')) {
 			return;
 		}
 
 		$marginInfo = $this->getMarginInfosArray($object, $force_price);
 
-		$parameters=array('marginInfo'=>&$marginInfo);
+		$parameters=array('marginInfo' => &$marginInfo);
 		$reshook = $hookmanager->executeHooks('displayMarginInfos', $parameters, $object, $action);
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
-			if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON)) {    // TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
-				print $langs->trans('ShowMarginInfos') . ' : ';
+			if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON)) {
+				print $langs->trans('ShowMarginInfos') . ' ';
 				$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']); // Clean cookie
-				print '<span id="showMarginInfos" class="linkobject ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
-				print '<span id="hideMarginInfos" class="linkobject ' . (!empty($hidemargininfos) ? 'hideobject' : '') . '">' . img_picto($langs->trans("Enabled"), 'switch_on') . '</span>';
+				print '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
+				print '<span id="hideMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? 'hideobject' : '') . '">' . img_picto($langs->trans("Enabled"), 'switch_on') . '</span>';
 
-				print '<script>$(document).ready(function() {
-        	    $("span#showMarginInfos").click(function() { $.getScript( "' . dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1) . '", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
-        	    $("span#hideMarginInfos").click(function() { $.getScript( "' . dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1) . '", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
-      	        });</script>';
+				print '<script nonce="'.getNonce().'">$(document).ready(function() {';
+				print '$("span#showMarginInfos").click(function() { console.log("click on showMargininfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=0; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject"); });';
+				print '$("span#hideMarginInfos").click(function() { console.log("click on hideMarginInfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=1; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject"); });';
 				if (!empty($hidemargininfos)) {
-					print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+					print 'console.log("hide the margin info"); $("#margintable").hide();';
 				}
+				print '});</script>';
 			}
 
+			print '<!-- displayMarginInfos() - Show margin table -->' . "\n";
 			print '<div class="div-table-responsive-no-min">';
-			print '<!-- Margin table -->' . "\n";
 
-			print '<table class="noborder margintable centpercent">';
+			print '<table class="noborder margintable centpercent" id="margintable">';
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">' . $langs->trans('Margins') . '</td>';
 			print '<td class="liste_titre right">' . $langs->trans('SellingPrice') . '</td>';
-			if ($conf->global->MARGIN_TYPE == "1") {
+			if (getDolGlobalString('MARGIN_TYPE') == "1") {
 				print '<td class="liste_titre right">' . $langs->trans('BuyingPrice') . '</td>';
 			} else {
 				print '<td class="liste_titre right">' . $langs->trans('CostPrice') . '</td>';

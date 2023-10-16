@@ -52,9 +52,9 @@ $type = 'supplier_payment';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'alpha');
+	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'aZ09');
 	$masksupplierpayment = GETPOST('masksupplierpayment', 'alpha');
-	if ($maskconstsupplierpayment) {
+	if ($maskconstsupplierpayment && preg_match('/_MASK$/', $maskconstsupplierpayment)) {
 		$res = dolibarr_set_const($db, $maskconstsupplierpayment, $masksupplierpayment, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -241,7 +241,7 @@ foreach ($dirmodels as $reldir) {
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_supplier_payment_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -260,7 +260,7 @@ foreach ($dirmodels as $reldir) {
 
 							print '<td class="center">';
 							//print "> ".$conf->global->SUPPLIER_PAYMENT_ADDON." - ".$file;
-							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || $conf->global->SUPPLIER_PAYMENT_ADDON.'.php' == $file) {
+							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . '.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).(!empty($module->scandir) ? '&scandir='.$module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';

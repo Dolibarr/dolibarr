@@ -91,8 +91,8 @@ if ($cancel) {
 }
 
 // Action mise a jour d'une categorie
-if ($action == 'update' && $user->rights->categorie->creer) {
-	$object->oldcopy = dol_clone($object);
+if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
+	$object->oldcopy = dol_clone($object, 2);
 	$object->label = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
@@ -166,7 +166,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
+$doleditor = new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), ROWS_6, '90%');
 $doleditor->Create();
 print '</td></tr>';
 

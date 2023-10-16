@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kód
+WebsiteName=Name of the website
 WebsiteSetupDesc=Vytvořte zde webové stránky, které chcete používat. Poté přejděte do nabídky Webové stránky a upravte je.
 DeleteWebsite=Odstranit web
 ConfirmDeleteWebsite=Opravdu chcete tento web odstranit? Všechny její stránky a obsah budou také odstraněny. Nahrané soubory (jako do adresáře médií, modul ECM, ...) zůstanou.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Přidání v dolní části hlavičky HTML (společné pro v
 WEBSITE_ROBOT=Soubor pro roboty (soubor robots.txt)
 WEBSITE_HTACCESS=Soubor .htaccess
 WEBSITE_MANIFEST_JSON=Soubor manifest.json webové stránky
-WEBSITE_README=Soubor README.md
 WEBSITE_KEYWORDSDesc=Hodnoty oddělte čárkou
-EnterHereLicenseInformation=Sem zadejte metadata nebo licenční informace a vyplňte soubor README.md. Pokud distribuujete svůj web jako šablonu, bude soubor zahrnut do temptátového balíčku.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=Záhlaví HTML (pouze pro tuto stránku)
 PageNameAliasHelp=Název nebo alias stránky. <br> Tento alias je také používán k vytvoření adresy URL při běhu webových stránek z virtuálního hostitele webového serveru (jako Apacke, Nginx, ...). Pomocí tlačítka "<strong> %s </strong>" upravte tento alias.
 EditTheWebSiteForACommonHeader=Poznámka: Pokud chcete definovat osobní hlavičku pro všechny stránky, upravte záhlaví na úrovni webu namísto na stránce / kontejneru.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Zobrazit stránku v nové kartě
 SetAsHomePage=Nastavit jako domovskou stránku
 RealURL=real URL
 ViewWebsiteInProduction=Pohled webové stránky s použitím domácí adresy URL
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost= <u> Použit  Apache / Nginx / ... </u> <br> vytvořit na svůj webový server (Apache, Nginx, ...) a vyhrazený virtuálního hostitele s PHP povoleno a Kořenový adresář na <br> <strong> %s </strong>
 ExampleToUseInApacheVirtualHostConfig=Příklad použití v nastavení virtuálního hostitele Apache:
 YouCanAlsoTestWithPHPS= <u> Použití s vloženým serverem PHP </u> <br> Při vývoji prostředí můžete upřednostňovat testování webu pomocí integrovaného webového serveru PHP (PHP 5.5 vyžadováno) spuštěním <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
-YouCanAlsoDeployToAnotherWHP= <u> Provozujte svůj web s jiným poskytovatelem hostingu Dolibarr </u> <br> Pokud nemáte webový server jako Apache nebo NGinx dostupný na internetu, můžete exportovat a importovat webový server na jinou instanci Dolibarr poskytovanou jiným poskytovatelem hostingu Dolibarr. integrace s modulem webových stránek. Seznam některých poskytovatelů hostingu Dolibarr najdete na <a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Číst
 WritePerm=Zápis
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Zdrojový kód HTML můžete upravit pomocí tlač�
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Pro obraz sdílený pomocí sdíleného odkazu (otevřený přístup pomocí klíče sdílení hash souboru) je syntaxe: <br> <strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore= <br> Další příklady HTML nebo dynamického kódu jsou k dispozici na <a href="%s" target="_blank"> wiki dokumentaci </a> <br>.
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
 ClonePage=Klonovat stránku / kontejner
 CloneSite=Kopie stránky
 SiteAdded=Webová stránka byla přidána
@@ -80,7 +83,7 @@ BlogPost=Příspěvek na blogu
 WebsiteAccount=Účet webových stránek
 WebsiteAccounts=Účty webových stránek
 AddWebsiteAccount=Vytvořte účet webových stránek
-BackToListForThirdParty=Zpět na seznam pro subjekt
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=Nejprve zakažte web
 MyContainerTitle=Název mé webové stránky
 AnotherContainer=Takto lze zahrnout obsah jiné stránky / kontejneru (pokud povolíte dynamický kód, protože integrovaný subdodavatel nemusí existovat, může se zde vyskytnout chyba)
@@ -137,7 +140,7 @@ PagesRegenerated=%s regenerováno stránky / kontejnery
 RegenerateWebsiteContent=Regenerate web site cache files
 AllowedInFrames=Allowed in Frames
 DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.
-GenerateSitemaps=Generate website sitemap file
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
 ConfirmSitemapsCreation=Confirm sitemap generation
 SitemapGenerated=Sitemap file <b>%s</b> generated
@@ -145,3 +148,15 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon must be png
 ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
 FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)
+Visibility=Viditelnost
+Everyone=Everyone
+AssignedContacts=Assigned contacts

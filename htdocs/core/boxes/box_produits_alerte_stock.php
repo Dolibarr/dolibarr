@@ -86,7 +86,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
-		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire) {
+		if (($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) && $user->hasRight('stock', 'lire')) {
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
 			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -95,10 +95,10 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			$sql .= " AND p.seuil_stock_alerte > 0";
-			if (empty($user->rights->produit->lire)) {
+			if (!$user->hasRight('produit', 'lire')) {
 				$sql .= ' AND p.fk_product_type <> 0';
 			}
-			if (empty($user->rights->service->lire)) {
+			if (!$user->hasRight('service', 'lire')) {
 				$sql .= ' AND p.fk_product_type <> 1';
 			}
 			// Add where from hooks
@@ -167,12 +167,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 						'text' => $objp->label,
 					);
 
-					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
+					if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
 						$price_base_type = $langs->trans($objp->price_base_type);
 						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-					} else //Parse the dynamic price
-					{
+					} else { //Parse the dynamic price
 						$productstatic->fetch($objp->rowid, '', '', 1);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($productstatic);
 						if ($price_result >= 0) {

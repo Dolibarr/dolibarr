@@ -34,12 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+if (isModEnabled('contrat')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+}
 if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
@@ -61,20 +63,17 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
+
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 $now = dol_now();
 
-// Security check
-$socid = GETPOST("socid", 'int');
-if ($user->socid > 0) {
-	$action = '';
-	$id = $user->socid;
-} else {
-	$id = 0;
+//restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+if (!$user->hasRight('propal', 'read') && !$user->hasRight('supplier_proposal', 'read') && !$user->hasRight('commande', 'read') && !$user->hasRight('fournisseur', 'commande', 'read')
+	&& !$user->hasRight('supplier_order', 'read') && !$user->hasRight('fichinter', 'read')) {
+	accessforbidden();
 }
-restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
-$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 
 /*
@@ -100,7 +99,7 @@ if (isModEnabled('supplier_proposal')) {
 if (isModEnabled('commande')) {
 	$orderstatic = new Commande($db);
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if (isModEnabled("supplier_order")) {
 	$supplierorderstatic = new CommandeFournisseur($db);
 }
 
@@ -129,7 +128,7 @@ if ($tmp) {
  * Draft customer proposals
  */
 
-if (isModEnabled("propal") && $user->rights->propal->lire) {
+if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -138,13 +137,13 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_DRAFT;
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -166,7 +165,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
-					$othernb += 1;
+					$othernb++;
 					$i++;
 					$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 					continue;
@@ -227,7 +226,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 
-if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "lire")) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -236,13 +235,13 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($supplierproposalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".SupplierProposal::STATUS_DRAFT;
 	$sql .= " AND p.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -324,7 +323,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
  * Draft sales orders
  */
 
-if (isModEnabled('commande') && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -333,13 +332,13 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_DRAFT;
 	$sql .= " AND c.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -422,7 +421,7 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
  * Draft purchase orders
  */
 
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "commande", "lire")) || (isModEnabled("supplier_order") && $user->hasRight("supplier_order", "lire"))) {
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -431,13 +430,13 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE cf.entity IN (".getEntity($supplierorderstatic->element).")";
 	$sql .= " AND cf.fk_statut = ".CommandeFournisseur::STATUS_DRAFT;
 	$sql .= " AND cf.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -517,10 +516,10 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 /*
- * Draft interventionals
+ * Draft interventions
  */
 if (isModEnabled('ficheinter')) {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
+	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -528,7 +527,7 @@ if (isModEnabled('ficheinter')) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -537,7 +536,7 @@ if (isModEnabled('ficheinter')) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -546,13 +545,12 @@ if (isModEnabled('ficheinter')) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, $maxofloop);
+		startSimpleTable("DraftFichinter", "fichinter/list.php", "search_status=".Fichinter::STATUS_DRAFT, 2, $num);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
+		//print '<tr class="liste_titre">';
+		//print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
 
-		if ($num) {
+		if ($num > 0) {
 			$i = 0;
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
@@ -576,15 +574,23 @@ if (isModEnabled('ficheinter')) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">';
+				print '<td class="tdoverflowmax100">';
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
-				print '<td class="nowrap tdoverflowmax100">';
+				print '<td class="tdoverflowmax100">';
 				print $companystatic->getNomUrl(1, 'customer');
-				print '</td></tr>';
+				print '</td>';
+				print '<td class="nowraponall tdoverflowmax100 right">';
+				print convertSecondToTime($obj->duration);
+				print '</td>';
+				print '</tr>';
 				$i++;
 			}
 		}
+
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoIntervention");
+		finishSimpleTable(true);
+
 		print "</table></div>";
 	}
 }
@@ -602,12 +608,12 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$sql .= ", s.canvas";
 	$sql .= ", s.datec, s.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
 	$sql .= " AND s.client IN (".Societe::CUSTOMER.", ".Societe::PROSPECT.", ".Societe::CUSTOMER_AND_PROSPECT.")";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	// Add where from hooks
@@ -669,7 +675,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 					$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 				}
 				/*
-				if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $obj->fournisseur)
+				if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $obj->fournisseur)
 				{
 					$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 				}*/
@@ -700,7 +706,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 /*
  * Last suppliers
  */
-if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->hasRight('societe', 'lire')) {
+if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->hasRight('societe', 'lire')) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -708,12 +714,12 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 	$sql .= ", s.canvas";
 	$sql .= ", s.datec as dc, s.tms as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$user->socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
 	$sql .= " AND s.fournisseur = ".Societe::SUPPLIER;
-	if (empty($user->rights->societe->client->voir) && !$user->socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	// Add where from hooks
@@ -765,7 +771,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 				{
 					$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 				}*/
-				if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $obj->fournisseur) {
+				if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $obj->fournisseur) {
 					$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 				}
 				print $s;
@@ -795,7 +801,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 /*
  * Last actions
  */
-/*if ($user->rights->agenda->myactions->read) {
+/*if ($user->hasRight('agenda', 'myactions', 'read')) {
 	show_array_last_actions_done($max);
 }*/
 
@@ -803,7 +809,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 /*
  * Actions to do
  */
-/*if ($user->rights->agenda->myactions->read) {
+/*if ($user->hasRight('agenda', 'myactions', 'read')) {
 	show_array_actions_to_do($max);
 }*/
 
@@ -811,7 +817,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 /*
  * Latest contracts
  */
-if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contrat') && $user->hasRight("contrat", "lire") && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -823,13 +829,13 @@ if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A RE
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.entity IN (".getEntity($staticcontrat->element).")";
 	$sql .= " AND c.fk_soc = s.rowid";
 	$sql .= " AND c.fk_product = p.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -868,7 +874,7 @@ if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A RE
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$staticcontrat->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="right">'.$staticcontrat->LibStatut($obj->statut, 3).'</td>';
 				print '</tr>';
 
@@ -889,7 +895,7 @@ if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A RE
 /*
  * Opened (validated) proposals
  */
-if (isModEnabled("propal") && $user->rights->propal->lire) {
+if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 	$sql = "SELECT p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -898,13 +904,13 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -971,7 +977,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				$datem = $db->jdate($obj->dp);
 				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("Date").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
 				print dol_print_date($datem, 'day', 'tzserver');
@@ -1008,7 +1014,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 /*
  * Opened (validated) order
  */
-if (isModEnabled('commande') && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -1017,13 +1023,13 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
 	$sql .= " AND c.fk_soc = s.rowid";
 	$sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_SHIPMENTONPROCESS.")";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -1091,7 +1097,7 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				$datem = $db->jdate($obj->dv);
 				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("DateValue").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
 				print dol_print_date($datem, 'day', 'tzserver');

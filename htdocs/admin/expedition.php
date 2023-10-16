@@ -62,9 +62,9 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstexpedition', 'alpha');
+	$maskconst = GETPOST('maskconstexpedition', 'aZ09');
 	$maskvalue = GETPOST('maskexpedition', 'alpha');
-	if (!empty($maskconst)) {
+	if (!empty($maskconst) && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -212,7 +212,7 @@ foreach ($dirmodels as $reldir) {
 
 						print '<tr><td>'.$module->name."</td>\n";
 						print '<td>';
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module

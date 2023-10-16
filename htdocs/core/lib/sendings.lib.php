@@ -47,10 +47,17 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire) {
+	if ($object->statut == Expedition::STATUS_DRAFT) {
+		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("ShipmentDistribution");
+		$head[$h][2] = 'dispatch';
+		$h++;
+	}
+
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire')) {
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
-		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
+		if (isset($object->linkedObjectsIds['delivery']) && is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
 			// Take first one element of array
 			$tmp = reset($object->linkedObjectsIds['delivery']);
 
@@ -133,7 +140,7 @@ function delivery_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	if ($conf->expedition_bon->enabled && $user->rights->expedition->lire) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->origin_id;
 		$head[$h][1] = $langs->trans("SendingCard");
 		$head[$h][2] = 'shipping';
@@ -235,14 +242,14 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
-	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
-	//if ($conf->delivery_note->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
+	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status,";
+	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
 	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 	$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
 	$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-	//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
+	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -285,7 +292,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<td>';
 				print '</td>';
 			}*/
-			if (!empty($conf->delivery_note->enabled)) {
+			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
 				//print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="right">'.$langs->trans("DeliveryDate").'</td>';
@@ -295,11 +302,18 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
+				$expedition->id = $objp->expedition_id;
+				$expedition->ref = $objp->exp_ref;
+				$expedition->billed = $objp->billed;
+				$expedition->statut = $objp->status;
+				$expedition->status = $objp->status;
+
 				print '<tr class="oddeven">';
 
 				// Sending id
 				print '<td class="nowrap left">';
-				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
+				print $expedition->getNomUrl(1);
+				//print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
 
 				// Description
@@ -339,16 +353,17 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$product_static->id = $objp->fk_product;
 					$product_static->ref = $objp->ref;
 					$product_static->status_batch = $objp->product_tobatch;
+
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
-					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($objp->description));
+					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
 
 					// Add description in form
-					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 						print (!empty($objp->description) && $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 					}
 
@@ -427,9 +442,8 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				}*/
 
 				// Informations on receipt
-				if (!empty($conf->delivery_note->enabled)) {
+				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-					$expedition->id = $objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
 					//var_dump($expedition->linkedObjects);
 

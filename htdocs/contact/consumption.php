@@ -133,11 +133,10 @@ $morehtmlref .= '<div class="refidno">';
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$objsoc->fetch($socid);
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : ';
 	if ($objsoc->id > 0) {
 		$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 	} else {
-		$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 	}
 }
 $morehtmlref .= '</div>';
@@ -156,30 +155,30 @@ print '</td></tr>';
 
 if ($object->thirdparty->client) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if (isModEnabled("propal") && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (isModEnabled('commande') && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
 
-if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
+if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
 if ($object->thirdparty->fournisseur) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 
@@ -378,12 +377,12 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element)."&id=".urlencode($id);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sprod_fulldescr) {
 		$param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
@@ -520,7 +519,7 @@ if ($sql_select) {
 			}
 
 			$text .= ' - '.(!empty($objp->label) ? $objp->label : $label);
-			$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($objp->description));
+			$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
 		}
 
 		if (($objp->info_bits & 2) == 2) {
@@ -571,7 +570,7 @@ if ($sql_select) {
 				echo get_date_range($objp->date_start, $objp->date_end);
 
 				// Add description in form
-				if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 					print (!empty($objp->description) && $objp->description != $objp->product_label) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 				}
 			} else {
@@ -608,7 +607,7 @@ if ($sql_select) {
 		// Show range
 		$prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
 		// Add description in form
-		if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
+		if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE'))
 		{
 			$prodreftxt .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 		}

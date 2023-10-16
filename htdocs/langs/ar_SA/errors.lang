@@ -14,6 +14,7 @@ ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
 ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
 ErrorEmailAlreadyExists=البريد الإلكتروني %s موجود بالفعل.
 ErrorRecordNotFound=لم يتم العثور على السجل.
+ErrorRecordNotFoundShort=Not found
 ErrorFailToCopyFile=فشل في نسخ الملف <b>'%s'</b> إلى <b>'%s</b> &quot;.
 ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=فشل لإعادة تسمية الملف <b>'%s'</b> إلى <b>'%s</b> &quot;.
@@ -48,6 +49,7 @@ ErrorBadImageFormat=ملف الصورة لم تنسيق معتمد (PHP لديك
 ErrorBadDateFormat='%s' قيمة له خاطئ تنسيق التاريخ
 ErrorWrongDate=تاريخ غير صحيح!
 ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
+ErrorFailedToBuildArchive=Failed to build archive file %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق= ٪ مع البريد الإلكتروني)
 ErrorUserCannotBeDelete=لا يمكن حذف المستخدم. ربما يرتبط بكيانات Dolibarr.
 ErrorFieldsRequired=تم ترك بعض الحقول المطلوبة فارغة.
@@ -76,7 +78,7 @@ ErrorNoValueForCheckBoxType=يرجى ملء قيمة لقائمة مربع
 ErrorNoValueForRadioType=يرجى ملء قيمة لقائمة الراديو
 ErrorBadFormatValueList=قيمة القائمة لا يمكن أن يكون أكثر من واحد <u>فاصلة:٪ الصورة،</u> ولكن تحتاج إلى واحد على الأقل: مفتاح، قيمة
 ErrorFieldCanNotContainSpecialCharacters=يجب ألا يحتوي الحقل <b> %s </b> على أحرف خاصة.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=يجب ألا يحتوي الحقل <b> %s </b> على أحرف خاصة ولا أحرف كبيرة ولا يمكن أن يحتوي على أرقام فقط.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters, and must start with an alphabetical character (a-z)
 ErrorFieldMustHaveXChar=يجب أن يحتوي الحقل <b> %s </b> على أحرف %s على الأقل.
 ErrorNoAccountancyModuleLoaded=أي وحدة المحاسبة وتفعيل
 ErrorExportDuplicateProfil=هذا الاسم الشخصي موجود مسبقا لهذه المجموعة التصدير.
@@ -95,9 +97,9 @@ ErrorWrongValueForField=الحقل <b> %s </b>: '<b> %s </b>' لا يتطابق 
 ErrorHtmlInjectionForField=الحقل <b> %s </b>: تحتوي القيمة '<b> %s </b>' على بيانات ضارة غير مسموح بها
 ErrorFieldValueNotIn=Field  <b> %s </b> : ' <b> %s </b> ' is not a value found in field  <b> %s </b>  of  <b> %s </b>
 ErrorFieldRefNotIn=الحقل <b> %s </b>: '<b> %s </b>' ليس a0aee833658377fz039
+ErrorMultipleRecordFoundFromRef=Several record found when searching from ref <b>%s</b>. No way to know which ID to use.
 ErrorsOnXLines=تم العثور على أخطاء %s
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
-ErrorSpecialCharNotAllowedForField=غير مسموح الأحرف الخاصة لحقل "%s"
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 ErrorQtyTooLowForThisSupplier=الكمية منخفضة جدًا لهذا البائع أو لم يتم تحديد سعر لهذا المنتج لهذا البائع
 ErrorOrdersNotCreatedQtyTooLow=لم يتم إنشاء بعض الطلبات بسبب الكميات المنخفضة للغاية
@@ -242,6 +244,7 @@ ErrorObjectMustHaveStatusActiveToBeDisabled=يجب أن تكون الكائنا�
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=يجب أن تكون الكائنات بحالة "مسودة" أو "معطلة" ليتم تمكينها
 ErrorNoFieldWithAttributeShowoncombobox=لا توجد حقول لها الخاصية "showoncombobox" في تعريف الكائن "%s". لا توجد طريقة لإظهار الاحتكاك.
 ErrorFieldRequiredForProduct=الحقل "%s" مطلوب للمنتج %s
+AlreadyTooMuchPostOnThisIPAdress=You have already posted too much on this IP address.
 ProblemIsInSetupOfTerminal=كانت المشكلة في إعداد المحطة الطرفية %s.
 ErrorAddAtLeastOneLineFirst=أضف سطرًا واحدًا على الأقل أولاً
 ErrorRecordAlreadyInAccountingDeletionNotPossible=خطأ ، تم نقل السجل بالفعل في المحاسبة ، والحذف غير ممكن.
@@ -271,14 +274,14 @@ ErrorYouMustFirstSetupYourChartOfAccount=يجب عليك أولاً إعداد �
 ErrorFailedToFindEmailTemplate=فشل العثور على قالب بالاسم الرمزي %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=المدة غير محددة في الخدمة. لا توجد طريقة لحساب سعر الساعة.
 ErrorActionCommPropertyUserowneridNotDefined=مالك المستخدم مطلوب
-ErrorActionCommBadType=Selected event type (id: %s, code: %s) do not exist in Event Type dictionary
+ErrorActionCommBadType=نوع الحدث المحدد (المعرف: %s ، الرمز: %s) غير موجود في قاموس نوع الحدث
 CheckVersionFail=فشل التحقق من الإصدار
 ErrorWrongFileName=لا يمكن أن يحتوي اسم الملف على __SOMETHING__ فيه
 ErrorNotInDictionaryPaymentConditions=ليس في قاموس شروط الدفع ، يرجى التعديل.
 ErrorIsNotADraft=%s ليس مسودة
 ErrorExecIdFailed=لا يمكن تنفيذ الأمر "id"
-ErrorBadCharIntoLoginName=شخصية غير مصرح بها في اسم تسجيل الدخول
-ErrorRequestTooLarge=خطأ ، الطلب كبير جدًا
+ErrorBadCharIntoLoginName=Unauthorized character in the field %s
+ErrorRequestTooLarge=Error, request too large or session expired
 ErrorNotApproverForHoliday=أنت لست المعتمد للمغادرة %s
 ErrorAttributeIsUsedIntoProduct=تُستخدم هذه السمة في متغير منتج واحد أو أكثر
 ErrorAttributeValueIsUsedIntoProduct=تُستخدم قيمة السمة هذه في متغير منتج واحد أو أكثر
@@ -289,13 +292,22 @@ ErrorInvoiceLoadThirdPartyKey=مفتاح الجهة الخارجية "%s" لم �
 ErrorDeleteLineNotAllowedByObjectStatus=حذف سطر غير مسموح به من خلال حالة الكائن الحالية
 ErrorAjaxRequestFailed=الطلب فشل
 ErrorThirpdartyOrMemberidIsMandatory=طرف ثالث أو عضو في الشراكة إلزامي
-ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
-ErrorQuantityIsLimitedTo=Quantity is limited to %s
+ErrorFailedToWriteInTempDirectory=فشل في الكتابة في الدليل المؤقت
+ErrorQuantityIsLimitedTo=الكمية محدودة بـ %s
+ErrorFailedToLoadThirdParty=Failed to find/load thirdparty from id=%s, email=%s, name=%s
+ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account
+ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
+ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character +
+ErrorTableNotFound=Table <b>%s</b> not found
+ErrorValueForTooLow=Value for <b>%s</b> is too low
+ErrorValueCantBeNull=Value for <b>%s</b> can't be null
+ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
+ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=معلمة PHP upload_max_filesize (%s) أعلى من معلمة PHP post_max_size (%s). هذا ليس إعداد ثابت.
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
-WarningMandatorySetupNotComplete=Click here to setup main parameters
+WarningMandatorySetupNotComplete=انقر هنا لإعداد المعلمات الرئيسية
 WarningEnableYourModulesApplications=انقر هنا لتمكين الوحدات والتطبيقات الخاصة بك
 WarningSafeModeOnCheckExecDir=انذار ، فب <b>safe_mode</b> الخيار في ذلك تخزين الأمر يجب أن يكون داخل الدليل الذي أعلنته <b>safe_mode_exec_dir</b> المعلمة بي.
 WarningBookmarkAlreadyExists=المرجعية هذا الكتاب أو هذا الهدف (عنوان) موجود بالفعل.
@@ -304,7 +316,7 @@ WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / �
 WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
 WarningNoDocumentModelActivated=لم يتم تنشيط أي نموذج لإنشاء المستندات. سيتم اختيار نموذج افتراضيًا حتى تتحقق من إعداد الوحدة الخاصة بك.
 WarningLockFileDoesNotExists=تحذير ، بمجرد الانتهاء من الإعداد ، يجب عليك تعطيل أدوات التثبيت / الترحيل عن طريق إضافة ملف <b> install.lock </b> إلى الدليل <b> %s </b>. يعد حذف إنشاء هذا الملف مخاطرة أمنية كبيرة.
-WarningUntilDirRemoved=ستبقى جميع التحذيرات الأمنية (المرئية من قبل المستخدمين المسؤولين فقط) نشطة طالما أن الثغرة الأمنية موجودة (أو أن MAIN_REMOVE_INSTALL_WARNING الثابت مضاف في الإعداد-> الإعداد الآخر).
+WarningUntilDirRemoved=This security warning will remain active as long as the vulnerability is present.
 WarningCloseAlways=تحذير، ويتم إغلاق حتى إذا قدر يختلف بين عناصر المصدر والهدف. تمكين هذه الميزة بحذر.
 WarningUsingThisBoxSlowDown=تحذير، وذلك باستخدام هذا الإطار تبطئ على محمل الجد كل الصفحات التي تظهر مربع.
 WarningClickToDialUserSetupNotComplete=إعداد المعلومات ClickToDial لالمستخدم الخاص بك ليست كاملة (انظر التبويب ClickToDial على بطاقة المستخدم الخاص بك).
@@ -326,6 +338,8 @@ WarningAvailableOnlyForHTTPSServers=متاح فقط في حالة استخدام
 WarningModuleXDisabledSoYouMayMissEventHere=لم يتم تمكين الوحدة النمطية %s. لذلك قد تفوتك الكثير من الأحداث هنا.
 WarningPaypalPaymentNotCompatibleWithStrict=تجعل القيمة "صارمة" ميزات الدفع عبر الإنترنت لا تعمل بشكل صحيح. استخدم "Lax" بدلاً من ذلك.
 WarningThemeForcedTo=تحذير ، تم إجبار السمة على <b> %s </b> بواسطة الثابت المخفي MAIN_FORCETHEME
+WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
+WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
 
 # Validate
 RequireValidValue = القيمة غير صالحة

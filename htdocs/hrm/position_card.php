@@ -174,7 +174,12 @@ if (empty($reshook)) {
 }
 
 
+/*
+ * View
+ */
+
 displayPositionCard($object);
+
 
 
 /**
@@ -198,6 +203,9 @@ function displayPositionCard(&$object)
 	$form = new Form($db);
 	$formfile = new FormFile($db);
 	$formproject = new FormProjets($db);
+
+	$backtopage = GETPOST('backtopage', 'alpha');
+	$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 	$title = $langs->trans("Position");
 	$help_url = '';
@@ -272,16 +280,15 @@ function displayPositionCard(&$object)
 
 		// Object card
 		// ------------------------------------------------------------
-		//      $linkback = '<a href="' . dol_buildpath('/hrm/position.php', 1) . '?restore_lastsearch_values=1' . (!empty($object->fk_job) ? '&fk_job=' . $object->fk_job : '') . '">' . $langs->trans("BackToList") . '</a>';
-		$linkback = '<a href="' . dol_buildpath('/hrm/position_list.php', 1) . '">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/position_list.php">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';
 		$u_position = new User(($db));
 		$u_position->fetch($object->fk_user);
-		$morehtmlref .= $langs->trans('Employee').' : '.($u_position->id > 0 ? $u_position->getNomUrl(1) : '');
+		$morehtmlref .= ($u_position->id > 0 ? $u_position->getNomUrl(1) : $langs->trans('Employee').' : ');
 		$job = new Job($db);
 		$job->fetch($object->fk_job);
-		$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
+		$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 		$morehtmlref .= '</div>';
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
@@ -340,7 +347,7 @@ function displayPositionCard(&$object)
 //		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
-//		$delallowed = $user->rights->societe->creer;
+//		$delallowed = $user->hasRight('societe', 'creer');
 //
 //		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 //	}
