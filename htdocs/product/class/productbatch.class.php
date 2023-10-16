@@ -500,7 +500,8 @@ class Productbatch extends CommonObject
 				$tmp->batch = $obj->batch;
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
-				$tmp->stock_entry_date = $obj->date_entree;
+
+				$tmp->context['stock_date_entry'] = $obj->date_entree;
 
 				// Some properties of the lot
 				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
@@ -514,7 +515,7 @@ class Productbatch extends CommonObject
 
 			return $ret;
 		} else {
-			$error = "Error ".$dbs->lasterror();
+			//$error = "Error ".$dbs->lasterror();
 			return -1;
 		}
 	}

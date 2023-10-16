@@ -1414,7 +1414,9 @@ if ($action == 'create') {
 									}
 									$subj++;
 									print '</td>';
-									if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td>'.dol_print_date($dbatch->stock_entry_date, 'day').'</td>'; //StockEntrydate
+									if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td>'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>'; //StockEntrydate
+									}
 									print '</tr>';
 								}
 							} else {
@@ -1426,7 +1428,7 @@ if ($action == 'create') {
 								print '<td class="left">';
 								print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
 								print '</td>';
-								if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>'; //StockEntrydate
+								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>'; //StockEntrydate
 								print '</tr>';
 							}
 						}
@@ -1639,7 +1641,9 @@ if ($action == 'create') {
 										//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 										$subj++;
 										print '</td>';
-										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td class="left">'.dol_print_date($dbatch->stock_entry_date, 'day').'</td>';
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+											print '<td class="left">'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>';
+										}
 										print '</tr>';
 									}
 								}
