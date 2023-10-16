@@ -2250,7 +2250,6 @@ class Form
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
 	/**
 	 * Return select list of users. Selected users are stored into session.
 	 * List of users are provided into $_SESSION['assignedtouser'].
@@ -2344,6 +2343,7 @@ class Form
 		return $out;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return select list of resources. Selected resources are stored into session.
 	 * List of resources are provided into $_SESSION['assignedtoresource'].
