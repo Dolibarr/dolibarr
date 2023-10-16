@@ -1150,6 +1150,7 @@ if ($action == 'create') {
 						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
 				}
+				if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td class="left">'.$langs->trans('StockEntryDate').'</td>';
 				print "</tr>\n";
 			}
 
@@ -1334,7 +1335,7 @@ if ($action == 'create') {
 								}
 								print '</td>';
 							}
-
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>'; //StockEntrydate
 							print "</tr>\n";
 
 							// Show subproducts of product
@@ -1351,13 +1352,17 @@ if ($action == 'create') {
 										print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
 											<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 											</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
-											<td class=\"center\">".$value['stock']." ".$img."</td></tr>";
+											<td class=\"center\">".$value['stock']." ".$img."</td>";
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>'; //StockEntrydate
+										print "</tr>";
 									}
 								}
 							}
 						} else {
 							// Product need lot
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td><td></td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE))  print '<td></td>'; //StockEntrydate
+							print '</tr>'; // end line and start a new one for lot/serial
 							print '<!-- Case product need lot -->';
 
 							$staticwarehouse = new Entrepot($db);
@@ -1408,7 +1413,9 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
-									print '</td></tr>';
+									print '</td>';
+									if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td>'.dol_print_date($dbatch->stock_entry_date, 'day').'</td>'; //StockEntrydate
+									print '</tr>';
 								}
 							} else {
 								print '<!-- Case there is no details of lot at all -->';
@@ -1418,14 +1425,18 @@ if ($action == 'create') {
 
 								print '<td class="left">';
 								print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
-								print '</td></tr>';
+								print '</td>';
+								if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>'; //StockEntrydate
+								print '</tr>';
 							}
 						}
 					} else {
 						// ship from multiple locations
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
-							print '<td></td><td></td></tr>'."\n"; // end line and start a new one for each warehouse
+							print '<td></td><td></td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
+							print '</tr>'."\n"; // end line and start a new one for each warehouse
 
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							$subj = 0;
@@ -1509,6 +1520,7 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
+									if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
 									print "</tr>\n";
 								}
 							}
@@ -1528,13 +1540,16 @@ if ($action == 'create') {
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 										</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
 										<td class=\"center\">".$value['stock']." ".$img."</td>";
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
 										print "</tr>";
 									}
 								}
 							}
 						} else {
 							print '<!-- Case warehouse not already known and product need lot -->';
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td><td></td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
+							print '</tr>'; // end line and start a new one for lot/serial
 
 							$subj = 0;
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1623,7 +1638,9 @@ if ($action == 'create') {
 										}
 										//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 										$subj++;
-										print '</td></tr>';
+										print '</td>';
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td class="left">'.dol_print_date($dbatch->stock_entry_date, 'day').'</td>';
+										print '</tr>';
 									}
 								}
 							}
@@ -1665,6 +1682,7 @@ if ($action == 'create') {
 								print $langs->trans("Service");
 							}
 							print '</td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
 							print '</tr>';
 						}
 					}
