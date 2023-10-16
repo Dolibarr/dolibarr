@@ -58,7 +58,7 @@ $setcurrency = GETPOST('setcurrency', 'aZ09');
 $nb_auth_terms = 0;
 $numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
 for ($i = 1; $i <= $numterminals; $i++) {
-	if ($user->rights->takepos->{'access_takepos_' . $i}) {
+	if ($user->hasRights('takepos', 'access_takepos_' . $i)) {
 		$curterm = $i;
 		$nb_auth_terms++;
 	}
@@ -68,7 +68,7 @@ if (empty($_SESSION["takeposterminal"])) {
 	if (empty($nb_auth_terms)) {
 		accessforbidden();
 	} elseif ($nb_auth_terms > 1) {
-		if (!empty($_COOKIE["takeposterminal"]) && $user->rights->takepos->{'access_takepos_' . $_COOKIE["takeposterminal"]}) {
+		if (!empty($_COOKIE["takeposterminal"]) && $user->hasRight('takepos', 'access_takepos_' . $_COOKIE["takeposterminal"])) {
 			$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
 		}
 	} else {
@@ -1137,7 +1137,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<?php
 		for ($i = 1; $i <= $numterminals; $i++) {
-			if ($user->rights->takepos->{'access_takepos_' . $i}) {
+			if ($user->hasRight('takepos', 'access_takepos_' . $i)) {
 				$terminal_name = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) != "" ? getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i) : $langs->trans("TerminalName", $i);
 				print '<button type="button" class="block" onclick="closeTerminal(true);location.href=\'index.php?setterminal='.$i.'\'">'. $terminal_name .'</button>';
 			}
