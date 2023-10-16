@@ -1525,7 +1525,7 @@ class Asset extends CommonObject
 		if (!empty($conf->global->ASSET_ASSET_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->ASSET_ASSET_ADDON.".php";
+			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";
 			$classname = $conf->global->ASSET_ASSET_ADDON;
 
 			// Include file with class

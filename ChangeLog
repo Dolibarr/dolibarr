@@ -7,7 +7,8 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-...
+
+NEW: Right for stats orders new const MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS
 
 For developers or integrators:
 ------------------------------

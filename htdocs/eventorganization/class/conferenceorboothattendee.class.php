@@ -992,7 +992,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (!empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON.".php";
+			$file = getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON') . ".php";
 			$classname = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON;
 
 			// Include file with class

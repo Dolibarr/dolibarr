@@ -158,7 +158,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Back to draft
-	if ($action == 'setdraft' && $user->rights->expedition->creer) {
+	if ($action == 'setdraft' && $user->hasRight('expedition', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setDraft($user, 0);
 		if ($result < 0) {
@@ -166,7 +166,7 @@ if (empty($reshook)) {
 		}
 	}
 	// Reopen
-	if ($action == 'reopen' && $user->rights->expedition->creer) {
+	if ($action == 'reopen' && $user->hasRight('expedition', 'creer')) {
 		$object->fetch($id);
 		$result = $object->reOpen();
 		if ($result < 0) {
@@ -219,7 +219,7 @@ if (empty($reshook)) {
 	}
 
 	// Create shipment
-	if ($action == 'add' && $user->rights->expedition->creer) {
+	if ($action == 'add' && $user->hasRight('expedition', 'creer')) {
 		$error = 0;
 
 		$db->begin();
@@ -446,7 +446,7 @@ if (empty($reshook)) {
 			$_GET["commande_id"] = GETPOST('commande_id', 'int');
 			$action = 'create';
 		}
-	} elseif ($action == 'create_delivery' && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->rights->expedition->delivery->creer) {
+	} elseif ($action == 'create_delivery' && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer')) {
 		// Build a receiving receipt
 		$db->begin();
 
@@ -462,8 +462,8 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))
+		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'creer'))
+		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'shipping_advance', 'validate')))
 	) {
 		$object->fetch_thirdparty();
 
@@ -495,7 +495,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->expedition->supprimer) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
 		$result = $object->cancel(0, $also_update_stock);
 		if ($result > 0) {
@@ -503,7 +503,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
 		$result = $object->delete(0, $also_update_stock);
 		if ($result > 0) {
@@ -521,7 +521,7 @@ if (empty($reshook)) {
 		//		setEventMessages($object->error, $object->errors, 'errors');
 		//	}
 		//}
-	} elseif ($action == 'setdate_livraison' && !empty($user->rights->expedition->creer)) {
+	} elseif ($action == 'setdate_livraison' && $user->hasRight('expedition', 'creer')) {
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -536,7 +536,7 @@ if (empty($reshook)) {
 		|| $action == 'settrueHeight'
 		|| $action == 'settrueDepth'
 		|| $action == 'setshipping_method_id')
-		&& $user->rights->expedition->creer
+		&& $user->hasRight('expedition', 'creer')
 		) {
 		// Action update
 		$error = 0;
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('save')) {
+	} elseif ($action == 'updateline' && $user->hasRight('expedition', 'creer') && GETPOST('save')) {
 		// Update a line
 		// Clean parameters
 		$qty = 0;
@@ -848,7 +848,7 @@ if (empty($reshook)) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 			exit();
 		}
-	} elseif ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
+	} elseif ($action == 'updateline' && $user->hasRight('expedition', 'creer') && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 		exit();
 	}
@@ -1150,6 +1150,7 @@ if ($action == 'create') {
 						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
 				}
+				if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td class="left">'.$langs->trans('StockEntryDate').'</td>';
 				print "</tr>\n";
 			}
 
@@ -1334,7 +1335,7 @@ if ($action == 'create') {
 								}
 								print '</td>';
 							}
-
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>'; //StockEntrydate
 							print "</tr>\n";
 
 							// Show subproducts of product
@@ -1351,13 +1352,17 @@ if ($action == 'create') {
 										print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
 											<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 											</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
-											<td class=\"center\">".$value['stock']." ".$img."</td></tr>";
+											<td class=\"center\">".$value['stock']." ".$img."</td>";
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>'; //StockEntrydate
+										print "</tr>";
 									}
 								}
 							}
 						} else {
 							// Product need lot
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td><td></td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE))  print '<td></td>'; //StockEntrydate
+							print '</tr>'; // end line and start a new one for lot/serial
 							print '<!-- Case product need lot -->';
 
 							$staticwarehouse = new Entrepot($db);
@@ -1408,7 +1413,11 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
-									print '</td></tr>';
+									print '</td>';
+									if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td>'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>'; //StockEntrydate
+									}
+									print '</tr>';
 								}
 							} else {
 								print '<!-- Case there is no details of lot at all -->';
@@ -1418,14 +1427,18 @@ if ($action == 'create') {
 
 								print '<td class="left">';
 								print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
-								print '</td></tr>';
+								print '</td>';
+								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>'; //StockEntrydate
+								print '</tr>';
 							}
 						}
 					} else {
 						// ship from multiple locations
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
-							print '<td></td><td></td></tr>'."\n"; // end line and start a new one for each warehouse
+							print '<td></td><td></td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
+							print '</tr>'."\n"; // end line and start a new one for each warehouse
 
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							$subj = 0;
@@ -1509,6 +1522,7 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
+									if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
 									print "</tr>\n";
 								}
 							}
@@ -1528,13 +1542,16 @@ if ($action == 'create') {
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 										</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
 										<td class=\"center\">".$value['stock']." ".$img."</td>";
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
 										print "</tr>";
 									}
 								}
 							}
 						} else {
 							print '<!-- Case warehouse not already known and product need lot -->';
-							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
+							print '<td></td><td></td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
+							print '</tr>'; // end line and start a new one for lot/serial
 
 							$subj = 0;
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1623,7 +1640,11 @@ if ($action == 'create') {
 										}
 										//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 										$subj++;
-										print '</td></tr>';
+										print '</td>';
+										if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+											print '<td class="left">'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>';
+										}
+										print '</tr>';
 									}
 								}
 							}
@@ -1665,6 +1686,7 @@ if ($action == 'create') {
 								print $langs->trans("Service");
 							}
 							print '</td>';
+							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
 							print '</tr>';
 						}
 					}
@@ -1815,8 +1837,8 @@ if ($action == 'create') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer shipment
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
@@ -1901,7 +1923,7 @@ if ($action == 'create') {
 
 	// Weight
 	print '<tr><td>';
-	print $form->editfieldkey("Weight", 'trueWeight', $object->trueWeight, $object, $user->rights->expedition->creer);
+	print $form->editfieldkey("Weight", 'trueWeight', $object->trueWeight, $object, $user->hasRight('expedition', 'creer'));
 	print '</td><td colspan="3">';
 
 	if ($action == 'edittrueWeight') {
@@ -1932,13 +1954,13 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Width
-	print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->expedition->creer);
+	print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->hasRight('expedition', 'creer')).'</td><td colspan="3">';
+	print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->hasRight('expedition', 'creer'));
 	print ($object->trueWidth && $object->width_units != '') ? ' '.measuringUnitString(0, "size", $object->width_units) : '';
 	print '</td></tr>';
 
 	// Height
-	print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
+	print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->hasRight('expedition', 'creer')).'</td><td colspan="3">';
 	if ($action == 'edittrueHeight') {
 		print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 		print '<input name="action" value="settrueHeight" type="hidden">';
@@ -1957,8 +1979,8 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Depth
-	print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->expedition->creer);
+	print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->hasRight('expedition', 'creer')).'</td><td colspan="3">';
+	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->hasRight('expedition', 'creer'));
 	print ($object->trueDepth && $object->depth_units != '') ? ' '.measuringUnitString(0, "size", $object->depth_units) : '';
 	print '</td></tr>';
 
@@ -2039,8 +2061,8 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Tracking Number
-	print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
-	print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->expedition->creer, 'safehtmlstring', $object->tracking_number);
+	print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->hasRight('expedition', 'creer')).'</td><td colspan="3">';
+	print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->hasRight('expedition', 'creer'), 'safehtmlstring', $object->tracking_number);
 	print '</td></tr>';
 
 	// Incoterms
@@ -2049,7 +2071,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($user->rights->expedition->creer) {
+		if ($user->hasRight('expedition', 'creer')) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
@@ -2568,8 +2590,8 @@ if ($action == 'create') {
 																									   // modified by hook
 		if (empty($reshook)) {
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
-				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
-				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate))) {
+				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'creer'))
+				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'shipping_advance', 'validate'))) {
 					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('Validate'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
@@ -2591,7 +2613,7 @@ if ($action == 'create') {
 			// Send
 			if (empty($user->socid)) {
 				if ($object->statut > 0) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send) {
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('expedition', 'shipping_advance', 'send')) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					} else {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
@@ -2610,7 +2632,7 @@ if ($action == 'create') {
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery'])) {
+			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
 				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
 

@@ -173,7 +173,7 @@ class PartnershipUtils
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
 							// We are in the case of autocancellation subscription because of missing backlink
 							$fk_partner = $object->fk_member;
@@ -389,7 +389,7 @@ class PartnershipUtils
 
 									$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 									$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
 									$sendto = $obj->email;
 
@@ -524,7 +524,7 @@ class PartnershipUtils
 			}
 		}
 
-		if ($webcontent && !empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) && preg_match('/'.$conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK.'/', $webcontent)) {
+		if ($webcontent && !empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) && preg_match('/' . getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK').'/', $webcontent)) {
 			$found = 1;
 		}
 

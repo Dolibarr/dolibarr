@@ -937,7 +937,7 @@ class Mo extends CommonObject
 		if (!empty($conf->global->MRP_MO_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->MRP_MO_ADDON.".php";
+			$file = getDolGlobalString('MRP_MO_ADDON') . ".php";
 			$classname = $conf->global->MRP_MO_ADDON;
 
 			// Include file with class

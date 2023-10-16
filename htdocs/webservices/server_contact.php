@@ -292,8 +292,8 @@ function getContact($authentication, $id, $ref_ext)
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
-			if ($fuser->rights->societe->contact->lire && !$fuser->socid
-				|| ($fuser->rights->societe->contact->lire && ($fuser->socid == $contact->socid))
+			if ($fuser->hasRight('societe', 'contact', 'lire') && !$fuser->socid
+				|| ($fuser->hasRight('societe', 'contact', 'lire') && ($fuser->socid == $contact->socid))
 			) {
 				$contact_result_fields = array(
 					'id' => $contact->id,

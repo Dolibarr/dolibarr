@@ -106,6 +106,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
+		if (GETPOSTISSET('THEME_ELDY_USECOMOACTROW')) {
+			dolibarr_set_const($db, "THEME_ELDY_USECOMOACTROW", GETPOST('THEME_ELDY_USECOMOACTROW'), 'chaine', 0, '', $conf->entity);
+		}
+
 		if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
 			$val = GETPOST('THEME_DARKMODEENABLED');
 			if (!$val) {
