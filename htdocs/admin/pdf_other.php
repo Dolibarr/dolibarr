@@ -103,7 +103,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", GETPOST("INVOICE_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
-	// Terms to sale
+	// Terms of sale
 	if ($_FILES['termsofsale']["name"]) {
 		if (!preg_match('/(\.pdf)$/i', $_FILES['termsofsale']["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
 			$langs->load("errors");
@@ -125,7 +125,7 @@ if ($action == 'update') {
 }
 
 
-// Terms to sale
+// Terms of sale
 if ($action == 'removetermsofsale') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -408,7 +408,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-// Terms to sale
+// Terms of sale
 $tooltiptermsofsale = $langs->trans('AvailableFormats').' : pdf';
 $maxfilesizearray = getMaxFileSizeArray();
 $tooltiptermsofsale .= ($maxfilesizearray['maxmin'] > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
