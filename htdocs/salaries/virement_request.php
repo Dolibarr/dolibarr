@@ -463,40 +463,71 @@ print dol_get_fiche_end();
 /**button  */
 print '<div class="tabsAction">'."\n";
 
-if ($resteapayer > 0) {
-	if ($user_perms) {
-		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		print '<input type="hidden" name="token" value="'.newToken().'" />';
-		print '<input type="hidden" name="id" value="'.$object->id.'" />';
-		print '<input type="hidden" name="type" value="'.$type.'" />';
-		print '<input type="hidden" name="action" value="new" />';
-		print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-		print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
-		print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
-		print '</form>';
+$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
+	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
+	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+if ($type == 'salaire') {
+	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
+} else {
+	$sql .= " WHERE fk_facture = ".((int) $object->id);
+}
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.type = 'ban'";
+	$sql .= " ORDER BY pfd.date_demande DESC";
+	$resql = $db->query($sql);
 
-		if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-			// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
-			print "<br>";
-			//add stripe sepa button
-			$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+	$hadRequest = $db->num_rows($resql);
+if ($object->paye == 0 && $hadRequest == 0) {
+	if ($resteapayer > 0) {
+		if ($user_perms) {
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
 			print '<input type="hidden" name="action" value="new" />';
-			print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 			print '</form>';
+
+			if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
+				print "<br>";
+				//add stripe sepa button
+				$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="token" value="'.newToken().'" />';
+				print '<input type="hidden" name="id" value="'.$object->id.'" />';
+				print '<input type="hidden" name="type" value="'.$type.'" />';
+				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
+				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+				print '</form>';
+			}
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 	}
 } else {
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
+	if ($hadRequest == 0) {
+		if ($object->paye > 0) {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
+		}
+	} else {
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+	}
 }
+
 print '</div>';
 
 print '<div>';
@@ -534,23 +565,6 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td>&nbsp;</td>';
 }
 	print '</tr>';
-
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
-	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
-	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-if ($type == 'salaire') {
-	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
-} else {
-	$sql .= " WHERE fk_facture = ".((int) $object->id);
-}
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.type = 'ban'";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-	$resql = $db->query($sql);
 
 	$num = 0;
 if ($resql) {
