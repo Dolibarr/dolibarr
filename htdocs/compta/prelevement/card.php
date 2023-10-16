@@ -72,8 +72,7 @@ $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitp
 
 $type = $object->type;
 // chek if salary pl
-$salaryBonPl = $object->checkIfSalaryBonPrelevement($id);
-
+$salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 

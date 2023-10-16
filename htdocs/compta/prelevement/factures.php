@@ -74,6 +74,7 @@ if ($user->socid > 0) {
 }
 
 $type = $object->type;
+$salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
