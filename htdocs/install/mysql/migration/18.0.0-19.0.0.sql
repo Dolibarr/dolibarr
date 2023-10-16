@@ -137,4 +137,3 @@ UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_i
 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
-
