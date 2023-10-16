@@ -54,6 +54,8 @@ $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
+$hookmanager->initHooks(array('takeposfrontend'));
+
 // get user authorized terminals
 $nb_auth_terms = 0;
 $numterminals = max(1, getDolGlobalInt("TAKEPOS_NUM_TERMINALS"));
