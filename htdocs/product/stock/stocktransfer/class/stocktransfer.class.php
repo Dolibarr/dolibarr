@@ -914,7 +914,7 @@ class StockTransfer extends CommonObject
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON;
 
 			// Include file with class

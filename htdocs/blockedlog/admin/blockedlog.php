@@ -127,7 +127,7 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_AUTHORITY_URL">';
 	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
-	print '<input type="text" name="BLOCKEDLOG_AUTHORITY_URL" value="'.$conf->global->BLOCKEDLOG_AUTHORITY_URL.'" size="40" />';
+	print '<input type="text" name="BLOCKEDLOG_AUTHORITY_URL" value="' . getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL').'" size="40" />';
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 

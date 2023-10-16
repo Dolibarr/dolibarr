@@ -305,7 +305,7 @@ if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
 }
 
-if ($action == 'createtask' && $user->rights->projet->creer) {
+if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
@@ -584,7 +584,7 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -695,7 +695,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
+if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object->thirdparty->id) || $userWrite > 0)) {
 	if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}
@@ -734,8 +734,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	$defaultref = '';
 	$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $obj;
 		$defaultref = $modTask->getNextValue($object->thirdparty, null);
 	}
@@ -1151,7 +1151,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if (!empty($user->rights->projet->all->lire)) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
+	if ($user->hasRight('projet', 'all', 'lire')) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
 		if ($search_user_id == $user->id) {
 			if ($nboftaskshown < count($tasksrole)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

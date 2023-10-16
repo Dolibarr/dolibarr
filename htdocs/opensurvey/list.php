@@ -79,7 +79,7 @@ if (!$sortorder) {
 }
 
 // Security check
-if (!$user->rights->opensurvey->read) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 

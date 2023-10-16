@@ -68,7 +68,7 @@ class FormAdmin
 		global $conf, $langs;
 
 		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) {
-			$filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
+			$filter[getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')] = 1;
 		}
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);

@@ -95,13 +95,13 @@ $ok = false;
 if ($user->id == $id) {
 	$ok = true; // A user can always read its own card
 }
-if (!empty($user->rights->salaries->read)) {
+if ($user->hasRight('salaries', 'read')) {
 	$ok = true;
 }
-if (!empty($user->rights->hrm->read)) {
+if ($user->hasRight('hrm', 'read')) {
 	$ok = true;
 }
-if (!empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) {
+if ($user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall'))) {
 	$ok = true;
 }
 if (!$ok) {
@@ -278,7 +278,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write)) {
+if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -328,7 +328,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
@@ -339,7 +339,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
 	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -431,8 +431,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-		|| (isModEnabled('salaries') && !empty($user->rights->salaries->readall))
-		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
+		|| (isModEnabled('salaries') && $user->hasRight('salaries', 'readall'))
+		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))) {
 		$langs->load("salaries");
 
 		// Salary
@@ -492,9 +492,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, '');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'), 'email', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -503,9 +503,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'phone', '', null, null, '', 0, '');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'), 'phone', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -600,7 +600,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&
-		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
+		(($user->hasRight('salaries', 'read') && (in_array($object->id, $childids) || $object->id == $user->id)) || ($user->hasRight('salaries', 'readall')))
 		) {
 		$payment_salary = new PaymentSalary($db);
 		$salary = new Salary($db);
@@ -665,7 +665,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest leave requests
-	if (isModEnabled('holiday') && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
+	if (isModEnabled('holiday') && ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
@@ -722,7 +722,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
-		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
+		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
 		) {
 		$exp = new ExpenseReport($db);
 
@@ -896,7 +896,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 	//print '<div class="fichecenter">';
 

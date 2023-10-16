@@ -996,7 +996,7 @@ class Skill extends CommonObject
 		if (!empty($conf->global->hrm_SKILL_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILL_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILL_ADDON;
 
 			// Include file with class

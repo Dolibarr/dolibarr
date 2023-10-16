@@ -347,7 +347,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, ($user->socid ? 1 : 0), 'auguria', $tabMenu);
 
 	// We update newmenu for special dynamic menus
-	if (isModEnabled('banque') && $user->rights->banque->lire && $mainmenu == 'bank') {	// Entry for each bank account
+	if (isModEnabled('banque') && $user->hasRight('banque', 'lire') && $mainmenu == 'bank') {	// Entry for each bank account
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
@@ -362,14 +362,14 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 			$i = 0;
 
 			if ($numr > 0) {
-				$newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->rights->banque->lire);
+				$newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->hasRight('banque', 'lire'));
 			}
 
 			while ($i < $numr) {
 				$objp = $db->fetch_object($resql);
-				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid, $objp->label, 1, $user->rights->banque->lire);
+				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid, $objp->label, 1, $user->hasRight('banque', 'lire'));
 				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos)) {  // If not cash account and not closed and can be reconciliate
-					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid, $langs->trans("Conciliate"), 2, $user->rights->banque->consolidate);
+					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid, $langs->trans("Conciliate"), 2, $user->hasRight('banque', 'consolidate'));
 				}
 				$i++;
 			}

@@ -212,7 +212,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -953,8 +953,8 @@ class Fichinter extends CommonObject
 		if (!empty($conf->global->FICHEINTER_ADDON)) {
 			$mybool = false;
 
-			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
-			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
+			$file = "mod_" . getDolGlobalString('FICHEINTER_ADDON').".php";
+			$classname = "mod_" . getDolGlobalString('FICHEINTER_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1169,7 +1169,7 @@ class Fichinter extends CommonObject
 	public function set_date_delivery($user, $date_delivery)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1199,7 +1199,7 @@ class Fichinter extends CommonObject
 	public function set_description($user, $description)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".$user->id;
@@ -1230,7 +1230,7 @@ class Fichinter extends CommonObject
 	public function set_contrat($user, $contractid)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1501,7 +1501,7 @@ class Fichinter extends CommonObject
 	public function setRefClient($user, $ref_client, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->ficheinter->creer)) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();

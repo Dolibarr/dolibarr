@@ -163,6 +163,8 @@ $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object-
  */
 
 $listUserAssignedUpdated = false;
+$listResourceAssignedUpdated = false;
+
 // Remove user to assigned list
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
 	$idtoremove = GETPOST('removedassigned');
@@ -190,6 +192,33 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 
 	$listUserAssignedUpdated = true;
 }
+// Remove resource to assigned list
+if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedassignedresource') == '0')) {
+	$idtoremove = GETPOST('removedassignedresource');
+
+	if (!empty($_SESSION['assignedtoresource'])) {
+		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], 1);
+	} else {
+		$tmpassignedresourceids = array();
+	}
+
+	foreach ($tmpassignedresourceids as $key => $val) {
+		if ($val['id'] == $idtoremove || $val['id'] == -1) {
+			unset($tmpassignedresourceids[$key]);
+		}
+	}
+
+	$_SESSION['assignedtoresource'] = json_encode($tmpassignedresourceids);
+	$donotclearsessionresource = 1;
+	if ($action == 'add') {
+		$action = 'create';
+	}
+	if ($action == 'update') {
+		$action = 'edit';
+	}
+
+	$listResourceAssignedUpdated = true;
+}
 
 // Add user to assigned list
 if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))) {
@@ -199,7 +228,7 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
-		$assignedtouser[GETPOST('assignedtouser')] = array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
+		$assignedtouser[GETPOST('assignedtouser')] = array('id'=>GETPOSTINT('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
 		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
 	}
 	$donotclearsession = 1;
@@ -211,6 +240,28 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 	}
 
 	$listUserAssignedUpdated = true;
+}
+
+// Add resource to assigned list
+if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassignedtoresource'))) {
+	// Add a new user
+	if (GETPOST('assignedtoresource') > 0) {
+		$assignedtoresource = array();
+		if (!empty($_SESSION['assignedtoresource'])) {
+			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
+		}
+		$assignedtoresource[GETPOST('assignedtoresource')] = array('id'=>GETPOSTINT('assignedtoresource'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
+		$_SESSION['assignedtoresource'] = json_encode($assignedtoresource);
+	}
+	$donotclearsession = 1;
+	if ($action == 'add') {
+		$action = 'create';
+	}
+	if ($action == 'update') {
+		$action = 'edit';
+	}
+
+	$listResourceAssignedUpdated = true;
 }
 
 // Link to a project
@@ -908,7 +959,7 @@ if (empty($reshook) && $action == 'update') {
 					$object->reminders = array();
 				}
 
-				//Create reminders
+				// Create reminders
 				if ($addreminder == 'on' && $object->datep > dol_now()) {
 					$actionCommReminder = new ActionCommReminder($db);
 
@@ -941,6 +992,7 @@ if (empty($reshook) && $action == 'update') {
 				}
 
 				unset($_SESSION['assignedtouser']);
+				unset($_SESSION['assignedtoresource']);
 
 				if (!$error) {
 					$db->commit();
@@ -1340,7 +1392,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="">&nbsp;</td><td></td></tr>';
 
-	// Assigned to
+	// Assigned to user
 	print '<tr><td class="tdtop nowrap"><span class="fieldrequired">'.$langs->trans("ActionAffectedTo").'</span></td><td>';
 	$listofuserid = array();
 	$listofcontactid = array();
@@ -1380,6 +1432,40 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
 	}
 
+	if (isModEnabled('categorie')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print "</td></tr>";
+	}
+
+	if (isModEnabled('resource')) {
+		// Categories
+		print '<tr><td class="tdtop nowrap">'.$langs->trans("Resource").'</td><td>';
+
+		$listofresourceid = array();
+		if (empty($donotclearsession)) {
+			$assignedtoresource = GETPOST("assignedtoresource");
+			if ($assignedtoresource) {
+				$listofresourceid[$assignedtoresource] = array('id'=>$assignedtoresource, 'mandatory'=>0); // Owner first
+			}
+			$_SESSION['assignedtoresource'] = json_encode($listofresourceid);
+		} else {
+			if (!empty($_SESSION['assignedtoresource'])) {
+				$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+			}
+			$firstelem = reset($listofresourceid);
+			if (isset($listofresourceid[$firstelem['id']])) {
+				$listofresourceid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
+			}
+		}
+		print '<div class="assignedtoresource">';
+		print $form->select_dolresources_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtoresource', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofresourceid);
+		print '</div>';
+		print '</td></tr>';
+	}
+
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
@@ -1397,14 +1483,6 @@ if ($action == 'create') {
 	}
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
-
-	if (isModEnabled('categorie')) {
-		// Categories
-		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
-		print "</td></tr>";
-	}
 
 	print '</table>';
 
@@ -1657,10 +1735,14 @@ if ($id > 0) {
 	}
 
 	if ($object->authorid > 0) {
-		$tmpuser = new User($db); $res = $tmpuser->fetch($object->authorid); $object->author = $tmpuser;
+		$tmpuser = new User($db);
+		$res = $tmpuser->fetch($object->authorid);
+		$object->author = $tmpuser;
 	}
 	if ($object->usermodid > 0) {
-		$tmpuser = new User($db); $res = $tmpuser->fetch($object->usermodid); $object->usermod = $tmpuser;
+		$tmpuser = new User($db);
+		$res = $tmpuser->fetch($object->usermodid);
+		$object->usermod = $tmpuser;
 	}
 
 
@@ -2269,7 +2351,7 @@ if ($id > 0) {
 			print '<tr><td>'.$langs->trans("Location").'</td><td>'.$object->location.'</td></tr>';
 		}
 
-		// Assigned to
+		// Assigned to user
 		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td>';
 		$listofuserid = array();
 		if (empty($donotclearsession)) {
