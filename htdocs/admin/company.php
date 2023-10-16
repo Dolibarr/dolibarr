@@ -38,7 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
@@ -110,7 +109,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$dirforimage = $conf->mycompany->dir_output.'/logos/';
 
 	$arrayofimages = array('logo', 'logo_squarred');
-	// var_dump($_FILES); exit;
+	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
@@ -183,20 +182,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 			}
 		}
 		/*}*/
-	}
-
-	if ($_FILES['termstosale']["name"]) {
-		if (!preg_match('/(\.pdf)$/i', $_FILES['termstosale']["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
-		} else {
-			$dirforterms = $conf->mycompany->dir_output.'/';
-			$original_file = $_FILES['termstosale']["name"];
-			$result = dol_move_uploaded_file($_FILES['termstosale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termstosale']['error']);
-			if ($result) {
-				dolibarr_set_const($db, 'MAIN_INFO_SOCIETE_TERMSTOSALE', $original_file, 'chaine', 0, '', $conf->entity);
-			}
-		}
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -393,19 +378,6 @@ if ($action == 'removelogo' || $action == 'removelogosquarred') {
 	}
 }
 
-if ($action == 'removetermstosale') {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$filename = $mysoc->termstosale;
-	$file = $conf->mycompany->dir_output.'/'.$filename;
-
-	if ($filename != '') {
-		dol_delete_file($file);
-	}
-	dolibarr_del_const($db, 'MAIN_INFO_SOCIETE_TERMSTOSALE', $conf->entity);
-
-	$mysoc->termstosale = '';
-}
 
 /*
  * View
@@ -417,7 +389,6 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
-$formfile = new FormFile($db);
 
 $countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' <a href="#trzipbeforecountry">('.$langs->trans("SeeAbove").')</a></span>';
 
@@ -605,30 +576,6 @@ if (!empty($mysoc->logo_squarred_small)) {
 		print '<div class="inline-block valignmiddle">';
 		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 		print '</div>';
-	}
-}
-print '</div>';
-print '</td></tr>';
-
-// Terms to sale
-$tooltiptermstosale = $langs->trans('AvailableFormats').' : pdf';
-$maxfilesizearray = getMaxFileSizeArray();
-$tooltiptermstosale .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
-$documenturl = DOL_URL_ROOT.'/document.php';
-if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-	$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
-}
-$modulepart = 'mycompany';
-$param = '';
-
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TermsToSale"), $tooltiptermstosale).'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
-print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termstosale" id="termstosale" accept="application/pdf">';
-
-if (!empty($mysoc->termstosale)) {
-	if (file_exists($conf->mycompany->dir_output.'/'.$mysoc->termstosale)) {
-		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($mysoc->termstosale).(!empty($param) ? '&'.$param : '').'">'.$mysoc->termstosale.'</a>'.$formfile->showPreview($mysoc->termstosale, $modulepart, $mysoc->termstosale, 0, $param);
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermstosale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	}
 }
 print '</div>';

@@ -34,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'bills', 'companies', 'languages', 'members', 'other', 'products', 'propal', 'receptions', 'stocks', 'trips'));
@@ -102,10 +104,41 @@ if ($action == 'update') {
 		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
+	// Terms to sale
+	if ($_FILES['termstosale']["name"]) {
+		if (!preg_match('/(\.pdf)$/i', $_FILES['termstosale']["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
+		} else {
+			$dirforterms = $conf->mycompany->dir_output.'/';
+			$original_file = $_FILES['termstosale']["name"];
+			$result = dol_move_uploaded_file($_FILES['termstosale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termstosale']['error']);
+			if ($result) {
+				dolibarr_set_const($db, 'MAIN_INFO_SOCIETE_TERMSTOSALE', $original_file, 'chaine', 0, '', $conf->entity);
+			}
+		}
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
+}
+
+
+// Terms to sale
+if ($action == 'removetermstosale') {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$filename = $mysoc->termstosale;
+	$file = $conf->mycompany->dir_output.'/'.$filename;
+
+	if ($filename != '') {
+		dol_delete_file($file);
+	}
+	dolibarr_del_const($db, 'MAIN_INFO_SOCIETE_TERMSTOSALE', $conf->entity);
+
+	$mysoc->termstosale = '';
 }
 
 
@@ -120,6 +153,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 $form = new Form($db);
 $formother = new FormOther($db);
 $formadmin = new FormAdmin($db);
+$formfile = new FormFile($db);
 
 print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
@@ -131,7 +165,7 @@ $tooltiptext = '';
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $tooltiptext)."</span><br>\n";
 print "<br>\n";
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
@@ -371,6 +405,36 @@ if (isModEnabled('reception')) {
 	print '</div>';
 }
 
+print load_fiche_titre($langs->trans("Files"), '', 'file');
+print '<div class="div-table-responsive-no-min">';
+print '<table summary="more" class="noborder centpercent">';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+// Terms to sale
+$tooltiptermstosale = $langs->trans('AvailableFormats').' : pdf';
+$maxfilesizearray = getMaxFileSizeArray();
+$tooltiptermstosale .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
+$documenturl = DOL_URL_ROOT.'/document.php';
+if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
+	$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
+}
+$modulepart = 'mycompany';
+$param = '';
+
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TermsToSale"), $tooltiptermstosale).'</label></td><td>';
+print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termstosale" id="termstosale" accept="application/pdf">';
+
+if (!empty($mysoc->termstosale)) {
+	if (file_exists($conf->mycompany->dir_output.'/'.$mysoc->termstosale)) {
+		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($mysoc->termstosale).(!empty($param) ? '&'.$param : '').'">'.$mysoc->termstosale.'</a>'.$formfile->showPreview($mysoc->termstosale, $modulepart, $mysoc->termstosale, 0, $param);
+		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermstosale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+	}
+}
+print '</div>';
+print '</td></tr>';
+print '</table>';
+print '</div>';
 
 print '<br><div class="center">';
 print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
