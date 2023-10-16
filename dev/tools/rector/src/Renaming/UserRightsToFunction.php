@@ -119,6 +119,12 @@ class UserRightsToFunction extends AbstractRector
 		if (!$node->var instanceof Node\Expr\PropertyFetch) {
 			return null;
 		}
+		// Add a test to avoid rector error on html.formsetup.class.php
+		if (! $node->name instanceof Node\Expr\Variable && is_null($this->getName($node))) {
+			//var_dump($node);
+			return null;
+			//exit;
+		}
 		$perm1 = $node->name instanceof Node\Expr\Variable ? $node->name : new String_($this->getName($node));
 		$moduleNode = $node->var;
 		if (!$moduleNode instanceof Node\Expr\PropertyFetch) {

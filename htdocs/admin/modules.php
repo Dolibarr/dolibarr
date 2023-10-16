@@ -1157,7 +1157,6 @@ if ($mode == 'marketplace') {
 					</tbody>
 				</table>
 			</div>
-
 		<?php
 	}
 }

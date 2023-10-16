@@ -917,7 +917,7 @@ class EvaluationLine extends CommonObjectLine
 		if (!empty($conf->global->hrm_EVALUATIONLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_EVALUATIONLINE_ADDON.".php";
+			$file = getDolGlobalString('hrm_EVALUATIONLINE_ADDON') . ".php";
 			$classname = $conf->global->hrm_EVALUATIONLINE_ADDON;
 
 			// Include file with class

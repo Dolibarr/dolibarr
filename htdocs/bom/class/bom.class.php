@@ -875,7 +875,7 @@ class BOM extends CommonObject
 		if (!empty($conf->global->BOM_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->BOM_ADDON.".php";
+			$file = getDolGlobalString('BOM_ADDON') . ".php";
 			$classname = $conf->global->BOM_ADDON;
 
 			// Include file with class

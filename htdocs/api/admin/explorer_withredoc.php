@@ -50,7 +50,7 @@ if (!empty($conf->global->API_RESTRICT_ON_IP)) {
 	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
-		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
+		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
 		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
 		//session_destroy();

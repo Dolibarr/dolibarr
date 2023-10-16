@@ -133,8 +133,8 @@ class pdf_standard extends CommonStickerGenerator
 
 		// Define background image
 		$backgroundimage = '';
-		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND)) {
-			$backgroundimage = $conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND;
+		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND'))) {
+			$backgroundimage = $conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND');
 		}
 
 		// Print lines

@@ -193,7 +193,7 @@ class Evaluation extends CommonObject
 			$this->fields['entity']['enabled'] = 0;
 		}
 
-		if (empty($user->rights->hrm->evaluation->readall)) {
+		if (!$user->hasRight('hrm', 'evaluation', 'readall')) {
 			$this->fields['fk_user']['type'].= ':rowid IN('.$this->db->sanitize(implode(", ", $user->getAllChildIds(1))).')';
 		}
 
@@ -949,7 +949,7 @@ class Evaluation extends CommonObject
 		if (!empty($conf->global->HRMTEST_EVALUATION_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->HRMTEST_EVALUATION_ADDON.".php";
+			$file = getDolGlobalString('HRMTEST_EVALUATION_ADDON') . ".php";
 			$classname = $conf->global->HRMTEST_EVALUATION_ADDON;
 
 			// Include file with class

@@ -793,7 +793,7 @@ class Workstation extends CommonObject
 		if (!empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->WORKSTATION_WORKSTATION_ADDON.".php";
+			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
 			$classname = $conf->global->WORKSTATION_WORKSTATION_ADDON;
 
 			// Include file with class
