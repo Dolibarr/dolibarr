@@ -2702,7 +2702,7 @@ class BonPrelevement extends CommonObject
 		}
 		if ($id) {
 			$sql = "SELECT * FROM ".MAIN_DB_PREFIX."prelevement_lignes";
-			$sql .= " WHERE fk_prelevement_bons=".$id;
+			$sql .= " WHERE fk_prelevement_bons=".((int) $id);
 			$sql .= " AND fk_soc = 0";
 			$sql .= " AND fk_user IS NOT NULL";
 
