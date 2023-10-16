@@ -1777,7 +1777,7 @@ class Account extends CommonObject
 
 		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
-				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
+				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
 						'BankCode',
 						'DeskCode',
@@ -2035,8 +2035,6 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function fetch($rowid, $ref = '', $num = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($rowid) && empty($ref) && empty($num)) {
 			return -1;
@@ -2052,9 +2050,9 @@ class AccountLine extends CommonObjectLine
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) {
-			$sql .= " AND b.num_chq='".$this->db->escape($num)."'";
+			$sql .= " AND b.num_chq = '".$this->db->escape($num)."'";
 		} elseif ($ref) {
-			$sql .= " AND b.rowid='".$this->db->escape($ref)."'";
+			$sql .= " AND b.rowid = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " AND b.rowid = ".((int) $rowid);
 		}
@@ -2070,9 +2068,9 @@ class AccountLine extends CommonObjectLine
 				$this->rowid = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->datec = $obj->datec;
-				$this->datev = $obj->datev;
-				$this->dateo = $obj->dateo;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datev = $this->db->jdate($obj->datev);
+				$this->dateo = $this->db->jdate($obj->dateo);
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
 				$this->note = $obj->note;
@@ -2177,10 +2175,11 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *      Delete bank transaction record
 	 *
-	 *		@param	User|null	$user	User object that delete
-	 *      @return	int 				<0 if KO, >0 if OK
+	 * @param	User|null	$user		User object that delete
+	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * @return	int 					<0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -2193,6 +2192,16 @@ class AccountLine extends CommonObjectLine
 		}
 
 		$this->db->begin();
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNTLINE_DELETE', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+		}
 
 		// Protection to avoid any delete of accounted lines. Protection on by default
 		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING)) {
@@ -2333,7 +2342,7 @@ class AccountLine extends CommonObjectLine
 
 		// Check statement field
 		if (!empty($conf->global->BANK_STATEMENT_REGEX_RULE)) {
-			if (!preg_match('/'.$conf->global->BANK_STATEMENT_REGEX_RULE.'/', $this->num_releve)) {
+			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
 				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
 				return -1;
 			}

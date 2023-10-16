@@ -77,7 +77,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire) && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
+if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -141,7 +141,7 @@ if (empty($reshook)) {
 	if ($action == 'setcost_price') {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 			$object->cost_price = price2num($cost_price);
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {
@@ -391,7 +391,7 @@ if ($id > 0 || $ref) {
 			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = " fk_product_type = ".$object->type;
+			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {

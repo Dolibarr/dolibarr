@@ -64,6 +64,16 @@ class pdf_baleine extends ModelePDFProjects
 	public $type;
 
 	/**
+	 * @var int posxdatestart
+	 */
+	public $posxdatestart;
+
+	/**
+	 * @var int posxdateend
+	 */
+	public $posxdateend;
+
+	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -196,7 +206,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 

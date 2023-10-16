@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $path = ''; // This value may be used in future for external module to overwrite theme
 $theme = 'md'; // Value of theme
 if (!empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
-	$path = '/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES'); $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
 }
 
 // Define image path files and other constants
@@ -192,6 +192,7 @@ $butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 $textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE1) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE2) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE2) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
+$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%') : (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%');
 
 // Hover color
 $colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_HOVER));
@@ -361,6 +362,7 @@ print '*/'."\n";
 	--textbutaction : #<?php print $textbutaction; ?>;
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--heightrow: <?php print $heightrow; ?>;
 }
 
 <?php
@@ -491,8 +493,9 @@ th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.list
 	text-overflow: ellipsis;
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
+	padding-top: 1px;
+	vertical-align: middle;
 	padding-bottom: 1px;
-	vertical-align: bottom;
 }
 
 /*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -688,8 +691,11 @@ a.butStatus {
 	margin: 0 0.45em !important;
 }
 
-span.userimg.notfirst {
+span.userimg.notfirst, div.userimg.notfirst {
 	margin-left: -5px;
+}
+div.userimg.notfirst {
+	display: block-inline;
 }
 
 /* Used by timesheets */
@@ -922,7 +928,7 @@ form {
 	margin:0px;
 }
 form#addproduct {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 div.float, span.floatleft
 {
@@ -1447,7 +1453,7 @@ if ($conf->browser->layout == 'phone') {
 	content: "\f080";
 }
 .a-filter:before, .a-mesure:before {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 600;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -1762,7 +1768,7 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 0.01%;
 }
 .div-table-responsive {
-	line-height: 120%;
+	line-height: var(--heightrow);
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -2261,7 +2267,7 @@ td.showDragHandle {
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
 	position: fixed;
-	top: 75px;
+	top: 45px;
 	<?php } ?>
 	z-index: 90;
 	-webkit-transform: translateZ(0);
@@ -2320,7 +2326,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 }
 
 /* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
-body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other
 {
 	display: none;
 }
@@ -2976,36 +2982,44 @@ div.mainmenu.menu {
 		}
 		//print "XXX".$val;
 
-		// Search img file in module dir
 		$found = 0; $url = '';
-		foreach ($conf->file->dol_document_root as $dirroot) {
-			if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-				$found = 1;
-				break;
+		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+		$iconformodule = getDolGlobalString($constformoduleicon);
+		if ($iconformodule) {
+			if (preg_match('/^fa\-/', $iconformodule)) {
+				// This is a fa icon
+			} else {
+				$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+			}
+			$found = 1;
+		} else {
+			// Search img file in module dir
+			foreach ($conf->file->dol_document_root as $dirroot) {
+				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+					$found = 1;
+					break;
+				}
 			}
 		}
-		// Img file not found
+
+		// Output entry for menu icon in CSS
 		if (!$found) {
-			if (!defined('DISABLE_FONT_AWSOME')) {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-				print 'div.mainmenu.'.$val.'::before {
-	                    content: "\f249";
-	                }'."\n";
-			} else {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-				print "div.mainmenu.".$val." {\n";
-				print "	background-image: url(".$url.");\n";
-				print "}\n";
-			}
+			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+			print 'div.mainmenu.'.$val.' span::before {'."\n";
+			print 'content: "\f249";'."\n";
+			print '}'."\n";
 			$generic++;
 		} else {
-			print "div.mainmenu.".$val." {\n";
-			print "	background-image: url(".$url.");\n";
-			print " filter: saturate(0);\n";
-			print "}\n";
+			if ($url) {
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print " background-position-y: 3px;\n";
+				print " filter: saturate(0);\n";
+				print "}\n";
+			} else {
+				print '/* icon for module '.$val.' is a fa icon */'."\n";
+			}
 		}
 	}
 	// End of part to add more div class css
@@ -3174,7 +3188,7 @@ div.login_block {
 	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
-	border-right: 1px solid rgba(0,0,0,0.2);
+	/* border-right: 1px solid rgba(0,0,0,0.2); */
 	<?php print $left; ?>: 0;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
@@ -3186,10 +3200,13 @@ div.login_block {
 	vertical-align: middle;
 	background: var(--colorbackvmenu1);
 	width: 228px;
-	height: 70px;
+	height: 68px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+.sidebar-collapse div.login_block {
+	top: -1000px;
 }
 div.login_block a {
 	color: var(--colortexthmenu);
@@ -3867,7 +3884,7 @@ table.tableforemailform tr td {
 }
 
 table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
-	border: 1px solid #f4f4f4;
+	/* border: 1px solid #f4f4f4; */
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -3883,7 +3900,7 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
 	padding: 3px 4px 3px 4px;
-	border: 1px solid #f0f0f0;
+	/* border: 1px solid #f0f0f0; */
 	border-collapse: collapse;
 }
 
@@ -5107,7 +5124,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
+/* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5117,6 +5134,11 @@ div#card-errors {
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
+}
+
+.ui-dialog.ui-widget.ui-widget-content {
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
 }
 
 div#dialogforpopup {
@@ -5168,11 +5190,10 @@ table.valid {
 }
 
 div.ui-tooltip {
-	max-width: <?php print dol_size(600, 'width'); ?>px !important;
+	max-width: <?php print dol_size(700, 'width'); ?>px !important;
 }
 
 div.ui-tooltip.mytooltip {
-	width: <?php print dol_size(450, 'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
 	border-<?php print $left; ?>: solid 1px #BBBBBB;
 	border-<?php print $right; ?>: solid 1px #444444;
@@ -7444,7 +7465,7 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	background-image: unset !important;
 }
 .phpdebugbar-indicator .fa {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 600;
 }
 div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
@@ -7462,7 +7483,7 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
-	font-family: "Font Awesome 5 Free" !important;
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>" !important;
 }
 
 
@@ -7618,13 +7639,38 @@ table.jPicker {
 }
 
 /* ============================================================================== */
-/* CSS style used for small screen                                                */
+/* CSS style used for survey                                                      */
 /* ============================================================================== */
 
+.opensurveydescription * {
+	width: 100%;
+}
 .imgopensurveywizard
 {
 	padding: 0 4px 0 4px;
 }
+.survey_borders {
+	margin-left: 100px;
+	margin-right: 100px;
+	text-align: start;
+}
+.survey_intro {
+	background-color: #f0f0f0;
+	padding: 15px;
+	border-radius: 8px;
+}
+.survey_borders .resultats .nom {
+	text-align: <?php echo $left; ?>
+}
+.survey_borders .resultats .sujet {
+	min-width: 100px;
+}
+
+
+/* ============================================================================== */
+/* CSS style used for small screen                                                */
+/* ============================================================================== */
+
 @media only screen and (max-width: 767px)
 {
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
@@ -7665,6 +7711,12 @@ table.jPicker {
 	}
 	.poweredbyimg {
 		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
 	}
 }
 

@@ -123,7 +123,7 @@ class modECM extends DolibarrModules
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'MenuECM',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
 			'mainmenu'=>'ecm',
 			'url'=>'/ecm/index.php',
 			'langs'=>'ecm',

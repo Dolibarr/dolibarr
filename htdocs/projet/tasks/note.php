@@ -41,7 +41,7 @@ $project_ref = GETPOST('project_ref', 'alpha');
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -148,9 +148,9 @@ if ($object->id > 0) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -270,7 +270,7 @@ if ($object->id > 0) {
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
 	} else {
-		$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+		$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
 	}
 
 	$morehtmlref = '';

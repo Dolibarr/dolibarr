@@ -277,7 +277,14 @@ if (isModEnabled('stock')) {
 	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)
+	print '<tr class="oddeven"><td>';
+	if (!$disabled) { print '<span class="fieldrequired">'; }
+	print $langs->trans("CashDeskIdWareHouse");
+	if (!$disabled) { print '</span>'; }
+	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
+		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
+	}
+	print '</td>'; // Force warehouse (this is not a default value)
 	print '<td class="minwidth300">';
 	if (!$disabled) {
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');

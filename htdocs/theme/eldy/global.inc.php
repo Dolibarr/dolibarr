@@ -59,6 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--heightrow: <?php print $heightrow; ?>;
 }
 
 <?php
@@ -173,8 +174,8 @@ table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste
 	text-overflow: ellipsis;
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
+	vertical-align: middle;
 	padding-bottom: 1px;
-	vertical-align: bottom;
 }
 
 /*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -425,8 +426,11 @@ a.butStatus {
 	margin: 0 0.45em !important;
 }
 
-span.userimg.notfirst {
+span.userimg.notfirst, div.userimg.notfirst {
 	margin-left: -5px;
+}
+div.userimg.notfirst {
+	display: block-inline;
 }
 
 /* Used by timesheets */
@@ -668,7 +672,7 @@ form {
 	margin:0px;
 }
 form#addproduct {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 div.float, span.floatleft
 {
@@ -1195,7 +1199,7 @@ div.divsearchfield {
 	content: "\f080";
 }
 .a-filter:before, .a-mesure:before {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 600;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -1529,7 +1533,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	min-height: 0.01%;
 }
 .div-table-responsive {
-	line-height: 120%;
+	line-height: var(--heightrow);
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -1732,11 +1736,11 @@ maxscreenheightless200 {
 	.minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection):not(.select2-dropdown), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -2830,6 +2834,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
 	// Put here list of menu entries we are sure we don't want
 	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+
 	foreach ($mainmenuusedarray as $val) {
 		if (empty($val) || in_array($val, $divalreadydefined)) {
 			continue;
@@ -2837,40 +2842,46 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 		if (in_array($val, $divnotrequired)) {
 			continue;
 		}
-		//print "XXX".$val;
 
-		// Search img file in module dir
 		$found = 0; $url = '';
-		foreach ($conf->file->dol_document_root as $dirroot) {
-			if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-				$found = 1;
-				break;
+		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+		$iconformodule = getDolGlobalString($constformoduleicon);
+		if ($iconformodule) {
+			if (preg_match('/^fa\-/', $iconformodule)) {
+				// This is a fa icon
+			} else {
+				$url = dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+			}
+			$found = 1;
+		} else {
+			// Search img file in module dir
+			foreach ($conf->file->dol_document_root as $dirroot) {
+				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+					$found = 1;
+					break;
+				}
 			}
 		}
-		// Img file not found
+		//print "XXX".$val."->".$found."\n";
+
+		// Output entry for menu icon in CSS
 		if (!$found) {
-			if (!defined('DISABLE_FONT_AWSOME')) {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-				print 'div.mainmenu.'.$val.'::before {
-                    content: "\f249";
-                }'."\n";
-			} else {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+			print 'div.mainmenu.'.$val.' span::before {'."\n";
+			print 'content: "\f249";'."\n";
+			print '}'."\n";
+			$generic++;
+		} else {
+			if ($url) {
 				print "div.mainmenu.".$val." {\n";
 				print "	background-image: url(".$url.");\n";
 				print " background-position-y: 3px;\n";
+				print " filter: saturate(0);\n";
 				print "}\n";
+			} else {
+				print '/* icon for module '.$val.' is a fa icon */'."\n";
 			}
-			$generic++;
-		} else {
-			print "div.mainmenu.".$val." {\n";
-			print "	background-image: url(".$url.");\n";
-			print " background-position-y: 3px;\n";
-			print " filter: saturate(0);\n";
-			print "}\n";
 		}
 	}
 	// End of part to add more div class css
@@ -2879,7 +2890,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 
 .tmenuimage {
 	padding:0 0 0 0 !important;
-	margin:0 0px 0 0 !important;
+	margin:0 0 0 0 !important;
 	<?php if ($disableimages) { ?>
 		display: none;
 	<?php } ?>
@@ -3146,6 +3157,13 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.4em;
 	background-size: contain;
 	vertical-align: middle;
+}
+span.userimg div.userphoto {
+	background-color: #eee;
+	border-radius: 0.72em;
+	width: 1.4em;
+	height: 1.4em;
+	padding-top: 1px;
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;
@@ -3460,7 +3478,7 @@ div.tabsElem {
 /*
 div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 	content: "\f0da";
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	padding-right: 2px;
 	font-weight: 900;
 }
@@ -5062,7 +5080,7 @@ div#card-errors {
 
 
 /* ============================================================================== */
-/* Formulaire confirmation (When Ajax JQuery is used) and Dialog popups           */
+/* Form confirmation (When Ajax JQuery is used) and Dialog popups                 */
 /* ============================================================================== */
 
 .ui-dialog-titlebar {
@@ -5072,7 +5090,10 @@ div#card-errors {
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
-
+.ui-dialog.ui-widget.ui-widget-content {
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5118,7 +5139,7 @@ table.valid {
 }
 
 div.ui-tooltip {
-	max-width: <?php print dol_size(600, 'width'); ?>px !important;
+	max-width: <?php print dol_size(700, 'width'); ?>px !important;
 }
 div.ui-tooltip.mytooltip {
 	border: none !important;
@@ -6801,7 +6822,7 @@ dl.dropdown {
 	padding: 0 3px 2px 0;
 }
 .maxwidthsearch .dropdown dt a span, .multiSel span {
-	padding: 0 3px 2px 3px;
+	padding: 3px 3px 2px 3px;
 }
 .dropdown span.value {
 	display:none;
@@ -7513,7 +7534,7 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	font-weight: 600 !important;
 }
 .phpdebugbar-fa-tags, .phpdebugbar-fa-tasks, .phpdebugbar-indicator .fa {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 600;
 }
 div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
@@ -7531,7 +7552,7 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
-	font-family: "Font Awesome 5 Free" !important;
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>" !important;
 }
 
 /* ============================================================================== */
@@ -7686,16 +7707,41 @@ table.jPicker {
 }
 
 /* ============================================================================== */
+/* CSS style used for survey                                                      */
+/* ============================================================================== */
+
+.opensurveydescription * {
+	width: 100%;
+}
+.imgopensurveywizard
+{
+	padding: 0 4px 0 4px;
+}
+.survey_borders {
+	margin-left: 100px;
+	margin-right: 100px;
+	text-align: start;
+}
+.survey_intro {
+	background-color: #f0f0f0;
+	padding: 15px;
+	border-radius: 8px;
+}
+.survey_borders .resultats .nom {
+	text-align: <?php echo $left; ?>
+}
+.survey_borders .resultats .sujet, .survey_borders .resultats .jour {
+	min-width: 100px;
+}
+
+
+/* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
 .topmenuimage {
 	background-size: 22px auto;
 	top: 2px;
-}
-.imgopensurveywizard
-{
-	padding: 0 4px 0 4px;
 }
 @media only screen and (max-width: 767px)
 {
@@ -7741,6 +7787,12 @@ table.jPicker {
 	}
 	.poweredbyimg {
 		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
 	}
 }
 
@@ -8055,7 +8107,5 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
+
 }
-
-
-

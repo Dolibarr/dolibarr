@@ -256,7 +256,7 @@ if ($resql) {
 		$userstatic->id = $obj->rowid;
 		$userstatic->getrights('fournisseur');
 
-		if (!empty($userstatic->rights->fournisseur->commande->approuver)) {
+		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			$userstatic->lastname = $obj->lastname;

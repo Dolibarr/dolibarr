@@ -716,6 +716,10 @@ class Conf
 				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 			}
 
+			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
+			}
+
 			// By default, suppliers objects can be linked to all projects
 			if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) {
 				$this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
@@ -733,7 +737,7 @@ class Conf
 
 			// conf->liste_limit = constante de taille maximale des listes
 			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 25;
+				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
 			}
 			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 

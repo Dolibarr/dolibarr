@@ -64,12 +64,12 @@ class ExtraFields
 	public $errors = array();
 
 	/**
-	 * @var string DB Error number
+	 * @var string 	DB Error number
 	 */
 	public $errno;
 
 	/**
-	 * @var array array of type to label
+	 * @var array 	Array of type to label
 	 */
 	public static $type2label = array(
 		'varchar'=>'String1Line',
@@ -96,7 +96,6 @@ class ExtraFields
 		'link' => 'ExtrafieldLink',
 		'separate' => 'ExtrafieldSeparator',
 	);
-
 
 	/**
 	 *	Constructor
@@ -1194,6 +1193,7 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				// 7 : sort by (to be close to common object)
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
@@ -1365,6 +1365,7 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				// 5 : id category type
 				// 6 : ids categories list separated by comma for category root
+				// 7 : sort by (to be close to common object)
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {

@@ -694,7 +694,7 @@ if (empty($reshook)) {
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
-					dol_print_error($db, $result);
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 
@@ -1194,7 +1194,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -1378,6 +1378,7 @@ if (empty($reshook)) {
 								);
 
 								if ($result < 0) {
+									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 									break;
 								}
@@ -1624,7 +1625,8 @@ if ($action == 'create') {
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
-		$soc = $objectsrc->client;
+		$soc = $objectsrc->thirdparty;
+
 		$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 		$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 		$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
@@ -1877,6 +1879,8 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
+		$selectedLines = array();
+
 		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
@@ -2044,7 +2048,7 @@ if ($action == 'create') {
 	$morehtmlref = '<div class="refidno">';
 	// Ref supplier
 	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>';
 	if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && !empty($usercancreate) && $action == 'edit_thirdparty') {
@@ -2119,7 +2123,7 @@ if ($action == 'create') {
 
 	// Author
 	print '<tr><td class="titlefield">'.$langs->trans("AuthorRequest").'</td>';
-	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
+	print '<td>'.$author->getNomUrl(-1, '', 0, 0, 0).'</td>';
 	print '</tr>';
 
 	// Relative and absolute discounts

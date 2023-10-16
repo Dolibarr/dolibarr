@@ -339,7 +339,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire) {
+		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
@@ -831,7 +831,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer) {
+		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext);
 

@@ -769,7 +769,7 @@ class ProductFournisseurPrice extends CommonObject
 		if (!empty($conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON.".php";
+			$file = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON') . ".php";
 			$classname = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON;
 
 			// Include file with class

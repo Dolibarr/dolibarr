@@ -101,6 +101,9 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
 		$ret = $object->fetch_thirdparty();
+		if ($ret > 0 && isset($object->fk_project)) {
+			$ret = $object->fetch_project();
+		}
 	}
 	if ($ret <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -489,9 +492,10 @@ if (empty($reshook)) {
 				if ($origin && $originid) {
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = $origin;
+					$regs = array();
 					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-						$element = $regs [1];
-						$subelement = $regs [2];
+						$element = $regs[1];
+						$subelement = $regs[2];
 					}
 
 					// For compatibility
@@ -722,7 +726,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
-					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
+					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1036,7 +1040,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		$propal_qty_requirement = (!empty($conf->global->PROPAL_ENABLE_NEGATIVE_QTY) ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
+		if (!$error && $propal_qty_requirement && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$pu_ht_devise = 0;
@@ -1494,7 +1499,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOST('lineid', 'int')) {
 						$fournprice = $line->fk_fournprice;
@@ -1603,7 +1608,7 @@ if (empty($reshook)) {
 		// warehouse
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -2010,7 +2015,7 @@ if ($action == 'create') {
 		print '<tr class="field_currency">';
 		print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="valuefieldcreate maxwidthonsmartphone">';
-		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency($currency_code, 'multicurrency_code', 0);
+		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0);
 		print '</td></tr>';
 	}
 
@@ -2164,9 +2169,12 @@ if ($action == 'create') {
 	/*
 	 * Show object in view mode
 	 */
-
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+	$object->fetch_thirdparty();
+	if ($object->thirdparty) {
+		$soc = $object->thirdparty;
+	} else {
+		$soc = new Societe($db);
+	}
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
@@ -2206,7 +2214,7 @@ if ($action == 'create') {
 			// It may also break step of creating an order when invoicing must be done from orders and not from proposal
 			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 				$object->fetchObjectLinked();
@@ -2414,11 +2422,11 @@ if ($action == 'create') {
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
+	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$soc->getNomUrl(1, 'customer');
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $soc->id > 0) {
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'&search_societe='.urlencode($soc->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -3071,7 +3079,7 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
 
 		$compatibleImportElementsList = false;
-		if ($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $object->statut == Propal::STATUS_DRAFT) {
 			$compatibleImportElementsList = array('commande', 'propal', 'facture'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);

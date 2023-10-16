@@ -401,16 +401,16 @@ class RemiseCheque extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
-		} elseif ($conf->global->CHEQUERECEIPTS_ADDON == 'thyme') {
+		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'thyme') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_thyme';
-		} elseif ($conf->global->CHEQUERECEIPTS_ADDON == 'mint') {
+		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'mint') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		}
 
 		if (!empty($conf->global->CHEQUERECEIPTS_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->CHEQUERECEIPTS_ADDON.".php";
+			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
 			$classname = $conf->global->CHEQUERECEIPTS_ADDON;
 
 			// Include file with class
@@ -427,8 +427,8 @@ class RemiseCheque extends CommonObject
 
 			// For compatibility
 			if (!$mybool) {
-				$file = $conf->global->CHEQUERECEIPTS_ADDON.".php";
-				$classname = "mod_chequereceipt_".$conf->global->CHEQUERECEIPTS_ADDON;
+				$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
+				$classname = "mod_chequereceipt_" . getDolGlobalString('CHEQUERECEIPTS_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -819,7 +819,7 @@ class RemiseCheque extends CommonObject
 	public function set_date($user, $date)
 	{
 		// phpcs:enable
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -849,7 +849,7 @@ class RemiseCheque extends CommonObject
 	public function set_number($user, $ref)
 	{
 		// phpcs:enable
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET ref = '".$this->db->escape($ref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);

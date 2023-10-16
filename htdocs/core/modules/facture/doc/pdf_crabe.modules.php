@@ -328,7 +328,7 @@ class pdf_crabe extends ModelePDFFactures
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$logodir = $conf->mycompany->multidir_output[$object->entity];
 					}
-					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -1010,8 +1010,9 @@ class pdf_crabe extends ModelePDFFactures
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$y += 3;
+			$maxY = $y;
 			while ($i < $num) {
-				$y += 3;
 				if ($tab3_top + $y >= ($this->page_hauteur - $heightforfooter)) {
 					$y = 0;
 					$current_page++;
@@ -1037,11 +1038,12 @@ class pdf_crabe extends ModelePDFFactures
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
+				$maxY = max($pdf->GetY() - $tab3_top - 3, $maxY);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
 				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
-
+				$y = $maxY = max($pdf->GetY() - $tab3_top - 3, $maxY);
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
-
+				$y += 3;
 				$i++;
 			}
 
@@ -1215,7 +1217,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
+				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
@@ -1781,6 +1783,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 
 		$ltrdirection = 'L';

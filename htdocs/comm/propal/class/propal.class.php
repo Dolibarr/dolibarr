@@ -1667,7 +1667,6 @@ class Propal extends CommonObject
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -1866,15 +1865,12 @@ class Propal extends CommonObject
 	 *
 	 *	@param		int			$only_product			Return only physical products
 	 *	@param		int			$loadalsotranslation	Return translation for products
-	 *	@param		string		$filters				Filter on other fields
-	 *
+	 *	@param		string		$sqlforgedfilters		Filter on other fields
 	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $filters = '')
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlforgedfilters = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->lines = array();
 
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
@@ -1890,8 +1886,8 @@ class Propal extends CommonObject
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
-		if ($filters) {
-			$sql .= $filters;
+		if ($sqlforgedfilters) {
+			$sql .= $sqlforgedfilters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -2017,8 +2013,8 @@ class Propal extends CommonObject
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)))) {
+		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('propal', 'creer'))
+		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('propal', 'propal_advance', 'validate')))) {
 			$this->error = 'ErrorPermissionDenied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -2132,7 +2128,7 @@ class Propal extends CommonObject
 			return -1;
 		}
 
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2190,7 +2186,7 @@ class Propal extends CommonObject
 	public function set_echeance($user, $date_end_validity, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2263,7 +2259,7 @@ class Propal extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2322,7 +2318,7 @@ class Propal extends CommonObject
 	public function set_availability($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2385,7 +2381,7 @@ class Propal extends CommonObject
 	public function set_demand_reason($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2450,7 +2446,7 @@ class Propal extends CommonObject
 	public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2510,7 +2506,7 @@ class Propal extends CommonObject
 		// phpcs:enable
 		$remise = trim($remise) ?trim($remise) : 0;
 
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$remise = price2num($remise, 2);
 
 			$error = 0;
@@ -2576,7 +2572,7 @@ class Propal extends CommonObject
 		}
 		$remise = price2num($remise);
 
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2969,17 +2965,17 @@ class Propal extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
-		if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -3491,7 +3487,7 @@ class Propal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3668,7 +3664,7 @@ class Propal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3945,13 +3941,13 @@ class Propal extends CommonObject
 
 	/**
 	 * 	Retrieve an array of proposal lines
-	 *	@param  string              $filters        Filter on other fields
 	 *
-	 * 	@return int		>0 if OK, <0 if KO
+	 *	@param  string	$sqlforgedfilters       Filter on other fields
+	 * 	@return int								>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($filters = '')
+	public function getLinesArray($sqlforgedfilters = '')
 	{
-		return $this->fetch_lines(0, 0, $filters);
+		return $this->fetch_lines(0, 0, $sqlforgedfilters);
 	}
 
 	/**

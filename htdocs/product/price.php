@@ -500,7 +500,7 @@ if (empty($reshook)) {
 	}
 
 
-	if ($action == 'delete' && $user->rights->produit->supprimer) {
+	if ($action == 'delete' && $user->hasRight('produit', 'supprimer')) {
 		$result = $object->log_price_delete($user, GETPOST('lineid', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -726,7 +726,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer)) {
+	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
 		// Delete price by customer
 		$prodcustprice->id = GETPOST('lineid', 'int');
 		$result = $prodcustprice->delete($user);
@@ -873,7 +873,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 print dol_get_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = " fk_product_type = ".$object->type;
+$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
@@ -1060,7 +1060,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 				print '<input type="hidden" name="action" value="setlabelsellingprice">';
 				print '<input type="hidden" name="pricelevel" value="'.$i.'">';
 				print $langs->trans("SellingPrice").' '.$i.' - ';
-				print '<input class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="'.$conf->global->$keyforlabel.'">';
+				print '<input class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="' . getDolGlobalString($keyforlabel).'">';
 				print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
@@ -1134,7 +1134,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							print '<td class="right">'.price($prices['unitprice']).'</td>';
 							print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 							print '<td class="center">';
-							if (($user->rights->produit->creer || $user->hasRight('service', 'creer'))) {
+							if (($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 								print img_edit().'</a>';
 								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
@@ -1295,7 +1295,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					print '<td class="right">'.price($prices['unitprice']).'</td>';
 					print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 					print '<td class="center">';
-					if (($user->rights->produit->creer || $user->hasRight('service', 'creer'))) {
+					if (($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
 						print img_edit().'</a>';
 						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete_price_by_qty&token='.newToken().'&rowid='.$prices["rowid"].'">';
@@ -1726,7 +1726,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
-			if ($user->rights->produit->supprimer) {
+			if ($user->hasRight('produit', 'supprimer')) {
 				print '<td class="right">&nbsp;</td>';
 			}
 			print '</tr>';
@@ -1864,7 +1864,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 				print '</td>';
 
 				// Action
-				if ($user->rights->produit->supprimer) {
+				if ($user->hasRight('produit', 'supprimer')) {
 					$candelete = 0;
 					if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 						if (empty($notfirstlineforlevel[$objp->price_level])) {
@@ -2107,10 +2107,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+			$nbtotalofrecords = $prodcustprice->fetchAllLog($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
 
-		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAllLog($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
@@ -2431,7 +2431,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				// Todo Edit or delete button
 				// Action
-				if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
+				if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 					print '<td class="right nowraponall">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&id='.$object->id.'&socid='.$line->fk_soc.'">';
 					print img_info($langs->trans('PriceByCustomerLog'));

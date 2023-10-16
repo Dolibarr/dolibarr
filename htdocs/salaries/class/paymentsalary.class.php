@@ -88,6 +88,11 @@ class PaymentSalary extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int ID of bank_line
+	 */
+	public $bank_line;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;
@@ -194,7 +199,7 @@ class PaymentSalary extends CommonObject
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
-								$result = $tmpsalary->set_paid($user);
+								$result = $tmpsalary->setPaid($user);
 							} else {
 								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 							}

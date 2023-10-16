@@ -80,7 +80,7 @@ $result = @include_once $conffile; // Keep @ because with some error reporting t
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
-// We need '.phar' for geoip2. TODO Replace phar with explode files so we can disable phar.
+// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar.
 $arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'rar', 'zip', 'zlib');
 foreach ($arrayofstreamtodisable as $streamtodisable) {
 	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {

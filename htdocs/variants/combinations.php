@@ -406,7 +406,7 @@ llxHeader("", $title);
 
 if (!empty($id) || !empty($ref)) {
 	$showbarcode = isModEnabled('barcode');
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
 		$showbarcode = 0;
 	}
 
@@ -416,8 +416,8 @@ if (!empty($id) || !empty($ref)) {
 
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = " fk_product_type = ".$object->type;
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.((int) $object->type).'">'.$langs->trans("BackToList").'</a>';
+	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 

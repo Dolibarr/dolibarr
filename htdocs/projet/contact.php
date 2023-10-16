@@ -157,7 +157,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new contact
-	if ($action == 'addcontact_confirm' && $user->rights->projet->creer) {
+	if ($action == 'addcontact_confirm' && $user->hasRight('projet', 'creer')) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
@@ -220,7 +220,7 @@ if (empty($reshook)) {
 	}
 
 	// Change contact's status
-	if ($action == 'swapstatut' && $user->rights->projet->creer) {
+	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
 		if ($object->fetch($id)) {
 			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 		} else {
@@ -229,7 +229,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a contact
-	if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer) {
+	if (($action == 'deleteline' || $action == 'deletecontact') && $user->hasRight('projet', 'creer')) {
 		$object->fetch($id);
 		$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
@@ -313,9 +313,9 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

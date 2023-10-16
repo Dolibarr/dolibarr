@@ -139,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && !empty($user->rights->stock->mouvement->creer) && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $user->hasRight('stock', 'mouvement', 'creer') && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -265,6 +265,7 @@ if (empty($reshook)) {
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= $db->order('id.rowid', 'ASC');
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();

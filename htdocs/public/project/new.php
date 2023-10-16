@@ -133,7 +133,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD)) {
 		print '<div class="backimagepublicnewlead">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD.'">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD').'">';
 		print '</div>';
 	}
 
@@ -370,7 +370,9 @@ if (empty($reshook) && $action == 'add') {
 						$msg     = $arraydefaultmessage->content;
 					}
 					if (empty($labeltosue)) {
-						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+						$appli = $mysoc->name;
+
+						$labeltouse = '['.$appli.'] '.$langs->trans("YourMessage");
 						$msg = $langs->trans("YourMessageHasBeenReceived");
 					}
 

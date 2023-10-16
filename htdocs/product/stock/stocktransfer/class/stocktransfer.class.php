@@ -914,7 +914,7 @@ class StockTransfer extends CommonObject
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON;
 
 			// Include file with class
@@ -975,8 +975,8 @@ class StockTransfer extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'eagle';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFER_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
 			}

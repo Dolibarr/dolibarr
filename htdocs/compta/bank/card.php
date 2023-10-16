@@ -329,7 +329,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->banque->configurer) {
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->hasRight('banque', 'configurer')) {
 		// Delete
 		$object = new Account($db);
 		$object->fetch(GETPOST("id", "int"));
@@ -880,12 +880,12 @@ if ($action == 'create') {
 		 */
 		print '<div class="tabsAction">';
 
-		if ($user->rights->banque->configurer) {
+		if ($user->hasRight('banque', 'configurer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
 		$canbedeleted = $object->can_be_deleted(); // Renvoi vrai si compte sans mouvements
-		if ($user->rights->banque->configurer && $canbedeleted) {
+		if ($user->hasRight('banque', 'configurer') && $canbedeleted) {
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 		}
 
@@ -898,7 +898,7 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	if (GETPOST('id', 'int') && $action == 'edit' && $user->rights->banque->configurer) {
+	if (GETPOST('id', 'int') && $action == 'edit' && $user->hasRight('banque', 'configurer')) {
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
