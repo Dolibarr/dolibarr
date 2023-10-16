@@ -91,6 +91,8 @@ ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_paymen
 
 ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
 
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_entity (entity);
+
 ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
 ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;
 
