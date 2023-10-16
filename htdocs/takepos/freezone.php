@@ -124,7 +124,7 @@ top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">
 <?php
 if ($action == "freezone") {
-	echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans('Price').'">';
+	echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans(getDolGlobalString("TAKEPOS_CHANGE_PRICE_HT") ? 'AmountHT' : 'AmountTTC').'">';
 }
 if ($action == "addnote") {
 	echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';
