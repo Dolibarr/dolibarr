@@ -651,7 +651,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			} else {
 				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
 				// or into all other projects if user has permission to).
-				if (empty($user->rights->projet->all->lire)) {
+				if (!$user->hasRight('projet', 'all', 'lire')) {
 					// User is not allowed on this project and project is not public, so we hide line
 					if (!in_array($lines[$i]->fk_project, $projectsArrayId)) {
 						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
@@ -706,7 +706,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					// Project ref
 					print '<td class="nowraponall">';
 					//if ($showlineingray) print '<i>';
-					if ($lines[$i]->public || in_array($lines[$i]->fk_project, $projectsArrayId) || !empty($user->rights->projet->all->lire)) {
+					if ($lines[$i]->public || in_array($lines[$i]->fk_project, $projectsArrayId) || $user->hasRight('projet', 'all', 'lire')) {
 						print $projectstatic->getNomUrl(1);
 					} else {
 						print $projectstatic->getNomUrl(1, 'nolink');
@@ -1291,7 +1291,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			//var_dump($lines[$i]);
 			//var_dump($projectsrole[$lines[$i]->fk_project]);
 			// If at least one role for project
-			if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+			if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 				$disabledproject = 0;
 				$disabledtask = 0;
 			}
@@ -1648,7 +1648,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
 				// If at least one role for project
-				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 					$disabledproject = 0;
 					$disabledtask = 0;
 				}
@@ -2047,7 +2047,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
 				// If at least one role for project
-				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 					$disabledproject = 0;
 					$disabledtask = 0;
 				}
@@ -2340,7 +2340,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
 				// If at least one role for project
-				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 					$disabledproject = 0;
 					$disabledtask = 0;
 				}

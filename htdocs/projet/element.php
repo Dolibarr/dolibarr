@@ -237,7 +237,7 @@ if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -1045,7 +1045,7 @@ foreach ($listofreferent as $key => $value) {
 		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) {
 			$idtofilterthirdparty = empty($object->thirdparty->id) ? 0 : $object->thirdparty->id;
 			if (!empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) {
-				$idtofilterthirdparty .= ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
+				$idtofilterthirdparty .= ',' . getDolGlobalString('PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS');
 			}
 		}
 

@@ -129,7 +129,7 @@ class Interfaces
 						if (strtolower($reg[2]) != 'all') {
 							$module = preg_replace('/^mod/i', '', $reg[2]);
 							$constparam = 'MAIN_MODULE_'.strtoupper($module);
-							if (empty($conf->global->$constparam)) {
+							if (!isModEnabled($constparam)) {
 								$qualified = false;
 							}
 						}

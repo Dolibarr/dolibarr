@@ -997,7 +997,7 @@ class Position extends CommonObject
 		if (!empty($conf->global->hrm_POSITION_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_POSITION_ADDON . ".php";
+			$file = getDolGlobalString('hrm_POSITION_ADDON') . ".php";
 			$classname = $conf->global->hrm_POSITION_ADDON;
 
 			// Include file with class

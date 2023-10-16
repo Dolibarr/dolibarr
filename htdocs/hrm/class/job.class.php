@@ -953,7 +953,7 @@ class Job extends CommonObject
 		if (!empty($conf->global->hrm_JOB_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_JOB_ADDON.".php";
+			$file = getDolGlobalString('hrm_JOB_ADDON') . ".php";
 			$classname = $conf->global->hrm_JOB_ADDON;
 
 			// Include file with class
