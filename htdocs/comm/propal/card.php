@@ -196,7 +196,7 @@ if (empty($reshook)) {
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
 					);
-					$date_delivery_old = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+					$date_delivery_old = $object->delivery_date;
 					if (!empty($date_delivery_old) && !empty($date_delivery)) {
 						//Attempt to get the date without possible hour rounding errors
 						$old_date_delivery = dol_mktime(
@@ -210,7 +210,6 @@ if (empty($reshook)) {
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
 						if ($difference != 0) {
-							$object->date_livraison = $date_delivery;
 							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line) {
 								if (isset($line->date_start)) {
@@ -418,7 +417,6 @@ if (empty($reshook)) {
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date = $datep;
-					$object->date_livraison = $date_delivery; // deprecated
 					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
@@ -451,7 +449,6 @@ if (empty($reshook)) {
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date = $datep;
-				$object->date_livraison = $date_delivery;
 				$object->delivery_date = $date_delivery;
 				$object->availability_id = GETPOST('availability_id', 'int');
 				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
@@ -1968,8 +1965,8 @@ if ($action == 'create') {
 	print '<tr class="field_date_livraison"><td class="titlefieldcreate">'.$langs->trans("DeliveryDate").'</td>';
 	print '<td class="valuefieldcreate">';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
-	if (isset($conf->global->DATE_LIVRAISON_WEEK_DELAY) && is_numeric($conf->global->DATE_LIVRAISON_WEEK_DELAY)) {
-		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+	if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
+		$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);

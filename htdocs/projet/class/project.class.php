@@ -146,10 +146,6 @@ class Project extends CommonObject
 	 */
 	public $fk_user_close;
 
-	/**
-	 * @var int user close id
-	 */
-	public $user_close_id;
 	public $public; //!< Tell if this is a public or private project
 
 	/**
@@ -727,7 +723,7 @@ class Project extends CommonObject
 				$this->socid = $obj->fk_soc;
 				$this->user_author_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->user_close_id = $obj->fk_user_close;
+				$this->user_closing_id = $obj->fk_user_close;
 				$this->public = $obj->public;
 				$this->statut = $obj->status; // deprecated
 				$this->status = $obj->status;
@@ -2334,9 +2330,7 @@ class Project extends CommonObject
 				}
 
 				if (!empty($obj->fk_user_cloture)) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id   = $obj->fk_user_cloture;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
