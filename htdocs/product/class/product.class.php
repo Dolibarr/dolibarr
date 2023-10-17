@@ -850,8 +850,8 @@ class Product extends CommonObject
 	 * Stockable product
 	 */
 	const NOT_MANAGED_IN_STOCK = 0;
-	const DISABLED_STOCK = 1;
-	const ENABLED_STOCK = 0;
+	const DISABLED_STOCK = 0;
+	const ENABLED_STOCK = 1;
 
 	/**
 	 *  Constructor
