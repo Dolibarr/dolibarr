@@ -550,7 +550,7 @@ class Position extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('POSITION_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_POSITION_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}

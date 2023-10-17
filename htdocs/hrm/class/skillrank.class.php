@@ -570,7 +570,7 @@ class SkillRank extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILLRANK_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILLRANK_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}

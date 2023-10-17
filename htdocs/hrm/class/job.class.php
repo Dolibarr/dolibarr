@@ -540,7 +540,7 @@ class Job extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('JOB_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_JOB_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
