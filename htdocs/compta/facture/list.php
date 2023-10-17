@@ -14,7 +14,7 @@
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2023		Nick Fragoulis 
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1386,12 +1386,12 @@ if (!empty($arrayfields['f.type']['checked'])) {
 	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
-	// Invoice Subtype
-	if (!empty($arrayfields['f.subtype']['checked'])) {
-		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray('search_subtype', $subtypearray, $search_subtype, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
-		print '</td>';
-	}
+// Invoice Subtype
+if (!empty($arrayfields['f.subtype']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print $form->selectarray('search_subtype', $subtypearray, $search_subtype, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	print '</td>';
+}
 // Date invoice
 if (!empty($arrayfields['f.datef']['checked'])) {
 	print '<td class="liste_titre center">';
