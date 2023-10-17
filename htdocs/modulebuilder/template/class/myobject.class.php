@@ -699,7 +699,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYOBJECT_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYMODULE_MYOBJECT_UNVALIDATE');
 	}
 
 	/**
@@ -723,7 +723,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYMODULE_MYOBJECT_CANCEL');
 	}
 
 	/**
@@ -747,8 +747,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYMODULE_MYOBJECT_REOPEN');
 	}
 
 	/**
