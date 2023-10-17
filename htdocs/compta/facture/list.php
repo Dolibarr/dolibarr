@@ -14,6 +14,7 @@
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023		Nick Fragoulis 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +87,7 @@ $userid = GETPOST('userid', 'int');
 $search_ref = GETPOST('sf_ref') ?GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'int');
+$search_subtype = GETPOST('search_subtype', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -216,6 +218,7 @@ $arrayfields = array(
 	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
 	'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
 	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
+	'f.subtype'=>array('label'=>"InvoiceSubtype", 'checked'=>0, 'position'=>17),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
 	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>40),
@@ -322,6 +325,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
+	$search_subtype = '';
 	$search_project_ref = '';
 	$search_project = '';
 	$search_company = '';
@@ -565,7 +569,7 @@ $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 $company_url_list = array();
-
+$subtypearray = $object->subtype_array(0);
 $title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
 $help_url = 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes';
 
@@ -578,7 +582,7 @@ $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -681,6 +685,9 @@ if ($search_refcustomer) {
 }
 if ($search_type != '' && $search_type != '-1') {
 	$sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
+}
+if ($search_subtype != '' && $search_subtype != '-1') {
+	$sql .= " AND f.subtype IN (".$db->sanitize($db->escape($search_subtype)).")";
 }
 if ($search_project_ref) {
 	$sql .= natural_search('p.ref', $search_project_ref);
@@ -1079,6 +1086,9 @@ if ($search_project) {
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
+if ($search_subtype != '') {
+	$param .= '&search_subtype='.urlencode($search_subtype);
+}
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
 }
@@ -1376,6 +1386,12 @@ if (!empty($arrayfields['f.type']['checked'])) {
 	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
+	// Invoice Subtype
+	if (!empty($arrayfields['f.subtype']['checked'])) {
+		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+		print $form->selectarray('search_subtype', $subtypearray, $search_subtype, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+		print '</td>';
+	}
 // Date invoice
 if (!empty($arrayfields['f.datef']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1671,6 +1687,9 @@ if (!empty($arrayfields['f.type']['checked'])) {
 	print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.subtype']['checked'])) {
+	print_liste_field_titre($arrayfields['f.subtype']['label'], $_SERVER["PHP_SELF"], 'f.subtype', '', $param, '', $sortfield, $sortorder);
+}
 if (!empty($arrayfields['f.datef']['checked'])) {
 	print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1911,6 +1930,7 @@ if ($num > 0) {
 		$facturestatic->ref = $obj->ref;
 		$facturestatic->ref_client = $obj->ref_client;
 		$facturestatic->type = $obj->type;
+		$facturestatic->subtype = $obj->subtype;
 		$facturestatic->total_ht = $obj->total_ht;
 		$facturestatic->total_tva = $obj->total_tva;
 		$facturestatic->total_ttc = $obj->total_ttc;
@@ -2103,6 +2123,16 @@ if ($num > 0) {
 			if (!empty($arrayfields['f.type']['checked'])) {
 				print '<td class="nowraponall tdoverflowmax100" title="'.$facturestatic->getLibType().'">';
 				print $facturestatic->getLibType(2);
+				print "</td>";
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Invoice Subtype
+			if (!empty($arrayfields['f.subtype']['checked'])) {
+				print '<td class="nowraponall tdoverflowmax300" title="'.$facturestatic->getSubtypeLabel().'">';
+				print $facturestatic->getSubtypeLabel('facture');
 				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;
