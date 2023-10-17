@@ -447,7 +447,6 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				$this->date = $this->date_creation;
 			}
-			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
@@ -1417,7 +1416,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($date)) {
 			$date = $now;
 		}
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Clean parameters
 		if (empty($this->source)) {
@@ -2609,7 +2608,6 @@ class CommandeFournisseur extends CommonOrder
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 			}
 
@@ -3396,10 +3394,6 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf;
 
-		if (empty($this->delivery_date) && !empty($this->date_livraison)) {
-			$this->delivery_date = $this->date_livraison; // For backward compatibility
-		}
-
 		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
 			$now = dol_now();
 			if (!empty($this->delivery_date)) {
@@ -3428,10 +3422,6 @@ class CommandeFournisseur extends CommonOrder
 	public function showDelay()
 	{
 		global $conf, $langs;
-
-		if (empty($this->delivery_date) && !empty($this->date_livraison)) {
-			$this->delivery_date = $this->date_livraison; // For backward compatibility
-		}
 
 		$text = '';
 

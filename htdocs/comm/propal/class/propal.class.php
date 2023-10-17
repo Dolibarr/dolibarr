@@ -224,9 +224,12 @@ class Propal extends CommonObject
 	 */
 	public $total;
 
-	public $cond_reglement_code;
-	public $cond_reglement_doc;
-	public $mode_reglement_code;
+	public $cond_reglement_code;	// code
+	public $cond_reglement;			// label
+	public $cond_reglement_doc;		// label doc
+
+	public $mode_reglement_code;	// code
+	public $mode_reglement;			// label
 
 	public $deposit_percent;
 
@@ -272,8 +275,9 @@ class Propal extends CommonObject
 
 	public $duree_validite;
 
-	public $demand_reason_id;
-	public $demand_reason_code;
+	public $demand_reason_id;		// id
+	public $demand_reason_code;		// code
+	public $demand_reason;			// label
 
 	public $warehouse_id;
 
@@ -1108,7 +1112,7 @@ class Propal extends CommonObject
 		}
 
 		// Set tmp vars
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		dol_syslog(get_class($this)."::create");
 
@@ -1684,7 +1688,6 @@ class Propal extends CommonObject
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
@@ -2277,7 +2280,6 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 			}
 
@@ -2400,7 +2402,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->fk_input_reason = $id;
+
 				$this->demand_reason_id = $id;
 			}
 
@@ -3298,7 +3300,7 @@ class Propal extends CommonObject
 		// phpcs:enable
 		global $user;
 
-		if ($this->statut >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();

@@ -1430,8 +1430,7 @@ class Facture extends CommonInvoice
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
-		$this->date_livraison       = $object->delivery_date; // deprecated
+		$this->delivery_date        = $object->delivery_date;
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
@@ -1566,8 +1565,7 @@ class Facture extends CommonInvoice
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
-		$this->date_livraison       = $object->delivery_date; // deprecated
+		$this->delivery_date        = $object->delivery_date;
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;

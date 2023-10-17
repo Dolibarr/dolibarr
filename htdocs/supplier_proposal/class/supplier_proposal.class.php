@@ -899,7 +899,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Set tmp vars
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) {
@@ -1261,7 +1261,6 @@ class SupplierProposal extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
 				$this->date                 = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
@@ -1533,7 +1532,6 @@ class SupplierProposal extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 				return 1;
 			} else {

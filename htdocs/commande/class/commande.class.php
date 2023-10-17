@@ -913,7 +913,7 @@ class Commande extends CommonOrder
 
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
@@ -1388,12 +1388,11 @@ class Commande extends CommonOrder
 		$this->fk_account           = $object->fk_account;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->date_livraison       = $object->date_livraison; // deprecated
-		$this->delivery_date        = $object->date_livraison;
+		$this->delivery_date        = $object->delivery_date;
 		$this->shipping_method_id   = $object->shipping_method_id;
 		$this->warehouse_id         = $object->warehouse_id;
 		$this->fk_delivery_address  = $object->fk_delivery_address;
-		$this->contact_id = $object->contact_id;
+		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
 		$this->ref_customer         = $object->ref_client;
 
@@ -1964,7 +1963,6 @@ class Commande extends CommonOrder
 				$this->availability	    	= $obj->availability_label;
 				$this->demand_reason_id		= $obj->fk_input_reason;
 				$this->demand_reason_code = $obj->demand_reason_code;
-				$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
@@ -2698,7 +2696,6 @@ class Commande extends CommonOrder
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 			}
 
@@ -3362,7 +3359,7 @@ class Commande extends CommonOrder
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -3644,7 +3641,6 @@ class Commande extends CommonOrder
 				$generic_commande->statut = $obj->fk_statut;
 				$generic_commande->date_commande = $this->db->jdate($obj->date_commande);
 				$generic_commande->date = $this->db->jdate($obj->date_commande);
-				$generic_commande->date_livraison = $this->db->jdate($obj->delivery_date);
 				$generic_commande->delivery_date = $this->db->jdate($obj->delivery_date);
 
 				if ($mode == 'toship' && $generic_commande->hasDelay()) {
@@ -4216,9 +4212,9 @@ class Commande extends CommonOrder
 		global $conf, $langs;
 
 		if (empty($this->delivery_date)) {
-			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date, 'day');
 		} else {
-			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');
+			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
 		}
 		$text .= ' '.($conf->commande->client->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->client->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
 
