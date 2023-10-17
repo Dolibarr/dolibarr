@@ -1089,22 +1089,6 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
-			if ($mysoc->country_code == 'GR' && getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && GETPOSTISSET('subtype')) {
-				$subtypearray = $object->subtype_array(1);
-				$subtype = GETPOST('subtype');
-				foreach ($subtypearray as $code => $rowid) {
-					if ($rowid == $subtype) {
-						$selectedcode = $code;
-						break;
-					}
-				}
-				if (!in_array($selectedcode, array('5.1', '5.2', '11.4'))) {
-					$error++;
-					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
-					$action = 'create';
-				}
-			}
-
 			if (!$error) {
 				if (!empty($originentity)) {
 					$object->entity = $originentity;
@@ -1330,22 +1314,6 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
-			if ($mysoc->country_code == 'GR' && getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && GETPOSTISSET('subtype')) {
-				$subtypearray = $object->subtype_array(1);
-				$subtype = GETPOST('subtype');
-				foreach ($subtypearray as $code => $rowid) {
-					if ($rowid == $subtype) {
-						$selectedcode = $code;
-						break;
-					}
-				}
-				if (in_array($selectedcode, array('5.1', '5.2', '11.4'))) {
-					$error++;
-					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
-					$action = 'create';
-				}
-			}
-
 			if (!$error) {
 				$object->socid              = GETPOST('socid', 'int');
 				$object->type               = GETPOST('type');
@@ -1431,22 +1399,6 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
 				$action = 'create';
-			}
-
-			if ($mysoc->country_code == 'GR' && getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && GETPOSTISSET('subtype')) {
-				$subtypearray = $object->subtype_array(1);
-				$subtype = GETPOST('subtype');
-				foreach ($subtypearray as $code => $rowid) {
-					if ($rowid == $subtype) {
-						$selectedcode = $code;
-						break;
-					}
-				}
-				if (in_array($selectedcode, array('5.1', '5.2', '11.4'))) {
-					$error++;
-					setEventMessages($langs->trans("ErrorInvalidSubtype"), null, 'errors');
-					$action = 'create';
-				}
 			}
 
 			if (!$error) {
