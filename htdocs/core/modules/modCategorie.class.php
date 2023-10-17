@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020      Stéphane Lesage		<stephane.lesage@ateis.com>
+/* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
+ * Copyright (C) 2005-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2020		Stéphane Lesage		<stephane.lesage@ateis.com>
+ * Copyright (C) 2022-2023	Solution Libre SAS	<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -447,8 +448,9 @@ class modCategorie extends DolibarrModules
 		$this->exportTagLinks(
 			$r,
 			15,
-			'facture',
-			['facture', 'facture', 'export'],
+			'FactureFournisseur',
+			'!empty($conf->fournisseur->enabled) && !empty($conf->supplier_invoice->enabled)',
+			['fournisseur', 'facture', 'export'],
 			[
 				'rowid' => [
 					'name' => 'InvoiceID',
@@ -638,7 +640,7 @@ class modCategorie extends DolibarrModules
 		// 11 Website Pages, TODO ?
 
 		// 15 Supplier Invoices
-		if (!empty($conf->facture->enabled) && !empty($conf->fournisseur->enabled)) {
+		if (!empty($conf->fournisseur->enabled) && !empty($conf->supplier_invoice->enabled)) {
 			++$r;
 			$this->importTagLinks(
 				$r,
@@ -653,17 +655,20 @@ class modCategorie extends DolibarrModules
 	/**
 	 * Configure a tag link export
 	 *
-	 * @param int    $r           Index of import tables
-	 * @param int    $cat_id      Categorie id
-	 * @param string $class       Class of the linked object
-	 * @param string $permission  Permission to export the linked object
-	 * @param array  $fields_list Additionnal fields of the linked object to export
+	 * @param int		$r				Index of import tables
+	 * @param int		$cat_id			Categorie id
+	 * @param string	$enabled		Condition to enable this export
+	 * @param string	$class			Class of the linked object
+	 * @param string	$permission		Permission to export the linked object
+	 * @param array		$fields_list	Additionnal fields of the linked object to export
+	 *
 	 * @return void
 	 */
 	protected function exportTagLinks(
 		int $r,
 		int $cat_id,
 		string $class,
+		string $enabled,
 		array $permission,
 		array $fields_list
 	) {
@@ -674,7 +679,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$cat_id.'_'.$cat_type;
 		$this->export_label[$r] = 'Cat'.ucfirst($cat_type).'sLinks';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->'.$class.'->enabled)';
+		$this->export_enabled[$r] = $enabled;
 		$this->export_permission[$r] = [
 			['categorie', 'lire'],
 			$permission
@@ -729,11 +734,12 @@ class modCategorie extends DolibarrModules
 	/**
 	 * Configure a tag link import
 	 *
-	 * @param int    $r          Index of import tables
-	 * @param int    $cat_id     Categorie id
-	 * @param string $class_file Class file of the linked object
-	 * @param string $class      Class of the linked object
-	 * @param string $element    Name of the linked object
+	 * @param int		$r			Index of import tables
+	 * @param int		$cat_id		Categorie id
+	 * @param string	$class_file	Class file of the linked object
+	 * @param string	$class		Class of the linked object
+	 * @param string	$element	Name of the linked object
+	 *
 	 * @return void
 	 */
 	protected function importTagLinks(
