@@ -212,7 +212,7 @@ foreach ($dirmodels as $reldir) {
 
 						print '<tr><td>'.$module->name."</td>\n";
 						print '<td>';
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -412,6 +412,25 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print load_fiche_titre($langs->trans('CreationOptions'), '', '');
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans('Name').'</td>';
+print '<td></td>';
+print '<td class="center" width="60">'.$langs->trans('Status').'</td>';
+
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
+print '</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" >';
+print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
+print '</td></tr>';
+
+print '</table><br>';
 print '<br>';
 
 

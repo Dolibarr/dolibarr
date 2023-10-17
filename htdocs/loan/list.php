@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2015       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -29,14 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("loan", "compta", "banks", "bills"));
-
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'loan', '', '', '');
+$langs->loadLangs(array("banks", "bills", "compta", "loan"));
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -51,7 +44,8 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical objects
-$loan_static = new Loan($db);
+$hookmanager->initHooks(array('loanlist'));
+$object = new Loan($db);
 $extrafields = new ExtraFields($db);
 
 if (!$sortfield) {
@@ -69,6 +63,14 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'loa
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');  // mode view result
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'loan', '', '', '');
 
 /*
  * Actions
@@ -100,12 +102,16 @@ if (empty($reshook)) {
 /*
  *	View
  */
-
+$form = new Form($db);
 $now = dol_now();
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
+$help_url="EN:Module_Loan|FR:Module_Emprunt";
 $help_url = '';
 $title = $langs->trans('Loans');
+
+llxHeader('', $title, $help_url);
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.paid,";
 $sql .= " SUM(pl.amount_capital) as alreadypaid";
@@ -167,9 +173,6 @@ $num = $db->num_rows($resql);
 
 // Output page
 // --------------------------------------------------------------------
-
-llxHeader('', $title, $help_url);
-
 if ($resql) {
 	$i = 0;
 
@@ -203,7 +206,8 @@ if ($resql) {
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url, '', $user->rights->loan->write);
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') {
@@ -233,12 +237,26 @@ if ($resql) {
 		print $searchpicto;
 		print '</td>';
 	}
+
+	// Filter: Ref
 	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
+
+	// Filter: Label
 	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
+
+	// Filter: Amount
 	print '<td class="liste_titre right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
+
+	// No filter: Date start
 	print '<td class="liste_titre">&nbsp;</td>';
+
+	// No filter: Date end
 	print '<td class="liste_titre">&nbsp;</td>';
+
+	// No filter: Status
 	print '<td class="liste_titre"></td>';
+
+	// Filter: Buttons
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons();
@@ -289,10 +307,10 @@ if ($resql) {
 			break; // Should not happen
 		}
 
-		$loan_static->id = $obj->rowid;
-		$loan_static->ref = $obj->rowid;
-		$loan_static->label = $obj->label;
-		$loan_static->paid = $obj->paid;
+		$object->id = $obj->rowid;
+		$object->ref = $obj->rowid;
+		$object->label = $obj->label;
+		$object->paid = $obj->paid;
 
 
 		if ($mode == 'kanban') {
@@ -301,12 +319,12 @@ if ($resql) {
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
-			$loan_static->datestart= $obj->datestart;
-			$loan_static->dateend = $obj->dateend;
-			$loan_static->capital = $obj->capital;
-			$loan_static->totalpaid = $obj->paid;
+			$object->datestart= $obj->datestart;
+			$object->dateend = $obj->dateend;
+			$object->capital = $obj->capital;
+			$object->totalpaid = $obj->paid;
 
-			print $loan_static->getKanbanView('', array('selected' => in_array($loan_static->id, $arrayofselected)));
+			print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
@@ -320,7 +338,7 @@ if ($resql) {
 			}
 
 			// Ref
-			print '<td>'.$loan_static->getNomUrl(1).'</td>';
+			print '<td>'.$object->getNomUrl(1).'</td>';
 
 			// Label
 			print '<td>'.dol_trunc($obj->label, 42).'</td>';
@@ -335,7 +353,7 @@ if ($resql) {
 			print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
 			print '<td class="right nowrap">';
-			print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypaid);
+			print $object->LibStatut($obj->paid, 5, $obj->alreadypaid);
 			print '</td>';
 
 			// Action column

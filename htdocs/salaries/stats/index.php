@@ -75,7 +75,7 @@ dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
 
-if (empty($user->rights->salaries->readall) && empty($useridtofilter)) {
+if (!$user->hasRight('salaries', 'readall') && empty($useridtofilter)) {
 	$useridtofilter = $user->getAllChildIds(1);
 }
 
@@ -209,7 +209,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, empty($user->rights->salaries->readall) ? 'hierarchyme' : '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

@@ -171,6 +171,11 @@ class Mailing extends CommonObject
 	public $date_validation;
 
 	/**
+	 * @var int date sending
+	 */
+	public $date_envoi;
+
+	/**
 	 * @var array extraparams
 	 */
 	public $extraparams = array();
@@ -218,11 +223,11 @@ class Mailing extends CommonObject
 		$this->statuts[2] = 'MailingStatusSentPartialy';
 		$this->statuts[3] = 'MailingStatusSentCompletely';
 
-		$this->statut_dest[-1] = 'MailingStatusError';
 		$this->statut_dest[0] = 'MailingStatusNotSent';
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe'; // Read but ask to not be contacted anymore
+		$this->statut_dest[-1] = 'MailingStatusError';
 	}
 
 	/**
@@ -237,8 +242,8 @@ class Mailing extends CommonObject
 		global $conf, $langs;
 
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -306,8 +311,8 @@ class Mailing extends CommonObject
 	public function update($user, $notrigger = 0)
 	{
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -410,7 +415,6 @@ class Mailing extends CommonObject
 
 				$this->user_creat = $obj->fk_user_creat;
 				$this->user_creation = $obj->fk_user_creat;
-				$this->user_valid = $obj->fk_user_valid;
 				$this->user_validation = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
@@ -474,8 +478,8 @@ class Mailing extends CommonObject
 			$object->email_replyto      = '';
 			$object->email_errorsto     = '';
 
-			$object->user_creat         = $user->id;
-			$object->user_valid         = '';
+			$object->user_creation_id = $user->id;
+			$object->user_validation_id = '';
 
 			$object->date_creat         = '';
 			$object->date_valid         = '';
@@ -788,9 +792,7 @@ class Mailing extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -818,7 +820,7 @@ class Mailing extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -844,7 +846,7 @@ class Mailing extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;

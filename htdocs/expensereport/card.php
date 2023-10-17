@@ -325,7 +325,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $user->rights->expensereport->creer) {
+	if (($action == 'update' || $action == 'updateFromRefuse') && $user->rights->expensereport->creer) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));

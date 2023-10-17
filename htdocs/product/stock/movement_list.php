@@ -167,7 +167,7 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'stock');
 
 // Security check
-if (!$user->rights->stock->mouvement->lire) {
+if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 	accessforbidden();
 }
 
@@ -596,7 +596,7 @@ $formproduct = new FormProduct($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $productstatic = new Product($db);
 $warehousestatic = new Entrepot($db);
 $movement = new MouvementStock($db);
@@ -936,11 +936,11 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 																								   // modified by hook
 	if (empty($reshook)) {
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 	}

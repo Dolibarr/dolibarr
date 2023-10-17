@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
-if (empty($user->rights->opensurvey->read)) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 
@@ -117,7 +117,7 @@ for ($i = 0; $i < $nblines; $i++) {
 }
 if ($testmodifier) {
 	// Security check
-	if (!$user->rights->opensurvey->write) {
+	if (!$user->hasRight('opensurvey', 'write')) {
 		accessforbidden();
 	}
 
@@ -146,7 +146,7 @@ if ($testmodifier) {
 // Add column (not for date)
 if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format == "A") {
 	// Security check
-	if (!$user->rights->opensurvey->write) {
+	if (!$user->hasRight('opensurvey', 'write')) {
 		accessforbidden();
 	}
 
@@ -171,7 +171,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 // Add column (with format date)
 if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 	// Security check
-	if (!$user->rights->opensurvey->write) {
+	if (!$user->hasRight('opensurvey', 'write')) {
 		accessforbidden();
 	}
 
@@ -296,7 +296,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 for ($i = 0; $i < $nblines; $i++) {
 	if (GETPOST("effaceligne".$i) || GETPOST("effaceligne".$i."_x") || GETPOST("effaceligne".$i.".x")) {	// effacelignei for chrome, effacelignei_x for firefox
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -331,7 +331,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 	if ((GETPOST("effacecolonne".$i) || GETPOST("effacecolonne".$i."_x") || GETPOST("effacecolonne".$i.".x"))
 		&& $nbcolonnes > 1) {	// effacecolonnei for chrome, effacecolonnei_x for firefox
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -572,7 +572,7 @@ print '</div>';
 // Show form to add a new field/column
 if (GETPOST('ajoutsujet')) {
 	// Security check
-	if (!$user->rights->opensurvey->write) {
+	if (!$user->hasRight('opensurvey', 'write')) {
 		accessforbidden();
 	}
 
@@ -657,7 +657,7 @@ if (GETPOST('ajoutsujet')) {
 	exit;
 }
 
-if ($user->rights->opensurvey->write) {
+if ($user->hasRight('opensurvey', 'write')) {
 	print '<span class="opacitymedium">';
 	$s = $langs->trans("PollAdminDesc", '{s1}', $langs->trans("Add"));
 	print str_replace('{s1}', img_picto('', 'delete'), $s);
@@ -673,7 +673,7 @@ print '<input type="hidden" name="page_y" value="">';
 print '<div class="cadre div-table-responsive-no-min"> '."\n";
 
 // Start to show survey result
-print '<table class="resultats">'."\n";
+print '<table class="resultats margintoponly">'."\n";
 
 //reformatage des données des sujets du sondage
 $toutsujet = explode(",", $object->sujet);
@@ -684,9 +684,9 @@ print '<td></td>'."\n";
 print '<td></td>'."\n";
 
 // loop to show the delete link
-if ($user->rights->opensurvey->write) {
+if ($user->hasRight('opensurvey', 'write')) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
-		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', false, 1).'"></td>'."\n";
+		print '<td class=somme><input type="image" class="buttonwebsite" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', false, 1).'"></td>'."\n";
 	}
 }
 
@@ -712,7 +712,7 @@ if ($object->format == "D") {
 		}
 	}
 
-	if ($user->rights->opensurvey->write) {
+	if ($user->hasRight('opensurvey', 'write')) {
 		print '<td class="annee">';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 	}
@@ -742,7 +742,7 @@ if ($object->format == "D") {
 		}
 	}
 
-	if ($user->rights->opensurvey->write) {
+	if ($user->hasRight('opensurvey', 'write')) {
 		print '<td class="mois"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 	}
 
@@ -769,7 +769,7 @@ if ($object->format == "D") {
 		}
 	}
 
-	if ($user->rights->opensurvey->write) {
+	if ($user->hasRight('opensurvey', 'write')) {
 		print '<td class="jour"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 	}
 	print '</tr>'."\n";
@@ -789,7 +789,7 @@ if ($object->format == "D") {
 			}
 		}
 
-		if ($user->rights->opensurvey->write) {
+		if ($user->hasRight('opensurvey', 'write')) {
 			print '<td class="heure"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 		}
 
@@ -832,7 +832,7 @@ while ($compteur < $num) {
 
 	print '<tr><td>'."\n";
 
-	if ($user->rights->opensurvey->write) {
+	if ($user->hasRight('opensurvey', 'write')) {
 		print '<input type="image" class="reposition" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete.png', '', false, 1).'">'."\n";
 	}
 
@@ -993,7 +993,7 @@ while ($compteur < $num) {
 	}
 
 	// Button edit at end of line
-	if ($compteur != $ligneamodifier && ($user->rights->opensurvey->write)) {
+	if ($compteur != $ligneamodifier && ($user->hasRight('opensurvey', 'write'))) {
 		print '<td class="casevide"><input type="submit" class="button reposition" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 

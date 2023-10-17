@@ -51,6 +51,7 @@ StripeAccount=Cuenta Stripe
 StripeChargeList=Listado de gastos de Stripe
 StripeTransactionList=Listado de transacciones
 StripeCustomerId=Id de cliente de Stripe
+StripePaymentId=ID de pago de Stripe
 StripePaymentModes=Modos de pago de Stripe
 LocalID=ID local
 StripeID=ID Stripe

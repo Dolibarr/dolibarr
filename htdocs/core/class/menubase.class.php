@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,7 +333,6 @@ class Menubase
 		//global $conf, $langs;
 
 		// Clean parameters
-		$this->rowid = trim($this->rowid);
 		$this->menu_handler = trim($this->menu_handler);
 		$this->module = trim($this->module);
 		$this->type = trim($this->type);
@@ -731,7 +730,7 @@ class Menubase
 						}
 					}
 					$tabMenu[$b]['titre']       = $title;
-					$tabMenu[$b]['prefix'] = $menu['prefix'];
+					$tabMenu[$b]['prefix']      = $menu['prefix'];
 					$tabMenu[$b]['target']      = $menu['target'];
 					$tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
 					$tabMenu[$b]['leftmenu']    = $menu['leftmenu'];

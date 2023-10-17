@@ -408,7 +408,7 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire) {
+		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
 			$result = $order->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
@@ -836,7 +836,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire) {
+		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
 			$result = $order->fetch($id);
 
@@ -865,7 +865,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
-			$errorlabel = $order->error;
+			$errorlabel = 'Bad permission';
 		}
 	}
 
