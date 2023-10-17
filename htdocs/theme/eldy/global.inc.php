@@ -1533,7 +1533,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	min-height: 0.01%;
 }
 .div-table-responsive {
-	line-height: var(--heightrow);
+	line-height: 150%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -3964,7 +3964,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
-	height: 22px;
+	height: var(--heightrow);
 }
 table.liste tr.trkanban td {
 	padding: 10px 12px 10px 12px;			/* t r b l */
