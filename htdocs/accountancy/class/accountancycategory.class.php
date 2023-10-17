@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +123,19 @@ class AccountancyCategory // extends CommonObject
 	public $lines_display;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var mixed Sum debit credit
 	 */
 	public $sdc;
 
+	/**
+	 * @var array Sum debit credit per month
+	 */
+	public $sdcpermonth;
 
+	/**
+	 * @var array Sum debit credit per account
+	 */
+	public $sdcperaccount;
 
 	/**
 	 *  Constructor

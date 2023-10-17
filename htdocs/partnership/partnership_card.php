@@ -444,12 +444,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	*/
 	$morehtmlref .= '</div>';
-	if (!isset($npfilter)) {
-		$npfilter = "";
-	}
 
-	if ($managedfor == 'member') $npfilter .= " AND te.fk_member > 0 "; else $npfilter .= " AND te.fk_soc > 0 ";
-	$object->next_prev_filter = $npfilter;
+	if ($managedfor == 'member') {
+		$object->next_prev_filter = "te.fk_member > 0";
+	} else {
+		$object->next_prev_filter = "te.fk_soc > 0";
+	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 

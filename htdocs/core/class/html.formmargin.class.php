@@ -208,12 +208,13 @@ class FormMargin
 	public function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user, $hookmanager;
+		global $action;
 
 		if (!empty($user->socid)) {
 			return;
 		}
 
-		if (empty($user->rights->margins->liretous)) {
+		if (!$user->hasRight('margins', 'liretous')) {
 			return;
 		}
 
@@ -246,7 +247,7 @@ class FormMargin
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">' . $langs->trans('Margins') . '</td>';
 			print '<td class="liste_titre right">' . $langs->trans('SellingPrice') . '</td>';
-			if ($conf->global->MARGIN_TYPE == "1") {
+			if (getDolGlobalString('MARGIN_TYPE') == "1") {
 				print '<td class="liste_titre right">' . $langs->trans('BuyingPrice') . '</td>';
 			} else {
 				print '<td class="liste_titre right">' . $langs->trans('CostPrice') . '</td>';

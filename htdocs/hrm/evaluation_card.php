@@ -472,9 +472,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		}
 
-		//if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
-		//}
+		// Lines of evaluated skills
+		// $object is Evaluation
+		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+
+		if (empty($object->lines)) {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.img_warning().' '.$langs->trans("TheJobProfileHasNoSkillsDefinedFixBefore").'</td></tr>';
+		}
 
 		// Form to add new line
 		/*
@@ -578,6 +582,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$sk = new Skill($db);
 			foreach ($Tab as $t) {
 				$sk->fetch($t->skill_id);
+
 				print '<tr>';
 				print ' <td>' . Skill::typeCodeToLabel($t->skill_type) . '</td>';
 				print ' <td>' . $sk->getNomUrl(1) . '</td>';

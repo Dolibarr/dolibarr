@@ -75,7 +75,7 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->expedition->creer) {
+if ($action == 'addcontact' && $user->hasRight('expedition', 'creer')) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -95,10 +95,10 @@ if ($action == 'addcontact' && $user->rights->expedition->creer) {
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->rights->expedition->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('expedition', 'creer')) {
 	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->expedition->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('expedition', 'creer')) {
 	// Efface un contact
 	$result = $objectsrc->delete_contact(GETPOST("lineid", 'int'));
 
@@ -145,8 +145,8 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer shipment
-	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project

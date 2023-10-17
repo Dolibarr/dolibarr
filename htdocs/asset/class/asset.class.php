@@ -155,7 +155,6 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	public $user_cloture_id;
 
 	/**
 	 * @var Asset object oldcopy
@@ -1313,7 +1312,7 @@ class Asset extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1363,7 +1362,7 @@ class Asset extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1433,7 +1432,7 @@ class Asset extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("asset@asset");
+			//$langs->load("assets");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
 			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
@@ -1469,7 +1468,7 @@ class Asset extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_cloture_id = $obj->fk_user_cloture;
+				$this->user_closing_id = $obj->fk_user_cloture;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
@@ -1516,7 +1515,7 @@ class Asset extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("asset@asset");
+		$langs->load("assets");
 
 		if (empty($conf->global->ASSET_ASSET_ADDON)) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
@@ -1525,7 +1524,7 @@ class Asset extends CommonObject
 		if (!empty($conf->global->ASSET_ASSET_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->ASSET_ASSET_ADDON.".php";
+			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";
 			$classname = $conf->global->ASSET_ASSET_ADDON;
 
 			// Include file with class
@@ -1581,7 +1580,7 @@ class Asset extends CommonObject
 	//      $result = 0;
 	//      $includedocgeneration = 1;
 	//
-	//      $langs->load("asset@asset");
+	//      $langs->load("assets");
 	//
 	//      if (!dol_strlen($modele)) {
 	//          $modele = 'standard_asset';

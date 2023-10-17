@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Entrada de correus electrònics per usuari
 MailingModuleDescDolibarrUsers=Usuaris amb correus electrònics
 MailingModuleDescThirdPartiesByCategories=Tercers
 SendingFromWebInterfaceIsNotAllowed=L'enviament des de la interfície web no està permès.
-EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
+EmailCollectorFilterDesc=Tots els filtres han de coincidir perquè es reculli un correu electrònic.<br>Podeu utilitzar el caràcter «!» abans del valor de la cadena de cerca si necessiteu una prova negativa
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línia %s al fitxer
@@ -180,7 +180,7 @@ DefaultBlacklistMailingStatus=Valor per defecte del camp '%s' en crear un contac
 DefaultStatusEmptyMandatory=Buit però obligatori
 WarningLimitSendByDay=ADVERTIMENT: la configuració o el contracte de la vostra instància limita el vostre nombre de correus electrònics per dia a <b> %s </b> . Si intenteu enviar-ne més, pot ser que la vostra instància es ralenteixi o se suspengui. Poseu-vos en contacte amb el vostre servei d'assistència si necessiteu una quota més alta.
 NoMoreRecipientToSendTo=No hi ha més destinatari a qui enviar el correu electrònic
-EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EmailOptedOut=El propietari del correu electrònic ha sol·licitat no contactar amb ell amb aquest correu electrònic
 EvenUnsubscribe=Inclou correus electrònics de desactivació
-EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
-XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)
+EvenUnsubscribeDesc=Incloeu correus electrònics de desactivació quan seleccioneu correus electrònics com a objectius. Útil per a correus electrònics de servei obligatori, per exemple.
+XEmailsDoneYActionsDone=%s correus electrònics prequalificats, %s correus electrònics processats correctament (per a %s registre/accions realitzades)

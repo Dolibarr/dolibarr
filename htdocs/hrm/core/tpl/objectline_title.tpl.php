@@ -43,7 +43,7 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE hrm/core/tpl/objectline_title.tpl.php -->\n";
 
 // Title line
 print "<thead>\n";
@@ -61,8 +61,8 @@ print '<td class="linecollabel">'.$langs->trans('SkillType').'</td>';
 // Label skill
 print '<td class="linecollabel">'.$langs->trans('Label').'</td>';
 
-// Description
-print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+// Comment
+print '<td class="linecolcomment"></td>';
 
 // Note
 print '<td class="linecolrank right" style="width: 80px">'.$form->textwithpicto($langs->trans("Level"), $langs->trans('EmployeeRank')).'</td>';
