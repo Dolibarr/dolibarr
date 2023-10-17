@@ -132,7 +132,7 @@ if (empty($reshook)) {
 	}
 
 	// Ajout entrepot
-	if ($action == 'add' && $user->rights->stock->creer) {
+	if ($action == 'add' && $user->hasRight('stock', 'creer')) {
 		$object->ref = (string) GETPOST("ref", "alpha");
 		$object->fk_parent = (int) GETPOST("fk_parent", "int");
 		$object->fk_project = GETPOST('projectid', 'int');
@@ -182,7 +182,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete warehouse
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
 		$object->fetch(GETPOST('id', 'int'));
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -237,7 +237,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -527,7 +527,7 @@ if ($action == 'create') {
 			print "</td></tr>";
 
 			// Last movement
-			if (!empty($user->rights->stock->mouvement->lire)) {
+			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
@@ -579,13 +579,13 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (empty($action) || $action == 'classin') {
-					if ($user->rights->stock->creer) {
+					if ($user->hasRight('stock', 'creer')) {
 						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
 					}
 
-					if ($user->rights->stock->supprimer) {
+					if ($user->hasRight('stock', 'supprimer')) {
 						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
@@ -647,11 +647,11 @@ if ($action == 'create') {
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
 				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
-			if ($user->rights->stock->mouvement->creer) {
+			if ($user->hasRight('stock', 'mouvement', 'creer')) {
 				print_liste_field_titre('');
 				$totalarray['nbfield']++;
 			}
-			if ($user->rights->stock->creer) {
+			if ($user->hasRight('stock', 'creer')) {
 				print_liste_field_titre('');
 				$totalarray['nbfield']++;
 			}
@@ -810,7 +810,7 @@ if ($action == 'create') {
 					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
 					// Link to transfer
-					if ($user->rights->stock->mouvement->creer) {
+					if ($user->hasRight('stock', 'mouvement', 'creer')) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
@@ -818,7 +818,7 @@ if ($action == 'create') {
 					}
 
 					// Link to stock
-					if ($user->rights->stock->creer) {
+					if ($user->hasRight('stock', 'creer')) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("CorrectStock");

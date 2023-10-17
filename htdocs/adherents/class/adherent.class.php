@@ -134,77 +134,9 @@ class Adherent extends CommonObject
 	public $socid;
 
 	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string zipcode
-	 */
-	public $zip;
-
-	/**
-	 * @var string town
-	 */
-	public $town;
-
-	/**
-	 * @var int Id of state
-	 */
-	public $state_id;
-
-	/**
-	 * @var string Code of state
-	 */
-	public $state_code;
-
-	/**
-	 * @var string Label of state
-	 */
-	public $state;
-
-	/**
-	 * @var string email
-	 */
-	public $email;
-
-	/**
-	 * @var string url
-	 */
-	public $url;
-
-	/**
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
-
-	/**
-	 * @var string skype account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $skype;
-
-	/**
-	 * @var string twitter account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $twitter;
-
-	/**
-	 * @var string facebook account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $facebook;
-
-	/**
-	 * @var string linkedin account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $linkedin;
 
 	/**
 	 * @var string Phone number
@@ -337,16 +269,11 @@ class Adherent extends CommonObject
 
 	public $partnerships = array();
 
-
 	/**
-	 * @var Adherent To contains a clone of this when we need to save old properties of object
+	 * @var Facture		To store the created invoice into subscriptionComplementaryActions()
 	 */
-	public $oldcopy;
+	public $invoice;
 
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var array fields
@@ -499,7 +426,7 @@ class Adherent extends CommonObject
 
 		// Envoi mail confirmation
 		$from = $conf->email_from;
-		if (!empty(getDolGlobalString('ADHERENT_MAIL_FROM'))) {
+		if (getDolGlobalString('ADHERENT_MAIL_FROM')) {
 			$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 		}
 
@@ -1255,7 +1182,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0) {
 						$result = $luser->setPassword($user, $this->pass, 0, 0, 1);
-						if (is_numeric($result) && $result < 0) {
+						if (is_int($result) && $result < 0) {
 							$this->error = $luser->error;
 							dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
 							$error++;
@@ -1898,7 +1825,7 @@ class Adherent extends CommonObject
 				}
 
 				$vattouse = 0;
-				if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry') {
+				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
@@ -2387,7 +2314,7 @@ class Adherent extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -2416,7 +2343,7 @@ class Adherent extends CommonObject
 		}
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
@@ -2425,12 +2352,12 @@ class Adherent extends CommonObject
 			} else {
 				// Picto must be a photo
 				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
-				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1);
+				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1);
 				$picto .= '</span>';
 			}
 			$result .= $picto;
 		}
-		if ($withpictoimg > -2 && $withpictoimg != 2) {
+		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
@@ -2773,13 +2700,13 @@ class Adherent extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS].",".$conf->global->LDAP_MEMBER_DN;
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')]."," . getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 1) {
 			$dn = $conf->global->LDAP_MEMBER_DN;
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS];
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')];
 		}
 		return $dn;
 	}
@@ -2823,11 +2750,11 @@ class Adherent extends CommonObject
 
 		// Member
 		foreach ($ldapkey as $constname => $varname) {
-			if (!empty($this->$varname) && !empty($conf->global->$constname)) {
-				$info[$conf->global->$constname] = $this->$varname;
+			if (!empty($this->$varname) && getDolGlobalString($constname)) {
+				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (!empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == $conf->global->$constname) {
+				if (!empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -2835,66 +2762,66 @@ class Adherent extends CommonObject
 			}
 		}
 		if ($this->firstname && !empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_FIRSTNAME')] = $this->firstname;
 		}
 		if ($this->poste && !empty($conf->global->LDAP_MEMBER_FIELD_TITLE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_TITLE')] = $this->poste;
 		}
 		if ($this->company && !empty($conf->global->LDAP_MEMBER_FIELD_COMPANY)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->company;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_COMPANY')] = $this->company;
 		}
 		if ($this->address && !empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_ADDRESS')] = $this->address;
 		}
 		if ($this->zip && !empty($conf->global->LDAP_MEMBER_FIELD_ZIP)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_ZIP')] = $this->zip;
 		}
 		if ($this->town && !empty($conf->global->LDAP_MEMBER_FIELD_TOWN)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_TOWN')] = $this->town;
 		}
 		if ($this->country_code && !empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_COUNTRY')] = $this->country_code;
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])})) {
-				$info[$conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
+			if ($this->socialnetworks[$value['label']] && getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))] = $this->socialnetworks[$value['label']];
 			}
 		}
 		if ($this->phone && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_PHONE')] = $this->phone;
 		}
 		if ($this->phone_perso && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_PHONE_PERSO')] = $this->phone_perso;
 		}
 		if ($this->phone_mobile && !empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_MOBILE')] = $this->phone_mobile;
 		}
 		if ($this->fax && !empty($conf->global->LDAP_MEMBER_FIELD_FAX)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_FAX')] = $this->fax;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_private, 2);
 		}
 		if ($this->note_public && !empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = dol_string_nohtmltag($this->note_public, 2);
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_NOTE_PUBLIC')] = dol_string_nohtmltag($this->note_public, 2);
 		}
 		if ($this->birth && !empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth, 'dayhourldap');
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')] = dol_print_date($this->birth, 'dayhourldap');
 		}
 		if (isset($this->statut) && !empty($conf->global->LDAP_FIELD_MEMBER_STATUS)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] = $this->statut;
 		}
 		if ($this->datefin && !empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin, 'dayhourldap');
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')] = dol_print_date($this->datefin, 'dayhourldap');
 		}
 
 		// When password is modified
 		if (!empty($this->pass)) {
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
-				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
 			}
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
-				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
 		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
 			// Set LDAP password if possible
@@ -2905,32 +2832,32 @@ class Adherent extends CommonObject
 					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
 						// Create OpenLDAP MD5 password from Dolibarr MD5 password
 						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
-						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
+						$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
 				if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
-					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
 				if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
-					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 				}
 			}
 		}
 
 		// Subscriptions
 		if ($this->first_subscription_date && !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE] = dol_print_date($this->first_subscription_date, 'dayhourldap');
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')] = dol_print_date($this->first_subscription_date, 'dayhourldap');
 		}
 		if (isset($this->first_subscription_amount) && !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')] = $this->first_subscription_amount;
 		}
 		if ($this->last_subscription_date && !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE] = dol_print_date($this->last_subscription_date, 'dayhourldap');
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')] = dol_print_date($this->last_subscription_date, 'dayhourldap');
 		}
 		if (isset($this->last_subscription_amount) && !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')] = $this->last_subscription_amount;
 		}
 
 		return $info;
@@ -3325,7 +3252,9 @@ class Adherent extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'type')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';
 		}

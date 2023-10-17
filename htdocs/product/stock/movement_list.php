@@ -85,7 +85,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
-$search_fk_projet=GETPOST("search_fk_projet", 'int');
+$search_fk_project=GETPOST("search_fk_project", 'int');
 
 $type = GETPOST("type", "int");
 
@@ -167,7 +167,7 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'stock');
 
 // Security check
-if (!$user->rights->stock->mouvement->lire) {
+if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 	accessforbidden();
 }
 
@@ -226,7 +226,7 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
-		$search_fk_projet=0;
+		$search_fk_project = "";
 		$search_all = "";
 		$toselect = array();
 		$search_array_options = array();
@@ -596,7 +596,7 @@ $formproduct = new FormProduct($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $productstatic = new Product($db);
 $warehousestatic = new Entrepot($db);
 $movement = new MouvementStock($db);
@@ -690,8 +690,8 @@ if (!empty($search_batch)) {
 if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
-	$sql .= natural_search('m.fk_projet', $search_fk_projet);
+if (!empty($search_fk_project) && $search_fk_project != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_project);
 }
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
@@ -936,11 +936,11 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 																								   // modified by hook
 	if (empty($reshook)) {
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 	}
@@ -1007,6 +1007,9 @@ if ($search_user) {
 }
 if ($idproduct > 0) {
 	$param .= '&idproduct='.urlencode($idproduct);
+}
+if ($search_fk_project != '' && $search_fk_project != '-1') {
+	$param .= '&search_fk_project='.urlencode($search_fk_project);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1181,7 +1184,7 @@ if (!empty($arrayfields['origin']['checked'])) {
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
 	// fk_project
 	print '<td class="liste_titre" align="left">';
-	print '&nbsp; ';
+	print $object->showInputField($object->fields['fk_project'], 'fk_project', $search_fk_project, '', '', 'search_', 'maxwidth125', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['m.type_mouvement']['checked'])) {
@@ -1399,13 +1402,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($warehousestatic->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

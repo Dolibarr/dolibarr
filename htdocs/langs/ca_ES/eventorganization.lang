@@ -146,7 +146,7 @@ OrganizationEventLinkToThirdParty=Enllaç a tercers (client, proveïdor o soci)
 OrganizationEvenLabelName=Nom públic de la conferència o estand
 
 NewSuggestionOfBooth=Sol·licitud d'estand
-NewSuggestionOfConference=Application to hold a conference
+NewSuggestionOfConference=Sol·licitud per a fer una conferència
 
 #
 # Vote page
@@ -175,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=No hi ha cap acció pública oberta al públi
 MaxNbOfAttendees=Nombre màxim d'assistents
 DateStartEvent=Data d'inici de l'esdeveniment
 DateEndEvent=Data de finalització de l'esdeveniment
+ModifyStatus=Modificar l'estat
+ConfirmModifyStatus=Confirmeu la modificació de l'estat
+ConfirmModifyStatusQuestion=Esteu segur que voleu modificar el(s) %s registres seleccionats?
+RecordsUpdated = %s Registres actualitzats
+RecordUpdated = Registre actualitzat
+NoRecordUpdated = No s'ha actualitzat cap registre

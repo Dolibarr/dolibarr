@@ -146,7 +146,7 @@ OrganizationEventLinkToThirdParty=Link naar derde partij (klant, leverancier of 
 OrganizationEvenLabelName=Openbare naam van de conferentie of stand
 
 NewSuggestionOfBooth=Aanvraag voor een stand
-NewSuggestionOfConference=Application to hold a conference
+NewSuggestionOfConference=Aanvraag om een conferentie te houden
 
 #
 # Vote page
@@ -175,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Er zijn geen openbare acties voor dit eveneme
 MaxNbOfAttendees=Max aantal deelnemers
 DateStartEvent=Startdatum evenement
 DateEndEvent=Einddatum evenement
+ModifyStatus=Status wijzigen
+ConfirmModifyStatus=Bevestig statuswijziging
+ConfirmModifyStatusQuestion=Weet u zeker dat u de <span class='notranslate'>%s</span>\n geselecteerde record(s) wilt wijzigen?
+RecordsUpdated = %s Records bijgewerkt
+RecordUpdated = Record bijgewerkt
+NoRecordUpdated = Geen record bijgewerkt

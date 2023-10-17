@@ -91,7 +91,7 @@ $filepath = $relativepath.$urlfile;
 $filepathtodocument = $relativetodocument.$urlfile;
 
 // Try to load object from index
-$object = new ECMFiles($db);
+$object = new EcmFiles($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -421,7 +421,7 @@ if ($action != 'edit') {
 	// Actions buttons
 	print '<div class="tabsAction">';
 
-	if ($user->rights->ecm->setup) {
+	if ($user->hasRight('ecm', 'setup')) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 	}
 

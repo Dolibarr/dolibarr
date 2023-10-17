@@ -63,7 +63,7 @@ $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), 
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
-$fk_user = GETPOST('userid', 'int');
+$fk_user = GETPOST('userid', 'int') > 0 ? GETPOST('userid', 'int') : 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('taxcard', 'globalcard'));
@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		$result = $object->setPaid($user);
 	}
 
-	if ($action == 'reopen' && $user->rights->tax->charges->creer) {
+	if ($action == 'reopen' && $user->hasRight('tax', 'charges', 'creer')) {
 		if ($object->paye) {
 			$result = $object->setUnpaid($user);
 			if ($result > 0) {
@@ -506,20 +506,20 @@ if ($id > 0) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', null, null, '', 1);
 
 		// Employee
 		if ($action != 'editfk_user') {
-			if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
+			if ($object->getSommePaiement() > 0 && $object->fk_user > 0) {
 				$userstatic = new User($db);
 				$result = $userstatic->fetch($object->fk_user);
 				if ($result > 0) {
 					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
 				}
 			} else {
-				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
-				if (!empty($object->fk_user)) {
+				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
+				if ($object->fk_user > 0) {
 					$userstatic = new User($db);
 					$result = $userstatic->fetch($object->fk_user);
 					if ($result > 0) {
@@ -631,7 +631,7 @@ if ($id > 0) {
 			print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('DefaultBankAccount');
 			print '<td>';
-			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {
+			if ($action != 'editbankaccount' && $user->hasRight('tax', 'charges', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -786,32 +786,32 @@ if ($id > 0) {
 			print '<div class="tabsAction">'."\n";
 
 			// Reopen
-			if ($object->paye && $user->rights->tax->charges->creer) {
+			if ($object->paye && $user->hasRight('tax', 'charges', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a></div>';
 			}
 
 			// Edit
-			if ($object->paye == 0 && $user->rights->tax->charges->creer) {
+			if ($object->paye == 0 && $user->hasRight('tax', 'charges', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 			}
 
 			// Emit payment
-			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer) {
+			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->hasRight('tax', 'charges', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_charge.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 			}
 
 			// Classify 'paid'
-			if ($object->paye == 0 && round($resteapayer) <= 0 && $user->rights->tax->charges->creer) {
+			if ($object->paye == 0 && round($resteapayer) <= 0 && $user->hasRight('tax', 'charges', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid").'</a></div>';
 			}
 
 			// Clone
-			if ($user->rights->tax->charges->creer) {
+			if ($user->hasRight('tax', 'charges', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 			}
 
 			// Delete
-			if ($user->rights->tax->charges->supprimer && empty($totalpaid)) {
+			if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';

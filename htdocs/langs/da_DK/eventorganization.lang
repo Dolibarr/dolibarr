@@ -146,7 +146,7 @@ OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller 
 OrganizationEvenLabelName=Offentligt navn på konferencen eller standen
 
 NewSuggestionOfBooth=Ansøgning om bod
-NewSuggestionOfConference=Application to hold a conference
+NewSuggestionOfConference=Ansøgning om at afholde en konference
 
 #
 # Vote page
@@ -175,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åbne for offe
 MaxNbOfAttendees=Max antal deltagere
 DateStartEvent=Begivenhedens startdato
 DateEndEvent=Begivenheds slutdato
+ModifyStatus=Rediger status
+ConfirmModifyStatus=Bekræft statusændring
+ConfirmModifyStatusQuestion=Er du sikker på, at du vil ændre %s valgte post(er)?
+RecordsUpdated = %s Optegnelser opdateret
+RecordUpdated = Rekord opdateret
+NoRecordUpdated = Ingen post opdateret

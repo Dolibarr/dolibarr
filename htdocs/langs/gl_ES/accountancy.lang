@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Aviso, esta listaxe contén só as entra
 VueByAccountAccounting=Ver por conta contable
 VueBySubAccountAccounting=Ver pos subconta contable
 
-MainAccountForCustomersNotDefined=Conta contable principal para clientes non definida na configuración
-MainAccountForSuppliersNotDefined=Conta contable principal para provedores non definida na configuración
-MainAccountForUsersNotDefined=Conta contable principal para usuarios non definida na configuración
-MainAccountForVatPaymentNotDefined=Conta contable principal para pagos de IVE non definida na configuración
-MainAccountForSubscriptionPaymentNotDefined=Conta contable principal para o pago de afiliacións non definida na configuración
+MainAccountForCustomersNotDefined=Conta contable principal (do Plan Contable) para clientes non definidos na configuración
+MainAccountForSuppliersNotDefined=Conta contable principal (do Plan Contable) para provedores non definidos na configuración
+MainAccountForUsersNotDefined=Conta contable principal (do Plan Contable) para usuarios non definidos na configuración
+MainAccountForRevenueStampSaleNotDefined=Conta (do Plan Contable) para o  ingresos (vendas) non definida na configuración
+MainAccountForRevenueStampPurchaseNotDefined=Conta (do Plan Contable) para ingresos (compras) non definida na configuración
+MainAccountForVatPaymentNotDefined=Conta (do Plan Contable) para o pagamento do IVE non definida na configuración
+MainAccountForSubscriptionPaymentNotDefined=Conta (do Plan Contable) para o pagamento da adhesión non  definida na configuración
+MainAccountForRetainedWarrantyNotDefined=Conta (do Plan Contable) para a garantía conservada non definida na configuración
 UserAccountNotDefined=Conta de contabilidade para o usuario non definida na configuración
 
 AccountancyArea=Área contabilidade
@@ -299,7 +302,7 @@ DescClosure=Consulte aquí o número de movementos por mes aínda non validados 
 OverviewOfMovementsNotValidated=Visión xeral dos movementos non validados e bloqueados
 AllMovementsWereRecordedAsValidated=Todos os movementos rexistráronse como validados e bloqueados
 NotAllMovementsCouldBeRecordedAsValidated=Non se puideron rexistrar todos os movementos como validados e bloqueados
-ValidateMovements=Validate and lock movements
+ValidateMovements=Validar e bloquear movementos
 DescValidateMovements=Prohíbese calquera modificación ou eliminación de rexistros. Todas as entradas para un exercicio deben validarse doutro xeito ou non será posible pechalo
 
 ValidateHistory=Contabilizar automáticamente
@@ -486,7 +489,7 @@ FECFormatMulticurrencyAmount=Importe multidivisa (Importedivisa)
 FECFormatMulticurrencyCode=Código multidivisa (Idivisa) 
 
 DateExport=Data de exportación
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Aviso, este informe non está baseado no libro maior, polo que non contén transaccións modificadas manualmente no libro maior. Se o seu diario está actualizado, a vista contable é máis precisa.
 ExpenseReportJournal=Informe de gastos diario
 DocsAlreadyExportedAreIncluded=Inclúense os documentos xa exportados
 ClickToShowAlreadyExportedLines=Prema para amosar as liñas xa exportadas

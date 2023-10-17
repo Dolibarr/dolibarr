@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=警告、このリストにはまだエ�
 VueByAccountAccounting=勘定科目順に表示
 VueBySubAccountAccounting=会計補助勘定科目で表示
 
-MainAccountForCustomersNotDefined=設定で定義されていない顧客のメイン勘定科目
-MainAccountForSuppliersNotDefined=設定で定義されていないベンダーのメイン勘定科目
-MainAccountForUsersNotDefined=設定で定義されていないユーザのメイン勘定科目
-MainAccountForVatPaymentNotDefined=設定で定義されていないVAT支払のメイン勘定科目
-MainAccountForSubscriptionPaymentNotDefined=設定で定義されていないサブスクリプション支払のメイン勘定科目
+MainAccountForCustomersNotDefined=設定で定義されていない顧客の主口座 (勘定科目表から)
+MainAccountForSuppliersNotDefined=設定で定義されていない仕入先の主勘定 (勘定科目表から)
+MainAccountForUsersNotDefined=セットアップで定義されていないユーザーの主勘定 (勘定科目表から)
+MainAccountForRevenueStampSaleNotDefined=設定で定義されていない収入印紙 (売上) の勘定科目 (勘定科目表から)
+MainAccountForRevenueStampPurchaseNotDefined=セットアップで定義されていない収入印紙 (購入) の勘定科目 (勘定科目表から)
+MainAccountForVatPaymentNotDefined=VAT 支払い用の勘定 (勘定科目表から) が設定で定義されていない
+MainAccountForSubscriptionPaymentNotDefined=メンバーシップ支払い用の勘定 (勘定科目表から) が設定で定義されていない
+MainAccountForRetainedWarrantyNotDefined=設定で定義されていない保持保証の勘定科目 (勘定科目表から)
 UserAccountNotDefined=設定で定義されていないユーザの会計勘定科目
 
 AccountancyArea=経理エリア
@@ -299,7 +302,7 @@ DescClosure=まだ検証されておらずロックされていない月ごと�
 OverviewOfMovementsNotValidated=検証およびロックされていない動きの概要
 AllMovementsWereRecordedAsValidated=全動きは検証され、ロックされたものとして記録された
 NotAllMovementsCouldBeRecordedAsValidated=全動きを検証済みおよびロック済みとして記録できるわけではない
-ValidateMovements=Validate and lock movements
+ValidateMovements=動きを検証してロックする
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習の全エントリが要検証済。検証済でないと、閉じることができない。
 
 ValidateHistory=自動的に結合
@@ -486,7 +489,7 @@ FECFormatMulticurrencyAmount=多通貨額 (Montantdevise)
 FECFormatMulticurrencyCode=他通貨 コード (Idevise)
 
 DateExport=日付のエクスポート
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=警告、このレポートは元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれない。仕訳が最新の場合、簿記ビューはより正確になる。
 ExpenseReportJournal=経費報告仕訳帳
 DocsAlreadyExportedAreIncluded=すでにエクスポートされたドキュメントが含まれる
 ClickToShowAlreadyExportedLines=クリックすると、すでにエクスポートされた行が表示される

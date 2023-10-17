@@ -54,7 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
 if (!isModEnabled('adherent')) {
-	httponly_accessforbidden('Module Memebership no enabled');
+	httponly_accessforbidden('Module Membership not enabled');
 }
 
 
@@ -80,7 +80,7 @@ $extrafields = new ExtraFields($db);
 
 $morehead = '';
 if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
-	$morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }

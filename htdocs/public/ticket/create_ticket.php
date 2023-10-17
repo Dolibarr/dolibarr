@@ -386,12 +386,13 @@ if (empty($reshook)) {
 						$mimetype = $attachedfiles['mimes'];
 
 						// Send email to customer
+						$appli = $mysoc->name;
 
-						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
+						$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
 						$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 						$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
-						$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+						$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 						$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
 						$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
@@ -400,7 +401,7 @@ if (empty($reshook)) {
 
 						$sendto = GETPOST('email', 'alpha');
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+						$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 						$replyto = $from;
 						$sendtocc = '';
 						$deliveryreceipt = 0;
@@ -423,7 +424,9 @@ if (empty($reshook)) {
 						// Send email to TICKET_NOTIFICATION_EMAIL_TO
 						$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 						if ($sendto) {
-							$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
+							$appli = $mysoc->name;
+
+							$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 							$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 							$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 							$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -443,7 +446,7 @@ if (empty($reshook)) {
 							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-							$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 							$replyto = $from;
 
 							if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -536,8 +539,10 @@ if ($action != "infos_success") {
 
 print '</div>';
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

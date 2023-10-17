@@ -78,12 +78,6 @@ if (isModEnabled('expedition')) {
 class doc_generic_project_odt extends ModelePDFProjects
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -97,7 +91,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "main"));
@@ -192,7 +186,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			'task_projectlabel'=>$task->projectlabel,
 			'task_label'=>$task->label,
 			'task_description'=>$task->description,
-			'task_fk_parent'=>$task->fk_parent,
+			'task_fk_parent'=>$task->fk_task_parent,
 			'task_duration'=>$task->duration,
 			'task_duration_hour'=>convertSecondToTime($task->duration, 'all'),
 			'task_planned_workload'=>$task->planned_workload,
@@ -407,12 +401,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROJECT_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -436,17 +430,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->PROJECT_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -469,14 +464,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 			}
 			$texte .= '</div>';
 		}
-
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="PROJECT_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -611,7 +611,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->project->dir_temp,
@@ -990,52 +990,52 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => $conf->ficheinter->enabled && $user->hasRight('ficheinter', 'lire')
+						'test' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => $conf->expedition->enabled && $user->rights->expedition->lire
+						'test' => isModEnabled('expedition') && $user->rights->expedition->lire
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",
 						'class' => 'Deplacement',
 						'table' => 'deplacement',
 						'disableamount' => 1,
-						'test' => $conf->deplacement->enabled && $user->rights->deplacement->lire
+						'test' => isModEnabled('deplacement') && $user->rights->deplacement->lire
 					),
 					'expensereport' => array(
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReportLine',
 						'table' => 'expensereport_det',
-						'test' => $conf->expensereport->enabled && $user->rights->expensereport->lire
+						'test' => isModEnabled('expensereport') && $user->rights->expensereport->lire
 					),
 					'donation' => array(
 						'title' => "ListDonationsAssociatedProject",
 						'class' => 'Don',
 						'table' => 'don',
-						'test' => $conf->don->enabled && $user->rights->don->lire
+						'test' => isModEnabled('don') && $user->rights->don->lire
 					),
 					'loan' => array(
 						'title' => "ListLoanAssociatedProject",
 						'class' => 'Loan',
 						'table' => 'loan',
-						'test' => $conf->loan->enabled && $user->rights->loan->read
+						'test' => isModEnabled('loan') && $user->rights->loan->read
 					),
 					'chargesociales' => array(
 						'title' => "ListSocialContributionAssociatedProject",
 						'class' => 'ChargeSociales',
 						'table' => 'chargesociales',
 						'urlnew' => DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$object->id,
-						'test' => $conf->tax->enabled && $user->rights->tax->charges->lire
+						'test' => isModEnabled('tax') && $user->rights->tax->charges->lire
 					),
 					'stock_mouvement' => array(
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
+						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",
@@ -1046,7 +1046,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					),
 				);
 
-				//Insert reference
+				// Insert list of objects into the project
 				try {
 					$listlines = $odfHandler->setSegment('projectrefs');
 
@@ -1122,6 +1122,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						$odfHandler->mergeSegment($listlines);
 					}
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// Do nothing
 				} catch (OdfException $e) {
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);

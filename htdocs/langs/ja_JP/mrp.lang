@@ -122,3 +122,4 @@ BOMServicesList=BOMのサービス
 Manufacturing=製造業
 Disassemble=分解する
 ProducedBy=によって生産
+QtyTot=合計数量

@@ -288,26 +288,24 @@ if (!empty($search_timespend)) {
 	$morewherefilterarray[] = natural_search('t.duration_effective', $search_timespend, 1, 1);
 }
 
-if (!empty($search_progresscalc)) {
-	$filterprogresscalc = 'if '.natural_search('round(100 * $line->duration / $line->planned_workload,2)', $search_progresscalc, 1, 1).'{return 1;} else {return 0;}';
-} else {
-	$filterprogresscalc = '';
-}
-
 if (!empty($search_progressdeclare)) {
 	$morewherefilterarray[] = natural_search('t.progress', $search_progressdeclare, 1, 1);
 }
-
+if (!empty($search_progresscalc)) {
+	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
+	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
+}
 if ($search_task_budget_amount) {
 	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
+//var_dump($morewherefilterarray);
 
 $morewherefilter = '';
 if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
 }
 
-if ($action == 'createtask' && $user->rights->projet->creer) {
+if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
@@ -556,7 +554,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
-		$arrayofmassactions['preclonetasks'] = img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone");
+		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -568,7 +566,13 @@ if ($id > 0 || !empty($ref)) {
 
 	// Project card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+		$tmpurl = $_SESSION['pageforbacktolist']['project'];
+		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	} else {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	}
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
@@ -580,9 +584,9 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -691,7 +695,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
+if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object->thirdparty->id) || $userWrite > 0)) {
 	if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}
@@ -725,12 +729,13 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print dol_get_fiche_head('');
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
 	$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $obj;
 		$defaultref = $modTask->getNextValue($object->thirdparty, null);
 	}
@@ -751,7 +756,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" name="label" autofocus class="minwidth500 maxwidthonsmartphone" value="'.$label.'">';
+	print '<input type="text" name="label" autofocus class="minwidth500" value="'.$label.'">';
 	print '</td></tr>';
 
 	// Project
@@ -770,12 +775,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
+		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
@@ -815,7 +820,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
 		$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 	}
-	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows, '90%');
 	print $doleditor->Create();
 
 	print '</td></tr>';
@@ -835,6 +840,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -903,14 +909,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
-	// Filter on categories
+	// Filter on assigned users
 	$moreforfilter = '';
-	if (count($tasksarray) > 0) {
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
-		$moreforfilter .= '</div>';
-	}
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
+	$moreforfilter .= '</div>';
 	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
@@ -1007,7 +1011,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	// progress resume not searchable
-	print '<td class="liste_titre right"></td>';
+	if (!empty($arrayfields['t.progress_summary']['checked'])) {
+		print '<td class="liste_titre right"></td>';
+	}
 
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
@@ -1128,7 +1134,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (count($tasksarray) > 0) {
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
 		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {
@@ -1145,7 +1151,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if (!empty($user->rights->projet->all->lire)) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
+	if ($user->hasRight('projet', 'all', 'lire')) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
 		if ($search_user_id == $user->id) {
 			if ($nboftaskshown < count($tasksrole)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

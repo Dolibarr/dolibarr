@@ -44,7 +44,7 @@ class Conf
 
 	//! To store properties found into database
 	public $global;
-	//! To store browser info
+	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -69,6 +69,8 @@ class Conf
 	//! Used to store current css (from theme)
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+
+	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
@@ -105,27 +107,64 @@ class Conf
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url. 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 
+	public $format_date_short; // Format of day with PHP/C tags (strftime functions)
+	public $format_date_short_java; // Format of day with Java tags
+	public $format_hour_short;
+	public $format_hour_short_duration;
+	public $format_date_text_short;
+	public $format_date_text;
+	public $format_date_hour_short;
+	public $format_date_hour_sec_short;
+	public $format_date_hour_text_short;
+	public $format_date_hour_text;
+
 	public $liste_limit;
 
 	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
+
 	// TODO Remove this part.
 	public $fournisseur;
 	public $product;
+	/**
+	 * @deprecated Use product
+	 */
+	public $produit;
 	public $service;
+	/**
+	 * @deprecated Use contract
+	 */
 	public $contrat;
+	public $contract;
 	public $actions;
 	public $agenda;
 	public $commande;
 	public $propal;
+	public $order;
+	/**
+	 * @deprecated Use invoice
+	 */
 	public $facture;
+	public $invoice;
 	public $user;
+	/**
+	 * @deprecated Use member
+	 */
 	public $adherent;
+	public $member;
 	public $bank;
 	public $notification;
 	public $expensereport;
 	public $productbatch;
-
+	/**
+	 * @deprecated Use project
+	 */
+	public $projet;
+	public $project;
+	public $supplier_proposal;
+	public $supplier_order;
+	public $supplier_invoice;
+	public $category;
 
 
 	/**
@@ -248,7 +287,6 @@ class Conf
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
 		$this->facture = new stdClass();
-		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
 		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
@@ -305,7 +343,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						$this->global->$key = dolDecrypt($value);
+						$this->global->$key = dolDecrypt($value);	// decrypt data excrypted with dolibarr_set_const($db, $name, $value)
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
@@ -338,11 +376,9 @@ class Conf
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
 								} elseif (in_array($partname, array('models', 'theme'))) {
 									$newvalue = '/'.$modulename.'/';
-								} elseif (in_array($partname, array('sms'))) {
-									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
-								} else {
+								} else {	// $partname can be any other value like 'sms', ...
 									$newvalue = $value;
 								}
 
@@ -400,9 +436,8 @@ class Conf
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				if ($ret) {
+				if ($ret && class_exists('ActionsMulticompany')) {
 					$mc = new ActionsMulticompany($db);
-					$this->mc = $mc;
 				}
 			}
 
@@ -536,11 +571,11 @@ class Conf
 				$this->fournisseur->facture->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
 				$this->fournisseur->facture->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 
-				$this->supplierproposal = new stdClass();
-				$this->supplierproposal->multidir_output = array($this->entity => $rootfordata."/supplier_proposal");
-				$this->supplierproposal->multidir_temp = array($this->entity => $rootfortemp."/supplier_proposal/temp");
-				$this->supplierproposal->dir_output = $rootfordata."/supplier_proposal"; // For backward compatibility
-				$this->supplierproposal->dir_temp = $rootfortemp."/supplier_proposal/temp"; // For backward compatibility
+				$this->supplier_proposal = new stdClass();
+				$this->supplier_proposal->multidir_output = array($this->entity => $rootfordata."/supplier_proposal");
+				$this->supplier_proposal->multidir_temp = array($this->entity => $rootfortemp."/supplier_proposal/temp");
+				$this->supplier_proposal->dir_output = $rootfordata."/supplier_proposal"; // For backward compatibility
+				$this->supplier_proposal->dir_temp = $rootfortemp."/supplier_proposal/temp"; // For backward compatibility
 
 				$this->fournisseur->payment = new stdClass();
 				$this->fournisseur->payment->multidir_output = array($this->entity => $rootfordata."/fournisseur/payment");
@@ -681,6 +716,10 @@ class Conf
 				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 			}
 
+			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
+			}
+
 			// By default, suppliers objects can be linked to all projects
 			if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) {
 				$this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
@@ -698,7 +737,7 @@ class Conf
 
 			// conf->liste_limit = constante de taille maximale des listes
 			if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) {
-				$this->global->MAIN_SIZE_LISTE_LIMIT = 25;
+				$this->global->MAIN_SIZE_LISTE_LIMIT = 15;
 			}
 			$this->liste_limit = $this->global->MAIN_SIZE_LISTE_LIMIT;
 

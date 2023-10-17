@@ -72,7 +72,7 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 	accessforbidden();
 }
 
@@ -83,7 +83,7 @@ $permissiontoadd = $user->rights->ticket->write;
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->ticket->write) {
+if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	$result = $object->fetch($id, '', $track_id);
 
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
@@ -131,7 +131,7 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->ticket->write) {
+if ($action == 'swapstatut' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$result = $object->swapContactStatus($ligne);
 	} else {
@@ -140,7 +140,7 @@ if ($action == 'swapstatut' && $user->rights->ticket->write) {
 }
 
 // Efface un contact
-if ($action == 'deletecontact' && $user->rights->ticket->write) {
+if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 		foreach ($internal_contacts as $key => $contact) {
@@ -162,7 +162,7 @@ if ($action == 'deletecontact' && $user->rights->ticket->write) {
 }
 
 // Set parent company
-if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
+if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
@@ -195,9 +195,9 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+			$object->next_prev_filter = "te.fk_user_assign ='".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);

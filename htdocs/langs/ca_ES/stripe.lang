@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook clau en directe
 ONLINE_PAYMENT_WAREHOUSE=Estoc a utilitzar per a disminuir l'estoc quan es fa el pagament en línia <br>(Pendent de fer quan l'opció per a reduir l'estoc es fa en una acció a la factura i el pagament en línia es genera la seva factura?)
 StripeLiveEnabled=Stripe live activat (en cas contrari, mode de prova/sandbox)
 StripeImportPayment=Importar pagaments per Stripe
-ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Exemple de targeta de crèdit per a un pagament de prova: %s => vàlid, %s => error CVC, %s => caducat, %s => la càrrega falla
 ExampleOfTestBankAcountForSEPA=Exemple de compte bancari BAN per a la prova de domiciliació bancària: %s
 StripeGateways=Passarel·les Stripe
 OAUTH_STRIPE_TEST_ID=Identificador de client de Stripe Connect (ca _...)
@@ -51,6 +51,7 @@ StripeAccount=Compte de Stripe
 StripeChargeList=Llista de càrregues de Stripe
 StripeTransactionList=Llista de transaccions de Stripe
 StripeCustomerId=ID de client de Stripe
+StripePaymentId=Id de pagament de Stripe
 StripePaymentModes=Formes de pagament de Stripe
 LocalID=ID local
 StripeID=ID de Stripe
