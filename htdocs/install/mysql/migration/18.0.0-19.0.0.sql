@@ -135,3 +135,7 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
+
+ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
+
+	

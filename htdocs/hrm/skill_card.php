@@ -724,7 +724,7 @@ if ($action != "create" && $action != "edit") {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
-				print '<td' . ($cssforfield ? ' class="' . $cssforfield . '"' : '') . '>';
+				print '<td' . (empty($cssforfield) ? '' : ' class="' . $cssforfield . '"') . '>';
 				if ($key == 'status') {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
