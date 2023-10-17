@@ -155,7 +155,6 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	public $user_cloture_id;
 
 	/**
 	 * @var Asset object oldcopy
@@ -1469,7 +1468,7 @@ class Asset extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_cloture_id = $obj->fk_user_cloture;
+				$this->user_closing_id = $obj->fk_user_cloture;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);

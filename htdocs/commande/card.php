@@ -291,7 +291,6 @@ if (empty($reshook)) {
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
-			$object->date_livraison = $date_delivery; // deprecated
 			$object->delivery_date = $date_delivery;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
@@ -1708,9 +1707,6 @@ if ($action == 'create' && $usercancreate) {
 			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ? -1 : '';
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
-			if (empty($date_delivery)) {
-				$date_delivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
-			}
 
 			if (isModEnabled("multicurrency")) {
 				if (!empty($objectsrc->multicurrency_code)) {
