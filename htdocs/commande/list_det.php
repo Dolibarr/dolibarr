@@ -628,6 +628,7 @@ if (!empty($searchCategoryProductList)) {
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -806,9 +807,6 @@ if ($resql) {
 	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
-	// if ($search_product_category != '') {
-	// 	$param .= '&search_product_category='.urlencode($search_product_category);
-	// }
 	if (!empty($search_product_category_array)) {
 		foreach ($search_product_category_array as $tmpval) {
 			$param .= '&search_categegory_product_list[]='.urlencode($tmpval);
@@ -919,8 +917,6 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	// $searchCategoryProjectOperator
-	// $searchCategoryProductOperator
 	// Filter on categories
 	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$formcategory = new FormCategory($db);
