@@ -255,7 +255,7 @@ function notify_sendMail(
 		$subject,
 		$to,
 		$from,
-		$message.' '.$filename_list[0],
+		$message,
 		$filename_list,
 		$mimetype_list,
 		$mimefilename_list,
