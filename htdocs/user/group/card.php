@@ -60,7 +60,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $userid = GETPOST('user', 'int');
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -457,9 +457,9 @@ if ($action == 'create') {
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
-							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 						} elseif ($useringroup->admin) {
-							print img_picto($langs->trans("Administrator"), 'star');
+							print img_picto($langs->trans("AdministratorDesc"), 'star');
 						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';

@@ -57,11 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Let op, deze lijst bevat alleen de boeki
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
-MainAccountForCustomersNotDefined=De standaard grootboekrekening voor klanten is niet vastgelegd bij de instellingen
-MainAccountForSuppliersNotDefined=Hoofdrekening voor leveranciers die niet zijn gedefinieerd in de configuratie
-MainAccountForUsersNotDefined=De standaard grootboekrekening voor gebruikers is niet vastgelegd bij de instellingen
-MainAccountForVatPaymentNotDefined=Standaard grootboekrekening voor betaalde BTW is niet vastgelegd bij instellingen
-MainAccountForSubscriptionPaymentNotDefined=Hoofdrekening voor abonnementsbetaling is niet gedefinieerd in de configuratie
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Grootboekrekening voor gebruiker niet gedefinieerd in setup
 
 AccountancyArea=Boekhouding

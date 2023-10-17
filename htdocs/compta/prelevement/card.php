@@ -37,10 +37,12 @@ $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawal
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
+
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $type = GETPOST('type', 'aZ09');
+$date_trans = dol_mktime(GETPOST('date_transhour', 'int'), GETPOST('date_transmin', 'int'), GETPOST('date_transsec', 'int'), GETPOST('date_transmonth', 'int'), GETPOST('date_transday', 'int'), GETPOST('date_transyear', 'int'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -100,9 +102,17 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 		$object->fk_bank_account = GETPOST('fk_bank_account', 'int');
 		$object->update($user);
+	}
+
+	// date of upload
+	if ($action == 'setdate_trans' && $permissiontoadd) {
+		$result = $object->setValueFrom('date_trans', $date_trans, '', null, 'date');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'infotrans' && $permissiontosend) {
@@ -193,21 +203,47 @@ if ($id > 0 || $ref) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Date for payment
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
+	// Upload file
 	if (!empty($object->date_trans)) {
 		$muser = new User($db);
 		$muser->fetch($object->user_trans);
 
-		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
-		print dol_print_date($object->date_trans, 'day');
-		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
+		// Date upload
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('TransData');
+		print '</td>';
+		if ($action != 'editdate_trans') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_trans&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetTransDate'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editdate_trans') {
+			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="setdate_trans">';
+			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, '', "setdate_trans");
+			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		} else {
+			print $object->date_trans ? dol_print_date($object->date_trans, 'day') : '';
+			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td>';
+		}
+		print '</td>';
+		print '</tr>';
+
+		// Method upload
 		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $object->methodes_trans[$object->method_trans];
 		print '</td></tr>';
 	}
+
+	// Date real payment
 	if (!empty($object->date_credit)) {
 		print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 		print dol_print_date($object->date_credit, 'day');
@@ -330,7 +366,7 @@ if ($id > 0 || $ref) {
 	print $formconfirm;
 
 
-	if (empty($object->date_trans) && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
+	if (empty($object->date_trans) && (($user->hasRight('prelevement', 'bons', 'send') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'send') && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
@@ -349,7 +385,7 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer')) && $action == 'setcredited') {
+	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->hasRight('prelevement', 'bons', 'credit') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'debit') && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -374,16 +410,16 @@ if ($id > 0 || $ref) {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			if (empty($object->date_trans)) {
-				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
-				else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
+				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'send'));
+				else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
 			}
 			if (!empty($object->date_trans) && empty($object->date_credit)) {
-				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
-				else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
+				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+				else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
 			}
 
-			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
-			else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
+			else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
 		}
 		print '</div>';
 	}
@@ -485,11 +521,11 @@ if ($id > 0 || $ref) {
 			print '<td class="right">';
 
 			if ($obj->statut == 3) {
-				print '<b>'.$langs->trans("StatusRefused").'</b>';
+				print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 			} else {
 				if ($object->statut == BonPrelevement::STATUS_CREDITED) {
-					if ($obj->statut == 2) {
-						if ($user->rights->prelevement->bons->credit) {
+					if ($obj->statut == LignePrelevement::STATUS_CREDITED) {
+						if ($user->hasRight('prelevement', 'bons', 'credit')) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
 							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {

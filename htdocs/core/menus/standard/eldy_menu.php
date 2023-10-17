@@ -191,7 +191,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
@@ -224,7 +224,7 @@ class MenuManager
 						print '<a href="'.$relurl.'">';
 
 						if ($val['level'] == 0) {
-							print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 						}
 
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation

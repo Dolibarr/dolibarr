@@ -78,13 +78,13 @@ class box_boms extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$bomstatic = new Bom($this->db);
+		$bomstatic = new BOM($this->db);
 		$productstatic = new Product($this->db);
 		$userstatic = new User($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-		if ($user->rights->bom->read) {
+		if ($user->hasRight('bom', 'read')) {
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", p.rowid as productid";
 			$sql .= ", p.tosell";

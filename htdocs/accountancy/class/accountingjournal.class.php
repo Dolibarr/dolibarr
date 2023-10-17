@@ -42,7 +42,7 @@ class AccountingJournal extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does object support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -367,6 +367,7 @@ class AccountingJournal extends CommonObject
 				return $langs->trans('AccountingJournalType1');
 			}
 		}
+		return "";
 	}
 
 

@@ -17,11 +17,12 @@
  */
 
 /**
- *  \defgroup   export      Module export
- *  \brief      Module generique pour realiser des exports de donnees en base
- *	\file       htdocs/core/modules/modExport.class.php
- *	\ingroup    export
- *	\brief      Description and activation file for the module export
+ *  \defgroup   export      Module Export
+ *  \brief      Module to manage data exports from Dolibarr database
+ *
+ *  \file       htdocs/core/modules/modExport.class.php
+ *  \ingroup    export
+ *  \brief      Description and activation file for the module export
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

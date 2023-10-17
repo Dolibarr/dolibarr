@@ -134,7 +134,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position-x: 10px;';
 }
 	print '
-        background-position-y: 16px;
+        background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
     }

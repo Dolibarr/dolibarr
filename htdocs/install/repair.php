@@ -97,6 +97,7 @@ print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETP
 // Structure
 print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
 print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+print "Option force_collation_from_conf_on_tables (force ".$conf->db->character_set."/".$conf->db->dolibarr_main_db_collation." + row=dynamic), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_collation_from_conf_on_tables', 'alpha') ? GETPOST('force_collation_from_conf_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -178,7 +179,7 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
-	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha')
+	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
@@ -231,11 +232,19 @@ if ($ok && GETPOST('standard', 'alpha')) {
 
 if ($ok && GETPOST('standard', 'alpha')) {
 	$extrafields = new ExtraFields($db);
+
+	// List of tables that has an extrafield table
 	$listofmodulesextra = array('societe'=>'societe', 'adherent'=>'adherent', 'product'=>'product',
-				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande', 'facture'=>'facture',
-				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
+				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande',
+				'facture'=>'facture', 'facturedet'=>'facturedet', 'facture_rec'=>'facture_rec', 'facturedet_rec'=>'facturedet_rec',
+				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur',
+				'facture_fourn'=>'facture_fourn', 'facture_fourn_rec'=>'facture_fourn_rec', 'facture_fourn_det'=>'facture_fourn_det', 'facture_fourn_det_rec'=>'facture_fourn_det_rec',
+				'fichinter'=>'fichinter', 'fichinterdet'=>'fichinterdet',
+				'inventory'=>'inventory',
 				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
-				'adherent_type'=>'adherent_type', 'user'=>'user', 'projet'=>'projet', 'projet_task'=>'projet_task');
+				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnershiap'=>'partnershiap', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
+	//$listofmodulesextra = array('fichinter'=>'fichinter');
+
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach ($listofmodulesextra as $tablename => $elementtype) {
 		// Get list of fields
@@ -248,7 +257,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$arrayoffieldsfound = array();
 		$resql = $db->DDLDescTable($tableextra);
 		if ($resql) {
-			print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
+			print '<tr><td>Check availability of extra field for '.$tableextra;
 			$i = 0;
 			while ($obj = $db->fetch_object($resql)) {
 				$fieldname = $fieldtype = '';
@@ -268,6 +277,11 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				}
 				$arrayoffieldsfound[$fieldname] = array('type'=>$fieldtype);
 			}
+			print ' - Found '.count($arrayoffieldsfound).' fields into table';
+			if (count($arrayoffieldsfound) > 0) {
+				print ' <span class="opacitymedium">('.join(', ', array_keys($arrayoffieldsfound)).')</span>';
+			}
+			print '<br>'."\n";
 
 			// If it does not match, we create fields
 			foreach ($arrayoffieldsdesc as $code => $label) {
@@ -325,7 +339,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 
 			print "</td><td>&nbsp;</td></tr>\n";
 		} else {
-			dol_print_error($db);
+			print '<tr><td>Table '.$tableextra.' is not found</td><td></td></tr>'."\n";
 		}
 	}
 }
@@ -1344,6 +1358,62 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 		// Enable foreign key checking
 		if ($force_utf8mb4_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=1';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+	} else {
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
+}
+
+if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into '.$conf->db->character_set.'/'.$conf->db->dolibarr_main_db_collation.' and row_format=dynamic (for mysql/mariadb only)</td></tr>';
+
+	if ($db->type == "mysql" || $db->type == "mysqli") {
+		$force_collation_from_conf_on_tables = GETPOST('force_collation_from_conf_on_tables', 'alpha');
+
+		$listoftables = $db->DDLListTablesFull($db->database_name);
+
+		// Disable foreign key checking for avoid errors
+		if ($force_collation_from_conf_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=0';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+
+		foreach ($listoftables as $table) {
+			// do not convert llx_const if mysql encrypt/decrypt is used
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
+				continue;
+			}
+			if ($table[1] == 'VIEW') {
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' (Skipped)</td></tr>';
+				continue;
+			}
+
+			print '<tr><td colspan="2">';
+			print $table[0];
+			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET ".$conf->db->character_set." COLLATE ".$conf->db->dolibarr_main_db_collation;
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
+			if ($force_collation_from_conf_on_tables == 'confirmed') {
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+			} else {
+				print ' - Disabled';
+			}
+			print '</td></tr>';
+		}
+
+		// Enable foreign key checking
+		if ($force_collation_from_conf_on_tables == 'confirmed') {
 			$sql = 'SET FOREIGN_KEY_CHECKS=1';
 			print '<!-- '.$sql.' -->';
 			$resql = $db->query($sql);

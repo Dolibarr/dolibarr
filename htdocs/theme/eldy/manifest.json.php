@@ -74,19 +74,22 @@ $manifest->name = constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$manifest->name = $conf->global->MAIN_APPLICATION_TITLE;
 }
+$manifest->short_name = $manifest->name;
 
 
-$manifest->theme_color = !empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR : '#F05F40';
-$manifest->background_color = !empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR : "#ffffff";
+$manifest->theme_color = empty($conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR) ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40') : $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR;
+$manifest->background_color = empty($conf->global->MAIN_MANIFEST_APPLI_BG_COLOR) ? "#ffffff" : $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR;
 $manifest->display = "standalone";
 $manifest->splash_pages = null;
 $manifest->icons = array();
+$manifest->start_url = constant('DOL_MAIN_URL_ROOT');
+$manifest->id = constant('DOL_MAIN_URL_ROOT');
 
 if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	$icon = new stdClass();
 	$icon->src = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL;
 	if ($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE) {
-		$icon->sizes = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE."x".$conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE;
+		$icon->sizes = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE') . "x" . getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE');
 	} else {
 		$icon->sizes = "512x512";
 	}
@@ -94,7 +97,7 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	$manifest->icons[] = $icon;
 } elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)) {
-		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
+		$iconRelativePath = 'logos/thumbs/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
@@ -109,7 +112,7 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	}
 
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL)) {
-		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
+		$iconRelativePath = 'logos/thumbs/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
@@ -124,7 +127,7 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 	}
 
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
-		$iconRelativePath = 'logos/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
+		$iconRelativePath = 'logos/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
