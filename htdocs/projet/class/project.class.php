@@ -146,10 +146,6 @@ class Project extends CommonObject
 	 */
 	public $fk_user_close;
 
-	/**
-	 * @var int user close id
-	 */
-	public $user_close_id;
 	public $public; //!< Tell if this is a public or private project
 
 	/**
@@ -727,7 +723,7 @@ class Project extends CommonObject
 				$this->socid = $obj->fk_soc;
 				$this->user_author_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->user_close_id = $obj->fk_user_close;
+				$this->user_closing_id = $obj->fk_user_close;
 				$this->public = $obj->public;
 				$this->statut = $obj->status; // deprecated
 				$this->status = $obj->status;
@@ -1490,9 +1486,9 @@ class Project extends CommonObject
 	{
 		// To verify role of users
 		$userAccess = 0;
-		if (($mode == 'read' && !empty($user->rights->projet->all->lire)) || ($mode == 'write' && !empty($user->rights->projet->all->creer)) || ($mode == 'delete' && !empty($user->rights->projet->all->supprimer))) {
+		if (($mode == 'read' && $user->hasRight('projet', 'all', 'lire')) || ($mode == 'write' && $user->hasRight('projet', 'all', 'creer')) || ($mode == 'delete' && $user->hasRight('projet', 'all', 'supprimer'))) {
 			$userAccess = 1;
-		} elseif ($this->public && (($mode == 'read' && !empty($user->rights->projet->lire)) || ($mode == 'write' && !empty($user->rights->projet->creer)) || ($mode == 'delete' && !empty($user->rights->projet->supprimer)))) {
+		} elseif ($this->public && (($mode == 'read' && $user->hasRight('projet', 'lire')) || ($mode == 'write' && $user->hasRight('projet', 'creer')) || ($mode == 'delete' && $user->hasRight('projet', 'supprimer')))) {
 			$userAccess = 1;
 		} else {	// No access due to permission to read all projects, so we check if we are a contact of project
 			foreach (array('internal', 'external') as $source) {
@@ -1502,24 +1498,24 @@ class Project extends CommonObject
 				$nblinks = 0;
 				while ($nblinks < $num) {
 					if ($source == 'internal' && $user->id == $userRole[$nblinks]['id']) {	// $userRole[$nblinks]['id'] is id of user (llx_user) for internal contacts
-						if ($mode == 'read' && $user->rights->projet->lire) {
+						if ($mode == 'read' && $user->hasRight('projet', 'lire')) {
 							$userAccess++;
 						}
-						if ($mode == 'write' && $user->rights->projet->creer) {
+						if ($mode == 'write' && $user->hasRight('projet', 'creer')) {
 							$userAccess++;
 						}
-						if ($mode == 'delete' && $user->rights->projet->supprimer) {
+						if ($mode == 'delete' && $user->hasRight('projet', 'supprimer')) {
 							$userAccess++;
 						}
 					}
 					if ($source == 'external' && $user->socid > 0 && $user->socid == $userRole[$nblinks]['socid']) {	// $userRole[$nblinks]['id'] is id of contact (llx_socpeople) or external contacts
-						if ($mode == 'read' && $user->rights->projet->lire) {
+						if ($mode == 'read' && $user->hasRight('projet', 'lire')) {
 							$userAccess++;
 						}
-						if ($mode == 'write' && $user->rights->projet->creer) {
+						if ($mode == 'write' && $user->hasRight('projet', 'creer')) {
 							$userAccess++;
 						}
-						if ($mode == 'delete' && $user->rights->projet->supprimer) {
+						if ($mode == 'delete' && $user->hasRight('projet', 'supprimer')) {
 							$userAccess++;
 						}
 					}
@@ -2267,7 +2263,7 @@ class Project extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE";
 		$sql .= " p.entity IN (".getEntity('project').")";
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			$sql .= "AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
@@ -2334,9 +2330,7 @@ class Project extends CommonObject
 				}
 
 				if (!empty($obj->fk_user_cloture)) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id   = $obj->fk_user_cloture;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -2432,7 +2426,9 @@ class Project extends CommonObject
 			$return .= img_warning($langs->trans('Late'));
 		}
 		$return .= '</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		// Date
 		/*
 		if (property_exists($this, 'date_start') && $this->date_start) {

@@ -313,7 +313,7 @@ if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
 }
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -331,7 +331,7 @@ $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
@@ -584,7 +584,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->rights->expedition->creer);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->hasRight('expedition', 'creer'));
 
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -616,7 +616,7 @@ if ($sall) {
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->user->user->lire) {
+if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -625,7 +625,7 @@ if ($user->rights->user->user->lire) {
 	$moreforfilter .= '</div>';
 }
 // If the user can view other users
-if ($user->rights->user->user->lire) {
+if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
@@ -908,7 +908,16 @@ while ($i < min($num, $limit)) {
 		}
 		$object->date_delivery = $obj->delivery_date;
 		$object->town = $obj->town;
-		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => in_array($obj->id, $arrayofselected)));
+
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => $selected));
 		if ($i == min($num, $limit) - 1) {
 			print '</div>';
 			print '</td></tr>';

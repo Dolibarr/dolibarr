@@ -410,7 +410,7 @@ class RemiseCheque extends CommonObject
 		if (!empty($conf->global->CHEQUERECEIPTS_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->CHEQUERECEIPTS_ADDON.".php";
+			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
 			$classname = $conf->global->CHEQUERECEIPTS_ADDON;
 
 			// Include file with class
@@ -427,8 +427,8 @@ class RemiseCheque extends CommonObject
 
 			// For compatibility
 			if (!$mybool) {
-				$file = $conf->global->CHEQUERECEIPTS_ADDON.".php";
-				$classname = "mod_chequereceipt_".$conf->global->CHEQUERECEIPTS_ADDON;
+				$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
+				$classname = "mod_chequereceipt_" . getDolGlobalString('CHEQUERECEIPTS_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -819,7 +819,7 @@ class RemiseCheque extends CommonObject
 	public function set_date($user, $date)
 	{
 		// phpcs:enable
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -849,7 +849,7 @@ class RemiseCheque extends CommonObject
 	public function set_number($user, $ref)
 	{
 		// phpcs:enable
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET ref = '".$this->db->escape($ref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1010,8 +1010,9 @@ class RemiseCheque extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'date_bordereau')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateCreation").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_bordereau), 'day').'</span>';
 		}

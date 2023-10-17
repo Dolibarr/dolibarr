@@ -387,40 +387,40 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-project{
-	color: #6c6aa8 !important;
+	color: #6c6aa8;
 }
 .infobox-action{
-	color: #b06080 !important;
+	color: #b06080;
 }
 /* Color for customer object */
 .infobox-propal:not(.error),
 .infobox-facture:not(.error),
 .infobox-commande:not(.error) {
-	color: #65953d !important;
+	color: #65953d;
 }
 /* Color for vendor object */
 .infobox-supplier_proposal:not(.error),
 .infobox-invoice_supplier:not(.error),
 .infobox-order_supplier:not(.error) {
-	color: #599caf !important;
+	color: #599caf;
 }
 .infobox-contrat, .infobox-ticket{
-	color: #3bbfa8 !important;
+	color: #3bbfa8;
 }
 .infobox-bank_account{
-	color: #b0bb39 !important;
+	color: #b0bb39;
 }
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-expensereport{
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-holiday{
-	color: #755114 !important;
+	color: #755114;
 }
 
 

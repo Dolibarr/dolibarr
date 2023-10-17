@@ -103,18 +103,16 @@ class SupplierProposal extends CommonObject
 
 	public $ref_fourn; //Reference saisie lors de l'ajout d'une ligne à la demande
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
+
+	/**
+	 * @deprecated
+	 */
 	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
 	 * @var integer|string Date of proposal
 	 */
 	public $date;
-
-	/**
-	 * @var integer|string date_livraison
-	 * @deprecated
-	 */
-	public $date_livraison;
 
 	/**
 	 * @var integer|string date_livraison
@@ -145,8 +143,6 @@ class SupplierProposal extends CommonObject
 
 
 	public $user_author_id;
-	public $user_valid_id;
-	public $user_close_id;
 
 	/**
 	 * @deprecated
@@ -899,7 +895,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Set tmp vars
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) {
@@ -1141,20 +1137,18 @@ class SupplierProposal extends CommonObject
 		$this->id = 0;
 		$this->statut = 0;
 
-		if (empty($conf->global->SUPPLIER_PROPOSAL_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/".$conf->global->SUPPLIER_PROPOSAL_ADDON.".php")) {
+		if (empty($conf->global->SUPPLIER_PROPOSAL_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
 			$this->error = 'ErrorSetupNotComplete';
 			return -1;
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;		// deprecated
 		$this->user_author_id = $user->id;
-		$this->user_valid = 0;				// deprecated
-		$this->user_valid_id = 0;
+		$this->user_validation_id = 0;
 		$this->date = $now;
 
 		// Set ref
-		require_once DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/".$conf->global->SUPPLIER_PROPOSAL_ADDON.'.php';
+		require_once DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').'.php';
 		$obj = $conf->global->SUPPLIER_PROPOSAL_ADDON;
 		$modSupplierProposal = new $obj;
 		$this->ref = $modSupplierProposal->getNextValue($objsoc, $this);
@@ -1261,7 +1255,6 @@ class SupplierProposal extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
 				$this->date                 = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
@@ -1277,8 +1270,8 @@ class SupplierProposal extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1407,8 +1400,8 @@ class SupplierProposal extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->creer))
-		   || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->validate_advance))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('supplier_proposal', 'creer'))
+		   || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('supplier_proposal', 'validate_advance'))) {
 			$this->db->begin();
 
 			// Numbering module definition
@@ -1487,7 +1480,7 @@ class SupplierProposal extends CommonObject
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
-				$this->user_valid_id = $user->id;
+				$this->user_validation_id = $user->id;
 				$this->datev = $now;
 				$this->date_validation = $now;
 
@@ -1527,13 +1520,12 @@ class SupplierProposal extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		if (!empty($user->rights->supplier_proposal->creer)) {
+		if ($user->hasRight('supplier_proposal', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
 			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 				return 1;
 			} else {
@@ -1558,7 +1550,7 @@ class SupplierProposal extends CommonObject
 		// phpcs:enable
 		$remise = trim($remise) ?trim($remise) : 0;
 
-		if (!empty($user->rights->supplier_proposal->creer)) {
+		if ($user->hasRight('supplier_proposal', 'creer')) {
 			$remise = price2num($remise, 2);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".((float) $remise);
@@ -1594,7 +1586,7 @@ class SupplierProposal extends CommonObject
 
 		$remise = price2num($remise);
 
-		if (!empty($user->rights->supplier_proposal->creer)) {
+		if ($user->hasRight('supplier_proposal', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
 			$sql .= " SET remise_absolue = ".((float) $remise);
 			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = 0";
@@ -1948,17 +1940,17 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as supplier_proposalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
-		if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -2137,15 +2129,11 @@ class SupplierProposal extends CommonObject
 				$this->user_creation = $cuser;
 
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 
 				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id = $obj->fk_user_cloture;
 				}
 			}
 			$this->db->free($result);
@@ -2230,7 +2218,7 @@ class SupplierProposal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.date_cloture as datefin";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -2387,7 +2375,7 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2425,7 +2413,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->SUPPLIER_PROPOSAL_ADDON.".php";
+			$file = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') . ".php";
 			$classname = $conf->global->SUPPLIER_PROPOSAL_ADDON;
 
 			// Include file with class
@@ -2777,7 +2765,9 @@ class SupplierProposal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'socid')) {
 			$return .= '<span class="info-box-ref"> | '.$this->socid.'</span>';
 		}

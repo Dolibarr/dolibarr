@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright (C) 2018    Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
+ * Copyright (C) 2018    	Andreu Bisquerra   	<jove@bisquerra.com>
+ * Copyright (C) 2021    	Nicolas ZABOURI    	<info@inovea-conseil.com>
+ * Copyright (C) 2022-2023	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $hookmanager->initHooks(array('takeposinvoice'));
 
@@ -62,7 +64,7 @@ $mobilepage = GETPOST('mobilepage', 'alpha');
 
 // Terminal is stored into $_SESSION["takeposterminal"];
 
-if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
 
@@ -525,11 +527,19 @@ if (empty($reshook)) {
 		}
 
 		$idoflineadded = 0;
+		$err = 0;
 		// Group if enabled. Skip group if line already sent to the printer
 		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
+					// check if qty in stock
+					if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && (($line->qty + $qty) > $prod->stock_reel)) {
+						$invoice->error = $langs->trans('NotEnoughInStock');
+						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+						$err++;
+						break;
+					}
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty + $qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 					if ($result < 0) {
 						dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
@@ -540,7 +550,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		if ($idoflineadded <= 0) {
+		if ($idoflineadded <= 0 && empty($err)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
@@ -578,7 +588,16 @@ if (empty($reshook)) {
 					$line = $hookmanager->resArray;
 				}
 
-				$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
+				// check if qty in stock
+				if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && $qty > $prod->stock_reel) {
+					$invoice->error = $langs->trans('NotEnoughInStock');
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+					$err++;
+				}
+
+				if (empty($err)) {
+					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
+				}
 			}
 
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
@@ -682,7 +701,7 @@ if (empty($reshook)) {
 	if ($action == "updateqty") {
 		foreach ($invoice->lines as $line) {
 			if ($line->id == $idline) {
-				if (!$user->rights->takepos->editlines || (!$user->rights->takepos->editorderedlines && $line->special_code == "4")) {
+				if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
 					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 				} else {
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -711,7 +730,7 @@ if (empty($reshook)) {
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 					//echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
-					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
+					if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 					} elseif (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')  == 1) {
 						$result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -748,7 +767,7 @@ if (empty($reshook)) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
-					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
+					if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 					} else {
 						$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -946,7 +965,7 @@ $form = new Form($db);
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -1154,13 +1173,26 @@ $( document ).ready(function() {
 	$s = $langs->trans("Customer");
 	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
 		$s = $soc->name;
+		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
+			$contactids = $invoice->getIdContact('external', 'BILLING');
+			$contactid = $contactids[0];
+			if ($contactid > 0) {
+				$contact = new Contact($db);
+				$contact->fetch($contactid);
+				$s .= " - " . $contact->getFullName($langs);
+			}
+		}
 	}
 	?>
 
 	$("#customerandsales").html('');
 	$("#shoppingcart").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax125 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT') == 0) { ?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php } else { ?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	<?php } ?>
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
@@ -1619,7 +1651,7 @@ if ($placeid > 0) {
 
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
-				if (isModEnabled('stock') && !empty($user->rights->stock->mouvement->lire)) {
+				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (getDolGlobalString($constantforkey) && $line->fk_product > 0 && empty($conf->global->TAKEPOS_HIDE_STOCK_ON_LINE)) {
 						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
@@ -1653,7 +1685,7 @@ if ($placeid > 0) {
 				}
 
 				$htmlforlines .= '</td>';
-				if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
+				if (getDolGlobalInt('TAKEPOS_SHOW_HT')) {
 					$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 					$htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
 					if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {

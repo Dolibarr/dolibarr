@@ -253,7 +253,6 @@ if (empty($reshook)) {
 			}
 		}
 
-
 		if (!$error) {
 			$db->commit();
 		} else {
@@ -498,8 +497,10 @@ if ($resql) {
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 	print '<td class="right">'.$langs->trans('Status').'</td>';
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 	print "</tr>\n";
 
 	if ($num > 0) {
@@ -561,8 +562,10 @@ if ($resql) {
 
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
-			$parameters = array( 'fk_paiement'=> (int) $object->id );
+
+			$parameters = array('fk_paiement'=> (int) $object->id);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+
 			print "</tr>\n";
 
 			// If at least one invoice is paid, disable delete. INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED Can be use for maintenance purpose. Never use this in production

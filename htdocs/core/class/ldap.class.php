@@ -1553,7 +1553,7 @@ class Ldap
 			$keygroup = 'LDAP_KEY_GROUPS';
 		}
 
-		$search = '('.$conf->global->$keygroup.'=*)';
+		$search = '(' . getDolGlobalString($keygroup).'=*)';
 		$result = $this->search($this->groups, $search);
 		if ($result) {
 			$c = $result['count'];

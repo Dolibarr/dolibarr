@@ -776,7 +776,7 @@ class PaiementFourn extends Paiement
 		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
 
 			// Include file with class
@@ -793,8 +793,8 @@ class PaiementFourn extends Paiement
 
 			// For compatibility
 			if ($mybool === false) {
-				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
-				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
+				$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
+				$classname = "mod_supplier_payment_" . getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
