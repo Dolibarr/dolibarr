@@ -191,7 +191,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];

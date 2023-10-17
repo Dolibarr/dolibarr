@@ -103,18 +103,16 @@ class SupplierProposal extends CommonObject
 
 	public $ref_fourn; //Reference saisie lors de l'ajout d'une ligne à la demande
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
+
+	/**
+	 * @deprecated
+	 */
 	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
 	 * @var integer|string Date of proposal
 	 */
 	public $date;
-
-	/**
-	 * @var integer|string date_livraison
-	 * @deprecated
-	 */
-	public $date_livraison;
 
 	/**
 	 * @var integer|string date_livraison
@@ -145,8 +143,6 @@ class SupplierProposal extends CommonObject
 
 
 	public $user_author_id;
-	public $user_valid_id;
-	public $user_close_id;
 
 	/**
 	 * @deprecated
@@ -899,7 +895,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Set tmp vars
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) {
@@ -1147,10 +1143,8 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;		// deprecated
 		$this->user_author_id = $user->id;
-		$this->user_valid = 0;				// deprecated
-		$this->user_valid_id = 0;
+		$this->user_validation_id = 0;
 		$this->date = $now;
 
 		// Set ref
@@ -1261,7 +1255,6 @@ class SupplierProposal extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
 				$this->date                 = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
@@ -1277,8 +1270,8 @@ class SupplierProposal extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1487,7 +1480,7 @@ class SupplierProposal extends CommonObject
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
-				$this->user_valid_id = $user->id;
+				$this->user_validation_id = $user->id;
 				$this->datev = $now;
 				$this->date_validation = $now;
 
@@ -1533,7 +1526,6 @@ class SupplierProposal extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 				return 1;
 			} else {
@@ -2137,15 +2129,11 @@ class SupplierProposal extends CommonObject
 				$this->user_creation = $cuser;
 
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 
 				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id = $obj->fk_user_cloture;
 				}
 			}
 			$this->db->free($result);
@@ -2777,7 +2765,9 @@ class SupplierProposal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'socid')) {
 			$return .= '<span class="info-box-ref"> | '.$this->socid.'</span>';
 		}

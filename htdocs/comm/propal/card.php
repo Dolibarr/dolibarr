@@ -196,7 +196,7 @@ if (empty($reshook)) {
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
 					);
-					$date_delivery_old = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+					$date_delivery_old = $object->delivery_date;
 					if (!empty($date_delivery_old) && !empty($date_delivery)) {
 						//Attempt to get the date without possible hour rounding errors
 						$old_date_delivery = dol_mktime(
@@ -210,7 +210,6 @@ if (empty($reshook)) {
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
 						if ($difference != 0) {
-							$object->date_livraison = $date_delivery;
 							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line) {
 								if (isset($line->date_start)) {
@@ -418,7 +417,6 @@ if (empty($reshook)) {
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date = $datep;
-					$object->date_livraison = $date_delivery; // deprecated
 					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
@@ -451,7 +449,6 @@ if (empty($reshook)) {
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date = $datep;
-				$object->date_livraison = $date_delivery;
 				$object->delivery_date = $date_delivery;
 				$object->availability_id = GETPOST('availability_id', 'int');
 				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
@@ -1280,6 +1277,15 @@ if (empty($reshook)) {
 				}
 			}
 
+			$info_bits = 0;
+			if ($tva_npr) {
+				$info_bits |= 0x01;
+			}
+
+			// Local Taxes
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $tva_npr);
+
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
@@ -1292,7 +1298,7 @@ if (empty($reshook)) {
 			$pu_equivalent_ttc = $pu_ttc;
 			$currency_tx = $object->multicurrency_tx;
 
-			// Check if we have a foreing currency
+			// Check if we have a foreign currency
 			// If so, we update the pu_equiv as the equivalent price in base currency
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 				$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1301,25 +1307,28 @@ if (empty($reshook)) {
 				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 			}
 
-			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $tva_npr);
-
-			$info_bits = 0;
-			if ($tva_npr) {
-				$info_bits |= 0x01;
-			}
+			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+			/*
+			 if ($pu_equivalent) {
+			 $tmp = calcul_price_total(1, $pu_equivalent, 0, $tva_tx, -1, -1, 0, 'HT', $info_bits, $type);
+			 $pu_equivalent_ttc = ...
+			 } else {
+			 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $tva_tx, -1, -1, 0, 'TTC', $info_bits, $type);
+			 $pu_equivalent_ht = ...
+			 }
+			 */
 
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
 				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				}
@@ -1388,14 +1397,15 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save')) {
 		// Update a line within proposal
+
+		// Clean parameters
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
+
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx'))) {
 			$info_bits |= 0x01;
 		}
-
-		// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1423,9 +1433,10 @@ if (empty($reshook)) {
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
 		$pu_equivalent_ttc = $pu_ttc;
+
 		$currency_tx = $object->multicurrency_tx;
 
-		// Check if we have a foreing currency
+		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 			$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1433,6 +1444,17 @@ if (empty($reshook)) {
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
 			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 		}
+
+		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+		/*
+		 if ($pu_equivalent) {
+		 $tmp = calcul_price_total(1, $pu_equivalent, 0, $vat_rate, -1, -1, 0, 'HT', $info_bits, $type);
+		 $pu_equivalent_ttc = ...
+		 } else {
+		 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $vat_rate, -1, -1, 0, 'TTC', $info_bits, $type);
+		 $pu_equivalent_ht = ...
+		 }
+		 */
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1472,6 +1494,7 @@ if (empty($reshook)) {
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
 				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
@@ -1479,7 +1502,7 @@ if (empty($reshook)) {
 					$error++;
 					$action = 'editline';
 				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
@@ -1968,8 +1991,8 @@ if ($action == 'create') {
 	print '<tr class="field_date_livraison"><td class="titlefieldcreate">'.$langs->trans("DeliveryDate").'</td>';
 	print '<td class="valuefieldcreate">';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
-	if (isset($conf->global->DATE_LIVRAISON_WEEK_DELAY) && is_numeric($conf->global->DATE_LIVRAISON_WEEK_DELAY)) {
-		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+	if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
+		$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);

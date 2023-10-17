@@ -134,8 +134,11 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
+
+ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
+
 ALTER TABLE llx_mrp_production ADD COLUMN fk_unit int DEFAULT NULL;
 UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline';
 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
 
-ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;

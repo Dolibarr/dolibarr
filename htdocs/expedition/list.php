@@ -908,7 +908,16 @@ while ($i < min($num, $limit)) {
 		}
 		$object->date_delivery = $obj->delivery_date;
 		$object->town = $obj->town;
-		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => in_array($obj->id, $arrayofselected)));
+
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('thirdparty' => $companystatic->getNomUrl(1), 'selected' => $selected));
 		if ($i == min($num, $limit) - 1) {
 			print '</div>';
 			print '</td></tr>';
