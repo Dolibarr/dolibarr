@@ -199,7 +199,6 @@ class Propal extends CommonObject
 	public $fin_validite;
 
 	public $user_author_id;
-	public $user_valid_id;
 
 	/**
 	 * @deprecated
@@ -1512,7 +1511,7 @@ class Propal extends CommonObject
 
 		// Clear fields
 		$object->user_author = $user->id;
-		$object->user_valid = 0;
+		$object->user_validation_id = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + ($object->duree_validite * 24 * 3600);
@@ -1803,7 +1802,7 @@ class Propal extends CommonObject
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
@@ -2093,7 +2092,7 @@ class Propal extends CommonObject
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
-			$this->user_valid_id = $user->id;
+			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;
 
@@ -3376,9 +3375,7 @@ class Propal extends CommonObject
 				$this->user_creation = $cuser;
 
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 
 				if ($obj->fk_user_signature) {

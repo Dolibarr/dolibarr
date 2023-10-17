@@ -194,7 +194,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 		if (method_exists($object, 'call_trigger')) {
 			// Online customer is not a user, so we use the use that validates the documents
 			$user = new User($db);
-			$user->fetch($object->user_valid_id);
+			$user->fetch($object->user_validation_id);
 			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
 			if ($result < 0) {

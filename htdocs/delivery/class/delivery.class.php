@@ -342,8 +342,9 @@ class Delivery extends CommonObject
 				$this->ref_customer         = $obj->ref_customer;
 				$this->socid                = $obj->fk_soc;
 				$this->statut               = $obj->fk_statut;
+				$this->status               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
-				$this->user_valid_id        = $obj->fk_user_valid;
+				$this->user_validation_id   = $obj->fk_user_valid;
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->note                 = $obj->note_private; //TODO deprecated
 				$this->note_private         = $obj->note_private;

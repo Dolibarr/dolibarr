@@ -103,6 +103,10 @@ class SupplierProposal extends CommonObject
 
 	public $ref_fourn; //Reference saisie lors de l'ajout d'une ligne à la demande
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
+
+	/**
+	 * @deprecated
+	 */
 	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
@@ -139,7 +143,6 @@ class SupplierProposal extends CommonObject
 
 
 	public $user_author_id;
-	public $user_valid_id;
 
 	/**
 	 * @deprecated
@@ -1140,10 +1143,8 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;		// deprecated
 		$this->user_author_id = $user->id;
-		$this->user_valid = 0;				// deprecated
-		$this->user_valid_id = 0;
+		$this->user_validation_id = 0;
 		$this->date = $now;
 
 		// Set ref
@@ -1268,8 +1269,8 @@ class SupplierProposal extends CommonObject
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
-				$this->user_author_id  = $obj->fk_user_author;
-				$this->user_valid_id   = $obj->fk_user_valid;
+				$this->user_author_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
@@ -1479,7 +1480,7 @@ class SupplierProposal extends CommonObject
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
-				$this->user_valid_id = $user->id;
+				$this->user_validation_id = $user->id;
 				$this->datev = $now;
 				$this->date_validation = $now;
 
@@ -2128,9 +2129,7 @@ class SupplierProposal extends CommonObject
 				$this->user_creation = $cuser;
 
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 
 				if ($obj->fk_user_cloture) {

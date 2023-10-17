@@ -1250,8 +1250,8 @@ class Facture extends CommonInvoice
 
 		// Clear fields
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
-		$object->user_author        = $user->id; // deprecated
-		$object->user_valid         = null; // deprecated
+		$object->user_creation_id   = $user->id;
+		$object->user_validation_id = null;
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
@@ -2206,8 +2206,8 @@ class Facture extends CommonInvoice
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
-				$this->user_author			= $obj->fk_user_author; // deprecated
-				$this->user_valid           = $obj->fk_user_valid; // deprecated
+				$this->user_creation_id     = $obj->fk_user_author; // deprecated
+				$this->user_validation_id   = $obj->fk_user_valid; // deprecated
 				$this->user_modification    = $obj->fk_user_modif; // deprecated
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_valid        = $obj->fk_user_valid;
@@ -4661,9 +4661,7 @@ class Facture extends CommonInvoice
 					$this->user_creation = $cuser;
 				}
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				if ($obj->fk_user_closing) {
 					$this->user_closing_id = $obj->fk_user_closing;

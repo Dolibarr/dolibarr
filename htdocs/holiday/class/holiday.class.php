@@ -2305,9 +2305,7 @@ class Holiday extends CommonObject
 					$this->user_creation = $cuser;
 				}
 				if (!empty($obj->fk_user_valid)) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				if (!empty($obj->fk_user_modification)) {
 					$muser = new User($this->db);
