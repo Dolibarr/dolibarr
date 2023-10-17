@@ -1277,7 +1277,6 @@ class BonPrelevement extends CommonObject
 
 						$this->raison_sociale = $account->proprio;
 					}
-
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
 					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
