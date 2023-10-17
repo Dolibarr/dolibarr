@@ -354,7 +354,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('HRM_EVALUATION_VALIDATE', $object->socid, $object);
+			$text .= $notify->confirmMessage('HRM_EVALUATION_VALIDATE', 0, $object);
 		}
 
 		if (!$error) {
@@ -440,9 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 
-	/*
-	 * Lines
-	 */
+	// Lines when evaluation is in edit mode
 
 	if (!empty($object->table_element_line) && $object->status == Evaluation::STATUS_DRAFT) {
 		// Show object lines
@@ -469,7 +467,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
 		}
 
 		// Lines of evaluated skills
@@ -505,7 +503,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print "<br>";
 	}
 
-	// list of comparison
+	// Lines when evaluation is validated
+
 	if ($object->status != Evaluation::STATUS_DRAFT) {
 		// Recovery of skills related to this evaluation
 
@@ -567,8 +566,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$num++;
 			}
 
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="noborder centpercent">';
+			print '<br>';
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("TypeSkill") . ' </th>';
@@ -594,6 +595,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			print '</table>';
+			print '</div>';
 
 			?>
 
