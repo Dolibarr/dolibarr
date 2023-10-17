@@ -112,12 +112,6 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 * @var integer|string date_livraison
-	 * @deprecated
-	 */
-	public $date_livraison;
-
-	/**
-	 * @var integer|string date_livraison
 	 */
 	public $delivery_date;
 
@@ -146,7 +140,6 @@ class SupplierProposal extends CommonObject
 
 	public $user_author_id;
 	public $user_valid_id;
-	public $user_close_id;
 
 	/**
 	 * @deprecated
@@ -1275,9 +1268,9 @@ class SupplierProposal extends CommonObject
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
-				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_author_id  = $obj->fk_user_author;
+				$this->user_valid_id   = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -2141,9 +2134,7 @@ class SupplierProposal extends CommonObject
 				}
 
 				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id = $obj->fk_user_cloture;
 				}
 			}
 			$this->db->free($result);

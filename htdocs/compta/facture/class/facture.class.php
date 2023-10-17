@@ -148,15 +148,8 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int	Date expected for delivery
-	 * @deprecated
-	 * @see $delivery_date
 	 */
-	public $date_livraison;
-
-	/**
-	 * @var int	Date expected for delivery
-	 */
-	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	public $delivery_date; // Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 
 	/**
 	 * @var string customer ref
@@ -4673,9 +4666,7 @@ class Facture extends CommonInvoice
 					$this->user_validation = $vuser;
 				}
 				if ($obj->fk_user_closing) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_closing);
-					$this->user_closing = $cluser;
+					$this->user_closing_id = $obj->fk_user_closing;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);

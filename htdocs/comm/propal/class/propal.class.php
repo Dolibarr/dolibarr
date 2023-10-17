@@ -191,12 +191,6 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var int	Date expected for delivery
-	 * @deprecated
-	 */
-	public $date_livraison; // deprecated; Use delivery_date instead.
-
-	/**
 	 * @var integer|string 	$delivery_date;
 	 */
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
@@ -206,7 +200,6 @@ class Propal extends CommonObject
 
 	public $user_author_id;
 	public $user_valid_id;
-	public $user_close_id;
 
 	/**
 	 * @deprecated
@@ -1712,8 +1705,8 @@ class Propal extends CommonObject
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id = $obj->fk_user_valid;
-				$this->user_close_id = $obj->fk_user_cloture;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
@@ -3395,9 +3388,7 @@ class Propal extends CommonObject
 				}
 
 				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id = $obj->fk_user_cloture;
 				}
 			}
 			$this->db->free($result);

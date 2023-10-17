@@ -206,14 +206,7 @@ class Commande extends CommonOrder
 	public $date_commande;
 
 	/**
-	 * @var int	Date expected for delivery
-	 * @see $delivery_date
-	 * @deprecated
-	 */
-	public $date_livraison;
-
-	/**
-	 * @var int	Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	 * @var int	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 	 */
 	public $delivery_date;
 

@@ -143,12 +143,6 @@ class CommandeFournisseur extends CommonOrder
 	public $date_commande;
 
 	/**
-	 * @var int	Date expected for delivery
-	 * @deprecated		See delivery_date
-	 */
-	public $date_livraison;
-
-	/**
 	 *  @var int Date expected for delivery
 	 */
 	public $delivery_date;

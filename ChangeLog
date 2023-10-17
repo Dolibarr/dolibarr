@@ -20,6 +20,7 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
 * The duplicated and deprecated property ->date_livraison that was renamed into ->delivery_date has been completely removed.
+* The property ->user_close to store ID of closing user has been renamed into ->user_closing_id.
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
 * The method ProductcustomerPrice->fetch_all_log() has been renamed into camel case ->fetchAllLog()
 * Recheck setup of your module workflow to see if you need to enable the new setting to have shipment set to billed automatically when
