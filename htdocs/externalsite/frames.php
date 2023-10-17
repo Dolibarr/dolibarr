@@ -65,12 +65,12 @@ if (!empty($keyforcontent)) {
 		 && !preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent)) {
 		$langs->load("errors");
 		print $langs->trans("ErrorBadSyntaxForParamKeyForContent", 'EXTERNAL_SITE_CONTENT_', 'EXTERNAL_SITE_URL_');
-	} elseif (empty($conf->global->$keyforcontent)) {
+	} elseif (!getDolGlobalString($keyforcontent)) {
 		$langs->load("errors");
 		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
 	} else {
 		if (preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent)) {
-			print $conf->global->$keyforcontent;
+			print getDolGlobalString($keyforcontent);
 		} elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent)) {
 			/*print "
 			<html>
@@ -82,7 +82,7 @@ if (!empty($keyforcontent)) {
 				<frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
 			  ";
 					print '<frame name="main" src="';
-					print $conf->global->$keyforcontent;
+					print getDolGlobalString($keyforcontent);
 					print '">';
 					print "
 				<noframes>
@@ -103,7 +103,7 @@ if (!empty($keyforcontent)) {
 
 			</html>
 			";*/
-			print '<iframe src="'.$conf->global->$keyforcontent.'"></iframe>';
+			print '<iframe src="'.getDolGlobalString($keyforcontent).'"></iframe>';
 		}
 	}
 

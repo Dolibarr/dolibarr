@@ -94,7 +94,7 @@ if (!GETPOST("currency", 'alpha')) {
 	$currency = GETPOST("currency", 'aZ09');
 }
 $source = GETPOST("s", 'aZ09') ?GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
-//$download = GETPOST('d', 'int') ?GETPOST('d', 'int') : GETPOST('download', 'int');
+$getpostlang = GETPOST('lang', 'aZ09');
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -241,6 +241,10 @@ if (!empty($entity)) {
 	$urlok .= 'e='.urlencode($entity).'&';
 	$urlko .= 'e='.urlencode($entity).'&';
 }
+if (!empty($getpostlang)) {
+	$urlok .= 'lang='.urlencode($getpostlang).'&';
+	$urlko .= 'lang='.urlencode($getpostlang).'&';
+}
 $urlok = preg_replace('/&$/', '', $urlok); // Remove last &
 $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
@@ -295,10 +299,10 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		if ($tmpsource && $REF) {
 			// Use the source in the hash to avoid duplicates if the references are identical
-			$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, $SECUREKEY, '2');
+			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $tmpsource.$REF, $SECUREKEY, '2');
 			// Do a second test for retro-compatibility (token may have been hashed with membersubscription in external module)
 			if ($tmpsource != $source) {
-				$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, $SECUREKEY, '2');
+				$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
 			}
 		} else {
 			$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN, $SECUREKEY, '2');
@@ -834,7 +838,7 @@ $form = new Form($db);
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.(!empty($getpostlang) ? $getpostlang: $langs->defaultlang).'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -878,6 +882,7 @@ print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 print "\n";
 
 
@@ -917,7 +922,7 @@ if ($urllogo) {
 }
 if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
 	print '<div class="backimagepublicpayment">';
-	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
+	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="' . getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT').'">';
 	print '</div>';
 }
 
@@ -951,7 +956,7 @@ if (!empty($conf->global->PAYMENT_NEWFORM_TEXT)) {
 	if (preg_match('/^\((.*)\)$/', $conf->global->PAYMENT_NEWFORM_TEXT, $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
-		$text .= $conf->global->PAYMENT_NEWFORM_TEXT."<br>\n";
+		$text .= getDolGlobalString('PAYMENT_NEWFORM_TEXT') . "<br>\n";
 	}
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
@@ -1632,7 +1637,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	// This place no longer allows amount edition
 	if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-		print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
+		print ' - <a href="' . getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
 	print '</td><td class="CTableRow2">';
 	if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $amount) {
@@ -1769,7 +1774,7 @@ if ($source == 'donation') {
 			print ' ('.$langs->trans("ToComplete");
 		}
 		if (!empty($conf->global->DONATION_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->DONATION_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="' . getDolGlobalString('DONATION_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		if (empty($conf->global->DONATION_NEWFORM_AMOUNT)) {
 			print ')';
@@ -2130,12 +2135,12 @@ if ($action != 'dopayment') {
 					print '<div style="line-height: 1em">&nbsp;</div>';
 				}
 				print '<span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
-				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral') {
+				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'</span>';
 				}
-				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly') {
+				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
 					//print '<br>';
 					//print '<span class="buttonpaymentsmall">'.$langs->trans("PayPalBalance").'"></span>';
 				}
@@ -2215,7 +2220,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 
 		//print '<br>';
 
-		print '<!-- Show Stripe form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
+		print '<!-- Show Stripe form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = ' . getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION').' STRIPE_USE_NEW_CHECKOUT = ' . getDolGlobalString('STRIPE_USE_NEW_CHECKOUT').' -->'."\n";
 		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
 
 		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
@@ -2233,6 +2238,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
+		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || !empty($conf->global->STRIPE_USE_NEW_CHECKOUT)) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';

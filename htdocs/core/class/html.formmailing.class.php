@@ -36,12 +36,13 @@ class FormMailing extends Form
 	/**
 	 * Output a select with destinaries status
 	 *
-	 * @param 	string   $selectedid     	The selected id
-	 * @param 	string   $htmlname       	Name of controm
-	 * @param 	integer  $show_empty     	Show empty option
+	 * @param 	string  $selectedid     	The selected id
+	 * @param 	string  $htmlname       	Name of controm
+	 * @param 	integer $show_empty     	Show empty option
+	 * @param	string	$morecss			More CSS
 	 * @return 	string 						HTML select
 	 */
-	public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
+	public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0, $morecss = 'minwidth75')
 	{
 		global $langs;
 
@@ -55,6 +56,6 @@ class FormMailing extends Form
 		$options = $options + $mailing->statut_dest;
 
 		// Note -1 is used for error, so we use -2 for tempty value
-		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1);
+		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1, 0, 0, '', $morecss);
 	}
 }

@@ -990,15 +990,17 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 				$origin = new Inventory($this->db);
 				break;
-
 			default:
 				if ($origin_type) {
 					// Separate originetype with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
-					$classname = ucfirst($origin_type_array[0]);
+					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
-					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
+
+					$result = dol_include_once('/'.$modulename.'/class/'.$classname.'.class.php');
+
 					if ($result) {
+						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
 				}
@@ -1181,6 +1183,8 @@ class MouvementStock extends CommonObject
 		} elseif ($mode == 5) {
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
+
+		return 'Bad value for mode';
 	}
 
 	/**

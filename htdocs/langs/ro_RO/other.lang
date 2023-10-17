@@ -300,6 +300,7 @@ ConfirmBtnCommonContent = Eşti sigur că vrei să  "%s" ?
 ConfirmBtnCommonTitle = Confirmare acţiune
 CloseDialog = Închide
 Autofill = Autocompletare
+OrPasteAnURL=sau Lipește un URL
 
 # externalsite
 ExternalSiteSetup=Link-ul de instalare pentru site-ul extern

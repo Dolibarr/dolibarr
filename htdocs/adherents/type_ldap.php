@@ -101,17 +101,17 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
 // LDAP DN
-print '<tr><td>LDAP '.$langs->trans("LDAPMemberTypeDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_TYPE_DN."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPMemberTypeDn").'</td><td class="valeur">' . getDolGlobalString('LDAP_MEMBER_TYPE_DN')."</td></tr>\n";
 
 // LDAP Cle
-print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_MEMBERS_TYPES."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">' . getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_TYPE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PROTOCOLVERSION."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">' . getDolGlobalString('LDAP_SERVER_TYPE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">' . getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">' . getDolGlobalString('LDAP_SERVER_HOST')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">' . getDolGlobalString('LDAP_SERVER_HOST_SLAVE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">' . getDolGlobalString('LDAP_SERVER_PORT')."</td></tr>\n";
 
 print '</table>';
 

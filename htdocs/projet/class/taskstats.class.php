@@ -27,8 +27,11 @@ class TaskStats extends Stats
 	private $project;
 	public $userid;
 	public $socid;
-	public $year;
-	public $month;
+
+	/**
+	 * @var int priority
+	 */
+	public $priority;
 
 	/**
 	 * Constructor of the class
@@ -55,7 +58,7 @@ class TaskStats extends Stats
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (empty($user->rights->societe->client->voir) && !$user->soc_id) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
@@ -109,7 +112,7 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (empty($user->rights->societe->client->voir) && !$user->soc_id) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();
@@ -171,7 +174,7 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (empty($user->rights->societe->client->voir) && !$user->soc_id) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=p.fk_soc AND sc.fk_user=".((int) $user->id);
 		}
 		$sql .= $this->buildWhere();

@@ -229,7 +229,7 @@ class modZapier extends DolibarrModules
 		// Permission label
 		$this->rights[$r][1] = 'Read myobject of Zapier';
 		// Permission by default for new user (0/1)
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		// In php code, permission will be checked by test if ($user->rights->zapier->level1->level2)
 		$this->rights[$r][4] = 'read';
 		// In php code, permission will be checked by test if ($user->rights->zapier->level1->level2)
@@ -237,13 +237,13 @@ class modZapier extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;
 		$this->rights[$r][1] = 'Create/Update myobject of Zapier';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;
 		$this->rights[$r][1] = 'Delete myobject of Zapier';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$this->rights[$r][5] = '';
 

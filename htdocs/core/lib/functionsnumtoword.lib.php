@@ -46,7 +46,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		$num = $num * 10;
 	}
 
-	if (!empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
+	if (isModEnabled('numberwords')) {
 		if ($currency) {
 			$type = '1';
 		} else {
@@ -163,7 +163,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
  * @param	float 	    $numero			Number to convert
  * @param	Translate	$langs			Language
  * @param	string	    $numorcurrency	'number' or 'amount'
- * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @return 	string|int  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {

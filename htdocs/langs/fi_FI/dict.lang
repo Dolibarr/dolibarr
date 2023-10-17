@@ -21,7 +21,7 @@ CountryNL=Alankomaat
 CountryHU=Unkari
 CountryRU=Venäjä
 CountrySE=Ruotsi
-CountryCI=Ivory Coast
+CountryCI=Norsunluurannikko
 CountrySN=Senegal
 CountryAR=Argentiina
 CountryCM=Kamerun
@@ -137,7 +137,7 @@ CountryLV=Latvia
 CountryLB=Libanon
 CountryLS=Lesotho
 CountryLR=Liberia
-CountryLY=Libyan
+CountryLY=Libya
 CountryLI=Liechtenstein
 CountryLT=Liettua
 CountryLU=Luxemburg
@@ -247,6 +247,7 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthélemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Mrs

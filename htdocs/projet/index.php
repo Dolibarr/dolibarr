@@ -53,7 +53,7 @@ if ($search_project_user == $user->id) {
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -109,7 +109,7 @@ llxHeader('', $title, $help_url);
 
 // Title for combo list see all projects
 $titleall = $langs->trans("AllAllowedProjects");
-if (!empty($user->rights->projet->all->lire) && !$socid) {
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllProjects");
 } else {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
@@ -130,7 +130,7 @@ $morehtml .= '</form>';
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyProjectsDesc");
 } else {
-	if (!empty($user->rights->projet->all->lire) && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("ProjectsDesc");
 	} else {
 		$tooltiphelp = $langs->trans("ProjectsPublicDesc");
@@ -209,7 +209,7 @@ $sql .= ", s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
-if ($mine || empty($user->rights->projet->all->lire)) {
+if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
@@ -320,7 +320,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
-if ($mine || empty($user->rights->projet->all->lire)) {
+if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid > 0) {
