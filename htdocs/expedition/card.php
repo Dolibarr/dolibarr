@@ -1616,7 +1616,13 @@ if ($action == 'create') {
 								if (!empty($conf->stock->enabled)) {
 									print '<td class="left">';
 									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-										print '';
+										if ($product->stockable_product == Product::ENABLED_STOCK){
+											print $tmpwarehouseObject->getNomUrl(0).' ';
+											print '<!-- Show details of stock -->';
+											print '('.$stock.')';
+										} else {
+											print img_warning().' '.$langs->trans('StockDisabled') ;
+										}
 									} else {
 										print $langs->trans('Service');
 									}
@@ -1624,28 +1630,6 @@ if ($action == 'create') {
 
 									// Action
 									print '<td></td>';
-
-									// Stock
-									if (isModEnabled('stock')) {
-										print '<td class="left">';
-										if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-											if ($product->stockable_product == Product::ENABLED_STOCK){
-												print $tmpwarehouseObject->getNomUrl(0).' ';
-												print '<!-- Show details of stock -->';
-												print '('.$stock.')';
-											} else {
-												print img_warning().' '.$langs->trans('StockDisabled') ;
-											}
-										} else {
-											print $langs->trans("Service");
-										}
-										print '</td>';
-									}
-									$quantityToBeDelivered -= $deliverableQty;
-									if ($quantityToBeDelivered < 0) {
-										$quantityToBeDelivered = 0;
-									}
-									$subj++;
 								}
 								print '</tr>';
 

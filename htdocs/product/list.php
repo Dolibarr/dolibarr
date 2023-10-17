@@ -1820,7 +1820,7 @@ if ($resql) {
 		// not managed in stock
 		if(! empty($arrayfields['p.stockable_product']['checked'])) {
 			print '<td class="nowrap center">';
-			print ($product_static->stockable_product == '1') ? $langs->trans('Yes') : $langs->trans('No');
+			print '<input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'>';
 			print '</td>';
 		}
 
