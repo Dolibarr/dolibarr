@@ -697,9 +697,9 @@ class Mo extends CommonObject
 			$moline->qty = $this->qty;
 			$moline->fk_product = $this->fk_product;
 			$moline->position = 1;
-            $tmpproduct = new Product($this->db);
-            $tmpproduct->fetch($this->fk_product);
-            $moline->fk_unit = $tmpproduct->fk_unit;
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($this->fk_product);
+			$moline->fk_unit = $tmpproduct->fk_unit;
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
@@ -730,7 +730,7 @@ class Mo extends CommonObject
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
 				if ($bom->id > 0) {
-                    // Lines to consume
+					// Lines to consume
 					if (!$error) {
 						foreach ($bom->lines as $line) {
 							$moline = new MoLine($this->db);
@@ -738,13 +738,13 @@ class Mo extends CommonObject
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
 							$moline->origin_type = 'bomline';
-                            if(!empty($line->fk_unit)) $moline->fk_unit = $line->fk_unit;
+							if (!empty($line->fk_unit)) $moline->fk_unit = $line->fk_unit;
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
 								$moline->qty = price2num(($line->qty / ( !empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( !empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
 							}
-                            if ($moline->qty <= 0) {
+							if ($moline->qty <= 0) {
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
 								break;
@@ -1528,12 +1528,12 @@ class Mo extends CommonObject
 		print '</td>';
 		// Qty
 		print '<td class="right">'.$langs->trans('Qty');
-        if ($this->bom->bomtype == 0) {
-            print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
-        } else {
-            print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
-        }
-        // Unit
+		if ($this->bom->bomtype == 0) {
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
+		} else {
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
+		}
+		// Unit
 		print '<td class="right">'.$langs->trans('Unit');
 
 		print '</td>';

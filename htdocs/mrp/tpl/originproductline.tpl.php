@@ -139,8 +139,8 @@ if ($resql) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		}
 
-        // Unit
-        print '<td class="linecolunit nowrap right" id="sub_bom_unit_'.$sub_bom_line->id.'">'.measuringUnitString($sub_bom_line->fk_unit,'','',1).'</td>';
+		// Unit
+		print '<td class="linecolunit nowrap right" id="sub_bom_unit_'.$sub_bom_line->id.'">'.measuringUnitString($sub_bom_line->fk_unit, '', '', 1).'</td>';
 
 		// Stock réel
 		if ($sub_bom_product->stock_reel > 0) {

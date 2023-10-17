@@ -181,7 +181,7 @@ if (empty($reshook)) {
 				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
 			}
 			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
-            if($conf->global->PRODUCT_USE_UNITS) $moline->fk_unit = $tmpproduct->fk_unit;
+			if ($conf->global->PRODUCT_USE_UNITS) $moline->fk_unit = $tmpproduct->fk_unit;
 		}
 
 		$resultline = $moline->create($user, false); // Never use triggers here
@@ -759,8 +759,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-        // Unit
-        if($conf->global->PRODUCT_USE_UNITS) print '<td class="right">' . $langs->trans("Unit") . '</td>';
+		// Unit
+		if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right">' . $langs->trans("Unit") . '</td>';
 		// Cost price
 		if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
@@ -821,7 +821,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-            // Cost price
+			// Cost price
 			if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 				print '<td></td>';
 			}
@@ -917,13 +917,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					print price2num($line->qty, 'MS');
 					print '</td>';
-                    // Unit
-                    if($conf->global->PRODUCT_USE_UNITS) {
-                        print '<td class="right nowraponall">';
-                        print measuringUnitString($line->fk_unit, '', '', 1);
-                        print '</td>';
-                    }
-                    // Cost price
+					// Unit
+					if ($conf->global->PRODUCT_USE_UNITS) {
+						print '<td class="right nowraponall">';
+						print measuringUnitString($line->fk_unit, '', '', 1);
+						print '</td>';
+					}
+					// Cost price
 					if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 						print '<td class="right nowraponall">';
 						print price($linecost);
@@ -1098,8 +1098,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
 
-                        // Unit
-                        if($conf->global->PRODUCT_USE_UNITS)  print '<td></td>';
+						// Unit
+						if ($conf->global->PRODUCT_USE_UNITS)  print '<td></td>';
 
 						// Cost
 						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
@@ -1216,8 +1216,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-        /// Unit
-        if($conf->global->PRODUCT_USE_UNITS) print '<td class="right">'.$langs->trans("Unit").'</td>';
+		/// Unit
+		if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right">'.$langs->trans("Unit").'</td>';
 		// Cost price
 		if ($permissiontoupdatecost) {
 			if (empty($bomcostupdated)) {
@@ -1267,8 +1267,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-            //Unit
-            if($conf->global->PRODUCT_USE_UNITS) print '<td></td>';
+			//Unit
+			if ($conf->global->PRODUCT_USE_UNITS) print '<td></td>';
 			// Cost price
 			if ($permissiontoupdatecost) {
 				print '<td></td>';
@@ -1332,8 +1332,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					// Qty
 					print '<td class="right">'.$line->qty.'</td>';
-                    // Unit
-					if($conf->global->PRODUCT_USE_UNITS) print '<td class="right">'.measuringUnitString($line->fk_unit,'','',1).'</td>';
+					// Unit
+					if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
 					// Cost price
 					if ($permissiontoupdatecost) {
 						// Defined $manufacturingcost
@@ -1429,8 +1429,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						// Qty
 						print '<td></td>';
-                        // Unit
-                        if($conf->global->PRODUCT_USE_UNITS) print '<td></td>';
+						// Unit
+						if ($conf->global->PRODUCT_USE_UNITS) print '<td></td>';
 						// Cost price
 						if ($permissiontoupdatecost) {
 							print '<td></td>';
@@ -1481,8 +1481,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						//Unit
-                        if($conf->global->PRODUCT_USE_UNITS) print '<td class="right"></td>';
-                        // Cost
+						if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right"></td>';
+						// Cost
 						if ($permissiontoupdatecost) {
 							// Defined $manufacturingcost
 							$manufacturingcost = 0;
