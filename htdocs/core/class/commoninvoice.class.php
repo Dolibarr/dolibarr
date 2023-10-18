@@ -670,29 +670,23 @@ abstract class CommonInvoice extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Retrieve a list of invoice subtype labels or codes.
 	 *
 	 *		@param	int		$mode		0=Return id+label, 1=Return code+id
-	 *      @param  string	$filter     Add a SQL filter to select. Data must not come from user input.
 	 *    	@return array      			Array of subtypes
 	 */
-	public function subtype_array($mode = 0, $filter = '')
+	public function getArrayOfInvoiceSubtypes($mode = 0)
 	{
-		// phpcs:enable
-		global $langs;
+		global $mysoc;
 
 		$effs = array();
 
 		$sql = "SELECT rowid, code, label as label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . 'c_invoice_subtype';
-		$sql .= " WHERE active = 1";
-		if ($filter) {
-			$sql .= " " . $filter;
-		}
+		$sql .= " WHERE active = 1 AND fk_country = ".((int) $mysoc->country_id)." AND entity IN(".getEntity('c_invoice_subtype').")";
 		$sql .= " ORDER by rowid, code";
-		dol_syslog(get_class($this) . '::subtype_array', LOG_DEBUG);
+		dol_syslog(get_class($this) . '::getArrayOfInvoiceSubtypes', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
