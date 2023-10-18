@@ -470,10 +470,10 @@ class MyObject extends CommonObject
 					if (preg_match('/^integer/', $type)) {
 						if (is_int($value)) {
 							// single value
-							$sqlwhere[] = $key . " = " . $value;
+							$sqlwhere[] = $key . " = " . intval($value);
 						} elseif (is_array($value)) {
 							if (empty($value)) continue;
-							$sqlwhere[] = $key . ' IN (' . implode(',', array_map('intval', $value)) . ')';
+							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
 						}
 						continue;
 					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
@@ -487,12 +487,12 @@ class MyObject extends CommonObject
 					$value = implode(',', array_map(function ($v) {
 						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
 					}, $value));
-					$sqlwhere[] = $key . " IN ($value)";
+					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
 				} elseif (is_scalar($value)) {
 					if (strpos($value, '%') === false) {
 						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
 					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($value))."%'";
+						$sqlwhere[] = $key . " LIKE '%" . $this->db->escapeforlike($this->db->escape($value)) . "%'";
 					}
 				}
 			}
