@@ -569,7 +569,7 @@ $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 $company_url_list = array();
-$subtypearray = $object->subtype_array(0);
+$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 $title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
 $help_url = 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes';
 

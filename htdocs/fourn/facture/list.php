@@ -399,7 +399,7 @@ $bankaccountstatic = new Account($db);
 $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
-$subtypearray = $object->subtype_array(0);
+$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 $now = dol_now();
 
 $title = $langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : '');
