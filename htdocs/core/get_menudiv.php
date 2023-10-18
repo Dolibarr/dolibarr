@@ -122,7 +122,7 @@ print '
     }
 
 	ul li.lilevel2 {
-		padding-left: 42px;
+		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
 	}
 
     a.alilevel0, span.spanlilevel0 {
