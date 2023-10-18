@@ -9337,6 +9337,7 @@ function verifCond($strToEvaluate)
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		//var_dump($strToEvaluate);
+		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
@@ -9369,8 +9370,6 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Old variables used
 	global $object;
 	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
-	//global $rights;
-	//global $soc; // For backward compatibility
 
 	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
 		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
@@ -9392,8 +9391,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
 			$scheck = preg_replace('/^\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '(...'
 			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '... ('
-			$scheck = preg_replace('/^[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function('
-			$scheck = preg_replace('/\s[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function('
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."\n";
 			if (strpos($scheck, '(') !== false) {
