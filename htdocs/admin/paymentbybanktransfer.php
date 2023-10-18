@@ -25,6 +25,7 @@
  *	\brief      Page to setup payments by credit transfer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -187,7 +188,7 @@ print '</td></tr>';
 //USTRD
 print '<tr class="oddeven"><td>'.$langs->trans("USTRD").'</td>';
 print '<td>';
-print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" class="width100"></td>';
+print '<input type="text" name="CREDITTRANSFER_USTRD" value="'.$conf->global->CREDITTRANSFER_USTRD.'" class="width100"></td>';
 print '</td></tr>';
 */
 
@@ -197,7 +198,7 @@ print '<td class="left">';
 if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) {
 	$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS = 0;
 }
-print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS.'" class="width50"></td>';
+print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="' . getDolGlobalString('PAYMENTBYBANKTRANSFER_ADDDAYS').'" class="width50"></td>';
 print '</td></tr>';
 print '</table>';
 
@@ -378,7 +379,7 @@ print '<br>';
  */
 
 /* Disable this, there is no trigger with elementtype 'withdraw'
-if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
+if (isModEnabled('notification'))
 {
 	$langs->load("mails");
 	print load_fiche_titre($langs->trans("Notifications"));

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=نص مرمز
+WebsiteName=Name of the website
 WebsiteSetupDesc=قم بإنشاء الموقع الالكتروني الذي ترغب باستخدامه ثم اذهب الى القائمة المواقع الإلكترونية لتعديلها
 DeleteWebsite=حذف الموقع الإلكتروني
 ConfirmDeleteWebsite=هل انت متأكد من رغبتك بحذف هذا الموقع الإلكتروني ؟ سيتم حذف جميع الصفحات والمحتويات ايضا. الملفات المحملة (كما في المسار الاستديو و وحدة وإدارة المحتوى الرقمي) ستبقى دون حذف.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=ترويسات لغة ترميز النصوص التشعبي
 WEBSITE_ROBOT=محتوى ملف الروبوتات النصي 
 WEBSITE_HTACCESS=محتوى ملف ضبط الوصول
 WEBSITE_MANIFEST_JSON=ملف قوائم جسون للموقع
-WEBSITE_README=ملف إقرأني الوصفي
 WEBSITE_KEYWORDSDesc=إستخدم الشولة لفصل القيم 
-EnterHereLicenseInformation=أدخل هنا المعلومات الوصفية او معلومات الترخيص لملئ محتوى ملف إقرأني الوصفي . إذا قمت بتوزيع موقعك كقالب ، سيتم تصمين الملف في الحزمة.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=ترويسات لغة ترميز النصوص التشعبية (لهذه الصفحة فقظ)
 PageNameAliasHelp=اسم او لقب الصفحة. <br> هذا يستخدم ايضا لانشاء رابط تسريع محركات البحث عندما يتم تشغيل الموقع عبر خادم إستضافة افتراضي (مثل اباتشي او انجنكس..) إستخدم الزر "<strong>%s</strong>" لتعديل هذا الاسم او اللقب.
 EditTheWebSiteForACommonHeader=ملاحظة: اذا كنت ترغب في تعيين ترويسة لكل الصفحات إستخدم الترويسات على مستوى الموقع بدلا عن ترويسات الصفحة\\الحاوية
@@ -31,7 +32,7 @@ AddWebsite=إضافة موقع إلكتروني
 Webpage=الصفحة\\الحاوية
 AddPage=إضافة صفحة\\حاوية
 PageContainer=صفحة
-PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
+PreviewOfSiteNotYetAvailable=معاينة موقع الويب الخاص بك <strong> %s </strong> ليست متاحة بعد. يجب عليك أولاً '<strong> استيراد قالب موقع ويب كامل </strong>' أو '<strong> فقط إضافة صفحة / حاوية </strong>'.
 RequestedPageHasNoContentYet=الصفحة المطلوبة بالمعرف  %s لاتحتوي بعد على محتوى ، او ان ملف القالب الخاص بها قد تم حذفه. قم بتعديل محتويات الصفحة لحل ذلك
 SiteDeleted= الموقع "%s" تم حذهف
 PageContent=الصفحة\\الحاوية
@@ -42,10 +43,12 @@ ViewPageInNewTab=عرض الصفحة في علامة تبويب جديدة
 SetAsHomePage=إجعلها الصفحة الرئيسية
 RealURL=الرابط الحقيقة
 ViewWebsiteInProduction=عرض الموقع باستخدام رابط الصفحة الرئيسية
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u>بإستخدام اباتشي \\انجنكس\\...</u><br> على خادمك (اباتشي او انجنكس..) قم بإنشاء خادم افتراضي يدعم البي اتش بي واجعل المسار الجذر له<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=مثال إعدادات لاستخدامه مع خادم اباتشي افتراضي
 YouCanAlsoTestWithPHPS=<u>لاستخدام خادم بي اتش بي المضمن </u><br>على بيئة التطوير ربما تفضل تجربة موقعك بخادم بي اتش بي المضمن (النسخة 5.5 فما فوق) عبر تشغيل <br><strong> php -S 0.0.0.0:8080 -t %s</strong> 
-YouCanAlsoDeployToAnotherWHP=<u>انشر موقعك الإلكتروني مع مقدم إستضافة اخر</u><br>إذا كنت لا تمتلك خادم مواقع مثل اباتشي او انجنكس على الأنترنت، يمكنك تصدير وإستيراد الى نظام دوليبار اخر المقدم بواسطة مقدم استضافة دوليبار والذي يوفر تكامل مكتمل مع وحدة الموقع الإلكتروني. يمكنك ايجاد قائمة من مقدمين إستضافة دوليبار على <a href="https://saas.dolibarr.org" target="_blank">موقع إستضافات دوليبار</a>
+YouCanAlsoDeployToAnotherWHP= <u> قم بتشغيل موقع الويب الخاص بك مع مزود استضافة Dolibarr آخر </u> <br> إذا لم يكن لديك خادم ويب مثل Apache أو NGinx متاحًا على الإنترنت ، فيمكنك تصدير واستيراد موقع الويب الخاص بك إلى مثيل Dolibarr آخر يوفره مزود استضافة Dolibarr آخر يوفره بالكامل التكامل مع وحدة موقع الويب. يمكنك العثور على قائمة ببعض موفري خدمة استضافة Dolibarr على <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=ايضاً تأكد من ان مستخدم الخادم (مثلا www-data ) لديه صلاحيات <strong>%s</strong> على الملفات <br><strong>%s</strong>
 ReadPerm=قرأ
 WritePerm=التعديل والكتابة
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=يمكن تحرير مصدر  لغة ترميز ا�
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span>يمكنك تضمين نصوص بي اتش بي بإستخدام أوسمة <strong>&gt;?php?&lt;</strong>.  و المتغيرات العامة التالية متاحة : $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> يمكنك ايضا تضمين محتوى صفحة \\حاوية اخرى عن طريق تركيب الجملة التالي <br><strong>&lt;?php includeContainer('لقب_الصفحة_المطلوبة'); ?&gt; </strong><br><br><span class="fa fa-bug"></span>يمكنك إعادة التوجيه الى صفحة \\حاوية اخرى عن طريق تركيب الجملة التالي (ملاحظة لاتقم باي طباعة لمخرجات قبل عملية إعادة التوجهي ) : <br><strong>&lt;?php redirectToContainer('لقب_الصفحة_المطلوبة'); ?&gt;</strong><br><br><span class="fa fa-link"></span> لإضافة رابط رابط صفحة اخرى يمكنك إستخدام تركيب الجملة التالي :<br><strong> &lt;a href="لقب_الصفحة_المطلوبة.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> لتضمين <strong>رابط لتحميل </strong> ملف موجود ضمن مسار <strong> المستندات </strong> إستخدم المغلف <strong>document.php</strong>:<br> على سبيل المثال لمف موجود على المسار /documents/ecm (يجب تسجيل الدخول اولاً) إستخدم تركيب الجملة التالي :<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br> ولملف في المسار documents/medias (مسار مفتوح الوصول للجميع) إستخدم تركيب الجملة التالي: <br><strong> &lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br> للمفات المشاركة بواسطة رابط المشاركة (وصول مفتوح بإستخدام مفتاح رمز دالة الملف ) إستخدم تركيب الجملة التالي:<br><strong> &lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> لتضمين <strong>صورة </strong> مخزنة في مسار <strong>المستندات</strong> إستخدم المغلف <strong> viewimage.php</strong>: <br> على سبيل المثال لتضمين صورة موجودة في المسار documents/medias (مسار مفتوح الوصول للعامة)، إستخدم تركيب الجملة التالي:<br><strong> &lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=لتضمين صورة مشاركة عن طريق رابط المشاركة (وصول عام باستخدام رمز دالة الملف) إستخدم تركيب الجملة التالي:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>امثلة اكثر  للغة ترميز النصوص التشعبية متاحة على <a href="%s" target="_blank">مدونة التوثيق</a><br>
+YouCanEditHtmlSourceMore= <br> يتوفر المزيد من أمثلة HTML أو التعليمات البرمجية الديناميكية على <a href="%s" target="_blank" rel="noopener noreferrer external"> وثائق wiki </a> <br>.
 ClonePage=نسخ الصفحة\\الحاوية
 CloneSite=نسخ الموقع
 SiteAdded=تم إضافة الموقع الإلكتروني
@@ -80,7 +83,7 @@ BlogPost=تدوينة
 WebsiteAccount=حساب موقع إلكتروني
 WebsiteAccounts=حسابات الموقع
 AddWebsiteAccount=إنشاء حساب موقع إلكتروني
-BackToListForThirdParty=عودة الى قائمة الاطراف الثالثة
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=عطل الموقع الإلكتروني اولاً
 MyContainerTitle=عنوان موقعي
 AnotherContainer=هذه هي الطريقة لتضمين محتوى صفحة\\حاوية اخرى (ربما يظهر لك خطأ عند تمكين المحتوى المتحرك وذلك لان الحاوية الجزئية المضمنة غير موجودة!)
@@ -137,7 +140,7 @@ PagesRegenerated=تم توليد %s صفحة\\حاوية
 RegenerateWebsiteContent=إعادة توليد ملفات الموقع الإلكترونية المؤقتة 
 AllowedInFrames=مسموح بها في الإطارات
 DefineListOfAltLanguagesInWebsiteProperties=عرف قائمة بكل اللغات المتاحة في خصائص الموقع
-GenerateSitemaps=توليد ملف خريطة الموقع
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=إذا اكدت ، ستقوم بحذف ملف خرطة الموقع الحالي...
 ConfirmSitemapsCreation=تأكيد توليد خريطة الموقع
 SitemapGenerated=تم توليد ملف خريطة الموقع <b>%s</b>
@@ -145,3 +148,15 @@ ImportFavicon=الايقونة
 ErrorFaviconType=الأيقونة لابد ان تكون بي ان جي
 ErrorFaviconSize=لابد ان يكون حجم الأيقونة 16x16 ، 32x32 او 64x64 
 FaviconTooltip=رفع صورة بي ان جي (16x16،32x32 او 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)
+Visibility=الرؤية
+Everyone=Everyone
+AssignedContacts=Assigned contacts

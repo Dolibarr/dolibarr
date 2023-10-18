@@ -24,6 +24,7 @@
  *	\brief      Payment reports page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -39,7 +40,7 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (empty($user->rights->societe->client->voir) || $socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
@@ -49,7 +50,7 @@ if (!$year) {
 }
 
 // Security check
-if (empty($user->rights->facture->lire)) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 

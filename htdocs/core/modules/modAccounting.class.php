@@ -57,7 +57,7 @@ class modAccounting extends DolibarrModules
 		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array('/accounting/temp');
+		$this->dirs = array('/accounting/temp', '/accounting/export');
 
 		// Config pages
 		$this->config_page_url = array('accounting.php?mainmenu=accountancy&leftmenu=accountancy_admin');
@@ -66,7 +66,7 @@ class modAccounting extends DolibarrModules
 		$this->depends = array("modFacture", "modBanque", "modTax"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("accountancy", "compta");
 
@@ -124,22 +124,10 @@ class modAccounting extends DolibarrModules
 				"",
 				"", 0, 'current', 0
 		);
-		$this->const[9] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
-		$this->const[10] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
 		$this->const[11] = array(
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
-				"%d%m%Y",
+				"%Y-%m-%d",
 				"", 0, 'current', 0
 		);
 		$this->const[12] = array(
@@ -338,7 +326,7 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 
-		// General ledger - Fichier FEC
+		// General ledger - File FEC
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportAccountingEntriesFECFormat';

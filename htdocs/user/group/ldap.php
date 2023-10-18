@@ -23,6 +23,7 @@
  *       \brief      Page fiche LDAP groupe
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -41,12 +42,12 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$object = new Usergroup($db);
-$object->fetch($id);
+$object = new UserGroup($db);
+$object->fetch($id, '', true);
 $object->getrights();
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	accessforbidden();
 }
 
@@ -68,7 +69,7 @@ if ($action == 'dolibarr2ldap') {
 		$info = $object->_load_ldap_info();
 
 		// Get a gid number for objectclass PosixGroup if none was provided
-		if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+		if (empty($info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')]) && in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 
@@ -92,7 +93,9 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-llxHeader();
+$title = $object->name." - ".$langs->trans('LDAP');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = group_prepare_head($object);
 
@@ -100,12 +103,12 @@ print dol_get_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, (!empty($user->rights->user->user->lire) || !empty($user->admin)));
+dol_banner_tab($object, 'id', $linkback, ($user->hasRight('user', 'user', 'lire') || !empty($user->admin)));
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (!empty($conf->mutlicompany->enabled)) {

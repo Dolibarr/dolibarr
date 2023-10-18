@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook jonli kaliti
 ONLINE_PAYMENT_WAREHOUSE=Onlayn to'lov amalga oshirilganda aktsiyalarni pasaytirish uchun foydalaniladigan zaxiralar
 StripeLiveEnabled=Stripe jonli yoqilgan (aks holda sinov / sandbox rejimi)
 StripeImportPayment=Stripe to'lovlarini import qilish
-ExampleOfTestCreditCard=Sinov uchun kredit karta misoli: %s => valid, %s => error CVC, %s => muddati o'tgan, %s => zaryad ishlamayapti
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe shlyuzlari
 OAUTH_STRIPE_TEST_ID=Stripe Connect mijoz identifikatori (taxminan _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect mijoz identifikatori (taxminan _...)
@@ -61,6 +62,7 @@ DeleteACard=Kartani o'chirish
 ConfirmDeleteCard=Ushbu Kredit yoki Debet kartani o'chirishni xohlaysizmi?
 CreateCustomerOnStripe=Stripe-da mijoz yarating
 CreateCardOnStripe=Stripe-da karta yarating
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Stripe-da ko'rsatish
 StripeUserAccountForActions=Stripe voqealari (Stripe to'lovlari) haqida elektron pochta orqali xabar berish uchun foydalanuvchi hisob qaydnomasi
 StripePayoutList=Stripe to'lovlari ro'yxati
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni sozl
 PaymentWillBeRecordedForNextPeriod=To'lov keyingi davr uchun qayd etiladi.
 ClickHereToTryAgain= <a href="%s"> Qayta urinish uchun shu erni bosing ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Mijozlarni kuchli autentifikatsiya qilish qoidalari tufayli kartani yaratish Stripe backoffice-da amalga oshirilishi kerak. Stripe mijozlar yozuvini yoqish uchun bu erni bosishingiz mumkin: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

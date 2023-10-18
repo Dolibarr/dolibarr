@@ -20,6 +20,7 @@
  *  \brief      	Page to show an establishment
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
@@ -53,6 +54,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->admin;
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -60,7 +62,7 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (empty($conf->hrm->enabled)) accessforbidden();
+if (!isModEnabled('hrm')) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 
 
@@ -178,7 +180,7 @@ if ($action == 'create') {
 
 	// Entity
 	/*
-	if (! empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -254,7 +256,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = establishment_prepare_head($object);
@@ -282,7 +284,7 @@ if (($id || $ref) && $action == 'edit') {
 
 			// Entity
 			/*
-			if (! empty($conf->multicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
 				print $object->entity > 0 ? $object->entity : $conf->entity;
@@ -371,7 +373,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Entity
 	/*
-	if ($conf->multicompany->enabled) {
+	if (!isModEnabled('multicompany') {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("Entity").'</td>';
 		print '<td>'.$object->entity.'</td>';
@@ -419,8 +421,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 * Action bar
 	 */
 	print '<div class="tabsAction">';
+
+	// Modify
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
+
+	// Delete
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+
 	print '</div>';
 }
 

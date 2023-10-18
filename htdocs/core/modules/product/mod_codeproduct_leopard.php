@@ -33,10 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 class mod_codeproduct_leopard extends ModeleProductCode
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
+	 * Please note this module is used by default if no module has been defined in the configuration
 	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+	 * Its operation must therefore remain as open as possible
 	 */
 
 	/**
@@ -96,17 +95,28 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	Translate	$langs		Object langs
+	 * @param	Product		$objproduct		Object product
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return string example
+	 */
+	public function getExample($langs, $objproduct = 0, $type = -1)
+	{
+		return '';
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	product		$objproduct		Object product
+	 * @param	Product		$objproduct		Object product
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
 	public function getNextValue($objproduct = 0, $type = -1)
 	{
-		global $langs;
 		return '';
 	}
 

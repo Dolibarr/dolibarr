@@ -21,9 +21,9 @@
  */
 
 /**
- * \file scripts/members/sync_members_types_ldap2dolibarr.php
+ * \file 	scripts/members/sync_members_types_ldap2dolibarr.php
  * \ingroup ldap member
- * \brief Script to update members types into Dolibarr from LDAP
+ * \brief 	Script to update members types into Dolibarr from LDAP
  */
 
 if (!defined('NOSESSION')) {
@@ -97,12 +97,12 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN to extract=".$conf->global->LDAP_MEMBER_TYPE_DN."\n";
-print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS_TYPES.'=*)'."\n";
+print "DN to extract=" . getDolGlobalString('LDAP_MEMBER_TYPE_DN')."\n";
+print 'Filter=(' . getDolGlobalString('LDAP_KEY_MEMBERS_TYPES').'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -139,9 +139,9 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$membertype = new AdherentType($db);
-			$membertype->fetch('', $ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
-			$membertype->label = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME];
-			$membertype->description = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION];
+			$membertype->fetch($ldapgroup[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]);
+			$membertype->label = $ldapgroup[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')];
+			$membertype->description = $ldapgroup[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')];
 			$membertype->entity = $conf->entity;
 
 			// print_r($ldapgroup);

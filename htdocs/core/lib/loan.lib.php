@@ -51,7 +51,7 @@ function loan_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'add', 'core');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -81,6 +81,8 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'remove');
 

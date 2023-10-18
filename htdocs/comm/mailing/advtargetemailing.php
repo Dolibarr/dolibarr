@@ -26,6 +26,7 @@ if (!defined('NOSTYLECHECK')) {
 	define('NOSTYLECHECK', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('mails', 'companies'));
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$langs->load("categories");
 }
 
@@ -95,7 +96,7 @@ if ($result < 0) {
 }
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -458,7 +459,7 @@ if ($object->fetch($id) >= 0) {
 	print "</div>";
 
 	// Show email selectors
-	if ($object->statut == 0 && $user->rights->mailing->creer) {
+	if ($object->statut == 0 && $user->hasRight('mailing', 'creer')) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/advtarget.tpl.php';
 	}
 }

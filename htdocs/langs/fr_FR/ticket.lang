@@ -19,14 +19,16 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
+Module56000Desc=Gestionnaire de tickets ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
 Permission56003=Supprimer tickets
 Permission56004=Gérer les tickets
 Permission56005=Voir les tickets de tous les tiers (non effectif pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
+Permission56006=Exporter les tickets
 
+Tickets=Tickets
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Catégorisation du ticket
 TicketDictSeverity=Ticket - Sévérités
@@ -60,10 +62,11 @@ TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 OriginEmail=Email demandeur
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
+ExportDataset_ticket_1=Tickets
+
 # Status
 Read=Lu
 Assigned=Assigné
-InProgress=En cours
 NeedMoreInformation=Attente retour demandeur
 NeedMoreInformationShort=En attente de retour
 Answered=Répondu
@@ -99,6 +102,8 @@ TicketNewEmailBodyHelp=Le texte spécifié ici sera inséré dans l'e-mail confi
 TicketParamPublicInterface=Configuration de l'interface publique\n
 TicketsEmailMustExist=Une adresse e-mail existante est requise pour créer un ticket
 TicketsEmailMustExistHelp=Pour accéder à l'interface publique et créer un nouveau ticket, votre compte doit déjà être existant.
+TicketsShowProgression=Afficher la progression du ticket dans l'interface publique
+TicketsShowProgressionHelp=Activez cette option pour masquer la progression du ticket dans les pages de l'interface publique
 TicketCreateThirdPartyWithContactIfNotExist=Demandez le nom et le nom de l'entreprise pour les e-mails inconnus.
 TicketCreateThirdPartyWithContactIfNotExistHelp=Vérifiez si un tiers ou un contact existe pour l'e-mail saisi. Sinon, demandez un nom et une raison sociale pour créer un tiers avec contact.
 PublicInterface=Interface publique
@@ -121,7 +126,9 @@ TicketParams=Paramètres
 TicketsShowModuleLogo=Afficher le logo du module dans l'interface publique
 TicketsShowModuleLogoHelp=Activer cette option pour cacher le logo du module dans les pages de l'interface publique
 TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publique
-TicketsShowCompanyLogoHelp=Activez cette option pour masquer le logo de la société dans les pages de l'interface publique
+TicketsShowCompanyLogoHelp=Activez cette option pour afficher le logo de l'entreprise principale dans les pages de l'interface publique
+TicketsShowCompanyFooter=Afficher le pied de page de l'entreprise dans l'interface publique
+TicketsShowCompanyFooterHelp=Activez cette option pour afficher le pied de page de l'entreprise principale dans les pages de l'interface publique
 TicketsEmailAlsoSendToMainAddress=Envoyer également une notification à l'adresse e-mail principale
 TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer aussi un email à l'adresse définie dans la configuration "%s" (Voir onglet "%s")
 TicketsLimitViewAssignedOnly=Limiter l'afficher des tickets assignés à l'utilisateur courant (non valable pour les utilisateurs externes, toujours limité par le tiers dont ils dépendent)
@@ -149,6 +156,10 @@ TicketsAutoNotifyCloseHelp=Lors de la clôture d'un ticket, il vous sera propos�
 TicketWrongContact=Le contact fourni ne fait pas partie des contacts actuels du ticket. E-mail non envoyé.
 TicketChooseProductCategory=Catégorie de produit pour les tickets
 TicketChooseProductCategoryHelp=Sélectionnez la catégorie de produit du support de ticket. Celui-ci sera utilisé pour lier automatiquement un contrat à un ticket.
+TicketUseCaptchaCode=Utiliser le code graphique (CAPTCHA) lors de la création d'un ticket
+TicketUseCaptchaCodeHelp=Ajoute la vérification CAPTCHA lors de la création d'un nouveau ticket.
+TicketsAllowClassificationModificationIfClosed=Permettre la modification de la classification des tickets résolus
+TicketsAllowClassificationModificationIfClosedHelp=Permettre la modification de la classification (type, groupe de ticket et sévérité) même si les tickets sont résolus.
 
 #
 # Index & list page
@@ -180,7 +191,7 @@ CreatedBy=Créé par
 NewTicket=Nouveau ticket
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
-TicketCategory=Catégorisation du ticket
+TicketCategory=Groupe du ticket
 SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Lu
@@ -192,8 +203,8 @@ TicketAssigned=Le ticket est à présent assigné
 TicketChangeType=Changer le type
 TicketChangeCategory=Changer le code analytique
 TicketChangeSeverity=Changer la sévérité
-TicketAddMessage=Ajouter un message
-AddMessage=Ajouter un message
+TicketAddMessage=Ajouter ou envoyer un message
+TicketAddPrivateMessage=Ajouter un message privé
 MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
@@ -204,8 +215,8 @@ TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
 TicketAddIntervention=Créer intervention
-CloseTicket=Fermer|Résoudre ticket
-AbandonTicket=Abandonner le ticket
+CloseTicket=Fermer|Résoudre
+AbandonTicket=Abandonner
 CloseATicket=Fermer|Résoudre un ticket
 ConfirmCloseAticket=Confirmer la fermeture du ticket
 ConfirmAbandonTicket=Confirmez-vous la fermeture du ticket au statut 'Abandonné'
@@ -219,18 +230,17 @@ SendMessageByEmail=Envoyer ce message par email
 TicketNewMessage=Nouveau message
 ErrorMailRecipientIsEmptyForSendTicketMessage=Le destinataire est vide. Aucun e-mail envoyé
 TicketGoIntoContactTab=Rendez-vous dans le tableau "Contacts" pour les sélectionner
-TicketMessageMailIntro=Introduction
+TicketMessageMailIntro=Entête de message
 TicketMessageMailIntroHelp=Ce texte est ajouté seulement au début de l'email et ne sera pas sauvegardé.
-TicketMessageMailIntroLabelAdmin=Texte d'introduction à toutes les réponses aux tickets
 TicketMessageMailIntroText=Bonjour, <br> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message : <br>
 TicketMessageMailIntroHelpAdmin=Ce texte sera inséré avant la réponse lors d'une réponse à un ticket depuis Dolibarr
-TicketMessageMailSignature=Signature
-TicketMessageMailSignatureHelp=Ce texte est ajouté seulement à la fin de l'email et ne sera pas sauvegardé.
-TicketMessageMailSignatureText=Message envoyé par <b>%s</b> via Dolibarr
-TicketMessageMailSignatureLabelAdmin=Signature de l'email de réponse
-TicketMessageMailSignatureHelpAdmin=Ce texte sera inséré après le message de réponse.
+TicketMessageMailFooter=Pied de page des messages
+TicketMessageMailFooterHelp=Ce texte est ajouté uniquement à la fin du message envoyé par e-mail et ne sera pas enregistré.
+TicketMessageMailFooterText=Message envoyé par <b>%s</b> via Dolibarr
+TicketMessageMailFooterHelpAdmin=Ce texte sera inséré après le message de réponse.
 TicketMessageHelp=Seul ce texte sera sauvegardé dans la liste des messages sur la fiche ticket.
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitution sont remplacées par des valeurs génériques.
+ForEmailMessageWillBeCompletedWith=Pour les e-mails envoyés à des utilisateurs externes, le message sera complété par
 TimeElapsedSince=Temps écoulé depuis
 TicketTimeToRead=Temps écoulé avant la lecture
 TicketTimeElapsedBeforeSince=Temps écoulé avant / depuis
@@ -240,8 +250,14 @@ ConfirmReOpenTicket=Voulez-vous ré-ouvrir ce ticket ?
 TicketMessageMailIntroAutoNewPublicMessage=Un nouveau message a été posté sur le ticket avec le sujet %s:
 TicketAssignedToYou=Ticket attribué
 TicketAssignedEmailBody=Vous avez été assigné au ticket #%s par %s
+TicketAssignedCustomerEmail=Votre ticket a été assigné pour traitement.
+TicketAssignedCustomerBody=Il s'agit d'un e-mail automatique pour confirmer que votre ticket a été assigné pour traitement.
 MarkMessageAsPrivate=Marquer message comme privé
-TicketMessagePrivateHelp=Ce message ne s'affichera pas pour les utilisateurs externes
+TicketMessageSendEmailHelp=Un e-mail sera envoyé à tous les contacts assignés
+TicketMessageSendEmailHelp2a=(contacts internes, mais aussi contacts externes sauf si l'option "%s" est vérifiée)
+TicketMessageSendEmailHelp2b=(contacts internes, mais aussi contacts externes)
+TicketMessagePrivateHelp=Ce message ne sera pas visible pour les utilisateurs externes
+TicketMessageRecipientsHelp=Champ destinataire rempli avec les contacts actifs liés au ticket
 TicketEmailOriginIssuer=Émetteur à l'origine des tickets
 InitialMessage=Message initial
 LinkToAContract=Lien vers un contrat
@@ -264,6 +280,7 @@ TicketsDelayForFirstResponseTooLong=Trop de temps écoulé entre l'ouverture du 
 TicketsDelayFromLastResponseTooLong=Trop de temps écoulé depuis la dernière réponse de ce ticket.
 TicketNoContractFoundToLink=Aucun contrat n'a été trouvé pour être automatiquement lié à ce ticket. Veuillez lier un contrat manuellement.
 TicketManyContractsLinked=De nombreux contrats ont été automatiquement liés à ce ticket. Assurez-vous de vérifier ce qui doit être choisi.
+TicketRefAlreadyUsed=La référence [%s] est déjà utilisée, votre nouvelle référence est [%s]
 
 #
 # Logs
@@ -296,7 +313,7 @@ TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez voir la progression du ticke
 TicketCloseEmailBodyInfosTrackUrlCustomer=Vous pouvez consulter l'historique de ce ticket en cliquant sur le lien suivant
 TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à ce courriel ! Utilisez le lien pour répondre via l'interface.
 TicketPublicInfoCreateTicket=Ce formulaire vous permet d'enregistrer un ticket dans notre système de gestion.
-TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire avec précision le problème. Fournissez le plus d'informations possibles pour nous permettre d'identifier correctement votre demande.
+TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire précisément votre question. Fournissez le plus d'informations possible pour nous permettre d'identifier correctement votre demande.
 TicketPublicMsgViewLogIn=Merci d'entrer le code de suivi du ticket
 TicketTrackId=ID de suivi publique
 OneOfTicketTrackId=Un de vos ID de suivi
@@ -314,6 +331,9 @@ OldUser=Ancien utilisateur
 NewUser=Nouvel utilisateur
 NumberOfTicketsByMonth=Nombre de tickets par mois
 NbOfTickets=Nombre de tickets
+ExternalContributors=Contributeurs externes
+AddContributor=Ajouter un contributeur externe
+
 # notifications
 TicketCloseEmailSubjectCustomer=Billet fermé
 TicketCloseEmailBodyCustomer=Ceci est un message automatique pour vous avertir que le ticket %s vient d'être clôturé.

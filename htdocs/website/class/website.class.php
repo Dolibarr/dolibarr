@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class Website
  */
@@ -46,9 +47,14 @@ class Website extends CommonObject
 	public $table_element = 'website';
 
 	/**
-	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
+
+
+	protected $childtablesoncascade = array();
+
 
 	/**
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
@@ -86,17 +92,21 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var integer date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string date_modification
+	 * @var integer	date_modification
 	 */
 	public $date_modification;
+	/**
+	 * @var integer date_modification
+	 */
+	public $tms;
 
 	/**
-	 * @var integer
+	 * @var integer Default home page
 	 */
 	public $fk_default_home;
 
@@ -106,24 +116,27 @@ class Website extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var string
+	 * @var int User Modification Id
+	 */
+	public $fk_user_modif;
+
+	/**
+	 * @var string Virtual host
 	 */
 	public $virtualhost;
 
 	/**
-	 * @var int
+	 * @var int Use a manifest file
 	 */
 	public $use_manifest;
 
 	/**
-	 * @var int
+	 * @var int	Postion
 	 */
 	public $position;
 
 	/**
-	 * List of containers
-	 *
-	 * @var array
+	 * @var array List of containers
 	 */
 	public $lines;
 
@@ -146,10 +159,10 @@ class Website extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  User $user      	User that creates
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int 				<0 if KO, 0 if already exists, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -244,7 +257,7 @@ class Website extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			// Create subdirectory per language
+			// Create a subdirectory for each language (except main language)
 			$tmplangarray = explode(',', $this->otherlang);
 			if (is_array($tmplangarray)) {
 				dol_mkdir($conf->website->dir_output.'/'.$this->ref);
@@ -252,9 +265,13 @@ class Website extends CommonObject
 					if (trim($val) == $this->lang) {
 						continue;
 					}
-					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val));
+					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val), DOL_DATA_ROOT);
 				}
 			}
+
+			// Create subdirectory for images and js
+			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
+			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
 			// Uncomment this and change WEBSITE to your own tag if you
 			// want this action to call a trigger.
@@ -277,8 +294,11 @@ class Website extends CommonObject
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
-
-			return -1 * $error;
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				return 0;
+			} else {
+				return -1 * $error;
+			}
 		} else {
 			$this->db->commit();
 
@@ -382,18 +402,19 @@ class Website extends CommonObject
 	/**
 	 * Load all object in memory ($this->records) from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 		$sortorder 		Sort Order
+	 * @param 	string 		$sortfield 		Sort field
+	 * @param 	int    		$limit     		offset limit
+	 * @param 	int    		$offset    		offset limit
+	 * @param 	array  		$filter    		filter array
+	 * @param 	string 		$filtermode 	filter mode (AND or OR)
+	 * @return 	array|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -428,35 +449,34 @@ class Website extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		$this->records = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new self($this->db);
+				$record = new self($this->db);
 
-				$line->id = $obj->rowid;
+				$record->id = $obj->rowid;
 
-				$line->entity = $obj->entity;
-				$line->ref = $obj->ref;
-				$line->description = $obj->description;
-				$line->lang = $obj->lang;
-				$line->otherlang = $obj->otherlang;
-				$line->status = $obj->status;
-				$line->fk_default_home = $obj->fk_default_home;
-				$line->virtualhost = $obj->virtualhost;
-				$this->fk_user_creat = $obj->fk_user_creat;
-				$this->fk_user_modif = $obj->fk_user_modif;
-				$line->date_creation = $this->db->jdate($obj->date_creation);
-				$line->date_modification = $this->db->jdate($obj->date_modification);
+				$record->entity = $obj->entity;
+				$record->ref = $obj->ref;
+				$record->description = $obj->description;
+				$record->lang = $obj->lang;
+				$record->otherlang = $obj->otherlang;
+				$record->status = $obj->status;
+				$record->fk_default_home = $obj->fk_default_home;
+				$record->virtualhost = $obj->virtualhost;
+				$record->fk_user_creat = $obj->fk_user_creat;
+				$record->fk_user_modif = $obj->fk_user_modif;
+				$record->date_creation = $this->db->jdate($obj->date_creation);
+				$record->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->records[$line->id] = $line;
+				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);
 
-			return $num;
+			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
@@ -580,8 +600,8 @@ class Website extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param User $user      	User that deletes
+	 * @param bool $notrigger 	false=launch triggers, true=disable triggers
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
@@ -596,20 +616,8 @@ class Website extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change WEBSITE to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('WEBSITE_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			}
-		}
-
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'website_page';
+			$sql .= ' WHERE fk_website = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -617,6 +625,12 @@ class Website extends CommonObject
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
+		}
+
+		// Delete common code. This include execution of trigger.
+		$result = $this->deleteCommon($user, $notrigger);
+		if ($result <= 0) {
+			$error++;
 		}
 
 		if (!$error && !empty($this->ref)) {
@@ -850,9 +864,9 @@ class Website extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -862,11 +876,11 @@ class Website extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un status donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -876,10 +890,10 @@ class Website extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
 		}
 
 		$statusType = 'status5';
@@ -977,8 +991,16 @@ class Website extends CommonObject
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
-		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2);
+		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'));
+
+		// Copy file README.md and LICENSE from directory containers into directory root
+		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
+			dol_copy($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md', $conf->website->dir_temp.'/'.$website->ref.'/README.md');
+		}
+		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/LICENSE')) {
+			dol_copy($conf->website->dir_temp.'/'.$website->ref.'/containers/LICENSE', $conf->website->dir_temp.'/'.$website->ref.'/LICENSE');
+		}
 
 		// Copy files into medias/image
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
@@ -996,10 +1018,14 @@ class Website extends CommonObject
 
 		// Make some replacement into some files
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
-		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+		if (dol_is_file($cssindestdir)) {
+			dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+		}
 
 		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
-		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
+		if (dol_is_file($htmldeaderindestdir)) {
+			dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
+		}
 
 		// Build sql file
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
@@ -1035,7 +1061,10 @@ class Website extends CommonObject
 			$allaliases = $objectpageold->pageurl;
 			$allaliases .= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
 
-			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;'; // newid start at 1, 2...
+			$line = '-- File generated by Dolibarr '.DOL_VERSION.' -- '.dol_print_date(dol_now('gmt'), 'standard', 'gmt').' UTC --;';
+			$line .= "\n";
+
+			$line .= '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;'; // newid start at 1, 2...
 			$line .= "\n";
 			fputs($fp, $line);
 
@@ -1060,29 +1089,35 @@ class Website extends CommonObject
 			$line .= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
 			$line .= "'".$this->db->escape($objectpageold->type_container)."', ";
 
+			// Make substitution with a generic path into htmlheader content
 			$stringtoexport = $objectpageold->htmlheader;
 			$stringtoexport = str_replace(array("\r\n", "\r", "\n"), "__N__", $stringtoexport);
 			$stringtoexport = str_replace('file=image/'.$website->ref.'/', "file=image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 			$line .= "'".$this->db->escape(str_replace(array("\r\n", "\r", "\n"), "__N__", $stringtoexport))."', "; // Replace \r \n to have record on 1 line
 
+			// Make substitution with a generic path into page content
 			$stringtoexport = $objectpageold->content;
 			$stringtoexport = str_replace(array("\r\n", "\r", "\n"), "__N__", $stringtoexport);
 			$stringtoexport = str_replace('file=image/'.$website->ref.'/', "file=image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('"image/'.$website->ref.'/', '"image/__WEBSITE_KEY__/', $stringtoexport);	// When we have a link src="image/websiteref/file.png" into html content
+			$stringtoexport = str_replace('"/image/'.$website->ref.'/', '"/image/__WEBSITE_KEY__/', $stringtoexport);	// When we have a link src="/image/websiteref/file.png" into html content
+			$stringtoexport = str_replace('"js/'.$website->ref.'/', '"js/__WEBSITE_KEY__/', $stringtoexport);
+			$stringtoexport = str_replace('"/js/'.$website->ref.'/', '"/js/__WEBSITE_KEY__/', $stringtoexport);
+
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 
-			// When we have a link src="image/websiteref/file.png" into html content
-			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
 
 			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
 			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
@@ -1109,9 +1144,7 @@ class Website extends CommonObject
 		fputs($fp, $line);
 
 		fclose($fp);
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($filesql);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
@@ -1134,7 +1167,7 @@ class Website extends CommonObject
 	/**
 	 * Open a zip with all data of web site and load it into database.
 	 *
-	 * @param 	string		$pathtofile		Path of zip file
+	 * @param 	string		$pathtofile		Full path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
 	public function importWebSite($pathtofile)
@@ -1142,6 +1175,8 @@ class Website extends CommonObject
 		global $conf, $mysoc;
 
 		$error = 0;
+
+		$pathtofile = dol_sanitizePathName($pathtofile);
 
 		$object = $this;
 		if (empty($object->ref)) {
@@ -1537,9 +1572,9 @@ class Website extends CommonObject
 			if ($countrycode == 'us') {
 				$label = preg_replace('/\s*\(.*\)/', '', $label);
 			}
-			$out .= '<a href="'.$url.substr($languagecodeselected, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+			$out .= '<li><a href="'.$url.substr($languagecodeselected, 0, 2).'"><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 			$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out .= '</li></a>';
+			$out .= '</a></li>';
 		}
 		$i = 0;
 		if (is_array($languagecodes)) {
@@ -1558,11 +1593,11 @@ class Website extends CommonObject
 				if ($countrycode == 'us') {
 					$label = preg_replace('/\s*\(.*\)/', '', $label);
 				}
-				$out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+				$out .= '<li><a href="'.$url.substr($languagecode, 0, 2).'"><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 				if (empty($i) && empty($languagecodeselected)) {
 					$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
 				}
-				$out .= '</li></a>';
+				$out .= '</a></li>';
 				$i++;
 			}
 		}

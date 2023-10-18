@@ -27,6 +27,7 @@
  *		\brief      Page to create a new category
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -37,7 +38,7 @@ $langs->load("categories");
 
 // Security check
 $socid = (int) GETPOST('socid', 'int');
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 
@@ -96,7 +97,7 @@ $error = 0;
  */
 
 // Add action
-if ($action == 'add' && $user->rights->categorie->creer) {
+if ($action == 'add' && $user->hasRight('categorie', 'creer')) {
 	// Action add a category
 	if ($cancel) {
 		if ($urlfrom) {
@@ -166,7 +167,7 @@ if ($action == 'add' && $user->rights->categorie->creer) {
 }
 
 // Confirm action
-if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer) {
+if (($action == 'add' || $action == 'confirmed') && $user->hasRight('categorie', 'creer')) {
 	// Action confirmation of creation category
 	if ($action == 'confirmed') {
 		if ($urlfrom) {
@@ -212,7 +213,7 @@ $help_url = 'EN:Module_Categories|FR:Module_Catégories|DE:Modul_Kategorien';
 
 llxHeader("", $langs->trans("Categories"), $help_url);
 
-if ($user->rights->categorie->creer) {
+if ($user->hasRight('categorie', 'creer')) {
 	// Create or add
 	if ($action == 'create' || GETPOST("addcat") == 'addcat') {
 		dol_set_focus('#label');
@@ -246,7 +247,7 @@ if ($user->rights->categorie->creer) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_5, '90%');
+		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 

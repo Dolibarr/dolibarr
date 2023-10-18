@@ -58,7 +58,7 @@ class box_services_expired extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->contrat->lire);
+		$this->hidden = !($user->hasRight('contrat', 'lire'));
 	}
 
 	/**
@@ -79,14 +79,14 @@ class box_services_expired extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
 
-		if ($user->rights->contrat->lire) {
+		if ($user->hasRight('contrat', 'lire')) {
 			// Select contracts with at least one expired service
 			$sql = "SELECT ";
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.ref_customer, c.ref_supplier,";
 			$sql .= " s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
@@ -95,7 +95,7 @@ class box_services_expired extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 			}
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";

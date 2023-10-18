@@ -22,6 +22,7 @@
  *  \brief      Page to add payment of a donation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
@@ -66,7 +67,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -94,7 +95,7 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
 			$payment->chid         = $chid;
-			$payment->datepaid     = $datepaid;
+			$payment->datep     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
 			$payment->paymenttype  = GETPOST("paymenttype", 'int');
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
@@ -191,14 +192,14 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype") : $object->paymenttype, "paymenttype");
+	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype") : $object->fk_typepayment, "paymenttype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->accountid, "accountid", 0, '', 2); // Show open bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : "0", "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
 	// Number

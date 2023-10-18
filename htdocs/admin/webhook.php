@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022 SuperAdmin <test@dolibarr.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,39 +22,7 @@
  */
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
-}
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
-global $langs, $user;
-
-// Libraries
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook.lib.php';
 
@@ -80,64 +47,26 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-$arrayofparameters = array(
-	'WEBHOOK_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>0),
-	//'WEBHOOK_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
-	//'WEBHOOK_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	//'WEBHOOK_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	//'WEBHOOK_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
-	//'WEBHOOK_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
-	//'WEBHOOK_MYPARAM6'=>array('type'=>'securekey', 'enabled'=>1),
-	//'WEBHOOK_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
-);
 
 $error = 0;
 $setupnotempty = 0;
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
-$useFormSetup = 0;
-// Convert arrayofparameter into a formSetup object
-if ($useFormSetup && (float) DOL_VERSION >= 15) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-	$formSetup = new FormSetup($db);
+$useFormSetup = 1;
 
-	// you can use the param convertor
-	$formSetup->addItemsFromParamsArray($arrayofparameters);
-
-	// or use the new system see exemple as follow (or use both because you can ;-) )
-
-	/*
-	// Hôte
-	$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
-	$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-	$item->cssClass = 'minwidth500';
-
-	// Setup conf WEBHOOK_MYPARAM1 as a simple string input
-	$item = $formSetup->newItem('WEBHOOK_MYPARAM1');
-
-	// Setup conf WEBHOOK_MYPARAM1 as a simple textarea input but we replace the text of field title
-	$item = $formSetup->newItem('WEBHOOK_MYPARAM2');
-	$item->nameText = $item->getNameText().' more html text ';
-
-	// Setup conf WEBHOOK_MYPARAM3
-	$item = $formSetup->newItem('WEBHOOK_MYPARAM3');
-	$item->setAsThirdpartyType();
-
-	// Setup conf WEBHOOK_MYPARAM4 : exemple of quick define write style
-	$formSetup->newItem('WEBHOOK_MYPARAM4')->setAsYesNo();
-
-	// Setup conf WEBHOOK_MYPARAM5
-	$formSetup->newItem('WEBHOOK_MYPARAM5')->setAsEmailTemplate('thirdparty');
-
-	// Setup conf WEBHOOK_MYPARAM6
-	$formSetup->newItem('WEBHOOK_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
-
-	// Setup conf WEBHOOK_MYPARAM7
-	$formSetup->newItem('WEBHOOK_MYPARAM7')->setAsProduct();
-	*/
-
-	$setupnotempty = count($formSetup->items);
+if (!class_exists('FormSetup')) {
+	// For retrocompatibility Dolibarr < 16.0
+	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
+		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
+	} else {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+	}
 }
+
+$formSetup = new FormSetup($db);
+
+
+$setupnotempty = count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -150,10 +79,10 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -179,7 +108,7 @@ if ($action == 'updateMask') {
 		$file = dol_buildpath($reldir."core/modules/webhook/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
 			$filefound = 1;
-			$classname = "pdf_".$modele;
+			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
 			break;
 		}
 	}
@@ -190,7 +119,7 @@ if ($action == 'updateMask') {
 		$module = new $classname($db);
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=webhook-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
 			return;
 		} else {
 			setEventMessages($module->error, null, 'errors');
@@ -266,7 +195,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = webhookAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook@webhook");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "webhook");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage").'</span><br><br>';
@@ -293,14 +222,14 @@ if ($action == 'edit') {
 
 				if ($val['type'] == 'textarea') {
 					print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
-					print $conf->global->{$constname};
+					print getDolGlobalString($constname);
 					print "</textarea>\n";
 				} elseif ($val['type']== 'html') {
 					require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-					$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($val['type'] == 'yesno') {
-					print $form->selectyesno($constname, $conf->global->{$constname}, 1);
+					print $form->selectyesno($constname, getDolGlobalString($constname), 1);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
 					include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
@@ -320,7 +249,7 @@ if ($action == 'edit') {
 							$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
 						}
 					}
-					print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+					print $form->selectarray($constname, $arrayofmessagename, getDolGlobalString($constname), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 				} elseif (preg_match('/category:/', $val['type'])) {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -328,38 +257,27 @@ if ($action == 'edit') {
 
 					$tmp = explode(':', $val['type']);
 					print img_picto('', 'category', 'class="pictofixedwidth"');
-					print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+					print $formother->select_categories($tmp[1], getDolGlobalString($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 					$formcompany = new FormCompany($db);
-					print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+					print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname);
 				} elseif ($val['type'] == 'securekey') {
-					print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+					print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
 					if (!empty($conf->use_javascript_ajax)) {
 						print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 					}
-					if (!empty($conf->use_javascript_ajax)) {
-						print "\n".'<script type="text/javascript">';
-						print '$(document).ready(function () {
-                        $("#generate_token'.$constname.'").click(function() {
-                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#'.$constname.'").val(token);
-            				});
-                         });
-                    });';
-						print '</script>';
-					}
+
+					// Add button to autosuggest a key
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+					print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 				} elseif ($val['type'] == 'product') {
-					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					if (isModEnabled("product") || isModEnabled("service")) {
 						$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 						$form->select_produits($selected, $constname, '', 0);
 					}
 				} else {
-					print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+					print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($constname).'">';
 				}
 				print '</td></tr>';
 			}
@@ -393,9 +311,9 @@ if ($action == 'edit') {
 					print '</td><td>';
 
 					if ($val['type'] == 'textarea') {
-						print dol_nl2br($conf->global->{$constname});
+						print dol_nl2br(getDolGlobalString($constname));
 					} elseif ($val['type']== 'html') {
-						print  $conf->global->{$constname};
+						print getDolGlobalString($constname);
 					} elseif ($val['type'] == 'yesno') {
 						print ajax_constantonoff($constname);
 					} elseif (preg_match('/emailtemplate:/', $val['type'])) {
@@ -404,14 +322,14 @@ if ($action == 'edit') {
 
 						$tmp = explode(':', $val['type']);
 
-						$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+						$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
 						if ($template<0) {
 							setEventMessages(null, $formmail->errors, 'errors');
 						}
 						print $langs->trans($template->label);
 					} elseif (preg_match('/category:/', $val['type'])) {
 						$c = new Categorie($db);
-						$result = $c->fetch($conf->global->{$constname});
+						$result = $c->fetch(getDolGlobalString($constname));
 						if ($result < 0) {
 							setEventMessages(null, $c->errors, 'errors');
 						} elseif ($result > 0 ) {
@@ -423,25 +341,25 @@ if ($action == 'edit') {
 							print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 						}
 					} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-						if ($conf->global->{$constname}==2) {
+						if (getDolGlobalInt($constname)==2) {
 							print $langs->trans("Prospect");
-						} elseif ($conf->global->{$constname}==3) {
+						} elseif (getDolGlobalInt($constname)==3) {
 							print $langs->trans("ProspectCustomer");
-						} elseif ($conf->global->{$constname}==1) {
+						} elseif (getDolGlobalInt($constname)==1) {
 							print $langs->trans("Customer");
-						} elseif ($conf->global->{$constname}==0) {
+						} elseif (getDolGlobalInt($constname)==0) {
 							print $langs->trans("NorProspectNorCustomer");
 						}
 					} elseif ($val['type'] == 'product') {
 						$product = new Product($db);
-						$resprod = $product->fetch($conf->global->{$constname});
+						$resprod = $product->fetch(getDolGlobalInt($constname));
 						if ($resprod > 0) {
 							print $product->ref;
 						} elseif ($resprod < 0) {
 							setEventMessages(null, $object->errors, "errors");
 						}
 					} else {
-						print $conf->global->{$constname};
+						print getDolGlobalString($constname);
 					}
 					print '</td></tr>';
 				}
@@ -514,7 +432,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model

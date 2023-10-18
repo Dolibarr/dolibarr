@@ -24,6 +24,7 @@
  *	\brief      Page to setup barcode module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -31,10 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 // Load translation files required by the page
 $langs->load("admin");
 
+// Security Check Access
 if (!$user->admin) {
 	accessforbidden();
 }
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
@@ -49,10 +52,20 @@ if ($action == 'setbarcodeproducton') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
 	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) {
-		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '020{000000000}', 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodeproductoff') {
 	$res = dolibarr_del_const($db, "BARCODE_PRODUCT_ADDON_NUM", $conf->entity);
+}
+
+if ($action == 'setbarcodethirdpartyon') {
+	$barcodenumberingmodule = GETPOST('value', 'alpha');
+	$res = dolibarr_set_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
+	if ($barcodenumberingmodule == 'mod_barcode_thirdparty_standard' && empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
+		$res = dolibarr_set_const($db, "BARCODE_STANDARD_THIRDPARTY_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
+	}
+} elseif ($action == 'setbarcodethirdpartyoff') {
+	$res = dolibarr_del_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $conf->entity);
 }
 
 if ($action == 'setcoder') {
@@ -180,7 +193,7 @@ foreach ($dirbarcode as $reldir) {
 
 
 // Select barcode numbering module
-if ($conf->product->enabled) {
+if (isModEnabled('product')) {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -241,6 +254,66 @@ if ($conf->product->enabled) {
 	print '</div>';
 }
 
+// Select barcode numbering module
+if (isModEnabled('societe')) {
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', '');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td width="140">'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+
+	foreach ($dirbarcodenum as $dirroot) {
+		$dir = dol_buildpath($dirroot, 0);
+
+		$handle = @opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match('/^mod_barcode_thirdparty_.*php$/', $file)) {
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					try {
+						dol_include_once($dirroot.$file.'.php');
+					} catch (Exception $e) {
+						dol_syslog($e->getMessage(), LOG_ERR);
+					}
+
+					$modBarCode = new $file();
+					print '<tr class="oddeven">';
+					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
+					print $modBarCode->info($langs);
+					print '</td>';
+					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
+
+					if (!empty($conf->global->BARCODE_THIRDPARTY_ADDON_NUM) && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodethirdpartyoff&token='.newToken().'&amp;value='.urlencode($file).'">';
+						print img_picto($langs->trans("Activated"), 'switch_on');
+						print '</a></td>';
+					} else {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodethirdpartyon&token='.newToken().'&amp;value='.urlencode($file).'">';
+						print img_picto($langs->trans("Disabled"), 'switch_off');
+						print '</a></td>';
+					}
+					print '<td class="center">';
+					$s = $modBarCode->getToolTip($langs, null, -1);
+					print $form->textwithpicto('', $s, 1);
+					print '</td>';
+					print "</tr>\n";
+				}
+			}
+			closedir($handle);
+		}
+	}
+	print "</table>\n";
+	print '</div>';
+}
 
 /*
  *  CHOIX ENCODAGE
@@ -380,7 +453,7 @@ if (!isset($_SERVER['WINDIR'])) {
 }
 
 // Module products
-if (!empty($conf->product->enabled)) {
+if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
@@ -391,7 +464,7 @@ if (!empty($conf->product->enabled)) {
 }
 
 // Module thirdparty
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';

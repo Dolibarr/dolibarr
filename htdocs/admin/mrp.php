@@ -21,6 +21,7 @@
  *	\brief      Setup page of module MRP
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -51,10 +52,10 @@ $type = 'mrp';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstmrp = GETPOST('maskconstMo', 'alpha');
+	$maskconstmrp = GETPOST('maskconstMo', 'aZ09');
 	$maskmrp = GETPOST('maskMo', 'alpha');
 
-	if ($maskconstmrp) {
+	if ($maskconstmrp && preg_match('/_MASK$/', $maskconstmrp)) {
 		$res = dolibarr_set_const($db, $maskconstmrp, $maskmrp, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -70,7 +71,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$mo = new MO($db);
+	$mo = new Mo($db);
 	$mo->initAsSpecimen();
 
 	// Search template files
@@ -217,7 +218,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -243,7 +244,7 @@ foreach ($dirmodels as $reldir) {
 						}
 						print '</td>';
 
-						$mrp = new MO($db);
+						$mrp = new Mo($db);
 						$mrp->initAsSpecimen();
 
 						// Info

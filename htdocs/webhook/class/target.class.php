@@ -74,7 +74,7 @@ class Target extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or '!empty($conf->multicurrency->enabled)' ...)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -105,6 +105,8 @@ class Target extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1',),
+		'url' => array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1,),
+		'trigger_codes' => array('type'=>'text', 'label'=>'TriggerCodes', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'help'=>"TriggerCodeInfo",),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'validate'=>'1',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
@@ -113,9 +115,7 @@ class Target extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>3, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validé', '9'=>'Annulé'), 'validate'=>'1',),
-		'url' => array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1,),
-		'trigger_codes' => array('type'=>'text', 'label'=>'TriggerCodes', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"TriggerCodeInfo",),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'default'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'), 'validate'=>'1',),
 	);
 	public $rowid;
 	public $ref;
@@ -184,7 +184,7 @@ class Target extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -218,7 +218,7 @@ class Target extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             <0 if KO, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -228,9 +228,8 @@ class Target extends CommonObject
 		if ($resultcreate <= 0) {
 			return $resultcreate;
 		}
-		$resultvalidate = $this->validate($user, $notrigger);
 
-		return $resultvalidate;
+		return $this->id;
 	}
 
 	/**
@@ -300,25 +299,24 @@ class Target extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
-		if (!$error) {
-			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
-				$error++;
-			}
-		}
+		// if (!$error) {
+		// 	// copy internal contacts
+		// 	if ($this->copy_linked_contact($object, 'internal') < 0) {
+		// 		$error++;
+		// 	}
+		// }
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
+		// if (!$error) {
+		// 	// copy external contacts if same company
+		// 	if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+		// 		if ($this->copy_linked_contact($object, 'external') < 0) {
+		// 			$error++;
+		// 		}
+		// 	}
+		// }
 
 		unset($object->context['createfromclone']);
 
@@ -342,9 +340,10 @@ class Target extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+		if (empty($this->ref)) {
+			$this->ref = $this->id;
 		}
+
 		return $result;
 	}
 
@@ -385,7 +384,7 @@ class Target extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -507,8 +506,8 @@ class Target extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->target->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->target->target_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->target->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->target->target_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -625,8 +624,8 @@ class Target extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->webhook_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->webhook_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -649,8 +648,8 @@ class Target extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->webhook_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->webhook_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -673,8 +672,8 @@ class Target extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->webhook->webhook_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->webhook->webhook_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -715,7 +714,7 @@ class Target extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -765,7 +764,7 @@ class Target extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -833,7 +832,7 @@ class Target extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("webhook@webhook");
+
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
@@ -891,10 +890,8 @@ class Target extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		// Set here init that are not commonf fields
-		// $this->property1 = ...
-		// $this->property2 = ...
-
+		$this->url = "https://thisisunurl";
+		$this->trigger_codes = "ThisIsATestCode";
 		$this->initAsSpecimenCommon();
 	}
 
@@ -911,8 +908,8 @@ class Target extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_target = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -928,49 +925,39 @@ class Target extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("webhook@webhook");
 
-		if (empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$conf->global->WEBHOOK_TARGET_ADDON = 'mod_target_standard';
+		$mybool = false;
+
+		$classname = getDolGlobalString('WEBHOOK_TARGET_ADDON', 'mod_target_standard');
+		$file = $classname.".php";
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/webhook/");
+
+			// Load file with numbering class (if found)
+			$mybool |= @include_once $dir.$file;
 		}
 
-		if (!empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$mybool = false;
+		if ($mybool === false) {
+			dol_print_error('', "Failed to include file ".$file);
+			return '';
+		}
 
-			$file = $conf->global->WEBHOOK_TARGET_ADDON.".php";
-			$classname = $conf->global->WEBHOOK_TARGET_ADDON;
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			$numref = $obj->getNextValue($this);
 
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/webhook/");
-
-				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
-			}
-
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
 			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
 		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
+			print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
 			return "";
 		}
 	}
@@ -992,8 +979,6 @@ class Target extends CommonObject
 
 		$result = 0;
 		$includedocgeneration = 0;
-
-		$langs->load("webhook@webhook");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_target';

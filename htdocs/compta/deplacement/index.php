@@ -23,6 +23,7 @@
  *  \brief      Page list of expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
@@ -67,7 +68,7 @@ $childids[] = $user->id;
 
 //$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
 $help_url = '';
-llxHeader('', $langs->trans("ListOfFees"), $help_url);
+llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
 
@@ -75,7 +76,7 @@ $totalnb = 0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " WHERE d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
 	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
 $sql .= " GROUP BY d.type";
@@ -150,15 +151,15 @@ $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
-if (empty($user->rights->societe->client->voir) && !$user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE u.rowid = d.fk_user";
 $sql .= " AND d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
 	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
-if (empty($user->rights->societe->client->voir) && !$user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 	$sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {

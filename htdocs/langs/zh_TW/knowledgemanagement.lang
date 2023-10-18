@@ -46,7 +46,7 @@ KnowledgeRecords = 文章
 KnowledgeRecord = 文章
 KnowledgeRecordExtraFields = 文章的補充屬性
 GroupOfTicket=服務單群組
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+YouCanLinkArticleToATicketCategory=您可以將文章連結至服務單群組（這樣文章將突顯在該群組中的任何服務單上）
 SuggestedForTicketsInGroup=建議的服務單群組
 
 SetObsolete=設定為已過時

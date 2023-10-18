@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Adminson Alicealalalamdskfldmjgdfgdfhfghgfh <testldr9@dolicloud.com>
+/* Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,16 +87,14 @@ $setupnotempty = 0;
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconst = GETPOST('maskconstcand', 'aZ09');
+	$maskvalue = GETPOST('maskcand', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {
@@ -310,7 +307,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model

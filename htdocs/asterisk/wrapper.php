@@ -34,9 +34,6 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -75,7 +72,6 @@ function llxFooter()
 	print "\n".'</html>'."\n";
 }
 
-
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -101,7 +97,7 @@ if (!isset($conf->global->ASTERISK_INDICATIF)) {
 if (!isset($conf->global->ASTERISK_PORT)) {
 	$conf->global->ASTERISK_PORT = 5038;
 }
-if ($conf->global->ASTERISK_INDICATIF == 'NONE') {
+if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
 if (!isset($conf->global->ASTERISK_CONTEXT)) {
@@ -125,20 +121,27 @@ $called = GETPOST('called', 'alphanohtml');
 
 // IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
-// Spécifiez le type d'extension par laquelle vous poste est connecte.
+
+// Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
 $channel = $conf->global->ASTERISK_TYPE;
-// Indicatif de la ligne sortante
+
+// Outgoing call sign
 $prefix = $conf->global->ASTERISK_INDICATIF;
-// Port
+
+// Asterisk Port
 $port = $conf->global->ASTERISK_PORT;
+
 // Context ( generalement from-internal )
 $strContext = $conf->global->ASTERISK_CONTEXT;
-// Delai d'attente avant de raccrocher
+
+// Waiting time before hanging up
 $strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
+
 // Priority
 $strPriority = $conf->global->ASTERISK_PRIORITY;
-// Nomber of try
+
+// Number of call attempts
 $strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
 
 
@@ -192,7 +195,7 @@ if (!empty($number)) {
 		} else {
 			$txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
 			dol_syslog($txt);
-			print '<body onload="javascript:history.go(-1);">'."\n";
+			print '<body onload="history.go(-1);">'."\n";
 			print '<!-- '.$txt.' -->';
 			fputs($oSocket, "Action: login\r\n");
 			fputs($oSocket, "Events: off\r\n");

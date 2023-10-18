@@ -22,6 +22,7 @@
  *		\brief      Page  setup proxy to use for external web access
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -144,7 +145,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ResponseTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_USE_RESPONSE_TIMEOUT" type="text" size="4" value="'.$conf->global->MAIN_USE_RESPONSE_TIMEOUT.'">';
+print '<input class="flat" name="MAIN_USE_RESPONSE_TIMEOUT" type="text" size="4" value="' . getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT').'">';
 print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';

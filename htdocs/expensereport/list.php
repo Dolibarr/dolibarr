@@ -29,6 +29,7 @@
  *		\brief      list of expense reports
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -49,6 +50,7 @@ $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect    = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'expensereportlist';
+$mode        = GETPOST('mode', 'alpha');
 
 $childids = $user->getAllChildIds(1);
 
@@ -174,7 +176,7 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canedituser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer'));
 
 $objectuser = new User($db);
 
@@ -253,7 +255,7 @@ $formexpensereport = new FormExpenseReport($db);
 
 $fuser = new User($db);
 
-$title = $langs->trans("ListOfTrips");
+$title = $langs->trans("TripsAndExpenses");
 llxHeader('', $title);
 
 $max_year = 5;
@@ -284,6 +286,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
@@ -339,20 +344,32 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 $resql = $db->query($sql);
@@ -362,11 +379,14 @@ if ($resql) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= "&sall=".urlencode($sall);
@@ -455,6 +475,7 @@ if ($resql) {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	if ($id > 0) {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
@@ -496,7 +517,10 @@ if ($resql) {
 		if (!empty($socid)) {
 			$url .= '&socid='.$socid;
 		}
-		$newcardbutton = dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
+		$newcardbutton = '';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
@@ -531,7 +555,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
@@ -539,6 +563,13 @@ if ($resql) {
 
 	// Filters
 	print '<tr class="liste_titre_filter">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
 	if (!empty($arrayfields['d.ref']['checked'])) {
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
@@ -625,40 +656,58 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 
 	print "</tr>\n";
 
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+
 	print '<tr class="liste_titre">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
+	}
 	if (!empty($arrayfields['d.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "d.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['user']['checked'])) {
 		print_liste_field_titre($arrayfields['user']['label'], $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_debut']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_debut']['label'], $_SERVER["PHP_SELF"], "d.date_debut", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_fin']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_fin']['label'], $_SERVER["PHP_SELF"], "d.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_valid']['label'], $_SERVER["PHP_SELF"], "d.date_valid", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_approve']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_approve']['label'], $_SERVER["PHP_SELF"], "d.date_approve", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['d.total_ht']['label'], $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_vat']['checked'])) {
 		print_liste_field_titre($arrayfields['d.total_vat']['label'], $_SERVER["PHP_SELF"], "d.total_tva", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['d.total_ttc']['label'], $_SERVER["PHP_SELF"], "d.total_ttc", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -668,14 +717,20 @@ if ($resql) {
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['d.date_create']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.tms']['checked'])) {
 		print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
+	}
 	print "</tr>\n";
 
 	$total_total_ht = 0;
@@ -687,6 +742,7 @@ if ($resql) {
 
 	if ($num > 0) {
 		$i = 0;
+		$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
@@ -694,6 +750,8 @@ if ($resql) {
 		$totalarray['val']['d.total_tva'] = 0;
 		$totalarray['val']['d.total_ttc'] = 0;
 		$totalarray['totalizable'] = array();
+
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -709,166 +767,202 @@ if ($resql) {
 			$expensereportstatic->note_private = $obj->note_private;
 			$expensereportstatic->note_public = $obj->note_public;
 
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+					print '<div class="box-flex-container kanban">';
+				}
+				// TODO Use a cache on user
+				$usertmp->fetch($obj->id_user);
 
-			print '<tr class="oddeven">';
-			// Ref
-			if (!empty($arrayfields['d.ref']['checked'])) {
-				print '<td>';
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $expensereportstatic->getNomUrl(1);
-				print '</td>';
-				// Warning late icon and note
-				print '<td class="nobordernopadding nowrap">';
-				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) {
-					print img_warning($langs->trans("Late"));
-				}
-				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {
-					print img_warning($langs->trans("Late"));
-				}
-				if (!empty($obj->note_private) || !empty($obj->note_public)) {
-					print ' <span class="note">';
-					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-					print '</span>';
-				}
-				print '</td>';
-				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
-				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
-				print '</td>';
-				print '</tr></table>';
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// User
-			if (!empty($arrayfields['user']['checked'])) {
-				print '<td class="left">';
-				$usertmp->id = $obj->id_user;
-				$usertmp->lastname = $obj->lastname;
-				$usertmp->firstname = $obj->firstname;
-				$usertmp->login = $obj->login;
-				$usertmp->statut = $obj->statut;
-				$usertmp->photo = $obj->photo;
-				$usertmp->email = $obj->email;
-				print $usertmp->getNomUrl(-1);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Start date
-			if (!empty($arrayfields['d.date_debut']['checked'])) {
-				print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// End date
-			if (!empty($arrayfields['d.date_fin']['checked'])) {
-				print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date validation
-			if (!empty($arrayfields['d.date_valid']['checked'])) {
-				print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date approval
-			if (!empty($arrayfields['d.date_approve']['checked'])) {
-				print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Amount HT
-			if (!empty($arrayfields['d.total_ht']['checked'])) {
-				  print '<td class="right">'.price($obj->total_ht)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ht';
-				}
-				  $totalarray['val']['d.total_ht'] += $obj->total_ht;
-			}
-			// Amount VAT
-			if (!empty($arrayfields['d.total_vat']['checked'])) {
-				print '<td class="right">'.price($obj->total_tva)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'd.total_tva';
-				}
-				$totalarray['val']['d.total_tva'] += $obj->total_tva;
-			}
-			// Amount TTC
-			if (!empty($arrayfields['d.total_ttc']['checked'])) {
-				print '<td class="right">'.price($obj->total_ttc)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ttc';
-				}
-				$totalarray['val']['d.total_ttc'] += $obj->total_ttc;
-			}
+				// Output Kanban
+				if ($massactionbutton || $massaction) {
+					$selected = 0;
 
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
+					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp->getNomUrl(1), 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
+				}
+				if ($i == ($imaxinloop - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
+			} else {
+				print '<tr class="oddeven">';
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->rowid, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Ref
+				if (!empty($arrayfields['d.ref']['checked'])) {
+					print '<td>';
+					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+					print '<td class="nobordernopadding nowrap">';
+					print $expensereportstatic->getNomUrl(1);
+					print '</td>';
+					// Warning late icon and note
+					print '<td class="nobordernopadding nowrap">';
+					if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) {
+						print img_warning($langs->trans("Late"));
+					}
+					if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {
+						print img_warning($langs->trans("Late"));
+					}
+					if (!empty($obj->note_private) || !empty($obj->note_public)) {
+						print ' <span class="note">';
+						print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+						print '</span>';
+					}
+					print '</td>';
+					print '<td width="16" class="nobordernopadding hideonsmartphone right">';
+					$filename = dol_sanitizeFileName($obj->ref);
+					$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+					$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+					print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
+					print '</td>';
+					print '</tr></table>';
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// User
+				if (!empty($arrayfields['user']['checked'])) {
+					print '<td class="left">';
+					$usertmp->id = $obj->id_user;
+					$usertmp->lastname = $obj->lastname;
+					$usertmp->firstname = $obj->firstname;
+					$usertmp->login = $obj->login;
+					$usertmp->statut = $obj->statut;
+					$usertmp->photo = $obj->photo;
+					$usertmp->email = $obj->email;
+					print $usertmp->getNomUrl(-1);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Start date
+				if (!empty($arrayfields['d.date_debut']['checked'])) {
+					print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// End date
+				if (!empty($arrayfields['d.date_fin']['checked'])) {
+					print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Date validation
+				if (!empty($arrayfields['d.date_valid']['checked'])) {
+					print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Date approval
+				if (!empty($arrayfields['d.date_approve']['checked'])) {
+					print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Amount HT
+				if (!empty($arrayfields['d.total_ht']['checked'])) {
+					print '<td class="right">'.price($obj->total_ht)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ht';
+					}
+					$totalarray['val']['d.total_ht'] += $obj->total_ht;
+				}
+				// Amount VAT
+				if (!empty($arrayfields['d.total_vat']['checked'])) {
+					print '<td class="right">'.price($obj->total_tva)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'd.total_tva';
+					}
+					$totalarray['val']['d.total_tva'] += $obj->total_tva;
+				}
+				// Amount TTC
+				if (!empty($arrayfields['d.total_ttc']['checked'])) {
+					print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ttc';
+					}
+					$totalarray['val']['d.total_ttc'] += $obj->total_ttc;
+				}
 
-			// Date creation
-			if (!empty($arrayfields['d.date_create']['checked'])) {
-				print '<td class="nowrap center">';
-				print dol_print_date($db->jdate($obj->date_create), 'dayhour');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date modification
-			if (!empty($arrayfields['d.tms']['checked'])) {
-				print '<td class="nowrap center">';
-				print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Status
-			if (!empty($arrayfields['d.fk_statut']['checked'])) {
-				print '<td class="nowrap right">'.$expensereportstatic->getLibStatut(5).'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Action column
-			print '<td class="nowrap center">';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+				// Extra fields
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				// Fields from hook
+				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
-			print "</tr>\n";
+				// Date creation
+				if (!empty($arrayfields['d.date_create']['checked'])) {
+					print '<td class="nowrap center">';
+					print dol_print_date($db->jdate($obj->date_create), 'dayhour');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Date modification
+				if (!empty($arrayfields['d.tms']['checked'])) {
+					print '<td class="nowrap center">';
+					print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Status
+				if (!empty($arrayfields['d.fk_statut']['checked'])) {
+					print '<td class="nowrap right">'.$expensereportstatic->getLibStatut(5).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->rowid, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				print "</tr>\n";
+			}
 
 			$total_total_ht = $total_total_ht + $obj->total_ht;
 			$total_total_tva = $total_total_tva + $obj->total_tva;

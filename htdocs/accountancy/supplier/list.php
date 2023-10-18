@@ -44,10 +44,11 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancysupplierlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
+
 $default_account = GETPOST('default_account', 'int');
 
 // Select Box
@@ -75,8 +76,6 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
-$btn_ventil = GETPOST('ventil', 'alpha');
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -94,6 +93,8 @@ if (!$sortfield) {
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 		$sortorder = "DESC";
+	} else {
+		$sortorder = "ASC";
 	}
 }
 
@@ -103,7 +104,7 @@ $hookmanager->initHooks(array('accountancysupplierlist'));
 $formaccounting = new FormAccounting($db);
 $accountingAccount = new AccountingAccount($db);
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -112,7 +113,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -168,10 +169,9 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
+if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
-	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {
 		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
 		$msg .= '<div class="detail">';
@@ -185,7 +185,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 			$monCompte = GETPOST('codeventil'.$monId);
 
 			if ($monCompte <= 0) {
-				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
+				$msg .= '<div><span class="error">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
@@ -197,10 +197,10 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 
 				dol_syslog('accountancy/supplier/list.php', LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
+					$msg .= '<div><span class="green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -212,6 +212,11 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	}
 }
 
+if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
+	$value = (GETPOST('sortorder') == 'asc,asc,asc' ? 0 : 1);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $value, 'yesno', 0, '', $conf->entity);
+}
 
 
 /*
@@ -232,7 +237,7 @@ if (empty($chartaccountcode)) {
 }
 
 // Supplier Invoice Lines
-$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype,";
+$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype, f.fk_facture_source,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -289,14 +294,14 @@ if ($search_lineid) {
 	$sql .= natural_search("l.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
-	$sql .= natural_search("f.ref", $search_invoice);
+	$sql .= natural_search(array("f.ref", "f.ref_supplier"), $search_invoice);
 }
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
 }
-if (strlen(trim($search_ref_supplier))) {
+/*if (strlen(trim($search_ref_supplier))) {
 	$sql .= natural_search("f.ref_supplier", $search_ref_supplier);
-}
+}*/
 if (strlen(trim($search_label))) {
 	$sql .= natural_search(array("p.label", "f.libelle"), $search_label);
 }
@@ -358,7 +363,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -388,7 +393,7 @@ if ($result) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($search_societe) {
 		$param .= '&search_societe='.urlencode($search_societe);
@@ -448,7 +453,7 @@ if ($result) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
@@ -490,7 +495,7 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
+	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
@@ -506,7 +511,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
@@ -521,7 +526,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
@@ -532,8 +537,8 @@ if ($result) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntraShort", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
-	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', 'center ');
+	print_liste_field_titre("DataUsedToSuggestAccount", '', '', '', '', '', '', '', 'nowraponall ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'center ');
 	$checkpicto = '';
 	if ($massactionbutton) {
 		$checkpicto = $form->showCheckAddButtons('checkforselect', 1);
@@ -592,6 +597,7 @@ if ($result) {
 		$facturefourn_static->ref_supplier = $objp->ref_supplier;
 		$facturefourn_static->label = $objp->invoice_label;
 		$facturefourn_static->date = $db->jdate($objp->datef);
+		$facturefourn_static->fk_facture_source = $objp->fk_facture_source;
 
 		$facturefourn_static_det->id = $objp->rowid;
 		$facturefourn_static_det->total_ht = $objp->total_ht;
@@ -647,16 +653,20 @@ if ($result) {
 		print '<td>'.$facturefourn_static_det->id.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1).'</td>';
-
-		// Ref supplier invoice
-		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
-		print $objp->ref_supplier;
+		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1);
+		if ($objp->ref_supplier) {
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
+		}
 		print '</td>';
 
+		// Ref supplier invoice
+		/*print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
+		print $objp->ref_supplier;
+		print '</td>';*/
+
 		// Supplier invoice label
-		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
-		print $objp->invoice_label;
+		print '<td class="tdoverflowmax100 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
+		print dol_escape_htmltag($objp->invoice_label);
 		print '</td>';
 
 		// Date
@@ -668,11 +678,11 @@ if ($result) {
 			print $product_static->getNomUrl(1);
 		}
 		if ($product_static->label) {
-			print '<br><span class="opacitymedium small">'.$product_static->label.'</span>';
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($product_static->label).'</span>';
 		}
 		print '</td>';
 
-		// Description
+		// Description of line
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
@@ -685,11 +695,11 @@ if ($result) {
 
 		// Vat rate
 		$code_vat_differ = '';
-		if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'warning bold';
-		}
+		//if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+		//	$code_vat_differ = 'warning bold';
+		//}
 		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
-		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
+		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''), false, 0, 0, 1);
 		print '</td>';
 
 		// Thirdparty
@@ -707,14 +717,19 @@ if ($result) {
 		// Found accounts
 		print '<td class="small">';
 		$s = '1. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
-		$shelp = '';
+		$shelp = ''; $ttype = 'help';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithvat') {
+			$shelp = $langs->trans("SaleEECWithVAT");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithoutvatnumber') {
+			$shelp = $langs->trans("SaleEECWithoutVATNumber");
+			$ttype = 'warning';
 		} elseif ($suggestedaccountingaccountbydefaultfor == 'export') {
 			$shelp .= $langs->trans("SaleExport");
 		}
 		$s .= ($code_buy_l > 0 ? length_accountg($code_buy_l) : '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 		if ($product_static->id > 0) {
 			print '<br>';
 			$s = '2. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
@@ -749,7 +764,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth150 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
@@ -771,6 +786,9 @@ if ($result) {
 
 		print '</tr>';
 		$i++;
+	}
+	if ($num_lines == 0) {
+		print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';

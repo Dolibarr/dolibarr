@@ -29,17 +29,13 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
 }
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-// Avoid warnings with strict mode E_STRICT
-$conf = new stdClass(); // instantiate $conf explicitely
-$conf->global	= new stdClass();
-$conf->file = new stdClass();
-$conf->db = new stdClass();
-$conf->syslog	= new stdClass();
+$conf = new Conf();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
@@ -59,11 +55,12 @@ $conffiletoshowshort = "conf.php";
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
+/*
 if (!file_exists($conffile)) {
 	$conffile = "/etc/dolibarr/conf.php";
 	$conffiletoshow = "/etc/dolibarr/conf.php";
 }
-
+*/
 
 // Load conf file if it is already defined
 if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8) { // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
@@ -108,7 +105,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 
 		// Create conf object
 		if (!empty($dolibarr_main_document_root)) {
-			$result = conf($dolibarr_main_document_root);
+			$result = loadconf($dolibarr_main_document_root);
 		}
 		// Load database driver
 		if ($result) {
@@ -187,7 +184,7 @@ $bc[true] = ' class="bg2"';
  *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
  *	@return	int											<0 if KO, >0 if OK
  */
-function conf($dolibarr_main_document_root)
+function loadconf($dolibarr_main_document_root)
 {
 	global $conf;
 	global $dolibarr_main_db_type;
@@ -198,7 +195,10 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	$return = 1;
+	if (!class_exists('Conf')) {
+		$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	}
 	if (!$return) {
 		return -1;
 	}
@@ -235,6 +235,8 @@ function pHeader($soutitre, $next, $action = 'none')
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+	// Security options
 	header("X-Content-Type-Options: nosniff");
 	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 

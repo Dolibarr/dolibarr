@@ -40,17 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
 	/**
-	 * @var Societe Issuer object that emits
-	 */
-	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -63,7 +52,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -110,12 +99,15 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
+
+		$odtChosen = getDolGlobalInt('MAIN_PROPAL_CHOOSE_ODT_DOCUMENT') > 0;
+		$odtPath = trim(getDolGlobalString('PROPALE_ADDON_PDF_ODT_PATH'));
 
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
@@ -123,7 +115,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROPALE_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+		if ($odtChosen) {
 			$texte .= '<input type="hidden" name="param2" value="PROPALE_ADDON_PDF_ODT_DEFAULT">';
 			$texte .= '<input type="hidden" name="param3" value="PROPALE_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="PROPALE_ADDON_PDF_ODT_CLOSED">';
@@ -133,7 +125,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->PROPALE_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -152,22 +144,23 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->PROPALE_ADDON_PDF_ODT_PATH;
+		$texte .= $odtPath;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->PROPALE_ADDON_PDF_ODT_PATH)) {
+		if (!empty($odtPath)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -187,26 +180,26 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			$texte .= '</div>';
 
 			// Set default template for different status of proposal
-			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+			if ($odtChosen) {
 				// Model for creation
 				$list = ModelePDFPropales::liste_modeles($this->db);
-				$texte .= '<table width="50%;">';
+				$texte .= '<table width="50%">';
 				$texte .= '<tr>';
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
+				$texte .= '<td width="60%">'.$langs->trans("DefaultModelPropalCreate").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value2', $list, $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT);
+				$texte .= $form->selectarray('value2', $list, getDolGlobalString('PROPALE_ADDON_PDF_ODT_DEFAULT'));
 				$texte .= "</td></tr>";
 
 				$texte .= '<tr>';
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
+				$texte .= '<td width="60%">'.$langs->trans("DefaultModelPropalToBill").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value3', $list, $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL);
+				$texte .= $form->selectarray('value3', $list, getDolGlobalString('PROPALE_ADDON_PDF_ODT_TOBILL'));
 				$texte .= "</td></tr>";
 				$texte .= '<tr>';
 
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
+				$texte .= '<td width="60%">'.$langs->trans("DefaultModelPropalClosed").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value4', $list, $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED);
+				$texte .= $form->selectarray('value4', $list, getDolGlobalString('PROPALE_ADDON_PDF_ODT_CLOSED'));
 				$texte .= "</td></tr>";
 				$texte .= '</table>';
 			}
@@ -220,15 +213,10 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		}
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="PROPALE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -307,24 +295,24 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			if (file_exists($dir)) {
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile = basename($srctemplatepath);
-				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
+				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -332,8 +320,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				dol_mkdir($conf->propal->multidir_temp[$object->entity]);
 				if (!is_writable($conf->propal->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->propal->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->propal->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -384,7 +372,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],
@@ -421,6 +409,13 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
+
+				include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+				$companybankaccount = new CompanyBankAccount($this->db);
+				$companybankaccount->fetch(0, $object->thirdparty->id);
+				$array_objet['company_default_bank_iban']=$companybankaccount->iban;
+				$array_objet['company_default_bank_bic']=$companybankaccount->bic;
+
 				// retrieve contact information for use in object as contact_xxx tags
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) {
@@ -523,9 +518,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 

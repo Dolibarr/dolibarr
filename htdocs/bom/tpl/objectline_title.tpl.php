@@ -38,6 +38,10 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+global $filtertype;
+if (empty($filtertype))	$filtertype = 0;
+
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
 
@@ -53,30 +57,42 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 
 // Product or sub-bom
 print '<td class="linecoldescription">'.$langs->trans('Description');
-if (!empty($conf->global->BOM_SUB_BOM)) {
+if (!empty($conf->global->BOM_SUB_BOM) && $filtertype != 1) {
 	print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 	print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 }
 print '</td>';
 
 // Qty
-print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
+if ($filtertype != 1) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
+	}
+
+	// Qty frozen
+	print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+
+	// Disable stock change
+	print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
+
+	// Efficiency
+	print '<td class="linecolefficiency right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
+
+	// Cost
+	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
+} else {
+	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+
+	if (isModEnabled('workstation')) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+
+	// Cost
+	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';
 }
 
-// Qty frozen
-print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
 
-// Disable stock change
-print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
 
-// Efficiency
-print '<td class="linecolefficiency right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
-
-// Cost
-print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 

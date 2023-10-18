@@ -134,7 +134,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position-x: 10px;';
 }
 	print '
-        background-position-y: 16px;
+        background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
     }
@@ -216,7 +216,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	}
 </style>
 
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
     $("body ul").click(function(){
         console.log("We click on body ul");
@@ -225,7 +225,7 @@ $(document).ready(function(){
 
         $(this).find("li ul").slideToggle(200);
 
-        target = $(this);
+        var target = $(this);
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);

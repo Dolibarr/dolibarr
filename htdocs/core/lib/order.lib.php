@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
@@ -42,7 +42,7 @@ function commande_prepare_head(Commande $object)
 	$h = 0;
 	$head = array();
 
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("CustomerOrder");
 		$head[$h][2] = 'order';
@@ -60,28 +60,28 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if ((isModEnabled('expedition_bon') && $user->rights->expedition->lire)
-	|| ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)) {
+	if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
+		|| (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))) {
 		$nbShipments = $object->getNbOfShipments();
 		$nbReceiption = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
 		$text = '';
-		if ($conf->expedition_bon->enabled) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 			$text .= $langs->trans("Shipments");
 		}
-		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 			$text .= ' - ';
 		}
-		if ($conf->delivery_note->enabled) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 			$text .= $langs->trans("Receivings");
 		}
 		if ($nbShipments > 0 || $nbReceiption > 0) {
 			$text .= '<span class="badge marginleftonlyshort">'.($nbShipments ? $nbShipments : 0);
 		}
-		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled && ($nbShipments > 0 || $nbReceiption > 0)) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($nbShipments > 0 || $nbReceiption > 0)) {
 			$text .= ' - ';
 		}
-		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled && ($nbShipments > 0 || $nbReceiption > 0)) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($nbShipments > 0 || $nbReceiption > 0)) {
 			$text .= ($nbReceiption ? $nbReceiption : 0);
 		}
 		if ($nbShipments > 0 || $nbReceiption > 0) {
@@ -96,7 +96,7 @@ function commande_prepare_head(Commande $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -128,10 +128,42 @@ function commande_prepare_head(Commande $object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
+
+	$head[$h][0] = DOL_URL_ROOT.'/commande/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_propal_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'order'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
@@ -145,7 +177,11 @@ function commande_prepare_head(Commande $object)
  */
 function order_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('commande');
+	$extrafields->fetch_name_optionals_label('commandedet');
 
 	$h = 0;
 	$head = array();
@@ -159,11 +195,19 @@ function order_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['commande']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['commandedet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
@@ -175,7 +219,7 @@ function order_admin_prepare_head()
 
 
 /**
- * Return a HTML table that contains a pie chart of customer orders
+ * Return a HTML table that contains a pie chart of sales orders
  *
  * @param	int		$socid		(Optional) Show only results from the customer with this id
  * @return	string				A HTML table that contains a pie chart of customer invoices
@@ -186,7 +230,7 @@ function getCustomerOrderPieChart($socid = 0)
 
 	$result = '';
 
-	if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) {
+	if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
 		return '';
 	}
 
@@ -199,15 +243,15 @@ function getCustomerOrderPieChart($socid = 0)
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('societe').")";
+	$sql .= " AND c.entity IN (".getEntity($commandestatic->element).")";
 	if ($user->socid) {
 		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";
@@ -226,20 +270,18 @@ function getCustomerOrderPieChart($socid = 0)
 		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-				{
 				if (!isset($vals[$row[1]])) {
 					$vals[$row[1]] = 0;
 				}
-					$vals[$row[1]] += $row[0];
-					$totalinprocess += $row[0];
-				}
+				$vals[$row[1]] += $row[0];
+				$totalinprocess += $row[0];
 				$total += $row[0];
 			}
 			$i++;
 		}
 		$db->free($resql);
 
+		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$result = '<div class="div-table-responsive-no-min">';
@@ -257,10 +299,7 @@ function getCustomerOrderPieChart($socid = 0)
 			if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
 				$colorseries[$status] = $badgeStatus4;
 			}
-			if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
-				$colorseries[$status] = $badgeStatus6;
-			}
-			if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
+			if ($status == Commande::STATUS_CLOSED) {
 				$colorseries[$status] = $badgeStatus6;
 			}
 			if ($status == Commande::STATUS_CANCELED) {
@@ -276,7 +315,7 @@ function getCustomerOrderPieChart($socid = 0)
 				$result .= "</tr>\n";
 			}
 		}
-		if ($conf->use_javascript_ajax) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$result .= '<tr class="impair"><td align="center" colspan="2">';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

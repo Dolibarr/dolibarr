@@ -24,7 +24,7 @@ create table llx_facture_fourn_det
   fk_facture_fourn  integer NOT NULL,
   fk_parent_line    integer NULL,
   fk_product        integer NULL,
-  ref               varchar(50),   -- supplier product ref
+  ref               varchar(128),  -- supplier product ref
   label             varchar(255),  -- product label
   description       text,
   pu_ht             double(24,8), -- unit price excluding tax

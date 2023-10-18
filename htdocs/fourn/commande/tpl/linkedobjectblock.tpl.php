@@ -46,11 +46,11 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("SupplierOrder"); ?></td>
-		<td><a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowOrder"), "order").' '.$objectlink->ref; ?></a></td>
+		<td><?php print $objectlink->getNomUrl(1); ?></td>
 		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight("fournisseur", "commande", "lire")) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>

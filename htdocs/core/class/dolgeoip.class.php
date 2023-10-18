@@ -25,7 +25,7 @@
 
 /**
  * 		\class      DolGeoIP
- *      \brief      Classe to manage GeoIP
+ *      \brief      Class to manage GeoIP conversion
  *      			Usage:
  *					$geoip=new GeoIP('country',$datfile);
  *					$geoip->getCountryCodeFromIP($ip);
@@ -34,6 +34,9 @@
 class DolGeoIP
 {
 	public $gi;
+
+	public $error;
+	public $errorlabel;
 
 	/**
 	 * Constructor
@@ -45,7 +48,7 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$geoipversion = '2'; // 'php', or '2'
+		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (!empty($conf->global->GEOIP_VERSION)) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
@@ -53,11 +56,17 @@ class DolGeoIP
 		if ($type == 'country') {
 			// geoip may have been already included with PEAR
 			if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name'))) {
+				if (function_exists('stream_wrapper_restore')) {
+					stream_wrapper_restore('phar');
+				}
 				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} elseif ($type == 'city') {
 			// geoip may have been already included with PEAR
 			if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name'))) {
+				if (function_exists('stream_wrapper_restore')) {
+					stream_wrapper_restore('phar');
+				}
 				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} else {
@@ -86,8 +95,8 @@ class DolGeoIP
 				dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
 				return 0;
 			}
-		} elseif (function_exists('geoip_open')) {
-			$this->gi = geoip_open($datfile, GEOIP_STANDARD);
+		} elseif (function_exists('geoip_open') && defined('GEOIP_STANDARD')) {
+			$this->gi = geoip_open($datfile, constant('GEOIP_STANDARD'));
 		} elseif (function_exists('geoip_country_code_by_name')) {
 			$this->gi = 'NOGI'; // We are using embedded php geoip functions
 			//print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
@@ -144,10 +153,12 @@ class DolGeoIP
 						return '';
 					}
 				} else {
-					if (!function_exists('geoip_country_code_by_addr_v6')) {
+					if (function_exists('geoip_country_code_by_addr_v6')) {
+						return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
+					} elseif (function_exists('geoip_country_code_by_name_v6')) {
 						return strtolower(geoip_country_code_by_name_v6($this->gi, $ip));
 					}
-					return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
+					return '';
 				}
 			}
 		}
@@ -181,7 +192,7 @@ class DolGeoIP
 				return '';
 			}
 		} else {
-			return geoip_country_code_by_name($this->gi, $name);
+			return strtolower(geoip_country_code_by_name($name));
 		}
 	}
 

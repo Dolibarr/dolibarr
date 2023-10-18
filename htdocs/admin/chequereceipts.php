@@ -25,6 +25,7 @@
  *		\brief      Page to setup the bank module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -53,9 +54,9 @@ if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
  */
 
 if ($action == 'updateMask') {
-	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'alpha');
+	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'aZ09');
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
-	if ($maskconstchequereceipts) {
+	if ($maskconstchequereceipts && preg_match('/_MASK$/', $maskconstchequereceipts)) {
 		$res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -111,6 +112,7 @@ print dol_get_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"
 
 print load_fiche_titre($langs->trans("ChequeReceiptsNumberingModule"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -163,7 +165,7 @@ foreach ($dirmodels as $reldir) {
 							print (empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -181,10 +183,10 @@ foreach ($dirmodels as $reldir) {
 							print '</td>'."\n";
 
 							print '<td class="center">';
-							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file) {
+							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || getDolGlobalString('CHEQUERECEIPTS_ADDON') . '.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -210,7 +212,7 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
+							if (getDolGlobalString('CHEQUERECEIPTS_ADDON').'.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
 									dol_htmloutput_mesg($module->error, '', 'error', 1);
 								}
@@ -229,6 +231,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 

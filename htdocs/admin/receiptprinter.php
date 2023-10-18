@@ -24,6 +24,7 @@
  *      \brief      Page to setup receipt printer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -316,6 +317,7 @@ if ($mode == 'config' && $user->admin) {
 	print '<th>'.$langs->trans("Parameters").'</th>';
 	print '<th></th>';
 	print "</tr>\n";
+
 	$ret = $printer->listprinters();
 	$nbofprinters = count($printer->listprinters);
 

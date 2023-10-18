@@ -47,12 +47,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	/**
 	 *	Return description of numbering model
 	 *
-	 *	@return		string		Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
-
 		return 'TCPDF-barcode';
 	}
 
@@ -70,12 +69,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return		boolean		false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
-		global $langs;
-
 		return true;
 	}
 
@@ -155,16 +153,16 @@ class modTcpdfbarcode extends ModeleBarCode
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf, $_GET;
+		global $conf, $langs, $_GET;
 
 		dol_mkdir($conf->barcode->dir_temp);
 		if (!is_writable($conf->barcode->dir_temp)) {
-			$this->error = "Failed to write in temp directory ".$conf->barcode->dir_temp;
-			dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
-		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		$file = $conf->barcode->dir_temp . '/barcode_' . $code . '_' . $encoding . '.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) {

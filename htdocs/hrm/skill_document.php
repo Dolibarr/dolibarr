@@ -20,9 +20,9 @@
  */
 
 /**
- *  \file       skill_document.php
- *  \ingroup    hrm
- *  \brief      Tab for documents linked to skill
+ *    \file       htdocs/hrm/skill_document.php
+ *    \ingroup    hrm
+ *    \brief      Tab for documents linked to skill
  */
 
 
@@ -37,15 +37,15 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies", "other", "mails"));
+$langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
 
-
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
-// Get parameters
+// Get Parameters for Pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -79,8 +79,9 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity ? $object->entity : $conf->entity]."/skill/".get_exdir(0, 0, 0, 1, $object);
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd  = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

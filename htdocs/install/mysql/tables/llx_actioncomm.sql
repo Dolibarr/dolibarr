@@ -80,6 +80,10 @@ create table llx_actioncomm
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
 
+  ip            varchar(250),              --ip used to create record (for public submission page)
+
+  fk_bookcal_availability integer DEFAULT NULL, --fk_bookcal_availability used to link booking to bookcal availability
+
   import_key		varchar(14),
   extraparams		varchar(255)					-- for other parameters with json format
 )ENGINE=innodb;

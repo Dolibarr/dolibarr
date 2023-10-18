@@ -23,6 +23,7 @@
  *		\brief      Liste des contacts fournisseurs
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 $langs->load("companies");
@@ -64,18 +65,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, st.libelle as stcomm, p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";
 }
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.fournisseur = 1";
 $sql .= " AND s.rowid = p.fk_soc";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 

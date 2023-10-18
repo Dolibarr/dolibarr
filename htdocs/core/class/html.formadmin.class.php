@@ -36,7 +36,7 @@ class FormAdmin
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB      $db      Database handler
+	 *  @param      DoliDB|null      $db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -51,7 +51,7 @@ class FormAdmin
 	 *  @param      string			$htmlname       Name of HTML select
 	 *  @param      int				$showauto       Show 'auto' choice
 	 *  @param      array			$filter         Array of keys to exclude in list (opposite of $onlykeys)
-	 *  @param		string			$showempty		'1'=Add empty value or 'string to show'
+	 *  @param		int|string		$showempty		'1'=Add empty value or 'string to show'
 	 *  @param      int				$showwarning    Show a warning if language is not complete
 	 *  @param		int				$disabled		Disable edit of select
 	 *  @param		string			$morecss		Add more css styles
@@ -68,7 +68,7 @@ class FormAdmin
 		global $conf, $langs;
 
 		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) {
-			$filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
+			$filter[getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')] = 1;
 		}
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
@@ -93,7 +93,11 @@ class FormAdmin
 
 		$out .= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($disabled ? ' disabled' : '').'>';
 		if ($showempty && !$multiselect) {
-			$out .= '<option value="0"';
+			if (is_numeric($showempty)) {
+				$out .= '<option value="0"';
+			} else {
+				$out .= '<option value="-1"';
+			}
 			if ($selected === '') {
 				$out .= ' selected';
 			}
@@ -239,10 +243,10 @@ class FormAdmin
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			$newprefix = $tab[0];
-			if ($newprefix == '1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) {
+			if ($newprefix == '1' && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1)) {
 				continue;
 			}
-			if ($newprefix == '2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) {
+			if ($newprefix == '2' && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2)) {
 				continue;
 			}
 			if ($newprefix != $oldprefix) {	// Add separators
@@ -325,7 +329,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'">';
 		$oldprefix = '';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
@@ -343,6 +347,8 @@ class FormAdmin
 			print '</option>'."\n";
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
 	}
 
 
@@ -357,8 +363,6 @@ class FormAdmin
 	public function select_timezone($selected, $htmlname)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
 
@@ -465,6 +469,43 @@ class FormAdmin
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
 		}
+
+		return $out;
+	}
+
+
+	/**
+	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
+	 *
+	 * @param	string	$htmlname				Name of HTML select component
+	 * @param	string	$type					Type preselected
+	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @return 	string							The combo HTML select component
+	 */
+	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
+	{
+		global $type2label;	// TODO Remove this
+
+		$out = '';
+
+		$out .= '<select class="flat type" id="'.$htmlname.'" name="'.$htmlname.'">';
+		foreach ($type2label as $key => $val) {
+			$selected = '';
+			if ($key == $type) {
+				$selected = ' selected="selected"';
+			}
+
+			// Set $valhtml with the picto for the type
+			$valhtml = ($key ? getPictoForType($key) : '').$val;
+
+			if (empty($typewecanchangeinto) || in_array($key, $typewecanchangeinto[$type])) {
+				$out .= '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+			} else {
+				$out .= '<option value="'.$key.'" disabled="disabled"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+			}
+		}
+		$out .= '</select>';
+		$out .= ajax_combobox('type');
 
 		return $out;
 	}

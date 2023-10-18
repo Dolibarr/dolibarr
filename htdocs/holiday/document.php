@@ -28,6 +28,7 @@
  *       \brief      Page des documents joints sur les contrats
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -82,10 +83,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -239,7 +240,7 @@ if ($object->id) {
 	print '<table class="border tableforfield centpercent">'."\n";
 	print '<tbody>';
 
-	if (! empty($object->fk_user_create)) {
+	if (!empty($object->fk_user_create)) {
 		$userCreate=new User($db);
 		$userCreate->fetch($object->fk_user_create);
 		print '<tr>';
