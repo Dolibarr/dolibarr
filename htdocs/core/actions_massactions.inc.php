@@ -1291,7 +1291,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
-	foreach ($toselect as $toselectid) {
+	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
+	$unique_arr = array_unique($toselect);
+	foreach ($unique_arr as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status
