@@ -563,10 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
-		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
-			$object->user_closing = $object->user_cloture;
-		}
+	if (!empty($object->user_closing_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -576,20 +573,12 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_closing)) {
-			if ($object->user_closing->id) {
-				print $object->user_closing->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+		$userstatic = new User($db);
+		$userstatic->fetch($object->user_closing_id);
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $langs->trans("Unknown");
 		}
 		if ($usetable) {
 			print '</td></tr>';

@@ -143,12 +143,6 @@ class CommandeFournisseur extends CommonOrder
 	public $date_commande;
 
 	/**
-	 * @var int	Date expected for delivery
-	 * @deprecated		See delivery_date
-	 */
-	public $date_livraison;
-
-	/**
 	 *  @var int Date expected for delivery
 	 */
 	public $delivery_date;
@@ -189,8 +183,8 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string paymnet choice label
 	 */
 	public $mode_reglement;
+
 	public $user_author_id;
-	public $user_valid_id;
 	public $user_approve_id;
 	public $user_approve_id2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 
@@ -429,7 +423,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->status = $obj->status;
 			$this->billed = $obj->billed;
 			$this->user_author_id = $obj->fk_user_author;
-			$this->user_valid_id = $obj->fk_user_valid;
+			$this->user_validation_id = $obj->fk_user_valid;
 			$this->user_approve_id = $obj->fk_user_approve;
 			$this->user_approve_id2 = $obj->fk_user_approve2;
 			$this->total_ht				= $obj->total_ht;
@@ -447,7 +441,6 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				$this->date = $this->date_creation;
 			}
-			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
@@ -1417,7 +1410,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($date)) {
 			$date = $now;
 		}
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Clean parameters
 		if (empty($this->source)) {
@@ -1657,7 +1650,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_valid) && $this->user_valid > 0 ? $this->user_valid : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
@@ -1755,7 +1748,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = 0;
+		$this->user_validation_id = 0;
 		$this->date_creation      = '';
 		$this->date_validation    = '';
 		$this->ref_supplier       = null;
@@ -2609,7 +2602,6 @@ class CommandeFournisseur extends CommonOrder
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 			}
 
@@ -3396,10 +3388,6 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf;
 
-		if (empty($this->delivery_date) && !empty($this->date_livraison)) {
-			$this->delivery_date = $this->date_livraison; // For backward compatibility
-		}
-
 		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
 			$now = dol_now();
 			if (!empty($this->delivery_date)) {
@@ -3428,10 +3416,6 @@ class CommandeFournisseur extends CommonOrder
 	public function showDelay()
 	{
 		global $conf, $langs;
-
-		if (empty($this->delivery_date) && !empty($this->date_livraison)) {
-			$this->delivery_date = $this->date_livraison; // For backward compatibility
-		}
 
 		$text = '';
 
@@ -3654,7 +3638,9 @@ class CommandeFournisseur extends CommonOrder
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'socid') || property_exists($this, 'total_tva')) {
 			$return .='<br><span class="info-box-label amount">'.$this->socid.'</span>';
 		}

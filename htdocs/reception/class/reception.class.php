@@ -370,7 +370,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.billed";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -383,13 +383,13 @@ class Reception extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		if ($id) {
-			$sql .= " AND e.rowid=".((int) $id);
+			$sql .= " AND e.rowid = ".((int) $id);
 		}
 		if ($ref) {
-			$sql .= " AND e.ref='".$this->db->escape($ref)."'";
+			$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
 		}
 		if ($ref_ext) {
-			$sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
+			$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -406,6 +406,8 @@ class Reception extends CommonObject
 				$this->ref_ext = $obj->ref_ext;
 				$this->statut               = $obj->status;
 				$this->status               = $obj->status;
+				$this->billed               = $obj->billed;
+
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
@@ -416,7 +418,6 @@ class Reception extends CommonObject
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
-				$this->billed = ($obj->fk_statut == 2 ? 1 : 0);
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
