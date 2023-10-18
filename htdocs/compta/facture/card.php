@@ -16,6 +16,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -87,7 +87,6 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-
 $lineid = GETPOST('lineid', 'int');
 $userid = GETPOST('userid', 'int');
 $search_ref = GETPOST('sf_ref', 'alpha') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
@@ -320,9 +319,9 @@ if (empty($reshook)) {
 			}
 		}
 
-		// On verifie signe facture
+		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
-			// Si avoir, le signe doit etre negatif
+			// If a credit note, the sign must be negative
 			if ($object->total_ht >= 0) {
 				setEventMessages($langs->trans("ErrorInvoiceAvoirMustBeNegative"), null, 'errors');
 				$action = '';
@@ -743,10 +742,10 @@ if (empty($reshook)) {
 
 			$resteapayer = $object->total_ttc - $totalpaid;
 
-			// We check that invlice lines are transferred into accountancy
+			// We check that invoice lines are transferred into accountancy
 			$ventilExportCompta = $object->getVentilExportCompta();
 
-			// On verifie si aucun paiement n'a ete effectue
+			// We check if no payment has been made
 			if ($ventilExportCompta == 0) {
 				if (!empty($conf->global->INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE) || ($resteapayer == $object->total_ttc && empty($object->paye))) {
 					$result = $object->setDraft($user, $idwarehouse);
@@ -811,7 +810,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
 		}
 	} elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate) {
-		// Convertir en reduc
+		// Convert to reduce
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 		//$object->fetch_lines();	// Already done into fetch
@@ -1036,27 +1035,27 @@ if (empty($reshook)) {
 				$result = $object->fetch(GETPOST('fac_replacement', 'int'));
 				$object->fetch_thirdparty();
 
-				$object->date = $dateinvoice;
-				$object->date_pointoftax = $date_pointoftax;
+				$object->date               = $dateinvoice;
+				$object->date_pointoftax    = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private		= trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client', 'alphanohtml');
 				$object->ref_customer		= GETPOST('ref_client', 'alphanohtml');
-				$object->model_pdf = GETPOST('model', 'alphanohtml');
+				$object->model_pdf          = GETPOST('model', 'alphanohtml');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
+				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU', 2);
 				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
-				// Proprietes particulieres a facture de remplacement
+				// Special properties of replacement invoice
 				$object->fk_facture_source = GETPOST('fac_replacement', 'int');
-				$object->type = Facture::TYPE_REPLACEMENT;
+				$object->type              = Facture::TYPE_REPLACEMENT;
 
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
@@ -1084,31 +1083,38 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
 			if (!$error) {
 				if (!empty($originentity)) {
 					$object->entity = $originentity;
 				}
-				$object->socid = GETPOST('socid', 'int');
-				$object->ref = GETPOST('ref');
-				$object->date = $dateinvoice;
-				$object->date_pointoftax = $date_pointoftax;
+				$object->socid              = GETPOST('socid', 'int');
+				$object->subtype            = GETPOST('subtype');
+				$object->ref                = GETPOST('ref');
+				$object->date               = $dateinvoice;
+				$object->date_pointoftax    = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private		= trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client', 'alphanohtml');
 				$object->ref_customer		= GETPOST('ref_client', 'alphanohtml');
-				$object->model_pdf = GETPOST('model');
+				$object->model_pdf          = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= 0;		// No payment term for a credit note
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
+				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
 				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
-				// Proprietes particulieres a facture avoir
+				// Special properties of replacement invoice
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
 				$object->type = Facture::TYPE_CREDIT_NOTE;
 
@@ -1301,25 +1307,33 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
 			if (!$error) {
-				$object->socid = GETPOST('socid', 'int');
-				$object->type            = GETPOST('type');
-				$object->ref             = GETPOST('ref');
-				$object->date            = $dateinvoice;
-				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
-				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
-				$object->ref_customer    = GETPOST('ref_client');
-				$object->ref_client      = $object->ref_customer;
-				$object->model_pdf = GETPOST('model');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->socid              = GETPOST('socid', 'int');
+				$object->type               = GETPOST('type');
+				$object->subtype            = GETPOST('subtype');
+				$object->ref                = GETPOST('ref');
+				$object->date               = $dateinvoice;
+				$object->date_pointoftax    = $date_pointoftax;
+				$object->note_public        = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private       = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_customer       = GETPOST('ref_client');
+				$object->ref_client         = $object->ref_customer;
+				$object->model_pdf          = GETPOST('model');
+				$object->fk_project         = GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = price2num(GETPOST('amount'));
+				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->amount             = price2num(GETPOST('amount'));
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
 				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
@@ -1380,26 +1394,33 @@ if (empty($reshook)) {
 				}
 			}
 
+
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
 			if (!$error) {
-				// Si facture standard
-				$object->socid = GETPOST('socid', 'int');
+				$object->socid              = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
-				$object->ref = GETPOST('ref');
+				$object->subtype            = GETPOST('subtype');
+				$object->ref                = GETPOST('ref');
 				$object->date				= $dateinvoice;
-				$object->date_pointoftax = $date_pointoftax;
+				$object->date_pointoftax    = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
-				$object->note_private = trim(GETPOST('note_private', 'restricthtml'));
+				$object->note_private       = trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client');
 				$object->ref_customer		= GETPOST('ref_client');
-				$object->model_pdf = GETPOST('model');
+				$object->model_pdf          = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = price2num(GETPOST('amount'));
+				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->amount             = price2num(GETPOST('amount'));
 				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
 				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
@@ -1917,7 +1938,7 @@ if (empty($reshook)) {
 						$line->multicurrency_total_tva = $tabprice[17];
 						$line->multicurrency_total_ttc = $tabprice[18];
 
-						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
+						// If fk_remise_except defined we check if the reduction has already been applied
 						if ($line->fk_remise_except) {
 							$discount = new DiscountAbsolute($line->db);
 							$result = $discount->fetch($line->fk_remise_except);
@@ -1947,7 +1968,7 @@ if (empty($reshook)) {
 				$object->fk_account = GETPOST('fk_account', 'int');
 
 
-				// Proprietes particulieres a facture de remplacement
+				// Special properties of replacement invoice
 
 				$object->situation_counter = $object->situation_counter + 1;
 				$id = $object->createFromCurrent($user);
@@ -2154,10 +2175,10 @@ if (empty($reshook)) {
 			$special_code = 0;
 			// if (!GETPOST(qty)) $special_code=3; // Options should not exists on invoices
 
-			// Ecrase $pu par celui du produit
-			// Ecrase $desc par celui du produit
-			// Ecrase $base_price_type par celui du produit
-			// Replaces $fk_unit with the product's
+			// Replaces $pu with that of the product
+			// Replaces $desc with that of the product
+			// Replaces $base_price_type with that of the product
+			// Replaces $fk_unit with that of the product
 			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
@@ -2181,6 +2202,7 @@ if (empty($reshook)) {
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 				// Set unit price to use
+				// TODO We should not have this
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
@@ -2287,28 +2309,54 @@ if (empty($reshook)) {
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
 
-				$pu_ht_devise = price2num($price_ht_devise, 'MU');
-				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
-
 				if ($pu_ttc && !$pu_ht) {
 					$price_base_type = 'TTC';
 				}
 			}
 
-			$pu_ht_devise = price2num($price_ht_devise, 'MU');
-
-			// Margin
-			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
-			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
+			// Define info_bits
+			$info_bits = 0;
+			if ($tva_npr) {
+				$info_bits |= 0x01;
+			}
 
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
-			$info_bits = 0;
-			if ($tva_npr) {
-				$info_bits |= 0x01;
+			$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+			$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+
+			// Prepare a price equivalent for minimum price check
+			$pu_equivalent = $pu_ht;
+			$pu_equivalent_ttc = $pu_ttc;
+
+			$currency_tx = $object->multicurrency_tx;
+
+			// Check if we have a foreign currency
+			// If so, we update the pu_equiv as the equivalent price in base currency
+			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+				$pu_equivalent = $pu_ht_devise * $currency_tx;
 			}
+			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+			}
+
+			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+			/*
+			 if ($pu_equivalent) {
+			 $tmp = calcul_price_total(1, $pu_equivalent, 0, $tva_tx, -1, -1, 0, 'HT', $info_bits, $type);
+			 $pu_equivalent_ttc = ...
+			 } else {
+			 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $tva_tx, -1, -1, 0, 'TTC', $info_bits, $type);
+			 $pu_equivalent_ht = ...
+			 }
+			 */
+
+			// Margin
+			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
+			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
+
 
 			$price2num_pu_ht = price2num($pu_ht);
 			$price2num_remise_percent = price2num($remise_percent);
@@ -2329,12 +2377,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
-				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				}
@@ -2378,7 +2426,6 @@ if (empty($reshook)) {
 					}
 
 					unset($_POST['prod_entry_mode']);
-
 					unset($_POST['qty']);
 					unset($_POST['type']);
 					unset($_POST['remise_percent']);
@@ -2396,7 +2443,6 @@ if (empty($reshook)) {
 					unset($_POST['dp_desc']);
 					unset($_POST['idprod']);
 					unset($_POST['units']);
-
 					unset($_POST['date_starthour']);
 					unset($_POST['date_startmin']);
 					unset($_POST['date_startsec']);
@@ -2409,7 +2455,6 @@ if (empty($reshook)) {
 					unset($_POST['date_endday']);
 					unset($_POST['date_endmonth']);
 					unset($_POST['date_endyear']);
-
 					unset($_POST['situations']);
 					unset($_POST['progress']);
 				} else {
@@ -2456,6 +2501,32 @@ if (empty($reshook)) {
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
+
+		// Prepare a price equivalent for minimum price check
+		$pu_equivalent = $pu_ht;
+		$pu_equivalent_ttc = $pu_ttc;
+
+		$currency_tx = $object->multicurrency_tx;
+
+		// Check if we have a foreign currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+			$pu_equivalent = $pu_ht_devise * $currency_tx;
+		}
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+		}
+
+		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+		/*
+		 if ($pu_equivalent) {
+		 $tmp = calcul_price_total(1, $pu_equivalent, 0, $vat_rate, -1, -1, 0, 'HT', $info_bits, $type);
+		 $pu_equivalent_ttc = ...
+		 } else {
+		 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $vat_rate, -1, -1, 0, 'TTC', $info_bits, $type);
+		 $pu_equivalent_ht = ...
+		 }
+		 */
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -2522,13 +2593,13 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_ht && $price_min && (((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min))) {
+				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
@@ -2647,11 +2718,9 @@ if (empty($reshook)) {
 				unset($_POST['buying_price']);
 				unset($_POST['np_marginRate']);
 				unset($_POST['np_markRate']);
-
 				unset($_POST['dp_desc']);
 				unset($_POST['idprod']);
 				unset($_POST['units']);
-
 				unset($_POST['date_starthour']);
 				unset($_POST['date_startmin']);
 				unset($_POST['date_startsec']);
@@ -2664,7 +2733,6 @@ if (empty($reshook)) {
 				unset($_POST['date_endday']);
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
-
 				unset($_POST['situations']);
 				unset($_POST['progress']);
 			} else {
@@ -2933,14 +3001,14 @@ if (empty($reshook)) {
 				}
 			}
 		} elseif ($action == 'swapstatut') {
-			// bascule du statut d'un contact
+			// toggle the status of a contact
 			if ($object->fetch($id)) {
 				$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 			} else {
 				dol_print_error($db);
 			}
 		} elseif ($action == 'deletecontact') {
-			// Efface un contact
+			// Delete a contact
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
 
@@ -3367,12 +3435,12 @@ if ($action == 'create') {
 				jQuery("#typedeposit").change(function() {
 					console.log("We change type of down payment");
 					jQuery("#radio_deposit").prop("checked", true);
-					setRadioForTypeOfIncoice();
+					setRadioForTypeOfInvoice();
 				});
     			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_creditnote, #radio_template").change(function() {
-					setRadioForTypeOfIncoice();
+					setRadioForTypeOfInvoice();
 				});
-				function setRadioForTypeOfIncoice() {
+				function setRadioForTypeOfInvoice() {
 					console.log("Change radio");
 					if (jQuery("#radio_deposit").prop("checked") && (jQuery("#typedeposit").val() == \'amount\' || jQuery("#typedeposit").val() == \'variable\')) {
 						jQuery(".checkforselect").prop("disabled", true);
@@ -3667,6 +3735,13 @@ if ($action == 'create') {
 
 
 	print '</td></tr>';
+
+	// Invoice Subtype
+	if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+		print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
+		print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
+		print '</td></tr>';
+	}
 
 	if ($socid > 0) {
 		// Discounts for third party
@@ -4068,7 +4143,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirmation de la conversion de l'avoir en reduc
+	// Confirmation of the conversion of the credit into a reduction
 	if ($action == 'converttoreduc') {
 		if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
 			$type_fac = 'ExcessReceived';
@@ -4252,7 +4327,7 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
 	}
 
-	// Confirmation du classement paye
+	// Confirmation of payment classification
 	if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $resteapayer == $object->total_ttc))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
 	}
@@ -4299,16 +4374,16 @@ if ($action == 'create') {
 			$arrayreasons[$close[$key]['code']] = $close[$key]['reason'];
 		}
 
-		// Cree un tableau formulaire
+		// Create a form table
 		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"), array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
-		// Paiement incomplet. On demande si motif = escompte ou autre
+		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 380, 600);
 	}
 
-	// Confirmation du classement abandonne
+	// Confirmation of status abandoned
 	if ($action == 'canceled') {
-		// S'il y a une facture de remplacement pas encore validee (etat brouillon),
-		// on ne permet pas de classer abandonner la facture.
+		// If there is a replacement invoice not yet validated (draft state),
+		// it is not allowed to classify the invoice as abandoned.
 		if ($objectidnext) {
 			$facturereplacement = new Facture($db);
 			$facturereplacement->fetch($objectidnext);
@@ -4323,14 +4398,14 @@ if ($action == 'create') {
 			// Help
 			$close[1]['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 			$close[2]['label'] = $langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
-			// Texte
+			// Text
 			$close[1]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close[1]['label'], 1);
 			$close[2]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close[2]['label'], 1);
 			// arrayreasons
 			$arrayreasons[$close[1]['code']] = $close[1]['reason'];
 			$arrayreasons[$close[2]['code']] = $close[2]['reason'];
 
-			// Cree un tableau formulaire
+			// Create a form table
 			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"), array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
 
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes", 1, 270);
@@ -4440,6 +4515,7 @@ if ($action == 'create') {
 	// Type
 	print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
 	print $object->getLibType(2);
+	print $object->getSubtypeLabel('facture');
 	if ($object->module_source) {
 		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.dol_escape_htmltag(ucfirst($object->module_source)).' - '.$langs->trans("Terminal").' '.dol_escape_htmltag($object->pos_source).')</span>';
 	}
@@ -4861,7 +4937,7 @@ if ($action == 'create') {
 	}
 
 
-	// Add the revenu stamp
+	// Add the revenue stamp
 	if ($selleruserevenustamp) {
 		print '<tr><td class="titlefieldmiddle">';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -5246,7 +5322,7 @@ if ($action == 'create') {
 			dol_print_error($db);
 		}
 
-		// Paye partiellement 'escompte'
+		// Partially paid 'discount'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
 			print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
 			print '<span class="opacitymedium">';
@@ -5256,7 +5332,7 @@ if ($action == 'create') {
 			$resteapayeraffiche = 0;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
-		// Paye partiellement ou Abandon 'badcustomer'
+		// Partially paid or abandoned 'badcustomer'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
 			print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
 			print '<span class="opacitymedium">';
@@ -5266,7 +5342,7 @@ if ($action == 'create') {
 			// $resteapayeraffiche=0;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
-		// Paye partiellement ou Abandon 'product_returned'
+		// Partially paid or abandoned 'product_returned'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
 			print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
 			print '<span class="opacitymedium">';
@@ -5276,7 +5352,7 @@ if ($action == 'create') {
 			$resteapayeraffiche = 0;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
-		// Paye partiellement ou Abandon 'abandon'
+		// Partially paid or abandoned 'abandoned'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
 			print '<tr><td colspan="'.$nbcols.'" class="nowrap right">';
 			$text = $langs->trans("HelpAbandonOther");

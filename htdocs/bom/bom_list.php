@@ -697,8 +697,15 @@ while ($i < $imaxinloop) {
 			$prod = null;
 		}
 
-		// Output kanban
-		print $object->getKanbanView('', array('prod'=>$prod, 'selected' => in_array($object->id, $arrayofselected)));
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('prod'=>$prod, 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

@@ -1582,7 +1582,8 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			print '<tr class="oddeven">';
 			print '<td>';
-			$text = $langs->trans('SellingPrice').' '.$i;
+			$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+			$text = $langs->trans('SellingPrice').' '.$i.' - '.getDolGlobalString($keyforlabel);
 			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
 

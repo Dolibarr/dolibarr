@@ -531,7 +531,7 @@ class Skilldet extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILLDET_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILLDET_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
