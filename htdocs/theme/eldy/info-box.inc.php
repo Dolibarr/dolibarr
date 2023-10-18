@@ -145,6 +145,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-line {
 	line-height: 1.35em;
 }
+.info-box-line-text {
+	overflow: hidden;
+	width: calc(100% - 76px);
+	text-overflow: ellipsis;
+}
 
 .info-box-icon-text {
 	box-sizing: border-box;
@@ -507,7 +512,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-basis: auto;
 
 	width: 280px;
-	margin: 5px 8px 0px 8px;
+	margin: 5px 10px 0px 10px;
 }
 .box-flex-item.filler{
 	margin: 0px 0px 0px 15px !important;

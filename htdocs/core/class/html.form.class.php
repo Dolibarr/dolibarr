@@ -22,6 +22,7 @@
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,7 @@ class Form
 	public $cache_demand_reason = array();
 	public $cache_types_fees = array();
 	public $cache_vatrates = array();
+	public $cache_invoice_subtype = array();
 
 
 	/**
@@ -10902,5 +10904,98 @@ class Form
 		}
 
 		return $retstring;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	* Load into cache list of invoice subtypes
+	*
+	* @return int             Nb of lines loaded, <0 if KO
+	*/
+	public function load_cache_invoice_subtype()
+	{
+		// phpcs:enable
+		global $langs;
+
+		$num = count($this->cache_invoice_subtype);
+		if ($num > 0) {
+			return 0; // Cache already loaded
+		}
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$sql = "SELECT rowid, code, label as label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . 'c_invoice_subtype';
+		$sql .= " WHERE active = 1";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				// If translation exists, we use it, otherwise we take the default wording
+				$label = ($langs->trans("InvoiceSubtype" . $obj->rowid) != ("InvoiceSubtype" . $obj->rowid)) ? $langs->trans("InvoiceSubtype" . $obj->rowid) : (($obj->label != '-') ? $obj->label : '');
+				$this->cache_invoice_subtype[$obj->rowid]['rowid'] = $obj->rowid;
+				$this->cache_invoice_subtype[$obj->rowid]['code'] = $obj->code;
+				$this->cache_invoice_subtype[$obj->rowid]['label'] = $label;
+				$i++;
+			}
+
+			$this->cache_invoice_subtype = dol_sort_array($this->cache_invoice_subtype, 'code', 'asc', 0, 0, 1);
+
+			return $num;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
+	* Return list of invoice subtypes.
+	*
+	* @param int    $selected     Id of invoice subtype to preselect by default
+	* @param string $htmlname     Select field name
+	* @param int    $addempty     Add an empty entry
+	* @param int    $noinfoadmin  0=Add admin info, 1=Disable admin info
+	* @param string $morecss       Add more CSS on select tag
+	* @return string  String for the HTML select component
+	*/
+	public function getSelectInvoiceSubtype($selected = 0, $htmlname = 'subtypeid', $addempty = 0, $noinfoadmin = 0, $morecss = '')
+	{
+		global $langs, $user;
+
+		$out = '';
+		dol_syslog(__METHOD__ . " selected=" . $selected . ", htmlname=" . $htmlname, LOG_DEBUG);
+
+		$this->load_cache_invoice_subtype();
+
+		$out .= '<select id="' . $htmlname . '" class="flat selectsubtype' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
+		if ($addempty) {
+			$out .= '<option value="0">&nbsp;</option>';
+		}
+
+		foreach ($this->cache_invoice_subtype as $rowid => $subtype) {
+			$label = $subtype['label'];
+			$out .= '<option value="' . $subtype['rowid'] . '"';
+			if ($selected == $subtype['rowid']) {
+				$out .= ' selected="selected"';
+			}
+			$out .= '>';
+			$out .= $label;
+			$out .= '</option>';
+		}
+
+		$out .= '</select>';
+		if ($user->admin && empty($noinfoadmin)) {
+			$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
+		$out .= ajax_combobox($htmlname);
+
+		return $out;
 	}
 }
