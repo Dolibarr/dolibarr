@@ -199,6 +199,9 @@ $permissiontoread = $user->hasRight('contrat', 'lire');
 $permissiontoadd = $user->hasRight('contrat', 'creer');
 $permissiontodelete = $user->hasRight('contrat', 'supprimer');
 
+$result = restrictedArea($user, 'contrat', 0);
+
+
 
 /*
  * Actions
