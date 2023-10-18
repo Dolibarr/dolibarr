@@ -121,7 +121,7 @@ class MenuManager
 		//var_dump($tabMenu);
 
 		//if ($forcemainmenu == 'all') {
-		//var_dump($this->tabMenu);
+		//foreach($this->tabMenu as $a) { var_dump($a); }
 		//}
 	}
 
