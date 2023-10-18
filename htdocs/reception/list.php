@@ -1289,7 +1289,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['e.datec']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
 		print '</td>';
 		if (!$i) {
@@ -1298,7 +1298,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['e.tms']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour');
 		print '</td>';
 		if (!$i) {
