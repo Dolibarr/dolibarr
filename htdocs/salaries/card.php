@@ -738,6 +738,22 @@ if ($id > 0) {
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+
+		//Add fill with end of month button
+		$formconfirm .= "<script>
+			$('#clone_date_end').after($('<button id=\"fill_end_of_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('FillEndOfMonth')."</button>'));
+			$('#fill_end_of_month').click(function(){
+				var jsDate = $('#clone_date_start').datepicker('getDate');
+				if (jsDate !== null) {
+					jsDate instanceof Date;
+					var lastDate = new Date(jsDate.getFullYear(), jsDate.getMonth() + 1, 0);
+					$('#clone_date_endday').val(lastDate.getDate());
+					$('#clone_date_endmonth').val(lastDate.getMonth() + 1);
+					$('#clone_date_endyear').val(lastDate.getFullYear());
+					$('#clone_date_end').datepicker().datepicker('setDate', lastDate);
+				}
+			});					
+		</script>";
 	}
 
 	if ($action == 'paid') {
