@@ -116,7 +116,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_JOB_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_JOB_MODIFY'; // Name of trigger action code to execute when we modify record
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -142,7 +142,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_JOB_SENTBYMAIL';
+	$triggersendname = 'HRM_JOB_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_JOB_TO';
 	$trackid = 'job' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';

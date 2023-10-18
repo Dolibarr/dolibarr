@@ -2442,12 +2442,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$return = '
     	<div class="box-flex-item info-box-module'
-			.(empty($conf->global->$const_name) ? ' --disabled' : '')
+			.(getDolGlobalString($const_name) ? '' : ' --disabled')
 			.($this->isCoreOrExternalModule() == 'external' ? ' --external' : '')
 			.($this->needUpdate ? ' --need-update' : '')
 			.'">
 	    <div class="info-box info-box-sm info-box-module">
-	    <div class="info-box-icon'.(empty($conf->global->$const_name) ? '' : ' info-box-icon-module-enabled'.($versiontrans ? ' info-box-icon-module-warning' : '')).'">';
+	    <div class="info-box-icon'.(!getDolGlobalString($const_name) ? '' : ' info-box-icon-module-enabled'.($versiontrans ? ' info-box-icon-module-warning' : '')).'">';
 
 		$alttext = '';
 		//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
@@ -2474,7 +2474,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		$return .=  '</div>
-	    <div class="info-box-content info-box-text-module'.(empty($conf->global->$const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
+	    <div class="info-box-content info-box-text-module'.(!getDolGlobalString($const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
 	    <span class="info-box-title">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 

@@ -89,10 +89,10 @@ if ($id > 0 || !empty($ref)) {
 
 	// Check current user can read this salary
 	$canread = 0;
-	if (!empty($user->rights->salaries->readall)) {
+	if ($user->hasRight('salaries', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -167,25 +167,25 @@ if (empty($reshook)) {
 }
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier) {
+if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
 // set label
-if ($action == 'setlabel' && $user->rights->salaries->write) {
+if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
 	$object->update($user);
 }
 
 // Classify paid
-if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == 'yes') {
+if ($action == 'confirm_paid' && $user->hasRight('salaries', 'write') && $confirm == 'yes') {
 	$object->fetch($id);
 	$result = $object->setPaid($user);
 }
 
-if ($action == 'setfk_user' && $user->rights->salaries->write) {
+if ($action == 'setfk_user' && $user->hasRight('salaries', 'write')) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$object->fk_user = $fk_user;
@@ -196,7 +196,7 @@ if ($action == 'setfk_user' && $user->rights->salaries->write) {
 	}
 }
 
-if ($action == 'reopen' && $user->rights->salaries->write) {
+if ($action == 'reopen' && $user->hasRight('salaries', 'write')) {
 	$result = $object->fetch($id);
 	if ($object->paye) {
 		$result = $object->set_unpaid($user);
@@ -210,7 +210,7 @@ if ($action == 'reopen' && $user->rights->salaries->write) {
 }
 
 // payment mode
-if ($action == 'setmode' && $user->rights->salaries->write) {
+if ($action == 'setmode' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	if ($result < 0)
@@ -218,7 +218,7 @@ if ($action == 'setmode' && $user->rights->salaries->write) {
 }
 
 // bank account
-if ($action == 'setbankaccount' && $user->rights->salaries->write) {
+if ($action == 'setbankaccount' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	if ($result < 0) {
@@ -361,7 +361,7 @@ if ($action == 'confirm_delete') {
 }
 
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('salaries', 'write')) {
 	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
 	if (empty($amount)) {
@@ -388,7 +388,7 @@ if ($action == 'confirm_clone' && $confirm != 'yes') {
 	$action = '';
 }
 
-if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
+if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->hasRight('salaries', 'write'))) {
 	$db->begin();
 
 	$originalId = $id;
@@ -435,7 +435,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 }
 
 // Action to update one extrafield
-if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
+if ($action == "update_extras" && $user->hasRight('salaries', 'read')) {
 	$object->fetch(GETPOST('id', 'int'));
 
 	$attributekey = GETPOST('attribute', 'alpha');
@@ -776,7 +776,7 @@ if ($id > 0) {
 
 	// Label
 	if ($action != 'editlabel') {
-		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
 		$morehtmlref .= $object->label;
 	} else {
 		$morehtmlref .= $langs->trans('Label').' :&nbsp;';
@@ -797,7 +797,7 @@ if ($id > 0) {
 				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 			}
 		} else {
-			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
 
 			if (!empty($object->fk_user)) {
 				$userstatic = new User($db);
@@ -917,7 +917,7 @@ if ($id > 0) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('DefaultBankAccount');
 		print '<td>';
-		if ($action != 'editbankaccount' && $user->rights->salaries->write) {
+		if ($action != 'editbankaccount' && $user->hasRight('salaries', 'write')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1071,23 +1071,23 @@ if ($id > 0) {
 		}
 
 		// Reopen
-		if ($object->paye && $user->rights->salaries->write) {
+		if ($object->paye && $user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Edit
-		if ($object->paye == 0 && $user->rights->salaries->write) {
+		if ($object->paye == 0 && $user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $user->rights->salaries->write) {
+		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
 		}
 
 		// Classify 'paid'
 		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
-		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->rights->salaries->write) {
+		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
 		}
 
@@ -1095,11 +1095,11 @@ if ($id > 0) {
 		print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id, '');
 
 		// Clone
-		if ($user->rights->salaries->write) {
+		if ($user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
 		}
 
-		if (!empty($user->rights->salaries->delete) && empty($totalpaid)) {
+		if ($user->hasRight('salaries', 'delete') && empty($totalpaid)) {
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 		} else {
 			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'),  'default', $_SERVER['PHP_SELF'].'#', '', false);

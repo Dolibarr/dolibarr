@@ -937,7 +937,7 @@ class Mo extends CommonObject
 		if (!empty($conf->global->MRP_MO_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->MRP_MO_ADDON.".php";
+			$file = getDolGlobalString('MRP_MO_ADDON') . ".php";
 			$classname = $conf->global->MRP_MO_ADDON;
 
 			// Include file with class
@@ -1715,7 +1715,9 @@ class Mo extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['bom'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['bom']->getNomUrl(1).'</span>';
 		}

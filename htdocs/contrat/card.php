@@ -2285,7 +2285,7 @@ $db->close();
 
 <?php
 if (isModEnabled('margin') && $action == 'editline') {
-		// TODO Why this ? To manage margin on contracts ?
+	// TODO Why this ? To manage margin on contracts ?
 	?>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -2341,5 +2341,5 @@ $(document).ready(function() {
 	}
 });
 </script>
-<?php
+	<?php
 }
