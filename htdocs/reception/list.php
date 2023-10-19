@@ -129,7 +129,7 @@ $arrayfields = array(
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>'getDolGlobalConst("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
+	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
 );
 
 // Extra fields
@@ -1289,7 +1289,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['e.datec']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
 		print '</td>';
 		if (!$i) {
@@ -1298,7 +1298,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['e.tms']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour');
 		print '</td>';
 		if (!$i) {

@@ -1012,7 +1012,7 @@ class Societe extends CommonObject
 				// Ajout du commercial affecte
 				if ($this->commercial_id != '' && $this->commercial_id != -1) {
 					$this->add_commercial($user, $this->commercial_id);
-				} elseif (empty($user->rights->societe->client->voir)) {
+				} elseif (!$user->hasRight('societe', 'client', 'voir')) {
 					// si un commercial cree un client il lui est affecte automatiquement
 					$this->add_commercial($user, $user->id);
 				}
@@ -1206,7 +1206,7 @@ class Societe extends CommonObject
 					// Check for mandatory prof id (but only if country is same than ours)
 					if ($mysoc->country_id > 0 && $this->country_id == $mysoc->country_id) {
 						$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
-						if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
+						if (!$vallabel && getDolGlobalString($idprof_mandatory)) {
 							$langs->load("errors");
 							$error++;
 							$this->errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $this->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").')';
@@ -2933,7 +2933,7 @@ class Societe extends CommonObject
 		$linkend = '</a>';
 
 		global $user;
-		if (empty($user->rights->societe->client->voir) && $user->socid > 0 && $this->id != $user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && $user->socid > 0 && $this->id != $user->socid) {
 			$linkstart = '';
 			$linkend = '';
 		}
@@ -5298,11 +5298,12 @@ class Societe extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'code_client')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';
 		}
-
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}

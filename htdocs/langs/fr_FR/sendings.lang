@@ -74,8 +74,11 @@ SumOfProductWeights=Somme des poids des produits
 # warehouse details
 DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock à la création d'une expédition pour les numéros de séries et lots
+CreationOptions=Options disponibles à la création d'une expédition
 
 ShipmentDistribution=Répartition des expéditions
 
 ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
-ErrorNoCombinationBatchcode=Pas de répartition pour la ligne %s car aucune combinaison entrepôt, produit, code de lot n'a été trouvée.
+ErrorNoCombinationBatchcode=Impossible d'enregistrer la ligne %s car la combinaison entrepôt-produit-lot/série (%s, %s, %s) n'a pas été trouvée en stock.
+

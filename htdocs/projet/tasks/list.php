@@ -300,7 +300,7 @@ if ($id) {
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 //var_dump($projectsListId);
@@ -382,7 +382,7 @@ if ($search_task_user > 0) {
 }
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
@@ -790,7 +790,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 $includeonly = '';
-if (empty($user->rights->user->user->lire)) {
+if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
@@ -800,7 +800,7 @@ $moreforfilter .= '</div>';
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('TasksWithThisUserAsContact');
 $includeonly = '';
-if (empty($user->rights->user->user->lire)) {
+if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');

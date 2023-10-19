@@ -87,7 +87,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'home',
 		'classname' =>  $classname = (empty($_SESSION["mainmenu"]) || $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
+		'prefix' => '<span class="fas fa-home fa-fw"></span>',
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
@@ -112,7 +112,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'members',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'member', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'member', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 0 : 1),
 		'loadLangs' => array("members"),
 		'submenus' => array(),
@@ -141,7 +141,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'companies',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "companies") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'company', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'company', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "companies") ? 0 : 1),
 		'loadLangs' => array("companies", "suppliers"),
 		'submenus' => array(),
@@ -168,7 +168,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'products',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'product', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'product', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 0 : 1),
 		'loadLangs' => array("products", "stocks"),
 		'submenus' => array(),
@@ -193,7 +193,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'mrp',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'mrp', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'mrp', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "mrp") ? 0 : 1),
 		'loadLangs' => array("mrp"),
 		'submenus' => array(),
@@ -231,7 +231,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'project',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "project") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'project', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'project', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "project") ? 0 : 1),
 		'loadLangs' => array("projects"),
 		'submenus' => array(),
@@ -280,7 +280,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'commercial',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "commercial") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'contract', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'contract', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "commercial") ? 0 : 1),
 		'loadLangs' => array("commercial"),
 		'submenus' => array(),
@@ -314,7 +314,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'billing',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "billing") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'bill', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'bill', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "billing") ? 0 : 1),
 		'loadLangs' => array("compta"),
 		'submenus' => array(),
@@ -339,7 +339,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'bank',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "bank") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'bank_account', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'bank_account', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "bank") ? 0 : 1),
 		'loadLangs' => array("compta", "banks"),
 		'submenus' => array(),
@@ -364,7 +364,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'accountancy',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "accountancy") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'accountancy', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'accountancy', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
 		'loadLangs' => array("compta", "accountancy", "assets", "intracommreport"),
 		'submenus' => array(),
@@ -390,7 +390,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'hrm',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'hrm', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'hrm', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 0 : 1),
 		'loadLangs' => array("hrm", "holiday"),
 		'submenus' => array(),
@@ -421,7 +421,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'ticket',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'ticket', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'ticket', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
 		'loadLangs' => array("ticket", "knowledgemanagement"),
 		'submenus' => array(),
@@ -446,7 +446,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'tools',
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => img_picto('', 'tools', 'class="fa-fw paddingright pictofixedwidth"'),
+		'prefix' => img_picto('', 'tools', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
 		'loadLangs' => array("other"),
 		'submenus' => array(),
@@ -575,10 +575,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		print_end_menu_entry(4);
 	}
 
+	//var_dump($menu->liste);
 	if (empty($noout)) {
 		foreach ($menu->liste as $menuval) {
 			print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-			print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
+			print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
 			print_end_menu_entry($menuval['enabled']);
 		}
 	}
@@ -627,16 +628,17 @@ function print_start_menu_entry($idsel, $classname, $showmode)
 /**
  * Output menu entry
  *
- * @param	string	$text		Text
- * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
- * @param	string	$url		Url
- * @param	string	$id			Id
- * @param	string	$idsel		Id sel
- * @param	string	$classname	Class name
- * @param	string	$atarget	Target
+ * @param	string	$text			Text
+ * @param	int		$showmode		0 = hide, 1 = allowed or 2 = not allowed
+ * @param	string	$url			Url
+ * @param	string	$id				Id
+ * @param	string	$idsel			Id sel
+ * @param	string	$classname		Class name
+ * @param	string	$atarget		Target
+ * @param	array	$menuval		All the $menuval array
  * @return	void
  */
-function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget)
+function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
 {
 	global $conf, $langs;
 
@@ -646,7 +648,13 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	//$conf->global->THEME_TOPMENU_DISABLE_TEXT=1;
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
+		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
+			print $menuval['prefix'];
+		} else {
+			print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
+		}
+		print '</div>';
 		print '</a>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
 			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
@@ -657,7 +665,13 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 		}
 	} elseif ($showmode == 2) {
 		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled">';
+		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
+			print $menuval['prefix'];
+		} else {
+			print '<span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span>';
+		}
+		print '</div>';
 		print '</div>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
 			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
@@ -987,8 +1001,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						print '<span class="vmenu">';
 					}
 					if (!empty($menu_array[$i]['prefix'])) {
-						if (preg_match('/^fa-[a-zA-Z0-9-_]+$/', $menu_array[$i]['prefix'])) {
-							print '<span class="fa '.$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
+						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $menu_array[$i]['prefix'])) {
+							print '<span class="fas '.$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
 						} else {
 							print $menu_array[$i]['prefix'];
 						}
@@ -1356,7 +1370,11 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($user->socid)) {
 				$newmenu->add("/commande/list_det.php?leftmenu=orders", $langs->trans("ListOrderLigne"), 1, $user->hasRight('commande',  'lire'));
 			}
-			$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande',  'lire'));
+			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'commande', 'export'));
+			} else {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande',  'lire'));
+			}
 		}
 
 		// Supplier proposal
@@ -1389,8 +1407,11 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			}
 			// Billed is another field. We should add instead a dedicated filter on list. if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&billed=1", $langs->trans("Billed"), 2, $user->hasRight('fournisseur',  'commande', 'lire'));
 
-
-			$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur',  'commande', 'lire'));
+			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'commande', 'export'));
+			} else {
+				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur',  'commande', 'lire'));
+			}
 		}
 
 		// Contrat
@@ -1403,7 +1424,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "contracts") {
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=0", $langs->trans("MenuInactiveServices"), 2, $user->hasRight('contrat',  'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4", $langs->trans("MenuRunningServices"), 2, $user->hasRight('contrat',  'lire'));
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat',  'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4&filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat',  'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat',  'lire'));
 			}
 		}
@@ -2009,7 +2030,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		// Cash Control
 		if (isModEnabled('takepos') || isModEnabled('cashdesk')) {
 			$permtomakecashfence = ($user->hasRight('cashdesk', 'run')|| $user->hasRight('takepos', 'run'));
-			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("POS"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="pictofixedwidth"'));
+			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("CashControl"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, $permtomakecashfence);
 			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("List"), 1, $permtomakecashfence);
 		}
@@ -2033,7 +2054,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 	if ($mainmenu == 'products') {
 		// Products
 		if (isModEnabled('product')) {
-			$newmenu->add("/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->hasRight('product',  'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->hasRight('product',  'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->hasRight('product',  'creer'));
 			$newmenu->add("/product/list.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->hasRight('product',  'read'));
 			if (isModEnabled('stock')) {
@@ -2061,7 +2082,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 
 		// Services
 		if (isModEnabled('service')) {
-			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service',  'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service',  'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service',  'creer'));
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service',  'read'));
 
@@ -2085,7 +2106,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Warehouse
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
-			$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="pictofixedwidth"'));
+			$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->hasRight('stock', 'creer'));
 			$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->hasRight('stock',  'lire'));
 			$newmenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));
@@ -2103,7 +2124,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		}
 
 		if (isModEnabled('stocktransfer')) {
-			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans("ModuleStockTransferName"), 0, $user->hasRight('stocktransfer',  'stocktransfer', 'read'), '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="pictofixedwidth"'));
+			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans("ModuleStockTransferName"), 0, $user->hasRight('stocktransfer',  'stocktransfer', 'read'), '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add('/product/stock/stocktransfer/stocktransfer_card.php?action=create', $langs->trans('StockTransferNew'), 1, $user->hasRight('stocktransfer',  'stocktransfer', 'write'));
 			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans('List'), 1, $user->hasRight('stocktransfer',  'stocktransfer', 'read'));
 		}
@@ -2112,13 +2133,13 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="pictofixedwidth"'));
+				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
 					$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->hasRight('stock',  'creer'));
 					$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->hasRight('stock',  'lire'));
 				}
 			} else {
-				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'inventory_advance', 'read'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="pictofixedwidth"'));
+				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'inventory_advance', 'read'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
 					$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->hasRight('stock',  'inventory_advance', 'write'));
 					$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->hasRight('stock',  'inventory_advance', 'read'));
@@ -2129,7 +2150,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Shipments
 		if (isModEnabled('expedition')) {
 			$langs->load("sendings");
-			$newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->hasRight('expedition',  'lire'), '', $mainmenu, 'sendings', 0, '', '', '', img_picto('', 'shipment', 'class="pictofixedwidth"'));
+			$newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->hasRight('expedition',  'lire'), '', $mainmenu, 'sendings', 0, '', '', '', img_picto('', 'shipment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/expedition/card.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->hasRight('expedition',  'creer'));
 			$newmenu->add("/expedition/list.php?leftmenu=sendings", $langs->trans("List"), 1, $user->hasRight('expedition',  'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "sendings") {
@@ -2143,7 +2164,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Receptions
 		if (isModEnabled('reception')) {
 			$langs->load("receptions");
-			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception',  'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="pictofixedwidth"'));
+			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception',  'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/reception/card.php?action=create2&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->hasRight('reception',  'creer'));
 			$newmenu->add("/reception/list.php?leftmenu=receptions", $langs->trans("List"), 1, $user->hasRight('reception',  'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") {

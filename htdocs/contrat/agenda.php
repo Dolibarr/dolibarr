@@ -82,7 +82,6 @@ if (!$sortorder) {
 
 
 $object = new Contrat($db);
-
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
@@ -91,6 +90,8 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
@@ -165,8 +166,8 @@ if ($object->id > 0) {
 	if (!empty($modCodeContract->code_auto)) {
 		$morehtmlref .= $object->ref;
 	} else {
-		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 3);
-		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 2);
+		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
+		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 2);
 	}
 
 	$permtoedit = 0;

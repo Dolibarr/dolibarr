@@ -1383,6 +1383,11 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
 		if ($result) {
+			if ($status == 0) {
+				$this->context['actionmsg'] = 'User '.$this->login.' disabled';
+			} else {
+				$this->context['actionmsg'] = 'User '.$this->login.' enabled';
+			}
 			// Call trigger
 			$result = $this->call_trigger('USER_ENABLEDISABLE', $user);
 			if ($result < 0) {
@@ -2865,7 +2870,6 @@ class User extends CommonObject
 	{
 		global $langs, $conf, $db, $hookmanager, $user;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
 
 		if (!$user->hasRight('user', 'user', 'read') && $user->id != $this->id) {
 			$option = 'nolink';
@@ -2947,7 +2951,7 @@ class User extends CommonObject
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"><div class="valignmiddle userphoto inline-block">'.img_object('', 'user', $paddafterimage.' class="")', 0, 0, $notooltip ? 0 : 1).'</div></span>';
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"><div class="valignmiddle userphoto inline-block center marginrightonlyshort"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 			} else {
 				// Picto must be a photo
 				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
@@ -3004,7 +3008,7 @@ class User extends CommonObject
 		$linkend = '</a>';
 
 		//Check user's rights to see an other user
-		if ((!$user->rights->user->user->lire && $this->id != $user->id)) {
+		if ((!$user->hasRight('user', 'user', 'lire') && $this->id != $user->id)) {
 			$option = 'nolink';
 		}
 
@@ -3132,7 +3136,9 @@ class User extends CommonObject
 			$return .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$return .= '</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}
@@ -3167,11 +3173,11 @@ class User extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
+			$dn = getDolGlobalString('LDAP_KEY_USERS') . "=".$info[getDolGlobalString('LDAP_KEY_USERS')]."," . getDolGlobalString('LDAP_USER_DN');
 		} elseif ($mode == 1) {
 			$dn = $conf->global->LDAP_USER_DN;
 		} elseif ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS];
+			$dn = getDolGlobalString('LDAP_KEY_USERS') . "=".$info[getDolGlobalString('LDAP_KEY_USERS')];
 		}
 		return $dn;
 	}
@@ -3232,22 +3238,22 @@ class User extends CommonObject
 			}
 		}
 		if ($this->address && !empty($conf->global->LDAP_FIELD_ADDRESS)) {
-			$info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+			$info[getDolGlobalString('LDAP_FIELD_ADDRESS')] = $this->address;
 		}
 		if ($this->zip && !empty($conf->global->LDAP_FIELD_ZIP)) {
-			$info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
+			$info[getDolGlobalString('LDAP_FIELD_ZIP')] = $this->zip;
 		}
 		if ($this->town && !empty($conf->global->LDAP_FIELD_TOWN)) {
-			$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
+			$info[getDolGlobalString('LDAP_FIELD_TOWN')] = $this->town;
 		}
 		if ($this->note_public && !empty($conf->global->LDAP_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_public, 2);
+			$info[getDolGlobalString('LDAP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_public, 2);
 		}
 		if ($this->socid > 0) {
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info[$conf->global->LDAP_FIELD_COMPANY] = $soc->name;
+			$info[getDolGlobalString('LDAP_FIELD_COMPANY')] = $soc->name;
 			if ($soc->client == 1) {
 				$info["businessCategory"] = "Customers";
 			}
@@ -3262,10 +3268,10 @@ class User extends CommonObject
 		// When password is modified
 		if (!empty($this->pass)) {
 			if (!empty($conf->global->LDAP_FIELD_PASSWORD)) {
-				$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
+				$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
 			}
 			if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+				$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
 		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
 			// Set LDAP password if possible
@@ -3274,16 +3280,16 @@ class User extends CommonObject
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5'); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+						$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5'); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
 				if (!empty($conf->global->LDAP_FIELD_PASSWORD)) {
-					$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
 				if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-					$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+					$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 				}
 			}
 		}
@@ -3316,21 +3322,21 @@ class User extends CommonObject
 		}
 
 		if (!empty($conf->global->LDAP_FIELD_USERID)) {
-			$info[$conf->global->LDAP_FIELD_USERID] = $this->id;
+			$info[getDolGlobalString('LDAP_FIELD_USERID')] = $this->id;
 		}
 		if (!empty($conf->global->LDAP_FIELD_GROUPID)) {
 			$usergroup = new UserGroup($this->db);
 			$groupslist = $usergroup->listGroupsForUser($this->id);
-			$info[$conf->global->LDAP_FIELD_GROUPID] = '65534';
+			$info[getDolGlobalString('LDAP_FIELD_GROUPID')] = '65534';
 			if (!empty($groupslist)) {
 				foreach ($groupslist as $groupforuser) {
-					$info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id; //Select first group in list
+					$info[getDolGlobalString('LDAP_FIELD_GROUPID')] = $groupforuser->id; //Select first group in list
 					break;
 				}
 			}
 		}
 		if (!empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) {
-			$info[$conf->global->LDAP_FIELD_HOMEDIRECTORY] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->login";
+			$info[getDolGlobalString('LDAP_FIELD_HOMEDIRECTORY')] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->login";
 		}
 
 		return $info;

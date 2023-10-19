@@ -10,11 +10,11 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->phpVersion(PhpVersion::PHP_71);
 	$rectorConfig->paths([
 		__DIR__ . '/../../../htdocs/',
-		__DIR__ . '/../../../scripts',
-		__DIR__ . '/../../../test',
+		__DIR__ . '/../../../scripts/',
+		__DIR__ . '/../../../test/phpunit/',
 	]);
 	$rectorConfig->skip([
-		__DIR__ . '/../../../htdocs/includes/*',
+		'**/includes/**',
 		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
 	$rectorConfig->parallel(240);
@@ -22,6 +22,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 	// register a single rule
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
+	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
 
 	// define sets of rules
 	// $rectorConfig->sets([

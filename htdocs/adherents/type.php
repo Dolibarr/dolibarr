@@ -187,7 +187,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
