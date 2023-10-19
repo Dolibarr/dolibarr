@@ -1854,7 +1854,6 @@ class BonPrelevement extends CommonObject
 				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture_fourn = f.rowid";
-				print_r($sql);exit;
 				// Lines
 				$i = 0;
 				$resql = $this->db->query($sql);
