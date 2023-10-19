@@ -391,7 +391,7 @@ class EcmFiles extends CommonObject
 	 * @param  string $ref         	   	Hash of file name (filename+filepath). Not always defined on some version.
 	 * @param  string $relativepath    	Relative path of file from document directory. Example: 'path/path2/file' or 'path/path2/*'
 	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
-	 * @param  string $hashforshare    	Hash of file sharing or 'shared'
+	 * @param  string $hashforshare    	Hash of file sharing, or 'shared'
 	 * @param  string $src_object_type 	src_object_type to search (value of object->table_element)
 	 * @param  string $src_object_id 	src_object_id to search
 	 * @return int                 	   	<0 if KO, 0 if not found, >0 if OK
