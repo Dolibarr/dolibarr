@@ -139,8 +139,57 @@ class Reception extends CommonObject
 	// We can use this to know warehouse planned to be used for each lot.
 	public $detail_batch;
 
+	/**
+	 * Workflow of the status variables:
+	 *
+	 * A reception is first created as a draft. It can then be validated
+	 * to apply the changes in the stock, and the closed when the stock
+	 * parts have been received.
+	 *
+	 * Only draft reception can have the stock lines modified.
+	 *
+	 * @codingStandardsIgnoreStart
+     * \verbatim
+     *              Creation
+     *                 |
+     *                 v
+     *           STATUS_DRAFT
+     *              |    ^
+     *     valid()  |    |  setDraft()
+     *              v    |
+     *         STATUS_VALIDATED
+     *              |    ^
+     * setClosed()  |    |  reOpen()
+     *              v    |
+     *           STATUS_CLOSED
+     *  \endverbatim
+	 * @codingStandardsIgnoreStop
+     */
+
+	/**
+	 * Set as Reception::status.
+	 *
+	 * The status is assigned when Reception::setDraft() is called on an
+	 * instance with Reception::status == Reception::STATUS_VALIDATED.
+	 **/
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Set as Reception::status.
+	 *
+	 * The status is assigned when Reception::valid() is called on an
+	 * instance with Reception::status == Reception::STATUS_DRAFT or when
+	 * Reception::reOpen() is called on an instance with Reception::status
+	 * == Reception::STATUS_CLOSED.
+	 **/
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Set as Reception::status.
+	 *
+	 * The status is assigned when Reception::setClosed() is called on an
+	 * instance with Reception::status == Reception::STATUS_VALIDATED.
+	 **/
 	const STATUS_CLOSED = 2;
 
 
