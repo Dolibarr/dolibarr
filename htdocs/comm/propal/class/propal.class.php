@@ -265,6 +265,11 @@ class Propal extends CommonObject
 	 */
 	public $availability_code;
 
+	/**
+	 * @var string availabilty label
+	 */
+	public $availability;
+
 	public $duree_validite;
 
 	public $demand_reason_id;		// id
