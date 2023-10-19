@@ -592,8 +592,7 @@ class Reception extends CommonObject
 
 						if (intval($result) < 0) {
 							$error++;
-							$this->errors[] = $mouvS->error;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
+							$this->setErrorsFromObject($mouvS);
 							break;
 						}
 					} else {
@@ -606,8 +605,7 @@ class Reception extends CommonObject
 
 						if (intval($result) < 0) {
 							$error++;
-							$this->errors[] = $mouvS->error;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
+							$this->setErrorsFromObject($mouvS);
 							break;
 						}
 					}
@@ -629,7 +627,7 @@ class Reception extends CommonObject
 				$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
 				if ($ret < 0) {
 					$error++;
-					$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
+					$this->setErrorsFromObject($commandeFournisseur);
 				}
 			} else {
 				$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
@@ -739,8 +737,7 @@ class Reception extends CommonObject
 
 			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
 			if ($ret < 0) {
-				$this->error = $supplierorderdispatch->error;
-				$this->errors = $supplierorderdispatch->errors;
+				$this->setErrorsFromObject($supplierorderdispatch);
 				return $ret;
 			} else {
 				// build array with quantity received by product in all supplier orders (origin)
@@ -823,8 +820,7 @@ class Reception extends CommonObject
 		$supplierorderline = new CommandeFournisseurLigne($this->db);
 		$result = $supplierorderline->fetch($id);
 		if ($result <= 0) {
-			$this->error = $supplierorderline->error;
-			$this->errors = $supplierorderline->errors;
+			$this->setErrorsFromObject($supplierorderline);
 			return -1;
 		}
 
@@ -1620,8 +1616,7 @@ class Reception extends CommonObject
 					$langs->trans("ReceptionClassifyClosedInDolibarr", $this->ref), $date_eatby, $date_sellby, $batch, '', 0, $inventorycode);
 
 				if ($result < 0) {
-					$this->error = $mouvS->error;
-					$this->errors = $mouvS->errors;
+					$this->setErrorsFromObject($mouvS);
 					$this->db->rollback();
 					return -1;
 				}
@@ -1631,8 +1626,7 @@ class Reception extends CommonObject
 		// Call trigger
 		$result = $this->call_trigger('RECEPTION_CLOSED', $user);
 		if ($result < 0) {
-			$this->error = $mouvS->error;
-			$this->errors = $mouvS->errors;
+			$this->setErrorsFromObject($mouvS);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1765,8 +1759,7 @@ class Reception extends CommonObject
 					$langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $date_eatby, $date_sellby, $batch, $fk_origin_stock, $inventorycode);
 
 				if ($result < 0) {
-					$this->error = $mouvS->error;
-					$this->errors = $mouvS->errors;
+					$this->setErrorsFromObject($mouvS);
 					$this->db->rollback();
 					return -1;
 				}
@@ -1785,8 +1778,7 @@ class Reception extends CommonObject
 			$commande->fetch($this->origin_id);
 			$result = $commande->setStatus($user, 4);
 			if ($result < 0) {
-				$this->error = $commande->error;
-				$this->errors = $commande->errors;
+				$this->setErrorsFromObject($commande);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1889,8 +1881,7 @@ class Reception extends CommonObject
 					$langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), '', $date_eatby, $date_sellby, $batch, 0, $inventorycode);
 
 				if ($result < 0) {
-					$this->error = $mouvS->error;
-					$this->errors = $mouvS->errors;
+					$this->setErrorsFromObject($mouvS);
 					$this->db->rollback();
 					return -1;
 				}
