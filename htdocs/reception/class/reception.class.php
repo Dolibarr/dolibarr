@@ -1722,7 +1722,8 @@ class Reception extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->statut = 1;
+			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			// If stock increment is done on closing
