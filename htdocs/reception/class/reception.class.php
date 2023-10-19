@@ -1959,6 +1959,7 @@ class Reception extends CommonObject
 
 			if (!$error) {
 				$this->statut = self::STATUS_DRAFT;
+				$this->status = self::STATUS_DRAFT;
 				$this->db->commit();
 				return 1;
 			} else {
