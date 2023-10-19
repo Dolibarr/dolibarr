@@ -1505,9 +1505,9 @@ if ($action == 'create') {
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
+				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			} else {
-				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
+				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			}
 		}
 		print '</td></tr>';
@@ -1520,7 +1520,7 @@ if ($action == 'create') {
 		}
 		if ($origin=='contact') $preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
 		print img_picto('', 'contact', 'class="paddingrightonly"');
-		print $form->selectcontacts(empty($conf->global->MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT) ? GETPOST('socid', 'int') : 0, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
+		print $form->selectcontacts(empty($conf->global->MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT) ? GETPOST('socid', 'int') : 0, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
@@ -1532,7 +1532,7 @@ if ($action == 'create') {
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container">';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+		print $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx maxwidth500');
 
 		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
 		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
@@ -2013,19 +2013,19 @@ if ($id > 0) {
 			// Related company
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
-			print '<div class="maxwidth200onsmartphone">';
+			print '<div>';
 			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
-			print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
 			print '</td></tr>';
 
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(empty($conf->global->MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT) ? $object->socid : 0, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
+			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(empty($conf->global->MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT) ? $object->socid : 0, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array(), 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -2036,10 +2036,10 @@ if ($id > 0) {
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
-			print img_picto('', 'project', 'class="paddingrightonly"');
-			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500');
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			if ($numprojet == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.img_picto($langs->trans("AddProject"), 'project').'</a>';
 			}
 			print '</td></tr>';
 		}

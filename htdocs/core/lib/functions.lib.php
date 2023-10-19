@@ -2989,6 +2989,10 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
+	if ($timestamp === '') {
+		return array();
+	}
+
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
 	if ($forcetimezone) {
@@ -12888,7 +12892,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$histo[$key]['id'];
 
 			$tmpa = dol_getdate($histo[$key]['datestart'], false);
-			if ($actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']) {
+
+			if (isset($tmpa['year']) && isset($tmpa['yday']) && $actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']) {
 				$actualCycleDate = $tmpa['year'].'-'.$tmpa['yday'];
 				$out .= '<!-- timeline time label -->';
 				$out .= '<li class="time-label">';
@@ -12911,10 +12916,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '<div class="timeline-item">'."\n";
 
-			$out .= '<span class="timeline-header-action">';
+			$out .= '<span class="time timeline-header-action2">';
 
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a class="timeline-btn" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+				$out .= '<a class="paddingleft paddingright timeline-btn2 editfielda" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 				$out .= $histo[$key]['id'];
 				$out .= '</a> ';
 			} else {
@@ -12923,7 +12928,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+				$out .= '<a class="paddingleft paddingright timeline-btn2 editfielda" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+				//$out .= '<i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i>';
+				$out .= img_picto($langs->trans("Modify"), 'edit', 'class="edita"');
+				$out .= '</a>';
 			}
 
 			$out .= '</span>';
