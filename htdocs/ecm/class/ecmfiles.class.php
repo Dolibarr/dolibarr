@@ -440,28 +440,33 @@ class EcmFiles extends CommonObject
 				$sql .= " AND t.filename = '".$this->db->escape($filename)."'";
 			}
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		} elseif (!empty($ref)) {		// hash of file path
+		}
+		if (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		} elseif (!empty($hashoffile)) {	// hash of content
+		}
+		if (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		} elseif (!empty($hashforshare)) {
+		}
+		if (!empty($hashforshare)) {
 			if ($hashforshare != 'shared') {
 				$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
 			} else {
 				$sql .= " AND t.share IS NOT NULL AND t.share <> ''";
 			}
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
-		} elseif ($src_object_type && $src_object_id) {
-			// Warning: May return several record, and only first one is returned !
+		}
+		if ($src_object_type && $src_object_id) {
 			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
 			$sql .= " AND t.entity = ".((int) $conf->entity);
-		} else {
+		}
+		if ($id > 0) {
 			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique
 		}
 
-		$this->db->plimit(1); // When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
+		// Warning: May return several record, and only first one is returned !
+		$this->db->plimit(1); // When we search on src, or on hash of content (hashforfile), we take first one only
 		$this->db->order('t.rowid', 'ASC');
 
 		$resql = $this->db->query($sql);
