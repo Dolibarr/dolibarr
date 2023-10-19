@@ -1579,7 +1579,7 @@ class Reception extends CommonObject
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
-			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setClosed select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -1596,7 +1596,7 @@ class Reception extends CommonObject
 				if ($qty <= 0) {
 					continue;
 				}
-				dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+				dol_syslog(get_class($this)."::setClosed movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
 
 				$mouvS = new MouvementStock($this->db);
 				$mouvS->origin = &$this;
