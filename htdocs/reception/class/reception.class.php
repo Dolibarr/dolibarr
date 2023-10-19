@@ -83,6 +83,7 @@ class Reception extends CommonObject
 	public $billed;
 	public $model_pdf;
 
+	public $weight;
 	public $trueWeight;
 	public $weight_units;
 	public $trueWidth;
