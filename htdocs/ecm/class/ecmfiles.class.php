@@ -432,6 +432,7 @@ class EcmFiles extends CommonObject
 		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
+		$filterfound = 0;
 		if ($relativepath) {
 			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath); // We must never have the .noexe into the database
 			$sql .= " AND t.filepath = '".$this->db->escape(dirname($relativepath))."'";
@@ -440,14 +441,17 @@ class EcmFiles extends CommonObject
 				$sql .= " AND t.filename = '".$this->db->escape($filename)."'";
 			}
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
+			$filterfound++;
 		}
 		if (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
+			$filterfound++;
 		}
 		if (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
+			$filterfound++;
 		}
 		if (!empty($hashforshare)) {
 			if ($hashforshare != 'shared') {
@@ -456,12 +460,14 @@ class EcmFiles extends CommonObject
 				$sql .= " AND t.share IS NOT NULL AND t.share <> ''";
 			}
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
+			$filterfound++;
 		}
 		if ($src_object_type && $src_object_id) {
 			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
 			$sql .= " AND t.entity = ".((int) $conf->entity);
+			$filterfound++;
 		}
-		if ($id > 0) {
+		if ($id > 0 || empty($filterfound)) {
 			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique
 		}
 
