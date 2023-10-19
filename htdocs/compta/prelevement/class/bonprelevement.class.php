@@ -1555,7 +1555,7 @@ class BonPrelevement extends CommonObject
 		$this->total = 0;
 
 		// Build file for European countries
-		if ($mysoc->isInEEC() || !empty($user_dest)) {
+		if ($mysoc->isInEEC()) {
 			$userAcount = new UserBankAccount($this->db);
 			$userAcount->fetch(0, '', $user_dest);
 			$userAcount->checkCountryBankAccount();
