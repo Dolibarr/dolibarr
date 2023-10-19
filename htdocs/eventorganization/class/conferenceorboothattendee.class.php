@@ -112,7 +112,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'email_company' => array('type'=>'mail', 'label'=>'EmailCompany', 'enabled'=>'1', 'position'=>41, 'notnull'=>0, 'visible'=>-2, 'searchall'=>1),
 		'date_subscription' => array('type'=>'datetime', 'label'=>'DateOfRegistration', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1, 'showoncombobox'=>'1',),
 		'fk_invoice' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Invoice', 'enabled'=>'isModEnabled("facture")', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'index'=>0, 'picto'=>'bill', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'amount' => array('type'=>'price', 'label'=>'AmountPaid', 'enabled'=>'1', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"AmountOfSubscriptionPaid",),
+		'amount' => array('type'=>'price', 'label'=>'AmountPaid', 'enabled'=>'1', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"AmountOfRegistrationPaid",),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>3,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>3,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2, 'css'=>'nowraponall'),
