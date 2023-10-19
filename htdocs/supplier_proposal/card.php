@@ -1339,7 +1339,7 @@ if ($action == 'create') {
 	print '<td colspan="2">';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
 	$datedelivery = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-	if (in_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
+	if (getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY') >= 0) {	// If value set to 0 or a num, not empty
 		$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
