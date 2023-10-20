@@ -1945,7 +1945,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 
-					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
+					print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch));
 
 					print '<span id="statusBatchWarning" class="warning" style="display: none;">';
 					print img_warning().'&nbsp;'.$langs->trans("WarningConvertFromBatchToSerial").'</span>';
