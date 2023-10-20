@@ -657,20 +657,20 @@ class modCategorie extends DolibarrModules
 	 *
 	 * @param int		$r				Index of import tables
 	 * @param int		$cat_id			Categorie id
-	 * @param string	$enabled		Condition to enable this export
 	 * @param string	$class			Class of the linked object
+	 * @param string	$enabled		Condition to enable this export
 	 * @param string	$permission		Permission to export the linked object
 	 * @param array		$fields_list	Additionnal fields of the linked object to export
 	 *
 	 * @return void
 	 */
 	protected function exportTagLinks(
-		int $r,
-		int $cat_id,
-		string $class,
-		string $enabled,
-		array $permission,
-		array $fields_list
+		int		$r,
+		int		$cat_id,
+		string	$class,
+		string	$enabled,
+		array	$permission,
+		array	$fields_list
 	) {
 		global $conf;
 
@@ -743,11 +743,11 @@ class modCategorie extends DolibarrModules
 	 * @return void
 	 */
 	protected function importTagLinks(
-		int $r,
-		int $cat_id,
-		string $class_file,
-		string $class,
-		string $element,
+		int		$r,
+		int		$cat_id,
+		string	$class_file,
+		string	$class,
+		string	$element,
 	) {
 		$cat_type = Categorie::$MAP_ID_TO_CODE[$cat_id];
 
