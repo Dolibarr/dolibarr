@@ -1910,6 +1910,25 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 }
 
 /**
+ *	Write messages into the debugbar
+ *
+ * 	@param  mixed		$message				Message to write into the debugbar. Can be text or any php object
+ * 	@param  string		$level					Log level
+ *
+ *  @return	void
+ */
+function dol_debug($message, $level = 'debug')
+{
+	global $debugbar;
+
+	// If debugbar module enabled
+	if (!isModEnabled('debugbar') || !isset($debugbar) || !isset($debugbar['messages'])) {
+		return;
+	}
+	$debugbar['messages']->addMessage($message, $level);
+}
+
+/**
  *	Return HTML code to output a button to open a dialog popup box.
  *  Such buttons must be included inside a HTML form.
  *
