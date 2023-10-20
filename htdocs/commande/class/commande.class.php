@@ -131,6 +131,10 @@ class Commande extends CommonOrder
 	public $billed;
 
 	/**
+	 * @var string Limit date payment
+	 */
+	public $date_lim_reglement;
+	/**
 	 * @var string Condition payment code
 	 */
 	public $cond_reglement_code;
@@ -220,10 +224,6 @@ class Commande extends CommonOrder
 	 */
 	public $remise_percent;
 
-	public $remise_absolue;
-	public $info_bits;
-	public $rang;
-	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
 	/**
