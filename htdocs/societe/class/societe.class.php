@@ -321,6 +321,11 @@ class Societe extends CommonObject
 	public $region;
 
 	/**
+	 * @var int country_id
+	 */
+	public $country_id;
+
+	/**
 	 * @var string State code
 	 * @deprecated Use state_code instead
 	 * @see $state_code
