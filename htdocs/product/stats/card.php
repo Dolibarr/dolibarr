@@ -167,15 +167,21 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$h++;
 
 	$title = $langs->trans("ListProductServiceByPopularity");
-	if ((string) $type == '1') {
-		$title = $langs->trans("ListServiceByPopularity");
-	}
 	if ((string) $type == '0') {
 		$title = $langs->trans("ListProductByPopularity");
+	}	if ((string) $type == '1') {
+		$title = $langs->trans("ListServiceByPopularity");
 	}
 
+
 	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
-	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	$head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
+	if ((string) $type == '0') {
+		$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	}
+	if ((string) $type == '1') {
+		$head[$h][1] = $langs->trans("ServicesPerPopularity");
+	}
 	$head[$h][2] = 'popularity';
 	$h++;
 
@@ -264,7 +270,13 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
-	print $langs->trans("StatsByNumberOfUnits");
+	if ($type == '0') {
+		print $langs->trans("StatsByNumberOfUnitsProducts");
+	} elseif ($type == '1') {
+		print $langs->trans("StatsByNumberOfUnitsServices");
+	} else {
+		print $langs->trans("StatsByNumberOfUnits");
+	}
 	if ($mode != 'byunit') {
 		print '</a>';
 	} else {
@@ -296,7 +308,13 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
-	print $langs->trans("StatsByAmount");
+	if ($type == '0') {
+		print $langs->trans("StatsByAmountProducts");
+	} elseif ($type == '1') {
+		print $langs->trans("StatsByAmountServices");
+	} else {
+		print $langs->trans("StatsByAmount");
+	}
 	if ($mode != 'byamount') {
 		print '</a>';
 	} else {
