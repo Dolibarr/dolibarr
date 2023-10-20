@@ -28,7 +28,7 @@ CREATE TABLE llx_resource
   zip                   varchar(25)     DEFAULT NULL,
   town                  varchar(50)     DEFAULT NULL,
   photo_filename        varchar(255)    DEFAULT NULL,
-  user_places           integer         DEFAULT NULL,
+  max_users             integer         DEFAULT NULL,
   phone                 varchar(20)     DEFAULT NULL,
   email                 varchar(128)    DEFAULT NULL,
   url                   varchar(255)    DEFAULT NULL,
