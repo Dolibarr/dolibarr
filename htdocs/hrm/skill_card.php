@@ -124,7 +124,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen

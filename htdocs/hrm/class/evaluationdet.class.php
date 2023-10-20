@@ -542,7 +542,7 @@ class EvaluationLine extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EVALUATIONLINE_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_EVALUATIONLINE_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}

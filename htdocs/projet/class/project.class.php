@@ -2426,7 +2426,9 @@ class Project extends CommonObject
 			$return .= img_warning($langs->trans('Late'));
 		}
 		$return .= '</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		// Date
 		/*
 		if (property_exists($this, 'date_start') && $this->date_start) {

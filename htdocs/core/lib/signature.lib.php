@@ -69,7 +69,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if (empty($object)) {
 			$obj = new stdClass();
 		} else {
-			dol_syslog(__METHOD__." using global object is deprecated, please give obj as argument", LOG_WARNING);
+			dol_syslog(__FUNCTION__." using global object is deprecated, please give obj as argument", LOG_WARNING);
 			$obj = $object;
 		}
 	}

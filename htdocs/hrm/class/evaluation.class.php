@@ -563,7 +563,7 @@ class Evaluation extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EVALUATION_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_EVALUATION_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -665,9 +665,7 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-
-
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'EVALUATION_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HRM_EVALUATION_UNVALIDATE');
 	}
 
 	/**
@@ -684,9 +682,7 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-
-
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'EVALUATION_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'HRM_EVALUATION_CANCEL');
 	}
 
 	/**
@@ -703,9 +699,7 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-
-
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EVALUATION_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'HRM_EVALUATION_REOPEN');
 	}
 
 	/**
