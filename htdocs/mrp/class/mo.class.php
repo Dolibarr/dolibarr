@@ -821,10 +821,10 @@ class Mo extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @param	User	$user										User that deletes
+	 * @param	bool	$notrigger									false=launch triggers after, true=disable triggers
 	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
-	 * @return int             <0 if KO, >0 if OK
+	 * @return	int													<0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
 	{
@@ -1135,10 +1135,10 @@ class Mo extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	User	$user										Object user that modify
+	 *  @param	int		$notrigger									1=Does not execute triggers, 0=Execute triggers
 	 *  @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int													<0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
