@@ -226,20 +226,6 @@ class Propal extends CommonObject
 	public $deposit_percent;
 
 	/**
-	 * @deprecated
-	 */
-	public $remise_percent;
-
-	/**
-	 * @deprecated
-	 */
-	public $remise;
-	/**
-	 * @deprecated
-	 */
-	public $remise_absolue;
-
-	/**
 	 * @var int ID
 	 * @deprecated
 	 */
@@ -264,6 +250,11 @@ class Propal extends CommonObject
 	 * @var string availabilty code
 	 */
 	public $availability_code;
+
+	/**
+	 * @var string availabilty label
+	 */
+	public $availability;
 
 	public $duree_validite;
 
@@ -348,9 +339,6 @@ class Propal extends CommonObject
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'price' =>array('type'=>'double', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
@@ -1140,9 +1128,6 @@ class Propal extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
 		$sql .= "fk_soc";
 		$sql .= ", price";
-		$sql .= ", remise";			// deprecated
-		$sql .= ", remise_percent";	// deprecated
-		$sql .= ", remise_absolue";	// deprecated
 		$sql .= ", total_tva";
 		$sql .= ", total_ttc";
 		$sql .= ", datep";
@@ -1175,9 +1160,6 @@ class Propal extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
 		$sql .= ", 0";
-		$sql .= ", ".((float) $this->remise);												// deprecated
-		$sql .= ", ".($this->remise_percent ? ((float) $this->remise_percent) : 'NULL');	// deprecated
-		$sql .= ", ".($this->remise_absolue ? ((float) $this->remise_absolue) : 'NULL');	// deprecated
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -1583,7 +1565,7 @@ class Propal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $forceentity = 0)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.ref, p.entity, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_signature as dates";
@@ -1646,9 +1628,6 @@ class Propal extends CommonObject
 				$this->ref_customer         = $obj->ref_client;
 				$this->ref_ext              = $obj->ref_ext;
 
-				$this->remise               = $obj->remise;				// TODO deprecated
-				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated
-				$this->remise_absolue       = $obj->remise_absolue;		// TODO deprecated
 				$this->total                = $obj->total_ttc;			// TODO deprecated
 				$this->total_ttc            = $obj->total_ttc;
 				$this->total_ht             = $obj->total_ht;
@@ -2558,6 +2537,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
@@ -2611,7 +2591,7 @@ class Propal extends CommonObject
 
 		return -1;
 	}
-
+	*/
 
 
 	/**
@@ -4027,7 +4007,9 @@ class Propal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_project')) {
 			$return .= '<span class="info-box-ref"> | '.$this->fk_project.'</span>';
 		}

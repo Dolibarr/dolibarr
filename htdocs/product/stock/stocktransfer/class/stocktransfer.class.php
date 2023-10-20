@@ -131,10 +131,10 @@ class StockTransfer extends CommonObject
 		'ref'                      => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label'                    => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200'/*, 'help'=>"Help text"*/, 'showoncombobox'=>'1',),
 		'description'              => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>3,),
-		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/,),
-		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource',),
-		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination'),
+		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'minwidth300 maxwidth500 span.widthcentpercentminusxx:not', 'csslist'=>'tdoverflowmax150'),
+		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/, 'picto'=>'company', 'css'=>'minwidth300 maxwidth500 span.widthcentpercentminusxx:not', 'csslist'=>'tdoverflowmax150'),
+		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 span.widthcentpercentminusxx:not', 'csslist'=>'tdoverflowmax150'),
+		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 span.widthcentpercentminusxx:not', 'csslist'=>'tdoverflowmax150'),
 		'note_public'              => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private'             => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation'            => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -353,7 +353,7 @@ class StockTransfer extends CommonObject
 	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
-	public function cmp($a, $b)
+	static public function cmp($a, $b)
 	{
 		if ($a->rang == $b->rang) {
 			return 0;

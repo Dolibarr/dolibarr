@@ -630,10 +630,10 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
-	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
+		//} elseif ($action == 'setremisepercent' && $usercancreate) {
+		//	$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
+		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
+		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '') {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
@@ -756,6 +756,8 @@ if (empty($reshook)) {
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ?GETPOST('price_base_type', 'alpha') : 'HT');
+
+			$price_min = $price_min_ttc = 0;
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
@@ -1653,7 +1655,7 @@ if ($action == 'create' && $usercancreate) {
 		$res = $soc->fetch($socid);
 	}
 
-	$remise_absolue = 0;
+	//$remise_absolue = 0;
 
 	$currency_code = $conf->currency;
 
@@ -1727,8 +1729,8 @@ if ($action == 'create' && $usercancreate) {
 			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
 			$warehouse_id       = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+			//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
+			//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ? -1 : '';
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
@@ -1757,8 +1759,8 @@ if ($action == 'create' && $usercancreate) {
 		$shipping_method_id = $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
-		$remise_percent     = $soc->remise_percent;
-		$remise_absolue     = 0;
+		//$remise_percent     = $soc->remise_percent;
+		//$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2039,8 +2041,8 @@ if ($action == 'create' && $usercancreate) {
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$objectsrc->remise_absolue = $remise_absolue;
-			$objectsrc->remise_percent = $remise_percent;
+			//$objectsrc->remise_absolue = $remise_absolue;
+			//$objectsrc->remise_percent = $remise_percent;
 			$objectsrc->update_price(1);
 		}
 

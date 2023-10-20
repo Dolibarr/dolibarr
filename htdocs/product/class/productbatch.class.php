@@ -479,7 +479,9 @@ class Productbatch extends CommonObject
 		}
 		$sql .= " ORDER BY ";
 		// TODO : use product lifo and fifo when product will implement it
-		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) $sql .= 'date_entree ASC,t.batch ASC,';
+		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+			$sql .= 'date_entree ASC,t.batch ASC,';
+		}
 		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
 		$sql .= "t.eatby ASC, t.sellby ASC ";
 		$sql .= ", t.qty ".(empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
@@ -501,7 +503,9 @@ class Productbatch extends CommonObject
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
 
-				$tmp->context['stock_date_entry'] = $obj->date_entree;
+				if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+					$tmp->context['stock_date_entry'] = $obj->date_entree;
+				}
 
 				// Some properties of the lot
 				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
