@@ -80,6 +80,8 @@ class BonPrelevement extends CommonObject
 
 	public $factures = array();
 
+	public $methodes_trans = array();
+
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
 

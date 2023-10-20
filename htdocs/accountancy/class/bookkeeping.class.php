@@ -170,6 +170,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var BookKeepingLine[] Movement line array
+	 */
+	public $linesmvt = array();
+
+	/**
+	 * @var BookKeepingLine[] export line array
+	 */
+	public $linesexport = array();
+
+	/**
 	 * @var integer|string date of movement validated & lock
 	 */
 	public $date_validation;
