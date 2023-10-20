@@ -58,6 +58,7 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_MODIFY','Third party payment information updated','Executed when a third party payment information is updated','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_RIB_DELETE','Third party payment information deleted','Executed when a third party payment information is deleted','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_CLOSE','Intervention is done','Executed when a intervention is done','ficheinter',36);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_APPROVE2','Supplier order request approved 2','Executed when a supplier order is approved 2','order_supplier',13);
 
 UPDATE llx_bank_url SET type = 'direct-debit' WHERE type = 'withdraw' AND url like '%compta/prelevement/card%';
 
