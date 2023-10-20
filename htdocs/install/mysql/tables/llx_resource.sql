@@ -30,7 +30,7 @@ CREATE TABLE llx_resource
   photo_filename        varchar(255)    DEFAULT NULL,
   max_users             integer         DEFAULT NULL,
   phone                 varchar(20)     DEFAULT NULL,
-  email                 varchar(128)    DEFAULT NULL,
+  email                 varchar(255)    DEFAULT NULL,
   url                   varchar(255)    DEFAULT NULL,
   datec                 datetime DEFAULT NULL,
   date_valid            datetime DEFAULT NULL,
