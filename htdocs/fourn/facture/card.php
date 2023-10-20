@@ -975,8 +975,8 @@ if (empty($reshook)) {
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->amount             = price2num(GETPOST('amount'));
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
+				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -2090,8 +2090,8 @@ if ($action == 'create') {
 		$cond_reglement_id = 0;
 		$mode_reglement_id = 0;
 		$fk_account = 0;
-		$remise_percent = 0;
-		$remise_absolue = 0;
+		//$remise_percent = 0;
+		//$remise_absolue = 0;
 		$transport_mode_id = 0;
 
 		// set from object source
@@ -2104,12 +2104,6 @@ if ($action == 'create') {
 		if (!empty($objectsrc->fk_account)) {
 			$fk_account = $objectsrc->fk_account;
 		}
-		if (!empty($objectsrc->remise_percent)) {
-			$remise_percent = $objectsrc->remise_percent;
-		}
-		if (!empty($objectsrc->remise_absolue)) {
-			$remise_absolue = $objectsrc->remise_absolue;
-		}
 		if (!empty($objectsrc->transport_mode_id)) {
 			$transport_mode_id = $objectsrc->transport_mode_id;
 		}
@@ -2117,8 +2111,6 @@ if ($action == 'create') {
 		if (empty($cond_reglement_id)
 			|| empty($mode_reglement_id)
 			|| empty($fk_account)
-			|| empty($remise_percent)
-			|| empty($remise_absolue)
 			|| empty($transport_mode_id)
 		) {
 			if ($origin == 'reception') {
@@ -2138,12 +2130,6 @@ if ($action == 'create') {
 					if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
 						$fk_account = $supplierOrder->fk_account;
 					}
-					if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
-						$remise_percent = $supplierOrder->remise_percent;
-					}
-					if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
-						$remise_absolue = $supplierOrder->remise_absolue;
-					}
 					if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
 						$transport_mode_id = $supplierOrder->transport_mode_id;
 					}
@@ -2160,12 +2146,6 @@ if ($action == 'create') {
 				}
 				if (empty($fk_account) && !empty($soc->fk_account)) {
 					$fk_account = $soc->fk_account;
-				}
-				if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
-					$remise_percent = $soc->remise_supplier_percent;
-				}
-				if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
-					$remise_absolue = $soc->remise_absolue;
 				}
 				if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
 					$transport_mode_id = $soc->transport_mode_id;
