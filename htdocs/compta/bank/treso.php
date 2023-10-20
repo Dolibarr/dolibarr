@@ -4,6 +4,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
  * Copyright (C) 2016       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +26,20 @@
  *	\brief      Page to estimate future balance
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
+$langs->loadLangs(array('banks', 'bills', 'categories', 'companies', 'salaries'));
 
 // Security check
 if (GETPOSTISSET("account") || GETPOSTISSET("ref")) {
@@ -57,15 +62,13 @@ $hookmanager->initHooks(array('banktreso', 'globalcard'));
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $societestatic = new Societe($db);
+$userstatic = new User($db);
 $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
 $socialcontribstatic = new ChargeSociales($db);
+$salarystatic = new Salary($db);
+$vatstatic = new Tva($db);
 
 $form = new Form($db);
 
@@ -85,6 +88,9 @@ if (GETPOST("account") || GETPOST("ref")) {
 		$_GET["account"] = $object->id;
 	}
 
+	$title = $object->ref.' - '.$langs->trans("PlannedTransactions");
+	$helpurl = "";
+	llxHeader('', $title, $helpurl);
 
 	// Onglets
 	$head = bank_prepare_head($object);
@@ -132,6 +138,27 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$sql .= " WHERE cs.entity = ".$conf->entity;
 	$sql .= " AND cs.paye = 0"; // Not paid
 	$sql .= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
+	$sql .= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
+
+	// Salaries
+	$sql = " SELECT 'salary' as family, sa.rowid as objid, sa.label as ref, (-1*sa.amount) as total_ttc, sa.dateep as dlr,";
+	$sql .= " s.rowid as socid, CONCAT(s.firstname, ' ', s.lastname) as name, 0 as fournisseur";
+	$sql .= " FROM ".MAIN_DB_PREFIX."salary as sa";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as s ON sa.fk_user = s.rowid";
+	$sql .= " WHERE sa.entity = ".$conf->entity;
+	$sql .= " AND sa.paye = 0"; // Not paid
+	$sql .= " AND (sa.fk_account IN (0, ".$object->id.") OR sa.fk_account IS NULL)"; // Id bank account of salary
+	$sql .= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
+
+	// VAT
+	$sql = " SELECT 'vat' as family, t.rowid as objid, t.label as ref, (-1*t.amount) as total_ttc, t.datev as dlr,";
+	$sql .= " 0 as socid, 'noname' as name, 0 as fournisseur";
+	$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+	$sql .= " WHERE t.entity = ".$conf->entity;
+	$sql .= " AND t.paye = 0"; // Not paid
+	$sql .= " AND (t.fk_account IN (-1, 0, ".$object->id.") OR t.fk_account IS NULL)"; // Id bank account of vat
 	$sql .= " ORDER BY dlr ASC";
 	$sqls[] = $sql;
 
@@ -268,6 +295,26 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 				$totalpayment = -1 * $socialcontribstatic->getSommePaiement(); // Payment already done
 			}
+			if ($tmpobj->family == 'salary') {
+				$salarystatic->ref = $tmpobj->ref;
+				$salarystatic->id = $tmpobj->objid;
+				$salarystatic->label = $langs->trans("SalaryPayment");
+				$ref = $salarystatic->getNomUrl(1, '');
+
+				$userstatic->id = $tmpobj->socid;
+				$userstatic->name = $tmpobj->name;
+				$refcomp = $userstatic->getNomUrl(1);
+
+				$totalpayment = -1 * $salarystatic->getSommePaiement(); // Payment already done
+			}
+			if ($tmpobj->family == 'vat') {
+				$vatstatic->ref = $tmpobj->ref;
+				$vatstatic->id = $tmpobj->objid;
+				$vatstatic->type = $tmpobj->type;
+				$ref = $vatstatic->getNomUrl(1, '');
+
+				$totalpayment = -1 * $vatstatic->getSommePaiement(); // Payment already done
+			}
 
 			$parameters = array('obj' => $tmpobj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
 			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $tmpobject, $action); // Note that $action and $tmpobject may have been modified by hook
@@ -295,7 +342,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
-				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+				if (getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
 					if ($tmpobj->family == 'invoice') {
 						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";
@@ -306,10 +353,10 @@ if (GETPOST("account") || GETPOST("ref")) {
 				print "<td>".$refcomp."</td>";
 				if ($tmpobj->total_ttc < 0) {
 					print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>";
-				};
+				}
 				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
-				};
+				}
 				print '<td class="nowrap right">'.price($solde).'</td>';
 				print "</tr>";
 			}

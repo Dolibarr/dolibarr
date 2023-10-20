@@ -14,14 +14,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/intracommreport/class/intracommreport.class.php
- *  \ingroup    Intracomm report
- *  \brief      File of class to manage intracomm report
+ *    \file       htdocs/intracommreport/class/intracommreport.class.php
+ *    \ingroup    Intracomm report
+ *    \brief      File of class to manage intracomm report
  */
+
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
@@ -46,15 +48,27 @@ class IntracommReport extends CommonObject
 	public $fk_element = 'fk_intracommreport';
 
 	/**
+	 * 0 = No test on entity, 1 = Test with field entity, 2 = Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+	public $picto = 'intracommreport';
+
+
+	public $label; 		// ref ???
+
+	public $period;
+
+	public $declaration;
+
+	/**
 	 * @var string declaration number
 	 */
 	public $declaration_number;
 
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
+	public $type_declaration;		// deb or des
+
 
 	/**
 	 * DEB - Product
@@ -71,6 +85,7 @@ class IntracommReport extends CommonObject
 		'expedition'=>'Expédition'
 	);
 
+
 	/**
 	 * Constructor
 	 *
@@ -83,7 +98,8 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Fonction create
+	 * Function create
+	 *
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
 	 * @return 	int
@@ -94,7 +110,8 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Fonction fetch
+	 * Function fetch
+	 *
 	 * @param 	int 	$id 	object ID
 	 * @return 	int
 	 */
@@ -104,7 +121,8 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Fonction delete
+	 * Function delete
+	 *
 	 * @param 	int 	$id 		object ID
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
@@ -158,7 +176,7 @@ class IntracommReport extends CommonObject
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
-		$declaration->addChild('declarationTypeCode', $conf->global->{'INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)});
+		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
 		/********************************************************************/

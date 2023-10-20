@@ -57,10 +57,10 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement informations
 	 *
-	 * @param 	int 	$id ID of movement
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id				ID of movement
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	/*
 	public function get($id)
@@ -89,11 +89,12 @@ class StockMovements extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -104,17 +105,17 @@ class StockMovements extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".$this->db->prefix()."stock_mouvement as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+
 		//$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
 		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -136,7 +137,7 @@ class StockMovements extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$stockmovement_static = new MouvementStock($this->db);
 				if ($stockmovement_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($stockmovement_static), $properties);
 				}
 				$i++;
 			}
@@ -162,8 +163,8 @@ class StockMovements extends DolibarrApi
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
 	 * @param int $type Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
 	 * @param string $lot Lot {@from body}
-	 * @param string $movementcode Movement code {@example INV123} {@from body}
-	 * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
+	 * @param string $movementcode Movement code {@from body}
+	 * @param string $movementlabel Movement label {@from body}
 	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
 	 * @param string $datem Date of movement {@from body} {@type date}
 	 * @param string $dlc Eat-by date. {@from body} {@type date}

@@ -28,6 +28,7 @@
  *	\brief      Setup page of module Interventions
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -57,9 +58,9 @@ $type = 'ficheinter';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -212,6 +213,32 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+} elseif ($action == "set_FICHINTER_ALLOW_ONLINE_SIGN") {
+	$val = GETPOST('FICHINTER_ALLOW_ONLINE_SIGN', 'alpha');
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_ONLINE_SIGN", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == "set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD") {
+	$val = GETPOST('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD', 'alpha');
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_EXTERNAL_DOWNLOAD", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -276,7 +303,7 @@ foreach ($dirmodels as $reldir) {
 
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -537,7 +564,7 @@ print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">'
 print '<tr class="oddeven"><td>';
 print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
 print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
-if ($conf->global->FICHINTER_PRINT_PRODUCTS) {
+if (getDolGlobalString("FICHINTER_PRINT_PRODUCTS")) {
 	print 'checked ';
 }
 print '/>';
@@ -554,7 +581,7 @@ print '<td>';
 print $langs->trans("UseServicesDurationOnFichinter");
 print '</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.($conf->global->FICHINTER_USE_SERVICE_DURATION ? ' checked' : '').'>';
+print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.(getDolGlobalString("FICHINTER_USE_SERVICE_DURATION") ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
@@ -570,7 +597,7 @@ print '<td>';
 print $langs->trans("UseDurationOnFichinter");
 print '</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.($conf->global->FICHINTER_WITHOUT_DURATION ? ' checked' : '').'>';
+print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.(getDolGlobalString("FICHINTER_WITHOUT_DURATION") ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
@@ -586,13 +613,46 @@ print '<td>';
 print $langs->trans("UseDateWithoutHourOnFichinter");
 print '</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.($conf->global->FICHINTER_DATE_WITHOUT_HOUR ? ' checked' : '').'>';
+print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.(getDolGlobalString("FICHINTER_DATE_WITHOUT_HOUR") ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
 print '</form>';
+// Allow online signing
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_FICHINTER_ALLOW_ONLINE_SIGN">';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans("AllowOnlineSign");
+print '</td>';
+print '<td class="center">';
+print '<input type="checkbox" name="FICHINTER_ALLOW_ONLINE_SIGN"'.(getDolGlobalString("FICHINTER_ALLOW_ONLINE_SIGN") ? ' checked' : '').'>';
+print '</td>';
+print '<td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+// Allow external download
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD">';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans("AllowExternalDownload");
+print '</td>';
+print '<td class="center">';
+print '<input type="checkbox" name="FICHINTER_ALLOW_EXTERNAL_DOWNLOAD"'.(getDolGlobalString("FICHINTER_ALLOW_EXTERNAL_DOWNLOAD") ? ' checked' : '').'>';
+print '</td>';
+print '<td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
 
 print '</table>';
 print '</div>';

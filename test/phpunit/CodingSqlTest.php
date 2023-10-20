@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +88,12 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return SecurityTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -110,7 +112,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +125,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +138,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,9 +154,55 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
+	}
+
+	/**
+	 * testEscape
+	 *
+	 * @return string
+	 */
+	public function testEscape()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		if ($db->type == 'mysqli') {
+			$a = 'abc"\'def';	// string is abc"'def
+			print $a;
+			$result = $db->escape($a);	// $result must be abc\"\'def
+			$this->assertEquals('abc\"\\\'def', $result);
+		}
+		if ($db->type == 'pgsql') {
+			$a = 'abc"\'def';	// string is abc"'def
+			print $a;
+			$result = $db->escape($a);	// $result must be abc"''def
+			$this->assertEquals('abc"\'\'def', $result);
+		}
+	}
+
+	/**
+	 * testEscapeForLike
+	 *
+	 * @return string
+	 */
+	public function testEscapeForLike()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$a = 'abc"\'def_ghi%klm\\nop';
+		//print $a;
+		$result = $db->escapeforlike($a);	// $result must be abc"'def\_ghi\%klm\\nop with mysql
+		$this->assertEquals('abc"\'def\_ghi\%klm\\\\nop', $result);
 	}
 
 	/**
@@ -184,17 +232,19 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 				print 'Check sql file '.$file."\n";
 				$filecontent = file_get_contents($dir.'/'.$file);
 
-				// Allow ` for 'rank' column name
+				// Allow ` for 'rank' column name only
 				$filecontent = str_replace('`rank`', '_rank_', $filecontent);
+
+				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")'), '__OKSTRING__', $filecontent);
+				// To accept " after the comment tag
+				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
+				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
 
 				$result=strpos($filecontent, '`');
 				//print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
 				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
 				$result=strpos($filecontent, '"');
-				if ($result) {
-					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"') && ! strpos($filecontent, '("'));
-				}
 				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
 				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
 
@@ -275,6 +325,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 			$result=strpos($filecontent, 'eldy@');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
 			$this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
+
+			$result=strpos($filecontent, 'INSERT INTO `llx_oauth_token`');
+			print __METHOD__." Result for checking we don't have data into llx_oauth_token = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a non expected insert into file '.$file);
 		}
 
 		return;

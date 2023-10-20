@@ -38,10 +38,8 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
@@ -51,6 +49,8 @@ restrictedArea($user, 'salaries');
 /*
  * View
  */
+
+top_httphead('application/json');
 
 $fk_user = GETPOST('fk_user', 'int');
 $return_arr = array();

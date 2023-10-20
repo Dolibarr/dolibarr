@@ -19,10 +19,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Den zugrundeliegenden Kunden
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setzt das verknüpfte Lieferantenangebot auf "abgerechnet", sofern die Lieferanrenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist. 
 # Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verknüpfte Lieferantenbestellung als abgerechnet, wenn die Lieferantenrechnung erstellt wurde und die Gesamtbeträge übereinstimmen.
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang validiert wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Lieferantenbestellung übereinstimmt)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang freigegeben wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Lieferantenbestellung übereinstimmt)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang geschlossen wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Bestellung übereinstimmt)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Klassifizieren Sie Empfänge als "in Rechnung gestellt", wenn eine verknüpfte Lieferantenbestellung validiert wird
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Wareneingänge als „abgerechnet“ klassifizieren, wenn eine verknüpfte Einkaufsrechnung freigegeben wird (und wenn der Rechnungsbetrag mit dem Gesamtbetrag der verknüpften Wareneingänge übereinstimmt)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Verknüpfen Sie beim Erstellen eines Tickets verfügbare Verträge passender Geschäftspartner
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Beim Verknüpfen von Verträgen unter denen der Mutterunternehmen suchen
@@ -31,6 +31,6 @@ descWORKFLOW_TICKET_CLOSE_INTERVENTION=Schließen Sie alle mit dem Ticket verkn�
 AutomaticCreation=Automatische Erstellung
 AutomaticClassification=Automatische Klassifikation
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassifizieren Sie die verknüpfte Lieferung als geschlossen, wenn die Kundenrechnung validiert ist.
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Verknüpfte Lieferung als abgeschlossen klassifizieren, wenn die Kundenrechnung freigegeben ist (und wenn der Rechnungsbetrag mit dem Gesamtbetrag der verknüpften Lieferungen übereinstimmt)
 AutomaticClosing=Automatisches Schließen
 AutomaticLinking=Automatisches Verknüpfen

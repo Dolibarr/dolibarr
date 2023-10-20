@@ -22,7 +22,7 @@
  */
 
 /**
- * Class to manage accounting accounts
+ * Class to manage accounting journals
  */
 class AccountingJournal extends CommonObject
 {
@@ -42,7 +42,7 @@ class AccountingJournal extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  	Does object support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -231,7 +231,7 @@ class AccountingJournal extends CommonObject
 	 * Return clicable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 * @param	int		$withlabel		0=No label, 1=Include label of journal
+	 * @param	int		$withlabel		0=No label, 1=Include label of journal, 2=Include nature of journal
 	 * @param	int  	$nourl			1=Disable url
 	 * @param	string  $moretitle		Add more text to title tooltip
 	 * @param	int  	$notooltip		1=Disable tooltip
@@ -281,8 +281,13 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel && !empty($this->label)) {
+		if ($withlabel != 2 && !empty($this->label)) {
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
+		}
+		if ($withlabel == 2 && !empty($this->nature)) {
+			$key = $langs->trans("AccountingJournalType".strtoupper($this->nature));
+			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
+			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
 
 		$result .= $linkstart;
@@ -307,10 +312,10 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode		  0=libelle long, 1=libelle court
-	 *  @return	string 				   Label of type
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibType($mode = 0)
 	{
@@ -322,7 +327,7 @@ class AccountingJournal extends CommonObject
 	 *  Return type of an accounting journal
 	 *
 	 *  @param	int		$nature			Id type
-	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
+	 *  @param  int		$mode		  	0=label long, 1=label short
 	 *  @return string 				   	Label of type
 	 */
 	public function LibType($nature, $mode = 0)
@@ -362,6 +367,7 @@ class AccountingJournal extends CommonObject
 				return $langs->trans('AccountingJournalType1');
 			}
 		}
+		return "";
 	}
 
 
@@ -382,12 +388,6 @@ class AccountingJournal extends CommonObject
 		// Clean parameters
 		if (empty($type)) $type = 'view';
 		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
-
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$data = array();
 
@@ -449,27 +449,12 @@ class AccountingJournal extends CommonObject
 		}
 
 		$sql = "";
-
-		// FIXME sql error with Mysql 5.7
-		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
-			$sql .= "WITH in_accounting_bookkeeping(fk_docdet) AS (";
-			$sql .= " SELECT DISTINCT fk_docdet";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-			$sql .= " WHERE doc_type = 'asset'";
-			$sql .= ") ";
-		}*/
-
 		$sql .= "SELECT ad.fk_asset AS rowid, a.ref AS asset_ref, a.label AS asset_label, a.acquisition_value_ht AS asset_acquisition_value_ht";
 		$sql .= ", a.disposal_date AS asset_disposal_date, a.disposal_amount_ht AS asset_disposal_amount_ht, a.disposal_subject_to_vat AS asset_disposal_subject_to_vat";
 		$sql .= ", ad.rowid AS depreciation_id, ad.depreciation_mode, ad.ref AS depreciation_ref, ad.depreciation_date, ad.depreciation_ht, ad.accountancy_code_debit, ad.accountancy_code_credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
-		// FIXME sql error with Mysql 5.7
-		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
-			$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		}*/
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
-		// Compatibility with Mysql 5.7
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
 		} elseif ($in_bookkeeping == 'notyet') {
@@ -483,11 +468,6 @@ class AccountingJournal extends CommonObject
 		if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
 		}
-		// Already in bookkeeping or not
-		// FIXME sql error with Mysql 5.7
-		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
-			$sql .= " AND iab.fk_docdet IS" . ($in_bookkeeping == 'already' ? " NOT" : "") . " NULL";
-		}*/
 		$sql .= " ORDER BY ad.depreciation_date";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -750,7 +730,7 @@ class AccountingJournal extends CommonObject
 				}
 			}
 
-			$journal_data[$pre_data_id] = $element;
+			$journal_data[(int) $pre_data_id] = $element;
 		}
 		unset($pre_data);
 
@@ -804,12 +784,6 @@ class AccountingJournal extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$error = 0;
 
@@ -955,11 +929,6 @@ class AccountingJournal extends CommonObject
 		$out = '';
 
 		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('accountingjournaldao'));
 		$parameters = array('journal_data' => &$journal_data, 'search_date_end' => &$search_date_end, 'sep' => &$sep, 'out' => &$out);
 		$reshook = $hookmanager->executeHooks('exportCsv', $parameters, $this); // Note that $action and $object may have been
@@ -982,8 +951,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("LedgerAccount"),
 					$langs->transnoentitiesnoconv("SubledgerAccount"),
 					$langs->transnoentitiesnoconv("Label"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 					$langs->transnoentitiesnoconv("Journal"),
 					$langs->transnoentitiesnoconv("Note"),
 				);
@@ -993,8 +962,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Piece"),
 					$langs->transnoentitiesnoconv("AccountAccounting"),
 					$langs->transnoentitiesnoconv("LabelOperation"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 				);
 			} elseif ($this->nature == 1) {
 				$header = array(
@@ -1002,8 +971,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Piece"),
 					$langs->transnoentitiesnoconv("AccountAccounting"),
 					$langs->transnoentitiesnoconv("LabelOperation"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 				);
 			}
 

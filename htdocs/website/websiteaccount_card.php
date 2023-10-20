@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
-*
+ * Copyright (C) 2023 Lionel Vessiller	   <lvessiller@open-dsi.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -32,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id         = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -43,7 +44,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('websiteaccountcard'));   //  Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -63,18 +64,69 @@ if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'website', $id);
-
-$permissionnote = $user->rights->websiteaccount->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->websiteaccount->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Security check
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$result = restrictedArea($user, 'website', $id);
+$permissiontoaccess = (isModEnabled('website') && $user->hasRight('website', 'read')) || isModEnabled('webportal');
+if (!$permissiontoaccess) {
+	accessforbidden('NotAllowed');
+}
+
+// Permissions
+$permissiontocreate = 0;
+$permissiontodelete = 0;
+// permissions from object type of site
+if ($object->id > 0) {
+	if ($object->site == 'dolibarr_website') {
+		$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write');
+		$permissiontodelete = isModEnabled('website') && $user->hasRight('website', 'delete');
+	} elseif ($object->site == 'dolibarr_portal') {
+		$permissiontocreate = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+	}
+} else {
+	$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write') || isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+}
+$permissionnote    = $permissiontocreate;   //  Used by the include of actions_setnotes.inc.php
+$permissiondellink = $permissiontocreate;   //  Used by the include of actions_dellink.inc.php
+$permissiontoadd   = $permissiontocreate;   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+// check access from type of site on create, edit, delete (other than view)
+$site_type_js = '';
+if (!empty($action) && $action != 'view') {
+	if (!empty($object->fields['site']['arrayofkeyval'])) {
+		if (isset($object->fields['site']['arrayofkeyval']['dolibarr_website'])) {
+			if ($action == 'delete' || $action == 'confirm_delete') {
+				if (!$user->hasRight('website', 'delete')) {
+					unset($object->fields['site']['arrayofkeyval']['dolibarr_website']);
+				}
+			} else {
+				if (!$user->hasRight('website', 'write')) {
+					unset($object->fields['site']['arrayofkeyval']['dolibarr_website']);
+				}
+			}
+		}
+
+		if (isset($object->fields['site']['arrayofkeyval']['dolibarr_portal'])) {
+			if (!$user->hasRight('webportal', 'write')) {
+				unset($object->fields['site']['arrayofkeyval']['dolibarr_portal']);
+			}
+		}
+	}
+	if (empty($object->fields['site']['arrayofkeyval'])) {
+		accessforbidden('NotAllowed');
+	}
+
+	if ($object->id > 0) { // update or delete or other than create
+		// check user has the right to modify this type of website
+		if (!key_exists($object->site, $object->fields['site']['arrayofkeyval'])) {
+			accessforbidden('NotAllowed');
+		}
+	}
+}
 
 
 /*
@@ -90,9 +142,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$permissiontoadd = $user->rights->website->write;
-	$permissiontodelete = $user->rights->website->delete;
-	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php', 1);
+	$backurlforlist = dol_buildpath('/societe/website.php', 1).'?id='.$object->fk_soc;
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -116,6 +166,31 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader('', 'WebsiteAccount', '');
+
+// prepare output js
+$out_js = '';
+if ($action == 'create' || $action == 'edit') {
+	if (!empty($object->fields['site']['visible']) && !empty($object->fields['fk_website']['visible'])) {
+		$site_type_js = 'function siteTypeChange(site_type) {';
+		$site_type_js .= '		if (site_type == "dolibarr_website") {';
+		$site_type_js .= '			jQuery("tr.field_fk_website").show();';
+		$site_type_js .= '		} else {';
+		$site_type_js .= '			jQuery("select#fk_website").val("-1").change();';
+		$site_type_js .= '			jQuery("tr.field_fk_website").hide();';
+		$site_type_js .= '		}';
+		$site_type_js .= '}';
+		$site_type_js .= 'jQuery(document).ready(function(){';
+		$site_type_js .= '	siteTypeChange(jQuery("#site").val());';
+		$site_type_js .= '	jQuery("#site").change(function(){';
+		$site_type_js .= '		siteTypeChange(this.value);';
+		$site_type_js .= '	});';
+		$site_type_js .= '});';
+
+		$out_js .= '<script type"text/javascript">';
+		$out_js .= $site_type_js;
+		$out_js .= '</script>';
+	}
+}
 
 // Part to create
 if ($action == 'create') {
@@ -143,6 +218,8 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
+
+	print $out_js;
 }
 
 // Part to edit record
@@ -171,6 +248,8 @@ if (($id || $ref) && $action == 'edit') {
 	print $form->buttonsSaveCancel();
 
 	print '</form>';
+
+	print $out_js;
 }
 
 // Part to show record
@@ -192,7 +271,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -210,23 +289,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($socid) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
 	}
-	if ($fk_website) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
-	}
+	//if ($fk_website) {
+	//	$linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	//}
 
 	$morehtmlref = '<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->website->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('website', 'write'), 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('website', 'write'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->project->enabled))
+	if (isModEnabled('project'))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		if ($user->rights->website->creer)
+		if ($user->hasRight('website', 'write'))
 		{
 			if ($action != 'classify')
 			{
@@ -244,7 +323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
@@ -301,7 +380,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 			}
 
-			if ($user->rights->website->write) {
+			if ($permissiontoadd) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
@@ -319,8 +398,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			*/
 
-			if ($user->rights->website->delete) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
+			if ($permissiontodelete) {
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 			}
 		}
 		print '</div>'."\n";

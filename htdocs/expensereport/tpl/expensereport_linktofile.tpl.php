@@ -136,8 +136,18 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 
 		print '</td></tr>';
 	} else {
-		print '<tr class="oddeven nohover trattachnewfilenow"'.(!GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
-		print '<td colspan="'.$colspan.'">';
+		if (empty($tredited)) {
+			$css = 'oddeven nohover trattachnewfilenow';
+			$newcolspan = $colspan;
+		} else {
+			$css = 'trattachnewfilenow tredited';
+			$newcolspan = $colspan - 1;
+		}
+		print '<tr class="'.$css.'"'.(!GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
+		if (!empty($tredited)) {
+			print '<td></td>';
+		}
+		print '<td colspan="'.($newcolspan).'">';
 		print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';
 		print '</td></tr>';
 	}

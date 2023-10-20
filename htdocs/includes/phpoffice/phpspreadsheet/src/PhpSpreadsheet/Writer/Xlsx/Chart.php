@@ -83,11 +83,11 @@ class Chart extends WriterPart
         $this->writeLegend($objWriter, $pChart->getLegend());
 
         $objWriter->startElement('c:plotVisOnly');
-        $objWriter->writeAttribute('val', 1);
+        $objWriter->writeAttribute('val', (int) $pChart->getPlotVisibleOnly());
         $objWriter->endElement();
 
         $objWriter->startElement('c:dispBlanksAs');
-        $objWriter->writeAttribute('val', 'gap');
+        $objWriter->writeAttribute('val', $pChart->getDisplayBlanksAs());
         $objWriter->endElement();
 
         $objWriter->startElement('c:showDLblsOverMax');
@@ -1136,7 +1136,7 @@ class Chart extends WriterPart
                 $fillColorValues = $plotSeriesValues->getFillColor();
                 if ($fillColorValues !== null && is_array($fillColorValues)) {
                     foreach ($plotSeriesValues->getDataValues() as $dataKey => $dataValue) {
-                        $this->writePlotSeriesValuesElement($objWriter, $dataKey, (isset($fillColorValues[$dataKey]) ? $fillColorValues[$dataKey] : 'FF9900'));
+                        $this->writePlotSeriesValuesElement($objWriter, $dataKey, ($fillColorValues[$dataKey] ?? 'FF9900'));
                     }
                 } else {
                     $this->writePlotSeriesValuesElement($objWriter);

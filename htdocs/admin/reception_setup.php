@@ -21,6 +21,7 @@
  *		\brief      Page to setup reception module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
@@ -47,7 +48,7 @@ $type = 'reception';
  * Actions
  */
 
-if (!empty($conf->reception->enabled) && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
+if (isModEnabled('reception') && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_RECEPTION", "1", 'chaine', 0, '', $conf->entity);
 }
@@ -64,9 +65,9 @@ if (empty($conf->global->RECEPTION_ADDON_NUMBER)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstreception', 'alpha');
+	$maskconst = GETPOST('maskconstreception', 'aZ09');
 	$maskvalue = GETPOST('maskreception', 'alpha');
-	if (!empty($maskconst)) {
+	if (!empty($maskconst) && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -217,7 +218,7 @@ foreach ($dirmodels as $reldir) {
 
 						print '<tr><td>'.$module->nom."</td>\n";
 						print '<td>';
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -237,7 +238,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->RECEPTION_ADDON_NUMBER == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).(!empty($module->scandir) ? '&scan_dir='.$module->scandir : '').(!empty($module->name) ? '&label='.urlencode($module->name) : '').'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -344,10 +345,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if (isset($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if (isset($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
 								$modulequalified = 0;
 							}
 

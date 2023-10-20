@@ -28,6 +28,7 @@
  *	\brief      config Page module Export
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -46,7 +47,7 @@ $action = GETPOST('action', 'aZ09');
  */
 
 if ($action == 'save') {
-	dolibarr_set_const($db, 'EXPORT_CSV_SEPARATOR_TO_USE', GETPOST('EXPORT_CSV_SEPARATOR_TO_USE', 'alphanohtml'));
+	dolibarr_set_const($db, 'EXPORT_CSV_SEPARATOR_TO_USE', GETPOST('EXPORT_CSV_SEPARATOR_TO_USE', 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 }
 
 

@@ -50,7 +50,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+	if (isModEnabled('accounting')) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 	foreach ($assetaccountancycodes->accountancy_codes_fields as $mode_key => $mode_info) {
 		//if (empty($object->enabled_modes[$mode_key])) continue;
@@ -63,7 +63,7 @@ if (empty($reshook)) {
 			print '<tr><td class="titlefieldcreate">' . $langs->trans($field_info['label']) . '</td><td colspan="3">';
 			if (!empty($assetaccountancycodes->accountancy_codes[$mode_key][$field_key])) {
 				$accountancy_code = $assetaccountancycodes->accountancy_codes[$mode_key][$field_key];
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					$accountingaccount = new AccountingAccount($db);
 					$accountingaccount->fetch('', $accountancy_code, 1);
 

@@ -23,22 +23,25 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/multicurrency/multicurrency_rate.php
- *  \ingroup    multicurrency
- *  \brief      Page to list multicurrency rate
+ *    \file       htdocs/multicurrency/multicurrency_rate.php
+ *    \ingroup    multicurrency
+ *    \brief      Page to list multicurrency rate
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('multicurrency'));
 
+// Get Parameters
 $action				= GETPOST('action', 'alpha');
 $massaction			= GETPOST('massaction', 'alpha');
 $show_files			= GETPOST('show_files', 'int');
@@ -69,12 +72,13 @@ if (!$sortfield) $sortfield = "cr.date_sync";
 if (!$sortorder) $sortorder = "DESC";
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize technical objects
 $object = new CurrencyRate($db);
-
-$extrafields = new ExtraFields($db);
 $form = new Form($db);
+$extrafields = new ExtraFields($db);
 
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('EditorRatelist', 'globallist'));
 
 if (empty($action)) {
@@ -102,7 +106,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Access control
 // TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
 // One permission to read rates (history) and one to add/edit rates.
-if (!$user->admin || empty($conf->multicurrency->enabled)) {
+if (!$user->admin || !isModEnabled("multicurrency")) {
 	accessforbidden();
 }
 
@@ -231,8 +235,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = "CurrencyRate";
 	$uploaddir = $conf->multicurrency->multidir_output; // define only because core/actions_massactions.inc.php want it
-	$permtoread = $user->admin;
-	$permtodelete = $user->admin;
+	$permissiontoread = $user->admin;
+	$permissiontodelete = $user->admin;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -267,7 +271,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 	print ' <td>'.$langs->trans('Date').'</td>';
 	print ' <td>';
-	print $form->selectDate($dateinput, 'dateinput', 0, 0, 1);
+	print $form->selectDate($dateinput, 'dateinput', 0, 0, 1, '', 1, 1);
 	print '</td>';
 
 	print '<td> '.$langs->trans('Currency').'</td>';
@@ -324,7 +328,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 
 	if ($result) {
@@ -350,7 +354,7 @@ if ($resql) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sall) {
 		$param .= "&sall=".urlencode($sall);
@@ -506,7 +510,7 @@ if ($resql) {
 			}
 
 			// code
-			if (! empty($arrayfields['m.code']['checked'])) {
+			if (!empty($arrayfields['m.code']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->code;
 				print ' - <span class="opacitymedium">'.$obj->name.'</span>';
@@ -516,7 +520,7 @@ if ($resql) {
 			}
 
 			// rate
-			if (! empty($arrayfields['cr.rate']['checked'])) {
+			if (!empty($arrayfields['cr.rate']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->rate;
 				print "</td>\n";

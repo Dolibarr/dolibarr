@@ -23,6 +23,7 @@
  *       \brief      Page to setup emails sending
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -110,8 +111,11 @@ if ($action == 'send' && !$cancel) {
 		$body = make_substitutions($body, $substitutionarrayfortest);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
-
-		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
+		try {
+			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
+		} catch (Exception $e) {
+			setEventMessages($e->getMessage(), null, 'error');
+		}
 		$result = $smsfile->sendfile(); // This send SMS
 
 		if ($result) {
@@ -181,7 +185,7 @@ if ($action == 'edit') {
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	if (count($listofmethods)) {
-		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
+		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, getDolGlobalString('MAIN_SMS_SENDMODE'), 1);
 	} else {
 		print '<span class="error">'.$langs->trans("None").'</span>';
 	}
@@ -220,7 +224,7 @@ if ($action == 'edit') {
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	$text = empty(getDolGlobalString('MAIN_SMS_SENDMODE')) ? '' : $listofmethods[getDolGlobalString('MAIN_SMS_SENDMODE')];
+	$text = getDolGlobalString('MAIN_SMS_SENDMODE') ? $listofmethods[getDolGlobalString('MAIN_SMS_SENDMODE')] : '';
 	if (empty($text)) {
 		$text = $langs->trans("Undefined").' '.img_warning();
 	}
@@ -252,19 +256,7 @@ if ($action == 'edit') {
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 
-	/*if ($conf->global->MAIN_SMS_SENDMODE != 'mail' || ! $linuxlike)
-	{
-		if (function_exists('fsockopen') && $port && $server)
-		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
-		}
-	}
-	else
-	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
-	}*/
-
-	if (count($listofmethods) && !empty($conf->global->MAIN_SMS_SENDMODE)) {
+	if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';

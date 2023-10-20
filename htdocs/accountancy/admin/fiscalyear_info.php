@@ -21,6 +21,7 @@
  * \brief	    Page to show info of a fiscal year
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -33,7 +34,7 @@ $langs->loadLangs(array("admin", "compta"));
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->fiscalyear->write)) {
+if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
@@ -55,7 +56,7 @@ if ($id) {
 
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'calendar');
 
 	print '<table width="100%"><tr><td>';
 	dol_print_object_info($object);

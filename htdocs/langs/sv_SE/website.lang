@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
+WebsiteName=Webbplatsens namn
 WebsiteSetupDesc=Skapa här de webbplatser du vill använda. Gå sedan till menyn webbplatser för att redigera dem.
 DeleteWebsite=Ta bort webbplats
 ConfirmDeleteWebsite=Är du säker på att du vill ta bort den här webbplatsen? Alla sidor och innehåll tas också bort. Filerna som laddas upp (som till mediekatalogen, ECM-modulen, ...) kommer att finnas kvar.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Tillägg längst ner i HTML-rubrik (vanligt för alla sidor)
 WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Webbsida. Htaccess-fil
 WEBSITE_MANIFEST_JSON=Webbplats manifest.json-fil
-WEBSITE_README=README.md-fil
 WEBSITE_KEYWORDSDesc=Använd ett komma för att separera värden
-EnterHereLicenseInformation=Ange här metadata eller licensinformation för att arkivera en README.md-fil. om du distribuerar din webbplats som en mall inkluderas filen i det frestande paketet.
+EnterHereReadmeInformation=Ange en beskrivning av webbplatsen. Om du distribuerar din webbplats som en mall kommer filen att inkluderas i temptate-paketet.
+EnterHereLicenseInformation=Ange här LICENSEN för koden för webbplatsen. Om du distribuerar din webbplats som en mall kommer filen att inkluderas i temptate-paketet.
 HtmlHeaderPage=HTML-rubrik (endast för den här sidan)
 PageNameAliasHelp=Namn eller alias på sidan. <br> Detta alias används också för att skapa en SEO-URL när webbplatsen springer från en virtuell värd på en webbserver (som Apacke, Nginx, ...). Använd knappen "<strong> %s </strong>" för att redigera detta alias.
 EditTheWebSiteForACommonHeader=Obs! Om du vill definiera en personlig rubrik för alla sidor, redigera rubriken på sidnivån istället för på sidan / behållaren.
@@ -42,11 +43,13 @@ ViewPageInNewTab=Visa sida i ny flik
 SetAsHomePage=Sätt som hemsida
 RealURL=Verklig URL
 ViewWebsiteInProduction=Visa webbplats med hjälp av hemadresser
-SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
+Virtualhost=Virtuell värd eller domännamn
+VirtualhostDesc=Namnet på den virtuella värden eller domänen (till exempel: www.mywebsite.com, mybigcompany.net, ...)
+SetHereVirtualHost= <u> Use with Apache/NGinx/... </u>  <br> Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on <br>  <strong> %s </strong>
 ExampleToUseInApacheVirtualHostConfig=Exempel att använda i Apache virtuell värdinställning:
 YouCanAlsoTestWithPHPS= <u> Använd med PHP-inbäddad server </u> <br> På utvecklingsmiljö kan du föredra att testa webbplatsen med PHP-inbäddad webbserver (PHP 5.5 krävs) genom att köra <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
-YouCanAlsoDeployToAnotherWHP= <u> Kör din webbplats med en annan Dolibarr Hosting-leverantör </u> <br> Om du inte har en webbserver som Apache eller NGinx tillgänglig på internet kan du exportera och importera din webbplats till en annan Dolibarr-instans som tillhandahålls av en annan Dolibarr-värdleverantör integration med webbplatsmodulen. Du hittar en lista med några Dolibarr-värdleverantörer på <a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>
-CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
+YouCanAlsoDeployToAnotherWHP= <u> Kör din webbplats med en annan Dolibarr-värdleverantör </u> <br> Om du inte har en webbserver som Apache eller NGinx tillgänglig på internet, kan du exportera och importera din webbplats till en annan Dolibarr-instans som tillhandahåller en annan Dolibarr-instans som tillhandahåller en komplett värd från Dolibarr. integration med webbplatsmodulen. Du kan hitta en lista över några Dolibarr-värdleverantörer på <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
+CheckVirtualHostPerms=Kontrollera också att den virtuella värdanvändaren (till exempel www-data) har <strong> %s </strong>-behörigheter för filer till <br><strong>%s</strong> 
 ReadPerm=Läsa
 WritePerm=Skriva
 TestDeployOnWeb=Test / distribuera på webben
@@ -59,8 +62,8 @@ SyntaxHelp=Hjälp med specifika syntaxtips
 YouCanEditHtmlSourceckeditor=Du kan redigera HTML-källkod med knappen "Källa" i redigeraren.
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Du kan inkludera PHP-kod i den här källan med taggar <strong> &lt;? php? &gt; a0a65d071f6fcf Följande globala variabler är tillgängliga: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Du kan också inkludera innehållet i en annan sida / behållare med följande syntax: <br> <strong> a313907? ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Du kan göra en omdirigering till en annan sida / Container med följande syntax (OBS! Inte ut innehållet innan en omdirigering): <br> <strong> &lt; php redirectToContainer (alias_of_container_to_redirect_to '); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> att lägga till en länk till en annan sida använder syntax: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> att inkludera en <strong> länk för att hämta </strong> en fil som lagras i <strong> dokument </strong>-katalog, använd <strong> document.php </strong> wrapper: <br> Exempel, för en fil till dokument / ecm (måste loggas), syntax är: a0342fccfda19b4 ] filename.ext "&gt; </strong> <br> För en fil till dokument / media (öppen katalog för allmän åtkomst) är syntax: <br> <strong> a03900df7d "/document.php?modulepart=medias&file= [relative_dir/] filnamn.ext"&gt; </strong> <br> För en fil som delas med en delningslänk (öppen åtkomst med den delande hash-nyckeln för fil) är syntax20 /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> för att inkludera en <strong> bild </strong> lagras in i de <strong> dokument </strong> katalog använder <strong> viewimage.php </strong> wrapper: <br> Exempel, för en bild i dokument / medier (öppna katalog för allmän åtkomst), syntax är: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [relativ_dir /] filnamn.ext" a012c07
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore= <br> Fler exempel på HTML eller dynamisk kod finns på <a href="%s" target="_blank"> wiki-dokumentationen </a> <br>.
+YouCanEditHtmlSource2=För en bild som delas med en delningslänk (öppen åtkomst med hjälp av fildelnings-hash-nyckeln), är syntaxen: <br> <strong> &lt;img src="/viewimage.php?hashp=120142567...accad09accdf0000142677acccf0001425677acccf0001425677accdf0001426770001426670001426770001256770001256770000000000000000002000
+YouCanEditHtmlSourceMore= <br> Fler exempel på HTML eller dynamisk kod finns på <a href="%s" target="_blank" rel="noopener noreferrer external"> wikidokumentationen </a> <br> .
 ClonePage=Klona sida / behållare
 CloneSite=Klona webbplatsen
 SiteAdded=Webbplats tillagd
@@ -80,7 +83,7 @@ BlogPost=Blogginlägg
 WebsiteAccount=Webbsida konto
 WebsiteAccounts=Webbsida konton
 AddWebsiteAccount=Skapa webbplatskonto
-BackToListForThirdParty=Tillbaka till listan för tredje part
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=Inaktivera webbplats först
 MyContainerTitle=Min webbplatstitel
 AnotherContainer=Så här inkluderar du innehåll från en annan sida / behållare (du kan ha ett fel här om du aktiverar dynamisk kod eftersom den inbäddade underbehållaren kanske inte finns)
@@ -137,7 +140,7 @@ PagesRegenerated=%s sida (er) / behållare / regenererade
 RegenerateWebsiteContent=Återskapa cachefiler på webbplatsen
 AllowedInFrames=Tillåtet i ramar
 DefineListOfAltLanguagesInWebsiteProperties=Definiera lista över alla tillgängliga språk i webbplatsegenskaper.
-GenerateSitemaps=Skapa webbplatskarta för webbplats
+GenerateSitemaps=Skapa webbplats sitemap.xml-fil
 ConfirmGenerateSitemaps=Om du bekräftar raderar du den befintliga webbplatskartfilen ...
 ConfirmSitemapsCreation=Bekräfta generering av webbplatskarta
 SitemapGenerated=Sitemap-fil <b> %s </b> genererad
@@ -145,3 +148,15 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon måste vara png
 ErrorFaviconSize=Favicon måste vara 16x16, 32x32 eller 64x64
 FaviconTooltip=Ladda upp en bild som måste vara en png (16x16, 32x32 eller 64x64)
+NextContainer=Nästa sida/behållare
+PreviousContainer=Föregående sida/behållare
+WebsiteMustBeDisabled=Webbplatsen måste ha statusen "%s"
+WebpageMustBeDisabled=Webbsidan måste ha statusen "%s"
+SetWebsiteOnlineBefore=När webbplatsen är offline är alla sidor offline. Ändra webbplatsens status först.
+Booking=Bokning
+Reservation=Reservation
+PagesViewedPreviousMonth=Visade sidor (föregående månad)
+PagesViewedTotal=Visade sidor (totalt)
+Visibility=Synlighet
+Everyone=Everyone
+AssignedContacts=Tilldelade kontakter

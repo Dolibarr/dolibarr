@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,6 +24,7 @@
  *  \ingroup    takepos
  *  \brief      File with Simple ref numbering module for takepos
  */
+
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -57,9 +58,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	/**
 	 *  Return description of numbering module
 	 *
-	 * @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 
@@ -80,12 +82,13 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
+	 *  of conflicts that will prevent this numbering from working.
 	 *
-	 * @return     boolean     false si conflit, true si ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -129,7 +132,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * @param   Societe     $objsoc     Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Next ref value or last ref if $mode is 'last'
+	 * @return  string|int     			Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
@@ -197,6 +200,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 

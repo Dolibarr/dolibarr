@@ -68,7 +68,7 @@ class modWebsite extends DolibarrModules
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("website");
 
 		// Constants
@@ -120,7 +120,7 @@ class modWebsite extends DolibarrModules
 		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top', // This is a Left menu entry
 								'titre'=>'WebSites',
-								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 								'mainmenu'=>'website',
 								'url'=>'/website/index.php',
 								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -164,6 +164,8 @@ class modWebsite extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$error = 0;
+
 		$result = $this->_load_tables('/install/mysql/', 'website');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
@@ -185,9 +187,14 @@ class modWebsite extends DolibarrModules
 				if ($result < 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
-					return 0;
+					$this->errors[] = $langs->trans('ErrorFailToCopyDir', $src, $dest);
+					$error++;
 				}
 			}
+		}
+
+		if ($error) {
+			return 0;
 		}
 
 		// Website templates
@@ -196,6 +203,7 @@ class modWebsite extends DolibarrModules
 
 		dol_mkdir($destroot);
 
+		// Copy templates in zip format (old)
 		$docs = dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
 		foreach ($docs as $cursorfile) {
 			$src = $srcroot.'/'.$cursorfile['name'];
@@ -205,7 +213,31 @@ class modWebsite extends DolibarrModules
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$this->errors[] = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$error++;
 			}
+		}
+
+		// Copy templates in dir format (recommended)
+		$docs = dol_dir_list($srcroot, 'directories', 0, 'website_.*$');
+
+		foreach ($docs as $cursorfile) {
+			$src = $srcroot.'/'.$cursorfile['name'];
+			$dest = $destroot.'/'.$cursorfile['name'];
+
+			// Compress it
+			global $errormsg;
+			$errormsg = '';
+			$result = dol_compress_dir($src, $dest.'.zip', 'zip');
+			if ($result < 0) {
+				$error++;
+				$this->error = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
+				$this->errors[] = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
+			}
+		}
+
+		if ($error) {
+			return 0;
 		}
 
 		$sql = array();

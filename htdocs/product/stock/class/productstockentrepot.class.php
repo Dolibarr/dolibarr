@@ -114,23 +114,17 @@ class ProductStockEntrepot extends CommonObject
 
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
-
 		$sql .= 'fk_product,';
 		$sql .= 'fk_entrepot,';
 		$sql .= 'seuil_stock_alerte,';
 		$sql .= 'desiredstock,';
 		$sql .= 'import_key';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
 		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot).',';
 		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : $this->seuil_stock_alerte).',';
 		$sql .= ' '.(!isset($this->desiredstock) ? '0' : $this->desiredstock).',';
 		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -248,7 +242,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param array  $filter     filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int|array <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = '', $fk_entrepot = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -538,9 +532,9 @@ class ProductStockEntrepot extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -598,6 +592,8 @@ class ProductStockEntrepot extends CommonObject
 				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+
+		return '';
 	}
 
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Marc Barilley		<marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   FactureFournisseur	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function facturefourn_prepare_head($object)
+function facturefourn_prepare_head(FactureFournisseur $object)
 {
 	global $db, $langs, $conf;
 
@@ -55,12 +56,12 @@ function facturefourn_prepare_head($object)
 	}
 
 	//if ($fac->mode_reglement_code == 'PRE')
-	if (!empty($conf->paymentbybanktransfer->enabled)) {
+	if (isModEnabled('paymentbybanktransfer')) {
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $object->id);
-		$sql .= " AND pfd.ext_payment_id IS NULL";
+		$sql .= " AND type = 'ban'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -70,6 +71,7 @@ function facturefourn_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
+		$langs->load("banks");
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer';
 		$head[$h][1] = $langs->trans('BankTransfer');
 		if ($nbStandingOrders > 0) {
@@ -83,7 +85,7 @@ function facturefourn_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -120,6 +122,8 @@ function facturefourn_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'remove');
 
 	return $head;
@@ -129,8 +133,8 @@ function facturefourn_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   CommandeFournisseur	$object		Object related to tabs
+ * @return  array							Array of tabs to show
  */
 function ordersupplier_prepare_head(CommandeFournisseur $object)
 {
@@ -155,7 +159,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 		$h++;
 	}
 
-	if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
+	if (isModEnabled('stock') && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
@@ -176,7 +180,10 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
-				$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+				//If line is a product of conf to manage stocks for services
+				if ($object->lines[$line]->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+				}
 			}
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.price2num($sumQtyAllreadyDispatched, 'MS').' / '.price2num($sumQtyOrdered, 'MS').'</span>';
 		}
@@ -189,7 +196,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -223,13 +230,17 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'remove');
+
 	return $head;
 }
 
@@ -240,7 +251,13 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
  */
 function supplierorder_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('commande_fournisseur');
+	$extrafields->fetch_name_optionals_label('commande_fournisseurdet');
+	$extrafields->fetch_name_optionals_label('facture_fourn');
+	$extrafields->fetch_name_optionals_label('facture_fourn_det');
 
 	$h = 0;
 	$head = array();
@@ -264,21 +281,37 @@ function supplierorder_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
+	$nbExtrafields = $extrafields->attributes['commande_fournisseur']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
+	$nbExtrafields = $extrafields->attributes['commande_fournisseurdet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
+	$nbExtrafields = $extrafields->attributes['facture_fourn']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
+	$nbExtrafields = $extrafields->attributes['facture_fourn_det']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 

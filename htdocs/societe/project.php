@@ -28,11 +28,25 @@
  *  \brief      Page of third party projects
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->loadLangs(array("companies", "projects"));
+$form  = new Form($db);
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'projects'));
+
+$action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+$toselect = GETPOST('toselect', 'array');
+
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -44,35 +58,64 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
 
+$object = new Societe($db);
+$permissiontodelete = $user->hasRight('societe', 'supprimer');
+
+
 
 /*
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
+
+if (GETPOST('cancel', 'alpha')) {
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+	$massactionbutton = '';
+}
+
+
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$parameters = array('id'=>$socid);
+
+// List of mass actions available
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+	$arrayofmassactions = array();
+}
+
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+	$arrayofmassactions = array();
+}
+
+// Mass actions
+$objectclass = 'Project';
+$objectlabel = 'Project';
+$uploaddir = $conf->societe->dir_output;
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
 /*
  *	View
  */
 
-$contactstatic = new Contact($db);
-
-$form = new Form($db);
-
+unset($_SESSION['pageforbacktolist']['project']);
 if ($socid) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$langs->load("companies");
 
-
-	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
@@ -81,7 +124,7 @@ if ($socid) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);
@@ -96,6 +139,7 @@ if ($socid) {
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
+
 
 	// Type Prospect/Customer/Supplier
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
@@ -134,15 +178,23 @@ if ($socid) {
 
 	print dol_get_fiche_end();
 
+	print '<br>';
 	$params = '';
 	$backtopage = $_SERVER['PHP_SELF'].'?socid='.$object->id;
 	$newcardbutton = dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
 
-	print '<br>';
+	if (empty($conf->dol_optimize_smallscreen)) {
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="nobordernopadding center valignmiddle col-center">'.$massactionbutton.'</div>';
+	}
 
 
 	// Projects list
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	$arrayofselected = is_array($toselect) ? $toselect : array();
 	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
+	print '</form>';
 }
 
 // End of page

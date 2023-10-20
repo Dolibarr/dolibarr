@@ -114,15 +114,16 @@ class CompanyPaymentMode extends CommonObject
 		'max_total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Max total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>155),
 		'preapproval_key' =>array('type'=>'varchar(255)', 'label'=>'Preapproval key', 'enabled'=>1, 'visible'=>-2, 'position'=>160),
 		'total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>165),
-		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'Stripe card ref', 'enabled'=>1, 'visible'=>-2, 'position'=>170),
-		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'Stripe account', 'enabled'=>1, 'visible'=>-2, 'position'=>171),
+		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystemID', 'enabled'=>1, 'visible'=>-2, 'position'=>170, 'help'=>'IDOfPaymentInAnExternalSystem'),
+		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystemCustomerAccount', 'enabled'=>1, 'visible'=>-2, 'position'=>171, 'help'=>'IDOfCustomerInAnExternalSystem'),
+		'ext_payment_site' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystem', 'enabled'=>1, 'visible'=>-2, 'position'=>172, 'help'=>'NameOfExternalSystem'),
 		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>175),
 		'starting_date' =>array('type'=>'date', 'label'=>'Starting date', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'ending_date' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>1, 'visible'=>-2, 'position'=>185),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
-	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
+		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 
 	/**
@@ -146,6 +147,18 @@ class CompanyPaymentMode extends CommonObject
 	public $number;
 	public $cle_rib;
 	public $bic;
+
+	/**
+	 * @var string iban
+	 * @deprecated
+	 * @see $iban_prefix
+	 */
+	public $iban;
+
+	/**
+	 * iban_prefix
+	 * @var string
+	 */
 	public $iban_prefix;
 	public $domiciliation;
 	public $proprio;
@@ -166,8 +179,9 @@ class CompanyPaymentMode extends CommonObject
 	public $max_total_amount_of_all_payments;
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
-	public $stripe_card_ref;
-	public $stripe_account;
+	public $stripe_card_ref;	// External system payment mode ID
+	public $stripe_account;		// External system customer ID
+	public $ext_payment_site;	// External system 'StripeLive', 'StripeTest', 'StancerLive', 'StancerTest', ...
 
 	/**
 	 * @var int Status
@@ -195,32 +209,6 @@ class CompanyPaymentMode extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var string    Name of subtable line
-	 */
-	//public $table_element_line = 'companypaymentmodedet';
-	/**
-	 * @var string    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_companypaymentmode';
-	/**
-	 * @var string    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'CompanyPaymentModeline';
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-	/**
-	 * @var CompanyPaymentModeLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -235,7 +223,7 @@ class CompanyPaymentMode extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}
@@ -281,8 +269,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -329,7 +316,7 @@ class CompanyPaymentMode extends CommonObject
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
 
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -403,7 +390,7 @@ class CompanyPaymentMode extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

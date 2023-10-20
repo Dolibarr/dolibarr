@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=ເສັ້ນທາງບ່ອນທີ່ມີການສ້າງ/ແກ້ໄຂໂມດູນ (ໄດເຣັກທໍຣີ ທຳ ອິດ ສຳ ລັບໂມດູນພາຍນອກທີ່ ກຳ ນົດໄວ້ໃນ %s): <strong> %s </strong>
 ModuleBuilderDesc3=ພົບໂມດູນທີ່ສ້າງຂຶ້ນ/ແກ້ໄຂໄດ້: <strong> %s </strong>
-ModuleBuilderDesc4=ໂມດູນຖືກກວດພົບວ່າສາມາດແກ້ໄຂໄດ້ເມື່ອໄຟລ a <strong> %s </strong> ມີຢູ່ໃນຮາກຂອງລະບົບໂມດູນ
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=ໂມດູນໃຫມ່
 NewObjectInModulebuilder=ວັດຖຸໃ່
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=ປຸ່ມໂມດູນ
 ObjectKey=ປຸ່ມວັດຖຸ
 DicKey=Dictionary key
@@ -48,11 +50,14 @@ PathToModulePackage=ເສັ້ນທາງໄປຫາ zip ຂອງຊຸດ�
 PathToModuleDocumentation=ເສັ້ນທາງໄປຫາເອກະສານເອກະສານລະຫັດໂມດູນ/ໃບສະັກ (%s)
 SpaceOrSpecialCharAreNotAllowed=ບໍ່ອະນຸຍາດໃຫ້ມີຍະຫວ່າງຫຼືຕົວອັກສອນພິເສດ.
 FileNotYetGenerated=ຍັງບໍ່ໄດ້ສ້າງໄຟລເທື່ອ
+GenerateCode=Generate code
 RegenerateClassAndSql=ບັງຄັບອັບເດດໄຟລ. .class ແລະ .sql
 RegenerateMissingFiles=ສ້າງໄຟລ missing ທີ່ຂາດຫາຍໄປ
 SpecificationFile=ເອກະສານປະກອບເອກະສານ
 LanguageFile=ໄຟລ for ສໍາລັບພາສາ
 ObjectProperties=ຄຸນສົມບັດວັດຖຸ
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບຄຸນສົມບັດ <strong> %s </strong>? ອັນນີ້ຈະປ່ຽນລະຫັດໃນຊັ້ນ PHP ແຕ່ຍັງເອົາຖັນອອກມາຈາກການກໍານົດຕາຕະລາງວັດຖຸ.
 NotNull=ບໍ່ແມ່ນ NULL
 NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
@@ -81,15 +86,16 @@ IsAMeasure=ເປັນມາດຕະການ
 DirScanned=ສະແກນບັນຊີລາຍການແລ້ວ
 NoTrigger=ບໍ່ມີທຣິກເກີ
 NoWidget=ບໍ່ມີວິດເຈັດ
-GoToApiExplorer=API explorer
+ApiExplorer=API explorer
 ListOfMenusEntries=ລາຍການລາຍການເມນູ
 ListOfDictionariesEntries=ລາຍຊື່ວັດຈະນານຸກົມ
 ListOfPermissionsDefined=ບັນຊີລາຍຊື່ຂອງການອະນຸຍາດທີ່ກໍານົດໄວ້
 SeeExamples=ເບິ່ງຕົວຢ່າງທີ່ນີ້
-EnabledDesc=ເງື່ອນໄຂໃຫ້ພາກສະ ໜາມ ນີ້ເຄື່ອນໄຫວຢູ່ (ຕົວຢ່າງ: 1 ຫຼື $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=ພາກສະຫນາມແມ່ນສັງເກດເຫັນ? (ຕົວຢ່າງ: 0 = ບໍ່ເຄີຍເຫັນ, 1 = ເບິ່ງເຫັນໄດ້ຢູ່ໃນລາຍການແລະສ້າງ/ອັບເດດ/ເບິ່ງແບບຟອມ, 2 = ເບິ່ງເຫັນໄດ້ຢູ່ໃນລາຍການເທົ່ານັ້ນ, 3 = ສາມາດເບິ່ງເຫັນໄດ້ໃນຮູບແບບສ້າງ/ອັບເດດ/ເບິ່ງຮູບແບບເທົ່ານັ້ນ (ບໍ່ມີລາຍຊື່), 4 = ເບິ່ງເຫັນໄດ້ໃນລາຍຊື່ແລະ update/view form only (not create), 5 = Visible on list end view form only (ບໍ່ສ້າງ, ບໍ່ໄດ້ອັບເດດ). <br> <br> ມັນສາມາດເປັນການສະແດງອອກ, ຕົວຢ່າງ: <br> preg_match ('/public/', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> right->)
-DisplayOnPdfDesc=ສະແດງຊ່ອງຂໍ້ມູນນີ້ໃສ່ເອກະສານ PDF ທີ່ເຂົ້າກັນໄດ້, ເຈົ້າສາມາດຈັດການ ຕຳ ແໜ່ງ ດ້ວຍຊ່ອງຂໍ້ມູນ "ຕຳ ແໜ່ງ". <br> ໃນປະຈຸບັນ, ຮູບແບບ PDF ທີ່ເຂົ້າກັນໄດ້ເປັນທີ່ຮູ້ຈັກແມ່ນ: eratosthene (ຄໍາສັ່ງ), espadon (ເຮືອ), sponge (ໃບແຈ້ງ ໜີ້), cyan (propal/ໃບສະ ເໜີ ລາຄາ), cornas (ຄໍາສັ່ງຂອງຜູ້ສະ ໜອງ) <br> <br> a0e78439009d04d09d04d09d0b0b0b0b0b0b0d0b0b0b0b0b0b0b0b0b0bf0bfd ແມ່ນເຮັດໃຫ້ເປັນໄປໄດ້ = ສະແດງ <br> 2 = ສະແດງຫນ້າຈໍຖ້າບໍ່ຫວ່າງ <br> <br> <strong> ສໍາລັບສາຍເອກະສານ: </strong> <br> 0 = ບໍ່ສະແດງ <br> 1 = ສະແດງໃນຄໍລໍາ <br> 3 = ການສະແດງໃນຖັນຄໍາອະທິບາຍເສັ້ນພາຍຫຼັງທີ່ຄໍາອະທິບາຍ <br> 4 = ການສະແດງໃນຖັນຄໍາອະທິບາຍຫຼັງຈາກ ຄໍາອະທິບາຍເທົ່ານັ້ນຖ້າບໍ່ຫວ່າງເປົ່າ
-DisplayOnPdf=ສະແດງໃນ PDF
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=ສາມາດສະສົມມູນຄ່າຂອງຊ່ອງຂໍ້ມູນເພື່ອເອົາຈໍານວນທັງintoົດເຂົ້າໃນບັນຊີໄດ້ບໍ? (ຕົວຢ່າງ: 1 ຫຼື 0)
 SearchAllDesc=ພາກສະ ໜາມ ໄດ້ຖືກນໍາໃຊ້ເພື່ອເຮັດການຄົ້ນຫາຈາກເຄື່ອງມືຄົ້ນຫາໄວບໍ? (ຕົວຢ່າງ: 1 ຫຼື 0)
 SpecDefDesc=ກະລຸນາໃສ່ເອກະສານທັງyouົດທີ່ເຈົ້າຕ້ອງການສະ ໜອງ ໃຫ້ກັບໂມດູນຂອງເຈົ້າທີ່ບໍ່ໄດ້ຖືກກໍານົດໄວ້ໂດຍແຖບອື່ນຢູ່ແລ້ວ. ເຈົ້າສາມາດໃຊ້ .md ຫຼືດີກວ່າ, ໄວຍາກອນ .asciidoc ອຸດົມສົມບູນ.
@@ -130,26 +136,44 @@ UseSpecificEditorURL = ໃຊ້ URL ຕົວແກ້ໄຂສະເພາະ
 UseSpecificFamily = ໃຊ້ຄອບຄົວສະເພາະ
 UseSpecificAuthor = ໃຊ້ຜູ້ຂຽນສະເພາະ
 UseSpecificVersion = ໃຊ້ສະບັບເລີ່ມຕົ້ນສະເພາະ
-IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
-IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=ຖ້າເຈົ້າກວດເບິ່ງອັນນີ້, ລະຫັດບາງອັນຈະຖືກສ້າງຂຶ້ນເພື່ອເພີ່ມກ່ອງ "ສ້າງເອກະສານ" ໃສ່ໃນບັນທຶກ.
-ShowOnCombobox=ສະແດງໃຫ້ເຫັນມູນຄ່າໃນການ combobox
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=ກະແຈ ສຳ ລັບ ຄຳ ແນະ ນຳ
 CSSClass=CSS ສໍາລັບການແກ້ໄຂ/ສ້າງແບບຟອມ
 CSSViewClass=CSS ສໍາລັບແບບຟອມການອ່ານ
 CSSListClass=CSS ສຳ ລັບລາຍຊື່
 NotEditable=ບໍ່ສາມາດແກ້ໄຂໄດ້
 ForeignKey=ກະແຈຕ່າງປະເທດ
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=ຕົວປ່ຽນ Ascii ເປັນ HTML
 AsciiToPdfConverter=Ascii ເປັນຕົວປ່ຽນ PDF
 TableNotEmptyDropCanceled=ຕາຕະລາງບໍ່ຫວ່າງເປົ່າ. ການຍົກເລີກໄດ້ຖືກຍົກເລີກ.
 ModuleBuilderNotAllowed=ຕົວສ້າງໂມດູນສາມາດໃຊ້ໄດ້ແຕ່ບໍ່ອະນຸຍາດໃຫ້ກັບຜູ້ໃຊ້ຂອງເຈົ້າ.
 ImportExportProfiles=ນຳ ເຂົ້າແລະສົ່ງອອກໂປຣໄຟລ
-ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
 LinkToParentMenu=Parent menu (fk_xxxxmenu)
 ListOfTabsEntries=List of tab entries
 TabsDefDesc=Define here the tabs provided by your module
 TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Read
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
@@ -17,8 +19,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IMoveTarget extends ICollection {
-
+interface IMoveTarget extends ICollection
+{
     /**
      * Moves a node into this collection.
      *
@@ -34,11 +36,11 @@ interface IMoveTarget extends ICollection {
      * the move itself. If you return true from this function, the assumption
      * is that the move was successful.
      *
-     * @param string $targetName New local file/collection name.
+     * @param string $targetName new local file/collection name
      * @param string $sourcePath Full path to source node
-     * @param INode $sourceNode Source node itself
+     * @param INode  $sourceNode Source node itself
+     *
      * @return bool
      */
-    function moveInto($targetName, $sourcePath, INode $sourceNode);
-
+    public function moveInto($targetName, $sourcePath, INode $sourceNode);
 }

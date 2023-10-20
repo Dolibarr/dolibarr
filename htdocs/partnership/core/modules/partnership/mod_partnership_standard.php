@@ -22,11 +22,11 @@
  *  \ingroup    partnership
  *  \brief      File of class to manage Partnership numbering rules standard
  */
-dol_include_once('/partnership/core/modules/partnership/modules_partnership.php');
+require_once DOL_DOCUMENT_ROOT.'/partnership/core/modules/partnership/modules_partnership.php';
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the Standard numbering rule for Partnership
  */
 class mod_partnership_standard extends ModeleNumRefPartnership
 {
@@ -52,11 +52,11 @@ class mod_partnership_standard extends ModeleNumRefPartnership
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *  @param  Translate	$langs      Lang object to use for output
+	 *  @return string      Text with description
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 

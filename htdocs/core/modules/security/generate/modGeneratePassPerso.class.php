@@ -37,6 +37,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $id;
 
+	public $picto = 'fa-shield-alt';
+
 	/**
 	 * Minimum length (text visible by end user)
 	 *
@@ -62,15 +64,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 * @var integer
 	 */
 	public $WithoutAmbi = 0;
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
 
 	public $Maj;
 	public $Min;
@@ -98,8 +91,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->user = $user;
 
 		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
-			// default value at auto generation (12 chars, 1 upercase, 1 digit, 1 special char,  3 repeat, exclude ambiguous characters).
-			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '12;1;1;1;3;1', 'chaine', 0, '', $conf->entity);
+			// default value at auto generation (12 chars, 1 uppercase, 1 digit, 0 special char, 3 repeat max, exclude ambiguous characters).
+			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '12;1;1;0;3;1', 'chaine', 0, '', $conf->entity);
 		}
 
 		$this->Maj = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -210,7 +203,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		$password_a = preg_split('//u', $password, null, PREG_SPLIT_NO_EMPTY);
 		$maj = preg_split('//u', $this->Maj, null, PREG_SPLIT_NO_EMPTY);
-		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);;
+		$num = preg_split('//u', $this->Nb, null, PREG_SPLIT_NO_EMPTY);
 		$spe = preg_split('//u', $this->Spe, null, PREG_SPLIT_NO_EMPTY);
 		/*
 		$password_a = str_split($password);

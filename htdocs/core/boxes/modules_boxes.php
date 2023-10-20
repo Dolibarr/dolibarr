@@ -21,8 +21,8 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    facture
- *		\brief      Fichier contenant la classe mere des boites
+ *		\ingroup    core
+ *		\brief      File containing the parent class of boxes
  */
 
 
@@ -213,7 +213,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 
 			$out .= "\n<!-- Box ".get_class($this)." start -->\n";
 
-			$out .= '<div class="box boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
+			$out .= '<div class="box divboxtable boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
 
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
 				$out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
@@ -259,9 +259,9 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
 					$label = $head['text'];
-					//if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
-						$label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
+						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
 					}
 					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
 					//$out.= '</td></tr></table>';
@@ -326,7 +326,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 							}
 
 							$maxlength = $MAXLENGTHBOX;
-							if (!empty($contents[$i][$j]['maxlength'])) {
+							if (isset($contents[$i][$j]['maxlength'])) {
 								$maxlength = $contents[$i][$j]['maxlength'];
 							}
 
@@ -432,7 +432,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				while (($file = readdir($handle)) !== false) {
 					$reg = array();
 					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg)) {
-						if (preg_match('/\.back$/', $file)) {
+						if (preg_match('/\.back$/', $file) || preg_match('/^(.+)\.disabled\.php/', $file)) {
 							continue;
 						}
 
@@ -464,6 +464,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				closedir($handle);
 			}
 		}
+		//echo "<pre>";print_r($modules);echo "</pre>";
 
 		asort($orders);
 
@@ -495,7 +496,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				}
 
 				// We set info of modules
-				$widget[$j]['picto'] = $objMod->picto ? img_object('', $objMod->picto) : img_object('', 'generic');
+				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];

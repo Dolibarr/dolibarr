@@ -20,9 +20,9 @@
  */
 
 /**
- *  \file       position_document.php
- *  \ingroup    hrm
- *  \brief      Tab for documents linked to Position
+ *    \file       htdocs/hrm/position_document.php
+ *    \ingroup    hrm
+ *    \brief      Tab for documents linked to Position
  */
 
 // Load Dolibarr environment
@@ -39,13 +39,13 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "companies", "other", "mails"));
 
-
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
-// Get parameters
+// Get parameters for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -79,8 +79,9 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity ? $object->entity : $conf->entity]."/position/".get_exdir(0, 0, 0, 1, $object);
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd  = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -132,10 +133,10 @@ if ($object->id) {
 	$morehtmlref = '<div class="refidno">';
 	$u_position = new User(($db));
 	$u_position->fetch($object->fk_user);
-	$morehtmlref .= $langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+	$morehtmlref .= ($u_position->id > 0 ? $u_position->getNomUrl(1) : $langs->trans('Employee').' : ');
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 
