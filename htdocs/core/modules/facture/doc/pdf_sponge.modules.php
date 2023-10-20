@@ -77,42 +77,6 @@ class pdf_sponge extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
-	/**
 	 * @var int heightforinfotot
 	 */
 	public $heightforinfotot;
@@ -136,12 +100,6 @@ class pdf_sponge extends ModelePDFFactures
 	 * @var int tab_top_newpage
 	 */
 	public $tab_top_newpage;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
 
 	/**
 	 * @var bool Situation invoice type
@@ -396,7 +354,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$logodir = $conf->mycompany->multidir_output[$object->entity];
 					}
-					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -658,7 +616,7 @@ class pdf_sponge extends ModelePDFFactures
 
 							// Add footer
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs));
+							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($i, $object, $outputlangs));
 
 							$i++;
 						}
@@ -1053,7 +1011,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pageposbefore, $object, $langs));
+				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
 				}
@@ -1206,10 +1164,10 @@ class pdf_sponge extends ModelePDFFactures
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$y += 3;
+			$maxY = $y;
 			while ($i < $num) {
-				$y += 3;
 				$row = $this->db->fetch_object($resql);
-
 				$pdf->SetXY($tab3_posx, $tab3_top + $y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), 'day', false, $outputlangs, true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);
@@ -1218,11 +1176,12 @@ class pdf_sponge extends ModelePDFFactures
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
+				$maxY = max($pdf->GetY() - $tab3_top - 3, $maxY);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
 				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
-
+				$y = $maxY = max($pdf->GetY() - 3 - $tab3_top, $maxY);
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
-
+				$y += 3;
 				$i++;
 			}
 
@@ -1354,7 +1313,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
+				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
@@ -1591,7 +1550,7 @@ class pdf_sponge extends ModelePDFFactures
 				$facSign = $object->total_ht >= 0 ? '+' : ''; // management of a particular customer case
 			}
 
-			if ($fac->type === facture::TYPE_CREDIT_NOTE) {
+			if ($fac->type === Facture::TYPE_CREDIT_NOTE) {
 				$facSign = '-'; // les avoirs
 			}
 
@@ -2076,6 +2035,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 
 		$ltrdirection = 'L';

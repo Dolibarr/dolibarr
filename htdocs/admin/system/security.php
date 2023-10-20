@@ -323,7 +323,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, clamdscan').')</span>';
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
@@ -428,7 +428,7 @@ print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
 if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
-	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
+	print ' &nbsp; - ' . getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 	}
@@ -461,7 +461,7 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 	foreach ($eventstolog as $key => $arr) {
 		if ($arr['id']) {
 			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			$value = getDolGlobalString($key);
 			if ($value) {
 				if ($i > 0) {
 					$out .= ', ';

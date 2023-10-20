@@ -134,6 +134,7 @@ class FormMail extends Form
 	public $withtocc;
 	public $withtoccc;
 	public $withtopic;
+	public $witherrorsto;
 
 	/**
 	 * @var int 0=No attaches files, 1=Show attached files, 2=Can add new attached files
@@ -150,12 +151,20 @@ class FormMail extends Form
 	public $withreplytoreadonly;
 	public $withtoreadonly;
 	public $withtoccreadonly;
+	public $witherrorstoreadonly;
 	public $withtocccreadonly;
 	public $withtopicreadonly;
+	public $withbodyreadonly;
 	public $withfilereadonly;
 	public $withdeliveryreceipt;
 	public $withcancel;
+	public $withdeliveryreceiptreadonly;
 	public $withfckeditor;
+
+	/**
+	 * @var string ckeditortoolbar
+	 */
+	public $ckeditortoolbar;
 
 	public $substit = array();
 	public $substit_lines = array();
@@ -277,7 +286,7 @@ class FormMail extends Form
 	/**
 	 * Remove a file from the list of attached files (stored in SECTION array)
 	 *
-	 * @param  	string	$keytodelete     Key index in file array (0, 1, 2, ...)
+	 * @param  	int		$keytodelete     Key index in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
 	public function remove_attached_files($keytodelete)
@@ -369,7 +378,7 @@ class FormMail extends Form
 
 		// Required to show preview wof mail attachments
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-		$formfile = new Formfile($this->db);
+		$formfile = new FormFile($this->db);
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
@@ -604,7 +613,7 @@ class FormMail extends Form
 
 						// Add also company main email
 						if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
-							$s = (empty($conf->global->MAIN_INFO_SOCIETE_NOM)?$conf->global->MAIN_INFO_SOCIETE_EMAIL:$conf->global->MAIN_INFO_SOCIETE_NOM).' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+							$s = (empty($conf->global->MAIN_INFO_SOCIETE_NOM)?$conf->global->MAIN_INFO_SOCIETE_EMAIL:$conf->global->MAIN_INFO_SOCIETE_NOM).' &lt;' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'&gt;';
 							$liste['company'] = array('label' => $s, 'data-html' => $s);
 						}
 
@@ -624,7 +633,7 @@ class FormMail extends Form
 							if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && getDolGlobalString('MAIN_MAIL_EMAIL_FROM') != getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 								$s = $conf->global->MAIN_MAIL_EMAIL_FROM;
 								if ($this->frommail) {
-									$s .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
+									$s .= ' &lt;' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'&gt;';
 								}
 								array('label' => $s, 'data-html' => $s);
 							}
@@ -666,9 +675,16 @@ class FormMail extends Form
 							}
 						}
 
-						// Using combo here make the '<email>' no more visible on list.
-						//$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
-						$out .= ' '.$form->selectarray('fromtype', $liste, !empty($arraydefaultmessage->email_from) ? 'from_template_'.GETPOST('modelmailselected') : $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 0, '', $disablebademails);
+						// Using ajaxcombo here make the '<email>' no more visible on list because <emailofuser> is not a valid html tag,
+						// so we transform before each record into $liste to be printable with ajaxcombo by replacing <> into ()
+						// $liste['senderprofile_0_0'] = array('label'=>'rrr', 'data-html'=>'rrr &lt;aaaa&gt;');
+						foreach ($liste as $key => $val) {
+							if (!empty($liste[$key]['data-html'])) {
+								$liste[$key]['data-html'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $liste[$key]['data-html']);
+								$liste[$key]['data-html'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $liste[$key]['data-html']);
+							}
+						}
+						$out .= ' '.$form->selectarray('fromtype', $liste, empty($arraydefaultmessage->email_from) ? $this->fromtype : 'from_template_'.GETPOST('modelmailselected'), 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
 					}
 
 					$out .= "</td></tr>\n";
@@ -1093,11 +1109,26 @@ class FormMail extends Form
 				if (!empty($this->withtofree)) {
 					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 				}
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+					if (is_array($val)) {
+						$label = $val['label'];
+					} else {
+						$label = $val;
+					}
+
+					$tmparray[$key] = array();
+					$tmparray[$key]['id'] = $key;
+
+					$tmparray[$key]['label'] = $label;
+					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
+					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+
+					$tmparray[$key]['labelhtml'] = $label;
+					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
+					$tmparray[$key]['labelhtml'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $tmparray[$key]['labelhtml']);
 				}
 
 				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
@@ -1107,7 +1138,7 @@ class FormMail extends Form
 					}
 				}
 
-				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', 0, 0);
 			}
 		}
 		$out .= "</td></tr>\n";
@@ -1131,14 +1162,31 @@ class FormMail extends Form
 			$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 			if (!empty($this->withtocc) && is_array($this->withtocc)) {
 				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+					if (is_array($val)) {
+						$label = $val['label'];
+					} else {
+						$label = $val;
+					}
+
+					$tmparray[$key] = array();
+					$tmparray[$key]['id'] = $key;
+
+					$tmparray[$key]['label'] = $label;
+					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
+					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+
+					$tmparray[$key]['labelhtml'] = $label;
+					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
+					$tmparray[$key]['labelhtml'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $tmparray[$key]['labelhtml']);
 				}
+
 				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
-				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
+
+				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', 0, 0);
 			}
 		}
 		$out .= "</td></tr>\n";
@@ -1162,13 +1210,30 @@ class FormMail extends Form
 			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 			if (!empty($this->withtoccc) && is_array($this->withtoccc)) {
 				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+
 				$tmparray = $this->withtoccc;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					if (is_array($val)) {
+						$label = $val['label'];
+					} else {
+						$label = $val;
+					}
+					$tmparray[$key] = array();
+					$tmparray[$key]['id'] = $key;
+
+					$tmparray[$key]['label'] = $label;
+					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
+					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+
+					$tmparray[$key]['labelhtml'] = $label;
+					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
+					$tmparray[$key]['labelhtml'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $tmparray[$key]['labelhtml']);
 				}
+
 				$withtocccselected = GETPOST("receiverccc", 'array'); // Array of selected value
-				$out .= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null, null, "90%");
+
+				$out .= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, 'inline-block minwidth500', 0, 0);
 			}
 		}
 

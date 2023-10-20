@@ -47,7 +47,6 @@ $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
 
@@ -55,6 +54,8 @@ $object = new Contrat($db);
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
@@ -110,7 +111,10 @@ if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

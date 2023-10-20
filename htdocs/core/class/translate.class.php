@@ -82,7 +82,7 @@ class Translate
 			$more = array();
 			$i = 0;
 			foreach ($conf->file->dol_document_root as $dir) {
-				$newdir = $dir . $conf->global->MAIN_FORCELANGDIR; // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
+				$newdir = $dir . getDolGlobalString('MAIN_FORCELANGDIR'); // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
 				if (!in_array($newdir, $this->dir)) {
 					$more['module_' . $i] = $newdir;
 					$i++; // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
@@ -266,7 +266,8 @@ class Translate
 			$file_lang = $searchdir . ($modulename ? '/' . $modulename : '') . "/langs/" . $langofdir . "/" . $newdomain . ".lang";
 			$file_lang_osencoded = dol_osencode($file_lang);
 
-			$filelangexists = is_file($file_lang_osencoded);
+			//$filelangexists = is_file($file_lang_osencoded);
+			$filelangexists = @is_file($file_lang_osencoded);	// avoid [php:warn]
 
 			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' domain='.$domain.' newdomain='.$newdomain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 			//print 'Try to read for alt='.$alt.' langofdir='.$langofdir.' domain='.$domain.' newdomain='.$newdomain.' modulename='.$modulename.' this->_tab_loaded[newdomain]='.$this->_tab_loaded[$newdomain].' file_lang='.$file_lang." => filelangexists=".$filelangexists."\n";
@@ -494,9 +495,10 @@ class Translate
 
 		if (!$found && !empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 			// Overwrite translation with database read
-			$sql = "SELECT transkey, transvalue FROM " . $db->prefix() . "overwrite_trans where lang='" . $db->escape($this->defaultlang) . "' OR lang IS NULL";
-			$sql .= " AND entity IN (0, " . getEntity('overwrite_trans') . ")";
+			$sql = "SELECT transkey, transvalue FROM ".$db->prefix()."overwrite_trans where (lang='".$db->escape($this->defaultlang)."' OR lang IS NULL)";
+			$sql .= " AND entity IN (0, ".getEntity('overwrite_trans').")";
 			$sql .= $db->order("lang", "DESC");
+
 			$resql = $db->query($sql);
 
 			if ($resql) {

@@ -170,6 +170,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var BookKeepingLine[] Movement line array
+	 */
+	public $linesmvt = array();
+
+	/**
+	 * @var BookKeepingLine[] export line array
+	 */
+	public $linesexport = array();
+
+	/**
 	 * @var integer|string date of movement validated & lock
 	 */
 	public $date_validation;
@@ -282,7 +292,7 @@ class BookKeeping extends CommonObject
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
 			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
-				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
+				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.($this->numero_compte != -1 ? $this->numero_compte : $langs->trans("Unknown"));
 				if ($this->subledger_account && $this->subledger_account != $this->numero_compte) {
 					$mesg .= ', '.$langs->trans("SubledgerAccount").': '.$this->subledger_account;
 				}
@@ -488,7 +498,7 @@ class BookKeeping extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -716,11 +726,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int 	$id 	Id object
+	 * @param 	string 	$ref 	Ref (Not used. Does not exists on this table, same as rowid)
+	 * @param 	string 	$mode 	Mode
+	 * @return 	int 			Int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -761,7 +770,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
-			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.rowid = ".((int) $ref);
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id);
 		}
@@ -1154,7 +1163,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
-	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
+	 * @param 	int 	$option 		option (0: aggregate by general account or 1: aggreegate by subaccount)
 	 * @return 	int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
@@ -1210,9 +1219,9 @@ class BookKeeping extends CommonObject
 		}
 
 		if (!empty($option)) {
-			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' AND t.subledger_account != ""';
-			$sql .= ' GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label';
+			$sql .= " AND t.subledger_account IS NOT NULL";
+			$sql .= " AND t.subledger_account <> ''";
+			$sql .= " GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
@@ -1238,8 +1247,10 @@ class BookKeeping extends CommonObject
 
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
-				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label;
+				if (!empty($option)) {
+					$line->subledger_account = $obj->subledger_account;
+					$line->subledger_label = $obj->subledger_label;
+				}
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 
@@ -1480,15 +1491,16 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
+	 * @param string $mode Mode
 	 * @return int Result
 	 */
-	public function deleteByImportkey($importkey)
+	public function deleteByImportkey($importkey, $mode = '')
 	{
 		$this->db->begin();
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE import_key = '".$this->db->escape($importkey)."'";
 
 		$resql = $this->db->query($sql);
@@ -1562,9 +1574,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @param string $mode Mode
 	 * @return 	int 				Result
 	 */
-	public function deleteMvtNum($piecenum)
+	public function deleteMvtNum($piecenum, $mode = '')
 	{
 		global $conf;
 
@@ -1572,7 +1585,7 @@ class BookKeeping extends CommonObject
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
 		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features

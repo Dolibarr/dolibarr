@@ -42,8 +42,8 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$object = new Usergroup($db);
-$object->fetch($id);
+$object = new UserGroup($db);
+$object->fetch($id, '', true);
 $object->getrights();
 
 // Users/Groups management only in master entity if transverse mode
@@ -69,7 +69,7 @@ if ($action == 'dolibarr2ldap') {
 		$info = $object->_load_ldap_info();
 
 		// Get a gid number for objectclass PosixGroup if none was provided
-		if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+		if (empty($info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')]) && in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 
@@ -103,7 +103,7 @@ print dol_get_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, (!empty($user->rights->user->user->lire) || !empty($user->admin)));
+dol_banner_tab($object, 'id', $linkback, ($user->hasRight('user', 'user', 'lire') || !empty($user->admin)));
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

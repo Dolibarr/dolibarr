@@ -102,8 +102,7 @@ class Availabilities extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'validate'=>'1',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
@@ -118,14 +117,12 @@ class Availabilities extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'), 'validate'=>'1',),
 		'start' => array('type'=>'date', 'label'=>'Start Date', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'searchall'=>1,),
 		'end' => array('type'=>'date', 'label'=>'End Date', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'searchall'=>1,),
-		'type' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>'1', 'position'=>49, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Customer', '1'=>'Supplier', '2'=>'Else'),),
 		'duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>'1', 'position'=>47, 'notnull'=>1, 'visible'=>1, 'default'=>'30',),
 		'startHour' => array('type'=>'integer', 'label'=>'Start Hour', 'enabled'=>'1', 'position'=>46, 'notnull'=>1, 'visible'=>-1,),
 		'endHour' => array('type'=>'integer', 'label'=>'End Hour', 'enabled'=>'1', 'position'=>46.5, 'notnull'=>1, 'visible'=>-1,),
 		'fk_bookcal_calendar' => array('type'=>'integer:Calendar:bookcal/class/calendar.class.php:1', 'label'=>'CalendarId', 'enabled'=>'1', 'position'=>48, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
-	public $ref;
 	public $label;
 	public $description;
 	public $note_public;
@@ -140,7 +137,6 @@ class Availabilities extends CommonObject
 	public $status;
 	public $start;
 	public $end;
-	public $type;
 	public $duration;
 	public $startHour;
 	public $endHour;
@@ -726,7 +722,7 @@ class Availabilities extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -776,7 +772,7 @@ class Availabilities extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -955,7 +951,7 @@ class Availabilities extends CommonObject
 		if (!empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->BOOKCAL_AVAILABILITIES_ADDON.".php";
+			$file = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON') . ".php";
 			$classname = $conf->global->BOOKCAL_AVAILABILITIES_ADDON;
 
 			// Include file with class

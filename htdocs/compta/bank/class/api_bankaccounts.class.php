@@ -56,13 +56,14 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
-	 * @param  int    	$category   Use this param to filter list by category
+	 * @param  int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		$list = array();
 
@@ -108,7 +109,7 @@ class BankAccounts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$account = new Account($this->db);
 				if ($account->fetch($obj->rowid) > 0) {
-					$list[] = $this->_cleanObjectDatas($account);
+					$list[] = $this->_filterObjectProperties($this->_cleanObjectDatas($account), $properties);
 				}
 			}
 		} else {
@@ -121,8 +122,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get account by ID.
 	 *
-	 * @param 	int			$id				ID of account
-	 * @return  Object              		Object with cleaned properties
+	 * @param	int			$id				ID of account
+	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
@@ -144,8 +145,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Create account object
 	 *
-	 * @param 	array $request_data    	Request data
-	 * @return 	int 					ID of account
+	 * @param	array $request_data		Request data
+	 * @return	int						ID of account
 	 */
 	public function post($request_data = null)
 	{
@@ -312,9 +313,9 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param 	int    $id              ID of account
-	 * @param 	array  $request_data    data
-	 * @return	Object              	Object with cleaned properties
+	 * @param	int    $id              ID of account
+	 * @param	array  $request_data    data
+	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -480,7 +481,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string $accountancycode  Accountancy code {@from body}
 	 * @param string $datev            Payment date value (timestamp) {@from body} {@type timestamp}
 	 * @param string $num_releve       Bank statement numero {@from body}
-	 * @return int  				   ID of line
+	 * @return int					   ID of line
 	 *
 	 * @url POST {id}/lines
 	 */
@@ -527,7 +528,7 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Add a link to an account line
 	 *
-	 * @param int    $id    		ID of account
+	 * @param int    $id			ID of account
 	 * @param int    $line_id       ID of account line
 	 * @param int    $url_id        ID to set in the URL {@from body}
 	 * @param string $url           URL of the link {@from body}

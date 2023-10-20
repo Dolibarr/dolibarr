@@ -422,7 +422,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 		$selectedposnumber = 0;
 		$showempty = 1;
-		if ($conf->global->TAKEPOS_NUM_TERMINALS == '1') {
+		if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') == '1') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}

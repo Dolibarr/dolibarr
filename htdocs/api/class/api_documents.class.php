@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class Documents extends DolibarrApi
 {
-
 	/**
 	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -68,7 +67,7 @@ class Documents extends DolibarrApi
 	 */
 	public function index($modulepart, $original_file = '')
 	{
-		global $conf, $langs;
+		global $conf;
 
 		if (empty($modulepart)) {
 				throw new RestException(400, 'bad value for parameter modulepart');
@@ -121,7 +120,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * Supported modules: invoice, order, proposal, contract
+	 * Supported modules: invoice, order, proposal, contract, shipment
 	 *
 	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
@@ -189,66 +188,82 @@ class Documents extends DolibarrApi
 
 		if ($modulepart == 'facture' || $modulepart == 'invoice') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$this->invoice = new Facture($this->db);
-			$result = $this->invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			$tmpobject = new Facture($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
 			if (!$result) {
 				throw new RestException(404, 'Invoice not found');
 			}
 
-			$templateused = $doctemplate ? $doctemplate : $this->invoice->model_pdf;
-			$result = $this->invoice->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
 		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') {
 			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
-			$this->supplier_invoice = new FactureFournisseur($this->db);
-			$result = $this->supplier_invoice->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			$tmpobject = new FactureFournisseur($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
 			if (!$result) {
 				throw new RestException(404, 'Supplier invoice not found');
 			}
 
-			$templateused = $doctemplate ? $doctemplate : $this->supplier_invoice->model_pdf;
-			$result = $this->supplier_invoice->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
 				throw new RestException(500, 'Error generating document');
 			}
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-			$this->order = new Commande($this->db);
-			$result = $this->order->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			$tmpobject = new Commande($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
 			if (!$result) {
 				throw new RestException(404, 'Order not found');
 			}
-			$templateused = $doctemplate ? $doctemplate : $this->order->model_pdf;
-			$result = $this->order->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-			$this->propal = new Propal($this->db);
-			$result = $this->propal->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			$tmpobject = new Propal($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
 			if (!$result) {
 				throw new RestException(404, 'Proposal not found');
 			}
-			$templateused = $doctemplate ? $doctemplate : $this->propal->model_pdf;
-			$result = $this->propal->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
 		} elseif ($modulepart == 'contrat' || $modulepart == 'contract') {
 			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 
-			$this->contract = new Contrat($this->db);
-			$result = $this->contract->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			$tmpobject = new Contrat($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
 
 			if (!$result) {
 				throw new RestException(404, 'Contract not found');
 			}
 
-			$templateused = $doctemplate ? $doctemplate : $this->contract->model_pdf;
-			$result = $this->contract->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
+			}
+		} elseif ($modulepart == 'expedition' || $modulepart == 'shipment') {
+			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+
+			$tmpobject = new Expedition($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Shipment not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document missing doctemplate parameter');
@@ -632,7 +647,7 @@ class Documents extends DolibarrApi
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
 	{
-		global $db, $conf;
+		global $conf;
 
 		//var_dump($modulepart);
 		//var_dump($filename);

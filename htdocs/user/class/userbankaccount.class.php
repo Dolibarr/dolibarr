@@ -78,7 +78,7 @@ class UserBankAccount extends Account
 
 		$this->userid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 	}
 
 
@@ -302,5 +302,21 @@ class UserBankAccount extends Account
 		}
 
 		return $rib;
+	}
+
+	/**
+	 * Return if a country of userBank is inside the EEC (European Economic Community)
+	 * @return     boolean    true = country inside EEC, false = country outside EEC
+	 */
+	public function checkCountryBankAccount()
+	{
+
+		if (!empty($this->country_code)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+			$country_code_in_EEC = getCountriesInEEC();
+			return in_array($this->country_code, $country_code_in_EEC);
+		} else {
+			return -1;
+		}
 	}
 }

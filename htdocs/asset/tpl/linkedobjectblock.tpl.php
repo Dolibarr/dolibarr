@@ -55,7 +55,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td class="linkedcol-ref" align="center">'.$objectlink->label.'</td>';
 	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_start, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
-	if ($user->rights->asset->read) {
+	if ($user->hasRight('asset', 'read')) {
 		$total = $total + $objectlink->acquisition_value_ht;
 		echo price($objectlink->acquisition_value_ht);
 	}

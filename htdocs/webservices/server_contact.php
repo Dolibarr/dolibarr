@@ -292,8 +292,8 @@ function getContact($authentication, $id, $ref_ext)
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
-			if ($fuser->rights->societe->contact->lire && !$fuser->socid
-				|| ($fuser->rights->societe->contact->lire && ($fuser->socid == $contact->socid))
+			if ($fuser->hasRight('societe', 'contact', 'lire') && !$fuser->socid
+				|| ($fuser->hasRight('societe', 'contact', 'lire') && ($fuser->socid == $contact->socid))
 			) {
 				$contact_result_fields = array(
 					'id' => $contact->id,
@@ -608,7 +608,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  */
 function updateContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -628,7 +628,7 @@ function updateContact($authentication, $contact)
 		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-	if (!$error && ($id && $ref_ext)) {
+	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
 	}

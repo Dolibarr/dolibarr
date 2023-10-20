@@ -51,6 +51,7 @@ StripeAccount=Stripe-konto
 StripeChargeList=Liste over Stripe-kostnader
 StripeTransactionList=Liste over stripe-transaksjoner
 StripeCustomerId=Stripe kunde-id
+StripePaymentId=Stripe betalings-ID
 StripePaymentModes=Stripe betalingsmåter
 LocalID=Lokal ID
 StripeID=Stripe ID

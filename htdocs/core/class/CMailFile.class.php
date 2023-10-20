@@ -877,7 +877,7 @@ class CMailFile
 				}
 			} elseif ($this->sendmode == 'smtps') {
 				if (!is_object($this->smtps)) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
+					$this->error = "Failed to send mail with smtps lib<br>Constructor of object CMailFile was not initialized without errors.";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					return false;
 				}
@@ -895,7 +895,7 @@ class CMailFile
 				}
 
 				// If we use SSL/TLS
-				$server = $conf->global->$keyforsmtpserver;
+				$server = getDolGlobalString($keyforsmtpserver);
 				$secure = '';
 				if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
 					$secure = 'ssl';
@@ -905,7 +905,7 @@ class CMailFile
 				}
 				$server = ($secure ? $secure.'://' : '').$server;
 
-				$port = $conf->global->$keyforsmtpport;
+				$port = getDolGlobalInt($keyforsmtpport);
 
 				$this->smtps->setHost($server);
 				$this->smtps->setPort($port); // 25, 465...;
@@ -922,6 +922,8 @@ class CMailFile
 				}
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					$supportedoauth2array = array();
+
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
@@ -933,7 +935,7 @@ class CMailFile
 					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-					if (isset($supportedoauth2array)) {
+					if (!empty($supportedoauth2array)) {
 						$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
 					} else {
 						$OAUTH_SERVICENAME = 'Unknown';
@@ -983,19 +985,19 @@ class CMailFile
 				$res = true;
 				$from = $this->smtps->getFrom('org');
 				if ($res && !$from) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Sender address '$from' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 				$dest = $this->smtps->getTo();
 				if ($res && !$dest) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Recipient address '$dest' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 
 				if ($res) {
-					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport), LOG_DEBUG);
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 						$this->smtps->setDebug(true);
@@ -1035,7 +1037,7 @@ class CMailFile
 						if (empty($this->error)) {
 							$this->error = $result;
 						}
-						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - ".$this->error, LOG_ERR);
 						$res = false;
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
@@ -1075,6 +1077,8 @@ class CMailFile
 					$this->transport->setPassword($conf->global->$keyforsmtppw);
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					$supportedoauth2array = array();
+
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
@@ -1157,7 +1161,7 @@ class CMailFile
 					$this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
 				}
 
-				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport), LOG_DEBUG);
 
 				// send mail
 				$failedRecipients = array();
@@ -1282,6 +1286,14 @@ class CMailFile
 
 			fclose($fp);
 			dolChmod($outputfile);
+
+			// Move dolibarr_mail.log into a dolibarr_mail.YYYYMMDD.log
+			if (getDolGlobalString('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".log";
+
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				dol_move($outputfile, $destfile, 0, 1, 0, 0);
+			}
 		}
 	}
 

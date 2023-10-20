@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
 
@@ -146,9 +148,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->workstation->workstation->read;
-$permissiontoadd = $user->rights->workstation->workstation->write;
-$permissiontodelete = $user->rights->workstation->workstation->delete;
+$permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
+$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');
+$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete');
 
 // Security check
 restrictedArea($user, $object->element, 0, $object->table_element, 'workstation');
@@ -632,7 +634,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

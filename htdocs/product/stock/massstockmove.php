@@ -60,22 +60,25 @@ $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 if (!$sortfield) {
 	$sortfield = 'p.ref';
 }
-
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$offset = $limit * $page;
 
 if (GETPOST('init')) {
 	unset($_SESSION['massstockmove']);
@@ -85,12 +88,14 @@ if (!empty($_SESSION['massstockmove'])) {
 	$listofdata = json_decode($_SESSION['massstockmove'], true);
 }
 
+$error = 0;
+
 
 /*
  * Actions
  */
 
-if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	if (!($id_sw > 0)) {
 		//$error++;
 		//setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
@@ -156,7 +161,7 @@ if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 	}
 }
 
-if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'delline' && $idline != '' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	if (!empty($listofdata[$idline])) {
 		unset($listofdata[$idline]);
 	}
@@ -167,7 +172,7 @@ if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvem
 	}
 }
 
-if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$error = 0;
 
 	if (!GETPOST("label")) {
@@ -311,7 +316,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 	}
 }
 
-if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	dol_mkdir($conf->stock->dir_temp);
 	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 

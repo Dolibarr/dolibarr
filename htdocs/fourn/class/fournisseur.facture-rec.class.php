@@ -71,14 +71,28 @@ class FactureFournisseurRec extends CommonInvoice
 	protected $table_ref_field = 'titre';
 
 	/**
-	 * @var string The label of recurring invoice
+	 * @var string 	The label of recurring invoice
+	 * @deprecated	Use $title
 	 */
 	public $titre;
+	/**
+	 * @var string The label of recurring invoice
+	 */
+	public $title;
+
 	public $ref_supplier;
 	public $socid;
 
-	public $suspended;
+	public $suspended; // status
+
+	/**
+	 * @var string		Label of invoice
+	 * @deprecated		Use $label
+	 */
 	public $libelle;
+	/**
+	 * @var string		Label of invoice
+	 */
 	public $label;
 
 	/**
@@ -111,6 +125,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $fk_multicurrency;
 	public $multicurrency_code;
 	public $multicurrency_tx;
+	public $multicurrency_subprice;
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
@@ -478,8 +493,6 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
@@ -568,7 +581,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
-		$sql .= ', f.note_private, f.note_public, f.modelpdf';
+		$sql .= ', f.note_private, f.note_public, f.modelpdf as model_pdf';
 		$sql .= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ', f.usenewprice, f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.generate_pdf';
@@ -622,7 +635,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_lim_reglement       = $this->db->jdate($obj->date_lim_reglement);
 				$this->note_private             = $obj->note_private;
 				$this->note_public              = $obj->note_public;
-				$this->model_pdf                = $obj->modelpdf;
+				$this->model_pdf                = $obj->model_pdf;
 
 				// Multicurrency
 				$this->fk_multicurrency         = $obj->fk_multicurrency;
@@ -641,11 +654,6 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->nb_gen_max               = $obj->nb_gen_max;
 				$this->auto_validate            = $obj->auto_validate;
 				$this->generate_pdf             = $obj->generate_pdf;
-
-
-				if ($this->statut == self::STATUS_DRAFT) {
-					$this->brouillon = 1;
-				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -1046,10 +1054,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string	$ref				Ref
 	 * @param string 	$label 				Label of the line
 	 * @param string 	$desc 				Description de la ligne
-	 * @param double 	$pu_ht 				Prix unitaire HT (> 0 even for credit note)
+	 * @param double 	$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param double 	$qty 				Quantity
 	 * @param int 		$remise_percent 	Percentage discount of the line
-	 * @param double 	$txtva 				Taux de tva force, sinon -1
+	 * @param double 	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
@@ -1060,17 +1068,18 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$special_code 		Special code
 	 * @param int 		$rang 				Position of line
 	 * @param string 	$fk_unit 			Unit
-	 * @param int 		$pu_ht_devise 		Unit price in currency
+	 * @param double	$pu_ht_devise 		Unit price in currency
+	 * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
 	 * @return int  		                <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
-	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
+	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0, $pu_ttc = 0)
 	{
 		global $mysoc, $user;
 
 		$facid = $this->id;
 
-		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
+		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -1078,7 +1087,7 @@ class FactureFournisseurRec extends CommonInvoice
 			return -1;
 		}
 
-		if ($this->brouillon) {
+		if ($this->status == self::STATUS_SUSPENDED) {
 			// Clean parameters
 			$fk_product = empty($fk_product) ? 0 : $fk_product;
 			$label = empty($label) ? '' : $label;
@@ -1187,6 +1196,19 @@ class FactureFournisseurRec extends CommonInvoice
 		}
 	}
 
+
+	/**
+	 * Return next reference of invoice not already used (or last reference)
+	 *
+	 * @param	 Societe	$soc		Thirdparty object
+	 * @param    string		$mode		'next' for next value or 'last' for last value
+	 * @return   string					free ref or last ref
+	 */
+	public function getNextNumRef($soc, $mode = 'next')
+	{
+		// Not used for recurring invoices
+		return '';
+	}
 
 	/**
 	 * Return the next date of
@@ -1305,8 +1327,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
-					$new_fac_fourn->brouillon = 1;
-					$new_fac_fourn->statut = self::STATUS_DRAFT;
+					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$new_fac_fourn->socid = $facturerec->socid;
@@ -1314,7 +1335,8 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->ref_supplier = $facturerec->ref_supplier;
 					$new_fac_fourn->model_pdf = $facturerec->model_pdf;
 					$new_fac_fourn->fk_project = $facturerec->fk_project;
-					$new_fac_fourn->libelle = $facturerec->libelle;
+					$new_fac_fourn->label = $facturerec->label;
+					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
 					if ($invoiceidgenerated <= 0) {
@@ -1992,23 +2014,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $fk_user_author;
 	public $fk_user_modif;
 	public $fk_multicurrency;
-	public $multicurrency_subprice;
-
-
-	/* Overrides fields in CommonObject
-	public $total_ht;
-	public $total_tva;
-	public $total_localtax1;
-	public $total_localtax2;
-	public $total_ttc;
-
-	public $fk_unit;
-	public $import_key;
-	public $multicurrency_code;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-	*/
 
 
 	/**

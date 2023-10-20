@@ -80,10 +80,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -96,19 +96,19 @@ $hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
 $cancreate = 0;
 $cancreateall = 0;
-if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
+if ($user->hasRight('holiday', 'write') && in_array($fuserid, $childids)) {
 	$cancreate = 1;
 }
-if (!empty($user->rights->holiday->writeall)) {
+if ($user->hasRight('holiday', 'writeall')) {
 	$cancreate = 1;
 	$cancreateall = 1;
 }
 
 $candelete = 0;
-if (!empty($user->rights->holiday->delete)) {
+if ($user->hasRight('holiday', 'delete')) {
 	$candelete = 1;
 }
-if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) {
+if ($object->statut == Holiday::STATUS_DRAFT && $user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids)) {
 	$candelete = 1;
 }
 
@@ -189,7 +189,7 @@ if (empty($reshook)) {
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
 			if (!$cancreateall) {
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-					if (empty($user->rights->holiday->write)) {
+					if (!$user->hasRight('holiday', 'write')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 					} elseif (!in_array($fuserid, $childids)) {
@@ -198,10 +198,10 @@ if (empty($reshook)) {
 						$action = 'create';
 					}
 				} else {
-					if (empty($user->rights->holiday->write) && empty($user->rights->holiday->writeall_advance)) {
+					if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall_advance')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-					} elseif (empty($user->rights->holiday->writeall_advance) && !in_array($fuserid, $childids)) {
+					} elseif (!$user->hasRight('holiday', 'writeall_advance') && !in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -373,7 +373,7 @@ llxHeader('', $title, $help_url);
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->writeall)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'writeall')) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || !$user->hasRight('holiday', 'writeall_advance')))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -487,47 +487,45 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<table class="border centpercent">';
 		print '<tbody>';
 
-		// groupe
+		// Groups of users
 		print '<tr>';
 		print '<td class="titlefield fieldrequired">';
 		print $form->textwithpicto($langs->trans("groups"), $langs->trans("fusionGroupsUsers"));
-
 		print '</td>';
-
 		print '<td>';
-		//@todo  ajouter entity  !
-		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup ';
+		print img_picto($langs->trans("groups"), 'group', 'class="pictofixedwidth"');
 
+		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup WHERE entity IN ('.getEntity('usergroup').')';
 		$resql = $db->query($sql);
 		$Tgroup = array();
 		while ($obj = $db->fetch_object($resql)) {
 			$Tgroup[$obj->rowid] = $obj->nom;
 		}
+
 		print $form->multiselectarray('groups', $Tgroup, GETPOST('groups', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 
 		print '</td>';
 
-		// users
+		// Users
 		print '<tr>';
 		print '<td class="titlefield fieldrequired">';
 		print $form->textwithpicto($langs->trans("users"), $langs->trans("fusionGroupsUsers"));
 		print '<td>';
+		print img_picto($langs->trans("users"), 'user', 'class="pictofixedwidth"');
 
-		$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from '.MAIN_DB_PREFIX.'user as  u';
-		$sql .= ' WHERE  1=1 ';
+		$sql = ' SELECT u.rowid, u.lastname, u.firstname from '.MAIN_DB_PREFIX.'user as  u';
+		$sql .= ' WHERE 1=1';
 		$sql .= !empty($morefilter) ? $morefilter : '';
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$userlist[$obj->rowid] = $obj->firstname . ' '. $obj->lastname;
+				$userlist[$obj->rowid] = dolGetFirstLastname($obj->firstname, $obj->lastname);
 			}
 		}
 
 		print img_picto('', 'users') . $form->multiselectarray('users', $userlist, GETPOST('users', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td>';
-
-
 
 		// Type
 		print '<tr>';
@@ -683,7 +681,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 	if ($result) {
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_VALIDATED && $cancreate) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			//if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
 
@@ -759,7 +757,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				} elseif ($object->halfday == 1) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Morning";
-				} elseif ($object->halfday == 2) {
+				} elseif ($object->halfday == 0 || $object->halfday == 2) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Afternoon";
 				}

@@ -153,20 +153,40 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification shipping
+	/* Replaced by next option
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
 		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
+		'picto' => 'shipment',
+		'deprecated' => 1
+	),
+	*/
+
+	'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_shipping',
+		'position' => 91,
+		'enabled' => isModEnabled("expedition") && isModEnabled("facture") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
 		'picto' => 'shipment'
 	),
 
 	// Automatic classification reception
-	'WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE'=>array(
+	/*
+	'WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE'=>array(
 		'family'=>'classify_reception',
 		'position'=>95,
 		'enabled'=>(isModEnabled("reception") && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'reception'
 	),
+	*/
+
+	'WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_reception',
+		'position' => 91,
+		'enabled' => isModEnabled("reception") && isModEnabled("supplier_invoice") && getDolGlobalString('WORKFLOW_BILL_ON_RECEPTION') !== '0',
+		'picto' => 'shipment'
+	),
+
 
 	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
 
@@ -283,6 +303,9 @@ foreach ($workflowcodes as $key => $params) {
 
 	if (!empty($params['warning'])) {
 		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
+	}
+	if (!empty($params['deprecated'])) {
+		print ' '.img_warning($langs->transnoentitiesnoconv("Deprecated"));
 	}
 
 	print '</td>';
