@@ -105,7 +105,7 @@ class MenuManager
 				$classname = 'class="tmenu menuhider nohover"';
 				$idsel = 'menu';
 
-				$this->menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+				$this->menu->add('#', '', 0, $showmode, $this->atarget, "xxx", '', 0, $id, $idsel, $classname);
 			}
 
 			// Home
@@ -125,7 +125,7 @@ class MenuManager
 					print_start_menu_entry_empty($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
 				}
 				if (empty($noout)) {
-					print_text_menu_entry_empty($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
+					print_text_menu_entry_empty($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $this->atarget));
 				}
 				if (empty($noout)) {
 					print_end_menu_entry_empty($menuval['enabled']);

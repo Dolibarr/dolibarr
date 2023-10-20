@@ -68,7 +68,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
 
-		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fas fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname, '<span class="fas fa-bars"></span>');
 	}
 
 	$menu_arr = array();
@@ -1424,7 +1424,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "contracts") {
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=0", $langs->trans("MenuInactiveServices"), 2, $user->hasRight('contrat',  'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4", $langs->trans("MenuRunningServices"), 2, $user->hasRight('contrat',  'lire'));
-				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat',  'lire'));
+				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4&filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat',  'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat',  'lire'));
 			}
 		}
@@ -2030,7 +2030,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		// Cash Control
 		if (isModEnabled('takepos') || isModEnabled('cashdesk')) {
 			$permtomakecashfence = ($user->hasRight('cashdesk', 'run')|| $user->hasRight('takepos', 'run'));
-			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("POS"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="pictofixedwidth"'));
+			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("CashControl"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, $permtomakecashfence);
 			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("List"), 1, $permtomakecashfence);
 		}
@@ -2054,7 +2054,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 	if ($mainmenu == 'products') {
 		// Products
 		if (isModEnabled('product')) {
-			$newmenu->add("/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->hasRight('product',  'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->hasRight('product',  'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->hasRight('product',  'creer'));
 			$newmenu->add("/product/list.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->hasRight('product',  'read'));
 			if (isModEnabled('stock')) {
@@ -2082,7 +2082,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 
 		// Services
 		if (isModEnabled('service')) {
-			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service',  'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service',  'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service',  'creer'));
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service',  'read'));
 
@@ -2106,7 +2106,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Warehouse
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
-			$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="pictofixedwidth"'));
+			$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->hasRight('stock', 'creer'));
 			$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->hasRight('stock',  'lire'));
 			$newmenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));
@@ -2124,7 +2124,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		}
 
 		if (isModEnabled('stocktransfer')) {
-			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans("ModuleStockTransferName"), 0, $user->hasRight('stocktransfer',  'stocktransfer', 'read'), '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="pictofixedwidth"'));
+			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans("ModuleStockTransferName"), 0, $user->hasRight('stocktransfer',  'stocktransfer', 'read'), '', $mainmenu, 'stocktransfer', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add('/product/stock/stocktransfer/stocktransfer_card.php?action=create', $langs->trans('StockTransferNew'), 1, $user->hasRight('stocktransfer',  'stocktransfer', 'write'));
 			$newmenu->add('/product/stock/stocktransfer/stocktransfer_list.php', $langs->trans('List'), 1, $user->hasRight('stocktransfer',  'stocktransfer', 'read'));
 		}
@@ -2133,13 +2133,13 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="pictofixedwidth"'));
+				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
 					$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->hasRight('stock',  'creer'));
 					$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->hasRight('stock',  'lire'));
 				}
 			} else {
-				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'inventory_advance', 'read'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="pictofixedwidth"'));
+				$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->hasRight('stock',  'inventory_advance', 'read'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
 					$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->hasRight('stock',  'inventory_advance', 'write'));
 					$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->hasRight('stock',  'inventory_advance', 'read'));
@@ -2150,7 +2150,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Shipments
 		if (isModEnabled('expedition')) {
 			$langs->load("sendings");
-			$newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->hasRight('expedition',  'lire'), '', $mainmenu, 'sendings', 0, '', '', '', img_picto('', 'shipment', 'class="pictofixedwidth"'));
+			$newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->hasRight('expedition',  'lire'), '', $mainmenu, 'sendings', 0, '', '', '', img_picto('', 'shipment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/expedition/card.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->hasRight('expedition',  'creer'));
 			$newmenu->add("/expedition/list.php?leftmenu=sendings", $langs->trans("List"), 1, $user->hasRight('expedition',  'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "sendings") {
@@ -2164,7 +2164,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Receptions
 		if (isModEnabled('reception')) {
 			$langs->load("receptions");
-			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception',  'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="pictofixedwidth"'));
+			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception',  'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/reception/card.php?action=create2&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->hasRight('reception',  'creer'));
 			$newmenu->add("/reception/list.php?leftmenu=receptions", $langs->trans("List"), 1, $user->hasRight('reception',  'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") {

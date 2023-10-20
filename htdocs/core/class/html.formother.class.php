@@ -87,11 +87,12 @@ class FormOther
 		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
-		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= $stringaddbarcode.': <input type="text" name="barcodeproductqty" class="width40 right" value="1"><br>';
 		if ($warehouseselect > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($this->db);
 			$formproduct->loadWarehouses();
+			$out .= img_picto('', 'stock', 'class="pictofixedwidth"');
 			$out .= $formproduct->selectWarehouses('', "warehousenew", '', 0, 0, 0, '', 0, 1);
 			$out .= '<br>';
 			$out .= '<br>';

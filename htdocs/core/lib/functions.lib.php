@@ -134,8 +134,11 @@ function getMultidirOutput($object, $module = '')
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
 	}
-
-	return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
+	if (isset($conf->$module)) {
+		return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
+	} else {
+		return 'error-diroutput-not-defined-ffor-this-object='.$module;
+	}
 }
 
 /**
@@ -2989,6 +2992,10 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
+	if ($timestamp === '') {
+		return array();
+	}
+
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
 	if ($forcetimezone) {
@@ -9329,14 +9336,11 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
  */
 function verifCond($strToEvaluate)
 {
-	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-	global $user, $langs;
-	global $leftmenu;
-
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		//var_dump($strToEvaluate);
+		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
@@ -9369,8 +9373,6 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Old variables used
 	global $object;
 	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
-	//global $rights;
-	//global $soc; // For backward compatibility
 
 	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
 		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
@@ -9390,12 +9392,12 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				}
 			}
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '(...'
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '... ('
-			$scheck = preg_replace('/^[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function('
-			$scheck = preg_replace('/\s[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function('
+			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
-			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."\n";
+			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
@@ -9417,12 +9419,12 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				}
 			}
 			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '(...'
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__', $scheck);	// accept parenthesis in '... ('
-			$scheck = preg_replace('/^[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function('
-			$scheck = preg_replace('/\s[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function('
+			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
-			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."\n";
+			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
@@ -12893,7 +12895,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$histo[$key]['id'];
 
 			$tmpa = dol_getdate($histo[$key]['datestart'], false);
-			if ($actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']) {
+
+			if (isset($tmpa['year']) && isset($tmpa['yday']) && $actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']) {
 				$actualCycleDate = $tmpa['year'].'-'.$tmpa['yday'];
 				$out .= '<!-- timeline time label -->';
 				$out .= '<li class="time-label">';
@@ -12916,10 +12919,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '<div class="timeline-item">'."\n";
 
-			$out .= '<span class="timeline-header-action">';
+			$out .= '<span class="time timeline-header-action2">';
 
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a class="timeline-btn" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+				$out .= '<a class="paddingleft paddingright timeline-btn2 editfielda" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 				$out .= $histo[$key]['id'];
 				$out .= '</a> ';
 			} else {
@@ -12928,7 +12931,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+				$out .= '<a class="paddingleft paddingright timeline-btn2 editfielda" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+				//$out .= '<i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i>';
+				$out .= img_picto($langs->trans("Modify"), 'edit', 'class="edita"');
+				$out .= '</a>';
 			}
 
 			$out .= '</span>';
