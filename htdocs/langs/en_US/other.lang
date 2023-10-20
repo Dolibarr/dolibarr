@@ -43,6 +43,7 @@ Notify_ORDER_SENTBYMAIL=Sales order sent by mail
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
 Notify_ORDER_SUPPLIER_VALIDATE=Purchase order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Purchase order approved
+Notify_ORDER_SUPPLIER_APPROVE2=Purchase order approved 2
 Notify_ORDER_SUPPLIER_REFUSE=Purchase order refused
 Notify_PROPAL_VALIDATE=Customer proposal validated
 Notify_PROPAL_CLOSE_SIGNED=Customer proposal closed signed

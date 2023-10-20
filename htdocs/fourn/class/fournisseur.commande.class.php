@@ -1125,7 +1125,8 @@ class CommandeFournisseur extends CommonOrder
 
 				if (!$error) {
 					// Call trigger
-					$result = $this->call_trigger('ORDER_SUPPLIER_APPROVE', $user);
+					$trigger = ($secondlevel === 0) ? 'ORDER_SUPPLIER_APPROVE' : 'ORDER_SUPPLIER_APPROVE2';
+					$result = $this->call_trigger($trigger, $user);
 					if ($result < 0) {
 						$error++;
 					}

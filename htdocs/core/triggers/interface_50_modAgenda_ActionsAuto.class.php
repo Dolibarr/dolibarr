@@ -541,7 +541,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("OrderValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
 			$object->sendtoid = 0;
-		} elseif ($action == 'ORDER_SUPPLIER_APPROVE') {
+		} elseif ($action == 'ORDER_SUPPLIER_APPROVE' || $action == 'ORDER_SUPPLIER_APPROVE2') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
 

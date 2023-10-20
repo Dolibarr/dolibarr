@@ -1947,7 +1947,8 @@ if ($action == 'create') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new	Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
+			$trigger = ($action === 'approve') ? 'ORDER_SUPPLIER_APPROVE' : 'ORDER_SUPPLIER_APPROVE2';
+			$text .= $notify->confirmMessage($trigger, $object->socid, $object);
 		}
 
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);

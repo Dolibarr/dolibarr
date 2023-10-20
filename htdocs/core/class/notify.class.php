@@ -75,6 +75,7 @@ class Notify
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
+		'ORDER_SUPPLIER_APPROVE2',
 		'ORDER_SUPPLIER_REFUSE',
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
@@ -530,6 +531,7 @@ class Notify
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
+							case 'ORDER_SUPPLIER_APPROVE2':
 								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
@@ -770,13 +772,6 @@ class Notify
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'ORDER_SUPPLIER_APPROVE':
-						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $conf->fournisseur->commande->dir_output;
-						$object_type = 'order_supplier';
-						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-						$mesg .= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($langs));
-						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-						break;
 					case 'ORDER_SUPPLIER_APPROVE2':
 						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->fournisseur->commande->dir_output;
