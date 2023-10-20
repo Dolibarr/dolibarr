@@ -75,6 +75,7 @@ global $dolibarr_main_instance_unique_id;
 
 // Load translation files
 // Use browser-defined language
+$langs = new Translate('', $conf);
 $langs->setDefaultLang('auto');
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
@@ -1319,6 +1320,19 @@ if ($source == 'contractline') {
 		$amount = price2num($amount);
 	}
 
+	$contract->fetchObjectLinked('', '', '', 'invoice');
+	if (!empty($contract->linkedObjects['facture'])) {
+		foreach ($contract->linkedObjects['facture'] as $invoice) {
+			if ($invoice->element == 'facture' && count($invoice->lines) === 1 && $invoice->paye) {
+				$invoiceline = $invoice->lines[0];
+				if ($invoiceline->total_ttc == $amount && (($invoiceline->fk_product == 0 && $invoiceline->description == $contractline->description) || ($invoiceline->fk_product != 0 && $invoiceline->fk_product == $contractline->fk_product && $invoiceline->qty == $contractline->qty))) {
+					$contract_line_is_paid = true;
+				}
+			}
+		}
+	}
+
+
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
@@ -1405,14 +1419,19 @@ if ($source == 'contractline') {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
 	print '</td><td class="CTableRow2">';
-	if (empty($amount) || !is_numeric($amount)) {
-		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
+	if (! $contract_line_is_paid) {
+		if (empty($amount) || !is_numeric($amount)) {
+			print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
+			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
+		} else {
+			print '<b>'.price($amount).'</b>';
+			print '<input type="hidden" name="amount" value="'.$amount.'">';
+			print '<input type="hidden" name="newamount" value="'.$amount.'">';
+		}
 	} else {
-		print '<b>'.price($amount).'</b>';
-		print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+		print '<b>'.price($object->total_ttc, 1, $langs).'</b>';
 	}
+
 	// Currency
 	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
@@ -2054,6 +2073,9 @@ if ($action != 'dopayment') {
 			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("InvoicePaid").'</span>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("DonationPaid").'</span>';
+		} elseif ($source == 'contractline' && $contract_line_is_paid == true) {
+			// A contract is paid if the sum of invoices is at least equal to the price of contract.
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("ContractLinePaid").'</span>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
 			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > dol_now()) {
@@ -2116,6 +2138,7 @@ if ($action != 'dopayment') {
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) {
 					$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
 				}
