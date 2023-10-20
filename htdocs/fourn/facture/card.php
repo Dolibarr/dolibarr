@@ -2173,11 +2173,11 @@ if ($action == 'create') {
 	} else {
 		$cond_reglement_id = !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
 		$mode_reglement_id = !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
-		$vat_reverse_charge = $societe->vat_reverse_charge;
+		$vat_reverse_charge = (empty($societe) ? '' : $societe->vat_reverse_charge);
 		$transport_mode_id = !empty($societe->transport_mode_supplier_id) ? $societe->transport_mode_supplier_id : 0;
 		$fk_account = !empty($societe->fk_account) ? $societe->fk_account : 0;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (getDolGlobalInt('MAIN_AUTOFILL_DATE') ? '' : -1) : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
