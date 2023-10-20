@@ -19,6 +19,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,6 +301,7 @@ class Facture extends CommonInvoice
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>10),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>12),
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		//'increment' =>array('type'=>'varchar(10)', 'label'=>'Increment', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50),
 		'datef' =>array('type'=>'date', 'label'=>'DateInvoice', 'enabled'=>1, 'visible'=>1, 'position'=>20),
@@ -648,6 +650,7 @@ class Facture extends CommonInvoice
 		$sql .= ", entity";
 		$sql .= ", ref_ext";
 		$sql .= ", type";
+		$sql .= ", subtype";
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
 		$sql .= ", remise_absolue";
@@ -674,6 +677,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".setEntity($this);
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->type)."'";
+		$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
@@ -1142,6 +1146,7 @@ class Facture extends CommonInvoice
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
+		$facture->subtype 			= $this->subtype;
 		$facture->socid 		    = $this->socid;
 		$facture->date              = $this->date;
 		$facture->date_pointoftax   = $this->date_pointoftax;
@@ -2114,7 +2119,7 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		$sql = 'SELECT f.rowid, f.entity, f.ref, f.ref_client, f.ref_ext, f.type, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.entity, f.ref, f.ref_client, f.ref_ext, f.type, f.subtype, f.fk_soc';
 		$sql .= ', f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc, f.revenuestamp';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.datef as df, f.date_pointoftax';
@@ -2165,12 +2170,13 @@ class Facture extends CommonInvoice
 				$this->ref_customer			= $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
 				$this->type					= $obj->type;
+				$this->subtype				= $obj->subtype;
 				$this->date					= $this->db->jdate($obj->df);
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
-				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_creation        = $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->datem = $this->db->jdate($obj->datem);
+				$this->date_modification    = $this->db->jdate($obj->datem);
+				$this->datem                = $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;	// TODO deprecated
 				$this->remise_absolue		= $obj->remise_absolue;
 				$this->total_ht				= $obj->total_ht;
@@ -2178,8 +2184,8 @@ class Facture extends CommonInvoice
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
-				$this->revenuestamp = $obj->revenuestamp;
-				$this->paye = $obj->paye;
+				$this->revenuestamp         = $obj->revenuestamp;
+				$this->paye                 = $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 
@@ -2446,6 +2452,9 @@ class Facture extends CommonInvoice
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
 		}
+		if (isset($this->subtype)) {
+			$this->subtype = trim($this->subtype);
+		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
 		}
@@ -2492,6 +2501,7 @@ class Facture extends CommonInvoice
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " type=".(isset($this->type) ? $this->db->escape($this->type) : "null").",";
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape($this->socid) : "null").",";
@@ -4825,7 +4835,7 @@ class Facture extends CommonInvoice
 		$return = array();
 
 
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.paye, pf.fk_paiement";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiement";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";

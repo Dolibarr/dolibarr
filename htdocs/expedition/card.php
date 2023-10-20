@@ -1823,12 +1823,11 @@ if ($action == 'create') {
 	$totalWeight = $tmparray['weight'];
 	$totalVolume = $tmparray['volume'];
 
-
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if (!empty($typeobject) && $typeobject === 'commande' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled('commande')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject === 'propal' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -1875,7 +1874,7 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if (!empty($typeobject) && $typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -1883,7 +1882,7 @@ if ($action == 'create') {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -2642,7 +2641,7 @@ if ($action == 'create') {
 					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
-					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
