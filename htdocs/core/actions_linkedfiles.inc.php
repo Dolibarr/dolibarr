@@ -38,7 +38,7 @@ if (GETPOST('uploadform', 'int') && empty($_POST) && empty($_FILES)) {
 
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
-	if (!empty($_FILES)) {
+	if (!empty($_FILES) && is_array($_FILES['userfile'])) {
 		if (is_array($_FILES['userfile']['tmp_name'])) {
 			$userfiles = $_FILES['userfile']['tmp_name'];
 		} else {
