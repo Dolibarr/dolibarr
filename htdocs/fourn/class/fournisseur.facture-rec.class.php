@@ -1057,7 +1057,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param double 	$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param double 	$qty 				Quantity
 	 * @param int 		$remise_percent 	Percentage discount of the line
-	 * @param double 	$txtva 				VAT rate forced, or -1
+	 * @param double 	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
@@ -1095,7 +1095,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$qty = price2num($qty);
 			$info_bits = empty($info_bits) ? 0 : $info_bits;
 			$pu_ht          = price2num($pu_ht);
-			$pu_ttc         = price2num($pu_ttc); // TODO: is ttc with txlocaltax?
+			$pu_ttc         = price2num($pu_ttc);
 			$pu_ht_devise = price2num($pu_ht_devise);
 
 			if (!preg_match('/\((.*)\)/', $txtva)) {
