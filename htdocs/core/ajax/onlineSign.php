@@ -209,7 +209,7 @@ if ($action == "importSignature") {
 				}
 				$sql .= " WHERE rowid = " . ((int) $object->id);
 
-				dol_syslog(__METHOD__, LOG_DEBUG);
+				dol_syslog(__FILE__, LOG_DEBUG);
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;

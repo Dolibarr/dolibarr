@@ -1705,7 +1705,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Vat is used
 		print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
 		print '<td>';
-		print $form->selectyesno('assujtva_value', GETPOSTISSET('assujtva_value') ?GETPOST('assujtva_value', 'int') : 1, 1); // Assujeti par defaut en creation
+		print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"': 'checked="checked"') . ' value="1">'; // Assujeti par defaut en creation
 		print '</td>';
 		if ($conf->browser->layout == 'phone') {
 			print '</tr><tr>';
@@ -1755,21 +1755,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		//TODO: Place into a function to control showing by country or study better option
 		if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 			print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-			print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
+			print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-			print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
+			print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td></tr>';
 		} elseif ($mysoc->localtax1_assuj == "1") {
 			print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-			print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
+			print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td></tr>';
 		} elseif ($mysoc->localtax2_assuj == "1") {
 			print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-			print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
+			print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td></tr>';
 		}
 
@@ -2435,14 +2435,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// VAT is used
 			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectyesno('assujtva_value', $object->tva_assuj, 1);
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . ($object->tva_assuj ? 'checked="checked"': '') . ' value="1">';
 			print '</td></tr>';
 
 			// Local Taxes
 			//TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td>';
-				print $form->selectyesno('localtax1assuj_value', $object->localtax1_assuj, 1);
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
 				if (!isOnlyOneLocalTax(1)) {
 					print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2451,7 +2451,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 				print '</tr><tr>';
 				print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
-				print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1"></td></tr>';
 				if (!isOnlyOneLocalTax(2)) {
 					print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2460,7 +2460,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1") {
 				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td colspan="3">';
-				print $form->selectyesno('localtax1assuj_value', $object->localtax1_assuj, 1);
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
 				if (!isOnlyOneLocalTax(1)) {
 					print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2469,7 +2469,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1") {
 				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td colspan="3">';
-				print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1">';
 				if (!isOnlyOneLocalTax(2)) {
 					print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(2, $object->localtax2_value, "lt2");

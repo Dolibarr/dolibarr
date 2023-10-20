@@ -643,6 +643,7 @@ while ($i < $imaxinloop) {
 		$userstatic = new User($db);
 		$userstatic->fetch($obj->fk_user);
 
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
