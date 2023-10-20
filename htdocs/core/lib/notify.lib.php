@@ -182,17 +182,17 @@ function notify_sendMail(
 		$defaultMessage = $formmail->getEMailTemplate($db, $objectType.'_send', $user, $outputLangs, 0, 1, $labelToUse);
 	}
 
+	if (!empty($object->fk_project) && !is_object($object->project)) {
+		$object->fetch_project();
+	}
+
 	if (!empty($labelToUse) && is_object($defaultMessage) && $defaultMessage->id > 0) {
 		$substitutionarray = getCommonSubstitutionArray($outputLangs, 0, null, $object);
 		complete_substitutions_array($substitutionarray, $outputLangs, $object);
 		$subject = make_substitutions($defaultMessage->topic, $substitutionarray, $outputLangs);
 		$message = make_substitutions($defaultMessage->content, $substitutionarray, $outputLangs);
 	} else {
-		$projectTitle = '';
-		if (!empty($object->fk_project) && !is_object($object->project)) {
-			$object->fetch_projet();
-			$projectTitle = ' ('.$object->project->title.')';
-		}
+		$projectTitle = is_object($object->project) ? ' ('.$object->project->title.')' : '';
 		$subject = '['.$companyName.'] '.$outputLangs->transnoentitiesnoconv("DolibarrNotification").$projectTitle;
 		$message = $outputLangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $companyName)."\n";
 		$message .= $outputLangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $companyName)."\n";
