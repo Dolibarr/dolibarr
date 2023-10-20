@@ -2103,6 +2103,11 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			}
 		}
 
+		// Products/Services Statistics
+		if (isModEnabled('product') && isModEnabled('service')) {
+			$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats", $langs->trans("Products/Services Statistics"), '', ($user->hasRight('product','read') && $user->hasRight('service','read')), '', $mainmenu, '', 0, '', '', '', '');
+		}
+
 		// Warehouse
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
