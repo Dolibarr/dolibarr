@@ -781,7 +781,11 @@ if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
 } else {
-	$title = $langs->trans("NewUser");
+	if (GETPOST('employee', 'alphanohtml')) {
+		$title = $langs->trans("NewEmployee");
+	} else {
+		$title = $langs->trans("NewUser");
+	}
 }
 $help_url = '';
 
@@ -789,7 +793,7 @@ llxHeader('', $title, $help_url);
 
 
 if ($action == 'create' || $action == 'adduserldap') {
-	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
+	print load_fiche_titre($title, '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";

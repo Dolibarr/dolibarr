@@ -1362,6 +1362,11 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
 		if ($result) {
+			if ($status == 0) {
+				$this->context['actionmsg'] = 'User '.$this->login.' disabled';
+			} else {
+				$this->context['actionmsg'] = 'User '.$this->login.' enabled';
+			}
 			// Call trigger
 			$result = $this->call_trigger('USER_ENABLEDISABLE', $user);
 			if ($result < 0) {
