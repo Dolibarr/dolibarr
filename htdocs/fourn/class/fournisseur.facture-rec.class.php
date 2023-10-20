@@ -1054,10 +1054,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string	$ref				Ref
 	 * @param string 	$label 				Label of the line
 	 * @param string 	$desc 				Description de la ligne
-	 * @param double 	$pu_ht 				Prix unitaire HT (> 0 even for credit note)
+	 * @param double 	$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param double 	$qty 				Quantity
 	 * @param int 		$remise_percent 	Percentage discount of the line
-	 * @param double 	$txtva 				Taux de tva force, sinon -1
+	 * @param double 	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
@@ -1068,7 +1068,8 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$special_code 		Special code
 	 * @param int 		$rang 				Position of line
 	 * @param string 	$fk_unit 			Unit
-	 * @param int 		$pu_ht_devise 		Unit price in currency
+	 * @param double	$pu_ht_devise 		Unit price in currency
+     * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
 	 * @return int  		                <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */

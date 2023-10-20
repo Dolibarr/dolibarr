@@ -780,7 +780,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
  */
 function DisplayPositionList()
 {
-	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $permissiontoadd, $permissiontodelete;
+	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $permissiontoadd, $permissiontodelete, $permissiontoread;
 
 	$action 	 = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction  = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)

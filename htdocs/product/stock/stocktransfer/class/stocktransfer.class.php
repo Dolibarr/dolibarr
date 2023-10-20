@@ -353,7 +353,7 @@ class StockTransfer extends CommonObject
 	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
-	public function cmp($a, $b)
+	static public function cmp($a, $b)
 	{
 		if ($a->rang == $b->rang) {
 			return 0;
