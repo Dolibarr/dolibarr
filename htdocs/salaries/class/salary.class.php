@@ -635,12 +635,26 @@ class Salary extends CommonObject
 	/**
 	 *    Tag social contribution as payed completely
 	 *
+	 *	  @deprecated
+	 *    @see setPaid()
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					<0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user);
+	}
+
+	/**
+	 *    Tag social contribution as payed completely
+	 *
+	 *    @param    User    $user       Object user making change
+	 *    @return   int					<0 if KO, >0 if OK
+	 */
+	public function setPaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -751,7 +765,9 @@ class Salary extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}

@@ -274,7 +274,7 @@ print '</form>';
 
 
 // Pattern for Password Perso
-if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
+if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';

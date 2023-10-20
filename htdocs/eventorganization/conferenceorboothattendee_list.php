@@ -164,7 +164,7 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if (preg_match('/^set/', $action) && $projectid > 0 && !empty($user->rights->eventorganization->write)) {
+if (preg_match('/^set/', $action) && $projectid > 0 && $user->hasRight('eventorganization', 'write')) {
 	$project = new Project($db);
 	//If "set" fields keys is in projects fields
 	$project_attr=preg_replace('/^set/', '', $action);
@@ -427,7 +427,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -944,13 +944,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

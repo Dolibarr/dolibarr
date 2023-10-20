@@ -57,7 +57,7 @@ $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user')
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not the user that read and has no permission to read other users, we stop
-if (($object->id != $user->id) && empty($user->rights->user->user->lire)) {
+if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
@@ -111,7 +111,7 @@ $title = $langs->trans("User");
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 

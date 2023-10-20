@@ -61,7 +61,6 @@ class Lessc
 	public $_parseFile;
 	public $env;
 	public $count;
-	public $inExp;
 
 	protected $numberPrecision = null;
 
@@ -2653,6 +2652,7 @@ class lessc_parser
 	public $writeComments;
 	public $seenComments;
 	public $currentProperty;
+	public $inExp;
 
 
 	public function __construct($lessc, $sourceName = null)
@@ -3004,9 +3004,9 @@ class lessc_parser
 		return false;
 	}
 
-		/**
-		 * recursively parse infix equation with $lhs at precedence $minP
-		 */
+	/**
+	 * recursively parse infix equation with $lhs at precedence $minP
+	 */
 	protected function expHelper($lhs, $minP)
 	{
 		$next = null;

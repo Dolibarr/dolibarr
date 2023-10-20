@@ -342,8 +342,9 @@ class Delivery extends CommonObject
 				$this->ref_customer         = $obj->ref_customer;
 				$this->socid                = $obj->fk_soc;
 				$this->statut               = $obj->fk_statut;
+				$this->status               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
-				$this->user_valid_id        = $obj->fk_user_valid;
+				$this->user_validation_id   = $obj->fk_user_valid;
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->note                 = $obj->note_private; //TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -403,8 +404,8 @@ class Delivery extends CommonObject
 
 		$error = 0;
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery', 'creer'))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
@@ -1070,7 +1071,7 @@ class Delivery extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		if ($user->rights->expedition->creer) {
+		if ($user->hasRight('expedition', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);

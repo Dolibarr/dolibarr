@@ -328,7 +328,7 @@ class Paiement extends CommonObject
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::create insert paiement", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create insert paiement (closepaidinvoices = ".$closepaidinvoices.")", LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -494,6 +494,8 @@ class Paiement extends CommonObject
 
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
+							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
+
 							if ($result < 0) {
 								$this->error = $invoice->error;
 								$this->errors = $invoice->errors;
@@ -508,6 +510,8 @@ class Paiement extends CommonObject
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
+
+			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
 				// Appel des triggers
@@ -1114,16 +1118,16 @@ class Paiement extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->PAYMENT_ADDON)) {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
-		} elseif ($conf->global->PAYMENT_ADDON == 'ant') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'ant') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_ant';
-		} elseif ($conf->global->PAYMENT_ADDON == 'cicada') {
+		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'cicada') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		}
 
 		if (!empty($conf->global->PAYMENT_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->PAYMENT_ADDON;
 
 			// Include file with class
@@ -1140,8 +1144,8 @@ class Paiement extends CommonObject
 
 			// For compatibility
 			if (!$mybool) {
-				$file = $conf->global->PAYMENT_ADDON.".php";
-				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
+				$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
+				$classname = "mod_payment_" . getDolGlobalString('PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {

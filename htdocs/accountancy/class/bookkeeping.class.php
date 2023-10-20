@@ -170,6 +170,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var BookKeepingLine[] Movement line array
+	 */
+	public $linesmvt = array();
+
+	/**
+	 * @var BookKeepingLine[] export line array
+	 */
+	public $linesexport = array();
+
+	/**
 	 * @var integer|string date of movement validated & lock
 	 */
 	public $date_validation;
@@ -1153,7 +1163,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
-	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
+	 * @param 	int 	$option 		option (0: aggregate by general account or 1: aggreegate by subaccount)
 	 * @return 	int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
@@ -1209,9 +1219,9 @@ class BookKeeping extends CommonObject
 		}
 
 		if (!empty($option)) {
-			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' AND t.subledger_account != ""';
-			$sql .= ' GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label';
+			$sql .= " AND t.subledger_account IS NOT NULL";
+			$sql .= " AND t.subledger_account <> ''";
+			$sql .= " GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
@@ -1237,8 +1247,10 @@ class BookKeeping extends CommonObject
 
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
-				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label;
+				if (!empty($option)) {
+					$line->subledger_account = $obj->subledger_account;
+					$line->subledger_label = $obj->subledger_label;
+				}
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 

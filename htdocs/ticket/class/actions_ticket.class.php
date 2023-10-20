@@ -27,6 +27,7 @@
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
@@ -188,7 +189,7 @@ class ActionsTicket extends CommonHookActions
 		global $conf, $langs;
 
 		print '<!-- initial message of ticket -->'."\n";
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
 
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
@@ -239,7 +240,7 @@ class ActionsTicket extends CommonHookActions
 
 			//print '<div>' . $object->message . '</div>';
 		}
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			print '<div class="center">';
 			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -250,7 +251,7 @@ class ActionsTicket extends CommonHookActions
 		print '</table>';
 		print '</div>';
 
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}

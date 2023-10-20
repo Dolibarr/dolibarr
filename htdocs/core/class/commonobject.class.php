@@ -2136,18 +2136,15 @@ abstract class CommonObject
 		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
-		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".$this->db->prefix()."usergroup_user as ug";
-		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
-		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && empty($user->rights->societe->client->voir) && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe as s"; // If we need to link to societe to limit select to socid
-		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && empty($user->rights->societe->client->voir) && !$socid) {
+		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		}
-		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
+		if ($restrictiononfksoc && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
 		if ($fieldid == 'rowid') {
@@ -2155,10 +2152,10 @@ abstract class CommonObject
 		} else {
 			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
-		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
+		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
-		if ($restrictiononfksoc == 2 && empty($user->rights->societe->client->voir) && !$socid) {
+		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
 		}
 		if (!empty($filter)) {
@@ -2170,16 +2167,15 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
-		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && empty($user->rights->societe->client->voir) && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if ($this->element == 'user' && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
+					$sql .= " AND te.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -2210,18 +2206,15 @@ abstract class CommonObject
 
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
-		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".$this->db->prefix()."usergroup_user as ug";
-		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
-		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && empty($user->rights->societe->client->voir) && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe as s"; // If we need to link to societe to limit select to socid
-		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && empty($user->rights->societe->client->voir) && !$socid) {
+		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		}
-		if ($restrictiononfksoc && empty($user->rights->societe->client->voir) && !$socid) {
+		if ($restrictiononfksoc && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
 		if ($fieldid == 'rowid') {
@@ -2229,10 +2222,10 @@ abstract class CommonObject
 		} else {
 			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
-		if ($restrictiononfksoc == 1 && empty($user->rights->societe->client->voir) && !$socid) {
+		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
 		}
-		if ($restrictiononfksoc == 2 && empty($user->rights->societe->client->voir) && !$socid) {
+		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
 		}
 		if (!empty($filter)) {
@@ -2244,16 +2237,15 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
-		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && empty($user->rights->societe->client->voir) && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if ($this->element == 'user' && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
+					$sql .= " AND te.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -5049,6 +5041,7 @@ abstract class CommonObject
 
 		$object_rights = $this->getRights();
 
+		// var used into tpl
 		$text = '';
 		$description = '';
 
@@ -5109,6 +5102,7 @@ abstract class CommonObject
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
+				//var_dump($tpl);
 				if (file_exists($tpl)) {
 					if (empty($conf->file->strict_mode)) {
 						$res = @include $tpl;
@@ -5882,6 +5876,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
 		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
 			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
 			exit;
@@ -7273,7 +7268,7 @@ abstract class CommonObject
 					//print $sql;
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
-					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_-,]+$/i', $InfoFieldList[7])) {
+					if (isset($InfoFieldList[7]) && preg_match('/^[a-z0-9_\-,]+$/i', $InfoFieldList[7])) {
 						$sql .= " ORDER BY ".$this->db->escape($InfoFieldList[7]);
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
@@ -7670,11 +7665,12 @@ abstract class CommonObject
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			$param['options'] = $val['arrayofkeyval'];
 		}
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
+			// Special case: Force addition of getnomurlparam1 to -1 for users
 			if ($reg[1] == 'User') {
-				$stringforoptions .= ':-1';
+				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7979,18 +7975,31 @@ abstract class CommonObject
 
 			// only if something to display (perf)
 			if ($value) {
-				$param_list = array_keys($param['options']); // Example: $param_list='ObjectName:classPath:-1::customer'
+				$param_list = array_keys($param['options']);
+				// Example: $param_list='ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
+				// Example: $param_list='ObjectClass:PathToClass:#getnomurlparam1=-1#getnomurlparam2=customer'
 
 				$InfoFieldList = explode(":", $param_list[0]);
+
 				$classname = $InfoFieldList[0];
 				$classpath = $InfoFieldList[1];
-				$getnomurlparam = (empty($InfoFieldList[2]) ? 3 : $InfoFieldList[2]);
-				$getnomurlparam2 = (empty($InfoFieldList[4]) ? '' : $InfoFieldList[4]);
+
+				// Set $getnomurlparam1 et getnomurlparam2
+				$getnomurlparam = 3;
+				$getnomurlparam2 = '';
+				$regtmp = array();
+				if (preg_match('/#getnomurlparam1=([^#]*)/', $param_list[0], $regtmp)) {
+					$getnomurlparam = $regtmp[1];
+				}
+				if (preg_match('/#getnomurlparam2=([^#]*)/', $param_list[0], $regtmp)) {
+					$getnomurlparam2 = $regtmp[1];
+				}
+
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
-						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
+						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
 							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
 							$result = $object->fetch($value);
@@ -8682,10 +8691,10 @@ abstract class CommonObject
 		if ($element == 'facturerec') {
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
-			return empty($user->rights->fournisseur->facture) ? null : $user->rights->fournisseur->facture;
-		} elseif ($module && !empty($user->rights->$module->$element)) {
+			return !$user->hasRight('fournisseur', 'facture') ? null : $user->hasRight('fournisseur', 'facture');
+		} elseif ($module && $user->hasRight($module, $element)) {
 			// for modules built with ModuleBuilder
-			return $user->rights->$module->$element;
+			return $user->hasRight($module, $element);
 		}
 
 		return $user->rights->$element;
@@ -8773,7 +8782,7 @@ abstract class CommonObject
 		} else {
 			// Get cost price for margin calculation
 			if (!empty($fk_product) && $fk_product > 0) {
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') {
+				if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);
@@ -8786,7 +8795,7 @@ abstract class CommonObject
 					} elseif ($product->pmp > 0) {
 						$buyPrice = $product->pmp;
 					}
-				} elseif (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp') {
+				} elseif (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);
@@ -9529,10 +9538,7 @@ abstract class CommonObject
 
 		// Create lines
 		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
-			$num = (is_array($this->lines) ? count($this->lines) : 0);
-			for ($i = 0; $i < $num; $i++) {
-				$line = $this->lines[$i];
-
+			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
 
@@ -9542,7 +9548,12 @@ abstract class CommonObject
 					$line = (object) $line;
 				}
 
-				$result = $line->create($user, 1);
+				$result = 0;
+				if (method_exists($line, 'insert')) {
+					$result = $line->insert($user, 1);
+				} elseif (method_exists($line, 'create')) {
+					$result = $line->create($user, 1);
+				}
 				if ($result < 0) {
 					$this->error = $line->error;
 					$this->db->rollback();

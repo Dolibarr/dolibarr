@@ -767,16 +767,16 @@ class PaiementFourn extends Paiement
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'brodator') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'brodator') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'bronan') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'bronan') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		}
 
 		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
 
 			// Include file with class
@@ -793,8 +793,8 @@ class PaiementFourn extends Paiement
 
 			// For compatibility
 			if ($mybool === false) {
-				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
-				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
+				$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
+				$classname = "mod_supplier_payment_" . getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -910,7 +910,7 @@ class PaiementFourn extends Paiement
 			if (!empty($billsarray)) {
 				$supplier_invoice = new FactureFournisseur($this->db);
 				if ($supplier_invoice->fetch($billsarray[0]) > 0) {
-					$force_thirdparty_id = $supplier_invoice->fk_soc;
+					$force_thirdparty_id = $supplier_invoice->socid;
 				}
 			}
 		}

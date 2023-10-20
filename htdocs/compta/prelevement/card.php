@@ -102,7 +102,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 		$object->fk_bank_account = GETPOST('fk_bank_account', 'int');
 		$object->update($user);
 	}
@@ -366,7 +366,7 @@ if ($id > 0 || $ref) {
 	print $formconfirm;
 
 
-	if (empty($object->date_trans) && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
+	if (empty($object->date_trans) && (($user->hasRight('prelevement', 'bons', 'send') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'send') && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
@@ -385,7 +385,7 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer')) && $action == 'setcredited') {
+	if (!empty($object->date_trans) && empty($object->date_credit) && (($user->hasRight('prelevement', 'bons', 'credit') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'debit') && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -410,16 +410,16 @@ if ($id > 0 || $ref) {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			if (empty($object->date_trans)) {
-				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
-				else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
+				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'send'));
+				else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
 			}
 			if (!empty($object->date_trans) && empty($object->date_credit)) {
-				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
-				else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
+				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+				else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
 			}
 
-			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
-			else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
+			else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
 		}
 		print '</div>';
 	}
