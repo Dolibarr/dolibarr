@@ -224,6 +224,7 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>'ProductRef', 'checked'=>1, 'position'=>10),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
+	'p.description'=>array('label'=>'Description', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service")), 'position'=>11),
 	'p.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(isModEnabled('barcode')), 'position'=>12),
@@ -992,6 +993,11 @@ if (!empty($arrayfields['p.fk_product_type']['checked'])) {
 	print $form->selectarray('search_type', $array, $search_type);
 	print '</td>';
 }
+// Description
+if (!empty($arrayfields['p.description']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '</td>';
+}
 // Barcode
 if (!empty($arrayfields['p.barcode']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1718,7 +1724,17 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
+		// Description
+		if (!empty($arrayfields['p.description']['checked'])) {
+			print '<td class="left">';
+			// Since description can be very large (several pages of HTML-
+			// code) we limit to the first two rows
+			print dolGetFirstLineofText($product_static->description, 2);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Weight
 		if (!empty($arrayfields['p.weight']['checked'])) {
 			print '<td class="center">';

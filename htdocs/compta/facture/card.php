@@ -615,6 +615,7 @@ if (empty($reshook)) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				$object->fetch_thirdparty();
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -1046,8 +1047,8 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account         = GETPOST('fk_account', 'int');
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU', 2);
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU', 2);
+				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1107,8 +1108,8 @@ if (empty($reshook)) {
 				$object->cond_reglement_id	= 0;		// No payment term for a credit note
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account         = GETPOST('fk_account', 'int');
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
+				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1331,8 +1332,8 @@ if (empty($reshook)) {
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->amount             = price2num(GETPOST('amount'));
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
+				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1418,8 +1419,8 @@ if (empty($reshook)) {
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account         = GETPOST('fk_account', 'int');
 				$object->amount             = price2num(GETPOST('amount'));
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
+				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1963,8 +1964,8 @@ if (empty($reshook)) {
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-				$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
-				$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+				//$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
+				//$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_account = GETPOST('fk_account', 'int');
 
 
@@ -3069,7 +3070,7 @@ if ($action == 'create') {
 	$fk_account = 0;
 
 	// Load objectsrc
-	$remise_absolue = 0;
+	//$remise_absolue = 0;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -3148,8 +3149,8 @@ if ($action == 'create') {
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
 				$mode_reglement_id 	= (!empty($expesrc->mode_reglement_id) ? $expesrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($expesrc->fk_account) ? $expesrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-				$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+				//$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
+				//$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
 					$currency_code 	= (!empty($expesrc->multicurrency_code) ? $expesrc->multicurrency_code : (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : $objectsrc->multicurrency_code));
@@ -3163,8 +3164,8 @@ if ($action == 'create') {
 				$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 				$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-				$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-				$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+				//$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
+				//$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
 					if (!empty($objectsrc->multicurrency_code)) {
@@ -3184,8 +3185,8 @@ if ($action == 'create') {
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$fk_account        	= $soc->fk_account;
-		$remise_percent 	= $soc->remise_percent;
-		$remise_absolue 	= 0;
+		//$remise_percent 	= $soc->remise_percent;
+		//$remise_absolue 	= 0;
 		$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
 		if (isModEnabled('multicurrency') && !empty($soc->multicurrency_code)) {
@@ -3968,8 +3969,8 @@ if ($action == 'create') {
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$objectsrc->remise_absolue = $remise_absolue;
-			$objectsrc->remise_percent = $remise_percent;
+			//$objectsrc->remise_absolue = $remise_absolue;
+			//$objectsrc->remise_percent = $remise_percent;
 			$objectsrc->update_price(1, 'auto', 1);
 		}
 

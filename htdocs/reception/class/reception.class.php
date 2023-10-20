@@ -685,7 +685,8 @@ class Reception extends CommonObject
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $numref;
-			$this->statut = 1;
+			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {

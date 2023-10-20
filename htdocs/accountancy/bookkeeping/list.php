@@ -772,6 +772,7 @@ if (empty($reshook)) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->hasRight('accounting', 'mouvements', 'creer'));
 }
 
