@@ -184,22 +184,23 @@ if (empty($reshook)) {
 				$object->ref = $getRef;
 			}
 
-			$object->fk_soc = $object->socid = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
-			$object->subject = GETPOST("subject", 'alphanohtml');
-			$object->message = GETPOST("message", 'restricthtml');
+			$object->fk_soc 					= $object->socid = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
+			$object->subject 					= GETPOST("subject", 'alphanohtml');
+			$object->message 					= GETPOST("message", 'restricthtml');
 
-			$object->type_code = GETPOST("type_code", 'alpha');
-			$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
-			$object->category_code = GETPOST("category_code", 'alpha');
-			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
-			$object->severity_code = GETPOST("severity_code", 'alpha');
-			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
-			$object->email_from = $user->email;
-			$object->origin_email = null;
-			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
-			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
+			$object->type_code 					= GETPOST("type_code", 'alpha');
+			$object->type_label 				= $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
+			$object->category_code 				= GETPOST("category_code", 'alpha');
+			$object->category_label 			= $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
+			$object->severity_code 				= GETPOST("severity_code", 'alpha');
+			$object->severity_label 			= $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
+			$object->fk_user_create 			= $user->id;
+			$object->email_from 				= $user->email;
+			$object->origin_email 				= null;
+			$notifyTiers 						= GETPOST("notify_tiers_at_create", 'alpha');
+			$object->notify_tiers_at_create 	= empty($notifyTiers) ? 0 : 1;
 
-			$object->fk_project = $projectid;
+			$object->fk_project 				= $projectid;
 
 			// File transfer
 			$object->copyFilesForTicket();
@@ -924,7 +925,7 @@ if ($action == 'create' || $action == 'presend') {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1, 1, 0, 0, '', 1, 0, 'maxwidth500');
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {

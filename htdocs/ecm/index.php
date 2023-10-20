@@ -102,10 +102,13 @@ if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) 
 	}
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (is_array($_FILES['userfile']['tmp_name'])) {
-		$userfiles = $_FILES['userfile']['tmp_name'];
-	} else {
-		$userfiles = array($_FILES['userfile']['tmp_name']);
+	$userfiles = [];
+	if (is_array($_FILES['userfile'])) {
+		if (is_array($_FILES['userfile']['tmp_name'])) {
+			$userfiles = $_FILES['userfile']['tmp_name'];
+		} else {
+			$userfiles = array($_FILES['userfile']['tmp_name']);
+		}
 	}
 
 	foreach ($userfiles as $key => $userfile) {
