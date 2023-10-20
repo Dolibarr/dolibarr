@@ -576,24 +576,26 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 	// Table line height
-	if ($foruserprofile) {
-	} else {
-		$listoftopmenumodes = array(
-			'0' => $langs->transnoentitiesnoconv("Normal"),
-			'1' => $langs->transnoentitiesnoconv("LargeModern"),
-		);
-		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans("TableLineHeight").'</td>';
-		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
-		if ($edit) {
-			//print ajax_constantonoff('THEME_ELDY_USECOMOACTROW', array(), null, 0, 0, 1);
-			print $form->selectarray('THEME_ELDY_USECOMOACTROW', $listoftopmenumodes, getDolGlobalString('THEME_ELDY_USECOMOACTROW'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300');
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 1 ) {
+		if ($foruserprofile) {
 		} else {
-			print $listoftopmenumodes[getDolGlobalString('THEME_ELDY_USECOMOACTROW')];
+			$listoftopmenumodes = array(
+				'0' => $langs->transnoentitiesnoconv("Normal"),
+				'1' => $langs->transnoentitiesnoconv("LargeModern"),
+			);
+			print '<tr class="oddeven">';
+			print '<td>'.$langs->trans("TableLineHeight").'</td>';
+			print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+			if ($edit) {
+				//print ajax_constantonoff('THEME_ELDY_USECOMOACTROW', array(), null, 0, 0, 1);
+				print $form->selectarray('THEME_ELDY_USECOMOACTROW', $listoftopmenumodes, getDolGlobalString('THEME_ELDY_USECOMOACTROW'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300');
+			} else {
+				print $listoftopmenumodes[getDolGlobalString('THEME_ELDY_USECOMOACTROW')];
+			}
+			print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+			print '</td>';
+			print '</tr>';
 		}
-		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
-		print '</td>';
-		print '</tr>';
 	}
 
 	// Background color THEME_ELDY_BACKBODY
