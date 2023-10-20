@@ -1054,10 +1054,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string	$ref				Ref
 	 * @param string 	$label 				Label of the line
 	 * @param string 	$desc 				Description de la ligne
-	 * @param double 	$pu_ht 				Prix unitaire HT (> 0 even for credit note)
+	 * @param double 	$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param double 	$qty 				Quantity
 	 * @param int 		$remise_percent 	Percentage discount of the line
-	 * @param double 	$txtva 				Taux de tva force, sinon -1
+	 * @param double 	$txtva 				VAT rate forced, or -1
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
@@ -1068,7 +1068,8 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$special_code 		Special code
 	 * @param int 		$rang 				Position of line
 	 * @param string 	$fk_unit 			Unit
-	 * @param int 		$pu_ht_devise 		Unit price in currency
+	 * @param double	$pu_ht_devise 		Unit price in currency
+     * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
 	 * @return int  		                <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
@@ -1078,7 +1079,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$facid = $this->id;
 
-		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ht=$pu_ht, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
+		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -1094,7 +1095,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$qty = price2num($qty);
 			$info_bits = empty($info_bits) ? 0 : $info_bits;
 			$pu_ht          = price2num($pu_ht);
-			$pu_ttc         = price2num($pu_ht+$pu_ht*$txtva); // TODO: is ttc with txlocaltax?
+			$pu_ttc         = price2num($pu_ttc); // TODO: is ttc with txlocaltax?
 			$pu_ht_devise = price2num($pu_ht_devise);
 
 			if (!preg_match('/\((.*)\)/', $txtva)) {
