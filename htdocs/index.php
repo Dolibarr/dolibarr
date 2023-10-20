@@ -584,22 +584,27 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					if ($board->total > 0) {
 						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
-					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.'<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'" >';
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
+					$openedDashBoard .= $infoName;
+					$openedDashBoard .= '<div class="inline-block nowraponall">';
+					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
 					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
 					$openedDashBoard .= '</span>';
+
 					if ($textLate) {
 						if ($board->url_late) {
-							$openedDashBoard .= '</a>';
-							$openedDashBoard .= ' <a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
+							$openedDashBoard .= '</div></a>';
+							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
 							$openedDashBoard .= ' ';
 						}
 						$openedDashBoard .= $textLate;
 					}
 					$openedDashBoard .= '</a>'."\n";
+					$openedDashBoard .= '</div>';
 					$openedDashBoard .= '</div>'."\n";
 				}
 

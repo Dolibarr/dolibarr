@@ -255,15 +255,15 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expedition' || $modulepart == 'shipment') {
 			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 
-			$this->shipment = new Expedition($this->db);
-			$result = $this->shipment->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+			$tmpobject = new Expedition($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
 
 			if (!$result) {
 				throw new RestException(404, 'Shipment not found');
 			}
 
-			$templateused = $doctemplate ? $doctemplate : $this->shipment->model_pdf;
-			$result = $this->shipment->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document missing doctemplate parameter');

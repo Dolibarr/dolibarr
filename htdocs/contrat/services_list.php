@@ -115,13 +115,13 @@ $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '') {
 	$tmp = explode('&', $search_status);
-	if (empty($tmp[1])) {
-		$filter = '';
-	} else {
+	if (!empty($tmp[1])) {
 		if ($tmp[1] == 'filter=notexpired') {
+			$search_status = $tmp[0];
 			$filter = 'notexpired';
 		}
 		if ($tmp[1] == 'filter=expired') {
+			$search_status = $tmp[0];
 			$filter = 'expired';
 		}
 	}
@@ -699,7 +699,11 @@ if (!empty($arrayfields['status']['checked'])) {
 		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
 		'5'=>$langs->trans("ServiceStatusClosed")
 	);
-	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	$search_status_new = GETPOST('search_status', 'alpha');
+	if ($filter == 'expired' && !preg_match('/expired/', $search_status_new)) {
+		$search_status_new .= '&filter=expired';
+	}
+	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status_new, ',') ?-1 : $search_status_new), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column

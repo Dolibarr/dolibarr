@@ -147,7 +147,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .info-box-line-text {
 	overflow: hidden;
-	width: calc(100% - 76px);
+	width: calc(100% - 88px);
+	max-width: calc(100% - 76px);
 	text-overflow: ellipsis;
 }
 
