@@ -133,7 +133,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD)) {
 		print '<div class="backimagepublicnewlead">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD.'">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD').'">';
 		print '</div>';
 	}
 

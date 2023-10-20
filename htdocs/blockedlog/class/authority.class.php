@@ -316,7 +316,7 @@ class BlockedLogAuthority
 
 		if (is_array($blocks)) {
 			foreach ($blocks as &$block) {
-				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
+				$url = getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') . '/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
 				$res = getURLContent($url);
 				echo $block->signature.' '.$url.' '.$res['content'].'<br>';

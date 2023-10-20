@@ -40,7 +40,8 @@ $langs->load("modulebuilder");
 
 $title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '': $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
-$newcardbutton = dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
 /*} else {
 	$newcardbutton = '';
 }*/

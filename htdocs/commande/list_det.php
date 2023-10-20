@@ -175,7 +175,7 @@ $arrayfields = array(
 	// Détail commande
 	'rowid'=> array('label'=>'TechnicalID', 'checked'=>1, 'position'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0)),
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
-	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1),
+	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>-1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
@@ -413,7 +413,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -445,7 +445,7 @@ if ($search_product_category > 0) {
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_id) {
@@ -865,7 +865,7 @@ if ($resql) {
 	$moreforfilter .= '<br>';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -873,7 +873,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
@@ -939,7 +939,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -1224,7 +1224,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1235,7 +1235,7 @@ if ($resql) {
 	// Fields title
 	print '<tr class="liste_titre">';
 
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
@@ -1398,7 +1398,7 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print '</tr>'."\n";
@@ -1450,7 +1450,6 @@ if ($resql) {
 			$oldref = $obj->product_ref;
 		}
 		if ($oldref != $obj->product_ref && $sortfield == 'pr.ref') {
-			// TODO make new /core/tpl/list_print_sub_total.php
 			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
 			$oldref = $obj->product_ref;
 		}
@@ -1475,7 +1474,6 @@ if ($resql) {
 		$generic_commande->statut = $obj->fk_statut;
 		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
-		$generic_commande->date_livraison = $db->jdate($obj->date_delivery); // deprecated
 		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
 		$generic_commande->ref_client = $obj->ref_client;
 		$generic_commande->total_ht = $obj->c_total_ht;
@@ -1499,7 +1497,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1518,7 +1516,9 @@ if ($resql) {
 		// ID
 		if (!empty($arrayfields['rowid']['checked'])) {
 			print '<td class="nowrap right">'.$obj->rowid.'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Product Ref
@@ -1543,7 +1543,9 @@ if ($resql) {
 		if (!empty($arrayfields['pr.desc']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
-			print '<td class="nowrap tdoverflowmax200">'.dol_escape_htmltag($labelproduct).'</td>';
+			print '<td class="nowrap tdoverflowmax200">';
+			print dolGetFirstLineOfText(dolPrintHTML($labelproduct), 5);
+			print '</td>';
 
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2150,7 +2152,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -2164,15 +2166,16 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// $totalarray['nbfield']--;
-		// $totalarray['nbfield']--;
+
 		print "</tr>\n";
 
 		$total += $obj->total_ht;
 		$subtotal += $obj->total_ht;
 		$i++;
 	}
-
+	if ($sortfield == 'pr.ref') {
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
+	}
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 

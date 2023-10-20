@@ -19,6 +19,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,15 +149,8 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int	Date expected for delivery
-	 * @deprecated
-	 * @see $delivery_date
 	 */
-	public $date_livraison;
-
-	/**
-	 * @var int	Date expected for delivery
-	 */
-	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	public $delivery_date; // Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 
 	/**
 	 * @var string customer ref
@@ -170,14 +164,12 @@ class Facture extends CommonInvoice
 	 */
 	public $ref_customer;
 
-	// Warning: Do not set default value into property defintion. it must stay null.
-	// For example to avoid to have substition done when object is generic and not yet defined.
-	public $remise_absolue;
+	//public $remise_absolue;
 
 	/**
 	 * @deprecated
 	 */
-	public $remise_percent;
+	//public $remise_percent;
 
 	public $total_ht;
 	public $total_tva;
@@ -307,6 +299,7 @@ class Facture extends CommonInvoice
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>10),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>12),
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		//'increment' =>array('type'=>'varchar(10)', 'label'=>'Increment', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50),
 		'datef' =>array('type'=>'date', 'label'=>'DateInvoice', 'enabled'=>1, 'visible'=>1, 'position'=>20),
@@ -316,7 +309,7 @@ class Facture extends CommonInvoice
 		'paye' =>array('type'=>'smallint(6)', 'label'=>'InvoicePaidCompletely', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
 		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
+		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
 		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>93),
@@ -555,8 +548,8 @@ class Facture extends CommonInvoice
 			$this->total_ttc         = $_facrec->total_ttc;
 
 			// Fields always coming from template
-			$this->remise_absolue    = $_facrec->remise_absolue;
-			$this->remise_percent    = $_facrec->remise_percent;	// TODO deprecated
+			//$this->remise_absolue    = $_facrec->remise_absolue;
+			//$this->remise_percent    = $_facrec->remise_percent;	// TODO deprecated
 			$this->fk_incoterms = $_facrec->fk_incoterms;
 			$this->location_incoterms = $_facrec->location_incoterms;
 
@@ -655,10 +648,9 @@ class Facture extends CommonInvoice
 		$sql .= ", entity";
 		$sql .= ", ref_ext";
 		$sql .= ", type";
+		$sql .= ", subtype";
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
-		$sql .= ", remise_absolue";
-		$sql .= ", remise_percent";	// TODO deprecated
 		$sql .= ", datef";
 		$sql .= ", date_pointoftax";
 		$sql .= ", note_private";
@@ -681,10 +673,9 @@ class Facture extends CommonInvoice
 		$sql .= ", ".setEntity($this);
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->type)."'";
+		$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
-		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');	// TODO deprecated
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -1149,6 +1140,7 @@ class Facture extends CommonInvoice
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
+		$facture->subtype 			= $this->subtype;
 		$facture->socid 		    = $this->socid;
 		$facture->date              = $this->date;
 		$facture->date_pointoftax   = $this->date_pointoftax;
@@ -1159,8 +1151,8 @@ class Facture extends CommonInvoice
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
-		$facture->remise_absolue    = $this->remise_absolue;
-		$facture->remise_percent    = $this->remise_percent;	// TODO deprecated
+		//$facture->remise_absolue    = $this->remise_absolue;
+		//$facture->remise_percent    = $this->remise_percent;	// TODO deprecated
 
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
@@ -1257,8 +1249,8 @@ class Facture extends CommonInvoice
 
 		// Clear fields
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
-		$object->user_author        = $user->id; // deprecated
-		$object->user_valid         = null; // deprecated
+		$object->user_creation_id   = $user->id;
+		$object->user_validation_id = null;
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
@@ -1430,8 +1422,7 @@ class Facture extends CommonInvoice
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
-		$this->date_livraison       = $object->delivery_date; // deprecated
+		$this->delivery_date        = $object->delivery_date;
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
@@ -1566,8 +1557,7 @@ class Facture extends CommonInvoice
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
-		$this->date_livraison       = $object->delivery_date; // deprecated
+		$this->delivery_date        = $object->delivery_date;
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
@@ -2123,9 +2113,8 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		$sql = 'SELECT f.rowid, f.entity, f.ref, f.ref_client, f.ref_ext, f.type, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.entity, f.ref, f.ref_client, f.ref_ext, f.type, f.subtype, f.fk_soc';
 		$sql .= ', f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc, f.revenuestamp';
-		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.datef as df, f.date_pointoftax';
 		$sql .= ', f.date_lim_reglement as dlr';
 		$sql .= ', f.datec as datec';
@@ -2174,21 +2163,20 @@ class Facture extends CommonInvoice
 				$this->ref_customer			= $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
 				$this->type					= $obj->type;
+				$this->subtype				= $obj->subtype;
 				$this->date					= $this->db->jdate($obj->df);
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
-				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_creation        = $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->datem = $this->db->jdate($obj->datem);
-				$this->remise_percent		= $obj->remise_percent;	// TODO deprecated
-				$this->remise_absolue		= $obj->remise_absolue;
+				$this->date_modification    = $this->db->jdate($obj->datem);
+				$this->datem                = $this->db->jdate($obj->datem);
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
-				$this->revenuestamp = $obj->revenuestamp;
-				$this->paye = $obj->paye;
+				$this->revenuestamp         = $obj->revenuestamp;
+				$this->paye                 = $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 
@@ -2215,8 +2203,8 @@ class Facture extends CommonInvoice
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
-				$this->user_author			= $obj->fk_user_author; // deprecated
-				$this->user_valid           = $obj->fk_user_valid; // deprecated
+				$this->user_creation_id     = $obj->fk_user_author; // deprecated
+				$this->user_validation_id   = $obj->fk_user_valid; // deprecated
 				$this->user_modification    = $obj->fk_user_modif; // deprecated
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_valid        = $obj->fk_user_valid;
@@ -2455,6 +2443,9 @@ class Facture extends CommonInvoice
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
 		}
+		if (isset($this->subtype)) {
+			$this->subtype = trim($this->subtype);
+		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
 		}
@@ -2501,6 +2492,7 @@ class Facture extends CommonInvoice
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " type=".(isset($this->type) ? $this->db->escape($this->type) : "null").",";
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape($this->socid) : "null").",";
@@ -2509,8 +2501,6 @@ class Facture extends CommonInvoice
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql .= " paye=".(isset($this->paye) ? $this->db->escape($this->paye) : 0).",";
-		$sql .= " remise_percent=".(isset($this->remise_percent) ? $this->db->escape($this->remise_percent) : "null").",";	// TODO deprecated
-		$sql .= " remise_absolue=".(isset($this->remise_absolue) ? $this->db->escape($this->remise_absolue) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
@@ -3196,10 +3186,10 @@ class Facture extends CommonInvoice
 			$this->error = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->ref);
 			return -1;
 		}
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->facture->invoice_advance->validate))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('facture', 'creer'))
+		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('facture', 'invoice_advance', 'validate'))) {
 			$this->error = 'Permission denied';
-			dol_syslog(get_class($this)."::validate ".$this->error.' MAIN_USE_ADVANCED_PERMS='.$conf->global->MAIN_USE_ADVANCED_PERMS, LOG_ERR);
+			dol_syslog(get_class($this)."::validate ".$this->error.' MAIN_USE_ADVANCED_PERMS=' . getDolGlobalString('MAIN_USE_ADVANCED_PERMS'), LOG_ERR);
 			return -1;
 		}
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
@@ -3420,6 +3410,7 @@ class Facture extends CommonInvoice
 												if ($result < 0) {
 													$error++;
 													$this->error = $mouvP->error;
+													$this->errors = $mouvP->errors;
 													break;
 												}
 
@@ -3438,6 +3429,7 @@ class Facture extends CommonInvoice
 													if ($result < 0) {
 														$error++;
 														$this->error = $mouvP->error;
+														$this->errors = $mouvP->errors;
 													}
 												} else {
 													$error++;
@@ -3456,6 +3448,7 @@ class Facture extends CommonInvoice
 									if ($result < 0) {
 										$error++;
 										$this->error = $mouvP->error;
+										$this->errors = $mouvP->errors;
 									}
 								}
 							}
@@ -4478,6 +4471,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
+	/*
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
@@ -4534,6 +4528,7 @@ class Facture extends CommonInvoice
 
 		return 0;
 	}
+	*/
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
@@ -4580,7 +4575,7 @@ class Facture extends CommonInvoice
 		}
 
 		if (!empty($addon)) {
-			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->name.", type=".$soc->typent_code.", mode=".$mode, LOG_DEBUG);
+			dol_syslog("Call getNextNumRef with ".$addonConstName." = " . getDolGlobalString('FACTURE_ADDON').", thirdparty=".$soc->name.", type=".$soc->typent_code.", mode=".$mode, LOG_DEBUG);
 
 			$mybool = false;
 
@@ -4667,14 +4662,10 @@ class Facture extends CommonInvoice
 					$this->user_creation = $cuser;
 				}
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				if ($obj->fk_user_closing) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_closing);
-					$this->user_closing = $cluser;
+					$this->user_closing_id = $obj->fk_user_closing;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -4712,16 +4703,16 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " f.rowid as fid, f.ref as ref, f.datef as df";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND f.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -4835,7 +4826,7 @@ class Facture extends CommonInvoice
 		$return = array();
 
 
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.paye, pf.fk_paiement";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiement";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";
@@ -4911,7 +4902,7 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut as status, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -5160,7 +5151,7 @@ class Facture extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -5951,25 +5942,34 @@ class Facture extends CommonInvoice
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $langs;
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'socid')) {
-			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_user_author')) {
-			$return .= '<br><span class="info-box-label">'.$this->fk_user_author.'</span>';
+		if (!empty($arraydata['thirdparty'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['thirdparty'].'</span>';
+		}
+		if (property_exists($this, 'date')) {
+			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date, 'day').'</span>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= ' &nbsp; <span class="info-box-label amount" title="'.dol_escape_htmltag($langs->trans("AmountHT")).'">'.price($this->total_ht);
+			$return .= ' '.$langs->trans("HT");
+			$return .= '</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$alreadypaid = (empty($arraydata['alreadypaid']) ? 0 : $arraydata['alreadypaid']);
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -294,7 +294,7 @@ class Contrat extends CommonObject
 		if (!empty($conf->global->CONTRACT_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->CONTRACT_ADDON.".php";
+			$file = getDolGlobalString('CONTRACT_ADDON') . ".php";
 			$classname = $conf->global->CONTRACT_ADDON;
 
 			// Include file with class
@@ -2272,7 +2272,7 @@ class Contrat extends CommonObject
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from .= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$this->from .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -2303,7 +2303,7 @@ class Contrat extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
@@ -2371,7 +2371,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2628,14 +2628,14 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (empty($conf->global->CONTRACT_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/contract/".$conf->global->CONTRACT_ADDON.".php")) {
+		if (empty($conf->global->CONTRACT_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').".php")) {
 			$this->error = 'ErrorSetupNotComplete';
 			dol_syslog($this->error);
 			return -1;
 		}
 
 		// Set ref
-		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/".$conf->global->CONTRACT_ADDON.'.php';
+		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
 		$obj = $conf->global->CONTRACT_ADDON;
 		$modContract = new $obj();
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
@@ -2891,7 +2891,9 @@ class Contrat extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			$return .= '<br><div class="info-box-label inline-block">'.$tmpthirdparty->getNomUrl(1).'</div>';

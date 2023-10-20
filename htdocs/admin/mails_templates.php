@@ -225,19 +225,19 @@ if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture
 if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
-if (isModEnabled('ticket') && !empty($user->rights->ticket->read)) {
+if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
-if (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire)) {
+if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
 	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToExpenseReport'));
 }
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
-if (isModEnabled('eventorganization') && !empty($user->rights->eventorganization->read)) {
+if (isModEnabled('eventorganization') && $user->hasRight('eventorganization', 'read')) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
-if (isModEnabled('partnership') && !empty($user->rights->partnership->read)) {
+if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
 
@@ -658,7 +658,8 @@ $titlepicto = 'title_setup';
 
 
 $url = DOL_URL_ROOT.'/admin/mails_templates.php?action=create';
-$newcardbutton = dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {

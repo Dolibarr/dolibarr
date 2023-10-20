@@ -701,7 +701,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 
 	if ($phpfullcodestringold != $phpfullcodestring) {
-		if (!$error && empty($user->rights->website->writephp)) {
+		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
 		}

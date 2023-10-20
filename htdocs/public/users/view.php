@@ -188,7 +188,7 @@ if ($mode == 'vcard') {
 
 $head = '';
 if (!empty($conf->global->MAIN_USER_PROFILE_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_USER_PROFILE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_USER_PROFILE_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -224,7 +224,7 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
 
 // Output html code for logo
@@ -256,7 +256,7 @@ print '</div>';
 
 if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 

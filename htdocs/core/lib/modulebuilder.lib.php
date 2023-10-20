@@ -121,74 +121,75 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		if (count($object->fields)) {
 			foreach ($object->fields as $key => $val) {
 				$i++;
-				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
-				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				$texttoinsert .= "\t\t".'"'.$key.'" => array(';
+				$texttoinsert .= '"type"=>"'.dol_escape_php($val['type']).'",';
+				$texttoinsert .= ' "label"=>"'.dol_escape_php($val['label']).'",';
 				if (!empty($val['picto'])) {
-					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+					$texttoinsert .= ' "picto"=>"'.dol_escape_php($val['picto']).'",';
 				}
-				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
-				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
-				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
-				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
+				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
+				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? (int) $val['position'] : 50).",";
+				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 :(int) $val['notnull']).",";
+				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
+					$texttoinsert .= ' "noteditable"=>"'.dol_escape_php($val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= " 'alwayseditable'=>'".$val['alwayseditable']."',";
+					$texttoinsert .= ' "alwayseditable"=>"'.dol_escape_php($val['alwayseditable']).'",';
 				}
 				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
-					$texttoinsert .= " 'default'=>'".$val['default']."',";
+					$texttoinsert .= ' "default"=>"'.dol_escape_php($val['default']).'",';
 				}
 				if (!empty($val['index'])) {
-					$texttoinsert .= " 'index'=>".$val['index'].",";
+					$texttoinsert .= ' "index"=>"'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
+					$texttoinsert .= ' "foreignkey"=>"'.(int) $val['foreignkey'].'",';
 				}
 				if (!empty($val['searchall'])) {
-					$texttoinsert .= " 'searchall'=>".$val['searchall'].",";
+					$texttoinsert .= ' "searchall"=>"'.(int) $val['searchall'].'",';
 				}
 				if (!empty($val['isameasure'])) {
-					$texttoinsert .= " 'isameasure'=>'".$val['isameasure']."',";
+					$texttoinsert .= ' "isameasure"=>"'.(int) $val['isameasure'].'",';
 				}
 				if (!empty($val['css'])) {
-					$texttoinsert .= " 'css'=>'".$val['css']."',";
+					$texttoinsert .= ' "css"=>"'.dol_escape_php($val['css']).'",';
 				}
 				if (!empty($val['cssview'])) {
-					$texttoinsert .= " 'cssview'=>'".$val['cssview']."',";
+					$texttoinsert .= ' "cssview"=>"'.dol_escape_php($val['cssview']).'",';
 				}
 				if (!empty($val['csslist'])) {
-					$texttoinsert .= " 'csslist'=>'".$val['csslist']."',";
+					$texttoinsert .= ' "csslist"=>"'.dol_escape_php($val['csslist']).'",';
 				}
 				if (!empty($val['help'])) {
-					$texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
+					$texttoinsert .= ' "help"=>"'.dol_escape_php($val['help']).'",';
 				}
 				if (!empty($val['showoncombobox'])) {
-					$texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
+					$texttoinsert .= ' "showoncombobox"=>"'.(int) $val['showoncombobox'].'",';
 				}
 				if (!empty($val['disabled'])) {
-					$texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
+					$texttoinsert .= ' "disabled"=>"'.(int) $val['disabled'].'",';
 				}
 				if (!empty($val['autofocusoncreate'])) {
-					$texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
+					$texttoinsert .= ' "autofocusoncreate"=>"'.(int) $val['autofocusoncreate'].'",';
 				}
 				if (!empty($val['arrayofkeyval'])) {
-					$texttoinsert .= " 'arrayofkeyval'=>array(";
+					$texttoinsert .= ' "arrayofkeyval"=>array(';
 					$i = 0;
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						if ($i) {
 							$texttoinsert .= ", ";
 						}
-						$texttoinsert .= "'".$key2."'=>'".$val2."'";
+						$texttoinsert .= '"'.dol_escape_php($key2).'" => "'.dol_escape_php($val2).'"';
 						$i++;
 					}
-					$texttoinsert .= "),";
+					$texttoinsert .= '),';
 				}
 				if (!empty($val['validate'])) {
-					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
+					$texttoinsert .= ' "validate"=>"'.(int) $val['validate'].'",';
 				}
 				if (!empty($val['comment'])) {
-					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
+					$texttoinsert .= ' "comment"=>"'.dol_escape_php($val['comment']).'"';
 				}
 
 				$texttoinsert .= "),\n";
@@ -336,7 +337,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'mail') {
+				$type = 'varchar(128)';
+			} elseif ($type == 'phone') {
+				$type = 'varchar(20)';
+			} elseif ($type == 'ip') {
+				$type = 'varchar(32)';
 			}
+
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid') {
 				$texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
@@ -787,26 +795,30 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 
 
 /**
- * Delete property and permissions from documentation if we delete object
+ * Delete property and permissions from documentation ascii file if we delete an object
+ *
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
  * @return void
  */
 function deletePropsAndPermsFromDoc($file, $objectname)
 {
+	if (dol_is_file($file)) {
+		$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+		$end = "__ end table for object ".ucfirst($objectname);
 
-	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
-	$end = "__ end table for object ".ucfirst($objectname);
-	$str = file_get_contents($file);
-	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
-	$new_contents = preg_replace($search, '', $str);
-	file_put_contents($file, $new_contents);
+		$str = file_get_contents($file);
 
-	//perms If Exist
-	$perms = "|*".strtolower($objectname)."*|";
-	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
-	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
-	file_put_contents($file, $new_contents);
+		$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+		$new_contents = preg_replace($search, '', $str);
+		file_put_contents($file, $new_contents);
+
+		//perms If Exist
+		$perms = "|*".strtolower($objectname)."*|";
+		$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
+		$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
+		file_put_contents($file, $new_contents);
+	}
 }
 
 
@@ -1090,13 +1102,15 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 		//prepare each menu and stock them in string
 		$str_menu = "";
-		foreach ($menus as $index =>$menu) {
+		foreach ($menus as $index => $menu) {
 			$menu['position'] = "1000 + \$r";
 			if ($menu['type'] === 'left') {
 				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
 				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+
 				$val_actuel = $menu;
-				$next_val = $menus[$index + 1];
+				$next_val = empty($menus[$index + 1]) ? null : $menus[$index + 1];
+
 				$str_menu .= $start."\n";
 				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
 				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
@@ -1113,7 +1127,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
 				$str_menu.= "\t\t);\n";
 
-				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {
 					$str_menu .= $end."\n";
 				}
 			}

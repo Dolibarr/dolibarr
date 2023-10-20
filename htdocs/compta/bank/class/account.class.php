@@ -1870,8 +1870,9 @@ class Account extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'type_lib')) {
 			$return .= '<br><span class="info-box-label opacitymedium" title="'.$this->type_lib[$this->type].'">'.substr($this->type_lib[$this->type], 0, 24).'...</span>';
 		}
@@ -2342,7 +2343,7 @@ class AccountLine extends CommonObjectLine
 
 		// Check statement field
 		if (!empty($conf->global->BANK_STATEMENT_REGEX_RULE)) {
-			if (!preg_match('/'.$conf->global->BANK_STATEMENT_REGEX_RULE.'/', $this->num_releve)) {
+			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
 				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
 				return -1;
 			}
