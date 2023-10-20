@@ -573,3 +573,7 @@ ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux,
 
 -- Add input reason on invoice
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
+
+-- Product/service managed in stock
+ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
+UPDATE llx_product set stockable_product = 0 WHERE type = 1;
