@@ -224,11 +224,6 @@ class Commande extends CommonOrder
 	 */
 	public $remise_percent;
 
-	public $remise;
-	public $remise_absolue;
-	public $info_bits;
-	public $rang;
-	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
 	/**
