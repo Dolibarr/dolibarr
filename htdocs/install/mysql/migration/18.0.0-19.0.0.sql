@@ -138,9 +138,9 @@ ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
 ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
 
-ALTER TABLE llx_resource ADD COLUMN address varchar(255) DEFAULT NULL AFTER fk_code_type_resource;
-ALTER TABLE llx_resource ADD COLUMN zip varchar(25) DEFAULT NULL AFTER address;
-ALTER TABLE llx_resource ADD COLUMN town varchar(50) DEFAULT NULL AFTER zip;
+ALTER TABLE llx_resource ADD COLUMN address varchar(255) AFTER fk_code_type_resource;
+ALTER TABLE llx_resource ADD COLUMN zip varchar(25) AFTER address;
+ALTER TABLE llx_resource ADD COLUMN town varchar(50) AFTER zip;
 ALTER TABLE llx_resource ADD COLUMN photo_filename varchar(255) DEFAULT NULL AFTER town;
 ALTER TABLE llx_resource ADD COLUMN user_places integer DEFAULT NULL AFTER photo_filename;
 ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_places;
