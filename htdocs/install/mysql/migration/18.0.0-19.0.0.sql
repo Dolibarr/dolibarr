@@ -91,6 +91,8 @@ ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_paymen
 
 ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
 
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_entity (entity);
+
 ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
 ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;
 
@@ -113,7 +115,7 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur
 UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AND site IS NULL;
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
-ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
+ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(60);
 
 -- Drop the composite unique index that exists on llx_links to rebuild a new one with objecttype included.
 -- The old design did not allow same label on different objects with same id.
@@ -133,3 +135,14 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
+
+ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
+
+ALTER TABLE llx_resource ADD COLUMN address varchar(255) DEFAULT NULL AFTER fk_code_type_resource;
+ALTER TABLE llx_resource ADD COLUMN zip varchar(25) DEFAULT NULL AFTER address;
+ALTER TABLE llx_resource ADD COLUMN town varchar(50) DEFAULT NULL AFTER zip;
+ALTER TABLE llx_resource ADD COLUMN photo_filename varchar(255) DEFAULT NULL AFTER town;
+ALTER TABLE llx_resource ADD COLUMN max_users integer DEFAULT NULL AFTER photo_filename;
+ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_places;
+ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
+ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;

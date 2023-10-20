@@ -149,7 +149,8 @@ if ($action == 'updatelines' && $usercancreate) {
 			$fk_commandedet = "fk_commandedet_".$reg[1].'_'.$reg[2];
 			$idline = GETPOST("idline_".$reg[1].'_'.$reg[2]);
 			$warehouse_id = GETPOSTINT($ent);
-			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
+			$prod_id = GETPOSTINT($prod);
+			//$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 			$lot = '';
 			$dDLUO = '';
 			$dDLC = '';
@@ -177,8 +178,8 @@ if ($action == 'updatelines' && $usercancreate) {
 						$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
 						$sql .= " ON ps.rowid = pb.fk_product_stock";
 						$sql .= " WHERE pb.batch = '".$db->escape($lot)."'";
-						$sql .= " AND ps.fk_product = ".((int) GETPOST($prod, 'int')) ;
-						$sql .= " AND ps.fk_entrepot = ".((int) GETPOST($ent, 'int')) ;
+						$sql .= " AND ps.fk_product = ".((int) $prod_id) ;
+						$sql .= " AND ps.fk_entrepot = ".((int) $warehouse_id) ;
 
 						$resql = $db->query($sql);
 						if ($resql) {
@@ -188,8 +189,12 @@ if ($action == 'updatelines' && $usercancreate) {
 								setEventMessages($langs->trans('ErrorTooManyCombinationBatchcode', $numline, $num), null, 'errors');
 								$error++;
 							} elseif ($num < 1) {
+								$tmpwarehouse = new Entrepot($db);
+								$tmpwarehouse->fetch($warehouse_id);
+								$tmpprod = new Product($db);
+								$tmpprod->fetch($prod_id);
 								dol_syslog('No dispatch for line '.$key.' as no combination warehouse, product, batch code was found.');
-								setEventMessages($langs->trans('ErrorNoCombinationBatchcode', $numline), null, 'errors');
+								setEventMessages($langs->trans('ErrorNoCombinationBatchcode', $numline, $tmpwarehouse->ref, $tmpprod->ref, $lot), null, 'errors');
 								$error++;
 							}
 							$db->free($resql);
@@ -432,8 +437,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 	$morehtmlref = '<div class="refidno">';
 
 	// Ref customer shipment
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->hasRight('expedition', 'creer'), 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
@@ -962,7 +967,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '</tr>';
 
 								print '<!-- line for batch '.$numline.' (not dispatched line yet for this order line) -->';
-								print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'">';
+								print '<tr class="oddeven autoresettr" name="'.$type.$suffix.'" data-remove="clear">';
 								print '<td>';
 								print '<input id="fk_commandedet'.$suffix.'" name="fk_commandedet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="-1">';
@@ -1396,7 +1401,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$(".autoresettr").each(function(){
 					id = $(this).attr("name");
 					idtab = id.split("_");
-					if ($(this).data("remove") == "clear"){
+					console.log("we process line "+id+" "+idtab);
+					if ($(this).data("remove") == "clear") {	/* data-remove=clear means that line qty must be cleared but line must not be removed */
 						console.log("We clear the object to expected value")
 						$("#qty_"+idtab[1]+"_"+idtab[2]).val("");
 						/*
@@ -1406,7 +1412,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						qtydispatched = $("#qty_dispatched_0_"+idtab[2]).data("dispatched")
 						$("#qty_dispatched_0_"+idtab[2]).val(qtydispatched);
 						*/
-					} else {
+					} else {									/* data-remove=remove means that line must be removed */
 						console.log("We remove the object")
 						$(this).remove();
 						$("tr[name^=\'"+idtab[0]+"_\'][name$=\'_"+idtab[2]+"\']:last .splitbutton").show();

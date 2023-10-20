@@ -212,7 +212,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -953,8 +953,8 @@ class Fichinter extends CommonObject
 		if (!empty($conf->global->FICHEINTER_ADDON)) {
 			$mybool = false;
 
-			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
-			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
+			$file = "mod_" . getDolGlobalString('FICHEINTER_ADDON').".php";
+			$classname = "mod_" . getDolGlobalString('FICHEINTER_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1022,9 +1022,7 @@ class Fichinter extends CommonObject
 				$this->user_creation = $cuser;
 
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				if ($obj->fk_user_modification) {
 					$muser = new User($this->db);
@@ -1169,7 +1167,7 @@ class Fichinter extends CommonObject
 	public function set_date_delivery($user, $date_delivery)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1199,7 +1197,7 @@ class Fichinter extends CommonObject
 	public function set_description($user, $description)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".$user->id;
@@ -1230,7 +1228,7 @@ class Fichinter extends CommonObject
 	public function set_contrat($user, $contractid)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1294,9 +1292,10 @@ class Fichinter extends CommonObject
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = 0;
+		$this->user_validation_id = 0;
 		$this->date_creation      = '';
 		$this->date_validation    = '';
+
 		$this->ref_client         = '';
 
 		// Create clone
@@ -1501,7 +1500,7 @@ class Fichinter extends CommonObject
 	public function setRefClient($user, $ref_client, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->ficheinter->creer)) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -1567,7 +1566,9 @@ class Fichinter extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';

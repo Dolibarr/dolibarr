@@ -477,7 +477,7 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
 		}
 		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {

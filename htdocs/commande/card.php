@@ -291,7 +291,6 @@ if (empty($reshook)) {
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
-			$object->date_livraison = $date_delivery; // deprecated
 			$object->delivery_date = $date_delivery;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
@@ -631,10 +630,10 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
-	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
+		//} elseif ($action == 'setremisepercent' && $usercancreate) {
+		//	$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
+		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
+		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '') {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
@@ -757,6 +756,8 @@ if (empty($reshook)) {
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ?GETPOST('price_base_type', 'alpha') : 'HT');
+
+			$price_min = $price_min_ttc = 0;
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
@@ -982,6 +983,15 @@ if (empty($reshook)) {
 				}
 			}
 
+			$info_bits = 0;
+			if ($tva_npr) {
+				$info_bits |= 0x01;
+			}
+
+			// Local Taxes
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
+
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
@@ -989,9 +999,10 @@ if (empty($reshook)) {
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
 			$pu_equivalent_ttc = $pu_ttc;
+
 			$currency_tx = $object->multicurrency_tx;
 
-			// Check if we have a foreing currency
+			// Check if we have a foreign currency
 			// If so, we update the pu_equiv as the equivalent price in base currency
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 				$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1000,24 +1011,27 @@ if (empty($reshook)) {
 				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 			}
 
-			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
-
-			$info_bits = 0;
-			if ($tva_npr) {
-				$info_bits |= 0x01;
+			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one defined
+			/*
+			if ($pu_equivalent) {
+				$tmp = calcul_price_total(1, $pu_equivalent, 0, $tva_tx, -1, -1, 0, 'HT', $info_bits, $type);
+				$pu_equivalent_ttc = ...
+			} else {
+				$tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $tva_tx, -1, -1, 0, 'TTC', $info_bits, $type);
+				$pu_equivalent_ht = ...
 			}
+			*/
 
 			$desc = dol_htmlcleanlastbr($desc);
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
 				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				}
@@ -1090,10 +1104,20 @@ if (empty($reshook)) {
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
+
+		// Define info_bits
+		$info_bits = 0;
+		if (preg_match('/\*/', GETPOST('tva_tx'))) {
+			$info_bits |= 0x01;
+		}
+
+		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
-
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
@@ -1105,9 +1129,10 @@ if (empty($reshook)) {
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
 		$pu_equivalent_ttc = $pu_ttc;
+
 		$currency_tx = $object->multicurrency_tx;
 
-		// Check if we have a foreing currency
+		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 			$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1116,16 +1141,16 @@ if (empty($reshook)) {
 			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 		}
 
-		// Define info_bits
-		$info_bits = 0;
-		if (preg_match('/\*/', $vat_rate)) {
-			$info_bits |= 0x01;
-		}
-
-		// Define vat_rate
-		$vat_rate = str_replace('*', '', $vat_rate);
-		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
-		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
+		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+		/*
+		 if ($pu_equivalent) {
+		 $tmp = calcul_price_total(1, $pu_equivalent, 0, $vat_rate, -1, -1, 0, 'HT', $info_bits, $type);
+		 $pu_equivalent_ttc = ...
+		 } else {
+		 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $vat_rate, -1, -1, 0, 'TTC', $info_bits, $type);
+		 $pu_equivalent_ht = ...
+		 }
+		 */
 
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
@@ -1168,6 +1193,7 @@ if (empty($reshook)) {
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
 				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
@@ -1175,7 +1201,7 @@ if (empty($reshook)) {
 					$error++;
 					$action = 'editline';
 				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
@@ -1629,7 +1655,7 @@ if ($action == 'create' && $usercancreate) {
 		$res = $soc->fetch($socid);
 	}
 
-	$remise_absolue = 0;
+	//$remise_absolue = 0;
 
 	$currency_code = $conf->currency;
 
@@ -1703,14 +1729,11 @@ if ($action == 'create' && $usercancreate) {
 			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
 			$warehouse_id       = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+			//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
+			//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ? -1 : '';
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
-			if (empty($date_delivery)) {
-				$date_delivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
-			}
 
 			if (isModEnabled("multicurrency")) {
 				if (!empty($objectsrc->multicurrency_code)) {
@@ -1736,8 +1759,8 @@ if ($action == 'create' && $usercancreate) {
 		$shipping_method_id = $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
-		$remise_percent     = $soc->remise_percent;
-		$remise_absolue     = 0;
+		//$remise_percent     = $soc->remise_percent;
+		//$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
@@ -2018,8 +2041,8 @@ if ($action == 'create' && $usercancreate) {
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$objectsrc->remise_absolue = $remise_absolue;
-			$objectsrc->remise_percent = $remise_percent;
+			//$objectsrc->remise_absolue = $remise_absolue;
+			//$objectsrc->remise_percent = $remise_percent;
 			$objectsrc->update_price(1);
 		}
 

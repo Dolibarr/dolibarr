@@ -120,7 +120,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * Supported modules: invoice, order, proposal, contract
+	 * Supported modules: invoice, order, proposal, contract, shipment
 	 *
 	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
@@ -244,6 +244,22 @@ class Documents extends DolibarrApi
 
 			if (!$result) {
 				throw new RestException(404, 'Contract not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
+			}
+		} elseif ($modulepart == 'expedition' || $modulepart == 'shipment') {
+			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+
+			$tmpobject = new Expedition($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Shipment not found');
 			}
 
 			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;

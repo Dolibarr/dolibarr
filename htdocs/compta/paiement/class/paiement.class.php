@@ -328,7 +328,7 @@ class Paiement extends CommonObject
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::create insert paiement", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create insert paiement (closepaidinvoices = ".$closepaidinvoices.")", LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -494,6 +494,8 @@ class Paiement extends CommonObject
 
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
+							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
+
 							if ($result < 0) {
 								$this->error = $invoice->error;
 								$this->errors = $invoice->errors;
@@ -508,6 +510,8 @@ class Paiement extends CommonObject
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
+
+			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
 				// Appel des triggers

@@ -319,6 +319,7 @@ StockTransferRightRead=Read stocks transfers
 StockTransferRightCreateUpdate=Create/Update stocks transfers
 StockTransferRightDelete=Delete stocks transfers
 BatchNotFound=Lot / serial not found for this product
+StockEntryDate=Date of <br>entry in stock
 StockMovementWillBeRecorded=Stock movement will be recorded
 StockMovementNotYetRecorded=Stock movement will not be affected by this step
 WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse

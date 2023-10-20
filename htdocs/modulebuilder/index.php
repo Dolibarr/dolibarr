@@ -351,7 +351,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
+				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1510,7 +1510,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
+				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -3086,7 +3086,6 @@ $linktoenabledisable = '';
 if (is_array($listofmodules) && count($listofmodules) > 0) {
 	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
-	$const_name = 'MAIN_MODULE_'.strtoupper($module);
 
 	$param = '';
 	if ($tab) {
@@ -4117,7 +4116,7 @@ if ($module == 'initmodule') {
 								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
-								if (!isModEnabled(strtolower($const_name))) {	// If module is not activated
+								if (!isModEnabled($modulelowercase)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 								} else {
 									print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
@@ -5990,7 +5989,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated"); '</span>';
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcli&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}

@@ -191,7 +191,7 @@ class Holiday extends CommonObject
 		if (!empty($conf->global->HOLIDAY_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->HOLIDAY_ADDON.".php";
+			$file = getDolGlobalString('HOLIDAY_ADDON') . ".php";
 			$classname = $conf->global->HOLIDAY_ADDON;
 
 			// Include file with class
@@ -2305,9 +2305,7 @@ class Holiday extends CommonObject
 					$this->user_creation = $cuser;
 				}
 				if (!empty($obj->fk_user_valid)) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				if (!empty($obj->fk_user_modification)) {
 					$muser = new User($this->db);
@@ -2373,7 +2371,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut > 1";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2415,7 +2413,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->read_all)) {
+		if (!$user->hasRight('expensereport', 'read_all')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2467,7 +2465,9 @@ class Holiday extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.$arraydata['user']->getNomUrl(-1).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br>';
 			//$return .= '<span class="opacitymedium">'.$langs->trans("Type").'</span> : ';

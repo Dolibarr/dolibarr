@@ -93,7 +93,6 @@ if (!class_exists('FormSetup')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	}
 }
-
 $formSetup = new FormSetup($db);
 
 

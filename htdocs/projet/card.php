@@ -68,6 +68,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('proj
 $date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
 $date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
 $location = GETPOST('location', 'alphanohtml');
+$fk_project = GETPOST('fk_project', 'int');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
@@ -205,6 +206,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->fk_project      = GETPOST('fk_project', 'int');
 			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
 			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
@@ -304,6 +306,7 @@ if (empty($reshook)) {
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
+			$object->fk_project   = GETPOST('fk_project', 'int');
 			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
@@ -542,7 +545,7 @@ if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) { // 2 = leads only
 	$titlenew = $langs->trans("NewLead");
 }
 
-if ($action == 'create' && $user->rights->projet->creer) {
+if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	/*
 	 * Create
 	 */
@@ -602,6 +605,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="width500 maxwidth150onsmartphone" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
+
+	// Parent
+	if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+		print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		$formproject->select_projects(-1, '', 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+		print '</td></tr>';
+	}
 
 	// Usage (opp, task, bill time, ...)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
@@ -970,6 +981,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print ajax_combobox('status');
 		print '</td></tr>';
 
+		// Parent
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			$formproject->select_projects(-1, $object->fk_project, 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+			print '</td></tr>';
+		}
+
 		// Usage
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
@@ -1246,10 +1265,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
+		// Parent
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			if (!empty($object->fk_project) && $object->fk_project) {
+				$parent = new Project($db);
+				$parent->fetch($object->fk_project);
+				$morehtmlref .= $langs->trans("Child of").' '.$parent->getNomUrl(1, 'project').' '.$parent->title;
+			}
+		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -1551,7 +1578,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
+			if ($object->statut == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1560,7 +1587,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Reopen
-			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer) {
+			if ($object->statut == Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1617,6 +1644,41 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
+
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			/*
+			 * Sub-projects (children)
+			 */
+			$children = $object->getChildren();
+			if ($children) {
+				print '<table class="centpercent notopnoleftnoright table-fiche-title">';
+				print '<tr class="titre"><td class="nobordernopadding valignmiddle col-title">';
+				print '<div class="titre inline-block">'.$langs->trans('Sub-projects').'</div>';
+				print '</td></tr></table>';
+
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
+				print '<tr class="liste_titre">';
+				print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print getTitleFieldOfList('Status', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print '</tr>';
+				print "\n";
+
+				$subproject = new Project($db);
+				foreach ($children as $child) {
+					$subproject->fetch($child->rowid);
+					print '<tr class="oddeven">';
+					print '<td class="nowraponall">'.$subproject->getNomUrl(1, 'project').'</td>';
+					print '<td class="nowraponall tdoverflowmax125">'.$child->title.'</td>';
+					print '<td class="nowraponall">'.$subproject->getLibStatut(5).'</td>';
+					print '</tr>';
+				}
+
+				print '</table>';
+				print '</div>';
+			}
+		}
 
 		/*
 		 * Generated documents

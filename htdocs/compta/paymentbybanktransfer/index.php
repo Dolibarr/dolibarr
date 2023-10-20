@@ -111,7 +111,7 @@ print '</span></td></tr></table></div><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.ref, f.rowid, f.salary, f.paye,";$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
 $sql .= " pfd.date_demande, pfd.amount,";
 $sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";

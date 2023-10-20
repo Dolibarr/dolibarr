@@ -29,12 +29,12 @@
  * Prepare array with list of tabs
  *
  * @param   BonPrelevement	$object		Object related to tabs
- * @param   int             $salary     1=salary, 0=invoices
  * @return  array				Array of tabs to show
  */
-function prelevement_prepare_head(BonPrelevement $object, $salary = 0)
+function prelevement_prepare_head(BonPrelevement $object)
 {
 	global $langs, $conf, $user;
+	$salary = $object->checkIfSalaryBonPrelevement();
 	$langs->load("withdrawals");
 
 	$h = 0;

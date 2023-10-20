@@ -237,7 +237,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
-if (empty($user->rights->salaries->readall)) {
+if (!$user->hasRight('salaries', 'readall')) {
 	$sql .= " AND sal.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 
@@ -401,6 +401,7 @@ if (!empty($socid)) {
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
