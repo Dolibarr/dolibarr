@@ -40,15 +40,15 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$value = GETPOST('value', 'alpha');
-$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+if ($action == 'save') {
+	dolibarr_set_const($db, 'EXPORT_CSV_SEPARATOR_TO_USE', GETPOST('EXPORT_CSV_SEPARATOR_TO_USE', 'alphanohtml'));
+}
 
 
 /*
@@ -77,21 +77,29 @@ print dol_get_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "tech
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="page_y" value="">';
-print '<input type="hidden" name="action" value="setModuleOptions">';
-print '<input type="hidden" name="param" value="EXPORT_CSV_SEPARATOR_TO_USE">';
+print '<input type="hidden" name="action" value="save">';
 
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100"></td>'."\n";
 print '</tr>';
 
+/* No more need for this, you can set that a profile is public when saving it.
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ExportCsvSeparator").' ('.$langs->trans("ByDefault").')</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
-print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
+print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100">';
+print ajax_constantonoff('EXPORTS_SHARE_MODELS');
+print '</td></tr>';
+*/
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
+print '<td width="60" align="center"><input class="flat width50" maxlength="3" type="text" name="EXPORT_CSV_SEPARATOR_TO_USE" value="'.(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE).'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 
 print '</table>';
