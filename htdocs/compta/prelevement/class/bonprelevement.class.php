@@ -949,7 +949,7 @@ class BonPrelevement extends CommonObject
 		$factures_errors = array();
 		if (!$error) {
 			dol_syslog(__METHOD__." Read invoices for did=".((int) $did), LOG_DEBUG);
-      
+
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
 			if ($sourcetype != 'salary') {
 				$sql .= ", f.fk_soc";
@@ -963,18 +963,18 @@ class BonPrelevement extends CommonObject
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
 					$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_demande as pd ON f.rowid = pd.fk_facture";
 				} else {
 					$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
 				}
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
 			} else {
 				$sql .= " FROM ".MAIN_DB_PREFIX."salary as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_demande as pd ON f.rowid = pd.fk_salary";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as s ON s.rowid = f.fk_user";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user_rib as sr ON s.rowid = sr.fk_user";
 			}
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
 			if ($sourcetype != 'salary') {
