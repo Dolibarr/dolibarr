@@ -102,8 +102,6 @@ class MultiCurrency extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 	/**
@@ -756,8 +754,6 @@ class CurrencyRate extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 	/**

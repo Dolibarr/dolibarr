@@ -39,7 +39,7 @@ class Ticket extends CommonObject
 {
 
 	/**
-	 * @var db connector
+	 * @var DoliDb Database handler
 	 */
 	public $db;
 
@@ -268,7 +268,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var Tickets[] array of Tickets
+	 * @var Ticket[] array of Tickets
 	 */
 	public $lines;
 
