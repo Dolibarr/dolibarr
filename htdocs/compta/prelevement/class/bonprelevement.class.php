@@ -849,9 +849,10 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 *  @param	int		$sourcetype			'invoice' or 'salary'
 	 *	@return	int							<0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0)
+	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -898,25 +899,42 @@ class BonPrelevement extends CommonObject
 		if (!$error) {
 			dol_syslog(__METHOD__." Read invoices for did=".((int) $did), LOG_DEBUG);
 
-			$sql = "SELECT f.rowid, pd.rowid as pfdrowid, f.fk_soc";
+			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
+			if ($sourcetype != 'salary') {
+				$sql .= ", f.fk_soc";
+			} else {
+				$sql .= ", f.fk_user";
+			}
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			$sql .= ", s.nom as name";
 			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
-			if ($type != 'bank-transfer') {
-				$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
+			if ($sourcetype != 'salary') {
+				if ($type != 'bank-transfer') {
+					$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture";
+				} else {
+					$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+					$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
+				}
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
 			} else {
-				$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_facture_fourn";
+				$sql .= " FROM ".MAIN_DB_PREFIX."salary as f";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "prelevement_demande as pd ON f.rowid = pd.fk_salary";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as s ON s.rowid = f.fk_user";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user_rib as sr ON s.rowid = sr.fk_user";
 			}
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_rib as sr ON s.rowid = sr.fk_soc AND sr.default_rib = 1";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-			$sql .= " AND f.fk_statut = 1"; // Invoice validated
-			$sql .= " AND f.paye = 0";
+			if ($sourcetype != 'salary') {
+				$sql .= " AND f.fk_statut = 1"; // Invoice validated
+				$sql .= " AND f.paye = 0";
+				$sql .= " AND f.total_ttc > 0";
+			} else {
+				$sql .= " AND f.paye = 0";
+				$sql .= " AND f.amount > 0";
+			}
 			$sql .= " AND pd.traite = 0";
-			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pd.ext_payment_id IS NULL";
 			$sql .= " AND sr.type = 'ban' ";
 			if ($did > 0) {
@@ -933,18 +951,18 @@ class BonPrelevement extends CommonObject
 					$factures[$i] = $row; // All fields
 					if ($row[7] == 0) {
 						$error++;
-						dol_syslog(__METHOD__." Read invoices error Found a null invoice", LOG_ERR);
-						$this->invoice_in_error[$row[0]] = "Error for invoice id ".$row[0].", found a null amount";
+						dol_syslog(__METHOD__." Read invoices/salary error Found a null amount", LOG_ERR);
+						$this->invoice_in_error[$row[0]] = "Error for invoice or salary id ".$row[0].", found a null amount";
 						break;
 					}
 					$i++;
 				}
 				$this->db->free($resql);
-				dol_syslog(__METHOD__." Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
+				dol_syslog(__METHOD__." Read invoices/salary, ".$i." invoices/salary to withdraw", LOG_DEBUG);
 			} else {
 				$error++;
 				$this->error = $this->db->lasterror();
-				dol_syslog(__METHOD__." Read invoices error ".$this->db->lasterror(), LOG_ERR);
+				dol_syslog(__METHOD__." Read invoices/salary error ".$this->db->lasterror(), LOG_ERR);
 				return -1;
 			}
 		}
@@ -1213,9 +1231,9 @@ class BonPrelevement extends CommonObject
 
 					// Generation of direct debit or credit transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
-					if (!empty($sourcetype)) {
-						$usertmp = $this->context['factures_prev'][0][2];
-						$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $usertmp);
+					if ($sourcetype == 'salary') {
+						$userid = $this->context['factures_prev'][0][2];
+						$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid);
 					} else {
 						$result = $this->generate($format, $executiondate, $type);
 					}
@@ -1527,10 +1545,10 @@ class BonPrelevement extends CommonObject
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
 	 * @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
-	 * @param   string  $user_dest          User id for bankaccount when if it is salary invoice
+	 * @param   int  	$user_dest          User id for bankaccount when if it is salary invoice
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $user_dest = '')
+	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $user_dest = 0)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1556,9 +1574,6 @@ class BonPrelevement extends CommonObject
 
 		// Build file for European countries
 		if ($mysoc->isInEEC()) {
-			$userAcount = new UserBankAccount($this->db);
-			$userAcount->fetch(0, '', $user_dest);
-			$userAcount->checkCountryBankAccount();
 			$found++;
 
 			if ($type != 'bank-transfer') {
