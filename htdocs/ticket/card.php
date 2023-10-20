@@ -286,6 +286,11 @@ if (empty($reshook)) {
 			if (!$error) {
 				$db->commit();
 
+				// if a user got defined as an assigned user: run trigger
+				if (!empty($object->fk_user_assign)) {
+					$res = $object->call_trigger("TICKET_ASSIGNED", $user);
+				}
+
 				if (!empty($backtopage)) {
 					if (empty($id)) {
 						$url = $backtopage;
