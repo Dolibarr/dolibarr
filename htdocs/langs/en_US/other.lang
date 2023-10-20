@@ -298,12 +298,12 @@ LinesToImport=Lines to import
 
 MemoryUsage=Memory usage
 RequestDuration=Duration of request
-ProductsServicesPerPopularity=Products/Services by popularity
+ProductsServicesPerPopularity=Products|Services by popularity
 ProductsPerPopularity=Products by popularity
 ServicesPerPopularity=Services by popularity
-PopuProp=Products/Services by popularity in Proposals
-PopuCom=Products/Services by popularity in Orders
-ProductStatistics=Products/Services Statistics
+PopuProp=Products|Services by popularity in Proposals
+PopuCom=Products|Services by popularity in Orders
+ProductStatistics=Products|Services Statistics
 NbOfQtyInOrders=Qty in orders
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
 

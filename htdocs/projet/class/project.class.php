@@ -1253,6 +1253,10 @@ class Project extends CommonObject
 		// phpcs:enable
 		global $langs;
 
+		if (is_null($status)) {
+			return '';
+		}
+
 		$statustrans = array(
 			0 => 'status0',
 			1 => 'status4',
