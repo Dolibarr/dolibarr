@@ -284,7 +284,7 @@ class Contact extends CommonObject
 	public $priv;
 
 	/**
-	 * @var date
+	 * @var int|string Date
 	 */
 	public $birthday;
 
