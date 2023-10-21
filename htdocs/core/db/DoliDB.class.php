@@ -31,7 +31,7 @@ abstract class DoliDB implements Database
 {
 	/** @var string Force subclass to implement VERSIONMIN */
 	const VERSIONMIN=self::VERSIONMIN;
-	/** @var bool|resource|mysqli|SQLite3|PgSql\connection Database handler */
+	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
