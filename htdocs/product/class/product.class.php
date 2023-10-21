@@ -1298,8 +1298,8 @@ class Product extends CommonObject
 
 				if (!$this->hasbatch() && $this->oldcopy->hasbatch()) {
 					// Selection of all product stock mouvements that contains batchs
-					$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product_batch batch';
-					$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock ps ON (ps.rowid = batch.fk_product_stock)';
+					$sql = 'SELECT pb.qty, pb.fk_entrepot, pb.batch FROM '.MAIN_DB_PREFIX.'product_batch as pb';
+					$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON (ps.rowid = batch.fk_product_stock)';
 					$sql.= ' WHERE ps.fk_product = '.(int) $this->id;
 
 					$resql = $this->db->query($sql);
@@ -1314,7 +1314,7 @@ class Product extends CommonObject
 							$dluo = '';
 							$batch = $obj->batch;
 
-							//To know how to revert stockMouvement (add or remove)
+							// To know how to revert stockMouvement (add or remove)
 							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
 							$label = $langs->trans('BatchStockMouvementAddInGlobal');
 							$res = $this->correct_stock_batch($user, $fk_entrepot, abs($value), $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '', null, 0, null, true);
