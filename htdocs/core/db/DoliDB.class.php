@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
+	/** @var string Force subclass to implement VERSIONMIN */
+	const VERSIONMIN=self::VERSIONMIN;
+
 	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
 	public $db;
 	/** @var string Database type */
