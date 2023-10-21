@@ -123,7 +123,7 @@ install:
   sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
   sudo chmod -R a+rwx /usr/local/bin/composer
   
-  apt install composer
+  #sudo apt install composer
   composer -V
   composer -n config -g vendor-dir htdocs/includes
   echo
