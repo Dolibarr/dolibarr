@@ -594,14 +594,18 @@ class Categorie extends CommonObject
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 				if ($result < 0) {
-					$error++; $this->db->rollback(); return -1;
+					$error++;
 				}
 				// End call triggers
 			}
 
-			$this->db->commit();
-
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
 		} else {
 			$this->db->rollback();
 			dol_print_error($this->db);
