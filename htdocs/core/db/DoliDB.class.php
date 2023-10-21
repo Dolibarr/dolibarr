@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
+	/** @var string Force subclass to implement VERSIONMIN */
+	const VERSIONMIN=self::VERSIONMIN;
 	/** @var bool|resource|mysqli|SQLite3|PgSql\connection Database handler */
 	public $db;
 	/** @var string Database type */
