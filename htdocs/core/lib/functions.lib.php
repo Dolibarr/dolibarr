@@ -1645,7 +1645,9 @@ function dolPrintHTML($s, $allowiframe = 0)
  */
 function dolPrintHTMLForAttribute($s)
 {
-	return dol_escape_htmltag($s);
+	// The dol_htmlentitiesbr will convert simple text into html
+	// The dol_escape_htmltag will escape html chars.
+	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
 }
 
 /**
@@ -1669,7 +1671,7 @@ function dolPrintHTMLForTextArea($s, $allowiframe = 0)
  */
 function dolPrintPassword($s)
 {
-	return htmlspecialchars($s , ENT_COMPAT, 'UTF-8');
+	return htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
 }
 
 
@@ -1682,7 +1684,7 @@ function dolPrintPassword($s)
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
- *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
+ *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
@@ -1709,18 +1711,20 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	}
 	if (!$keepn) {
 		$tmp = strtr($tmp, array("\r"=>'\\r', "\n"=>'\\n'));
+	} elseif ($keepn == -1) {
+		$tmp = strtr($tmp, array("\r"=>'', "\n"=>''));
 	}
 
 	if ($escapeonlyhtmltags) {
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
 		// Escape tags to keep
-		// TODO Does not works yet when there is attributes into tag
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
 		if (count($tmparrayoftags)) {
+			// TODO Does not works yet when there is attributes into tag
 			foreach ($tmparrayoftags as $tagtoreplace) {
 				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
