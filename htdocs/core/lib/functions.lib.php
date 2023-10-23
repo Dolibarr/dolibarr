@@ -7494,12 +7494,14 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		$i = 0; $countline = 0; $lastaddediscontent = 1;
 		while ($countline < $nboflines && isset($a[$i])) {
 			if (preg_match('/<br[^>]*>/', $a[$i])) {
-				$firstline .= ($ishtml ? "<br>\n" : "\n");
-				// Is it a br for a new line of after a printed line ?
-				if (!$lastaddediscontent) {
-					$countline++;
+				if (array_key_exists($i+1, $a) && !empty($a[$i+1])) {
+					$firstline .= ($ishtml ? "<br>\n" : "\n");
+					// Is it a br for a new line of after a printed line ?
+					if (!$lastaddediscontent) {
+						$countline++;
+					}
+					$lastaddediscontent = 0;
 				}
-				$lastaddediscontent = 0;
 			} else {
 				$firstline .= $a[$i];
 				$lastaddediscontent = 1;
@@ -7507,9 +7509,12 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 			}
 			$i++;
 		}
-		$adddots = isset($a[$i]);
-		unset($a);
-		return $firstline.($adddots ? '...' : '');
+
+		$adddots = (isset($a[$i]) && (!preg_match('/<br[^>]*>/', $a[$i]) || (array_key_exists($i+1, $a) && !empty($a[$i+1]))));
+		//unset($a);
+		$ret = $firstline.($adddots ? '...' : '');
+		//exit;
+		return $ret;
 	}
 }
 
