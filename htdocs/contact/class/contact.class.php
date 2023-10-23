@@ -138,6 +138,11 @@ class Contact extends CommonObject
 	public $civilite;
 
 	/**
+	 * @var string gender
+	 */
+	public $gender;
+
+	/**
 	 * @var string Address
 	 */
 	public $address;
