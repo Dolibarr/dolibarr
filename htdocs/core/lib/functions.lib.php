@@ -2766,7 +2766,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
  *
- *  @see        dol_mktime(), dol_stringtotime(), dol_getdate()
+ *  @see        dol_mktime(), dol_stringtotime(), dol_getdate(), selectDate()
  */
 function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
 {
@@ -2818,7 +2818,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Do we have to reduce the length of date (year on 2 chars) to save space.
 	// Note: dayinputnoreduce is same than day but no reduction of year length will be done
-	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;	// Test on original $format param.
+	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour', 'dayhoursec'))) ? 1 : 0;	// Test on original $format param.
 	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) {
