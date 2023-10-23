@@ -155,6 +155,7 @@ class InterfaceLogevents extends DolibarrTriggers
 				$desc = $langs->transnoentities("GroupDeleted", $object->name);
 				break;
 			default:
+				dol_syslog("Unknown action. Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 				break;
 		}
 
