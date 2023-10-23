@@ -445,8 +445,8 @@ if (empty($reshook)) {
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
-				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+				$emailFrom = $expediteur->email;
+				//$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -588,8 +588,8 @@ if (empty($reshook)) {
 					// From
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_validator);
-					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+					$emailFrom = $expediteur->email;
+					//$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					// Subject
 					$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -669,8 +669,8 @@ if (empty($reshook)) {
 						// From
 						$expediteur = new User($db);
 						$expediteur->fetch($object->fk_validator);
-						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$emailFrom = $expediteur->email;
+						//$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 						// Subject
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -809,8 +809,8 @@ if (empty($reshook)) {
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
-				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+				$emailFrom = $expediteur->email;
+				//$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
