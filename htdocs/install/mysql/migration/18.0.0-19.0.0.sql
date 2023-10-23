@@ -146,3 +146,6 @@ ALTER TABLE llx_resource ADD COLUMN max_users integer DEFAULT NULL AFTER photo_f
 ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_places;
 ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
 ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
+
+ALTER TABLE llx_mailing ADD COLUMN note_private text;
+ALTER TABLE llx_mailing ADD COLUMN note_public text;
