@@ -51,10 +51,10 @@ if ($action == 'presend') {
 		//Get also the main_lastdoc field of $object. If not found, try to guess with following code
 		if (!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
 			//$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
-			if(!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES)) {
-    			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES)) {
+				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			} else {
-			    $fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
+				$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
 			}
 		} else {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -67,12 +67,12 @@ if ($action == 'presend') {
 		}
 
 		//$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
-		if(!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($fileparams) > 0) {
-    		for ($i = 0; $i < count($fileparams); $i++) {
-    		    $files[$i] = isset($fileparams[$i]['fullname'])?$fileparams[$i]['fullname']:null;
-    		}
+		if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($fileparams) > 0) {
+			for ($i = 0; $i < count($fileparams); $i++) {
+				$files[$i] = isset($fileparams[$i]['fullname'])?$fileparams[$i]['fullname']:null;
+			}
 		} else {
-		    $file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
+			$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
 		}
 	}
 
@@ -400,12 +400,12 @@ if ($action == 'presend') {
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	//$formmail->param['fileinit'] = array($file);
-	if(!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($files) > 0) {
-	   for ($i = 0; $i < count($files); $i++) {
-    	    $formmail->param['fileinit'] = $files;
-    	}
+	if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES) && count($files) > 0) {
+		for ($i = 0; $i < count($files); $i++) {
+			$formmail->param['fileinit'] = $files;
+		}
 	} else {
-	    $formmail->param['fileinit'] = array($file);
+		$formmail->param['fileinit'] = array($file);
 	}
 
 	// Show form
