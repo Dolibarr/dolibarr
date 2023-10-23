@@ -1614,7 +1614,7 @@ function dol_escape_php($stringtoescape)
 
 /**
  * Return a string label ready to be output on HTML content
- * To use text inside an attribute, use can use only dol_escape_htmltag()
+ * To use text inside an attribute, use can simply only dol_escape_htmltag()
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1626,35 +1626,59 @@ function dolPrintLabel($s)
 
 /**
  * Return a string ready to be output on HTML page
- * To use text inside an attribute, use can use only dol_escape_htmltag()
+ * To use text inside an attribute, you can simply use dol_escape_htmltag()
+ *
+ * @param	string	$s				String to print
+ * @param	int		$allowiframe	Allow iframe tags
+ * @return	string					String ready for HTML output
+ */
+function dolPrintHTML($s, $allowiframe = 0)
+{
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+}
+
+/**
+ * Return a string ready to be output on an HTML attribute (alt, title, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
  */
-function dolPrintHTML($s)
+function dolPrintHTMLForAttribute($s)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1)), 1, 1, 'common', 0, 1);
+	return dol_escape_htmltag($s);
 }
 
 /**
  * Return a string ready to be output on input textarea
  * To use text inside an attribute, use can use only dol_escape_htmltag()
  *
- * @param	string	$s		String to print
- * @return	string			String ready for HTML output into a textarea
+ * @param	string	$s				String to print
+ * @param	int		$allowiframe	Allow iframe tags
+ * @return	string					String ready for HTML output into a textarea
  */
-function dolPrintHTMLForTextArea($s)
+function dolPrintHTMLForTextArea($s, $allowiframe = 0)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1)), 1, 1, '', 0, 1);
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, '', 0, 1);
+}
+
+/**
+ * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ *
+ * @param	string	$s		String to print
+ * @return	string			String ready for HTML output
+ */
+function dolPrintPassword($s)
+{
+	return htmlspecialchars($s , ENT_COMPAT, 'UTF-8');
 }
 
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
- *  When we output string on pages, we use
- *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
- *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
- *        - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
+ *  When we need to output strings on pages, we should use:
+ *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
+ *        - dolPrintLabel... that is dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
@@ -7463,18 +7487,25 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 		$firstline = '';
-		$i = 0;
-		$nba = count($a); // 2x nb of lines in $a because $a contains also a line for each new line separator
-		while (($i < $nba) && ($i < ($nboflines * 2))) {
-			if ($i % 2 == 0) {
-				$firstline .= $a[$i];
-			} elseif (($i < (($nboflines * 2) - 1)) && ($i < ($nba - 1))) {
+		$i = 0; $countline = 0; $lastaddediscontent = 1;
+		while ($countline < $nboflines && isset($a[$i])) {
+			if (preg_match('/<br[^>]*>/', $a[$i])) {
 				$firstline .= ($ishtml ? "<br>\n" : "\n");
+				// Is it a br for a new line of after a printed line ?
+				if (!$lastaddediscontent) {
+					$countline++;
+				}
+				$lastaddediscontent = 0;
+			} else {
+				$firstline .= $a[$i];
+				$lastaddediscontent = 1;
+				$countline++;
 			}
 			$i++;
 		}
+		$adddots = isset($a[$i]);
 		unset($a);
-		return $firstline.(($i < $nba) ? '...' : '');
+		return $firstline.($adddots ? '...' : '');
 	}
 }
 
@@ -7606,13 +7637,13 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
- *              - writeHTMLCell -> param must be encoded into HTML.
- *              - MultiCell -> param must not be encoded into HTML.
- *              Because writeHTMLCell convert also \n into <br>, if function
- *              is used to build PDF, nl2brmode must be 1.
+ *        - writeHTMLCell -> param must be encoded into HTML.
+ *        - MultiCell -> param must not be encoded into HTML.
+ *        Because writeHTMLCell convert also \n into <br>, if function is used to build PDF, nl2brmode must be 1.
  *  Note: When we output string on pages, we should use
- *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
- *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
+ *        - dolPrintLabel... that is dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
