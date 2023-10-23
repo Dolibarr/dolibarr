@@ -1296,6 +1296,42 @@ class Product extends CommonObject
 					}
 				}
 
+				if (!$this->hasbatch() && $this->oldcopy->hasbatch()) {
+					// Selection of all product stock mouvements that contains batchs
+					$sql = 'SELECT pb.qty, pb.fk_entrepot, pb.batch FROM '.MAIN_DB_PREFIX.'product_batch as pb';
+					$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON (ps.rowid = batch.fk_product_stock)';
+					$sql.= ' WHERE ps.fk_product = '.(int) $this->id;
+
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						$inventorycode = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+						while ($obj = $this->db->fetch_object($resql)) {
+							$value = $obj->qty;
+							$fk_entrepot = $obj->fk_entrepot;
+							$price = 0;
+							$dlc = '';
+							$dluo = '';
+							$batch = $obj->batch;
+
+							// To know how to revert stockMouvement (add or remove)
+							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
+							$label = $langs->trans('BatchStockMouvementAddInGlobal');
+							$res = $this->correct_stock_batch($user, $fk_entrepot, abs($value), $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '', null, 0, null, true);
+
+							if ($res > 0) {
+								$label = $langs->trans('BatchStockMouvementAddInGlobal');
+								$res = $this->correct_stock($user, $fk_entrepot, abs($value), (int) empty($addOremove), $label, $price, $inventorycode, '', null, 0);
+								if ($res < 0) {
+									$error++;
+								}
+							} else {
+								$error++;
+							}
+						}
+					}
+				}
+
 				// Actions on extra fields
 				if (!$error) {
 					$result = $this->insertExtraFields();
@@ -5535,9 +5571,10 @@ class Product extends CommonObject
 	 * @param  int      $origin_id      Origin id of element
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @param  Extrafields $extrafields	Array of extrafields
+     * @param  boolean  $force_update_batch   Force update batch
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -5557,7 +5594,7 @@ class Product extends CommonObject
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin
-			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
+			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct, 0, $force_update_batch);
 
 			if ($result >= 0) {
 				if ($extrafields) {
