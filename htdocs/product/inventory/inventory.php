@@ -978,8 +978,10 @@ if ($object->id > 0) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product p on p.rowid = id.fk_product';
+
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-	$sql .= ' ORDER BY id.rowid';
+	$sql .= ' ORDER BY p.ref';
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -1149,6 +1151,7 @@ if ($object->id > 0) {
 					print $obj->qty_view;	// qty found
 					print '</td>';
 				}
+				print '<td class="nowraponall right">';
 				if ($obj->fk_movement > 0) {
 					$stockmovment = new MouvementStock($db);
 					$stockmovment->fetch($obj->fk_movement);
