@@ -230,6 +230,7 @@ class Propal extends CommonObject
 	 * @deprecated
 	 */
 	public $fk_address;
+	public $fk_delivery_address;
 
 	public $address_type;
 	public $address;
@@ -1153,6 +1154,7 @@ class Propal extends CommonObject
 		$sql .= ", fk_incoterms";
 		$sql .= ", location_incoterms";
 		$sql .= ", entity";
+		$sql .= ", fk_delivery_address";
 		$sql .= ", fk_multicurrency";
 		$sql .= ", multicurrency_code";
 		$sql .= ", multicurrency_tx";
@@ -1185,6 +1187,7 @@ class Propal extends CommonObject
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->fk_delivery_address;
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;

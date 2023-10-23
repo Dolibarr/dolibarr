@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1752,8 +1753,21 @@ class pdf_cyan extends ModelePDFPropales
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
+			// Delivery contact address
+			$usecontactdelivery = false;
+			if (!empty($conf->global->PROPAL_ADDRESS_DELIVERY_CONTACT)) {
+				$arrayidcontactdelivery = $object->getIdContact('external', 'SHIPPING');
+				if (count($arrayidcontactdelivery) > 0)
+				{
+					$usecontactdelivery = true;
+					$objcontactdelivery = new Contact($this->db);
+					$result = $objcontactdelivery->fetch($arrayidcontactdelivery[0]);
+				}
+			}
+
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			//$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object, 'propale', ($usecontactdelivery ? $objcontactdelivery : ''));
 
 			// Show recipient
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
