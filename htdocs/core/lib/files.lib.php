@@ -2526,10 +2526,10 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 	global $conf;
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
 	//return isset($tmparray[0])?$tmparray[0]:null;
-	if(!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES)) {
-	    return isset($tmparray)?$tmparray:null;
+	if (!empty($conf->global->MAIN_EMAIL_ATTACH_ALL_FILES)) {
+		return isset($tmparray)?$tmparray:null;
 	} else {
-	    return isset($tmparray[0])?$tmparray[0]:null;
+		return isset($tmparray[0])?$tmparray[0]:null;
 	}
 }
 
