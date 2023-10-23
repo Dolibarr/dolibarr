@@ -1109,7 +1109,6 @@ class FormMail extends Form
 				if (!empty($this->withtofree)) {
 					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 				}
-
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
 					if (is_array($val)) {
@@ -1129,12 +1128,28 @@ class FormMail extends Form
 					$tmparray[$key]['labelhtml'] = $label;
 					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
 					$tmparray[$key]['labelhtml'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $tmparray[$key]['labelhtml']);
+
+					if (getDolGlobalInt('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS')){
+						$contact_static = new Contact($this->db);
+						if ($contact_static->fetch($key) > 0){
+							if ($contact_static->fetchRoles() > 0){
+								foreach ($contact_static->roles as $indice => $role) {
+									if (!empty($role['source'])) $tmparray[$key]['source'] = $role["source"]; break;
+								}
+							}
+						}
+					}
 				}
 
 				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
 				if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
+					}
+				}
+				if (getDolGlobalInt('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS')){
+					if (empty($withtoselected) && count($tmparray) > 0 && GETPOST('action', 'aZ09') == 'presend') {
+						$withtoselected = array_keys(array_filter($tmparray, function($contact) { return isset($contact['source']) && $contact['source'] === 'external'; }));
 					}
 				}
 

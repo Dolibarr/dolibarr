@@ -2992,12 +2992,6 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						$param = '';
-						$list_contact= $object->liste_contact();
-						if (!empty($list_contact)){
-							foreach ($list_contact as $id => $contactobj){
-								if ($contactobj['source'] == 'external') $param .= '&receiver['.$id.']='.$contactobj['id'];
-							}
-						}
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init'.$param.'#formmailbeforetitle', '', $usercansend);
 					}
 				}
