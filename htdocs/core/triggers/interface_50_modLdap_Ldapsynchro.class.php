@@ -134,7 +134,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($result > 0 && !empty($object->context['newgroupid'])) {      // We are in context of adding a new group to user
 						$usergroup = new UserGroup($this->db);
 
-						$usergroup->fetch($object->context['newgroupid']);
+						$usergroup->fetch($object->context['newgroupid'], '', true);
 
 						$oldinfo = $usergroup->_load_ldap_info();
 						$olddn = $usergroup->_load_ldap_dn($oldinfo);
@@ -156,7 +156,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($result > 0 && !empty($object->context['oldgroupid'])) {      // We are in context of removing a group from user
 						$usergroup = new UserGroup($this->db);
 
-						$usergroup->fetch($object->context['oldgroupid']);
+						$usergroup->fetch($object->context['oldgroupid'], '', true);
 
 						$oldinfo = $usergroup->_load_ldap_info();
 						$olddn = $usergroup->_load_ldap_dn($oldinfo);
@@ -271,7 +271,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn = $object->_load_ldap_dn($info);
 
 					// Get a gid number for objectclass PosixGroup if none was provided
-					if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+					if (empty($info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')]) && in_array('posixGroup', $info['objectclass'])) {
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 

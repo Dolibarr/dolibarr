@@ -658,7 +658,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 // Email to send notifications
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
 print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'"></td>';
+print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';

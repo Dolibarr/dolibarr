@@ -278,7 +278,7 @@ class Expedition extends CommonObject
 		if (!empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
 			$mybool = false;
 
-			$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$file = getDolGlobalString('EXPEDITION_ADDON_NUMBER') . ".php";
 			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
 
 			// Include file with class
@@ -708,8 +708,8 @@ class Expedition extends CommonObject
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))) {
+		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'creer'))
+		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'shipping_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -729,6 +729,8 @@ class Expedition extends CommonObject
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$numref = $this->getNextNumRef($soc);
+		} elseif (!empty($this->ref)) {
+			$numref = $this->ref;
 		} else {
 			$numref = "EXP".$this->id;
 		}
@@ -1993,7 +1995,7 @@ class Expedition extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		if ($user->rights->expedition->creer) {
+		if ($user->hasRight('expedition', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);

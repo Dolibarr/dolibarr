@@ -120,7 +120,7 @@ class modWebsite extends DolibarrModules
 		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top', // This is a Left menu entry
 								'titre'=>'WebSites',
-								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 								'mainmenu'=>'website',
 								'url'=>'/website/index.php',
 								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

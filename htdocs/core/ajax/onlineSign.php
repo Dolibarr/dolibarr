@@ -209,7 +209,7 @@ if ($action == "importSignature") {
 				}
 				$sql .= " WHERE rowid = " . ((int) $object->id);
 
-				dol_syslog(__METHOD__, LOG_DEBUG);
+				dol_syslog(__FILE__, LOG_DEBUG);
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -221,7 +221,7 @@ if ($action == "importSignature") {
 					if (method_exists($object, 'call_trigger')) {
 						//customer is not a user !?! so could we use same user as validation ?
 						$user = new User($db);
-						$user->fetch($object->user_valid_id);
+						$user->fetch($object->user_validation_id);
 						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {

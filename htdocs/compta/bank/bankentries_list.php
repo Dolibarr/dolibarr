@@ -246,7 +246,7 @@ $rowids = GETPOST('rowid', 'array');
 // Conciliation
 if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha'))
 	&& (GETPOST("num_releve", "alpha") || !empty($rowids))
-	&& !empty($user->rights->banque->consolidate)
+	&& $user->hasRight('banque', 'consolidate')
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
@@ -569,7 +569,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) {
+			if ($user->hasRight('banque', 'consolidate')) {
 				$newparam = $param;
 				$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
 				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliatemanual.'</a>';
@@ -579,7 +579,7 @@ if ($id > 0 || !empty($ref)) {
 
 			if ($allowautomaticconciliation) {
 				// If not cash account and can be reconciliate
-				if ($user->rights->banque->consolidate) {
+				if ($user->hasRight('banque', 'consolidate')) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
 					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
@@ -820,7 +820,7 @@ if ($resql) {
 	}
 
 	// Form to reconcile
-	if ($user->rights->banque->consolidate && $action == 'reconcile') {
+	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 		$texttoshow = $langs->trans("InputReceiptNumber").': ';
 		$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
@@ -1297,7 +1297,7 @@ if ($resql) {
 			$balancecalculated = true;
 
 			// Output a line with start balance
-			if ($user->rights->banque->consolidate && $action == 'reconcile') {
+			if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 				$tmpnbfieldbeforebalance = 0;
 				$tmpnbfieldafterbalance = 0;
 				$balancefieldfound = 0;
@@ -1647,8 +1647,8 @@ if ($resql) {
 				$companystatic->fetch($companylinked_id);
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
-					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
-						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
+					(($type_link == 'payment_salary' && $user->hasRight('salaries', 'read'))
+						|| ($type_link == 'payment_sc' && $user->hasRight('tax', 'charges', 'lire')))) {
 				// Get object user from cache or load it
 				if (!empty($conf->cache['user'][$userlinked_id])) {
 					$tmpuser = $conf->cache['user'][$userlinked_id];
@@ -1795,7 +1795,7 @@ if ($resql) {
 			print img_edit();
 			print '</a>';
 		} else {
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
+			if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_edit();
 				print '</a>';
@@ -1809,7 +1809,7 @@ if ($resql) {
 					print ' '.img_warning($langs->trans("ReconciliationLate"));
 				}
 			}
-			if ($user->rights->banque->modifier) {
+			if ($user->hasRight('banque', 'modifier')) {
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
@@ -1854,7 +1854,7 @@ if ($resql) {
 				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
-				if ($user->rights->banque->consolidate && $action == 'reconcile') {
+				if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 					print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 				}
 				print '</td>';

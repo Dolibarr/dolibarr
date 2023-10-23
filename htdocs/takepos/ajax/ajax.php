@@ -50,7 +50,7 @@ $id = GETPOST('id', 'int');
 $search_start = GETPOST('search_start', 'int');
 $search_limit = GETPOST('search_limit', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 

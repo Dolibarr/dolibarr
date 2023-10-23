@@ -277,7 +277,7 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
-	print $labelmeteo[$conf->global->MAIN_DISABLE_METEO];
+	print $labelmeteo[getDolGlobalString('MAIN_DISABLE_METEO')];
 	print '</td></tr>';
 
 	print '</table>';
@@ -409,19 +409,19 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 			print '<div>';
 			print '<div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 0, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL0').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 1, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL1').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 2, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL2').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 3, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 4, $options);
-			print ' &gt; '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
+			print ' &gt; ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'&nbsp;%</td>';
 			print '</div>';
 			print '</div>';
 		} else {

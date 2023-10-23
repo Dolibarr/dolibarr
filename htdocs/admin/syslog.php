@@ -179,7 +179,7 @@ if (!$defaultsyslogfile) {
 	$defaultsyslogfile = 'dolibarr.log';
 }
 $optionmc = '';
-if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
+if (isModEnabled('multicompany') && $user->entity) {
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
 	$optionmc = 'disabled';
 }

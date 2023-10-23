@@ -520,8 +520,8 @@ if (empty($reshook)) {
 	}
 
 	// Update extrafields
-	if ($action == 'update_extras' && !empty($user->rights->societe->contact->creer)) {
-		$object->oldcopy = dol_clone($object);
+	if ($action == 'update_extras' && $user->hasRight('societe', 'contact', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -593,7 +593,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 
 	// Confirm deleting contact
-	if ($user->rights->societe->contact->supprimer) {
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
@@ -617,7 +617,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$head = contact_prepare_head($object);
 	}
 
-	if ($user->rights->societe->contact->creer) {
+	if ($user->hasRight('societe', 'contact', 'creer')) {
 		if ($action == 'create') {
 			/*
 			 * Fiche en mode creation
@@ -1529,7 +1529,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
-			if ($user->rights->societe->contact->creer) {
+			if ($user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 			}
 
@@ -1543,8 +1543,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Delete
-			if ($user->rights->societe->contact->supprimer) {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->rights->societe->contact->supprimer);
+			if ($user->hasRight('societe', 'contact', 'supprimer')) {
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->hasRight('societe', 'contact', 'supprimer'));
 			}
 		}
 
