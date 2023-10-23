@@ -35,13 +35,15 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array();
-$arrayofparameters['ThirdParty'] = array(
-	'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'supplier', 'class="pictofixedwidth"')),
-);
+// ThirdParty
+	$arrayofparameters['ThirdParty'] = array(
+		'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'supplier', 'class="pictofixedwidth"')),
+	);
+// Contact
 if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
 	$arrayofparameters['Contact'] = array(
 		'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
@@ -51,6 +53,7 @@ if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
 		'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
 	);
 }
+// Member
 if (isModEnabled('adherent')) {
 	$arrayofparameters['Member'] = array(
 		'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'member', 'class="pictofixedwidth"')),
@@ -58,13 +61,13 @@ if (isModEnabled('adherent')) {
 }
 
 $valTab = array(
-	'' => $langs->trans('Never'),
-	'6' => $langs->trans('NB_MONTHS', 6),
-	'12' => $langs->trans('ONE_YEAR'),
-	'24' => $langs->trans('NB_YEARS', 2),
-	'36' => $langs->trans('NB_YEARS', 3),
-	'48' => $langs->trans('NB_YEARS', 4),
-	'60' => $langs->trans('NB_YEARS', 5),
+	   '' => $langs->trans('Never'),
+	  '6' => $langs->trans('NB_MONTHS', 6),
+	 '12' => $langs->trans('ONE_YEAR'),
+	 '24' => $langs->trans('NB_YEARS', 2),
+	 '36' => $langs->trans('NB_YEARS', 3),
+	 '48' => $langs->trans('NB_YEARS', 4),
+	 '60' => $langs->trans('NB_YEARS', 5),
 	'120' => $langs->trans('NB_YEARS', 10),
 	'180' => $langs->trans('NB_YEARS', 15),
 	'240' => $langs->trans('NB_YEARS', 20),
