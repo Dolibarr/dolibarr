@@ -1058,7 +1058,7 @@ class Ldap
 		if (is_array($attributeArray)) {
 			// Return list with required fields
 			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".get_resource_type($this->connection)." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		} else {
