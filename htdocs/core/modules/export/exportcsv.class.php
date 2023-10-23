@@ -185,6 +185,7 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
+		if (empty ($conf->global->EXPORT_CSV_FORCE_CHARSET)) $conf->global->EXPORT_CSV_FORCE_CHARSET = '';
 		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 
 		$selectlabel = array();
@@ -223,6 +224,7 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
+		if (empty ($conf->global->EXPORT_CSV_FORCE_CHARSET)) $conf->global->EXPORT_CSV_FORCE_CHARSET = '';
 		$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 
 		$this->col = 0;
