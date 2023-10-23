@@ -1648,7 +1648,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$index++;
 
-		if (!empty($conf->global->BILL_TEXT_TOTAL_FOOTER)) {
+		if (getDolGlobalString($conf->global->BILL_TEXT_TOTAL_FOOTER)) {
 			$index++;
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
