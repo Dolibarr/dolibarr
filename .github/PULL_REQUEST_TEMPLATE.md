@@ -16,3 +16,12 @@
 
 # NEW|New [*Short description*]
 [*Long description*]
+
+
+# PERF|Perf #[*issue_number Short description*]
+[*Long description*]
+
+
+# QUAL|Qual #[*issue_number Short description*]
+[*Long description*]
+
