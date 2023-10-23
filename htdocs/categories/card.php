@@ -81,6 +81,7 @@ if ($catorigin && $type == Categorie::TYPE_PRODUCT) {
 }
 
 $object = new Categorie($db);
+$object->type = $type; // for hooks
 
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
