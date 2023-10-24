@@ -61,7 +61,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @return int                        if KO: <0, if no trigger ran: 0, if OK: >0
 	 * @throws Exception
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
 	{
 		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) {
 			return 0; // Log events is disabled (hidden features)
