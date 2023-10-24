@@ -1149,7 +1149,7 @@ class FormMail extends Form
 				}
 				if (getDolGlobalInt('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS')) {
 					if (empty($withtoselected) && count($tmparray) > 0 && GETPOST('action', 'aZ09') == 'presend') {
-						$withtoselected = array_keys(array_filter($tmparray, function($contact) {
+						$withtoselected = array_keys(array_filter($tmparray, function ($contact) {
 							return isset($contact['source']) && $contact['source'] === 'external'; }
 						));
 					}
