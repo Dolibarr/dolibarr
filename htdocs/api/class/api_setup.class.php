@@ -24,6 +24,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/api/class/api.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
@@ -1860,7 +1861,7 @@ class Setup extends DolibarrApi
 		global $conf, $mysoc;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
 				throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
@@ -2012,7 +2013,7 @@ class Setup extends DolibarrApi
 		global $langs, $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK');
 		}
 
@@ -2028,11 +2029,11 @@ class Setup extends DolibarrApi
 		$file_list = array('missing' => array(), 'updated' => array());
 
 		// Local file to compare to
-		$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+		$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
 		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
-		if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
+		if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
 			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
@@ -2318,7 +2319,7 @@ class Setup extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 

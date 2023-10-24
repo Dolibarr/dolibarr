@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/api/class/api.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
@@ -180,9 +181,9 @@ class Documents extends DolibarrApi
 		}
 
 		// --- Generates the document
-		$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 0 : 1;
-		$hidedesc = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 0 : 1;
-		$hideref = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 0 : 1;
+		$hidedetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 0 : 1;
+		$hidedesc = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 0 : 1;
+		$hideref = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 0 : 1;
 
 		$templateused = '';
 
@@ -864,7 +865,7 @@ class Documents extends DolibarrApi
 		// Security:
 		// Disallow file with some extensions. We rename them.
 		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED)) {
+		if (isAFileWithExecutableContent($dest_file) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
 			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
 			if (!preg_match('/\/$/', $publicmediasdirwithslash)) {

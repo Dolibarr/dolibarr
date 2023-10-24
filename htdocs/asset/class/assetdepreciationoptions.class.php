@@ -272,7 +272,7 @@ class AssetDepreciationOptions extends CommonObject
 				$deprecation_options[$mode_key][$field_key] = $field_value;
 
 				// Validation of fields values
-				if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+				if (getDolGlobalInt('MAIN_FEATURE_LEVEL') >= 2 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 					if (!$error && !empty($field_info['validate']) && is_callable(array($this, 'validateField'))) {
 						if (!$this->validateField($mode_info['fields'], $field_key, $value)) {
 							$error++;

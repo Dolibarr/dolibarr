@@ -48,12 +48,12 @@ $type = 'reception';
  * Actions
  */
 
-if (isModEnabled('reception') && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
+if (isModEnabled('reception') && !getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_RECEPTION", "1", 'chaine', 0, '', $conf->entity);
 }
 
-if (empty($conf->global->RECEPTION_ADDON_NUMBER)) {
+if (!getDolGlobalString('RECEPTION_ADDON_NUMBER')) {
 	$conf->global->RECEPTION_ADDON_NUMBER = 'mod_reception_beryl';
 }
 
