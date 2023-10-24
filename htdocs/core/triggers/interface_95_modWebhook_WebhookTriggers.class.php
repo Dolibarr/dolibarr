@@ -128,7 +128,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					$errormsg = "Failed to get url with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 					$this->error = $errormsg;
 					$this->errors[] = $errormsg;
-					dol_syslog($errormsg, LOG_DEBUG);
+					dol_syslog($errormsg, LOG_ERR);
 				}
 			}
 		}
