@@ -38,6 +38,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -508,6 +509,13 @@ if (empty($reshook)) {
 				$action = '';
 			}
 
+			if (isModEnabled('categorie')) {
+				$categories = GETPOST('categories', 'array');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			// End of object creation, we show it
 			if ($object_id > 0 && !$error) {
 				$db->commit();
@@ -634,6 +642,11 @@ if (empty($reshook)) {
 		//	$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
 		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
+	} elseif ($action == 'settags' && isModEnabled('categorie') && $usercancreate) {
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '') {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
@@ -2015,6 +2028,15 @@ if ($action == 'create' && $usercancreate) {
 		print '</td></tr>';
 	}
 
+	// Categories
+	if (!empty($conf->categorie->enabled)) {
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ORDER, '', 'parent', 64, 0, 1);
+		$arrayselected = GETPOST('categories', 'array');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print "</td></tr>";
+	}
+
 	// Note public
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
@@ -2724,6 +2746,40 @@ if ($action == 'create' && $usercancreate) {
 			}
 			print '</td>';
 			print '</tr>';
+		}
+
+		// Tags-Categories
+		if (isModEnabled('categorie')) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans("Categories");
+			print '<td><td class="right">';
+			if ($usercancreate) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td>';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ORDER, '', 'parent', 64, 0, 1);
+			if ($action == 'edittags') {
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="action" value="settags">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_ORDER);
+				$arrayselected=[];
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print $form->showCategories($object->id, Categorie::TYPE_ORDER, 1);
+			}
+			print "</td></tr>";
 		}
 
 		// Other attributes
