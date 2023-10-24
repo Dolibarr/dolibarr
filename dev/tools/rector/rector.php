@@ -8,6 +8,7 @@ use Rector\Set\ValueObject\LevelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->phpVersion(PhpVersion::PHP_71);
+	//$rectorConfig->indent(' ', 4);
 	$rectorConfig->paths([
 		__DIR__ . '/../../../htdocs/',
 		__DIR__ . '/../../../scripts/',
@@ -15,12 +16,23 @@ return static function (RectorConfig $rectorConfig): void {
 	]);
 	$rectorConfig->skip([
 		'**/includes/**',
+		__DIR__ . '/../../../htdocs/custom',
 		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
 	$rectorConfig->parallel(240);
 
 
-	// register a single rule
+	// register rules
+
+	// Remove use of list($a, $b) = ...
+	//$rectorConfig->rule(Rector\Php71\Rector\List_\ListToArrayDestructRector::class);
+	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\CreateFunctionToAnonymousFunctionRector::class);
+	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\GetClassOnNullRector::class);
+	//$rectorConfig->rule(Rector\Php72\Rector\Assign\ListEachRector::class);
+	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\ParseStrWithResultArgumentRector::class);
+	//$rectorConfig->rule(ReplaceEachAssignmentWithKeyCurrentRector::class);
+	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\StringifyDefineRector::class);
+
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
 

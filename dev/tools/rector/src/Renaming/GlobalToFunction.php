@@ -58,9 +58,9 @@ class GlobalToFunction extends AbstractRector
 	}
 
 	/**
-	 * getNodeTypes
+	 * Return a node type from https://github.com/rectorphp/php-parser-nodes-docs/
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function getNodeTypes(): array
 	{
@@ -70,8 +70,8 @@ class GlobalToFunction extends AbstractRector
 	/**
 	 * refactor
 	 *
-	 * @param Node $node A node
-	 * @return    Equal|Concat|ArrayDimFetch|void
+	 * @param Node 	$node 		A node
+	 * @return    				Equal|Concat|ArrayDimFetch|void
 	 */
 	public function refactor(Node $node)
 	{
@@ -136,6 +136,7 @@ class GlobalToFunction extends AbstractRector
 			return;
 		}
 
+		// Test the type after the comparison conf->global->xxx to know the name of function
 		switch ($node->right->getType()) {
 			case 'Scalar_LNumber':
 				$funcName = 'getDolGlobalInt';
@@ -146,6 +147,7 @@ class GlobalToFunction extends AbstractRector
 			default:
 				return;
 		}
+
 		$constName = $this->getConstName($node->left);
 		if (empty($constName)) {
 			return;
@@ -190,10 +192,10 @@ class GlobalToFunction extends AbstractRector
 	}
 
 	/**
-	 * Check node is global access
+	 * Check if node is a global access with format conf->global->XXX
 	 *
-	 * @param Node $node A node
-	 * @return bool
+	 * @param Node 	$node 	A node
+	 * @return bool			Return true if noe is conf->global->XXX
 	 */
 	private function isGlobalVar($node)
 	{
@@ -214,8 +216,8 @@ class GlobalToFunction extends AbstractRector
 	}
 
 	/**
-	 * @param Node $node node to be parsed
-	 * @return Node|void
+	 * @param 	Node 		$node 	Node to be parsed
+	 * @return 	Node|void			Return the name of the constant
 	 */
 	private function getConstName($node)
 	{
