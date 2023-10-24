@@ -81,6 +81,11 @@ class Events // extends CommonObject
 	public $user_agent;
 
 	/**
+	 * @var string label
+	 */
+	public $label;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
