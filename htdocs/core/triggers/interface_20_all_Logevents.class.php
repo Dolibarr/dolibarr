@@ -106,7 +106,7 @@ class InterfaceLogevents extends DolibarrTriggers
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 				$this->initEventData("NewUserPassword", $object, $langs, true);
 				break;
-			case 'USER_ENABLEDISABLE':
+			case 'USER_ENABLEDISABLE': // TODO maybe divide this action into 2 separate actions for better traceability
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 				if ($object->statut == 0) {
 					$this->initEventData("UserEnabled", $object, $langs, true);
