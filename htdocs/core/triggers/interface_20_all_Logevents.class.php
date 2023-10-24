@@ -35,14 +35,11 @@ class InterfaceLogevents extends DolibarrTriggers
 {
 	/**
 	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
-		$this->db = $db;
+		parent::__construct($db);
 
-		$this->name 		= preg_replace('/^Interface/i', '', get_class($this));
 		$this->family 		= "core";
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
 		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
