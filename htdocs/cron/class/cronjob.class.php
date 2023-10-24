@@ -1633,6 +1633,5 @@ class Cronjobline
 	 */
 	public function __construct()
 	{
-		return 1;
 	}
 }

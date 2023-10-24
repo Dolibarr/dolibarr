@@ -437,7 +437,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				if ($objectclass == 'Facture') {
 					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO')));
 				}
-				if ($objectclass == 'Supplier_Proposal') {
+				if ($objectclass == 'SupplierProposal') {
 					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO')));
 				}
 				if ($objectclass == 'CommandeFournisseur') {
@@ -536,7 +536,7 @@ if (!$error && $massaction == 'confirm_presend') {
 							$trackid = 'ord';
 						} elseif (get_class($objecttmp) == 'Facture') {
 							$trackid = 'inv';
-						} elseif (get_class($objecttmp) == 'Supplier_Proposal') {
+						} elseif (get_class($objecttmp) == 'SupplierProposal') {
 							$trackid = 'spr';
 						} elseif (get_class($objecttmp) == 'CommandeFournisseur') {
 							$trackid = 'sor';
@@ -581,7 +581,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 								if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 								if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
-								if ($objectclass == 'Supplier_Proposal') $actiontypecode='AC_SUP_PRO';
+								if ($objectclass == 'SupplierProposal') $actiontypecode='AC_SUP_PRO';
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
@@ -1047,7 +1047,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	$TMsg = array();
-	foreach ($toselect as $toselectid) {
+
+	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
+	$unique_arr = array_unique($toselect);
+	foreach ($unique_arr as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status

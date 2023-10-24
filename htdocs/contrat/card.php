@@ -72,7 +72,6 @@ $usehm = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global-
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'contrat', $id);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
@@ -104,6 +103,8 @@ $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the in
 $permissiontoedit = $permissiontoadd;
 $permissiontoactivate = $user->hasRight('contrat', 'activer');
 $error = 0;
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*

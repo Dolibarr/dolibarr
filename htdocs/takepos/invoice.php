@@ -321,8 +321,8 @@ if (empty($reshook)) {
 		$creditnote->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$creditnote->type = Facture::TYPE_CREDIT_NOTE;
 		$creditnote->fk_facture_source = $placeid;
-		$creditnote->remise_absolue = $invoice->remise_absolue;
-		$creditnote->remise_percent = $invoice->remise_percent;
+		//$creditnote->remise_absolue = $invoice->remise_absolue;
+		//$creditnote->remise_percent = $invoice->remise_percent;
 		$creditnote->create($user);
 
 		foreach ($invoice->lines as $line) {
