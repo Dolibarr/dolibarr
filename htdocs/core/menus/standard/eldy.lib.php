@@ -1509,6 +1509,12 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			}
 
 			$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur',  'facture', 'lire'), '', $mainmenu, 'suppliers_bills_stats');
+
+			// Categories
+			if (isModEnabled('categorie')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=15", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+			}
 		}
 
 		// Orders

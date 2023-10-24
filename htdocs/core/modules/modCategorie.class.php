@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020      Stéphane Lesage		<stephane.lesage@ateis.com>
+/* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
+ * Copyright (C) 2005-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2020		Stéphane Lesage		<stephane.lesage@ateis.com>
+ * Copyright (C) 2022-2023	Solution Libre SAS	<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,6 +163,9 @@ class modCategorie extends DolibarrModules
 		}
 		if (isModEnabled('website')) {
 			$typeexample .= ($typeexample ? " / " : "")."11=Website page";
+		}
+		if (!empty($conf->facture->enabled) && !empty($conf->fournisseur->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."15=Supplier invoice";
 		}
 
 		// Definition of vars
@@ -439,6 +443,22 @@ class modCategorie extends DolibarrModules
 
 		// 11 Website Pages, TODO ?
 
+		// 15 Supplier Invoices
+		++$r;
+		$this->exportTagLinks(
+			$r,
+			15,
+			'FactureFournisseur',
+			'!empty($conf->fournisseur->enabled) && !empty($conf->supplier_invoice->enabled)',
+			['fournisseur', 'facture', 'export'],
+			[
+				'rowid' => [
+					'name' => 'InvoiceID',
+					'type' => 'Numeric'
+				]
+			]
+		);
+
 		// Imports
 		//--------
 
@@ -455,7 +475,7 @@ class modCategorie extends DolibarrModules
 			'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11)$');
+		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11|15)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -618,8 +638,153 @@ class modCategorie extends DolibarrModules
 		// 10 Agenda Events, TODO ?
 
 		// 11 Website Pages, TODO ?
+
+		// 15 Supplier Invoices
+		if (!empty($conf->fournisseur->enabled) && !empty($conf->supplier_invoice->enabled)) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				15,
+				'/fourn/class/fournisseur.facture.class.php',
+				'FactureFournisseur',
+				'FactureFournisseur'
+			);
+		}
 	}
 
+	/**
+	 * Configure a tag link export
+	 *
+	 * @param int		$r				Index of import tables
+	 * @param int		$cat_id			Categorie id
+	 * @param string	$class			Class of the linked object
+	 * @param string	$enabled		Condition to enable this export
+	 * @param string	$permission		Permission to export the linked object
+	 * @param array		$fields_list	Additionnal fields of the linked object to export
+	 *
+	 * @return void
+	 */
+	protected function exportTagLinks(
+		int		$r,
+		int		$cat_id,
+		string	$class,
+		string	$enabled,
+		array	$permission,
+		array	$fields_list
+	) {
+		global $conf;
+
+		$cat_type = Categorie::$MAP_ID_TO_CODE[$cat_id];
+
+		$this->export_code[$r] = $this->rights_class.'_'.$cat_id.'_'.$cat_type;
+		$this->export_label[$r] = 'Cat'.ucfirst($cat_type).'sLinks';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = $enabled;
+		$this->export_permission[$r] = [
+			['categorie', 'lire'],
+			$permission
+		];
+
+		$entities = [];
+		$names = [];
+		$types = [];
+		foreach ($fields_list as $field => $value) {
+			$key = 'p.'.$field;
+			$entities[$key] = $cat_type;
+			$names[$key] = $value['name'];
+			$types[$key] = $value['type'];
+		}
+		$this->export_fields_array[$r] = array_merge(
+			[
+				'cat.rowid'       => 'CategId',
+				'cat.label'       => 'Label',
+				'cat.description' => 'Description',
+				'cat.fk_parent'   => 'ParentCategory',
+				'pcat.label'      => 'ParentCategoryLabel'
+			],
+			$names
+		);
+		$this->export_TypeFields_array[$r] = array_merge(
+			[
+				'cat.rowid'       => 'Numeric',
+				'cat.label'       => 'Text',
+				'cat.description' => 'Text',
+				'cat.fk_parent'   => 'Numeric',
+				'pcat.label'      => 'Text'
+			],
+			$names
+		);
+		$this->export_entities_array[$r] = $entities; // We define here only fields that use another picto
+
+		$keyforselect = $class;
+		$keyforelement = $class;
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_'.$cat_type.' as cfk ON cfk.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.$class.' as p ON p.rowid = cfk.fk_'.$cat_type;
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.$class.'_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = '.((int) $cat_id);
+	}
+
+	/**
+	 * Configure a tag link import
+	 *
+	 * @param int		$r			Index of import tables
+	 * @param int		$cat_id		Categorie id
+	 * @param string	$class_file	Class file of the linked object
+	 * @param string	$class		Class of the linked object
+	 * @param string	$element	Name of the linked object
+	 *
+	 * @return void
+	 */
+	protected function importTagLinks(
+		int		$r,
+		int		$cat_id,
+		string	$class_file,
+		string	$class,
+		string	$element,
+	) {
+		$cat_type = Categorie::$MAP_ID_TO_CODE[$cat_id];
+
+		$this->import_code[$r] = $this->rights_class.'_'.$cat_id.'_'.$cat_type;
+		$this->import_label[$r] = 'Cat'.ucfirst($cat_type).'sLinks'; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = ['ci' => MAIN_DB_PREFIX.'categorie_'.$cat_type];
+		$this->import_fields_array[$r] = [
+			'ci.fk_categorie'  => 'Category*',
+			'ci.fk_'.$cat_type => ucfirst($cat_type).'*'
+		];
+		$this->import_regex_array[$r] = ['ci.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type='.$cat_id];
+
+		$this->import_convertvalue_array[$r] = [
+			'ci.fk_categorie' =>
+			[
+				'rule'          => 'fetchidfromcodeorlabel',
+				'classfile'     => '/categories/class/categorie.class.php',
+				'class'         => 'Categorie',
+				'method'        => 'fetch',
+				'element'       => 'category'
+			],
+			'ci.fk_'.$cat_type =>
+			[
+				'rule'      => 'fetchidfromref',
+				'classfile' => $class_file,
+				'class'     => $class,
+				'method'    => 'fetch',
+				'element'   => $element
+			]
+		];
+		$this->import_examplevalues_array[$r] = [
+			'ci.fk_categorie' => 'rowid or label',
+			'ci.fk_'.$cat_type   => 'rowid or ref'
+		];
+	}
 
 	/**
 	 *		Function called when module is enabled.

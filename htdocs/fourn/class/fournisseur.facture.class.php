@@ -1461,6 +1461,18 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice";
+			$sql .= " WHERE fk_supplier_invoice = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'facture_fourn_det';
 			$ef = $main."_extrafields";
@@ -1734,6 +1746,22 @@ class FactureFournisseur extends CommonInvoice
 			$this->db->rollback();
 			return -2;
 		}
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 * @return void
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_INVOICE);
 	}
 
 	/**
