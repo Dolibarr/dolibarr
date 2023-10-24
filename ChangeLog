@@ -8,11 +8,13 @@ English Dolibarr ChangeLog
 For users:
 ----------
 
-NEW: Right for stats orders new const MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS
+...
 
 For developers or integrators:
 ------------------------------
-...
+
+QUAL Reduce very seriously the technical debt (using PHPStan, Psalm and Rector)
+NEW Tool in dev/tools/rector to autofix code using style coding practice rules
 
 
 WARNING:
