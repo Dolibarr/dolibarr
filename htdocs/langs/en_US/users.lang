@@ -111,6 +111,7 @@ DisabledInMonoUserMode=Disabled in maintenance mode
 UserAccountancyCode=User accounting code
 UserLogoff=User logout
 UserLogged=User logged
+UserLoginFailed=User login failed
 DateOfEmployment=Employment date
 DateEmployment=Employment
 DateEmploymentStart=Employment Start Date
