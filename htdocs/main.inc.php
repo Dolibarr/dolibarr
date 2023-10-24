@@ -2906,8 +2906,8 @@ function top_menu_search()
 	$html = '';
 
 	$usedbyinclude = 1;
-	$arrayresult = null;
-	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This set $arrayresult
+	$arrayresult = array();
+	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This sets $arrayresult
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers

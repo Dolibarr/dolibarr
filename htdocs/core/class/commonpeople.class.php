@@ -272,7 +272,7 @@ trait CommonPeople
 	/**
 	 * Set to upper or ucwords/lower if needed
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function setUpperOrLowerCase()
 	{
