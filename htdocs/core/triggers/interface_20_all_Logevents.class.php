@@ -33,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
+	private string $event_label;
+	private string $event_desc;
+	private int $event_date;
+
 	/**
 	 * Constructor
 	 */
@@ -44,6 +48,10 @@ class InterfaceLogevents extends DolibarrTriggers
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
 		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
 		$this->picto 		= 'technic';
+
+		$this->event_label = '';
+		$this->event_desc = '';
+		$this->event_date = 0;
 	}
 
 	/**
@@ -74,87 +82,60 @@ class InterfaceLogevents extends DolibarrTriggers
 			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
 		}
 
-		$date = dol_now();
-
 		/* Actions */
 
-		$label = '';
-		$desc = '';
 		$langs->load("users");
 
 		// Actions
 		switch ($action) {
 			case 'USER_LOGIN':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("UserLogged", $object->login);
-				$desc = $langs->transnoentities("UserLogged", $object->login);
+				$this->initEventData("UserLogged", $object, $langs, true);
 				break;
 			case 'USER_LOGIN_FAILED':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("UserLoginFailed", $object->login);
-				$desc = $langs->transnoentities("UserLoginFailed", $object->login);
+				$this->initEventData("UserLoginFailed", $object, $langs, true);
 				break;
 			case 'USER_LOGOUT':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("UserLogoff", $object->login);
-				$desc = $langs->transnoentities("UserLogoff", $object->login);
+				$this->initEventData("UserLogoff", $object, $langs, true);
 				break;
 			case 'USER_CREATE':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("NewUserCreated", $object->login);
-				$desc = $langs->transnoentities("NewUserCreated", $object->login);
+				$this->initEventData("NewUserCreated", $object, $langs, true);
 				break;
 			case 'USER_MODIFY':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("EventUserModified", $object->login);
-				$desc = $langs->transnoentities("EventUserModified", $object->login);
+				$this->initEventData("EventUserModified", $object, $langs, true);
 				break;
 			case 'USER_NEW_PASSWORD':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("NewUserPassword", $object->login);
-				$desc = $langs->transnoentities("NewUserPassword", $object->login);
+				$this->initEventData("NewUserPassword", $object, $langs, true);
 				break;
 			case 'USER_ENABLEDISABLE':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
 				if ($object->statut == 0) {
-					$label = $langs->transnoentities("UserEnabled", $object->login);
-					$desc = $langs->transnoentities("UserEnabled", $object->login);
+					$this->initEventData("UserEnabled", $object, $langs, true);
 				}
 				if ($object->statut == 1) {
-					$label = $langs->transnoentities("UserDisabled", $object->login);
-					$desc = $langs->transnoentities("UserDisabled", $object->login);
+					$this->initEventData("UserDisabled", $object, $langs, true);
 				}
 				break;
 			case 'USER_DELETE':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("UserDeleted", $object->login);
-				$desc = $langs->transnoentities("UserDeleted", $object->login);
+				$this->initEventData("UserDeleted", $object, $langs, true);
 				break;
 			case 'USERGROUP_CREATE':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("NewGroupCreated", $object->name);
-				$desc = $langs->transnoentities("NewGroupCreated", $object->name);
+				$this->initEventData("NewGroupCreated", $object, $langs, false);
 				break;
 			case 'USERGROUP_MODIFY':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("GroupModified", $object->name);
-				$desc = $langs->transnoentities("GroupModified", $object->name);
+				$this->initEventData("GroupModified", $object, $langs, false);
 				break;
 			case 'USERGROUP_DELETE':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				// Initialize data (date,duree,label,desc)
-				$label = $langs->transnoentities("GroupDeleted", $object->name);
-				$desc = $langs->transnoentities("GroupDeleted", $object->name);
+				$this->initEventData("GroupDeleted", $object, $langs, false);
 				break;
 			default:
 				dol_syslog("Unknown action. Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -163,7 +144,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		// Add more information into desc from the context property
 		if (!empty($object->context['audit'])) {
-			$desc .= (empty($desc) ? '' : ' - ').$object->context['audit'];
+			$this->event_desc .= (empty($desc) ? '' : ' - ').$object->context['audit'];
 		}
 
 		// Add entry in event table
@@ -171,9 +152,9 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		$event = new Events($this->db);
 		$event->type = $action;
-		$event->dateevent = $date;
-		$event->label = $label;
-		$event->description = $desc;
+		$event->dateevent = $this->event_date;
+		$event->label = $this->event_label;
+		$event->description = $this->event_desc;
 		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"]) ? '' : $_SERVER["HTTP_USER_AGENT"]);
 		$event->authentication_method = (empty($object->context['authentication_method']) ? '' : $object->context['authentication_method']);
 
@@ -187,6 +168,26 @@ class InterfaceLogevents extends DolibarrTriggers
 
 			dol_syslog(get_class($this).": ".$error, LOG_ERR);
 			return -1;
+		}
+	}
+	/**
+	 * Method called by runTrigger to initialize date, label & description data for event
+	 *
+	 * @param string $key
+	 * @param Object $object
+	 * @param Translate $langs
+	 * @param bool $login_else_name
+	 * @return void
+	 */
+	private function initEventData(string $key, Object $object, Translate $langs, bool $login_else_name): void
+	{
+		$this->event_date = dol_now();
+		if($login_else_name) {
+			$this->event_label = $langs->transnoentities($key, $object->login);
+			$this->event_desc = $langs->transnoentities($key, $object->login);
+		} else {
+			$this->event_label = $langs->transnoentities($key, $object->name);
+			$this->event_desc = $langs->transnoentities($key, $object->name);
 		}
 	}
 }
