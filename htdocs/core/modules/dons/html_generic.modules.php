@@ -62,7 +62,7 @@ class html_generic extends ModeleDon
 	{
 		return true;
 	}
-	
+
 	/**
 	 *  Load translation files
 	 *
@@ -76,10 +76,10 @@ class html_generic extends ModeleDon
 		}
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "donations"));
-			
+
 		return $outputlangs;
 	}
-	
+
 	/**
 	 *  Write the object to document file to disk
 	 *
@@ -93,13 +93,13 @@ class html_generic extends ModeleDon
 		// This is not the proper way to do it but $formclass->form_modes_reglement
 		// prints the translation instead of returning it
 		$formclass->load_cache_types_paiements();
-		
+
 		if ($don->mode_reglement_id) {
 			$paymentmode = $formclass->cache_types_paiements[$don->mode_reglement_id]['label'];
 		} else {
 			$paymentmode = '';
 		}
-		
+
 		return $paymentmode;
 	}
 
@@ -114,7 +114,7 @@ class html_generic extends ModeleDon
 	private function getContents($don, $outputlangs, $currency)
 	{
 		global $user, $conf, $langs, $mysoc;
-		
+
 		$now = dol_now();
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
@@ -124,10 +124,10 @@ class html_generic extends ModeleDon
 		$form = str_replace('__NOW__', dol_print_date($now, 'day', false, $outputlangs), $form);
 		$form = str_replace('__REF__', $don->id, $form);
 		$form = str_replace('__DATE__', dol_print_date($don->date, 'day', false, $outputlangs), $form);
-		
+
 		$form = str_replace('__BENEFICIARY_NAME__', $mysoc->name, $form);
 		$form = str_replace('__BENEFICIARY_FULL_ADDRESS__', $mysoc->getFullAddress(1, "<br>", 1), $form);
-		
+
 		$form = str_replace('__PAYMENTMODE_LABEL__', $this->getDonationPaymentType($don), $form);
 		$form = str_replace('__AMOUNT__', price($don->amount), $form);
 		$form = str_replace('__CURRENCY_CODE__', $co
@@ -135,12 +135,11 @@ class html_generic extends ModeleDon
 		if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES) && $don->socid > 0 && $don->thirdparty) {
 			$form = str_replace('__DONOR_FULL_NAME__', $don->thirdparty->name, $form);
 			$form = str_replace('__DONOR_FULL_ADDRESS__', $don->thirdparty->getFullAddress(1, ", ", 1), $form);
-			
 		} else {
 			$form = str_replace('__DONOR_FULL_NAME__', $don->getFullName($langs), $form);
 			$form = str_replace('__DONOR_FULL_ADDRESS__', $don->getFullAddress(1, " ", 1), $form);
 		}
-		
+
 		$form = str_replace('__DonationTitle__', $outputlangs->trans("DonationTitle"), $form);
 		$form = str_replace('__DonationRef__', $outputlangs->trans("DonationRef"), $form);
 		$form = str_replace('__Date__', $outputlangs->trans("Date"), $form);
@@ -148,7 +147,7 @@ class html_generic extends ModeleDon
 		$form = str_replace('__Donor__', $outputlangs->trans("Donor"), $form);
 		$form = str_replace('__Amount__', $outputlangs->trans("Amount"), $form);
 		$form = str_replace('__PaymentMode__', $outputlangs->trans("PaymentMode"), $form);
-		
+
 		$notePublic = '';
 		if ($conf->global->DONATION_NOTE_PUBLIC >= 1 && !empty($don->note_public)) {
 			$notePublic = '<div id="note-public"><p>'.$don->note_public.'</p></div>';
@@ -163,12 +162,13 @@ class html_generic extends ModeleDon
 
 		return $form;
 	}
-	
+
 	/**
 	 *  Write the object to document file to disk
 	 *
 	 *  @param	string			$path	        Path for the file
 	 *  @param	string			$contents	Contents of the file
+	 *  @return	NULL
 	 */
 	private function saveFile($path, $contents)
 	{
