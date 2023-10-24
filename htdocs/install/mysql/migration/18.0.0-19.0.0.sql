@@ -147,5 +147,11 @@ ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_p
 ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
 ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
 
+
 ALTER TABLE llx_mailing ADD COLUMN note_private text;
 ALTER TABLE llx_mailing ADD COLUMN note_public text;
+
+ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+
