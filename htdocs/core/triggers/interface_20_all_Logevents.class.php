@@ -80,9 +80,6 @@ class InterfaceLogevents extends DolibarrTriggers
 			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
 		}
 
-		/* Actions */
-		$langs->load("users");
-
 		// Actions
 		switch ($action) {
 			case 'USER_LOGIN':
@@ -174,6 +171,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 */
 	private function initEventData(string $key, Object $object, Translate $langs, bool $login_else_name): void
 	{
+		$langs->load("users");
 		$this->event_date = dol_now();
 		if($login_else_name) {
 			$this->event_label = $langs->transnoentities($key, $object->login);
