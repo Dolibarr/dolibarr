@@ -166,14 +166,14 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @param	string		$key
 	 * @param	Object		$object
 	 * @param	Translate	$langs
-	 * @param	bool		$login_else_name
+	 * @param	bool		$user_else_group
 	 * @return	void
 	 */
-	private function initEventData(string $key, Object $object, Translate $langs, bool $login_else_name): void
+	private function initEventData(string $key, Object $object, Translate $langs, bool $user_else_group): void
 	{
 		$langs->load("users");
 		$this->event_date = dol_now();
-		if($login_else_name) { // TODO maybe use enum instead of bool when Dolibarr minimum PHP version is 8.1
+		if($user_else_group) { // TODO maybe use enum instead of bool when Dolibarr minimum PHP version is 8.1
 			$this->event_label = $langs->transnoentities($key, $object->login);
 			$this->event_desc = $langs->transnoentities($key, $object->login);
 		} else {
