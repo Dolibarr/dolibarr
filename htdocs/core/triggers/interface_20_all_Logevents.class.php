@@ -87,17 +87,20 @@ class InterfaceLogevents extends DolibarrTriggers
 			case 'USER_LOGIN':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 				// Initialize data (date,duree,label,desc)
-				$label = "(UserLogged," . $object->login . ")";
-				$desc = "(UserLogged," . $object->login . ")";
+				$label = $langs->transnoentities("UserLogged", $object->login);
+				$desc = $langs->transnoentities("UserLogged", $object->login);
 				break;
 			case 'USER_LOGIN_FAILED':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+				// Initialize data (date,duree,label,desc)
+				$label = $langs->transnoentities("UserLoginFailed", $object->login);
+				$desc = $langs->transnoentities("UserLoginFailed", $object->login);
 				break;
 			case 'USER_LOGOUT':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 				// Initialize data (date,duree,label,desc)
-				$label = "(UserLogoff," . $object->login . ")";
-				$desc = "(UserLogoff," . $object->login . ")";
+				$label = $langs->transnoentities("UserLogoff", $object->login);
+				$desc = $langs->transnoentities("UserLogoff", $object->login);
 				break;
 			case 'USER_CREATE':
 				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
