@@ -16,15 +16,15 @@ return static function (RectorConfig $rectorConfig): void {
 	]);
 	$rectorConfig->skip([
 		'**/includes/**',
-		__DIR__ . '/../../../htdocs/custom',
+		'**/custom/**',
+		__DIR__ . '/../../../htdocs/custom/',
 		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
 	$rectorConfig->parallel(240);
 
 
-	// register rules
+	// Register rules
 
-	// Remove use of list($a, $b) = ...
 	//$rectorConfig->rule(Rector\Php71\Rector\List_\ListToArrayDestructRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\CreateFunctionToAnonymousFunctionRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\GetClassOnNullRector::class);
@@ -33,10 +33,11 @@ return static function (RectorConfig $rectorConfig): void {
 	//$rectorConfig->rule(ReplaceEachAssignmentWithKeyCurrentRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\StringifyDefineRector::class);
 
-	$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
-	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
+	//$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
+	//$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
+	$rectorConfig->rule(Dolibarr\Rector\Renaming\EmptyGlobalToFunction::class);
 
-	// define sets of rules
+	// Add all predefined rules to migrate to up to php 71
 	// $rectorConfig->sets([
 	//	LevelSetList::UP_TO_PHP_71
 	// ]);
