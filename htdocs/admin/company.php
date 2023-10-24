@@ -921,7 +921,7 @@ if ($mysoc->country_code == 'GR') {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
+	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY" value="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
