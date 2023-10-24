@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
-	private string $event_label;
-	private string $event_desc;
-	private int $event_date;
+	private string 	$event_label;
+	private string 	$event_desc;
+	private int 	$event_date;
 
 	/**
 	 * Constructor
@@ -48,23 +48,22 @@ class InterfaceLogevents extends DolibarrTriggers
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
 		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
 		$this->picto 		= 'technic';
-
-		$this->event_label = '';
-		$this->event_desc = '';
-		$this->event_date = 0;
+		$this->event_label 	= '';
+		$this->event_desc 	= '';
+		$this->event_date 	= 0;
 	}
 
 	/**
 	 * Function called when a Dolibarr security audit event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
-	 * @param string $action Event action code
-	 * @param Object $object Object
-	 * @param User $user Object user
-	 * @param Translate $langs Object langs
-	 * @param conf $conf Object conf
-	 * @return int                        if KO: <0, if no trigger ran: 0, if OK: >0
-	 * @throws Exception
+	 * @param	string		$action	Event action code
+	 * @param	Object		$object	Object
+	 * @param	User		$user	Object user
+	 * @param	Translate	$langs	Object langs
+	 * @param	conf		$conf	Object conf
+	 * @return	int					if KO: <0, if no trigger ran: 0, if OK: >0
+	 * @throws	Exception			dol_syslog can throw Exceptions
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
 	{
@@ -73,7 +72,6 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		$key = 'MAIN_LOGEVENTS_'.$action;
-		//dol_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) {
 			return 0; // Log events not enabled for this action
 		}
@@ -83,7 +81,6 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		/* Actions */
-
 		$langs->load("users");
 
 		// Actions
@@ -142,11 +139,6 @@ class InterfaceLogevents extends DolibarrTriggers
 				break;
 		}
 
-		// Add more information into desc from the context property
-		if (!empty($object->context['audit'])) {
-			$this->event_desc .= (empty($desc) ? '' : ' - ').$object->context['audit'];
-		}
-
 		// Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
@@ -170,14 +162,15 @@ class InterfaceLogevents extends DolibarrTriggers
 			return -1;
 		}
 	}
+
 	/**
 	 * Method called by runTrigger to initialize date, label & description data for event
 	 *
-	 * @param string $key
-	 * @param Object $object
-	 * @param Translate $langs
-	 * @param bool $login_else_name
-	 * @return void
+	 * @param	string		$key
+	 * @param	Object		$object
+	 * @param	Translate	$langs
+	 * @param	bool		$login_else_name
+	 * @return	void
 	 */
 	private function initEventData(string $key, Object $object, Translate $langs, bool $login_else_name): void
 	{
@@ -188,6 +181,10 @@ class InterfaceLogevents extends DolibarrTriggers
 		} else {
 			$this->event_label = $langs->transnoentities($key, $object->name);
 			$this->event_desc = $langs->transnoentities($key, $object->name);
+		}
+		// Add more information into event description from the context property
+		if (!empty($object->context['audit'])) {
+			$this->event_desc .= (empty($this->event_desc) ? '' : ' - ').$object->context['audit'];
 		}
 	}
 }
