@@ -132,6 +132,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_REF"), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE", GETPOST("MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE"), 'chaine', 0, '', $conf->entity);
+	}
+
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) {
 		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
 	}
@@ -531,6 +535,18 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF : 0, 1);
 }
 print '</td></tr>';
+
+// Barcode
+
+if (isModEnabled('barcode')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("ShowProductBarcodeOnPDF").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE');
+	} else {
+		print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE : 0, 1);
+	}
+	print '</td></tr>';
+}
 
 // Desc
 
