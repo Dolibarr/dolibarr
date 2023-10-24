@@ -45,12 +45,12 @@ class InterfaceLogevents extends DolibarrTriggers
 		$this->name 		= preg_replace('/^Interface/i', '', get_class($this));
 		$this->family 		= "core";
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
-		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERMENTAL' or 'DOLIBARR'
+		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
 		$this->picto 		= 'technic';
 	}
 
 	/**
-	 * Function called when a Dolibarrr security audit event is done.
+	 * Function called when a Dolibarr security audit event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
