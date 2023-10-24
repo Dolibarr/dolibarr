@@ -39,6 +39,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 	/**
 	 * Constructor
+	 * @param	DoliDB	$db	Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -163,17 +164,17 @@ class InterfaceLogevents extends DolibarrTriggers
 	/**
 	 * Method called by runTrigger to initialize date, label & description data for event
 	 *
-	 * @param	string		$key
-	 * @param	Object		$object
-	 * @param	Translate	$langs
-	 * @param	bool		$user_else_group
+	 * @param	string		$key				Text lang string
+	 * @param	Object		$object				Object
+	 * @param	Translate	$langs				Object langs
+	 * @param	bool		$user_else_group	Bool to define if localized string param is Object login or name
 	 * @return	void
 	 */
 	private function initEventData(string $key, Object $object, Translate $langs, bool $user_else_group): void
 	{
 		$langs->load("users");
 		$this->event_date = dol_now();
-		if($user_else_group) { // TODO maybe use enum instead of bool when Dolibarr minimum PHP version is 8.1
+		if ($user_else_group) { // TODO maybe use enum instead of bool when Dolibarr minimum PHP version is 8.1
 			$this->event_label = $langs->transnoentities($key, $object->login);
 			$this->event_desc = $langs->transnoentities($key, $object->login);
 		} else {
