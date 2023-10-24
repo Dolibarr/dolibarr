@@ -296,7 +296,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 
 		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
 		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
-		if (!$result) {
+		if ($result < 0) {
 			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
 		} else {
 			$listoffiles[$langkey] = $tmpfile;
