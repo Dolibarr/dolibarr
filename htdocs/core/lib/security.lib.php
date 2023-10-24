@@ -372,6 +372,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'facturerec') {
 		$features = 'facture';
 	}
+	if ($features == 'supplier_invoicerec') {
+		$features = 'fournisseur';
+		$feature2 = 'facture';
+	}
 	if ($features == 'mo') {
 		$features = 'mrp';
 	}
@@ -392,6 +396,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	}
 	if ($features == 'product') {
 		$features = 'produit';
+	}
+	if ($features == 'payment_sc') {
+		$tableandshare = 'paiementcharge';
+		$parentfortableentity = 'fk_charge@chargesociales';
 	}
 
 	// Get more permissions checks from hooks
@@ -800,7 +808,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	$params = explode('&', $tableandshare);
 	$dbtablename = (!empty($params[0]) ? $params[0] : '');
 	$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename);
-
 	foreach ($featuresarray as $feature) {
 		$sql = '';
 
@@ -816,14 +823,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'task') {
 			$feature = 'projet_task';
 		}
-
 		if ($feature == 'payment_sc') {
-			$feature = "chargesociales";
+			$feature = 'paiementcharge';
 		}
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment','chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment','chargesociales', 'paiementcharge'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkother = array('contact', 'agenda', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -844,7 +850,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
 			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
 		}
-
 		// Check permission for objectid on entity only
 		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -1012,7 +1017,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
+
 
 		// For events, check on users assigned to event
 		if ($feature === 'agenda' && $objectid > 0) {

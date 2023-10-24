@@ -82,6 +82,7 @@ NewPrice=Nouveau prix
 MinPrice=Prix de vente min.
 EditSellingPriceLabel=Modifier le libellé du prix de vente
 CantBeLessThanMinPrice=Le prix de vente ne doit pas être inférieur au minimum pour ce produit (%s HT). Ce message peut aussi être provoqué par une remise trop importante.
+CantBeLessThanMinPriceInclTax=Le prix de vente ne doit pas être inférieur au minimum pour ce produit (%s TTC). Ce message peut aussi être provoqué par une remise trop importante.
 ContractStatusClosed=Clôturé
 ErrorProductAlreadyExists=Un produit avec la référence %s existe déjà.
 ErrorProductBadRefOrLabel=La valeur de la référence ou du libellé est incorrecte.

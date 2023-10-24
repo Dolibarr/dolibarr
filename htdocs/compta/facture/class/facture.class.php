@@ -1157,6 +1157,7 @@ class Facture extends CommonInvoice
 
 		$facture->origin            = $this->origin;
 		$facture->origin_id         = $this->origin_id;
+		$facture->fk_account         = $this->fk_account;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
 		$facture->situation_counter = $this->situation_counter;

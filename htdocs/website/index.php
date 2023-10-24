@@ -2432,7 +2432,7 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 				if (GETPOSTISSET('templateuserfile')) {
 					// Case we selected one template
 					$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');	// $fileofzip will be sanitized later into the importWebSite()
-				} elseif (!empty($_FILES)) {
+				} elseif (!empty($_FILES) && is_array($_FILES['userfile'])) {
 					// Case we upload a new template
 					if (is_array($_FILES['userfile']['tmp_name'])) {
 						$userfiles = $_FILES['userfile']['tmp_name'];

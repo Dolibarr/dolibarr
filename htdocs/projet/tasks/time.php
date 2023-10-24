@@ -1551,7 +1551,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
-		$sql .= " WHERE  1 = 1 ";
+		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 			// Limit on one task
 			$sql .= " AND t.fk_task =".((int) $object->id);

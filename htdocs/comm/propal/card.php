@@ -995,7 +995,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		$propal_qty_requirement = (!empty($conf->global->PROPAL_ENABLE_NEGATIVE_QTY) ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
+		if (!$error && $propal_qty_requirement && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$price_min = 0;
@@ -1232,6 +1233,15 @@ if (empty($reshook)) {
 				}
 			}
 
+			$info_bits = 0;
+			if ($tva_npr) {
+				$info_bits |= 0x01;
+			}
+
+			// Local Taxes
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $tva_npr);
+
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we muste keep this value
@@ -1244,7 +1254,7 @@ if (empty($reshook)) {
 			$pu_equivalent_ttc = $pu_ttc;
 			$currency_tx = $object->multicurrency_tx;
 
-			// Check if we have a foreing currency
+			// Check if we have a foreign currency
 			// If so, we update the pu_equiv as the equivalent price in base currency
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 				$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1253,25 +1263,28 @@ if (empty($reshook)) {
 				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 			}
 
-			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $tva_npr);
-
-			$info_bits = 0;
-			if ($tva_npr) {
-				$info_bits |= 0x01;
-			}
+			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+			/*
+			 if ($pu_equivalent) {
+			 $tmp = calcul_price_total(1, $pu_equivalent, 0, $tva_tx, -1, -1, 0, 'HT', $info_bits, $type);
+			 $pu_equivalent_ttc = ...
+			 } else {
+			 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $tva_tx, -1, -1, 0, 'TTC', $info_bits, $type);
+			 $pu_equivalent_ht = ...
+			 }
+			 */
 
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
 				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 				}
@@ -1340,14 +1353,15 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save')) {
 		// Update a line within proposal
+
+		// Clean parameters
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
+
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx'))) {
 			$info_bits |= 0x01;
 		}
-
-		// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1375,9 +1389,10 @@ if (empty($reshook)) {
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
 		$pu_equivalent_ttc = $pu_ttc;
+
 		$currency_tx = $object->multicurrency_tx;
 
-		// Check if we have a foreing currency
+		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 			$pu_equivalent = $pu_ht_devise * $currency_tx;
@@ -1385,6 +1400,17 @@ if (empty($reshook)) {
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
 			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 		}
+
+		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
+		/*
+		 if ($pu_equivalent) {
+		 $tmp = calcul_price_total(1, $pu_equivalent, 0, $vat_rate, -1, -1, 0, 'HT', $info_bits, $type);
+		 $pu_equivalent_ttc = ...
+		 } else {
+		 $tmp = calcul_price_total(1, $pu_equivalent_ttc, 0, $vat_rate, -1, -1, 0, 'TTC', $info_bits, $type);
+		 $pu_equivalent_ht = ...
+		 }
+		 */
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1424,6 +1450,7 @@ if (empty($reshook)) {
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
 				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
@@ -1431,7 +1458,7 @@ if (empty($reshook)) {
 					$error++;
 					$action = 'editline';
 				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
-					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
@@ -1560,7 +1587,7 @@ if (empty($reshook)) {
 		// warehouse
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -2101,9 +2128,12 @@ if ($action == 'create') {
 	/*
 	 * Show object in view mode
 	 */
-
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+	$object->fetch_thirdparty();
+	if ($object->thirdparty) {
+		$soc = $object->thirdparty;
+	} else {
+		$soc = new Societe($db);
+	}
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
@@ -2351,9 +2381,9 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
+	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$soc->getNomUrl(1, 'customer');
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $soc->id > 0) {
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'&search_societe='.urlencode($soc->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
