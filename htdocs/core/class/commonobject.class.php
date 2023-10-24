@@ -587,14 +587,14 @@ abstract class CommonObject
 	public $date_cloture; // Date closing (tms field)
 
 	/**
-	 * @var User|int	User author/creation
-	 * @TODO Merge with user_creation
+	 * @var User	User author/creation
+	 * @deprecated	Store only id in user_creation_id
 	 */
 	public $user_author;
 
 	/**
-	 * @var User|int	User author/creation
-	 * @TODO Remove type id
+	 * @var User	User author/creation
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -604,14 +604,14 @@ abstract class CommonObject
 	public $user_creation_id;
 
 	/**
-	 * @var User|int	User of validation
-	 * @TODO Merge with user_validation
+	 * @var User	User of validation
+	 * @deprecated
 	 */
 	public $user_valid;
 
 	/**
-	 * @var User|int	User of validation
-	 * @TODO Remove type id
+	 * @var User	User of validation
+	 * @deprecated
 	 */
 	public $user_validation;
 
@@ -626,8 +626,8 @@ abstract class CommonObject
 	public $user_closing_id;
 
 	/**
-	 * @var User|int	User last modifier
-	 * @TODO Remove type id
+	 * @var User	User last modifier
+	 * @deprecated
 	 */
 	public $user_modification;
 
