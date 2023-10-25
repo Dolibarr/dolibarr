@@ -2271,7 +2271,7 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 			$fileofzip = '';
 			if (GETPOSTISSET('templateuserfile')) {
 				$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');
-			} elseif (!empty($_FILES)) {
+			} elseif (!empty($_FILES) && is_array($_FILES['userfile'])) {
 				if (is_array($_FILES['userfile']['tmp_name'])) {
 					$userfiles = $_FILES['userfile']['tmp_name'];
 				} else {
