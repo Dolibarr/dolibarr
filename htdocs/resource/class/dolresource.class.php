@@ -44,6 +44,12 @@ class Dolresource extends CommonObject
 	 */
 	public $picto = 'resource';
 
+	/**
+	 * @var string address variables
+	 */
+	public $address;
+	public $zip;
+	public $town;
 
 	/**
 	 * @var int ID
@@ -122,6 +128,15 @@ class Dolresource extends CommonObject
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
 		}
+		if (isset($this->address)) {
+			$this->address = trim($this->address);
+		}
+		if (isset($this->zip)) {
+			$this->zip = trim($this->zip);
+		}
+		if (isset($this->town)) {
+			$this->town = trim($this->town);
+		}
 		if (isset($this->description)) {
 			$this->description = trim($this->description);
 		}
@@ -143,6 +158,9 @@ class Dolresource extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= "entity,";
 		$sql .= "ref,";
+		$sql .= "address,";
+		$sql .= "zip,";
+		$sql .= "town,";
 		$sql .= "description,";
 		$sql .= "fk_country,";
 		$sql .= "fk_code_type_resource,";
@@ -219,6 +237,9 @@ class Dolresource extends CommonObject
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
+		$sql .= " t.address,";
+		$sql .= " t.zip,";
+		$sql .= " t.town,";
 		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.fk_code_type_resource,";
@@ -243,6 +264,9 @@ class Dolresource extends CommonObject
 				$this->id = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
+				$this->address = $obj->address;
+				$this->zip = $obj->zip;
+				$this->town = $obj->zip;
 				$this->description				= $obj->description;
 				$this->country_id = $obj->fk_country;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
@@ -281,6 +305,15 @@ class Dolresource extends CommonObject
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
 		}
+		if (isset($this->address)) {
+			$this->address = trim($this->address);
+		}
+		if (isset($this->zip)) {
+			$this->zip = trim($this->zip);
+		}
+		if (isset($this->town)) {
+			$this->town = trim($this->town);
+		}
 		if (isset($this->fk_code_type_resource)) {
 			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
 		}
@@ -299,6 +332,9 @@ class Dolresource extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " address=".(isset($this->address) ? "'".$this->db->escape($this->address)."'" : "null").",";
+		$sql .= " zip=".(isset($this->zip) ? "'".$this->db->escape($this->zip)."'" : "null").",";
+		$sql .= " town=".(isset($this->town) ? "'".$this->db->escape($this->town)."'" : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
@@ -517,6 +553,9 @@ class Dolresource extends CommonObject
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
+		$sql .= " t.address,";
+		$sql .= " t.zip,";
+		$sql .= " t.town,";
 		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
 		$sql .= " t.fk_code_type_resource,";
@@ -560,6 +599,9 @@ class Dolresource extends CommonObject
 					$line = new Dolresource($this->db);
 					$line->id = $obj->rowid;
 					$line->ref = $obj->ref;
+					$line->address = $obj->address;
+					$line->zip = $obj->zip;
+					$line->town = $obj->town;
 					$line->description = $obj->description;
 					$line->country_id = $obj->fk_country;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
