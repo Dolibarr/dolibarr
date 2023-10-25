@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,10 +90,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$newobject->context['origin_id'] = $object->id;
 
 					$ret = $newobject->createFromProposal($object, $user);
-					if ($ret < 0) {
-						$this->error = $newobject->error;
-						$this->errors[] = $newobject->error;
-					}
+					if ($ret < 0)
+						$this->setErrorsFromObject($newobject);
 
 					$object->clearObjectLinkedCache();
 
@@ -113,10 +112,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$newobject->context['origin_id'] = $object->id;
 
 				$ret = $newobject->createFromOrder($object, $user);
-				if ($ret < 0) {
-					$this->error = $newobject->error;
-					$this->errors[] = $newobject->error;
-				}
+				if ($ret < 0)
+					$this->setErrorsFromObject($newobject);
 
 				$object->clearObjectLinkedCache();
 
@@ -375,14 +372,12 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$order = new Commande($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				//Build array of quantity shipped by product for an order
@@ -422,8 +417,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					//No diff => mean everythings is shipped
 					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $order->error;
-						$this->errors = $order->errors;
+						$this->setErrorsFromObject($order);
 						return $ret;
 					}
 				}
@@ -448,14 +442,12 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$order = new CommandeFournisseur($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				//Build array of quantity received by product for a purchase order
@@ -491,8 +483,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					//No diff => mean everythings is received
 					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $order->error;
-						$this->errors = $order->errors;
+						$this->setErrorsFromObject($order);
 						return $ret;
 					}
 				}
