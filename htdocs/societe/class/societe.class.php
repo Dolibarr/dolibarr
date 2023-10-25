@@ -18,6 +18,7 @@
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,6 +159,12 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $prefixCustomerIsRequired;
+
+	/**
+	 * Generator name for the PDF model assigned to this company.
+	 * @var string
+	 */
+	public $model_pdf;
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
