@@ -505,19 +505,18 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						continue;
 					{
 						$number_contracts_found = count($list);
-						if ($number_contracts_found == 1) {
-							foreach ($list as $linked_contract) {
-								$object->setContract($linked_contract->id);
-							}
-							break;
-						} elseif ($number_contracts_found > 1) {
-							foreach ($list as $linked_contract) {
-								$object->setContract($linked_contract->id);
-								// don't set '$contractid' so it is not used when creating an intervention.
-							}
-							if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
-							break;
+						if ($number_contracts_found == 0)
+							continue;
+
+						foreach ($list as $linked_contract) {
+							$object->setContract($linked_contract->id);
+							// don't set '$contractid' so it is not used when creating an intervention.
 						}
+
+						if ($number_contracts_found > 1 && empty(NOLOGIN))
+							setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+
+						break;
 					}
 				}
 				if ($number_contracts_found == 0) {
