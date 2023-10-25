@@ -65,6 +65,7 @@ ErrorFileNotFound=File <b>%s</b> not found (Bad path, wrong permissions or acces
 ErrorDirNotFound=Directory <b>%s</b> not found (Bad path, wrong permissions or access denied by PHP openbasedir or safe_mode parameter)
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
 ErrorDirAlreadyExists=A directory with this name already exists.
+ErrorDirNotWritable=Directory <b>%s</b> is not writable.
 ErrorFileAlreadyExists=A file with this name already exists.
 ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exists.
 ErrorPartialFile=File not received completely by server.
