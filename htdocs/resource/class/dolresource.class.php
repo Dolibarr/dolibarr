@@ -266,7 +266,7 @@ class Dolresource extends CommonObject
 				$this->ref = $obj->ref;
 				$this->address = $obj->address;
 				$this->zip = $obj->zip;
-				$this->town = $obj->zip;
+				$this->town = $obj->town;
 				$this->description				= $obj->description;
 				$this->country_id = $obj->fk_country;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
@@ -968,5 +968,13 @@ class Dolresource extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getBannerAddress()
+	{
+		return $this->getFullAddress(1,', ');
 	}
 }
