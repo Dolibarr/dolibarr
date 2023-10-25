@@ -174,13 +174,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	{
 		$langs->load("users");
 		$this->event_date = dol_now();
-		if ($user_else_group) { // TODO maybe use enum instead of bool when Dolibarr minimum PHP version is 8.1
-			$this->event_label = $langs->transnoentities($key, $object->login);
-			$this->event_desc = $langs->transnoentities($key, $object->login);
-		} else {
-			$this->event_label = $langs->transnoentities($key, $object->name);
-			$this->event_desc = $langs->transnoentities($key, $object->name);
-		}
+		$this->event_label = $this->event_desc = $langs->transnoentities($key, $user_else_group ? $object->login : $object->name);
 		// Add more information into event description from the context property
 		if (!empty($object->context['audit'])) {
 			$this->event_desc .= (empty($this->event_desc) ? '' : ' - ').$object->context['audit'];
