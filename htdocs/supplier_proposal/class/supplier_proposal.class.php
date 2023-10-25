@@ -1533,6 +1533,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_percent($user, $remise)
 	{
 		// phpcs:enable
@@ -1555,7 +1556,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

@@ -2474,6 +2474,7 @@ class Propal extends CommonObject
 	 *	@return     int         		<0 if ko, >0 if ok
 	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
+	/*
 	public function set_remise_percent($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
@@ -2526,7 +2527,7 @@ class Propal extends CommonObject
 
 		return -1;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
