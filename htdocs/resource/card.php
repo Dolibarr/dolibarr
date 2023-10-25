@@ -276,12 +276,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-
-		$morehtmlref = '<div class="refidno">';
-		$morehtmlref .= '</div>';
-
-
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 
 		print '<div class="fichecenter">';
