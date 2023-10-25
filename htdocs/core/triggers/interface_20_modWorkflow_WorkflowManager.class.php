@@ -501,7 +501,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
 					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
-					if (is_array($list) && !empty($list)) {
+					if (!is_array($list) || empty($list))
+						continue;
+					{
 						$number_contracts_found = count($list);
 						if ($number_contracts_found == 1) {
 							foreach ($list as $linked_contract) {
