@@ -617,7 +617,7 @@ class ExtraFields
 			if ($type != 'separate') { // No table update when separate type
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
-			if (isset($result) && $result > 0 || $type == 'separate') {
+			if ((isset($result) && $result > 0) || $type == 'separate') {
 				if ($label) {
 					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 				}
