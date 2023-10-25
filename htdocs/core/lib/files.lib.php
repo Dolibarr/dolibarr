@@ -3569,7 +3569,7 @@ function getOutputDir(CommonObject $object, bool $withoutSlash = false): string
 			break;
 	};
 
-	$outputDir = isset($confElement->multidir_output)
+	$outputDir = isset($confElement->multidir_output) && key_exists($object->entity, $confElement->multidir_output)
 		? $confElement->multidir_output[$object->entity]
 		: $confElement->dir_output;
 
