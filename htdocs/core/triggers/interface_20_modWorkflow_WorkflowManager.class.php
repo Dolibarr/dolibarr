@@ -81,22 +81,22 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						setEventMessages($langs->trans("OrderExists"), null, 'warnings');
 					}
 					return $ret;
-				} else {
-					include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-					$newobject = new Commande($this->db);
-
-					$newobject->context['createfrompropal'] = 'createfrompropal';
-					$newobject->context['origin'] = $object->element;
-					$newobject->context['origin_id'] = $object->id;
-
-					$ret = $newobject->createFromProposal($object, $user);
-					if ($ret < 0)
-						$this->setErrorsFromObject($newobject);
-
-					$object->clearObjectLinkedCache();
-
-					return $ret;
 				}
+
+				include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$newobject = new Commande($this->db);
+
+				$newobject->context['createfrompropal'] = 'createfrompropal';
+				$newobject->context['origin'] = $object->element;
+				$newobject->context['origin_id'] = $object->id;
+
+				$ret = $newobject->createFromProposal($object, $user);
+				if ($ret < 0)
+					$this->setErrorsFromObject($newobject);
+
+				$object->clearObjectLinkedCache();
+
+				return $ret;
 			}
 		}
 
