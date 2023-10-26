@@ -140,7 +140,7 @@ print '<td align="center" width="100">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('WEBSITE_USE_WEBSITE_ACCOUNTS');
 } else {
-	if (empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) {
+	if (!getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

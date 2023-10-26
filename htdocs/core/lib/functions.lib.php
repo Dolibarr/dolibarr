@@ -1614,7 +1614,7 @@ function dol_escape_php($stringtoescape)
 
 /**
  * Return a string label ready to be output on HTML content
- * To use text inside an attribute, use can use only dol_escape_htmltag()
+ * To use text inside an attribute, use can simply only dol_escape_htmltag()
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1626,39 +1626,65 @@ function dolPrintLabel($s)
 
 /**
  * Return a string ready to be output on HTML page
- * To use text inside an attribute, use can use only dol_escape_htmltag()
+ * To use text inside an attribute, you can simply use dol_escape_htmltag()
+ *
+ * @param	string	$s				String to print
+ * @param	int		$allowiframe	Allow iframe tags
+ * @return	string					String ready for HTML output
+ */
+function dolPrintHTML($s, $allowiframe = 0)
+{
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+}
+
+/**
+ * Return a string ready to be output on an HTML attribute (alt, title, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
  */
-function dolPrintHTML($s)
+function dolPrintHTMLForAttribute($s)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1)), 1, 1, 'common', 0, 1);
+	// The dol_htmlentitiesbr will convert simple text into html
+	// The dol_escape_htmltag will escape html chars.
+	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
 }
 
 /**
  * Return a string ready to be output on input textarea
  * To use text inside an attribute, use can use only dol_escape_htmltag()
  *
- * @param	string	$s		String to print
- * @return	string			String ready for HTML output into a textarea
+ * @param	string	$s				String to print
+ * @param	int		$allowiframe	Allow iframe tags
+ * @return	string					String ready for HTML output into a textarea
  */
-function dolPrintHTMLForTextArea($s)
+function dolPrintHTMLForTextArea($s, $allowiframe = 0)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1)), 1, 1, '', 0, 1);
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, '', 0, 1);
+}
+
+/**
+ * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ *
+ * @param	string	$s		String to print
+ * @return	string			String ready for HTML output
+ */
+function dolPrintPassword($s)
+{
+	return htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
 }
 
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
- *  When we output string on pages, we use
- *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
- *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
- *        - htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords
+ *  When we need to output strings on pages, we should use:
+ *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
+ *        - dolPrintLabel... that is dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
- *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
+ *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
@@ -1685,18 +1711,20 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	}
 	if (!$keepn) {
 		$tmp = strtr($tmp, array("\r"=>'\\r', "\n"=>'\\n'));
+	} elseif ($keepn == -1) {
+		$tmp = strtr($tmp, array("\r"=>'', "\n"=>''));
 	}
 
 	if ($escapeonlyhtmltags) {
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
 		// Escape tags to keep
-		// TODO Does not works yet when there is attributes into tag
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
 		if (count($tmparrayoftags)) {
+			// TODO Does not works yet when there is attributes into tag
 			foreach ($tmparrayoftags as $tagtoreplace) {
 				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
@@ -2738,7 +2766,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
  *
- *  @see        dol_mktime(), dol_stringtotime(), dol_getdate()
+ *  @see        dol_mktime(), dol_stringtotime(), dol_getdate(), selectDate()
  */
 function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
 {
@@ -2790,7 +2818,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Do we have to reduce the length of date (year on 2 chars) to save space.
 	// Note: dayinputnoreduce is same than day but no reduction of year length will be done
-	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;	// Test on original $format param.
+	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour', 'dayhoursec'))) ? 1 : 0;	// Test on original $format param.
 	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) {
@@ -7463,18 +7491,30 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 		$firstline = '';
-		$i = 0;
-		$nba = count($a); // 2x nb of lines in $a because $a contains also a line for each new line separator
-		while (($i < $nba) && ($i < ($nboflines * 2))) {
-			if ($i % 2 == 0) {
+		$i = 0; $countline = 0; $lastaddediscontent = 1;
+		while ($countline < $nboflines && isset($a[$i])) {
+			if (preg_match('/<br[^>]*>/', $a[$i])) {
+				if (array_key_exists($i+1, $a) && !empty($a[$i+1])) {
+					$firstline .= ($ishtml ? "<br>\n" : "\n");
+					// Is it a br for a new line of after a printed line ?
+					if (!$lastaddediscontent) {
+						$countline++;
+					}
+					$lastaddediscontent = 0;
+				}
+			} else {
 				$firstline .= $a[$i];
-			} elseif (($i < (($nboflines * 2) - 1)) && ($i < ($nba - 1))) {
-				$firstline .= ($ishtml ? "<br>\n" : "\n");
+				$lastaddediscontent = 1;
+				$countline++;
 			}
 			$i++;
 		}
-		unset($a);
-		return $firstline.(($i < $nba) ? '...' : '');
+
+		$adddots = (isset($a[$i]) && (!preg_match('/<br[^>]*>/', $a[$i]) || (array_key_exists($i+1, $a) && !empty($a[$i+1]))));
+		//unset($a);
+		$ret = $firstline.($adddots ? '...' : '');
+		//exit;
+		return $ret;
 	}
 }
 
@@ -7606,13 +7646,13 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
- *              - writeHTMLCell -> param must be encoded into HTML.
- *              - MultiCell -> param must not be encoded into HTML.
- *              Because writeHTMLCell convert also \n into <br>, if function
- *              is used to build PDF, nl2brmode must be 1.
+ *        - writeHTMLCell -> param must be encoded into HTML.
+ *        - MultiCell -> param must not be encoded into HTML.
+ *        Because writeHTMLCell convert also \n into <br>, if function is used to build PDF, nl2brmode must be 1.
  *  Note: When we output string on pages, we should use
- *        - dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
- *        - dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
+ *        - dolPrintLabel... that is dol_escape_htmltag(dol_htmlentitiesbr()) for simple labels.
+ *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
@@ -10523,7 +10563,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	if ($alldata == 1) {
 		if ($isAllowedForPreview) {
-			return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath));
+			return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath));
 		} else {
 			return array();
 		}
@@ -10531,7 +10571,14 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	// old behavior, return a string
 	if ($isAllowedForPreview) {
-		return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : '')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
+		$tmpurl = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : '');
+		$title = $langs->trans("Preview");
+		//$title = '%27-alert(document.domain)-%27';
+		//$tmpurl = 'file='.urlencode("'-alert(document.domain)-'_small.jpg");
+
+		// We need to urlencode the parameter after the dol_escape_js($tmpurl) because  $tmpurl may contain n url with param file=abc%27def if file has a ' inside.
+		// and when we click on href with this javascript string, a urlcode is done by browser, converted the %27 of file param
+		return 'javascript:document_preview(\''.urlencode(dol_escape_js($tmpurl)).'\', \''.urlencode(dol_mimetype($relativepath)).'\', \''.urlencode(dol_escape_js($title)).'\')';
 	} else {
 		return '';
 	}

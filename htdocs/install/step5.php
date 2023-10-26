@@ -93,7 +93,7 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("- step5: entering step5.php page");
+dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$versionto);
 
 $error = 0;
 
@@ -545,7 +545,7 @@ if ($error && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("- step5: Dolibarr setup finished");
+dolibarr_install_syslog("--- step5: Dolibarr setup finished");
 
 pFooter(1, $setuplang, '', 0, $morehtml);
 
