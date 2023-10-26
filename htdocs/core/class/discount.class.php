@@ -254,7 +254,7 @@ class DiscountAbsolute
 
 		// Check parameters
 		if (empty($this->description)) {
-			$this->error = 'BadValueForPropertyDescription';
+			$this->error = 'BadValueForPropertyDescriptionOfDiscount';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -373,7 +373,7 @@ class DiscountAbsolute
 			if ($this->fk_facture_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
+				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -388,7 +388,7 @@ class DiscountAbsolute
 			} elseif ($this->fk_invoice_supplier_source) {
 				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
-				$sql .= " WHERE (type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
+				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
 
 				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
 				$result = $this->db->query($sql);

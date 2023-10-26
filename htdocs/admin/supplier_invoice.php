@@ -246,7 +246,7 @@ foreach ($dirmodels as $reldir) {
 
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -469,7 +469,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_INVOICE_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

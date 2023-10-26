@@ -57,6 +57,9 @@ if ($in_bookkeeping == '') {
 
 $now = dol_now();
 
+$hookmanager->initHooks(array('expensereportsjournal'));
+$parameters = array();
+
 // Security check
 if (!isModEnabled('accounting')) {
 	accessforbidden();
@@ -102,11 +105,17 @@ $sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_expensereport";
 $sql .= " JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE er.fk_statut > 0";
 $sql .= " AND erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
@@ -114,7 +123,7 @@ if ($date_start && $date_end) {
 	$sql .= " AND er.date_debut >= '".$db->idate($date_start)."' AND er.date_debut <= '".$db->idate($date_end)."'";
 }
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
 // Already in bookkeeping or not
@@ -124,6 +133,9 @@ if ($in_bookkeeping == 'already') {
 if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY er.date_debut";
 
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
@@ -141,8 +153,8 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$account_salary = (!empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT)) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
-	$account_vat = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
+	$account_salary = (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
+	$account_vat = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT')) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
 
 	$i = 0;
 	while ($i < $num) {
@@ -380,7 +392,7 @@ if ($action == 'writebookkeeping') {
 		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
-			setEventMessages('Try to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
+			setEventMessages('We tried to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (!$errorforline) {
@@ -469,6 +481,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print "\n";
 			}
 		}
+
 		// VAT
 		foreach ($tabtva[$key] as $k => $mt) {
 			if ($mt) {
@@ -516,7 +529,7 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Button to write into Ledger
-	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
+	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
 		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
@@ -525,10 +538,10 @@ if (empty($action) || $action == 'view') {
 	}
 	print '<div class="tabsAction tabsActionNoBottom centerimp">';
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
-	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
+	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
 		if ($in_bookkeeping == 'notyet') {

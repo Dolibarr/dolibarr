@@ -194,7 +194,7 @@ class PaiementFourn extends Paiement
 				continue;
 			}
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -519,7 +519,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
+		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms as fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -528,18 +528,10 @@ class PaiementFourn extends Paiement
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->id = $obj->rowid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -767,16 +759,16 @@ class PaiementFourn extends Paiement
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'brodator') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'brodator') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'bronan') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'bronan') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		}
 
 		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
 
 			// Include file with class
@@ -793,8 +785,8 @@ class PaiementFourn extends Paiement
 
 			// For compatibility
 			if ($mybool === false) {
-				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
-				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
+				$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
+				$classname = "mod_supplier_payment_" . getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -910,7 +902,7 @@ class PaiementFourn extends Paiement
 			if (!empty($billsarray)) {
 				$supplier_invoice = new FactureFournisseur($this->db);
 				if ($supplier_invoice->fetch($billsarray[0]) > 0) {
-					$force_thirdparty_id = $supplier_invoice->fk_soc;
+					$force_thirdparty_id = $supplier_invoice->socid;
 				}
 			}
 		}

@@ -51,9 +51,9 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
 
-if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
-	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 		$i = 0;
 		$reg = array();
 		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100) {
@@ -83,7 +83,7 @@ print '</span>';
 print '<br>';
 
 // Show info setup company
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
 }
 

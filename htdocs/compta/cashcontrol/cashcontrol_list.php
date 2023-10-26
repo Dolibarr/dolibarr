@@ -131,7 +131,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (empty($user->rights->cashdesk->run) && empty($user->rights->takepos->run)) {
+if (!$user->hasRight('cashdesk', 'run') && !$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -400,6 +400,7 @@ $permforcashfence = 1;
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permforcashfence);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'cash-register', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -466,7 +467,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -505,12 +506,16 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '</tr>'."\n";
 
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
@@ -525,17 +530,19 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+		$totalarray['nbfield']++;
 	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
@@ -544,7 +551,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -554,6 +561,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
@@ -568,7 +576,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// show kanban result
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 
@@ -578,7 +586,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$object->year_close = $obj->year_close;
 		$object->cheque = $obj->cheque;
 
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == (min($num, $limit) - 1)) {
 			print '</div>';
 			print '</td></tr>';

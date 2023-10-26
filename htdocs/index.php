@@ -157,7 +157,7 @@ $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 // Dolibarr Working Board with weather
 if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
-	$showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
+	$showweather = (empty($conf->global->MAIN_DISABLE_METEO) || getDolGlobalInt('MAIN_DISABLE_METEO') == 2) ? 1 : 0;
 
 	//Array that contains all WorkboardResponse classes to process them
 	$dashboardlines = array();
@@ -209,7 +209,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (isModEnabled('commande')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
-		$dashboardlines[$board->element] = $board->load_board($user);
+		// Number of customer orders to be shipped (validated and in progress)
+		$dashboardlines[$board->element.'_toship'] = $board->load_board($user, 'toship');
+		// Number of customer orders to be billed (not visible by default, does not match a lot of organization).
+		if (getDolGlobalInt('ORDER_BILL_AFTER_VALIDATION')) {
+			$dashboardlines[$board->element.'_tobill'] = $board->load_board($user, 'tobill');
+		}
+		// Number of customer orders to be billed (delivered but not billed)
+		$dashboardlines[$board->element.'_shippedtobill'] = $board->load_board($user, 'shippedtobill');
 	}
 
 	// Number of suppliers orders a deal
@@ -349,7 +356,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				'groupName' => 'Orders',
 				'globalStatsKey' => 'orders',
 				'stats' =>
-					array('commande'),
+					array('commande_toship', 'commande_tobill', 'commande_shippedtobill'),
 			),
 		'facture' =>
 			array(
@@ -448,7 +455,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 	// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 	foreach ($valid_dashboardlines as $board) {
-		if ($board->nbtodolate > 0) {
+		if (is_numeric($board->nbtodo) && is_numeric($board->nbtodolate) && $board->nbtodolate > 0) {
 			$totaltodo += $board->nbtodo;
 			$totallate += $board->nbtodolate;
 		}
@@ -546,9 +553,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$openedDashBoard .= '<div class="info-box-line spanoverflow nowrap">';
 
 					if (!empty($board->labelShort)) {
-						$infoName = '<span class="marginrightonly" title="'.$board->label.'">'.$board->labelShort.'</span>';
+						$infoName = '<div class="marginrightonly inline-block valignmiddle info-box-line-text" title="'.$board->label.'">'.$board->labelShort.'</div>';
 					} else {
-						$infoName = '<span class="marginrightonly">'.$board->label.'</span>';
+						$infoName = '<div class="marginrightonly inline-block valignmiddle info-box-line-text">'.$board->label.'</div>';
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
@@ -577,22 +584,27 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					if ($board->total > 0) {
 						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
-					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.'<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'" >';
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
+					$openedDashBoard .= $infoName;
+					$openedDashBoard .= '<div class="inline-block nowraponall">';
+					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
 					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
 					$openedDashBoard .= '</span>';
+
 					if ($textLate) {
 						if ($board->url_late) {
-							$openedDashBoard .= '</a>';
-							$openedDashBoard .= ' <a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
+							$openedDashBoard .= '</div></a>';
+							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
 							$openedDashBoard .= ' ';
 						}
 						$openedDashBoard .= $textLate;
 					}
 					$openedDashBoard .= '</a>'."\n";
+					$openedDashBoard .= '</div>';
 					$openedDashBoard .= '</div>'."\n";
 				}
 
@@ -607,7 +619,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		}
 
 		if ($showweather && !empty($isIntopOpenedDashBoard)) {
-			$appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '');
+			$appendClass = (getDolGlobalInt('MAIN_DISABLE_METEO') == 2 ? ' hideonsmartphone' : '');
 			$weather = getWeatherStatus($totallate);
 
 			$text = '';

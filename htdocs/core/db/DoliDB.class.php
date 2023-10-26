@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var bool|resource|mysqli|SQLite3|PgSql\connection Database handler */
+	/** @var string Force subclass to implement VERSIONMIN */
+	const VERSIONMIN=self::VERSIONMIN;
+	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -283,7 +285,7 @@ abstract class DoliDB implements Database
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null)
+	public function order($sortfield = '', $sortorder = '')
 	{
 		if (!empty($sortfield)) {
 			$oldsortorder = '';

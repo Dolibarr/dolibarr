@@ -422,7 +422,8 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/product/stock/productlot_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/product/stock/productlot_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -582,7 +583,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}

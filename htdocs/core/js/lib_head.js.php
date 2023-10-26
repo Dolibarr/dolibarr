@@ -253,14 +253,15 @@ function dpChangeDay(dateFieldID, format)
 
 /*
  * =================================================================
- * Function:
- * formatDate (javascript object Date(), format) Purpose: Returns a date in the
- * output format specified. The format string can use the following tags: Field |
- * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
- * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
- * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
- * (2 digits) Author: Laurent Destailleur Author: Matelli (see
- * http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+ * Function: formatDate(javascript object Date(), format)
+ * Purpose: Returns a date in the output format specified. The format string can use the following tags:
+ * Year | yyyy (4 digits), yy (2 digits)
+ * Month | MM (2 digits)
+ * Day of Month | dd (2 digits)
+ * Hour (1-12) | hh (2 digits) Hour (0-23) | HH (2 digits)
+ * Minute | mm (2 digits)
+ * Second | ss (2 digits)
+ * Author: Laurent Destailleur Author: Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
  * Licence: GPL
  * ==================================================================
  */
@@ -284,7 +285,7 @@ function formatDate(date,format)
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
-		substr="";
+		var substr = '';
 		j=i;
 		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
 		{
@@ -456,15 +457,15 @@ function getIntegerInString(str,i,minlength,maxlength)
  * ==================================================================
  */
 function urlencode(s) {
-	news=s;
-	news=news.replace(/\+/gi,'%2B');
-	news=news.replace(/&/gi,'%26');
+	var news = s;
+	news = news.replace(/\+/gi,'%2B');
+	news = news.replace(/&/gi,'%26');
 	return news;
 }
 
 /*
  * =================================================================
- * Purpose: Clean string to have it url encoded
+ * Purpose: Clean string to get a HTML coded string.
  * Input:   s
  * Author:  Laurent Destailleur
  * Licence: GPL
@@ -472,16 +473,16 @@ function urlencode(s) {
  */
 function htmlEntityDecodeJs(inp){
 	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
-	if (inp)
-	{
+	if (inp) {
 	  for(var r in replacements){
 		inp = inp.replace(new RegExp(r,'g'),replacements[r]);
 	  }
 	  return inp.replace(/&#(\d+);/g, function(match, dec) {
 		return String.fromCharCode(dec);
 	  });
+	} else {
+		return '';
 	}
-	else { return ''; }
 }
 
 
@@ -509,7 +510,9 @@ function htmlEntityDecodeJs(inp){
  * ==================================================================
  */
 function cleanSerialize(expr) {
-	if (typeof(expr) != 'string') return '';
+	if (typeof(expr) != 'string') {
+		return '';
+	}
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
@@ -962,12 +965,12 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview
+ * @see document_preview()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
-	tmp=url;
+	var tmp = url;
 	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
@@ -987,14 +990,14 @@ function newpopup(url, title) {
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup
+ * @see newpopup()
  */
 function document_preview(file, type, title)
 {
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/webp"];
 	var showOriginalSizeButton = false;
 
-	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
+	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
@@ -1047,8 +1050,10 @@ function document_preview(file, type, title)
 		optionsbuttons = {}
 		if (mode == 'image' && showOriginalSizeButton)
 		{
+			var curRot = 0;
 			optionsbuttons = {
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
@@ -1308,7 +1313,7 @@ jQuery(document).ready(function() {
 	}
 
 	// Code to set tooltip on search field
-	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not("maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
 
 

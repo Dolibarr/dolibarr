@@ -50,7 +50,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 	unset($_SESSION["dol_login"]);
 	unset($_SESSION['dol_entity']);
 	unset($_SESSION['urlfrom']);
-	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);	// TODO Really ? It at least delete the session file ?!
 }
 
 //global $conf, $langs, $user;

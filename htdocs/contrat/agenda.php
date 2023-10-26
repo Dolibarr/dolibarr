@@ -82,7 +82,6 @@ if (!$sortorder) {
 
 
 $object = new Contrat($db);
-
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
@@ -90,7 +89,9 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
@@ -148,7 +149,9 @@ if ($object->id > 0) {
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+	llxHeader('', $title, $help_url);
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -163,8 +166,8 @@ if ($object->id > 0) {
 	if (!empty($modCodeContract->code_auto)) {
 		$morehtmlref .= $object->ref;
 	} else {
-		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 3);
-		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 2);
+		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
+		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 2);
 	}
 
 	$permtoedit = 0;
@@ -244,14 +247,14 @@ if ($object->id > 0) {
 
 	$newcardbutton = '';
 	if (isModEnabled('agenda')) {
-		if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			$backtopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$out = '&origin='.$object->element.'&originid='.$object->id.'&backtopage='.urlencode($backtopage);
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		}
 	}
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
 		$param = '&id='.$object->id;

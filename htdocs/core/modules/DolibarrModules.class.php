@@ -120,12 +120,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $cronjobs = array();
 
 	/**
-	 * @var array Module access rights
+	 * @var array 	Module access rights
 	 */
 	public $rights;
 
 	/**
-	 * @var string Module access rights family
+	 * @var int		1=Admin is always granted of permission of modules (even when module is disabled)
+	 */
+	public $rights_admin_allowed;
+
+	/**
+	 * @var string 	Module access rights family
 	 */
 	public $rights_class;
 
@@ -256,6 +261,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $export_fields_array;
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
 	public $export_entities_array;
+	public $export_aggregate_array;
 	public $export_examplevalues_array;
 	public $export_help_array;
 	public $export_special_array; // special or computed field
@@ -287,7 +293,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_regex_array;
 	public $import_examplevalues_array;
 	public $import_updatekeys_array;
-
+	public $import_run_sql_after_array;
+	public $import_TypeFields_array;
+	public $import_help_array;
 
 	/**
 	 * @var string Module constant name
@@ -363,6 +371,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $warnings_activation_ext;
 
+	/**
+	 * @var array<string,string> Array of warnings to show when we disable the module
+	 *
+	 * array('always'='text') or array('FR'='text')
+	 */
+	public $warnings_unactivation;
 
 	/**
 	 * @var array Minimum version of PHP required by module.
@@ -377,6 +391,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
 	 */
 	public $need_dolibarr_version;
+
+	public $need_javascript_ajax;
 
 	public $enabled_bydefault;
 
@@ -958,7 +974,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 
 		dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2163,7 +2179,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 
 				// Define the constant in database if requested (not the default mode)
-				if (!empty($addtodatabase)) {
+				if (!empty($addtodatabase) && !empty($name)) {
 					$result = $this->insert_dirs($name, $dir);
 					if ($result) {
 						$err++;
@@ -2257,7 +2273,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$error = 0;
 
-		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+		if (is_array($this->module_parts)) {
+			if (empty($this->module_parts['icon']) && !empty($this->picto) && preg_match('/^fa\-/', $this->picto)) {
+				$this->module_parts['icon'] = $this->picto;
+			}
+
 			foreach ($this->module_parts as $key => $value) {
 				if (is_array($value) && count($value) == 0) {
 					continue; // Discard empty arrays
@@ -2285,32 +2305,34 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 				}
 
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-				$sql .= "name";
-				$sql .= ", type";
-				$sql .= ", value";
-				$sql .= ", note";
-				$sql .= ", visible";
-				$sql .= ", entity";
-				$sql .= ")";
-				$sql .= " VALUES (";
-				$sql .= " ".$this->db->encrypt($this->const_name."_".strtoupper($key));
-				$sql .= ", 'chaine'";
-				$sql .= ", ".$this->db->encrypt($newvalue);
-				$sql .= ", null";
-				$sql .= ", '0'";
-				$sql .= ", ".((int) $entity);
-				$sql .= ")";
+				if (!empty($newvalue)) {
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+					$sql .= "name";
+					$sql .= ", type";
+					$sql .= ", value";
+					$sql .= ", note";
+					$sql .= ", visible";
+					$sql .= ", entity";
+					$sql .= ")";
+					$sql .= " VALUES (";
+					$sql .= " ".$this->db->encrypt($this->const_name."_".strtoupper($key), 1);
+					$sql .= ", 'chaine'";
+					$sql .= ", ".$this->db->encrypt($newvalue, 1);
+					$sql .= ", null";
+					$sql .= ", '0'";
+					$sql .= ", ".((int) $entity);
+					$sql .= ")";
 
-				dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
+					dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
 
-				$resql = $this->db->query($sql, 1);
-				if (!$resql) {
-					if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-						 $error++;
-						 $this->error = $this->db->lasterror();
-					} else {
-						 dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
+					$resql = $this->db->query($sql, 1);
+					if (!$resql) {
+						if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							 $error++;
+							 $this->error = $this->db->lasterror();
+						} else {
+							 dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
+						}
 					}
 				}
 			}
@@ -2330,15 +2352,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $conf;
 
 		$err = 0;
-		$entity = $conf->entity;
 
-		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+		if (is_array($this->module_parts)) {
 			dol_syslog(get_class($this)."::delete_module_parts", LOG_DEBUG);
+
+			if (empty($this->module_parts['icon']) && !empty($this->picto) && preg_match('/^fa\-/', $this->picto)) {
+				$this->module_parts['icon'] = $this->picto;
+			}
 
 			foreach ($this->module_parts as $key => $value) {
 				// If entity is defined
 				if (is_array($value) && isset($value['entity'])) {
 					$entity = $value['entity'];
+				} else {
+					$entity = $conf->entity;
 				}
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
@@ -2413,26 +2440,26 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$versiontrans .= 'warning';
 		}
 
-		print '
+		$return = '
     	<div class="box-flex-item info-box-module'
-			.(empty($conf->global->$const_name) ? ' --disabled' : '')
+			.(getDolGlobalString($const_name) ? '' : ' --disabled')
 			.($this->isCoreOrExternalModule() == 'external' ? ' --external' : '')
 			.($this->needUpdate ? ' --need-update' : '')
 			.'">
 	    <div class="info-box info-box-sm info-box-module">
-	    <div class="info-box-icon'.(empty($conf->global->$const_name) ? '' : ' info-box-icon-module-enabled'.($versiontrans ? ' info-box-icon-module-warning' : '')).'">';
+	    <div class="info-box-icon'.(!getDolGlobalString($const_name) ? '' : ' info-box-icon-module-enabled'.($versiontrans ? ' info-box-icon-module-warning' : '')).'">';
 
 		$alttext = '';
 		//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 		//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
 		if (!empty($this->picto)) {
 			if (preg_match('/^\//i', $this->picto)) {
-				print img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
+				$return .= img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
 			} else {
-				print img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
+				$return .= img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
 			}
 		} else {
-			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
+			$return .= img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
 		}
 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
@@ -2441,34 +2468,36 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$versionTitle.= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
-			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
-			print $this->getVersion(1);
-			print '</span>';
+			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
+			$return .=  $this->getVersion(1);
+			$return .=  '</span>';
 		}
 
-		print '</div>
-	    <div class="info-box-content info-box-text-module'.(empty($conf->global->$const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
+		$return .=  '</div>
+	    <div class="info-box-content info-box-text-module'.(!getDolGlobalString($const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
 	    <span class="info-box-title">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
-		print '<div class="valignmiddle inline-block info-box-more">';
+		$return .=  '<div class="valignmiddle inline-block info-box-more">';
 		//if ($versiontrans) print img_warning($langs->trans("Version").' '.$this->getVersion(1)).' ';
-		print '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
-		print '</div><br>';
+		$return .=  '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $this->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+		$return .=  '</div><br>';
 
-		print '<div class="valignmiddle inline-block info-box-actions">';
-		print '<div class="valignmiddle inline-block info-box-setup">';
-		print $codetoconfig;
-		print '</div>';
-		print '<div class="valignmiddle inline-block marginleftonly marginrightonly">';
-		print $codeenabledisable;
-		print '</div>';
-		print '</div>';
+		$return .=  '<div class="valignmiddle inline-block info-box-actions">';
+		$return .=  '<div class="valignmiddle inline-block info-box-setup">';
+		$return .=  $codetoconfig;
+		$return .=  '</div>';
+		$return .=  '<div class="valignmiddle inline-block marginleftonly marginrightonly">';
+		$return .=  $codeenabledisable;
+		$return .=  '</div>';
+		$return .=  '</div>';
 
-		print '
+		$return .=  '
 	    </div><!-- /.info-box-content -->
 	    </div><!-- /.info-box -->
 	    </div>';
+
+		return $return;
 	}
 
 	/**

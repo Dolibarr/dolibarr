@@ -69,48 +69,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe object that emits
-	 */
-	public $emetteur;
-
-
 
 	/**
 	 *	Constructor
@@ -292,7 +250,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -363,6 +321,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+				// Extrafields in note
+				if (!empty($conf->global->INVOICE_ADD_EXTRAFIELD_IN_NOTE)) {
+					$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+					if (!empty($extranote)) {
+						$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					}
+				}
 
 				if ($notetoshow) {
 					$tab_top -= 2;
@@ -641,12 +607,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf            Object PDF
-	 *	@param  Object		$object         Object invoice
-	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
+	 *	@param	TCPDF				$pdf            Object PDF
+	 *	@param  FactureFournisseur	$object         Object invoice
+	 *	@param  int					$deja_regle     Amount already paid (in the currency of invoice)
+	 *	@param	int					$posy			Position depart
+	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@return int									Position of cursor after output
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -720,7 +686,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva, 0, $outputlangs), 0, 'R', 1);
 
 			// Total LocalTax1
-			if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION == 'localtax1on' && $object->total_localtax1 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on' && $object->total_localtax1 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code), 0, 'L', 1);
@@ -729,7 +695,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 
 			// Total LocalTax2
-			if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION == 'localtax2on' && $object->total_localtax2 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on' && $object->total_localtax2 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code), 0, 'L', 1);
@@ -1049,6 +1015,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -1075,6 +1042,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
+
+		$w = 100;
 
 		$posy = $this->marge_haute;
 		$posx = $this->page_largeur - $this->marge_droite - 100;
@@ -1118,7 +1087,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if ($object->type == 3) {
 			$title = $outputlangs->transnoentities("InvoiceDeposit");
 		}
-		$pdf->MultiCell(100, 3, $title." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$pdf->MultiCell($w, 3, $title." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		$posy += 1;
 
 		if ($object->ref_supplier) {
@@ -1126,7 +1095,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSupplier")." : ".$object->ref_supplier, '', 'R');
+			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("RefSupplier")." : ".$object->ref_supplier, '', 'R');
 			$posy += 1;
 		}
 
@@ -1150,7 +1119,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 
@@ -1158,19 +1127,19 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 		} else {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
-			$pdf->MultiCell(100, 4, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
+			$pdf->MultiCell($w, 4, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
 		}
 
 		if ($object->thirdparty->code_fournisseur) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 		$posy += 1;

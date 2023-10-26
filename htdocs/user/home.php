@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 	// Redirection vers la page de l'utilisateur
 	header("Location: card.php?id=".$user->id);
 	exit;
@@ -168,9 +168,9 @@ if ($resql) {
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
 		}
 		$lastcreatedbox .= "</td>";
 		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';

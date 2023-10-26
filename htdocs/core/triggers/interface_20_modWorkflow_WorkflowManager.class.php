@@ -189,6 +189,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
+			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
 			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
@@ -202,6 +203,27 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+
+			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE)) {
+				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
+				if (!empty($object->linkedObjects)) {
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['shipping'] as $element) {
+						if ($element->statut == Expedition::STATUS_VALIDATED || $element->statut == Expedition::STATUS_CLOSED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
+					}
+					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['shipping'] as $element) {
+							$ret = $element->setBilled();
 							if ($ret < 0) {
 								return $ret;
 							}
@@ -246,7 +268,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['supplier_proposal'] as $element) {
-						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) {
+						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_CLOSE) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -262,13 +284,37 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			// Then set reception to "Billed" if WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is set
-			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE)) {
+			// Set reception to "Closed" if WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE is set (deprecated, WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE instead))
+			/*
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE)) {
 				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) {
+						if ($element->statut == Reception::STATUS_VALIDATED || $element->statut == Reception::STATUS_CLOSED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
+					}
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['reception'] as $element) {
+							$ret = $element->setClosed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+			*/
+
+			// Then set reception to "Billed" if WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is set
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE)) {
+				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
+				if (!empty($object->linkedObjects)) {
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['reception'] as $element) {
+						if ($element->statut == Reception::STATUS_VALIDATED || $element->statut == Reception::STATUS_CLOSED) {
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
@@ -343,7 +389,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 					foreach ($order->linkedObjects as $type => $shipping_array) {
 						if ($type == 'shipping' && is_array($shipping_array) && count($shipping_array) > 0) {
+							/** @var Expedition[] $shipping_array */
 							foreach ($shipping_array as $shipping) {
+								if ($shipping->status <= 0) {
+									continue;
+								}
 								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
 									foreach ($shipping->lines as $shippingline) {
 										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
@@ -402,7 +452,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->errors = $order->errors;
 					return $ret;
 				}
-				$ret = $order->fetchObjectLinked($order->id, 'supplier_order', null, 'reception');
+				$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
 				if ($ret < 0) {
 					$this->error = $order->error;
 					$this->errors = $order->errors;
@@ -439,7 +489,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 				if (count($diff_array) == 0) {
 					//No diff => mean everythings is received
-					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, $object->origin_id, $object->origin, 'SUPPLIER_ORDER_CLOSE');
+					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
 					if ($ret < 0) {
 						$this->error = $order->error;
 						$this->errors = $order->errors;

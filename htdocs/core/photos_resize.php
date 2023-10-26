@@ -51,43 +51,43 @@ if (empty($modulepart)) {
 $accessallowed = 0;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	$result = restrictedArea($user, 'produit|service', $id, 'product&product');
-	if ($modulepart == 'produit|service' && (!$user->rights->produit->lire && !$user->rights->service->lire)) {
+	if ($modulepart == 'produit|service' && (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire'))) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'project') {
 	$result = restrictedArea($user, 'projet', $id);
-	if (empty($user->rights->projet->lire)) {
+	if (!$user->hasRight('projet', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bom') {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
-	if (empty($user->rights->bom->read)) {
+	if (!$user->hasRight('bom', 'read')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (empty($user->rights->adherent->lire)) {
+	if (!$user->hasRight('adherent', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
-	if (empty($user->rights->user->user->lire)) {
+	if (!$user->hasRight('user', 'user', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'tax') {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
-	if (empty($user->rights->tax->charges->lire)) {
+	if (!$user->hasRight('tax', 'charges', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bank') {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
-	if (empty($user->rights->banque->lire)) {
+	if (!$user->hasRight('banque', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -99,14 +99,14 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (empty($user->rights->fournisseur->facture->lire)) {
+	if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } else {
 	// ticket, holiday, expensereport, societe...
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
-	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) {
+	if (!$user->hasRight($modulepart, 'read') && !$user->hasRight($modulepart, 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -119,6 +119,7 @@ if (!$accessallowed) {
 }
 
 // Define dir according to modulepart
+$dir = '';
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
@@ -237,7 +238,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	}
 } elseif ($modulepart == 'mrp') {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-	$object = new MO($db);
+	$object = new Mo($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
 		if ($result <= 0) {
@@ -344,7 +345,8 @@ if ($cancel) {
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
 	if (empty($dir)) {
-		print 'Bug: Value for $dir could not be defined.';
+		dol_print_error('', 'Bug: Value for $dir could not be defined.');
+		exit;
 	}
 
 	$fullpath = $dir."/".$original_file;
@@ -552,7 +554,7 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	print '<!-- Form to crop -->'."\n";
 	print '<fieldset id="redim_file">';
-	print '<legend>'.$langs->trans("Recenter").'</legend>';
+	print '<legend>'.$langs->trans("Crop").'</legend>';
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 
@@ -587,7 +589,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 		      <br>
-		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
+		      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Crop")).'" />
 		      &nbsp;
 		      <input type="submit" id="cancelcrop" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />
 		   </form>'."\n";

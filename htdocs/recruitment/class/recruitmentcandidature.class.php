@@ -111,7 +111,7 @@ class RecruitmentCandidature extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of candidature", 'csslist'=>'nowraponall'),
-		'fk_recruitmentjobposition' => array('type'=>'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'picto'=>'recruitmentjobposition', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'minwidth100 nowraponall'),
+		'fk_recruitmentjobposition' => array('type'=>'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php:0:(t.status:=:1)', 'label'=>'Job', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'picto'=>'recruitmentjobposition', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'minwidth100 nowraponall'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
@@ -366,8 +366,6 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -732,7 +730,7 @@ class RecruitmentCandidature extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -774,7 +772,7 @@ class RecruitmentCandidature extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -882,6 +880,7 @@ class RecruitmentCandidature extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1071,7 +1070,9 @@ class RecruitmentCandidature extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_recruitmentjobposition')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans('Job').'</span> : <span class="info-box-label">'.$this->fk_recruitmentjobposition.'</span>';
 		}

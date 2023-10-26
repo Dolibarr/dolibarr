@@ -64,7 +64,9 @@ if (!empty($conf->dol_use_jmobile)) {
 }
 
 $php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
-$php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
+if (!empty($_SERVER["QUERY_STRING"]) && dol_escape_htmltag($_SERVER["QUERY_STRING"])) {
+	$php_self .= '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]);
+}
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
 }
@@ -136,7 +138,7 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
-	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
 	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
 	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
 	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
@@ -352,7 +354,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	print '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication) && strpos($conf->browser->ua, 'DoliDroid') === false) {
 	$langs->load("users");
 
 	echo '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';

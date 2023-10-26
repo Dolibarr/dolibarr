@@ -69,9 +69,9 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->read)));
-$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->write))); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'delete')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->delete))) || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontoread = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')));
+$permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'delete')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'delete'))) || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $permissiontoadd; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $permissiontoadd; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->asset->multidir_output[isset($object->entity) ? $object->entity : 1];

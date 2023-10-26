@@ -29,6 +29,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'companies'));
 
@@ -104,7 +106,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';

@@ -134,7 +134,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION)) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION').'">';
 		print '</div>';
 	}
 
@@ -158,7 +158,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 	}
 
 	print "</body>\n";
@@ -229,6 +229,7 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->date_partnership_start = dol_now();
 		$partnership->fk_user_creat          = 0;
 		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		$partnership->url                    = GETPOST('url');
 		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 		$partnership->ip = getUserRemoteIP();
 
@@ -253,16 +254,16 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 		}
-		// test if societe already exist
+		// test if thirdparty already exists
 		$company = new Societe($db);
 		$result = $company->fetch(0, GETPOST('societe'));
-		if ($result == 0) { // si il ya pas d'entree sur le nom  on teste l'email
+		if ($result == 0) { // if entry with name not found, we search using the email
 			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
 			if ($result1 > 0) {
 				$error++;
 				$errmsg = $langs->trans("EmailAlreadyExistsPleaseRewriteYourCompanyName");
 			} else {
-				//create thirdparty
+				// create thirdparty
 				$company = new Societe($db);
 
 				$company->name        = GETPOST('societe');
@@ -600,8 +601,8 @@ foreach ($listofpartnershipobj as $partnershipobj) {
 }
 
 if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print $listofpartnership[$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE];
-	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="'.$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE.'">';
+	print $listofpartnership[getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')];
+	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="' . getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE').'">';
 }
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
@@ -613,7 +614,7 @@ if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 // Company
 print '<tr id="trcompany" class="trcompany"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Company").' <span class="star">*</span></td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<input type="text" name="societe" class="minwidth150 maxwidth300 widthcentpercentminusxx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Lastname
 print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
@@ -621,10 +622,10 @@ print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemanda
 // EMail
 print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").' <span class="star">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
-print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Url
-print '<tr><td>'.$langs->trans("Url").' <span style="color:red;">*</span></td><td>';
-print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'">';
+print '<tr><td class="tdtop">'.$langs->trans("Url").' <span class="star">*</span></td><td>';
+print '<input type="text" name="url" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('url')).'">';
 if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
 	$listofkeytocheck = explode('|', getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK'));
 	$i = 0;
@@ -637,7 +638,7 @@ if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
 }
 print '</td></tr>'."\n";
 // Address
-print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
+print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
@@ -668,7 +669,7 @@ print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-	print '<tr><td>'.$langs->trans('State').'</td><td>';
+	print '<tr><td class="wordbreak">'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
 		print $formcompany->select_state(GETPOST("state_id"), $country_code);
 	}
@@ -682,7 +683,7 @@ $parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
+print '<td class="tdtop wordbreak">'.$langs->trans("Comments").'</td>';
 print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 

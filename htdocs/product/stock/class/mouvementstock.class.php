@@ -153,7 +153,7 @@ class MouvementStock extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Add a movement of stock (in one direction only).
-	 *  This is the lowest level method to record a stock change.
+	 *  This is the lowest level method to record a stock change. There is no control if warehouse is open or not.
 	 *  $this->origin_type and $this->origin_id can be also be set to save the source object of movement.
 	 *
 	 *	@param		User			$user				User object
@@ -175,9 +175,10 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
+	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
 	 *	@return		int									<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
-	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0)
+	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -540,7 +541,7 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = reel + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = COALESCE(reel, 0) + ".((float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
@@ -559,7 +560,7 @@ class MouvementStock extends CommonObject
 			}
 
 			// Update detail of stock for the lot.
-			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && (($product->hasbatch() && !$skip_batch) || $force_update_batch)) {
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch
@@ -990,15 +991,17 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 				$origin = new Inventory($this->db);
 				break;
-
 			default:
 				if ($origin_type) {
 					// Separate originetype with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
-					$classname = ucfirst($origin_type_array[0]);
+					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
-					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
+
+					$result = dol_include_once('/'.$modulename.'/class/'.$classname.'.class.php');
+
 					if ($result) {
+						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
 				}
@@ -1181,6 +1184,8 @@ class MouvementStock extends CommonObject
 		} elseif ($mode == 5) {
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
+
+		return 'Bad value for mode';
 	}
 
 	/**

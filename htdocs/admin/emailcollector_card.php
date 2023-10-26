@@ -398,7 +398,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 
 			if ($object->acces_type == 1) {
@@ -532,8 +532,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 					}
 
-					$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-					$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+					$timeoutconnect = !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+					$timeoutread = !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
 
 					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 
@@ -573,7 +573,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
-	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml ? $morehtml : '?');
+	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml !== '' ? $morehtml : '?');
 	$morehtml .= '<a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
@@ -754,7 +754,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$fk_element = 'position';
 	$i = 0;
 	foreach ($object->actions as $ruleaction) {
-		$ruleactionobj = new EmailcollectorAction($db);
+		$ruleactionobj = new EmailCollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';

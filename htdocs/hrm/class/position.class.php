@@ -105,17 +105,17 @@ class Position extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		//'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
-		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>51, 'notnull'=>1, 'visible'=>1,),
-		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>52, 'notnull'=>0, 'visible'=>1,),
+		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'isModEnabled("contract")', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0, 'picto'=>'user', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1, 'picto'=>'jobprofile', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>101, 'notnull'=>1, 'visible'=>1,),
+		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>1,),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>3,),
 		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'getDolGlobalInt("HRM_JOB_POSITON_ENDING_COMMENT")', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>0,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>0,),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>151, 'notnull'=>0, 'visible'=>0,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>152, 'notnull'=>0, 'visible'=>0,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 	);
@@ -550,7 +550,7 @@ class Position extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('POSITION_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_POSITION_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -687,12 +687,12 @@ class Position extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 * @param int $withpicto Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 * @param string $option On what the link point to ('nolink', ...)
-	 * @param int $notooltip 1=Disable tooltip
-	 * @param string $morecss Add more css on link
-	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return    string                              String with URL
+	 * @param 	int 		$withpicto 				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param 	string 		$option 				On what the link point to ('nolink', ...)
+	 * @param 	int 		$notooltip 				1=Disable tooltip
+	 * @param 	string 		$morecss 				Add more css on link
+	 * @param 	int 		$save_lastsearch_value 	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return  string      						String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -716,7 +716,7 @@ class Position extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -766,7 +766,7 @@ class Position extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div>';
@@ -822,6 +822,10 @@ class Position extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		if (is_null($status)) {
+			return '';
+		}
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -929,6 +933,7 @@ class Position extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -997,7 +1002,7 @@ class Position extends CommonObject
 		if (!empty($conf->global->hrm_POSITION_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_POSITION_ADDON . ".php";
+			$file = getDolGlobalString('hrm_POSITION_ADDON') . ".php";
 			$classname = $conf->global->hrm_POSITION_ADDON;
 
 			// Include file with class
@@ -1140,13 +1145,12 @@ class Position extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
 		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user') && !(empty($this->fk_user))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Employee").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_user.'</span>';
+		if (!empty($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label ">'.$arraydata['user'].'</span>';
 		}
-		if (property_exists($this, 'fk_job') && !(empty($this->fk_job))) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Job").'</span> : ';
-			$return .= '<span class="info-box-label ">'.$this->fk_job.'</span>';
+		if (!empty($arraydata['job'])) {
+			//$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("JobProfile").'</span> : ';
+			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
 		if (property_exists($this, 'date_start') && property_exists($this, 'date_end')) {
 			$return .= '<br><div class ="margintoponly"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';

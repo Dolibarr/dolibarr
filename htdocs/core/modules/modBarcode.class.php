@@ -82,14 +82,14 @@ class modBarcode extends DolibarrModules
 		$this->rights[$r][0] = 301; // id de la permission
 		$this->rights[$r][1] = 'Generate PDF sheets of barcodes'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'read';
 		$r++;
 
 		$this->rights[$r][0] = 304; // id de la permission
 		$this->rights[$r][1] = 'Read barcodes'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire_advance';
 		$r++;
 

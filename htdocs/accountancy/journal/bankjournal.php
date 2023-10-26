@@ -121,7 +121,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_currency, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer as code_compta,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
@@ -138,7 +138,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid A
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu4 ON bu4.fk_bank = b.rowid AND bu4.type='payment_supplier'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc on bu1.url_id=soc.rowid";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = soc.rowid AND spe.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
@@ -436,7 +436,7 @@ if ($result) {
 
 					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
 					// Note: A better way to fix this is to delete payment of salary and recreate it, or to fix the bookkeeping table manually after.
-					if (!empty($conf->global->ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT)) {
+					if (getDolGlobalString('ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT')) {
 						$tmpsalary = new Salary($db);
 						$tmpsalary->fetch($paymentsalstatic->id);
 						$tmpsalary->fetch_user($tmpsalary->fk_user);
@@ -861,7 +861,7 @@ if (!$error && $action == 'writebookkeeping') {
 		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
-			setEventMessages('Try to insert a non balanced transaction in book for '.$ref.'. Canceled. Surely a bug.', null, 'errors');
+			setEventMessages('We tried to insert a non balanced transaction in book for '.$ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (!$errorforline) {
@@ -1096,7 +1096,7 @@ if (empty($action) || $action == 'view') {
 
 	print '<div class="tabsAction tabsActionNoBottom centerimp">';
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
 
@@ -1262,7 +1262,7 @@ if (empty($action) || $action == 'view') {
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined') {
 						if ($tabtype[$key] == 'unknown') {
 							// We will accept writing, but into a waiting account
-							if (empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) || $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE == '-1') {
+							if (!getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE') || getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE') == '-1') {
 								$accounttoshow = '<span class="error small">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							} else {
 								$accounttoshow = '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account

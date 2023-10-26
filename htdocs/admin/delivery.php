@@ -58,7 +58,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 // Shipment note
-if (isModEnabled('expedition') && empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
+if (isModEnabled('expedition') && !getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
@@ -214,7 +214,7 @@ print dol_get_fiche_head($head, 'receivings', $langs->trans("Receivings"), -1, '
 
 print '<br>';
 print '<div class="inline-block valignmiddle">'.$langs->trans("DeliveriesOrderAbility").'</div>';
-if (empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
+if (!getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=activate_delivery&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
@@ -226,7 +226,7 @@ print '<br>';
 
 
 
-if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
+if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	// Delivery numbering model
 
 	print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"), '', '');
@@ -266,7 +266,7 @@ if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 							}
 
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering module
@@ -482,7 +482,7 @@ if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 	print '<tr class="oddeven"><td colspan="2">';
 	print $form->textwithpicto($langs->trans("FreeLegalTextOnDeliveryReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 	$variablename = 'DELIVERY_FREE_TEXT';
-	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

@@ -32,9 +32,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-// load hrm libraries
-require_once __DIR__.'/class/position.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/position.class.php';
 
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
@@ -205,6 +204,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$jobstatic = new Job($db);
 
 $now = dol_now();
 
@@ -220,9 +220,9 @@ $morecss = array();
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
 $sql .= ',';
-$sql .= $userstatic->getFieldList('u');
-$sql .= ',u.email, u.statut';
-$sql .= ',j.rowid, j.label as job_label';
+$sql .= $userstatic->getFieldList('u', array('rowid'));
+$sql .= ', u.email, u.statut, u.photo, u.login';		// Add more field not yet into the user->fields
+$sql .= ', j.rowid as job_id, j.label as job_label';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -435,6 +435,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1).'?action=create', '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -502,7 +503,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -561,7 +562,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
@@ -588,7 +589,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -614,13 +615,17 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// get info needed
 		$object->date_start = $obj->date_start;
 		$object->date_end = $obj->date_end;
-		$object->fk_job = $obj->job_label;
+		$object->fk_job = $obj->job_id;
+
+		$jobstatic->id = $obj->job_id;
+		$jobstatic->label = $obj->job_label;
+		$jobstatic->status = $obj->job_status;
 
 		$userstatic->id = $obj->fk_user;
 		$userstatic->ref = $obj->fk_user;
@@ -628,15 +633,19 @@ while ($i < $imaxinloop) {
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->email = $obj->email;
 		$userstatic->statut = $obj->statut;
+		$userstatic->status = $obj->statut;
+		$userstatic->login = $obj->login;
+		$userstatic->photo = $obj->photo;
 
-		// output kanban
+		// Output kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print $object->getKanbanView('', array('user' => $userstatic->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		}
+		print $object->getKanbanView('', array('user' => $userstatic->getNomUrl(-1), 'job'=> $jobstatic->getNomUrl(1), 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

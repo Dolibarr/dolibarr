@@ -1,8 +1,7 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
-![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg?style=flat-square)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
@@ -10,7 +9,7 @@ Dolibarr ERP & CRM is a modern software package that helps manage your organizat
 
 It's an Open Source Software suite (written in PHP with optional JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
-You can freely use, study, modify or distribute it according to its licence.
+You can freely use, study, modify or distribute it according to its license.
 
 You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
 
@@ -48,7 +47,7 @@ On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 - Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 
-- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you know git as it makes it easier if you want to upgrade later):
+- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommended if you know git as it makes it easier if you want to upgrade later):
 
   `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is main version like 3.6, 9.0, ...)
 
@@ -125,7 +124,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Suppliers/Vendors + Contacts
 - Supplier (price) requests
 - Purchase Orders management
-- Delivery/Receiption
+- Delivery/Reception
 - Supplier Invoices/credit notes and payment management
 - INCOTERMS
 

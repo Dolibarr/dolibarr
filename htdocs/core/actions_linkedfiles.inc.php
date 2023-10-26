@@ -49,7 +49,7 @@ if ((GETPOST('sendit', 'alpha')
 
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !empty($permissiontoadd)) {
-	if (!empty($_FILES)) {
+	if (!empty($_FILES) && is_array($_FILES['userfile'])) {
 		if (is_array($_FILES['userfile']['tmp_name'])) {
 			$userfiles = $_FILES['userfile']['tmp_name'];
 		} else {
@@ -96,7 +96,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 		// Parse $newUrl
 		$newUrlArray = parse_url($link);
 
-		// Check URL is external
+		// Allow external links to svg ?
 		if (!getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS')) {
 			if (!empty($newUrlArray['path']) && preg_match('/\.svg$/i', $newUrlArray['path'])) {
 				$error++;
@@ -104,9 +104,9 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 				setEventMessages($langs->trans('ErrorSVGFilesNotAllowedAsLinksWithout', 'MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS'), null, 'errors');
 			}
 		}
-		// Alow external links to svg ?
+		// Check URL is external (must refuse local link by default)
 		if (!getDolGlobalString('MAIN_ALLOW_LOCAL_LINKS_AS_EXTERNAL_LINKS')) {
-			// Test $newUrlAray['host'] to check link is external using isIPAllowed()
+			// Test $newUrlAray['host'] to check link is external using isIPAllowed() and if not refuse the local link
 			// TODO
 		}
 
@@ -191,7 +191,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	}
 } elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && !empty($permissiontoadd)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$langs->load('link');
+
 	$link = new Link($db);
 	$f = $link->fetch(GETPOST('linkid', 'int'));
 	if ($f) {

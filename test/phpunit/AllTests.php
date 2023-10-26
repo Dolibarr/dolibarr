@@ -54,7 +54,7 @@ if (empty($user->id)) {
 	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
-
+$conf->global->MAIN_UMASK='666';
 
 
 /**
@@ -140,6 +140,8 @@ class AllTests
 		$suite->addTestSuite('ActionCommTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
+		require_once dirname(__FILE__).'/ReceptionTest.php';
+		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
 		$suite->addTestSuite('ContactTest');
 		require_once dirname(__FILE__).'/AdherentTest.php';
@@ -221,10 +223,14 @@ class AllTests
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
+		require_once dirname(__FILE__).'/AssetModelTest.php';
+		$suite->addTestSuite('AssetModelTest');
 
 		// Rest
 		require_once dirname(__FILE__).'/RestAPIUserTest.php';
 		$suite->addTestSuite('RestAPIUserTest');
+		require_once dirname(__FILE__).'/RestAPIContactTest.php';
+		$suite->addTestSuite('RestAPIContactTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
 		$suite->addTestSuite('RestAPIDocumentTest');
 

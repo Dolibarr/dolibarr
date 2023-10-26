@@ -176,7 +176,7 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canedituser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer'));
 
 $objectuser = new User($db);
 
@@ -520,6 +520,7 @@ if ($resql) {
 		$newcardbutton = '';
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -665,36 +666,49 @@ if ($resql) {
 
 	print "</tr>\n";
 
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+
 	print '<tr class="liste_titre">';
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "d.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['user']['checked'])) {
 		print_liste_field_titre($arrayfields['user']['label'], $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_debut']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_debut']['label'], $_SERVER["PHP_SELF"], "d.date_debut", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_fin']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_fin']['label'], $_SERVER["PHP_SELF"], "d.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_valid']['label'], $_SERVER["PHP_SELF"], "d.date_valid", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_approve']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_approve']['label'], $_SERVER["PHP_SELF"], "d.date_approve", "", $param, 'align="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['d.total_ht']['label'], $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_vat']['checked'])) {
 		print_liste_field_titre($arrayfields['d.total_vat']['label'], $_SERVER["PHP_SELF"], "d.total_tva", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['d.total_ttc']['label'], $_SERVER["PHP_SELF"], "d.total_ttc", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -704,15 +718,19 @@ if ($resql) {
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['d.date_create']['checked'])) {
 		print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.tms']['checked'])) {
 		print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print "</tr>\n";
 
@@ -725,6 +743,7 @@ if ($resql) {
 
 	if ($num > 0) {
 		$i = 0;
+		$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
@@ -751,7 +770,7 @@ if ($resql) {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				// TODO Use a cache on user
@@ -780,6 +799,9 @@ if ($resql) {
 						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 				// Ref
 				if (!empty($arrayfields['d.ref']['checked'])) {
@@ -935,16 +957,18 @@ if ($resql) {
 						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
-				}
-				if (!$i) {
-					$totalarray['nbfield']++;
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 
 				print "</tr>\n";
 			}
-				$total_total_ht = $total_total_ht + $obj->total_ht;
-				$total_total_tva = $total_total_tva + $obj->total_tva;
-				$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+
+			$total_total_ht = $total_total_ht + $obj->total_ht;
+			$total_total_tva = $total_total_tva + $obj->total_tva;
+			$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+
 			$i++;
 		}
 	} else {

@@ -59,7 +59,7 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new StockTransfer($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->stocktransfer->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object).'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('stocktransferlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -82,7 +82,9 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
 }
 
 // Definition of fields for list
@@ -93,7 +95,7 @@ foreach ($object->fields as $key => $val) {
 }
 //var_dump($object->fields);
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
 			$arrayfields["ef.".$key] = array(
@@ -109,9 +111,9 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->stocktransfer->stocktransfer->read;
-$permissiontoadd = $user->rights->stocktransfer->stocktransfer->write;
-$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete;
+$permissiontoread = $user->hasRight('stocktransfer', 'stocktransfer', 'read');
+$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
+$permissiontodelete = $user->hasRight('stocktransfer', 'stocktransfer', 'delete');
 
 // Security check
 if (empty($conf->stocktransfer->enabled)) accessforbidden('Module not enabled');
@@ -191,7 +193,9 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+}
 if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql .= " WHERE 1 = 1";
 foreach ($search as $key => $val) {
@@ -319,7 +323,8 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?action=create', '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -370,10 +375,13 @@ foreach ($object->fields as $key => $val) {
 	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield .= ($cssforfield ? ' ' : '').'right';
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
-		elseif (strpos($val['type'], 'integer:') === 0) {
-			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
-		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (empty($search[$key]) ? '' : $search['$key']), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+		} elseif (strpos($val['type'], 'integer:') === 0) {
+			print $object->showInputField($val, $key, (empty($search[$key]) ? '' : $search['$key']), '', '', 'search_', 'maxwidth150', 1);
+		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(empty($search[$key]) ? '' : $search['$key']).'">';
+		}
 		print '</td>';
 	}
 }
@@ -418,9 +426,11 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) $needToFetchEachLine++; // There is at least one compute field that use $object
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
+			$needToFetchEachLine++; // There is at least one compute field that use $object
+		}
 	}
 }
 
@@ -497,7 +507,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if ($num == 0) {
 	$colspan = 1;
 	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 

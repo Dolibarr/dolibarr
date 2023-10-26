@@ -86,12 +86,13 @@ if ($id > 0 || !empty($ref)) {
 
 	// Check current user can read this salary
 	$canread = 0;
-	if (!empty($user->rights->salaries->readall)) {
+	if ($user->hasRight('salaries', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
+
 	if (!$canread) {
 		accessforbidden();
 	}
@@ -119,13 +120,13 @@ $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && is
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier) {
+if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
 // set label
-if ($action == 'setlabel' && $user->rights->salaries->write) {
+if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
 	$object->update($user);
@@ -166,7 +167,7 @@ if ($object->id) {
 
 	// Label
 	if ($action != 'editlabel') {
-		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
 		$morehtmlref .= $object->label;
 	} else {
 		$morehtmlref .= $langs->trans('Label').' :&nbsp;';

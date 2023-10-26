@@ -3,6 +3,8 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
+ * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
  */
 class Ticket extends CommonObject
 {
+
+	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -75,11 +83,17 @@ class Ticket extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;
+	public $socid;
 
 	/**
 	 * @var int Project ID
 	 */
 	public $fk_project;
+
+	/**
+	 * @var int Contract ID
+	 */
+	public $fk_contract;
 
 	/**
 	 * @var string Person email who have create ticket
@@ -105,6 +119,11 @@ class Ticket extends CommonObject
 	 * @var string Ticket message
 	 */
 	public $message;
+
+	/**
+	 * @var string Private message
+	 */
+	public $private;
 
 	/**
 	 * @var int  Ticket statut
@@ -172,6 +191,11 @@ class Ticket extends CommonObject
 	 * @var int Creation date
 	 */
 	public $datec = '';
+
+	/**
+	 * @var int Last modification date
+	 */
+	public $tms = '';
 
 	/**
 	 * @var int Read date
@@ -244,7 +268,7 @@ class Ticket extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var TicketsLine[] array of TicketsLine
+	 * @var Ticket[] array of Tickets
 	 */
 	public $lines;
 
@@ -308,6 +332,7 @@ class Ticket extends CommonObject
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
 		'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
+		'fk_contract' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'visible'=>-1, 'enabled'=>'$conf->contract->enabled', 'position'=>53, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToContract"),
 		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'csslist'=>'nowraponall'),
 		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
@@ -459,7 +484,8 @@ class Ticket extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
+
 		$error = 0;
 
 		// Clean parameters
@@ -473,12 +499,15 @@ class Ticket extends CommonObject
 		$result = $this->verify();
 
 		if ($result >= 0) {
+			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+
 			// Insert request
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ticket(";
 			$sql .= "ref,";
 			$sql .= "track_id,";
 			$sql .= "fk_soc,";
 			$sql .= "fk_project,";
+			$sql .= "fk_contract,";
 			$sql .= "origin_email,";
 			$sql .= "fk_user_create,";
 			$sql .= "fk_user_assign,";
@@ -504,6 +533,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->track_id) ? 'NULL' : "'".$this->db->escape($this->track_id)."'").",";
 			$sql .= " ".($this->fk_soc > 0 ? $this->db->escape($this->fk_soc) : "null").",";
 			$sql .= " ".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null").",";
+			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
@@ -521,7 +551,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
-			$sql .= ", ".((int) $conf->entity);
+			$sql .= ", ".((int) $this->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
@@ -605,7 +635,7 @@ class Ticket extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_print_error('', get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -616,6 +646,7 @@ class Ticket extends CommonObject
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
 		$sql .= " t.fk_project,";
+		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
@@ -668,6 +699,7 @@ class Ticket extends CommonObject
 				$this->fk_soc = $obj->fk_soc;
 				$this->socid = $obj->fk_soc; // for fetch_thirdparty() method
 				$this->fk_project = $obj->fk_project;
+				$this->fk_contract = $obj->fk_contract;
 				$this->origin_email = $obj->origin_email;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
@@ -722,21 +754,18 @@ class Ticket extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param  User   $user      User for action
-	 * @param  string $sortorder Sort order
-	 * @param  string $sortfield Sort field
-	 * @param  int    $limit     page number
-	 * @param  int    $offset    Offset for query
-	 * @param  int    $arch      archive or not (not used)
-	 * @param  array  $filter    Filter for query
-	 *                           output
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User   $user      	User for action
+	 * @param  string $sortorder 	Sort order
+	 * @param  string $sortfield 	Sort field
+	 * @param  int    $limit     	page number
+	 * @param  int    $offset    	Offset for query
+	 * @param  int    $arch      	archive or not (not used)
+	 * @param  array  $filter    	Filter for query
+	 * @return int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
 	{
-		global $langs;
-
-		$extrafields = new ExtraFields($this->db);
+		global $langs, $extrafields;
 
 		// fetch optionals attributes and labels
 		$extrafields->fetch_name_optionals_label($this->table_element);
@@ -747,12 +776,13 @@ class Ticket extends CommonObject
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
 		$sql .= " t.fk_project,";
+		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
 		$sql .= " t.fk_user_create, uc.lastname as user_create_lastname, uc.firstname as user_create_firstname,";
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
 		$sql .= " t.timing,";
@@ -766,8 +796,10 @@ class Ticket extends CommonObject
 		$sql .= " t.tms";
 		$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
-		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key : '');
+		if ($extrafields->attributes[$this->table_element]['count']> 0) {
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key : '');
+			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
@@ -776,10 +808,12 @@ class Ticket extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid=t.fk_user_create";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid=t.fk_user_assign";
-		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
+		if ($extrafields->attributes[$this->table_element]['count']> 0) {
+			if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
+			}
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -798,12 +832,14 @@ class Ticket extends CommonObject
 					} else {
 						$sql .= " AND ".$key.' = '.((int) $value);
 					}
+				} elseif ($key == 't.fk_contract') {
+					$sql .= " AND ".$key.' = '.((int) $value);
 				} else {
 					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		} elseif ($user->socid) {
 			$sql .= " AND t.fk_soc = ".((int) $user->socid);
@@ -827,27 +863,24 @@ class Ticket extends CommonObject
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
-					$line = new TicketsLine();
+					$line = new self($this->db);
 
 					$line->id = $obj->rowid;
-					$line->rowid = $obj->rowid;
+					//$line->rowid = $obj->rowid;
 					$line->ref = $obj->ref;
 					$line->track_id = $obj->track_id;
 					$line->fk_soc = $obj->fk_soc;
 					$line->fk_project = $obj->fk_project;
+					$line->fk_contract = $obj->fk_contract;
 					$line->origin_email = $obj->origin_email;
 
 					$line->fk_user_create = $obj->fk_user_create;
-					$line->user_create_lastname = $obj->user_create_lastname;
-					$line->user_create_firstname = $obj->user_create_firstname;
-
 					$line->fk_user_assign = $obj->fk_user_assign;
-					$line->user_assign_lastname = $obj->user_assign_lastname;
-					$line->user_assign_firstname = $obj->user_assign_firstname;
 
 					$line->subject = $obj->subject;
 					$line->message = $obj->message;
-					$line->fk_statut = $obj->fk_statut;
+					$line->fk_statut = $obj->status;
+					$line->status = $obj->status;
 					$line->resolution = $obj->resolution;
 					$line->progress = $obj->progress;
 					$line->timing = $obj->timing;
@@ -869,13 +902,14 @@ class Ticket extends CommonObject
 					$line->date_close = $this->db->jdate($obj->date_close);
 
 					// Extra fields
-					if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
-						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-							$tmpkey = 'options_'.$key;
-							$line->{$tmpkey} = $obj->$tmpkey;
+					if ($extrafields->attributes[$this->table_element]['count']> 0) {
+						if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+							foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+								$tmpkey = 'options_'.$key;
+								$line->{$tmpkey} = $obj->$tmpkey;
+							}
 						}
 					}
-
 					$this->lines[$i] = $line;
 					$i++;
 				}
@@ -898,7 +932,6 @@ class Ticket extends CommonObject
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
-		global $conf, $langs, $hookmanager;
 		$error = 0;
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
@@ -921,6 +954,10 @@ class Ticket extends CommonObject
 
 		if (isset($this->fk_project)) {
 			$this->fk_project = (int) $this->fk_project;
+		}
+
+		if (isset($this->fk_contract)) {
+			$this->fk_contract = (int) $this->fk_contract;
 		}
 
 		if (isset($this->origin_email)) {
@@ -984,6 +1021,7 @@ class Ticket extends CommonObject
 		$sql .= " track_id=".(isset($this->track_id) ? "'".$this->db->escape($this->track_id)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->fk_soc) ? "'".$this->db->escape($this->fk_soc)."'" : "null").",";
 		$sql .= " fk_project=".(isset($this->fk_project) ? "'".$this->db->escape($this->fk_project)."'" : "null").",";
+		$sql .= " fk_contract=".(isset($this->fk_contract) ? "'".$this->db->escape($this->fk_contract)."'" : "null").",";
 		$sql .= " origin_email=".(isset($this->origin_email) ? "'".$this->db->escape($this->origin_email)."'" : "null").",";
 		$sql .= " fk_user_create=".(isset($this->fk_user_create) ? $this->fk_user_create : "null").",";
 		$sql .= " fk_user_assign=".(isset($this->fk_user_assign) ? $this->fk_user_assign : "null").",";
@@ -1239,7 +1277,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::load_cache_type_tickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1279,7 +1318,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
-		$sql .= " WHERE active > 0 AND entity = ".((int) $conf->entity);
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
+		$sql .= " AND active > 0";
 		if ($publicgroup > -1) {
 			$sql .= " AND public = ".((int) $publicgroup);
 		}
@@ -1331,7 +1371,8 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
-		$sql .= " WHERE active > 0";
+		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
+		$sql .= " AND active > 0";
 		$sql .= " ORDER BY pos";
 		dol_syslog(get_class($this)."::loadCacheSeveritiesTickets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1364,7 +1405,7 @@ class Ticket extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->libStatut($this->fk_statut, $mode, 0, $this->progress);
+		return $this->LibStatut($this->fk_statut, $mode, 0, $this->progress);
 	}
 
 
@@ -1485,9 +1526,7 @@ class Ticket extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1516,7 +1555,7 @@ class Ticket extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1542,7 +1581,7 @@ class Ticket extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1579,8 +1618,8 @@ class Ticket extends CommonObject
 			dol_syslog(get_class($this)."::markAsRead");
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$this->actionmsg = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
-				$this->actionmsg2 = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+				$this->context['actionmsg'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+				$this->context['actionmsg2'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 
 				if (!$error && !$notrigger) {
 					// Call trigger
@@ -1612,7 +1651,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *    Mark a message as read
+	 *    Set an assigned user to a ticket.
 	 *
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
@@ -1621,8 +1660,6 @@ class Ticket extends CommonObject
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$this->oldcopy = dol_clone($this);
@@ -1677,9 +1714,10 @@ class Ticket extends CommonObject
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
 	 * @param boolean	 $send_email      Whether the message is sent by email
+	 * @param boolean	$public_area	  1=Is the public area
 	 * @return int						  <0 if KO, >0 if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false)
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = false)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -1721,6 +1759,20 @@ class Ticket extends CommonObject
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
 		$actioncomm->fk_project = $this->fk_project;
+
+		// add contact id from author email on public interface
+		if ($public_area && !empty($this->origin_email) && !empty($conf->global->TICKET_ASSIGN_CONTACT_TO_MESSAGE)) {
+			$contacts = $this->searchContactByEmail($this->origin_email);
+			if (!empty($contacts)) {
+				// Ensure that contact is active and select first active contact
+				foreach ($contacts as $contact) {
+					if ((int) $contact->statut == 1) {
+						$actioncomm->contact_id = $contact->id;
+						break;
+					}
+				}
+			}
+		}
 
 		$attachedfiles = array();
 		$attachedfiles['paths'] = $filename_list;
@@ -1764,11 +1816,11 @@ class Ticket extends CommonObject
 
 		// Cache already loaded
 
-		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, label, note as message, code";
+		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, datep, label, note as message, code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 		$sql .= " WHERE fk_element = ".(int) $this->id;
 		$sql .= " AND elementtype = 'ticket'";
-		$sql .= " ORDER BY datec DESC";
+		$sql .= " ORDER BY datep DESC";
 
 		dol_syslog(get_class($this)."::load_cache_actions_ticket", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1783,6 +1835,7 @@ class Ticket extends CommonObject
 					$this->cache_msgs_ticket[$i]['fk_contact_author'] = $obj->email_from;
 				}
 				$this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
+				$this->cache_msgs_ticket[$i]['datep'] = $this->db->jdate($obj->datep);
 				$this->cache_msgs_ticket[$i]['subject'] = $obj->label;
 				$this->cache_msgs_ticket[$i]['message'] = $obj->message;
 				$this->cache_msgs_ticket[$i]['private'] = (preg_match('/^TICKET_MSG_PRIVATE/', $obj->code) ? 1 : 0);
@@ -2037,17 +2090,18 @@ class Ticket extends CommonObject
 	 */
 	public function setContract($contractid)
 	{
-		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setContract was called on objet with property table_element not defined", LOG_ERR);
-			return -1;
-		}
-
-		$result = $this->add_object_linked('contrat', $contractid);
-		if ($result) {
-			$this->fk_contract = $contractid;
-			return 1;
+		if ($this->id) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$sql .= " SET fk_contract = ".($contractid > 0 ? $contractid : "null");
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setContract sql='.$sql);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				return 1;
+			} else {
+				return -1;
+			}
 		} else {
-			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -2522,7 +2576,7 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
-			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email);
+			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email, $public_area);
 			if ($id <= 0) {
 				$error++;
 				$this->error = $object->error;
@@ -2576,9 +2630,9 @@ class Ticket extends CommonObject
 
 						if (empty($sendto)) {
 							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
-								$sendto[$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
+								$sendto[getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
 							} elseif (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-								$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 							}
 						}
 
@@ -2586,12 +2640,13 @@ class Ticket extends CommonObject
 						if (!empty($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) &&
 							!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
 						) {
-							$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 						}
 
 						if (!empty($sendto)) {
-							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
+							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2639,8 +2694,8 @@ class Ticket extends CommonObject
 						$sendto = array();
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// Set default subject
-							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$appli = $label_title;
+							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
 							$subject = GETPOST('subject', 'alphanohtml') ? GETPOST('subject', 'alphanohtml') : '['.$appli.' - '.$langs->trans("Ticket").' #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
@@ -2688,7 +2743,7 @@ class Ticket extends CommonObject
 							// Add global email address recipient
 							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
 								if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-									$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+									$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 								}
 							}
 
@@ -2720,8 +2775,8 @@ class Ticket extends CommonObject
 							$sendto = array();
 							if (is_array($external_contacts) && count($external_contacts) > 0) {
 								// Get default subject for email to external contacts
-								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-								$appli = $mysoc->name;
+								$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
+
 								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$appli.' - '.$langs->trans("Ticket").' #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO');
@@ -2759,7 +2814,7 @@ class Ticket extends CommonObject
 
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
-										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
+										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
 								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
 
 								// Build final message
@@ -2783,7 +2838,7 @@ class Ticket extends CommonObject
 								// Add global email address recipient
 								if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
 									if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-										$sendto[$conf->global->TICKET_NOTIFICATION_EMAIL_TO] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 									}
 								}
 
@@ -2916,26 +2971,25 @@ class Ticket extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param          User	$user   Object user
-	 *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *      @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
+	 *  @param          User	$user   Object user
+	 *  @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
+	 *  @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$now = dol_now();
 		$delay_warning = 0;
 
-		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3001,7 +3055,7 @@ class Ticket extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3058,7 +3112,9 @@ class Ticket extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['user_assignment'])) {
 			$return .= '<br><span class="info-box-label" title="'.dol_escape_htmltag($langs->trans("AssignedTo")).'">'.$arraydata['user_assignment'].'</span>';
 		}
@@ -3074,137 +3130,4 @@ class Ticket extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
-}
-
-
-/**
- * Ticket line Class
- */
-class TicketsLine
-{
-	/**
-	 * @var int ID
-	 * @deprecated use id
-	 */
-	public $rowid;
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var string  $ref    Ticket reference
-	 */
-	public $ref;
-
-	/**
-	 * Hash to identify ticket
-	 */
-	public $track_id;
-
-	/**
-	 * @var int Thirdparty ID
-	 */
-	public $fk_soc;
-
-	/**
-	 * Project ID
-	 */
-	public $fk_project;
-
-	/**
-	 * Person email who have create ticket
-	 */
-	public $origin_email;
-
-	/**
-	 * User id who have create ticket
-	 */
-	public $fk_user_create;
-
-	/**
-	 * User id who have ticket assigned
-	 */
-	public $fk_user_assign;
-
-	/**
-	 * Ticket subject
-	 */
-	public $subject;
-
-	/**
-	 * Ticket message
-	 */
-	public $message;
-
-	/**
-	 * Ticket statut
-	 */
-	public $fk_statut;
-
-	/**
-	 * State resolution
-	 */
-	public $resolution;
-
-	/**
-	 * Progress in percent
-	 */
-	public $progress;
-
-	/**
-	 * Duration for ticket
-	 */
-	public $timing;
-
-	/**
-	 * Type code
-	 */
-	public $type_code;
-
-	/**
-	 * Category code
-	 */
-	public $category_code;
-
-	/**
-	 * Severity code
-	 */
-	public $severity_code;
-
-	/**
-	 * Type label
-	 */
-	public $type_label;
-
-	/**
-	 * Category label
-	 */
-	public $category_label;
-
-	/**
-	 * Severity label
-	 */
-	public $severity_label;
-
-	/**
-	 * Creation date
-	 */
-	public $datec = '';
-
-	/**
-	 * Read date
-	 */
-	public $date_read = '';
-
-	/**
-	 * @var int Last message date
-	 */
-	public $date_last_msg_sent = '';
-
-	/**
-	 * Close ticket date
-	 */
-	public $date_close = '';
 }

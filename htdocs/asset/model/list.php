@@ -121,9 +121,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->read)));
-$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->write)));
-$permissiontodelete = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'delete')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->delete)));
+$permissiontoread = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')));
+$permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write')));
+$permissiontodelete = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'delete')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'delete')));
 
 // Security check
 if (!isModEnabled('asset')) {
@@ -340,7 +340,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/asset/model/card.php?id='.$id);
@@ -410,7 +410,8 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/asset/model/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/asset/model/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -540,7 +541,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}

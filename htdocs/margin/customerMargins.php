@@ -125,7 +125,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print img_picto('', 'company').$form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+	print img_picto('', 'company').$form->select_company(null, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -231,14 +231,14 @@ if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
 }
 
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
@@ -261,7 +261,7 @@ if (!empty($enddate)) {
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 // We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 // We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($client) {
@@ -305,7 +305,7 @@ if ($result) {
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
-	if ($conf->global->MARGIN_TYPE == "1") {
+	if (getDolGlobalString('MARGIN_TYPE') == "1") {
 		$labelcostprice = 'BuyingPrice';
 	} else { // value is 'costprice' or 'pmp'
 		$labelcostprice = 'CostPrice';

@@ -301,6 +301,11 @@ class ActionComm extends CommonObject
 	public $elementtype;
 
 	/**
+	 * @var int id of availability
+	 */
+	public $fk_bookcal_availability;
+
+	/**
 	 * @var string Ical name
 	 */
 	public $icalname;
@@ -539,6 +544,7 @@ class ActionComm extends CommonObject
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
+		$sql .= "fk_bookcal_availability,";
 		$sql .= "entity,";
 		$sql .= "extraparams,";
 		// Fields emails
@@ -581,6 +587,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
 		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
+		$sql .= (!empty($this->fk_bookcal_availability) ? "'".$this->db->escape($this->fk_bookcal_availability)."'" : "null").", ";
 		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
 		// Fields emails
@@ -647,7 +654,7 @@ class ActionComm extends CommonObject
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
 					foreach ($this->socpeopleassigned as $id => $val) {
-						// Common value with new behavior is to have $val = iduser and $this->socpeopleassigned is an array of iduser => $val.
+						// Common value with new behavior is to have $this->socpeopleassigned an array of idcontact => dummyvalue
 						if (!empty($already_inserted[$id])) {
 							continue;
 						}
@@ -844,7 +851,6 @@ class ActionComm extends CommonObject
 				/*$transcode = $langs->trans("Action".$obj->type_code);
 				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label); */
 				$transcode = $langs->trans("Action".$obj->type_code.'Short');
-				$this->type_short = (($transcode != "Action".$obj->type_code.'Short') ? $transcode : '');
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
@@ -1315,7 +1321,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
 	 *  @param		string	$limit			Limit number of answers
-	 *  @return		array|string			Error string if KO, array with actions if OK
+	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
@@ -1328,7 +1334,7 @@ class ActionComm extends CommonObject
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
+			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('agendadao'));
 
@@ -1404,10 +1410,10 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
 		$sql .= " WHERE 1 = 1";
@@ -1415,13 +1421,13 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($user->socid) {
 			$sql .= " AND a.fk_soc = ".((int) $user->socid);
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
@@ -1490,7 +1496,9 @@ class ActionComm extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->id;
+
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_mod;
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -1669,10 +1677,10 @@ class ActionComm extends CommonObject
 		if ($user->hasRight('agenda', 'myactions', 'read') && ($this->authorid == $user->id || $this->userownerid == $user->id)) {
 			$canread = 1; // Can read my event
 		}
-		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
+		if ($user->hasRight('agenda', 'myactions', 'read') && array_key_exists($user->id, $this->userassigned)) {
 			$canread = 1; // Can read my event i am assigned
 		}
-		if (!empty($user->rights->agenda->allactions->read)) {
+		if ($user->hasRight('agenda', 'allactions', 'read')) {
 			$canread = 1; // Can read all event of other
 		}
 		if (!$canread) {
@@ -1718,8 +1726,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br>';
 			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
 			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
-			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
-			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_from) ? $this->email_from : '');
+			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_to) ? $this->email_to : '');
 			if (!empty($this->email_tocc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
@@ -1730,7 +1738,7 @@ class ActionComm extends CommonObject
 		}
 		if (!empty($this->note_private)) {
 			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
-			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);	// Try to limit length of content
+			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
 			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 			$tooltip .= '</div>';
@@ -1751,13 +1759,12 @@ class ActionComm extends CommonObject
 		}
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
-
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($tooltip ? ' title="'.dol_escape_htmltag($tooltip, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
@@ -1775,7 +1782,7 @@ class ActionComm extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1818,7 +1825,7 @@ class ActionComm extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : ' class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		$result .= dol_escape_htmltag($labelshort);
 		$result .= $linkend;
@@ -1839,9 +1846,11 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return Picto of type of event
 	 *
+	 *  @param	string		$morecss			More CSS
+	 *  @param	string		$titlealt			Title alt
 	 *  @return	string							HTML String
 	 */
-	public function getTypePicto()
+	public function getTypePicto($morecss = 'pictofixedwidth paddingright', $titlealt = '')
 	{
 		global $conf;
 
@@ -1852,34 +1861,35 @@ class ActionComm extends CommonObject
 				$color = 'style="color: #'.$this->type_color.' !important;"';
 			}
 			if ($this->type_picto) {
-				$imgpicto = img_picto('', $this->type_picto, 'class="paddingright"');
+				$imgpicto = img_picto($titlealt, $this->type_picto, '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
 				if ($this->type_code == 'AC_RDV') {
-					$imgpicto = img_picto('', 'meeting', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'meeting', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_TEL') {
-					$imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_phoning', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_FAX') {
-					$imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
-					$imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_email', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_INT') {
-					$imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_intervention', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
-					$imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_conversation', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type != 'systemauto') {
-					$imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'user-cog', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} else {
-					$imgpicto = img_picto('', 'cog', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'cog', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				}
 			}
 		} else {
 			// 2 picto: 1 for auto, 1 for manual
 			if ($this->type != 'systemauto') {
-				$imgpicto = img_picto('', 'user-cog', '', false, 0, 0, '', 'paddingright');
+				$imgpicto = img_picto($titlealt, 'user-cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
-				$imgpicto = img_picto('', 'cog', '', false, 0, 0, '', 'paddingright');
+				$imgpicto = img_picto($titlealt, 'cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			}
 		}
+
 		return $imgpicto;
 	}
 
@@ -2196,12 +2206,12 @@ class ActionComm extends CommonObject
 						$obj   = $this->db->fetch_object($resql);
 						$event = array();
 
-						if ($obj->halfday == -1) {
+						if ($obj->halfday == 1) {
 							$event['fulldayevent'] = false;
 
 							$timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
 							$timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
-						} elseif ($obj->halfday == 1) {
+						} elseif ($obj->halfday == -1) {
 							$event['fulldayevent'] = false;
 
 							$timestampStart = dol_stringtotime($obj->date_start." 12:00:00", 0);

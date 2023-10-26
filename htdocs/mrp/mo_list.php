@@ -433,6 +433,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/mrp/mo_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -541,6 +542,9 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
 
 // Fields title label
 // --------------------------------------------------------------------
@@ -548,6 +552,7 @@ print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
@@ -564,6 +569,7 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+		$totalarray['nbfield']++;
 	}
 }
 // Extra fields
@@ -575,6 +581,7 @@ print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
@@ -583,17 +590,20 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
 }
 
 
+$bom = new BOM($db);
+$product = new Product($db);
+
 // Loop on record
 // --------------------------------------------------------------------
-$bom = new Bom($db);
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -609,16 +619,28 @@ while ($i < $imaxinloop) {
 	//mode Kanban
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="12">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		$object->id = $obj->type_id;
 
 		// TODO Use a cache on BOM
-		$objectBom = $bom->fetch($obj->fk_bom);
+		if ($obj->fk_bom > 0) {
+			$bom->fetch($obj->fk_bom);
+		}
+		if ($obj->fk_product > 0) {
+			$product->fetch($obj->fk_product);
+		}
 
 		// Output Kanban
-		print $object->getKanbanView('', array('bom'=>$objectBom->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('bom'=>($obj->fk_bom > 0 ? $bom : null), 'product'=>($obj->fk_product > 0 ? $product: null), 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -727,7 +749,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 

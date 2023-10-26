@@ -100,14 +100,14 @@ $total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if (empty($user->rights->fournisseur->lire)) {
+if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 // Add where from hooks
@@ -151,16 +151,16 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
 	$dataseries = array();
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
-		$dataseries[] = array($langs->trans("Prospects"), round($third['prospect']));
+		$dataseries[] = array($langs->transnoentitiesnoconv("Prospects"), round($third['prospect']));
 	}
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
-		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
+		$dataseries[] = array($langs->transnoentitiesnoconv("Customers"), round($third['customer']));
 	}
 	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
-		$dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
+		$dataseries[] = array($langs->transnoentitiesnoconv("Suppliers"), round($third['supplier']));
 	}
 	if (isModEnabled('societe')) {
-		$dataseries[] = array($langs->trans("Others"), round($third['other']));
+		$dataseries[] = array($langs->transnoentitiesnoconv("Others"), round($third['other']));
 	}
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
@@ -290,14 +290,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if (empty($user->rights->fournisseur->lire)) {
+if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
 // Add where from hooks

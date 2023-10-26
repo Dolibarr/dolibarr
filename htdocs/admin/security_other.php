@@ -126,7 +126,7 @@ if (function_exists("imagecreatefrompng")) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
 	} else {
-		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -145,7 +145,7 @@ print '<td class="right">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 } else {
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -168,7 +168,7 @@ print "</tr>\n";
 
 
 $sessiontimeout = ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 }
 print '<tr class="oddeven">';
@@ -205,6 +205,14 @@ print '<td>'.$langs->trans("MaxNumberOfAttachementOnForms").'</td><td class="rig
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat right width50" name="MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).'"> '.strtolower($langs->trans("Files"));
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("MaxNumberOfFailedAuth").'</td><td class="right">';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100).'"> '.$langs->trans("FailedAuth");
 print '</td>';
 print '</tr>';
 

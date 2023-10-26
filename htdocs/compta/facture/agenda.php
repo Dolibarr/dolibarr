@@ -222,7 +222,7 @@ if ($object->id > 0) {
 	}
 
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
 		$param = '&id='.$object->id.(!empty($socid) ? '&socid='.$socid : '');

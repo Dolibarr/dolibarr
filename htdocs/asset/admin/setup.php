@@ -236,10 +236,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -247,7 +247,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -373,10 +373,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
@@ -514,7 +514,7 @@ if ($action == 'edit') {
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname);
 			} elseif ($val['type'] == 'securekey') {
-				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
 				if (!empty($conf->use_javascript_ajax)) {
 					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 				}
@@ -560,7 +560,7 @@ if ($action == 'edit') {
 					print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
 				}
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($constname).'">';
 			}
 			print '</td></tr>';
 		}

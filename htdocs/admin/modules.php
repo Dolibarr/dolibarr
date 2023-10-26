@@ -50,7 +50,7 @@ if (GETPOSTISSET('mode')) {
 	if ($mode =='common' || $mode =='commonkanban')
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 } else {
-	$mode = (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
+	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -112,6 +112,14 @@ $urldolibarrmodules = 'https://www.dolistore.com/';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
+
+// Execution Time
+$max_execution_time_for_deploy = (!getDolGlobalString('MODULE_UPLOAD_MAX_EXECUTION_TIME') ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_time = @ini_get("max_execution_time");
+if ($max_time && $max_time < $max_execution_time_for_deploy) {
+	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
+	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
+}
 
 
 /*
@@ -266,7 +274,7 @@ if ($action == 'set' && $user->admin) {
 	if ($csrfCheckOldValue != getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) {
 		setEventMessage($langs->trans('WarningModuleHasChangedSecurityCsrfParameter', $value), 'warnings');
 	}
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
@@ -290,7 +298,7 @@ if ($action == 'set' && $user->admin) {
 	exit;
 } elseif ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes') {
 	$result = unActivateModule($value);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 	}
@@ -396,13 +404,13 @@ foreach ($modulesdir as $dir) {
 
 							// We discard modules according to features level (PS: if module is activated we always show it)
 							$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-							if ($objMod->version == 'development' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
+							if ($objMod->version == 'development' && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
 								$modulequalified = 0;
 							}
-							if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
+							if ($objMod->version == 'experimental' && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
 								$modulequalified = 0;
 							}
-							if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
+							if (preg_match('/deprecated/', $objMod->version) && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 0))) {
 								$modulequalified = 0;
 							}
 
@@ -540,7 +548,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = str_replace('{picto}', img_picto('', 'switch_off', 'class="size15x"'), $desc);
 	$desc = str_replace('{picto2}', img_picto('', 'setup', 'class="size15x"'), $desc);
 	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
-		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
+	}
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
+		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
+	}
+	if ($deschelp) {
+		$deschelp .= '<br>';
 	}
 }
 if ($mode == 'marketplace') {
@@ -704,10 +718,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 		if ($search_status) {
-			if ($search_status == 'active' && empty($conf->global->$const_name)) {
+			if ($search_status == 'active' && !getDolGlobalString($const_name)) {
 				continue;
 			}
-			if ($search_status == 'disabled' && !empty($conf->global->$const_name)) {
+			if ($search_status == 'disabled' && getDolGlobalString($const_name)) {
 				continue;
 			}
 		}
@@ -804,7 +818,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				$action == 'checklastversion'
 				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
 				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
-				|| !empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
 			)
 		) {
 			$checkRes = $objMod->checkForUpdate();
@@ -972,12 +986,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print $objMod->getKanbanView($codeenabledisable, $codetoconfig);
 		} else {
 			print '<tr class="oddeven'.($warningstring ? ' info-box-content-warning' : '').'">'."\n";
-			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
+			if (getDolGlobalString('MAIN_MODULES_SHOW_LINENUMBERS')) {
 				print '<td class="width50">'.$linenum.'</td>';
 			}
 
 			// Picto + Name of module
-			print '  <td class="tdoverflowmax300 maxwidth300" title="'.dol_escape_htmltag($objMod->getName()).'">';
+			print '  <td class="tdoverflowmax200 minwidth200imp" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			$alttext = '';
 			//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
@@ -994,18 +1008,18 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Desc
-			print '<td class="valignmiddle tdoverflowmax300">';
+			print '<td class="valignmiddle tdoverflowmax300 minwidth200imp">';
 			print nl2br($objMod->getDesc());
 			print "</td>\n";
 
 			// Help
 			print '<td class="center nowrap" style="width: 82px;">';
 			//print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
-			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 			print '</td>';
 
 			// Version
-			print '<td class="center nowrap" width="150px" title="'.dol_escape_htmltag(dol_string_nohtmltag($versiontrans)).'">';
+			print '<td class="center nowrap width150" title="'.dol_escape_htmltag(dol_string_nohtmltag($versiontrans)).'">';
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
@@ -1015,7 +1029,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</td>\n";
 
 			// Link enable/disable
-			print '<td class="center valignmiddle left" width="60px">';
+			print '<td class="center valignmiddle left nowraponall" width="60px">';
 			print $codeenabledisable;
 			print "</td>\n";
 
@@ -1092,7 +1106,7 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
 		// $options is array with filter criterias
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
@@ -1143,7 +1157,6 @@ if ($mode == 'marketplace') {
 					</tbody>
 				</table>
 			</div>
-
 		<?php
 	}
 }
@@ -1299,7 +1312,7 @@ if ($mode == 'deploy') {
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button">';
 
-			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				if ($user->admin) {
 					$langs->load('other');
 					print ' ';

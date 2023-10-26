@@ -138,9 +138,9 @@ if ($id > 0 || !empty($ref)) {
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->recruitment->recruitmentjobposition->read;
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
-$permissiontodelete = $user->rights->recruitment->recruitmentjobposition->delete;
+$permissiontoread = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write');
+$permissiontodelete = $user->hasRight('recruitment', 'recruitmentjobposition', 'delete');
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -632,7 +632,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -692,7 +692,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
@@ -719,7 +719,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if ($val && preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -744,7 +744,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// TODO Use a cache for $recruitment
@@ -752,11 +752,16 @@ while ($i < $imaxinloop) {
 		$recruitment->fetch($obj->fk_recruitmentjobposition);
 
 		$object->phone = $obj->phone;
-		if ($massactionbutton || $massaction) {
-			$selected = 0;
-		}
+
 		// Output Kanban
-		print $object->getKanbanView('', array('jobpositionlink'=>$recruitment->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('jobpositionlink'=>$recruitment->getNomUrl(1), 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

@@ -104,6 +104,7 @@ print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br
 
 print '<br>';
 
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Key").'</td>';
@@ -126,7 +127,7 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_AUTHORITY_URL">';
 	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
-	print '<input type="text" name="BLOCKEDLOG_AUTHORITY_URL" value="'.$conf->global->BLOCKEDLOG_AUTHORITY_URL.'" size="40" />';
+	print '<input type="text" name="BLOCKEDLOG_AUTHORITY_URL" value="' . getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL').'" size="40" />';
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 
@@ -176,6 +177,7 @@ print '</td></tr>';
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 if ($withtab) {
 	print dol_get_fiche_end();

@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last invoices
+ * Class to manage the box to show invoices per year graph
  */
 class box_graph_invoices_peryear extends ModeleBoxes
 {
-	public $boxcode = "invoicesperyear";
-	public $boximg = "object_bill";
+	public $boxcode  = "invoicesperyear";
+	public $boximg   = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerYear";
-	public $depends = array("facture");
+	public $depends  = array("facture");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -54,7 +54,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->facture->lire);
+		$this->hidden = !$user->hasRight('facture', 'lire');
 	}
 
 	/**
@@ -93,7 +93,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		$prefix = '';
 		$socid = 0;
 		if ($user->socid) $socid = $user->socid;
-		if (empty($user->rights->societe->client->voir) || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		if (!$user->hasRight('societe', 'client', 'voir') || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 
 		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';

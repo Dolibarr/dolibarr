@@ -262,7 +262,7 @@ print '</div>';
 
 print '<br>';
 
-if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
+if (getDolGlobalString('MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION')) {
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setapilayer">';
@@ -283,13 +283,13 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
 	print '<tr class="oddeven">';
 	print '<td class="fieldrequired"><a target="_blank" rel="noopener noreferrer external" href="'.$urlforapilayer.'">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
 	print '<td class="right">';
-	print '<input type="text" name="MULTICURRENCY_APP_ID" value="'.$conf->global->MULTICURRENCY_APP_ID.'" size="28" />&nbsp;';
+	print '<input type="text" name="MULTICURRENCY_APP_ID" value="' . getDolGlobalString('MULTICURRENCY_APP_ID').'" size="28" />&nbsp;';
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
 	print '<td class="right">';
-	print '<input type="text" name="MULTICURRENCY_APP_SOURCE" value="'.$conf->global->MULTICURRENCY_APP_SOURCE.'" size="10" placeholder="USD" />&nbsp;'; // Default: USD
+	print '<input type="text" name="MULTICURRENCY_APP_SOURCE" value="' . getDolGlobalString('MULTICURRENCY_APP_SOURCE').'" size="10" placeholder="USD" />&nbsp;'; // Default: USD
 	print '</form>';
 	print '</td></tr>';
 

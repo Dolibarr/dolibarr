@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
@@ -72,9 +73,9 @@ $extrafields = new ExtraFields($db);
 $adherent = new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {
-	$hookmanager->initHooks(array('thirdpartypartnership'));
+	$hookmanager->initHooks(array('thirdpartypartnership', 'globalcard'));
 } elseif ($memberid > 0) {
-	$hookmanager->initHooks(array('memberpartnership'));
+	$hookmanager->initHooks(array('memberpartnership', 'globalcard'));
 } else {
 	$hookmanager->initHooks(array('partnershiplist')); // Note that conf->hooks_modules contains array
 }
@@ -286,6 +287,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$companystatic = new Societe($db);
 
 $now = dol_now();
 
@@ -740,7 +742,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -807,7 +809,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
@@ -840,7 +842,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if ($val && preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -863,13 +865,33 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
+	$object->thirdparty = null;
+	if ($obj->fk_soc > 0) {
+		if (!empty($conf->cache['thirdparty'][$obj->fk_soc])) {
+			$companyobj = $conf->cache['thirdparty'][$obj->fk_soc];
+		} else {
+			$companyobj = new Societe($db);
+			$companyobj->fetch($obj->fk_soc);
+			$conf->cache['thirdparty'][$obj->fk_soc] = $companyobj;
+		}
+
+		$object->thirdparty = $companyobj;
+	}
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('thirdparty'=>$object->thirdparty, 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -914,7 +936,7 @@ while ($i < $imaxinloop) {
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
+				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
 					print ' title="'.dol_escape_htmltag($object->$key).'"';
 				}
 				print '>';

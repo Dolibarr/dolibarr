@@ -105,7 +105,7 @@ class Mo extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200', 'alwayseditable'=>1),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'$conf->stock->enabled', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'isModEnabled("stock")', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
@@ -149,8 +149,16 @@ class Mo extends CommonObject
 	 */
 	public $date_creation;
 
+	/**
+	 * @var integer|string date_validation
+	 */
+	public $date_valid;
 
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $tms;
+
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -176,7 +184,6 @@ class Mo extends CommonObject
 	 */
 	public $date_end_planned;
 
-
 	/**
 	 * @var int ID bom
 	 */
@@ -191,6 +198,13 @@ class Mo extends CommonObject
 	 * @var int ID project
 	 */
 	public $fk_project;
+
+	/**
+	 * @var double	New quantity. When we update the quantity to produce, we set this to save old value before calling the ->update that call the updateProduction that need this
+	 * 				to recalculate all the quantities in lines to consume and produce.
+	 */
+	public $oldQty;
+
 
 	// If this object has a subtable with lines
 
@@ -238,6 +252,7 @@ class Mo extends CommonObject
 	 * @var array tpl
 	 */
 	public $tpl = array();
+
 
 	/**
 	 * Constructor
@@ -626,8 +641,6 @@ class Mo extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		global $langs;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -686,7 +699,7 @@ class Mo extends CommonObject
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
+				$bom = new BOM($this->db);
 				$bom->fetch($this->fk_bom);
 				if ($bom->bomtype == 1) {
 					$role = 'toproduce';
@@ -763,7 +776,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Update quantities in lines to consume and to produce.
+	 * Update quantities in lines to consume and/or lines to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -791,7 +804,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
 							$res = $moLine->update($user);
 							if (!$res) $error++;
 						}
@@ -813,14 +826,37 @@ class Mo extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param	User	$user										User that deletes
+	 * @param	bool	$notrigger									false=launch triggers after, true=disable triggers
+	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
+	 * @return	int													<0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
+		$error = 0;
+		$this->db->begin();
+
+		if ($also_cancel_consumed_and_produced_lines) {
+			$result = $this->cancelConsumedAndProducedLines($user, 0, false, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteCommon($user, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
@@ -834,7 +870,7 @@ class Mo extends CommonObject
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
 		global $langs;
-		$langs->load('stocks');
+		$langs->loadLangs(array('stocks', 'mrp'));
 
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -924,7 +960,7 @@ class Mo extends CommonObject
 		if (!empty($conf->global->MRP_MO_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->MRP_MO_ADDON.".php";
+			$file = getDolGlobalString('MRP_MO_ADDON') . ".php";
 			$classname = $conf->global->MRP_MO_ADDON;
 
 			// Include file with class
@@ -1103,11 +1139,12 @@ class Mo extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User	$user										Object user that modify
+	 *  @param	int		$notrigger									1=Does not execute triggers, 0=Execute triggers
+	 *  @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
+	 *	@return	int													<0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function cancel($user, $notrigger = 0)
+	public function cancel($user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
 		// Protection
 		if ($this->status != self::STATUS_VALIDATED && $this->status != self::STATUS_INPROGRESS) {
@@ -1121,7 +1158,30 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
+		$error = 0;
+		$this->db->begin();
+
+		if ($also_cancel_consumed_and_produced_lines) {
+			$result = $this->cancelConsumedAndProducedLines($user, 0, true, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$result = $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
@@ -1146,6 +1206,115 @@ class Mo extends CommonObject
 		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MRP_MO_REOPEN');
+	}
+
+	/**
+	 *	Cancel consumed and produced lines (movement stocks)
+	 *
+	 *	@param	User	$user					Object user that modify
+	 *  @param  bool	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
+	 *  @param  bool	$also_delete_lines  	true if the consumed/produced lines is deleted (false by default)
+	 *  @param	int		$notrigger				1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int								<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancelConsumedAndProducedLines($user, $mode = 0, $also_delete_lines = false, $notrigger = 0)
+	{
+		global $langs;
+
+		if (!isModEnabled('stock')) {
+			return 1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
+		$error = 0;
+		$langs->load('stocks');
+
+		$this->db->begin();
+
+		// Cancel consumed lines
+		if (empty($mode) || $mode == 1) {
+			$arrayoflines = $this->fetchLinesLinked('consumed');
+			if (!empty($arrayoflines)) {
+				foreach ($arrayoflines as $key => $lineDetails) {
+					$productstatic = new Product($this->db);
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockIncrease");
+
+					$stockmove = new MouvementStock($this->db);
+					$stockmove->setOrigin($this->element, $this->id);
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error = $stockmove->error;
+						$this->errors = $stockmove->errors;
+						$error++;
+						break;
+					}
+
+					if ($also_delete_lines) {
+						$result = $this->deleteLineCommon($user, $lineDetails['rowid'], $notrigger);
+						if ($result < 0) {
+							$error++;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Cancel produced lines
+		if (empty($mode) || $mode == 2) {
+			$arrayoflines = $this->fetchLinesLinked('produced');
+			if (!empty($arrayoflines)) {
+				foreach ($arrayoflines as $key => $lineDetails) {
+					$productstatic = new Product($this->db);
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockDecrease");
+
+					$stockmove = new MouvementStock($this->db);
+					$stockmove->setOrigin($this->element, $this->id);
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error = $stockmove->error;
+						$this->errors = $stockmove->errors;
+						$error++;
+						break;
+					}
+
+					if ($also_delete_lines) {
+						$result = $this->deleteLineCommon($user, $lineDetails['rowid'], $notrigger);
+						if ($result < 0) {
+							$error++;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
@@ -1237,7 +1406,7 @@ class Mo extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1355,6 +1524,7 @@ class Mo extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1702,9 +1872,14 @@ class Mo extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_bom')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->fk_bom.'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (!empty($arraydata['bom'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['bom']->getNomUrl(1).'</span>';
+		}
+		if (!empty($arraydata['product'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'qty')) {
 			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';

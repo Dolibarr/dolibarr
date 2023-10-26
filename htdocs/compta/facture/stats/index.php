@@ -44,10 +44,10 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
-if ($mode == 'customer' && !$user->rights->facture->lire) {
+if ($mode == 'customer' && !$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && empty($user->rights->fournisseur->facture->lire)) {
+if ($mode == 'supplier' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 	accessforbidden();
 }
 
@@ -193,7 +193,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';

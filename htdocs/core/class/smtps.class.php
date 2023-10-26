@@ -495,14 +495,14 @@ class SMTPs
 			if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 				$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-			} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 1) {
+			} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 1) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 				// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
 				$hosth = $this->getFrom('addr');
 				$hosth = preg_replace('/^.*</', '', $hosth);
 				$hosth = preg_replace('/>.*$/', '', $hosth);
 				$hosth = preg_replace('/.*@/', '', $hosth);
-			} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 2) {
+			} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 2) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 2, we use the domain in the $dolibarr_main_url_root.
 				global $dolibarr_main_url_root;
 				$hosth = getDomainFromURL($dolibarr_main_url_root, 1);
@@ -653,6 +653,7 @@ class SMTPs
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		/**
 		 * Default return value
 		 */
@@ -684,14 +685,14 @@ class SMTPs
 					if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 						$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-					} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 1) {
+					} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 1) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 						// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
 						$hosth = $this->getFrom('addr');
 						$hosth = preg_replace('/^.*</', '', $hosth);
 						$hosth = preg_replace('/>.*$/', '', $hosth);
 						$hosth = preg_replace('/.*@/', '', $hosth);
-					} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 2) {
+					} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 2) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 2, we use the domain in the $dolibarr_main_url_root.
 						global $dolibarr_main_url_root;
 						$hosth = getDomainFromURL($dolibarr_main_url_root, 1);

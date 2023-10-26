@@ -73,6 +73,8 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 $emailcompany = GETPOST("emailcompany");
 $note_public = GETPOST('note_public', "restricthtml");
+$firstname = GETPOST('firstname');
+$lastname = GETPOST('lastname');
 
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
@@ -195,7 +197,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE)) {
 		print '<div class="backimagepubliceventorganizationsubscription">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE.'">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE').'">';
 		print '</div>';
 	}
 
@@ -286,6 +288,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
 			$confattendee->note_public = $note_public;
+			$confattendee->firstname = $firstname;
+			$confattendee->lastname = $lastname;
 
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
@@ -332,7 +336,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 		// If the registration has already been paid for this attendee
 		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'master');
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'master');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorded", $email);
@@ -599,7 +603,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode($sourcetouse).'&ref='.urlencode($reftouse);
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-						$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
 					} else {
 						$redirection .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 					}
@@ -660,7 +664,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			Header("Location: ".$redirection);
@@ -796,6 +800,14 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		</script>';
 
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
+
+		// Firstname
+		print '<tr><td><span class="fieldrequired">' . $langs->trans("Firstname") . '</span></td><td>';
+		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required></td></tr>' . "\n";
+
+		// Lastname
+		print '<tr><td><span class="fieldrequired">' . $langs->trans("Lastname") . '</span></td><td>';
+		print '<input type="text" name="lastname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($lastname) . '" required></td></tr>' . "\n";
 
 		// Email
 		print '<tr><td><span class="fieldrequired">' . $langs->trans("EmailAttendee") . '</span></td><td>';

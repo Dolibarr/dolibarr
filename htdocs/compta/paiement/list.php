@@ -205,11 +205,11 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid > 0) {
@@ -416,7 +416,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 // Filter: Payment type
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1, 1, 1, '', 1);
+	print $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 	print '</td>';
 }
 
