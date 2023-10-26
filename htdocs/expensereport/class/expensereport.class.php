@@ -844,28 +844,11 @@ class ExpenseReport extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approbation = $this->db->jdate($obj->datea);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_creation) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creation);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-				if ($obj->fk_user_modification) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
-				if ($obj->fk_user_approve) {
-					$auser = new User($this->db);
-					$auser->fetch($obj->fk_user_approve);
-					$this->user_approve = $auser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_creation;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
+				$this->user_approve_id = $obj->fk_user_approve;
 			}
 			$this->db->free($resql);
 		} else {

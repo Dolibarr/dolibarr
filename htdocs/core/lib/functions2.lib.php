@@ -259,7 +259,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
+			$userstatic->fetch($object->user_creation_id);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -314,7 +314,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
+			$userstatic->fetch($object->user_modification_id);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
