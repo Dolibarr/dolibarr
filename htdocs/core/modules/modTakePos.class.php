@@ -25,6 +25,7 @@
  *  \brief      Description and activation file for the module TakePos
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -266,9 +267,54 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db;
+		global $conf, $db, $langs, $user;
+		$langs->load("cashdesk");
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+		
+		//Default customer for Point of sale
+		if (empty(getDolGlobalInt('CASHDESK_ID_THIRDPARTY1'))) {
+			$societe = new Societe($db);
+
+			$societe->name = $langs->trans("DefaultPOSThirdLabel");
+			$societe->client = 1;
+			$societe->note_private = "Default customer automaticaly created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer."
+				
+			$result = $societe->create($user);
+			if ($result > 0) {
+				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $result, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($societe->error, $societe->errors, 'errors');
+			}
+		}
+		
+		//Create category if not exists
+		$categories = new Categorie($this->db);
+		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
+		if (is_array($cate_arbo)) {
+			if (!count($cate_arbo)) {
+				$category = new Categorie($db);
+				
+				$category->label = $langs->trans("DefaultPOSCatLabel");
+				$category->type = Categorie::TYPE_PRODUCT;
+				
+				$result = $category->create($user);
+
+				if ($result > 0) {
+					/* TODO Create a generic product only if there is no product in category $result yet */
+					/*
+					$product = new Product($db);
+					$product->status = 1;
+					$product->ref = "takepos";
+					$product->label = $langs->trans("DefaultPOSProductLabel");
+					$product->create($user);
+					$product->setCategories($result);
+	 				*/
+				} else {
+					setEventMessages($category->error, $category->errors, 'errors');
+				}
+			}
+		}
 
 		$result = $this->_load_tables('/install/mysql/', 'takepos');
 		if ($result < 0) {
