@@ -167,29 +167,29 @@ print '</tr>';
 // Menu top
 print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 print '<td>';
-$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? $conf->global->MAIN_MENU_STANDARD : $conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? '' : ' disabled');
+$formadmin->select_menu(!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? $conf->global->MAIN_MENU_STANDARD : $conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? '' : ' disabled');
 print '</td>';
 print '<td>';
-$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? $conf->global->MAIN_MENUFRONT_STANDARD : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? '' : ' disabled');
+$formadmin->select_menu(!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? $conf->global->MAIN_MENUFRONT_STANDARD : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? '' : ' disabled');
 print '</td>';
 print '</tr>';
 
 // Menu smartphone
 print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 print '<td>';
-$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) ? $conf->global->MAIN_MENU_SMARTPHONE : $conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) ? '' : ' disabled');
+$formadmin->select_menu(!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? $conf->global->MAIN_MENU_SMARTPHONE : $conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
 
-if (!empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && !empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE))) {
+if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
+	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
 
 print '</td>';
 print '<td>';
-$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) ? $conf->global->MAIN_MENUFRONT_SMARTPHONE : $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) ? '' : ' disabled');
+$formadmin->select_menu(!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? $conf->global->MAIN_MENUFRONT_SMARTPHONE : $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
 
-if (!empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && !empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE))) {
+if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
 

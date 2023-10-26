@@ -18,5 +18,5 @@ composer install
 ##### To make changes on a given directory
 
 ```shell
-./vendor/bin/rector process [--dry-run] ../../../htdocs/core/
+./vendor/bin/rector process [--dry-run] [--clear-cache] ../../../htdocs/core/
 ```

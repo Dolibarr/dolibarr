@@ -321,12 +321,17 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 	$fullpath = $conf->stock->dir_temp."/".$user->id.'-csvfiletotimport.csv';
-	if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
+	$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
+	if (is_numeric($resultupload) && $resultupload > 0) {
 		dol_syslog("File ".$fullpath." was added for import");
 	} else {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		if ($resultupload === 'ErrorDirNotWritable') {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile").' - '.$langs->trans($resultupload, $fullpath), null, 'errors');
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		}
 	}
 
 	if (!$error) {

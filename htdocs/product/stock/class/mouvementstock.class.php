@@ -175,9 +175,10 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
+	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
 	 *	@return		int									<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
-	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0)
+	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -559,7 +560,7 @@ class MouvementStock extends CommonObject
 			}
 
 			// Update detail of stock for the lot.
-			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && (($product->hasbatch() && !$skip_batch) || $force_update_batch)) {
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch

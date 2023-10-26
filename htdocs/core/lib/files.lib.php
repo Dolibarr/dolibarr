@@ -1558,7 +1558,8 @@ function dol_delete_preview($object)
 	}
 
 	if (empty($dir)) {
-		return 'ErrorObjectNoSupportedByFunction';
+		$object->error = $langs->trans('ErrorObjectNoSupportedByFunction');
+		return 0;
 	}
 
 	$refsan = dol_sanitizeFileName($object->ref);
