@@ -272,17 +272,22 @@ class modTakePos extends DolibarrModules
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
 
-		//Default customer for Point of sale
-		if (empty(getDolGlobalInt('CASHDESK_ID_THIRDPARTY1'))) {
+		// Default customer for Point of sale
+		if (!getDolGlobalInt('CASHDESK_ID_THIRDPARTY1')) {	// If a customer has already ben set into the TakePos setup page
 			$societe = new Societe($db);
+			$nametouse = $langs->trans("DefaultPOSThirdLabel");
 
-			$societe->name = $langs->trans("DefaultPOSThirdLabel");
-			$societe->client = 1;
-			$societe->note_private = "Default customer automaticaly created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
+			$searchcompanyid = $societe->fetch(0, $nametouse);
+			if ($searchcompanyid == 0) {
+				$societe->name = $nametouse;
+				$societe->client = 1;
+				$societe->note_private = "Default customer automaticaly created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
 
-			$result = $societe->create($user);
-			if ($result > 0) {
-				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $result, 'chaine', 0, '', $conf->entity);
+				$searchcompanyid = $societe->create($user);
+			}
+			if ($searchcompanyid > 0) {
+				// We already have or we have create a thirdparty with id = $searchcompanyid, so we link use it into setup
+				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $searchcompanyid, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $societe->errors, 'errors');
 			}
