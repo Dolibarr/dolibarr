@@ -91,9 +91,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$newobject->context['origin_id'] = $object->id;
 
 				$ret = $newobject->createFromProposal($object, $user);
-				if ($ret < 0)
+				if ($ret < 0) {
 					$this->setErrorsFromObject($newobject);
-
+				}
+				
 				$object->clearObjectLinkedCache();
 
 				return $ret;
@@ -112,9 +113,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$newobject->context['origin_id'] = $object->id;
 
 				$ret = $newobject->createFromOrder($object, $user);
-				if ($ret < 0)
+				if ($ret < 0) {
 					$this->setErrorsFromObject($newobject);
-
+				}
+				
 				$object->clearObjectLinkedCache();
 
 				return $ret;
