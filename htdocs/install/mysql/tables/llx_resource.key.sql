@@ -24,4 +24,4 @@ ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
 ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
 
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
-ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
+--ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
