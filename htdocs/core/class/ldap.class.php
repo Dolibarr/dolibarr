@@ -1469,7 +1469,7 @@ class Ldap
 		);
 
 		$retval = "";
-		while (list($sat, $val) = each($stypes)) {
+		foreach ($stypes as $sat => $val) {
 			if ($samtype == $sat) {
 				$retval = $val;
 				break;

@@ -259,7 +259,7 @@ $tabsqlsort[4] = "code ASC";
 $tabsqlsort[5] = "label ASC";
 $tabsqlsort[6] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] = "c.label ASC, a.code ASC, a.libelle ASC";
-$tabsqlsort[8] = "country DESC,".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ' t.position ASC,' : '')." libelle ASC";
+$tabsqlsort[8] = "country DESC,".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ' t.position ASC,' : '')." libelle ASC";
 $tabsqlsort[9] = "label ASC";
 $tabsqlsort[10] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11] = "t.element ASC, t.source ASC, t.position ASC, t.code ASC";
@@ -306,7 +306,7 @@ $tabfield[4] = "code,label";
 $tabfield[5] = "code,label";
 $tabfield[6] = "code,libelle,type,color,position";
 $tabfield[7] = "code,libelle,country,accountancy_code";
-$tabfield[8] = "code,libelle,country_id,country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
+$tabfield[8] = "code,libelle,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[9] = "code,label,unicode";
 $tabfield[10] = "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11] = "element,source,code,libelle,position";
@@ -353,7 +353,7 @@ $tabfieldvalue[4] = "code,label";
 $tabfieldvalue[5] = "code,label";
 $tabfieldvalue[6] = "code,libelle,type,color,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code";
-$tabfieldvalue[8] = "code,libelle,country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
+$tabfieldvalue[8] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10] = "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11] = "element,source,code,libelle,position";
@@ -400,7 +400,7 @@ $tabfieldinsert[4] = "code,label";
 $tabfieldinsert[5] = "code,label";
 $tabfieldinsert[6] = "code,libelle,type,color,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code";
-$tabfieldinsert[8] = "code,libelle,fk_country".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ',position' : '');
+$tabfieldinsert[8] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10] = "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
 $tabfieldinsert[11] = "element,source,code,libelle,position";
@@ -502,9 +502,9 @@ $tabcond[10] = true;
 $tabcond[11] = (isModEnabled("societe"));
 $tabcond[12] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
 $tabcond[13] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
-$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
+$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || getDolGlobalString('MAIN_SHOW_ECOTAX_DICTIONNARY')));
 $tabcond[15] = true;
-$tabcond[16] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
+$tabcond[16] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS'));
 $tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
 $tabcond[18] = isModEnabled("expedition") || isModEnabled("reception");
 $tabcond[19] = isModEnabled("societe");
@@ -523,12 +523,12 @@ $tabcond[31] = ((isModEnabled('facture') || isModEnabled('supplier_invoice')) &&
 $tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
 $tabcond[33] = isModEnabled('hrm');
 $tabcond[34] = isModEnabled('hrm');
-$tabcond[35] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
-$tabcond[36] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[35] = isModEnabled('expensereport') && getDolGlobalString('MAIN_USE_EXPENSE_IK');
+$tabcond[36] = isModEnabled('expensereport') && getDolGlobalString('MAIN_USE_EXPENSE_IK');
 $tabcond[37] = isModEnabled("product");
 $tabcond[38] = isModEnabled('socialnetworks');
-$tabcond[39] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
-$tabcond[40] = (isModEnabled("societe") && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[39] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
+$tabcond[40] = (isModEnabled("societe") && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
 $tabcond[41] = isModEnabled('intracommreport');
 $tabcond[42] = isModEnabled("product");
 $tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && $conf->global->MAIN_FEATURES_LEVEL >= 2;
@@ -662,7 +662,7 @@ if ($id == 11) {
 		'order_supplier' => img_picto('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans('SupplierOrder'),
 		'invoice_supplier' => img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans('SupplierBill'),
 	);
-	if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$elementList['conferenceorbooth'] = img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth');
 	}
 
@@ -1340,7 +1340,7 @@ if ($id > 0) {
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 	// Special warning for VAT dictionary
-	if ($id == 10 && empty($conf->global->FACTURE_TVAOPTION)) {
+	if ($id == 10 && !getDolGlobalString('FACTURE_TVAOPTION')) {
 		print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
 		print "<br>\n";
 	}

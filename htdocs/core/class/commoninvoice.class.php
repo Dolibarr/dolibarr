@@ -192,6 +192,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
+	 *  @see getSumDepositsUsed(), getSumCreditNotesUsed()
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -236,12 +237,13 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all deposits invoices used by invoice.
-	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
-	 *      of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
+	 *  Return amount (with tax) of all deposits invoices used by invoice.
+	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
+	 *  of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
-	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *		@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
+	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
+	 *	@see getSommePaiement(), getSumCreditNotesUsed()
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
@@ -270,10 +272,11 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
+	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
-	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *		@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
 	{

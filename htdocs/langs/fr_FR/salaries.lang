@@ -30,3 +30,4 @@ VirementOrder=Ordres de virements
 BankTransferAmount=Montant de la demande de virement : 
 WithdrawalReceipt=Ordre de virement
 OrderWaiting=En attente de traitement
+FillEndOfMonth=Remplir avec la fin du mois

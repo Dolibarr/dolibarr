@@ -30,5 +30,4 @@ VirementOrder=Request virements
 BankTransferAmount=Amount of bank transfer
 WithdrawalReceipt=transfer order
 OrderWaiting=Order waiting
-
-
+FillEndOfMonth=Fill with end of month
