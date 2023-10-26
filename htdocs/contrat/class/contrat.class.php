@@ -151,6 +151,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * @var User 	Object user that create the contract. Set by the info method.
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -2157,14 +2158,9 @@ class Contrat extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
-
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-
 				$this->ref = (!$obj->ref) ? $obj->rowid : $obj->ref;
+
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}

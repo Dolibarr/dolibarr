@@ -330,7 +330,7 @@ if (!empty($searchCategoryProductList)) {
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {
-	$sql .= natural_search((empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "ppe.") . $accountancy_field_name, $search_current_account);
+	$sql .= natural_search((!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p." : "ppe.") . $accountancy_field_name, $search_current_account);
 }
 if ($search_current_account_valid == 'withoutvalidaccount') {
 	$sql .= " AND aa.account_number IS NULL";
@@ -614,7 +614,7 @@ if ($resql) {
 	} else {
 		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "ppe.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p." : "ppe.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

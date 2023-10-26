@@ -210,7 +210,7 @@ print '</td></tr>';
 //ADDDAYS
 print '<tr class="oddeven"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td>';
-if (empty($conf->global->PRELEVEMENT_ADDDAYS)) {
+if (!getDolGlobalString('PRELEVEMENT_ADDDAYS')) {
 	$conf->global->PRELEVEMENT_ADDDAYS = 0;
 }
 print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.getDolGlobalString('PRELEVEMENT_ADDDAYS').'"  class="width50"></td>';

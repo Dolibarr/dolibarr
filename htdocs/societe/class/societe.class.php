@@ -560,6 +560,7 @@ class Societe extends CommonObject
 	/**
 	 * User that made last update
 	 * @var User
+	 * @deprecated
 	 */
 	public $user_modification;
 
@@ -572,6 +573,7 @@ class Societe extends CommonObject
 	/**
 	 * User that created the thirdparty
 	 * @var User
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -1897,8 +1899,8 @@ class Societe extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_creation     = $obj->fk_user_creat;
-				$this->user_modification = $obj->fk_user_modif;
+				$this->user_creation_id     = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->address = $obj->address;
 				$this->zip 			= $obj->zip;
