@@ -275,8 +275,11 @@ class modTakePos extends DolibarrModules
 		//Default customer for Point of sale
 		if (empty(getDolGlobalInt('CASHDESK_ID_THIRDPARTY1'))) {
 			$societe = new Societe($db);
-			$societe->nom = $langs->trans("DefaultPOSThirdLabel");
+
+			$societe->name = $langs->trans("DefaultPOSThirdLabel");
 			$societe->client = 1;
+			$societe->note_private = "Default customer automaticaly created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer."
+				
 			$result = $societe->create($user);
 			if ($result > 0) {
 				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $result, 'chaine', 0, '', $conf->entity);
