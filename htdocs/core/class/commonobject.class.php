@@ -9584,14 +9584,15 @@ abstract class CommonObject
 
 
 	/**
-	 * Load object in memory from the database
+	 * Load object in memory from the database. This does not load line. This is done by parent fetch() that call fetchCommon
 	 *
 	 * @param	int    	$id				Id object
 	 * @param	string 	$ref			Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchCommon($id, $ref = null, $morewhere = '')
+	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
 		if (empty($id) && empty($ref) && empty($morewhere)) {
 			return -1;
@@ -9628,7 +9629,14 @@ abstract class CommonObject
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
+				if (empty($noextrafields)) {
+					$result = $this->fetch_optionals();
+					if ($result < 0) {
+						$this->error = $this->db->lasterror();
+						$this->errors[] = $this->error;
+						return -4;
+					}
+				}
 
 				return $this->id;
 			} else {
@@ -9645,9 +9653,10 @@ abstract class CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLinesCommon($morewhere = '')
+	public function fetchLinesCommon($morewhere = '', $noextrafields = 0)
 	{
 		$objectlineclassname = get_class($this).'Line';
 		if (!class_exists($objectlineclassname)) {
@@ -9676,6 +9685,12 @@ abstract class CommonObject
 				if ($obj) {
 					$newline = new $objectlineclassname($this->db);
 					$newline->setVarsFromFetchObj($obj);
+
+					// Note: extrafields load of line not yet supported
+					/*
+					if (empty($noextrafields)) {
+						// Load extrafields of line
+					}*/
 
 					$this->lines[] = $newline;
 				}
