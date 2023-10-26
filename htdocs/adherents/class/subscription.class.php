@@ -532,8 +532,9 @@ class Subscription extends CommonObject
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
 		$return .= $this->getNomUrl(-1);
 		$return .= '</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
 			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}

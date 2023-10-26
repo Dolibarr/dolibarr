@@ -68,6 +68,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('proj
 $date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
 $date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
 $location = GETPOST('location', 'alphanohtml');
+$fk_project = GETPOST('fk_project', 'int');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
@@ -205,6 +206,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->fk_project      = GETPOST('fk_project', 'int');
 			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
 			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
@@ -304,6 +306,7 @@ if (empty($reshook)) {
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
+			$object->fk_project   = GETPOST('fk_project', 'int');
 			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
@@ -602,6 +605,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="width500 maxwidth150onsmartphone" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
+
+	// Parent
+	if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+		print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		$formproject->select_projects(-1, '', 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+		print '</td></tr>';
+	}
 
 	// Usage (opp, task, bill time, ...)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
@@ -970,6 +981,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print ajax_combobox('status');
 		print '</td></tr>';
 
+		// Parent
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			$formproject->select_projects(-1, $object->fk_project, 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+			print '</td></tr>';
+		}
+
 		// Usage
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
@@ -1245,6 +1264,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
+		}
+		// Parent
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			if (!empty($object->fk_project) && $object->fk_project) {
+				$parent = new Project($db);
+				$parent->fetch($object->fk_project);
+				$morehtmlref .= $langs->trans("Child of").' '.$parent->getNomUrl(1, 'project').' '.$parent->title;
+			}
 		}
 		$morehtmlref .= '</div>';
 
@@ -1618,6 +1645,41 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			/*
+			 * Sub-projects (children)
+			 */
+			$children = $object->getChildren();
+			if ($children) {
+				print '<table class="centpercent notopnoleftnoright table-fiche-title">';
+				print '<tr class="titre"><td class="nobordernopadding valignmiddle col-title">';
+				print '<div class="titre inline-block">'.$langs->trans('Sub-projects').'</div>';
+				print '</td></tr></table>';
+
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
+				print '<tr class="liste_titre">';
+				print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print getTitleFieldOfList('Status', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print '</tr>';
+				print "\n";
+
+				$subproject = new Project($db);
+				foreach ($children as $child) {
+					$subproject->fetch($child->rowid);
+					print '<tr class="oddeven">';
+					print '<td class="nowraponall">'.$subproject->getNomUrl(1, 'project').'</td>';
+					print '<td class="nowraponall tdoverflowmax125">'.$child->title.'</td>';
+					print '<td class="nowraponall">'.$subproject->getLibStatut(5).'</td>';
+					print '</tr>';
+				}
+
+				print '</table>';
+				print '</div>';
+			}
+		}
+
 		/*
 		 * Generated documents
 		 */
@@ -1633,7 +1695,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id);
+		$morehtmlcenter = '<div class="nowraponall">';
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id);
+		$morehtmlcenter .= '</div>';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

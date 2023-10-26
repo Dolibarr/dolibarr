@@ -164,9 +164,6 @@ class SupplierProposal extends CommonObject
 
 	public $cond_reglement_code;
 	public $mode_reglement_code;
-	public $remise = 0;
-	public $remise_percent = 0;
-	public $remise_absolue = 0;
 
 	public $extraparams = array();
 	public $lines = array();
@@ -913,9 +910,6 @@ class SupplierProposal extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."supplier_proposal (";
 		$sql .= "fk_soc";
 		$sql .= ", price";
-		$sql .= ", remise";
-		$sql .= ", remise_percent";
-		$sql .= ", remise_absolue";
 		$sql .= ", total_tva";
 		$sql .= ", total_ttc";
 		$sql .= ", datec";
@@ -938,9 +932,6 @@ class SupplierProposal extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= ((int) $this->socid);
 		$sql .= ", 0";
-		$sql .= ", ".((double) $this->remise);
-		$sql .= ", ".($this->remise_percent ? ((double) $this->remise_percent) : 'null');
-		$sql .= ", ".($this->remise_absolue ? ((double) $this->remise_absolue) : 'null');
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -1196,7 +1187,7 @@ class SupplierProposal extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
@@ -1234,9 +1225,6 @@ class SupplierProposal extends CommonObject
 				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
-				$this->remise               = $obj->remise;
-				$this->remise_percent       = $obj->remise_percent;
-				$this->remise_absolue       = $obj->remise_absolue;
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
@@ -1545,6 +1533,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_percent($user, $remise)
 	{
 		// phpcs:enable
@@ -1567,7 +1556,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1577,6 +1566,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_absolue($user, $remise)
 	{
 		// phpcs:enable
@@ -1602,7 +1592,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 
 	/**
@@ -2124,17 +2114,9 @@ class SupplierProposal extends CommonObject
 				$this->date_validation   = $this->db->jdate($obj->datev);
 				$this->date_cloture      = $this->db->jdate($obj->dateo);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$this->user_closing_id = $obj->fk_user_cloture;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 			}
 			$this->db->free($result);
 		} else {
@@ -2765,7 +2747,9 @@ class SupplierProposal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'socid')) {
 			$return .= '<span class="info-box-ref"> | '.$this->socid.'</span>';
 		}

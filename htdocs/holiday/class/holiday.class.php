@@ -2299,19 +2299,9 @@ class Holiday extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approval = $this->db->jdate($obj->datea);
 
-				if (!empty($obj->fk_user_creation)) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creation);
-					$this->user_creation = $cuser;
-				}
-				if (!empty($obj->fk_user_valid)) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-				if (!empty($obj->fk_user_modification)) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_creation;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
 
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
@@ -2465,7 +2455,9 @@ class Holiday extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.$arraydata['user']->getNomUrl(-1).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br>';
 			//$return .= '<span class="opacitymedium">'.$langs->trans("Type").'</span> : ';

@@ -1334,7 +1334,7 @@ class ActionComm extends CommonObject
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
+			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('agendadao'));
 
@@ -1496,7 +1496,9 @@ class ActionComm extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->id;
+
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_mod;
 				$this->date_creation     = $this->db->jdate($obj->datec);

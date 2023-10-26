@@ -27,7 +27,7 @@ CREATE TABLE llx_asset_depreciation_options_economic(
     fk_asset_model						integer,
 
     depreciation_type					smallint		DEFAULT 0 NOT NULL,		-- 0:linear, 1:degressive, 2:exceptional
-    accelerated_depreciation_option		integer,								-- activate accelerated depreciation mode (fiscal)
+    accelerated_depreciation_option		boolean DEFAULT false,								-- activate accelerated depreciation mode (fiscal)
     degressive_coefficient				double(24,8),
     duration							smallint		NOT NULL,
     duration_type						smallint		DEFAULT 0  NOT NULL,	-- 0:annual, 1:monthly, 2:daily
