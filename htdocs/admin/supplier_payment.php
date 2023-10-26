@@ -165,7 +165,7 @@ print dol_get_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -
  *  Numbering module
  */
 
-if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+if (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 	$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 }
 

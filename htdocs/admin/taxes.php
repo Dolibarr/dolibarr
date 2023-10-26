@@ -166,7 +166,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(!empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVAINTRA') ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
@@ -188,7 +188,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '</tr>';
 
 	print '<tr class="oddeven"><td><label for="deadline_day_vat">'.$langs->trans("DeadlineDayVATSubmission").'</label></td><td>';
-	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.(!empty($conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION) ? $conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION : '').'">';
+	print '<input placeholder="'.$langs->trans("Example").':21" name="deadline_day_vat" id="deadline_day_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION') ? $conf->global->MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION : '').'">';
 	print '</td></tr>';
 
 	print '</table>';

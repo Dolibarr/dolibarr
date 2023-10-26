@@ -433,7 +433,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if (!empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 	$butlabel = $langs->trans("LDAPTestSynchroMember");
 	$testlabel = 'testmember';
 	$key = $conf->global->LDAP_KEY_MEMBERS;
