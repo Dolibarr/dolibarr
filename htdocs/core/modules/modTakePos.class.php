@@ -294,16 +294,22 @@ class modTakePos extends DolibarrModules
 		if (is_array($cate_arbo)) {
 			if (!count($cate_arbo)) {
 				$category = new Categorie($db);
+				
 				$category->label = $langs->trans("DefaultPOSCatLabel");
 				$category->type = Categorie::TYPE_PRODUCT;
+				
 				$result = $category->create($user);
+
 				if ($result > 0) {
+					/* TODO Create a generic product only if there is no product in category $result yet */
+					/*
 					$product = new Product($db);
 					$product->status = 1;
 					$product->ref = "takepos";
 					$product->label = $langs->trans("DefaultPOSProductLabel");
 					$product->create($user);
 					$product->setCategories($result);
+	 				*/
 				} else {
 					setEventMessages($category->error, $category->errors, 'errors');
 				}
