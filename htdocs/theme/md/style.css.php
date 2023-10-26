@@ -1548,6 +1548,12 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
 }
+.marginrightonly {
+	margin-<?php echo $right; ?>: 10px !important;
+}
+.marginrightonlyshort {
+	margin-<?php echo $right; ?>: 4px !important;
+}
 .margintoponly {
 	margin-top: 10px !important;
 }

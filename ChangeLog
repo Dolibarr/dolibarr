@@ -8,22 +8,30 @@ English Dolibarr ChangeLog
 For users:
 ----------
 
-NEW: Right for stats orders new const MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS
+...
 
 For developers or integrators:
 ------------------------------
-...
+
+QUAL Reduce very seriously the technical debt (using PHPStan, Psalm and Rector)
+NEW Tool in dev/tools/rector to autofix code using style coding practice rules
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
+* The duplicated and deprecated property ->date_livraison that was renamed into ->delivery_date has been completely removed.
+* The property ->user_close to store ID of closing user has been renamed into ->user_closing_id.
+* The property ->user_validation to store ID of user validating has been renamed into ->user_validation_id.
+* The property ->user_creation to store ID of user of creation has been renamed into ->user_creation_id.
+* The property ->user_modification to store ID of user of modification has been renamed into ->user_modification_id.
+* The duplicate property ->user_creat, ->date_creat, ->date_valid has been removed  
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
 * The method ProductcustomerPrice->fetch_all_log() has been renamed into camel case ->fetchAllLog()
-* Recheck setup of your module workflow to see if you need to enable the new setting to have shipment set to billed automatically
-  when an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order), because this setup has changed.
-* It was possible to use a variable $soc or $right inside a php code condition of some extrafields properties, this is no more true (this variables are no more defined globaly).
+* Recheck setup of your module workflow to see if you need to enable the new setting to have shipment set to billed automatically when
+  an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order), because this setup has changed.
+* It was possible to use a variable $soc or $right inside a php code condition of some extrafields properties, this is no more true (this 2 variables are no more global variables).
 
 
 

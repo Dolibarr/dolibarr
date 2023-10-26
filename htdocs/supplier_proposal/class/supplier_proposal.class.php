@@ -103,18 +103,16 @@ class SupplierProposal extends CommonObject
 
 	public $ref_fourn; //Reference saisie lors de l'ajout d'une ligne à la demande
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
+
+	/**
+	 * @deprecated
+	 */
 	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
 	 * @var integer|string Date of proposal
 	 */
 	public $date;
-
-	/**
-	 * @var integer|string date_livraison
-	 * @deprecated
-	 */
-	public $date_livraison;
 
 	/**
 	 * @var integer|string date_livraison
@@ -145,8 +143,6 @@ class SupplierProposal extends CommonObject
 
 
 	public $user_author_id;
-	public $user_valid_id;
-	public $user_close_id;
 
 	/**
 	 * @deprecated
@@ -168,9 +164,6 @@ class SupplierProposal extends CommonObject
 
 	public $cond_reglement_code;
 	public $mode_reglement_code;
-	public $remise = 0;
-	public $remise_percent = 0;
-	public $remise_absolue = 0;
 
 	public $extraparams = array();
 	public $lines = array();
@@ -899,7 +892,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Set tmp vars
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) {
@@ -917,9 +910,6 @@ class SupplierProposal extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."supplier_proposal (";
 		$sql .= "fk_soc";
 		$sql .= ", price";
-		$sql .= ", remise";
-		$sql .= ", remise_percent";
-		$sql .= ", remise_absolue";
 		$sql .= ", total_tva";
 		$sql .= ", total_ttc";
 		$sql .= ", datec";
@@ -942,9 +932,6 @@ class SupplierProposal extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= ((int) $this->socid);
 		$sql .= ", 0";
-		$sql .= ", ".((double) $this->remise);
-		$sql .= ", ".($this->remise_percent ? ((double) $this->remise_percent) : 'null');
-		$sql .= ", ".($this->remise_absolue ? ((double) $this->remise_absolue) : 'null');
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -1147,10 +1134,8 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;		// deprecated
 		$this->user_author_id = $user->id;
-		$this->user_valid = 0;				// deprecated
-		$this->user_valid_id = 0;
+		$this->user_validation_id = 0;
 		$this->date = $now;
 
 		// Set ref
@@ -1202,7 +1187,7 @@ class SupplierProposal extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
@@ -1240,9 +1225,6 @@ class SupplierProposal extends CommonObject
 				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
-				$this->remise               = $obj->remise;
-				$this->remise_percent       = $obj->remise_percent;
-				$this->remise_absolue       = $obj->remise_absolue;
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
@@ -1261,7 +1243,6 @@ class SupplierProposal extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
 				$this->date                 = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
@@ -1277,8 +1258,8 @@ class SupplierProposal extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1487,7 +1468,7 @@ class SupplierProposal extends CommonObject
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
-				$this->user_valid_id = $user->id;
+				$this->user_validation_id = $user->id;
 				$this->datev = $now;
 				$this->date_validation = $now;
 
@@ -1533,7 +1514,6 @@ class SupplierProposal extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 				return 1;
 			} else {
@@ -1553,6 +1533,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_percent($user, $remise)
 	{
 		// phpcs:enable
@@ -1575,7 +1556,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1585,6 +1566,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_absolue($user, $remise)
 	{
 		// phpcs:enable
@@ -1610,7 +1592,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 
 	/**
@@ -2132,21 +2114,9 @@ class SupplierProposal extends CommonObject
 				$this->date_validation   = $this->db->jdate($obj->datev);
 				$this->date_cloture      = $this->db->jdate($obj->dateo);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 			}
 			$this->db->free($result);
 		} else {
@@ -2777,7 +2747,9 @@ class SupplierProposal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'socid')) {
 			$return .= '<span class="info-box-ref"> | '.$this->socid.'</span>';
 		}

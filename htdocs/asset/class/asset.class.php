@@ -155,7 +155,6 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	public $user_cloture_id;
 
 	/**
 	 * @var Asset object oldcopy
@@ -183,7 +182,7 @@ class Asset extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -997,8 +996,8 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
-				$nb_days_in_month = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
+				$nb_days_in_year = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_YEAR') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
+				$nb_days_in_month = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_MONTH') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
 				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
@@ -1190,7 +1189,7 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
@@ -1253,7 +1252,7 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
@@ -1323,7 +1322,7 @@ class Asset extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAsset");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1469,7 +1468,7 @@ class Asset extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_cloture_id = $obj->fk_user_cloture;
+				$this->user_closing_id = $obj->fk_user_cloture;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
@@ -1518,11 +1517,11 @@ class Asset extends CommonObject
 		global $langs, $conf;
 		$langs->load("assets");
 
-		if (empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (!getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
 		}
 
-		if (!empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";

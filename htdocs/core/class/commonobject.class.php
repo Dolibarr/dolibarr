@@ -587,14 +587,14 @@ abstract class CommonObject
 	public $date_cloture; // Date closing (tms field)
 
 	/**
-	 * @var User|int	User author/creation
-	 * @TODO Merge with user_creation
+	 * @var User	User author/creation
+	 * @deprecated	Store only id in user_creation_id
 	 */
 	public $user_author;
 
 	/**
-	 * @var User|int	User author/creation
-	 * @TODO Remove type id
+	 * @var User	User author/creation
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -604,14 +604,14 @@ abstract class CommonObject
 	public $user_creation_id;
 
 	/**
-	 * @var User|int	User of validation
-	 * @TODO Merge with user_validation
+	 * @var User	User of validation
+	 * @deprecated
 	 */
 	public $user_valid;
 
 	/**
-	 * @var User|int	User of validation
-	 * @TODO Remove type id
+	 * @var User	User of validation
+	 * @deprecated
 	 */
 	public $user_validation;
 
@@ -626,8 +626,8 @@ abstract class CommonObject
 	public $user_closing_id;
 
 	/**
-	 * @var User|int	User last modifier
-	 * @TODO Remove type id
+	 * @var User	User last modifier
+	 * @deprecated
 	 */
 	public $user_modification;
 
@@ -5041,6 +5041,7 @@ abstract class CommonObject
 
 		$object_rights = $this->getRights();
 
+		// var used into tpl
 		$text = '';
 		$description = '';
 
@@ -5101,6 +5102,7 @@ abstract class CommonObject
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
+				//var_dump($tpl);
 				if (file_exists($tpl)) {
 					if (empty($conf->file->strict_mode)) {
 						$res = @include $tpl;
@@ -5874,6 +5876,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
 		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
 			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
 			exit;
@@ -6159,7 +6162,7 @@ abstract class CommonObject
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
 						if (!empty($extrafields->attributes[$this->table_element]['type'][$key]) && $extrafields->attributes[$this->table_element]['type'][$key] == 'password') {
-							if (preg_match('/^dolcrypt:/', $value)) {
+							if (!empty($value) && preg_match('/^dolcrypt:/', $value)) {
 								$this->array_options["options_".$key] = dolDecrypt($value);
 							}
 						}
@@ -7662,11 +7665,12 @@ abstract class CommonObject
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			$param['options'] = $val['arrayofkeyval'];
 		}
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
+			// Special case: Force addition of getnomurlparam1 to -1 for users
 			if ($reg[1] == 'User') {
-				$stringforoptions .= ':-1';
+				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7971,18 +7975,31 @@ abstract class CommonObject
 
 			// only if something to display (perf)
 			if ($value) {
-				$param_list = array_keys($param['options']); // Example: $param_list='ObjectName:classPath:-1::customer'
+				$param_list = array_keys($param['options']);
+				// Example: $param_list='ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
+				// Example: $param_list='ObjectClass:PathToClass:#getnomurlparam1=-1#getnomurlparam2=customer'
 
 				$InfoFieldList = explode(":", $param_list[0]);
+
 				$classname = $InfoFieldList[0];
 				$classpath = $InfoFieldList[1];
-				$getnomurlparam = (empty($InfoFieldList[2]) ? 3 : $InfoFieldList[2]);
-				$getnomurlparam2 = (empty($InfoFieldList[4]) ? '' : $InfoFieldList[4]);
+
+				// Set $getnomurlparam1 et getnomurlparam2
+				$getnomurlparam = 3;
+				$getnomurlparam2 = '';
+				$regtmp = array();
+				if (preg_match('/#getnomurlparam1=([^#]*)/', $param_list[0], $regtmp)) {
+					$getnomurlparam = $regtmp[1];
+				}
+				if (preg_match('/#getnomurlparam2=([^#]*)/', $param_list[0], $regtmp)) {
+					$getnomurlparam2 = $regtmp[1];
+				}
+
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
-						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
+						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
 							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
 							$result = $object->fetch($value);

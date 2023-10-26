@@ -180,7 +180,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$db->escape($object->note_private)."', date_signature='".$db->idate(dol_now())."'";
 	$sql .= " WHERE rowid = ".((int) $object->id);
 
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog(__FILE__, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$error++;
@@ -194,7 +194,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 		if (method_exists($object, 'call_trigger')) {
 			// Online customer is not a user, so we use the use that validates the documents
 			$user = new User($db);
-			$user->fetch($object->user_valid_id);
+			$user->fetch($object->user_validation_id);
 			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
 			if ($result < 0) {

@@ -50,7 +50,7 @@ if (GETPOSTISSET('mode')) {
 	if ($mode =='common' || $mode =='commonkanban')
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 } else {
-	$mode = (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
+	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -114,7 +114,7 @@ $urldolibarrmodules = 'https://www.dolistore.com/';
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
 // Execution Time
-$max_execution_time_for_deploy = (empty($conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME) ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_execution_time_for_deploy = (!getDolGlobalString('MODULE_UPLOAD_MAX_EXECUTION_TIME') ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_deploy) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
@@ -404,13 +404,13 @@ foreach ($modulesdir as $dir) {
 
 							// We discard modules according to features level (PS: if module is activated we always show it)
 							$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-							if ($objMod->version == 'development' && (!isModEnabled($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
+							if ($objMod->version == 'development' && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
 								$modulequalified = 0;
 							}
-							if ($objMod->version == 'experimental' && (!isModEnabled($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
+							if ($objMod->version == 'experimental' && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
 								$modulequalified = 0;
 							}
-							if (preg_match('/deprecated/', $objMod->version) && (!isModEnabled($const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
+							if (preg_match('/deprecated/', $objMod->version) && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 0))) {
 								$modulequalified = 0;
 							}
 
@@ -550,7 +550,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (!empty($conf->global->MAIN_SETUP_MODULES_INFO)) {	// Show a custom message
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
 		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
 	}
 	if ($deschelp) {
@@ -718,10 +718,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 		if ($search_status) {
-			if ($search_status == 'active' && empty($conf->global->$const_name)) {
+			if ($search_status == 'active' && !getDolGlobalString($const_name)) {
 				continue;
 			}
-			if ($search_status == 'disabled' && !empty($conf->global->$const_name)) {
+			if ($search_status == 'disabled' && getDolGlobalString($const_name)) {
 				continue;
 			}
 		}
@@ -818,7 +818,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				$action == 'checklastversion'
 				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
 				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
-				|| !empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
 			)
 		) {
 			$checkRes = $objMod->checkForUpdate();
@@ -986,7 +986,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print $objMod->getKanbanView($codeenabledisable, $codetoconfig);
 		} else {
 			print '<tr class="oddeven'.($warningstring ? ' info-box-content-warning' : '').'">'."\n";
-			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
+			if (getDolGlobalString('MAIN_MODULES_SHOW_LINENUMBERS')) {
 				print '<td class="width50">'.$linenum.'</td>';
 			}
 
@@ -1015,7 +1015,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			// Help
 			print '<td class="center nowrap" style="width: 82px;">';
 			//print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
-			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.((int) $objMod->numero).'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 			print '</td>';
 
 			// Version
@@ -1106,7 +1106,7 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
 		// $options is array with filter criterias
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
@@ -1312,7 +1312,7 @@ if ($mode == 'deploy') {
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button">';
 
-			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				if ($user->admin) {
 					$langs->load('other');
 					print ' ';
