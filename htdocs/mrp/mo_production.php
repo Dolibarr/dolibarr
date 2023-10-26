@@ -1236,6 +1236,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '</td>';
 
+						// Edit Line
+						if ($object->status == Mo::STATUS_DRAFT) {
+							print '<td></td>';
+						}
+						
 						// Action delete line
 						if ($permissiontodelete) {
 							print '<td></td>';
