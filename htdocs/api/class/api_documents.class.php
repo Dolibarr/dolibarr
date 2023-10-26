@@ -22,7 +22,7 @@ use Luracast\Restler\RestException;
 use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/api/class/api.php';
+require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
@@ -658,10 +658,6 @@ class Documents extends DolibarrApi
 			throw new RestException(400, 'Modulepart not provided.');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->ecm->upload) {
-			throw new RestException(401);
-		}
-
 		$newfilecontent = '';
 		if (empty($fileencoding)) {
 			$newfilecontent = $filecontent;
@@ -783,10 +779,17 @@ class Documents extends DolibarrApi
 				$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
 			}
 
-			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
-
-			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
-			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			// Test on permissions
+			if ($modulepart != 'ecm') {
+				$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
+				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
+				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			} else {
+				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
+					throw new RestException(401, 'Missing permission to upload files in ECM module');
+				}
+				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
 				throw new RestException(500, 'This value of modulepart ('.$modulepart.') does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
@@ -799,9 +802,17 @@ class Documents extends DolibarrApi
 				$modulepart = 'adherent';
 			}
 
-			$relativefile = $subdir;
-			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
-			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			// Test on permissions
+			if ($modulepart != 'ecm') {
+				$relativefile = $subdir;
+				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
+				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			} else {
+				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
+					throw new RestException(401, 'Missing permission to upload files in ECM module');
+				}
+				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
 				if (!empty($tmp['error'])) {
