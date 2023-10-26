@@ -63,8 +63,11 @@ class Dolresource extends CommonObject
 	 */
 	public $description;
 
+	/**
+	 * @var int ID
+	 */
 	public $fk_country;
-
+	public $fk_state;
 
 	// Variable for a link of resource
 
@@ -143,6 +146,9 @@ class Dolresource extends CommonObject
 		if (!is_numeric($this->country_id)) {
 			$this->country_id = 0;
 		}
+		if (!is_numeric($this->state_id)) {
+			$this->state_id = 0;
+		}
 		if (isset($this->fk_code_type_resource)) {
 			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
 		}
@@ -163,6 +169,7 @@ class Dolresource extends CommonObject
 		$sql .= "town,";
 		$sql .= "description,";
 		$sql .= "fk_country,";
+		$sql .= "fk_state,";
 		$sql .= "fk_code_type_resource,";
 		$sql .= "note_public,";
 		$sql .= "note_private";
@@ -171,6 +178,7 @@ class Dolresource extends CommonObject
 		$sql .= " ".(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").",";
 		$sql .= " ".(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
 		$sql .= " ".($this->country_id > 0 ? $this->country_id : 'null').",";
+		$sql .= " ".($this->state_id > 0 ? $this->state_id : 'null').",";
 		$sql .= " ".(!isset($this->fk_code_type_resource) ? 'NULL' : "'".$this->db->escape($this->fk_code_type_resource)."'").",";
 		$sql .= " ".(!isset($this->note_public) ? 'NULL' : "'".$this->db->escape($this->note_public)."'").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'");
@@ -242,6 +250,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.town,";
 		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
+		$sql .= " t.fk_state,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.note_public,";
 		$sql .= " t.note_private,";
@@ -269,6 +278,7 @@ class Dolresource extends CommonObject
 				$this->town = $obj->town;
 				$this->description				= $obj->description;
 				$this->country_id = $obj->fk_country;
+				$this->state_id = $obj->fk_state;
 				$this->fk_code_type_resource = $obj->fk_code_type_resource;
 				$this->note_public				= $obj->note_public;
 				$this->note_private = $obj->note_private;
@@ -323,6 +333,9 @@ class Dolresource extends CommonObject
 		if (!is_numeric($this->country_id)) {
 			$this->country_id = 0;
 		}
+		if (!is_numeric($this->state_id)) {
+			$this->state_id = 0;
+		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
@@ -337,6 +350,7 @@ class Dolresource extends CommonObject
 		$sql .= " town=".(isset($this->town) ? "'".$this->db->escape($this->town)."'" : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
+		$sql .= " fk_state=".($this->state_id > 0 ? $this->state_id : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -558,6 +572,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.town,";
 		$sql .= " t.description,";
 		$sql .= " t.fk_country,";
+		$sql .= " t.fk_state,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms,";
 		// Add fields from extrafields
@@ -604,6 +619,7 @@ class Dolresource extends CommonObject
 					$line->town = $obj->town;
 					$line->description = $obj->description;
 					$line->country_id = $obj->fk_country;
+					$line->state_id = $obj->fk_state;
 					$line->fk_code_type_resource = $obj->fk_code_type_resource;
 					$line->type_label = $obj->type_label;
 

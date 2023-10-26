@@ -46,6 +46,7 @@ $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
+$state_id				= GETPOST('state_id', 'int');
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -107,6 +108,7 @@ if (empty($reshook)) {
 				$object->description            = $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
 				$object->country_id             = $country_id;
+				$object->state_id				= $state_id;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -150,6 +152,7 @@ if (empty($reshook)) {
 				$object->description  			= $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
 				$object->country_id             = $country_id;
+				$object->state_id				= $state_id;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -258,6 +261,23 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		print '</td></tr>';
+
+		// State
+		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
+				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+			} else {
+				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+			}
+
+			if ($object->country_id) {
+				print img_picto('', 'state', 'class="pictofixedwidth"');
+				print $formresource->select_state($object->state_id, $object->country_code);
+			} else {
+				print $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+			}
+			print '</td></tr>';
+		}
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
