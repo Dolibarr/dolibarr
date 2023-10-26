@@ -239,4 +239,38 @@ class FormResource
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Return a select list with zip codes and their town
+	 *
+	 *    @param	string		$selected				Preselected value
+	 *    @param    string		$htmlname				HTML select name
+	 *    @param    array		$fields					Array with key of fields to refresh after selection
+	 *    @param    int			$fieldsize				Field size
+	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
+	 *    @param	string		$moreattrib				Add more attribute on HTML input field
+	 *    @param    string      $morecss                More css
+	 *    @return	string
+	 */
+	public function select_ziptown($selected = '', $htmlname = 'zipcode', $fields = array(), $fieldsize = 0, $disableautocomplete = 0, $moreattrib = '', $morecss = '')
+	{
+		// phpcs:enable
+		global $conf;
+
+		$out = '';
+
+		$size = '';
+		if (!empty($fieldsize)) {
+			$size = 'size="' . $fieldsize . '"';
+		}
+
+		if ($conf->use_javascript_ajax && empty($disableautocomplete)) {
+			$out .= ajax_multiautocompleter($htmlname, $fields, DOL_URL_ROOT . '/core/ajax/ziptown.php') . "\n";
+			$moreattrib .= ' autocomplete="off"';
+		}
+		$out .= '<input id="' . $htmlname . '" class="maxwidthonsmartphone' . ($morecss ? ' ' . $morecss : '') . '" type="text"' . ($moreattrib ? ' ' . $moreattrib : '') . ' name="' . $htmlname . '" ' . $size . ' value="' . $selected . '">' . "\n";
+
+		return $out;
+	}
 }
