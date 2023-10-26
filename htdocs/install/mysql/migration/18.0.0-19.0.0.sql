@@ -153,3 +153,5 @@ ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_sta
 ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
