@@ -120,7 +120,9 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 	}
 	if (empty($Lines)) return $langs->trans('SkillHasNoLines');
 
-	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">0</span>';
+	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">';
+	$ret .= $langs->trans('NA');
+	$ret .= '</span>';
 	if (is_array($Lines) && !empty($Lines)) {
 		foreach ($Lines as $line) {
 			$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;

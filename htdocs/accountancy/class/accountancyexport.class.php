@@ -103,7 +103,7 @@ class AccountancyExport
 
 		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
+		$this->end_line = !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -201,9 +201,9 @@ class AccountancyExport
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT) ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV) ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
+					'ACCOUNTING_EXPORT_FORMAT' => !getDolGlobalString('ACCOUNTING_EXPORT_FORMAT') ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => !getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV') ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
+					'ACCOUNTING_EXPORT_ENDLINE' => !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
 					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
@@ -480,10 +480,10 @@ class AccountancyExport
 				$this->exportGestimumV5($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_FEC:
-				$this->exportFEC($TData, $exportFile);
+				$archiveFileList = $this->exportFEC($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_FEC2:
-				$this->exportFEC2($TData, $exportFile);
+				$archiveFileList = $this->exportFEC2($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_ISUITEEXPERT :
 				$this->exportiSuiteExpert($TData, $exportFile);
@@ -1297,14 +1297,19 @@ class AccountancyExport
 
 	/**
 	 * Export format : FEC
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help to import in your software: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Exports_avec_fichiers_sources
 	 *
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @return	void
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportFEC($objectLines, $exportFile = null)
+	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
@@ -1330,6 +1335,7 @@ class AccountancyExport
 		$tab[] = "Idevise";
 		$tab[] = "DateLimitReglmt";
 		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
 
 		$output = implode($separator, $tab).$end_line;
 		if ($exportFile) {
@@ -1402,6 +1408,7 @@ class AccountancyExport
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				$line->label_operation = str_replace(array("..."), "", $line->label_operation);
 				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
@@ -1433,6 +1440,58 @@ class AccountancyExport
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
+				// get document file
+				$attachmentFileName = '';
+				if ($withAttachment == 1) {
+					$attachmentFileKey = trim($line->piece_num);
+
+					if (!isset($archiveFileList[$attachmentFileKey])) {
+						$objectDirPath = '';
+						$objectFileName = dol_sanitizeFileName($line->doc_ref);
+						if ($line->doc_type == 'customer_invoice') {
+							$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+						} elseif ($line->doc_type == 'expense_report') {
+							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+						} elseif ($line->doc_type == 'supplier_invoice') {
+							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						}
+						$arrayofinclusion = array();
+						// If it is a supplier invoice, we want to use last uploaded file
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = $line->doc_ref;
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									// skip native invoice pdfs (canelle)
+									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+									if ($line->doc_type == 'supplier_invoice') {
+										if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+										continue;
+									}
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (isset($archiveFileList[$attachmentFileKey])) {
+						$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+					}
+				}
+
+				$tab[] = $attachmentFileName;
+
 				$output = implode($separator, $tab).$end_line;
 				if ($exportFile) {
 					fwrite($exportFile, $output);
@@ -1441,18 +1500,25 @@ class AccountancyExport
 				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
 	 * Export format : FEC2
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help to import in your software: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Exports_avec_fichiers_sources
 	 *
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
-	 * @return 	void
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportFEC2($objectLines, $exportFile = null)
+	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
@@ -1478,6 +1544,7 @@ class AccountancyExport
 		$tab[] = "Idevise";
 		$tab[] = "DateLimitReglmt";
 		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
 
 		$output = implode($separator, $tab).$end_line;
 		if ($exportFile) {
@@ -1550,6 +1617,7 @@ class AccountancyExport
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				$line->label_operation = str_replace(array("..."), "", $line->label_operation);
 				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
@@ -1581,6 +1649,58 @@ class AccountancyExport
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
+				// get document file
+				$attachmentFileName = '';
+				if ($withAttachment == 1) {
+					$attachmentFileKey = trim($line->piece_num);
+
+					if (!isset($archiveFileList[$attachmentFileKey])) {
+						$objectDirPath = '';
+						$objectFileName = dol_sanitizeFileName($line->doc_ref);
+						if ($line->doc_type == 'customer_invoice') {
+							$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+						} elseif ($line->doc_type == 'expense_report') {
+							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+						} elseif ($line->doc_type == 'supplier_invoice') {
+							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						}
+						$arrayofinclusion = array();
+						// If it is a supplier invoice, we want to use last uploaded file
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = $line->doc_ref;
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									// skip native invoice pdfs (canelle)
+									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+									if ($line->doc_type == 'supplier_invoice') {
+										if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+										continue;
+									}
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (isset($archiveFileList[$attachmentFileKey])) {
+						$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+					}
+				}
+
+				$tab[] = $attachmentFileName;
+
 				$output = implode($separator, $tab).$end_line;
 				if ($exportFile) {
 					fwrite($exportFile, $output);
@@ -1589,6 +1709,8 @@ class AccountancyExport
 				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**

@@ -57,37 +57,37 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'project') {
 	$result = restrictedArea($user, 'projet', $id);
-	if (empty($user->rights->projet->lire)) {
+	if (!$user->hasRight('projet', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bom') {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
-	if (empty($user->rights->bom->read)) {
+	if (!$user->hasRight('bom', 'read')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (empty($user->rights->adherent->lire)) {
+	if (!$user->hasRight('adherent', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
-	if (empty($user->rights->user->user->lire)) {
+	if (!$user->hasRight('user', 'user', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'tax') {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
-	if (empty($user->rights->tax->charges->lire)) {
+	if (!$user->hasRight('tax', 'charges', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bank') {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
-	if (empty($user->rights->banque->lire)) {
+	if (!$user->hasRight('banque', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -99,14 +99,14 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (empty($user->rights->fournisseur->facture->lire)) {
+	if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } else {
 	// ticket, holiday, expensereport, societe...
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
-	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) {
+	if (!$user->hasRight($modulepart, 'read') && !$user->hasRight($modulepart, 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;

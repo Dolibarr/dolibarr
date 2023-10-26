@@ -214,7 +214,7 @@ class FormMargin
 			return;
 		}
 
-		if (empty($user->rights->margins->liretous)) {
+		if (!$user->hasRight('margins', 'liretous')) {
 			return;
 		}
 

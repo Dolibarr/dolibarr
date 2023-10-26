@@ -131,7 +131,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
+		'enabled'=>(getDolGlobalString('MAIN_FEATURES_LEVEL') && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -139,7 +139,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
+		'enabled'=>(getDolGlobalString('MAIN_FEATURES_LEVEL') && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),

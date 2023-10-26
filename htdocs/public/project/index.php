@@ -140,7 +140,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
 		print '<div class="backimagepubliceventorganizationsubscription">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT').'">';
 		print '</div>';
 	}
 
@@ -193,7 +193,7 @@ if (GETPOST('viewandvote')) {
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;

@@ -49,7 +49,7 @@ $pagenext = $page + 1;
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
-if ($user->rights->margins->read->all) {
+if ($user->hasRight('margins', 'read', 'all')) {
 	$agentid = GETPOST('agentid', 'int');
 } else {
 	$agentid = $user->id;
@@ -123,7 +123,7 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->hasRight('margins', 'read', 'all') ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date

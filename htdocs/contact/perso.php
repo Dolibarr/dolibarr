@@ -332,7 +332,7 @@ if ($action != 'edit') {
 	if ($user->socid == 0) {
 		print '<div class="tabsAction">';
 
-		if ($user->rights->societe->contact->creer) {
+		if ($user->hasRight('societe', 'contact', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 		}
 

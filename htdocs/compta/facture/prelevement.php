@@ -74,7 +74,7 @@ $hookmanager->initHooks(array('directdebitcard', 'globalcard'));
 
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', $fieldid, $isdraft);
-	if (empty($user->rights->fournisseur->facture->lire)) {
+	if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 		accessforbidden();
 	}
 } else {
@@ -889,10 +889,11 @@ if ($object->id > 0) {
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="right">';
+				print '<td class="center">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
-				print '</a></td>';
+				print '</a>';
+				print '</td>';
 			}
 
 			// Date
@@ -950,7 +951,7 @@ if ($object->id > 0) {
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="right">';
+				print '<td class="center">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
 				print '</a></td>';

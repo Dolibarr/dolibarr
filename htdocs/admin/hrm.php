@@ -470,7 +470,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 print load_fiche_titre($langs->trans('OtherOptions'), '', '');
 
-if (empty($conf->global->HRM_MAXRANK)) {
+if (!getDolGlobalString('HRM_MAXRANK')) {
 	$conf->global->HRM_MAXRANK = Skill::DEFAULT_MAX_RANK_PER_SKILL;
 }
 

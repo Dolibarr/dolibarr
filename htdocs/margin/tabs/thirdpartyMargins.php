@@ -62,7 +62,7 @@ $hookmanager->initHooks(array('thirdpartymargins', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $object->id, '');
 
-if (empty($user->rights->margins->liretous)) {
+if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
 
@@ -130,7 +130,7 @@ if ($socid > 0) {
 		print '</td></tr>';
 	}
 
-	if (((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) && $object->fournisseur) {
+	if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));

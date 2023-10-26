@@ -232,17 +232,19 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 				print 'Check sql file '.$file."\n";
 				$filecontent = file_get_contents($dir.'/'.$file);
 
-				// Allow ` for 'rank' column name
+				// Allow ` for 'rank' column name only
 				$filecontent = str_replace('`rank`', '_rank_', $filecontent);
+
+				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")'), '__OKSTRING__', $filecontent);
+				// To accept " after the comment tag
+				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
+				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
 
 				$result=strpos($filecontent, '`');
 				//print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
 				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
 				$result=strpos($filecontent, '"');
-				if ($result) {
-					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"') && ! strpos($filecontent, '("'));
-				}
 				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
 				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
 

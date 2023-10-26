@@ -202,7 +202,7 @@ $param = '&mode='.urlencode($mode);
 
 $enabledisablehtml = '';
 $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation").' ';
-if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -297,7 +297,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 
 		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
 		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
-		if (!$result) {
+		if ($result < 0) {
 			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
 		} else {
 			$listoffiles[$langkey] = $tmpfile;
@@ -319,11 +319,11 @@ if ($mode == 'overwrite') {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$disabled = '';
-	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+	if ($action == 'edit' || !getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 		$disabled = ' disabled="disabled"';
 	}
 	$disablededit = '';
-	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+	if ($action == 'edit' || !getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 		$disablededit = ' disabled';
 	}
 
@@ -583,7 +583,7 @@ if ($mode == 'searchkey') {
 				print '&nbsp;&nbsp;';
 				$htmltext = $langs->trans("OriginalValueWas", '<i>'.$newlangfileonly->tab_translate[$key].'</i>');
 				print $form->textwithpicto('', $htmltext, 1, 'info');
-			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+			} elseif (getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 				//print $key.'-'.$val;
 				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
 			}

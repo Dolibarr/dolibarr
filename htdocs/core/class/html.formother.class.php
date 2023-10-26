@@ -87,11 +87,12 @@ class FormOther
 		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
-		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= $stringaddbarcode.': <input type="text" name="barcodeproductqty" class="width40 right" value="1"><br>';
 		if ($warehouseselect > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($this->db);
 			$formproduct->loadWarehouses();
+			$out .= img_picto('', 'stock', 'class="pictofixedwidth"');
 			$out .= $formproduct->selectWarehouses('', "warehousenew", '', 0, 0, 0, '', 0, 1);
 			$out .= '<br>';
 			$out .= '<br>';
@@ -515,7 +516,7 @@ class FormOther
 			$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 
-		if (empty($user->rights->user->user->lire)) {
+		if (!$user->hasRight('user', 'user', 'lire')) {
 			$sql_usr .= " AND u.rowid = ".((int) $user->id);
 		}
 		if (!empty($user->socid)) {
@@ -528,7 +529,7 @@ class FormOther
 		}
 
 		// Add existing sales representatives of thirdparty of external user
-		if (empty($user->rights->user->user->lire) && $user->socid) {
+		if (!$user->hasRight('user', 'user', 'lire') && $user->socid) {
 			$sql_usr .= " UNION ";
 			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".$this->db->prefix()."user as u2, ".$this->db->prefix()."societe_commerciaux as sc";

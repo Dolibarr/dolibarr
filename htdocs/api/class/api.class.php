@@ -56,7 +56,7 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
-		$production_mode = (empty($conf->global->API_PRODUCTION_MODE) ? false : true);
+		$production_mode = (!getDolGlobalString('API_PRODUCTION_MODE') ? false : true);
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));

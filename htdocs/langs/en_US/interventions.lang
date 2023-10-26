@@ -38,6 +38,7 @@ InterventionModifiedInDolibarr=Intervention %s modified
 InterventionClassifiedBilledInDolibarr=Intervention %s set as billed
 InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
 InterventionSentByEMail=Intervention %s sent by email
+InterventionClosedInDolibarr= Intervention %s closed
 InterventionDeletedInDolibarr=Intervention %s deleted
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions

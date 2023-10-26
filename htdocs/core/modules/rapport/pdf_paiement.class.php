@@ -217,7 +217,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
@@ -226,7 +226,7 @@ class pdf_paiement extends CommonDocGenerator
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
@@ -255,7 +255,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
@@ -264,7 +264,7 @@ class pdf_paiement extends CommonDocGenerator
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {

@@ -113,7 +113,13 @@ $head[$h][2] = 'chart';
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
-$head[$h][1] = $langs->trans("ProductsPerPopularity");
+$head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
+if ((string) $type == '0') {
+	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+}
+if ((string) $type == '1') {
+	$head[$h][1] = $langs->trans("ServicesPerPopularity");
+}
 $head[$h][2] = 'popularity';
 $h++;
 

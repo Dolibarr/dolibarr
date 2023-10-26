@@ -1469,7 +1469,7 @@ class Ldap
 		);
 
 		$retval = "";
-		while (list($sat, $val) = each($stypes)) {
+		foreach ($stypes as $sat => $val) {
 			if ($samtype == $sat) {
 				$retval = $val;
 				break;
@@ -1553,7 +1553,7 @@ class Ldap
 			$keygroup = 'LDAP_KEY_GROUPS';
 		}
 
-		$search = '('.$conf->global->$keygroup.'=*)';
+		$search = '(' . getDolGlobalString($keygroup).'=*)';
 		$result = $this->search($this->groups, $search);
 		if ($result) {
 			$c = $result['count'];

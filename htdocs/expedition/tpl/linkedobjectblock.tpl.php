@@ -47,10 +47,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Shipment"); ?></td>
 		<td><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td></td>
+		<td><?php echo $objectlink->ref_customer; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="right"><?php
-		if ($user->rights->expedition->lire) {
+		if ($user->hasRight('expedition', 'lire')) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>

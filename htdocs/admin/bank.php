@@ -289,7 +289,7 @@ if ($resql) {
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';"\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td class="minwidth100">'.$langs->trans("Description").'</td>';
@@ -409,7 +409,7 @@ print '<br><br>';
 print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';"\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td colspan="4">'.$langs->trans("Name").'</td>';
 print '<td align="center" width="75">'.$langs->trans("Value").'</td>'."\n";
@@ -464,7 +464,7 @@ print '<br><br>';
 print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';"\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';

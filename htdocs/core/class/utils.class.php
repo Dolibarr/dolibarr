@@ -914,7 +914,7 @@ class Utils
 				$utils = new Utils($this->db);
 
 				// Build HTML doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile = $dirofmoduletmp.'/out.tmp';
 
 				$resarray = $utils->executeCLI($command, $outfile);
@@ -929,7 +929,7 @@ class Utils
 				}
 
 				// Build PDF doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
 				$outfile = $dirofmoduletmp.'/outpdf.tmp';
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {

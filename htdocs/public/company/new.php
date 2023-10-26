@@ -141,7 +141,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . $conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION . '">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION') . '">';
 		print '</div>';
 	}
 

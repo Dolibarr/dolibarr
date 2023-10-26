@@ -1,5 +1,5 @@
 -- =============================================================================
--- Copyright (C) 2015     Alexandre Spangaro  <aspangaro@open-dsi.fr>
+-- Copyright (C) 2015-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,23 +18,24 @@
 
 create table llx_user_rib
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_user        integer      NOT NULL,
-  entity         integer DEFAULT 1 NOT NULL,	-- multi company id
-  datec          datetime,
-  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  label          varchar(30),
-  bank           varchar(255),  -- bank name
-  code_banque    varchar(128),  -- bank code
-  code_guichet   varchar(6),    -- desk code
-  number         varchar(255),  -- account number
-  cle_rib        varchar(5),    -- key of bank account
-  bic            varchar(11),   -- 11 according to ISO 9362
-  iban_prefix    varchar(34),	-- full iban. 34 according to ISO 13616
-  domiciliation  varchar(255),
-  proprio        varchar(60),
-  owner_address  varchar(255),
-  state_id       integer,
-  fk_country     integer,
-  currency_code  varchar(3)
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_user           integer      NOT NULL,
+  entity            integer DEFAULT 1 NOT NULL,	-- multi company id
+  datec             datetime,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  label             varchar(30),
+  bank              varchar(255),  -- bank name
+  code_banque       varchar(128),  -- bank code
+  code_guichet      varchar(6),    -- desk code
+  number            varchar(255),  -- account number
+  cle_rib           varchar(5),    -- key of bank account
+  bic               varchar(11),   -- 11 according to ISO 9362
+  bic_intermediate  varchar(11),   -- 11 according to ISO 9362. Same as bic but for intermediate bank
+  iban_prefix       varchar(34),   -- full iban. 34 according to ISO 13616
+  domiciliation     varchar(255),
+  proprio           varchar(60),
+  owner_address     varchar(255),
+  state_id          integer,
+  fk_country        integer,
+  currency_code     varchar(3)
 )ENGINE=innodb;

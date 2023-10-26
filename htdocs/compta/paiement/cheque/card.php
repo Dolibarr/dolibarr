@@ -99,7 +99,7 @@ $arrayofpaymentmodetomanage = explode(',', getDolGlobalString('BANK_PAYMENT_MODE
  * Actions
  */
 
-if ($action == 'setdate' && $user->rights->banque->cheque) {
+if ($action == 'setdate' && $user->hasRight('banque', 'cheque')) {
 	$result = $object->fetch(GETPOST('id', 'int'));
 	if ($result > 0) {
 		$date = dol_mktime(0, 0, 0, GETPOST('datecreate_month', 'int'), GETPOST('datecreate_day', 'int'), GETPOST('datecreate_year', 'int'));
@@ -113,7 +113,7 @@ if ($action == 'setdate' && $user->rights->banque->cheque) {
 	}
 }
 
-if ($action == 'setrefext' && $user->rights->banque->cheque) {
+if ($action == 'setrefext' && $user->hasRight('banque', 'cheque')) {
 	$result = $object->fetch(GETPOST('id', 'int'));
 	if ($result > 0) {
 		$ref_ext = GETPOST('ref_ext');
@@ -127,7 +127,7 @@ if ($action == 'setrefext' && $user->rights->banque->cheque) {
 	}
 }
 
-if ($action == 'setref' && $user->rights->banque->cheque) {
+if ($action == 'setref' && $user->hasRight('banque', 'cheque')) {
 	$result = $object->fetch(GETPOST('id', 'int'));
 	if ($result > 0) {
 		$ref = GETPOST('ref');
@@ -141,7 +141,7 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 	}
 }
 
-if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
+if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->hasRight('banque', 'cheque')) {
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
 		$arrayofid = GETPOST('toRemise', 'array:int');
@@ -175,7 +175,7 @@ if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->ban
 	}
 }
 
-if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->rights->banque->cheque) {
+if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->hasRight('banque', 'cheque')) {
 	$object->id = $id;
 	$result = $object->removeCheck(GETPOST("lineid", "int"));
 	if ($result === 0) {
@@ -186,7 +186,7 @@ if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->rig
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->cheque) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
 	$object->id = $id;
 	$result = $object->delete();
 	if ($result == 0) {
@@ -197,7 +197,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 	}
 }
 
-if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->banque->cheque) {
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
 	$result = $object->fetch($id);
 	$result = $object->validate($user);
 	if ($result >= 0) {
@@ -221,7 +221,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->banque-
 	}
 }
 
-if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->banque->cheque) {
+if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
 	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
 	$rejected_check = GETPOST('bankid', 'int');
 
@@ -238,7 +238,7 @@ if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->ban
 	}
 }
 
-if ($action == 'builddoc' && $user->rights->banque->cheque) {
+if ($action == 'builddoc' && $user->hasRight('banque', 'cheque')) {
 	$result = $object->fetch($id);
 
 	// Save last template used to generate document
@@ -262,7 +262,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
 		exit;
 	}
-} elseif ($action == 'remove_file' && $user->rights->banque->cheque) {
+} elseif ($action == 'remove_file' && $user->hasRight('banque', 'cheque')) {
 	// Remove file in doc form
 	if ($object->fetch($id) > 0) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -582,7 +582,7 @@ if ($action == 'new') {
 		print '</div>';
 
 		print '<div class="tabsAction">';
-		if ($user->rights->banque->cheque) {
+		if ($user->hasRight('banque', 'cheque')) {
 			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn', $account_label).'">';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn', $account_label).'</a>';
@@ -794,11 +794,11 @@ if ($action == 'new') {
 
 print '<div class="tabsAction">';
 
-if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque) {
+if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->hasRight('banque', 'cheque')) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valide&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
-if ($user->socid == 0 && !empty($object->id) && $user->rights->banque->cheque) {
+if ($user->socid == 0 && !empty($object->id) && $user->hasRight('banque', 'cheque')) {
 	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 }
 print '</div>';

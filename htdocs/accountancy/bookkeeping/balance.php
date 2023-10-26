@@ -321,6 +321,7 @@ if ($action != 'export_csv') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
+		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -375,7 +376,7 @@ if ($action != 'export_csv') {
 	}
 	$moreforfilter .= '</div>';
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+	if (getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
 		$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
@@ -392,7 +393,7 @@ if ($action != 'export_csv') {
 	}
 
 
-	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
+	$colspan = (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE') ? 5 : 4);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -431,7 +432,7 @@ if ($action != 'export_csv') {
 	//if ($type == 'sub') {
 	//	print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
 	//}
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -460,7 +461,7 @@ if ($action != 'export_csv') {
 
 	// TODO Debug - This feature is dangerous, it takes all the entries and adds all the accounts
 	// without time and class limits (Class 6 and 7 accounts ???) and does not take into account the "a-nouveau" journal.
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.entity = " . $conf->entity;        // Never do sharing into accounting features
@@ -522,12 +523,12 @@ if ($action != 'export_csv') {
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
 					print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
 					print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
-					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
 					} else {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
@@ -570,7 +571,7 @@ if ($action != 'export_csv') {
 		//	print '<td></td>';
 		//}
 
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance, 'MT')).'</td>';
 		}
 
@@ -601,7 +602,7 @@ if ($action != 'export_csv') {
 		// Credit
 		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price(price2num($line->credit, 'MT')).'</a></td>';
 
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
 		} else {
 			print '<td class="right nowraponall amount">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
@@ -629,12 +630,12 @@ if ($action != 'export_csv') {
 			print "<td></td>\n";
 		}
 		print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
 		print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 		print '<td class="right nowraponall amount">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		} else {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
@@ -652,12 +653,12 @@ if ($action != 'export_csv') {
 		print "<td></td>\n";
 	}
 	print '<td class="right">'.$langs->trans("AccountBalance").':</td>';
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}
 	print '<td class="right nowraponall amount">'.price(price2num($total_debit, 'MT')).'</td>';
 	print '<td class="right nowraponall amount">'.price(price2num($total_credit, 'MT')).'</td>';
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		print '<td class="right nowraponall amount">' . price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')) . '</td>';
 	} else {
 		print '<td class="right nowraponall amount">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';

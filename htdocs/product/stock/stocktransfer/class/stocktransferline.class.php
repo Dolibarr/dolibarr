@@ -885,7 +885,7 @@ class StockTransferLine extends CommonObjectLine
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON;
 
 			// Include file with class

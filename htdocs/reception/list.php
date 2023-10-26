@@ -256,8 +256,6 @@ if (empty($reshook)) {
 				$cond_reglement_id = 0;
 				$mode_reglement_id = 0;
 				$fk_account = 0;
-				$remise_percent = 0;
-				$remise_absolue = 0;
 				$transport_mode_id = 0;
 				if (!empty($rcp->cond_reglement_id)) {
 					$cond_reglement_id = $rcp->cond_reglement_id;
@@ -268,12 +266,6 @@ if (empty($reshook)) {
 				if (!empty($rcp->fk_account)) {
 					$fk_account = $rcp->fk_account;
 				}
-				if (!empty($rcp->remise_percent)) {
-					$remise_percent = $rcp->remise_percent;
-				}
-				if (!empty($rcp->remise_absolue)) {
-					$remise_absolue = $rcp->remise_absolue;
-				}
 				if (!empty($rcp->transport_mode_id)) {
 					$transport_mode_id = $rcp->transport_mode_id;
 				}
@@ -281,8 +273,6 @@ if (empty($reshook)) {
 				if (empty($cond_reglement_id)
 					|| empty($mode_reglement_id)
 					|| empty($fk_account)
-					|| empty($remise_percent)
-					|| empty($remise_absolue)
 					|| empty($transport_mode_id)
 				) {
 					if (!isset($rcp->supplier_order)) {
@@ -301,12 +291,6 @@ if (empty($reshook)) {
 						if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
 							$fk_account = $supplierOrder->fk_account;
 						}
-						if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
-							$remise_percent = $supplierOrder->remise_percent;
-						}
-						if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
-							$remise_absolue = $supplierOrder->remise_absolue;
-						}
 						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
 							$transport_mode_id = $supplierOrder->transport_mode_id;
 						}
@@ -324,12 +308,6 @@ if (empty($reshook)) {
 						if (empty($fk_account) && !empty($soc->fk_account)) {
 							$fk_account = $soc->fk_account;
 						}
-						if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
-							$remise_percent = $soc->remise_supplier_percent;
-						}
-						if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
-							$remise_absolue = $soc->remise_absolue;
-						}
 						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
 							$transport_mode_id = $soc->transport_mode_id;
 						}
@@ -342,8 +320,6 @@ if (empty($reshook)) {
 				$objecttmp->cond_reglement_id = $cond_reglement_id;
 				$objecttmp->mode_reglement_id = $mode_reglement_id;
 				$objecttmp->fk_account = $fk_account;
-				$objecttmp->remise_percent = $remise_percent;
-				$objecttmp->remise_absolue = $remise_absolue;
 				$objecttmp->transport_mode_id = $transport_mode_id;
 
 				// if the VAT reverse-charge is activated by default in supplier card to resume the information
@@ -1289,7 +1265,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['e.datec']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
 		print '</td>';
 		if (!$i) {
@@ -1298,7 +1274,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['e.tms']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour');
 		print '</td>';
 		if (!$i) {

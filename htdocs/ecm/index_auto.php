@@ -104,7 +104,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 
 // Add directory
-if ($action == 'add' && $user->rights->ecm->setup) {
+if ($action == 'add' && $user->hasRight('ecm', 'setup')) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");

@@ -146,7 +146,6 @@ class RejetPrelevement
 		$result = $this->db->query($sql);
 
 		if (!$result) {
-			dol_syslog("RejetPrelevement::create Erreur 4");
 			dol_syslog("RejetPrelevement::create Erreur 4 $sql");
 			$error++;
 		}

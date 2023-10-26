@@ -190,17 +190,7 @@ class FormActions
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'supplier_proposal') {
-				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
-				$title = $langs->trans('ActionsOnOrder');
-			} elseif ($typeelement == 'shipping') {
-				$title = $langs->trans('ActionsOnShipping');
-			} else {
-				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
-			}
+			$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 
 			$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage ? '&'.$moreparambacktopage : '');
 

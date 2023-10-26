@@ -134,7 +134,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION)) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION').'">';
 		print '</div>';
 	}
 
@@ -601,8 +601,8 @@ foreach ($listofpartnershipobj as $partnershipobj) {
 }
 
 if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print $listofpartnership[$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE];
-	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="'.$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE.'">';
+	print $listofpartnership[getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')];
+	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="' . getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE').'">';
 }
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";

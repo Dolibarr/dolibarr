@@ -375,7 +375,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = '';
 if ($action != 'create') {
-	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create', '', $permissiontoadd);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create', '', $permissiontoadd);
 
 	if ($action == 'edit') {
 		print '<table class="border centpercent tableforfield">';
@@ -385,7 +385,7 @@ if ($action != 'create') {
 		print '<input type="text" name="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email).'"></td></tr>';
 		print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('signature', (GETPOSTISSET('signature') ? GETPOST('signature', 'restricthtml') : $object->signature), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+		$doleditor = new DolEditor('signature', (GETPOSTISSET('signature') ? GETPOST('signature', 'restricthtml') : $object->signature), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, ROWS_4, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("User").'</td><td>';
@@ -417,7 +417,7 @@ if ($action != 'create') {
 	print '<input type="text" name="email" class="width300" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('signature', GETPOST('signature'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+	$doleditor = new DolEditor('signature', GETPOST('signature'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("User").'</td><td>';

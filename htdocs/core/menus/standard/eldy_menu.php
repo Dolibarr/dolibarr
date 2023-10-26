@@ -191,7 +191,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
@@ -317,9 +317,11 @@ class MenuManager
 								}
 							}
 
-							// Add font-awesome
+							// Add font-awesome (if $val2['level'] == 0, we are on level2
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
-								print $val2['prefix'];
+								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+							} else {
+								print '<span class="paddingright"></span>';	// we also add class="paddingright". width similar to pictofixedwidth is managed by class=lilevel2
 							}
 
 							print $val2['titre'];

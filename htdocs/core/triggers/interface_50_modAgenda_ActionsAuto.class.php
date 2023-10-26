@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2022		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,11 +87,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
-		//var_dump($action.' - '.$conf->global->$key);exit;
+		//var_dump($action.' - '.$key.' - '.$conf->global->$key);exit;
 
 		// Do not log events not enabled for this action
 		// GUI allow to set this option only if entry exists into table llx_c_action_trigger
-		if (empty($conf->global->$key)) {
+		if (!getDolGlobalString($key)) {
 			return 0;
 		}
 
@@ -584,6 +585,24 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'FICHINTER_CLOSE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "interventions"));
+
+			if (empty($object->actionmsg2)) {
+				if (empty($object->context['actionmsg2'])) {
+					$object->actionmsg2 = $langs->transnoentities("InterventionClosedInDolibarr", $object->ref);
+				} else {
+					$object->actionmsg2 = $object->context['actionmsg2'];
+				}
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("InterventionClosedInDolibarr", $object->ref);
+			}
+
+			$object->sendtoid = 0;
+			$object->fk_element = 0;
+			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_DELETE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "interventions"));

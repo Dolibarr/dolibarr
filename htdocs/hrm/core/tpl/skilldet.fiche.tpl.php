@@ -13,7 +13,7 @@ if (!empty($object->table_element_line)) {
 
 
 
-print '<!-- BEGIN PHP TEMPLATE SKILLDET -->'."\n";
+print '<!-- BEGIN PHP TEMPLATE hrm/core/tpl/skilldet.fiche.tpl.php -->'."\n";
 
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
 	print '<div class="tagtr table-border-row">'."\n";

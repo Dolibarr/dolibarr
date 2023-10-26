@@ -985,19 +985,19 @@ class CMailFile
 				$res = true;
 				$from = $this->smtps->getFrom('org');
 				if ($res && !$from) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Sender address '$from' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 				$dest = $this->smtps->getTo();
 				if ($res && !$dest) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Recipient address '$dest' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 
 				if ($res) {
-					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport), LOG_DEBUG);
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 						$this->smtps->setDebug(true);
@@ -1037,7 +1037,7 @@ class CMailFile
 						if (empty($this->error)) {
 							$this->error = $result;
 						}
-						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - ".$this->error, LOG_ERR);
 						$res = false;
 
 						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
@@ -1161,7 +1161,7 @@ class CMailFile
 					$this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
 				}
 
-				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport), LOG_DEBUG);
 
 				// send mail
 				$failedRecipients = array();

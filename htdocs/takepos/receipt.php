@@ -129,7 +129,7 @@ if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) 
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if (!empty($conf->global->TAKEPOS_RECEIPT_NAME)) {
-	print $conf->global->TAKEPOS_RECEIPT_NAME." ";
+	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
 }
 if ($object->statut == Facture::STATUS_DRAFT) {
 	print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));

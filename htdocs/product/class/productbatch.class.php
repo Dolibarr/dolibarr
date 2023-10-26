@@ -451,6 +451,7 @@ class Productbatch extends CommonObject
 		$sql .= " t.eatby as oldeatby,"; // deprecated but may not be migrated into new table
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
+		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) $sql .= " MAX(sm.datem) as date_entree,";
 		$sql .= " t.import_key";
 		if ($fk_product > 0) {
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
@@ -461,13 +462,26 @@ class Productbatch extends CommonObject
 			$sql .= " LEFT JOIN ".$dbs->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
+		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock AS ps ON (ps.rowid = fk_product_stock)';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot)';
+		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
-
+		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+			$sql .= ' AND sm.type_mouvement IN (0,3)';
+			$sql .= ' GROUP BY t.rowid, t.tms, t.fk_product_stock,t.sellby,t.eatby , t.batch,t.qty,t.import_key';
+			if ($fk_product > 0) {
+				$sql .= ', pl.rowid, pl.eatby, pl.sellby';
+			}
+		}
 		$sql .= " ORDER BY ";
 		// TODO : use product lifo and fifo when product will implement it
+		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+			$sql .= 'date_entree ASC,t.batch ASC,';
+		}
 		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
 		$sql .= "t.eatby ASC, t.sellby ASC ";
 		$sql .= ", t.qty ".(empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
@@ -488,6 +502,11 @@ class Productbatch extends CommonObject
 				$tmp->batch = $obj->batch;
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
+
+				if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
+					$tmp->context['stock_date_entry'] = $obj->date_entree;
+				}
+
 				// Some properties of the lot
 				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
 				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
@@ -500,7 +519,7 @@ class Productbatch extends CommonObject
 
 			return $ret;
 		} else {
-			$error = "Error ".$dbs->lasterror();
+			//$error = "Error ".$dbs->lasterror();
 			return -1;
 		}
 	}

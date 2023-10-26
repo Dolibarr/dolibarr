@@ -262,7 +262,7 @@ class AccountingJournal extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAccountingJournal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -465,7 +465,7 @@ class AccountingJournal extends CommonObject
 			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($date_start) . "' AND ad.depreciation_date <= '" . $this->db->idate($date_end) . "'";
 		}
 		// Define begin binding date
-		if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
 		}
 		$sql .= " ORDER BY ad.depreciation_date";
@@ -614,7 +614,7 @@ class AccountingJournal extends CommonObject
 				$disposal_date = $pre_data_info['disposal']['date'];
 
 				if ((!($date_start && $date_end) || ($date_start <= $disposal_date && $disposal_date <= $date_end)) &&
-					(empty($conf->global->ACCOUNTING_DATE_START_BINDING) || $conf->global->ACCOUNTING_DATE_START_BINDING <= $disposal_date)
+					(!getDolGlobalString('ACCOUNTING_DATE_START_BINDING') || $conf->global->ACCOUNTING_DATE_START_BINDING <= $disposal_date)
 				) {
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];

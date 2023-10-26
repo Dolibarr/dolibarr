@@ -1111,6 +1111,7 @@ class Partnership extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1175,7 +1176,7 @@ class Partnership extends CommonObject
 		if (!empty($conf->global->PARTNERSHIP_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->PARTNERSHIP_ADDON.".php";
+			$file = getDolGlobalString('PARTNERSHIP_ADDON') . ".php";
 			$classname = $conf->global->PARTNERSHIP_ADDON;
 
 			// Include file with class
@@ -1298,7 +1299,9 @@ class Partnership extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}

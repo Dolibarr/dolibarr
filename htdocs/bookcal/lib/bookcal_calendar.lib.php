@@ -33,7 +33,7 @@ function calendarPrepareHead($object)
 
 	$langs->load("bookcal@bookcal");
 
-	$showtabofpagecontact = 1;
+	$showtabofpagecontact = 0;
 	$showtabofpagenote = 1;
 	$showtabofpagedocument = 1;
 	$showtabofpageagenda = 1;

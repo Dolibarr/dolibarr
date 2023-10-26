@@ -44,7 +44,7 @@ $langs->loadLangs(array('agenda', 'admin', 'other'));
 $def = array();
 $action = GETPOST('action', 'alpha');
 
-if (empty($conf->global->AGENDA_EXT_NB)) {
+if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
@@ -157,10 +157,10 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		if (!($res > 0)) {
 			$error++;
 		}
-		if (empty($conf->global->AGENDA_EXT_NB)) {
+		if (!getDolGlobalString('AGENDA_EXT_NB')) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
-		$MAXAGENDA = empty($conf->global->AGENDA_EXT_NB) ? 5 : $conf->global->AGENDA_EXT_NB;
+		$MAXAGENDA = !getDolGlobalString('AGENDA_EXT_NB') ? 5 : $conf->global->AGENDA_EXT_NB;
 	}
 
 	if (!$error) {
@@ -221,7 +221,7 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled'=>array(0=>'.hideifnotset')), null, 1);
 } else {
-	if (empty($conf->global->AGENDA_DISABLE_EXT)) {
+	if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

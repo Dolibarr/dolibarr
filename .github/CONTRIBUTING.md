@@ -69,8 +69,8 @@ In uppercase if you want to have the log comment appears into the generated Chan
 The keyword can be ommitted if your commit does not fit in any of the following categories:
 
 - Fix/FIX: for a bug fix
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Close/CLOSE: for closing a referenced feature request
+- New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Perf/PERF: for performance enhancement
 - Qual/QUAL: for quality code enhancement or re-engeneering
 

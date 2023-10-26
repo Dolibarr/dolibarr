@@ -351,20 +351,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'500000'=>$idmodule
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
-				$arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) {
-				$arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
-			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) {
-				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['modulefamily'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
+				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1032,7 +1020,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			setEventMessages($langs->trans("ErrorTableNotFound", $tablename), null, 'errors');
 		} else {
 			/**
-			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'ip', 'url', 'password')
 			 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 			 *  'label' the translation key.
 			 *  'picto' is code of a picto to show before value in forms
@@ -1522,20 +1510,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
-				$arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) {
-				$arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
-			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
-				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) {
-				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
-			}
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
+				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -1719,7 +1695,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'name'=>GETPOST('propname', 'aZ09'),
 				'label'=>GETPOST('proplabel', 'alpha'),
 				'type'=>strtolower(GETPOST('proptype', 'alpha')),
-				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'alphawithlgt'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'alphanohtml'),
 				'enabled'=>GETPOST('propenabled', 'alphanohtml'),
 				'position'=>GETPOST('propposition', 'int'),
@@ -1737,14 +1713,21 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				//'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
 			);
+
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
-				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
+				$tmpdecode = json_decode($addfieldentry['arrayofkeyval'], true);
+				if ($tmpdecode) {	// If string is already a json
+					$addfieldentry['arrayofkeyval'] = $tmpdecode;
+				} else {			// If string is a list of lines with "key,value"
+					$tmparray = dolExplodeIntoArray($addfieldentry['arrayofkeyval'], "\n", ",");
+					$addfieldentry['arrayofkeyval'] = $tmparray;
+				}
 			}
 		}
 	} else {
 		$addfieldentry = array();
 	}
-	//var_dump($addfieldentry);
+
 	/*if (GETPOST('regeneratemissing'))
 	{
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
@@ -3104,7 +3087,6 @@ $linktoenabledisable = '';
 if (is_array($listofmodules) && count($listofmodules) > 0) {
 	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
-	$const_name = 'MAIN_MODULE_'.strtoupper($module);
 
 	$param = '';
 	if ($tab) {
@@ -3878,13 +3860,42 @@ if ($module == 'initmodule') {
 					if ($key == 'propname' || $key == 'proplabel') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'proptype') {
-						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><div style="position: relative;"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"><div id="suggestions"></div><div></td>';
+						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50">';
+						print '<input class="maxwidth200" id="'.$key.'" list="datalist'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'">';
+						//print '<div id="suggestions"></div>';
+						print '<datalist id="datalist'.$key.'">';
+						print '<option>varchar(128)</option>';
+						print '<option>email</option>';
+						print '<option>phone</option>';
+						print '<option>ip</option>';
+						print '<option>url</option>';
+						print '<option>password</option>';
+						print '<option>text</option>';
+						print '<option>html</option>';
+						print '<option>date</option>';
+						print '<option>datetime</option>';
+						print '<option>integer</option>';
+						print '<option>double(28,4)</option>';
+						print '<option>real</option>';
+						print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
+						// Combo with list of fields
+						/*
+						if (empty($formadmin)) {
+							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+							$formadmin = new FormAdmin($db);
+						}
+						print $formadmin->selectTypeOfFields($key, GETPOST($key, 'alpha'));
+						*/
+						print '</datalist>';
+						print '</td>';
 						//} elseif ($key == 'propvalidate') {
 						//	print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'propvisible') {
 						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "1").'"></td>';
 					} elseif ($key == 'propenabled') {
-						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "isModEnabled('".strtolower($module)."')").'"></td>';
+						//$default = "isModEnabled('".strtolower($module)."')";
+						$default = 1;
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $default).'"></td>';
 					} elseif ($key == 'proparrayofkeyval') {
 						print '<td class="titlefieldcreate tdproparrayofkeyval">'.$attribute.'</td><td class="valuefieldcreate"><textarea class="maxwidth200" name="'.$key.'">'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "").'</textarea></td>';
 					} else {
@@ -3915,68 +3926,10 @@ if ($module == 'initmodule') {
 					window.location.href = url;
 				}
 				$(document).ready(function() {
-					// Tableau de suggestions statiques
-					var suggestions = ["VARCHAR", "DOUBLE", "REAL", "TEXT", "HTML", "DATETIME", "TIMESTAMP", "INTEGER", "INTEGER:CLASSNAME:RELATIVEPATH/TO/CLASSFILE.CLASS.PHP[:1[:FILTER]]"];
-
-					function showSuggestions() {
-						var inputText = $("#proptype").val().toLowerCase();
-						var suggestionsDiv = $("#suggestions");
-
-						var filteredSuggestions = suggestions.filter(function(suggestion) {
-						  return suggestion.toLowerCase().indexOf(inputText) !== -1;
-						});
-
-						//get suggestion on div
-						suggestionsDiv.empty();
-						for (var i = 0; i < filteredSuggestions.length; i++) {
-						  var suggestion = filteredSuggestions[i];
-						  var suggestionItem = $("<div>").text(suggestion).css({ cursor: "pointer", padding: "5px" });
-						  suggestionsDiv.append(suggestionItem);
-						}
-
-
-						if (inputText === "" || filteredSuggestions.length === 0) {
-						  suggestionsDiv.hide();
-						} else {
-						  suggestionsDiv.show();
-						}
-					}
-
-					$("#proptype").on("input", showSuggestions);
-
-					$("#suggestions").on("click", "div", function() {
-						var selectedValue = $(this).text();
-						$("#proptype").val(selectedValue);
-						$("#suggestions").hide();
-					});
-					// when we click outside the input
-					$(document).on("click", function(event) {
-						if (!$(event.target).closest("#proptype, #suggestions").length) {
-						  $("#suggestions").hide();
-						}
-					});
-					// when we delete the content input
-					$("#proptype").on("keyup", function() {
-						if ($(this).val() === "") {
-						  $("#suggestions").hide();
-						}
-					});
-
 					$("#proplabel").on("keyup", function() {
 						console.log("key up on label");
 						s = cleanString($("#proplabel").val());
 						$("#propname").val(s);
-					});
-
-					// when hover in suggestion
-					$("#suggestions").on("mouseenter", "div", function() {
-						console.log("enter suggestion");
-						$(this).css("background-color", "#e0e0e0");
-					});
-
-					$("#suggestions").on("mouseleave", "div", function() {
-						console.log("leave suggestion");
-						$(this).css("background-color", "#fff");
 					});
 
 					function cleanString( stringtoclean )
@@ -3993,7 +3946,7 @@ if ($module == 'initmodule') {
 						if (stringtoclean.length > 28) {
 							stringtoclean = stringtoclean.substring(0, 27);
 						}
-						return stringtoclean
+						return stringtoclean;
 					}
 
 				  });';
@@ -4164,7 +4117,7 @@ if ($module == 'initmodule') {
 								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
-								if (!isModEnabled(strtolower($const_name))) {	// If module is not activated
+								if (!isModEnabled($modulelowercase)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 								} else {
 									print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
@@ -6037,7 +5990,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated"); '</span>';
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("CLIFile").' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcli&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}

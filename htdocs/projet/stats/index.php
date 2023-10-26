@@ -50,7 +50,7 @@ $endyear = $year;
 $langs->loadLangs(array('companies', 'projects'));
 
 // Security check
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 

@@ -243,7 +243,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 			$newlocalobject,
 			true,
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
+				'newref','oldref','id','lines','client','thirdparty','brouillon','user_creation_id','date_creation','date_validation','datem','date_modification',
 				'ref','statut','status','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc', 'modelpdf',
 				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',

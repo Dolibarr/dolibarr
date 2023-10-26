@@ -452,11 +452,8 @@ class Notify
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$projtitle = '';
-			if (!empty($object->fk_project)) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-				$proj = new Project($this->db);
-				$proj->fetch($object->fk_project);
-				$projtitle = '('.$proj->title.')';
+			if (is_object($object->project) || $object->fetch_project() > 0) {
+				$projtitle = '('.$object->project->title.')';
 			}
 
 			if ($num > 0) {

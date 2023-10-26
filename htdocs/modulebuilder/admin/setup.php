@@ -26,12 +26,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 global $conf, $langs, $user, $db;
 $langs->loadLangs(array("admin", "other", "modulebuilder"));
 
+$action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 if (!$user->admin || !isModEnabled('modulebuilder')) {
 	accessforbidden();
 }
-
-$action = GETPOST('action', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
 
 
 /*

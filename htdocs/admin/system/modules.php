@@ -365,7 +365,7 @@ foreach ($moduleList as $module) {
 			$labelpermission .= ' : '.$arrayofpermissions[$permission]['label'];
 			$idperms .= ($idperms ? ", " : "").'<span title="'.$labelpermission.'">'.$permission.'</a>';
 
-			if (!empty($conf->global->MAIN_SHOW_PERMISSION)) {
+			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
 					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';

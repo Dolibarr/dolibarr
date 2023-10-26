@@ -52,7 +52,7 @@ $invoiceid = GETPOST('invoiceid', 'int');
 
 $hookmanager->initHooks(array('takepospay'));
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 

@@ -54,7 +54,7 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
-	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->rights->expedition->delivery->lire) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire')) {
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
 		if (isset($object->linkedObjectsIds['delivery']) && is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
@@ -140,7 +140,7 @@ function delivery_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->rights->expedition->lire) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->origin_id;
 		$head[$h][1] = $langs->trans("SendingCard");
 		$head[$h][2] = 'shipping';

@@ -586,7 +586,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if ($priceLevel < 1 || $priceLevel > $conf->global->PRODUIT_MULTIPRICES_LIMIT) {
-			throw new RestException(400, 'Price level must be between 1 and '.$conf->global->PRODUIT_MULTIPRICES_LIMIT);
+			throw new RestException(400, 'Price level must be between 1 and ' . getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT'));
 		}
 
 		if (empty(DolibarrApiAccess::$user->rights->societe->creer)) {

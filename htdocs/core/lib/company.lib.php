@@ -131,14 +131,14 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
-	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if ($supplier_module_enabled == 1 && $object->fournisseur && $user->hasRight('fournisseur', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
 		$head[$h][2] = 'supplier';
 		$h++;
 	}
 
-	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -279,7 +279,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
-		if (!empty($user->rights->partnership->read)) {
+		if ($user->hasRight('partnership', 'read')) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?socid='.$object->id;
@@ -885,7 +885,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->rights->projet->lire && $userAccess > 0) {
+					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
 						// Ref

@@ -77,7 +77,7 @@ if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 	}
 }
 
-if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+if ($action == 'removebackgroundlogin' && getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -495,7 +495,7 @@ if ($mode == 'other') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
 	print '</td><td>';
-	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
+	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (!getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
 	print '</td>';
 	print '</tr>';
 
@@ -563,7 +563,7 @@ if ($mode == 'dashboard') {
 	print '</td>';
 	print '</tr>';
 
-	if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
+	if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 		// Block meteo
 		print '<tr class="oddeven"><td>' . $langs->trans('MAIN_DISABLE_METEO') . '</td><td>';
 		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
@@ -671,7 +671,7 @@ if ($mode == 'login') {
 	print '<tr class="oddeven"><td><label for="imagebackground">' . $langs->trans("BackgroundImageLogin") . ' (png,jpg)</label></td><td>';
 	print '<div class="centpercent inline-block">';
 	$disabled = '';
-	if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 		$disabled = ' disabled="disabled"';
 	}
 	$maxfilesizearray = getMaxFileSizeArray();
@@ -683,7 +683,7 @@ if ($mode == 'login') {
 	if ($disabled) {
 		print '(' . $langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND") . ') ';
 	}
-	if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+	if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'&mode=login">' . img_delete($langs->trans("Delete")) . '</a>';
 		if (file_exists($conf->mycompany->dir_output . '/logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND'))) {
 			print ' &nbsp; ';

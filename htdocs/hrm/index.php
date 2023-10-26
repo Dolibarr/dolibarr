@@ -113,15 +113,15 @@ if (!empty($setupcompanynotcomplete)) {
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	if (isModEnabled('holiday') && $user->rights->holiday->read) {
+	if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
 	}
-	if (isModEnabled('deplacement') && $user->rights->deplacement->lire) {
+	if (isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')) {
 		$langs->load("trips");
 		$listofsearchfields['search_deplacement'] = array('text'=>'ExpenseReport');
 	}
-	if (isModEnabled('expensereport') && $user->rights->expensereport->lire) {
+	if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
 		$langs->load("trips");
 		$listofsearchfields['search_expensereport'] = array('text'=>'ExpenseReport');
 	}
@@ -194,7 +194,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->holiday->readall)) {
+	if (!$user->hasRight('holiday', 'readall')) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -279,7 +279,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
+	if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -351,11 +351,11 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {

@@ -122,10 +122,15 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array(), array('http', 'https'), 0, -1);
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
-					$nbPosts ++;
+					$nbPosts++;
 				} else {
-					$errors ++;
-					dol_syslog("Failed to get url with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : ""), LOG_DEBUG);
+					$errors++;
+					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$this->errors[] = $errormsg;
+					/*if (!empty($response['content'])) {
+						$this->errors[] = dol_trunc($response['content'], 200);
+					}*/
+					dol_syslog($errormsg, LOG_ERR);
 				}
 			}
 		}

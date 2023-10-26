@@ -412,7 +412,7 @@ if ($action == 'create') {
 	print img_picto('', 'pdf', 'class="pictofixedwidth"');
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFStockTransfer::liste_modeles($db);
-	$preselected = $conf->global->STOCKTRANSFER_ADDON_PDF;
+	$preselected = getDolGlobalString('STOCKTRANSFER_ADDON_PDF');
 	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>";
 

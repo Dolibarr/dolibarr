@@ -172,7 +172,7 @@ if (isModEnabled('barcode')) { ?>
 	echo $this->control->tpl['localtax'];
 } ?>
 
-<?php if ($user->rights->societe->client->voir) { ?>
+<?php if ($user->hasRight('societe', 'client', 'voir')) { ?>
 <tr>
 	<td><?php echo $langs->trans("AllocateCommercial"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_users']; ?></td>

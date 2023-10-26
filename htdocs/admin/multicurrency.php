@@ -262,7 +262,7 @@ print '</div>';
 
 print '<br>';
 
-if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
+if (getDolGlobalString('MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION')) {
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setapilayer">';

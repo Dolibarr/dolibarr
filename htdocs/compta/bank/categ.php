@@ -49,7 +49,7 @@ $bankcateg = new BankCateg($db);
 
 
 // Security Check  Access Control
-if (!$user->rights->banque->configurer) {
+if (!$user->hasRight('banque', 'configurer')) {
 	accessforbidden();
 }
 

@@ -88,7 +88,7 @@ function printDropdownBookmarksList()
 
 	// Url to go on create new bookmark page
 	$newbtn = '';
-	if (!empty($user->rights->bookmark->creer)) {
+	if ($user->hasRight('bookmark', 'creer')) {
 		if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
 			//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
 			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
@@ -127,10 +127,10 @@ function printDropdownBookmarksList()
 			//$searchForm .= '<option>--'.$langs->trans("Bookmarks").'--</option>';
 			$searchForm .= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 			$searchForm .= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
-			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
-			$searchForm .= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
+			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->hasRight('bookmark', 'creer') ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
+			$searchForm .= dol_escape_htmltag($user->hasRight('bookmark', 'creer') ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 			// Url to go on create new bookmark page
-			if (!empty($user->rights->bookmark->creer)) {
+			if ($user->hasRight('bookmark', 'creer')) {
 				if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
 					$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
 					$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';

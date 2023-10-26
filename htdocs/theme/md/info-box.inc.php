@@ -253,6 +253,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-line {
 	line-height: 1.2em;
 }
+.info-box-line-text {
+	overflow: hidden;
+	width: calc(100% - 76px);
+	text-overflow: ellipsis;
+}
 
 .info-box-icon-text {
 	box-sizing: border-box;
