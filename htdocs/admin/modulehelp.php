@@ -46,7 +46,7 @@ if (empty($mode)) {
 	$mode = 'desc';
 }
 
-if (!$user->admin) {
+if (empty($user->admin)) {
 	accessforbidden();
 }
 
@@ -261,7 +261,7 @@ if ($authorid > 0) {
 	$tmpuser = new User($db);
 	$tmpuser->fetch($authorid);
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
-	$text .= $tmpuser->getNomUrl(1);
+	$text .= $tmpuser->getNomUrl(-1);
 }
 $ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
 if ($ip) {

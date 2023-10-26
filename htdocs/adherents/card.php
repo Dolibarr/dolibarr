@@ -281,7 +281,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
 		}
 		// Check if the login already exists
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			if (empty($login)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
@@ -523,7 +523,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MemberNature")), null, 'errors');
 		}
 		// Tests if the login already exists
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			if (empty($login)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
@@ -563,7 +563,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
-		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($email)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
@@ -601,7 +601,7 @@ if (empty($reshook)) {
 			}
 
 			// Auto-create thirdparty on member creation
-			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+			if (getDolGlobalString('ADHERENT_DEFAULT_CREATE_THIRDPARTY')) {
 				if ($result > 0) {
 					// Create third party out of a member
 					$company = new Societe($db);
@@ -994,12 +994,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tbody>';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("member_login") ? GETPOST("member_login", 'alphanohtml', 2) : $object->login).'" autofocus="autofocus"></td></tr>';
 		}
 
 		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$generated_password = getRandomPassword(false);
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
@@ -1049,7 +1049,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.(!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? '</span>' : '').'</td>';
+		print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
@@ -1083,7 +1083,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// State
-		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
+		if (!getDolGlobalString('MEMBER_DISABLE_STATE')) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
 			if ($soc->country_id) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
@@ -1223,12 +1223,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->ref.'</td></tr>';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alphanohtml', 2) : $object->login).'"></td></tr>';
 		}
 
 		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : '').'"></td></tr>';
 		}
 
@@ -1329,7 +1329,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// State
-		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
+		if (!getDolGlobalString('MEMBER_DISABLE_STATE')) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
 			print img_picto('', 'state', 'class="pictofixedwidth"');
 			print $formcompany->select_state($object->state_id, GETPOSTISSET("country_id") ? GETPOST("country_id", "alpha") : $object->country_id);
@@ -1558,10 +1558,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($object->email) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? true : false));
 			}
-			if (isModEnabled('mailman') && !empty($conf->global->ADHERENT_USE_MAILMAN)) {
+			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"), 'value'=>'');
 			}
-			if (isModEnabled('mailman') && !empty($conf->global->ADHERENT_USE_SPIP)) {
+			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_SPIP')) {
 				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value'=>'');
 			}
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
@@ -1619,7 +1619,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Create an array
 			$formquestion = array();
 			if ($object->email) {
-				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? 'true' : 'false'));
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? 'true' : 'false'));
 			}
 			if ($backtopage) {
 				$formquestion[] = array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
@@ -1679,7 +1679,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Create an array
 			$formquestion = array();
 			if ($object->email) {
-				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? 'true' : 'false'));
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? 'true' : 'false'));
 			}
 			if ($backtopage) {
 				$formquestion[] = array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
@@ -1706,7 +1706,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		$rowspan = 17;
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			$rowspan++;
 		}
 		if (isModEnabled('societe')) {
@@ -1729,7 +1729,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 
@@ -1750,7 +1750,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</tr>';
 
 		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td>'.$langs->trans("Password").'</td><td>';
 			if ($object->pass) {
 				print preg_replace('/./i', '*', $object->pass);
@@ -1996,7 +1996,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Action SPIP
-				if (isModEnabled('mailmanspip') && !empty($conf->global->ADHERENT_USE_SPIP)) {
+				if (isModEnabled('mailmanspip') && getDolGlobalString('ADHERENT_USE_SPIP')) {
 					$isinspip = $mailmanspip->is_in_spip($object);
 
 					if ($isinspip == 1) {

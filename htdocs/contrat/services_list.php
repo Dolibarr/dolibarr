@@ -35,17 +35,22 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
-$optioncss = GETPOST('optioncss', 'aZ09');
-$mode = GETPOST("mode");
-
+// Get parameters
 $massaction = GETPOST('massaction', 'alpha');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+
+// Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -110,13 +115,13 @@ $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '') {
 	$tmp = explode('&', $search_status);
-	if (empty($tmp[1])) {
-		$filter = '';
-	} else {
+	if (!empty($tmp[1])) {
 		if ($tmp[1] == 'filter=notexpired') {
+			$search_status = $tmp[0];
 			$filter = 'notexpired';
 		}
 		if ($tmp[1] == 'filter=expired') {
+			$search_status = $tmp[0];
 			$filter = 'expired';
 		}
 	}
@@ -149,7 +154,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$permissiontoread = $user->hasRight('contrat', 'lire');
+$permissiontoadd = $user->hasRight('contrat', 'creer');
+$permissiontodelete = $user->hasRight('contrat', 'supprimer');
 
+$result = restrictedArea($user, 'contrat', 0);
 
 
 /*
@@ -157,7 +166,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -211,10 +221,27 @@ if (empty($reshook)) {
  * View
  */
 
-$now = dol_now();
-
 $form = new Form($db);
 
+$now = dol_now();
+
+$title = $langs->trans("ListOfServices");
+if ($search_status == "0") {
+	$title = $langs->trans("ListOfInactiveServices"); // Must use == "0"
+}
+if ($search_status == "4" && $filter != "expired") {
+	$title = $langs->trans("ListOfRunningServices");
+}
+if ($search_status == "4" && $filter == "expired") {
+	$title = $langs->trans("ListOfExpiredServices");
+}
+if ($search_status == "5") {
+	$title = $langs->trans("ListOfClosedServices");
+}
+$help_url = '';
+
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref_supplier,";
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql .= " cd.rowid, cd.description, cd.statut, cd.product_type as type,";
@@ -241,7 +268,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
@@ -363,10 +390,10 @@ if (!empty($filter_opcloture) && $filter_opcloture == ' BETWEEN ') {
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-$sql .= $db->order($sortfield, $sortorder);
 
 //print $sql;
 
+// Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
@@ -377,7 +404,11 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	}
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 dol_syslog("contrat/services_list.php", LOG_DEBUG);
@@ -390,25 +421,34 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 /*
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
-{
+// Direct jump if only one record found
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->id;
 	header("Location: ".DOL_URL_ROOT.'/projet/tasks/task.php?id='.$id.'&withprojet=1');
 	exit;
 }*/
 
-llxHeader(null, $langs->trans("Services"));
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url);
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.$limit;
+	$param .= '&limit='.((int) $limit);
 }
-if ($mode) {
-	$param .= '&amp;mode='.urlencode($mode);
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
@@ -464,10 +504,6 @@ if ($filter_date2_start != '') {
 if ($filter_datecloture_start != '') {
 	$param .= '&amp;opclotureday='.((int) $op2day).'&amp;opcloturemonth='.((int) $op2month).'&amp;opclotureyear='.((int) $op2year);
 }
-
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -480,7 +516,7 @@ $arrayofmassactions = array(
 //if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -491,20 +527,11 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-$title = $langs->trans("ListOfServices");
-if ($search_status == "0") {
-	$title = $langs->trans("ListOfInactiveServices"); // Must use == "0"
-}
-if ($search_status == "4" && $filter != "expired") {
-	$title = $langs->trans("ListOfRunningServices");
-}
-if ($search_status == "4" && $filter == "expired") {
-	$title = $langs->trans("ListOfExpiredServices");
-}
-if ($search_status == "5") {
-	$title = $langs->trans("ListOfClosedServices");
-}
+$newcardbutton = '';
+
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, '', '', $limit);
 
@@ -529,7 +556,7 @@ if (isModEnabled('categorie') && ($user->hasRight('produit', 'lire') || $user->h
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -540,18 +567,30 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-
-print '<tr class="liste_titre">';
+// Fields title search
+// --------------------------------------------------------------------
+print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="filter" value="'.$filter.'">';
@@ -638,7 +677,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['cd.datec']['checked'])) {
 	// Date creation
@@ -660,17 +699,33 @@ if (!empty($arrayfields['status']['checked'])) {
 		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
 		'5'=>$langs->trans("ServiceStatusClosed")
 	);
-	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	$search_status_new = GETPOST('search_status', 'alpha');
+	if ($filter == 'expired' && !preg_match('/expired/', $search_status_new)) {
+		$search_status_new .= '&filter=expired';
+	}
+	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status_new, ',') ?-1 : $search_status_new), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
-print "</tr>\n";
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
+print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
 }
@@ -711,7 +766,7 @@ if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['cd.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.datec']['label'], $_SERVER["PHP_SELF"], "cd.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -722,17 +777,29 @@ if (!empty($arrayfields['cd.tms']['checked'])) {
 if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "cd.statut,c.statut", "", $param, '', $sortfield, $sortorder, 'right ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-print "</tr>\n";
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+print '</tr>'."\n";
 
+
+// Loop on record
+// --------------------------------------------------------------------
 
 $contractstatic = new Contrat($db);
 $productstatic = new Product($db);
 
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array('nbfield'=>0, 'cd.qty'=>0, 'cd.total_ht'=>0, 'cd.total_tva'=>0);
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
 	$contractstatic->id = $obj->cid;
 	$contractstatic->ref = $obj->ref ? $obj->ref : $obj->cid;
@@ -755,8 +822,23 @@ while ($i < min($num, $limit)) {
 	$productstatic->description = $obj->description;
 	$productstatic->barcode = $obj->barcode;
 
-	print '<tr class="oddeven">';
+	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print '<td class="nowraponall">';
@@ -937,20 +1019,22 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-	}
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
-	print "</tr>\n";
+	print '</tr>'."\n";
 	$i++;
 }
 
@@ -970,17 +1054,16 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print '</table>';
-print '</div>';
+print '</table>'."\n";
+print '</div>'."\n";
 
-print '</form>';
+print '</form>'."\n";
 
 
-
+// End of page
 llxFooter();
-
 $db->close();

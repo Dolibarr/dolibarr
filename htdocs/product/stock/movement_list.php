@@ -1402,13 +1402,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($warehousestatic->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1484,11 +1485,11 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			// Inventory code
-			print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'&search_type_mouvement='.urlencode($obj->type_mouvement).'">'.$obj->inventorycode.'</a></td>';
+			print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a></td>';
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 		}
 		if (!empty($arrayfields['origin']['checked'])) {
 			// Origin of movement

@@ -44,7 +44,7 @@ class Export
 	 */
 	public $errno;
 	/**
-	 * @var string Error messages
+	 * @var string[] Error messages
 	 */
 	public $errors;
 

@@ -479,7 +479,7 @@ class Fichinter extends CommonObject
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->entity = $obj->entity;
 
-				$this->user_creation = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
@@ -726,12 +726,10 @@ class Fichinter extends CommonObject
 	 */
 	public function getAmount()
 	{
-		global $db;
-
 		$amount = 0;
 
-		$this->author = new User($db);
-		$this->author->fetch($this->user_creation);
+		$this->author = new User($this->db);
+		$this->author->fetch($this->user_creation_id);
 
 		$thm = $this->author->thm;
 
@@ -1017,18 +1015,9 @@ class Fichinter extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-				if ($obj->fk_user_modification) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
 			}
 			$this->db->free($resql);
 		} else {
@@ -1566,7 +1555,9 @@ class Fichinter extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';

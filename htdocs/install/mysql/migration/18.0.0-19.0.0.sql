@@ -115,7 +115,7 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur
 UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AND site IS NULL;
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
-ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
+ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(60);
 
 -- Drop the composite unique index that exists on llx_links to rebuild a new one with objecttype included.
 -- The old design did not allow same label on different objects with same id.
@@ -135,3 +135,27 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
+
+ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
+
+ALTER TABLE llx_resource ADD COLUMN address varchar(255) DEFAULT NULL AFTER fk_code_type_resource;
+ALTER TABLE llx_resource ADD COLUMN zip varchar(25) DEFAULT NULL AFTER address;
+ALTER TABLE llx_resource ADD COLUMN town varchar(50) DEFAULT NULL AFTER zip;
+ALTER TABLE llx_resource ADD COLUMN photo_filename varchar(255) DEFAULT NULL AFTER town;
+ALTER TABLE llx_resource ADD COLUMN max_users integer DEFAULT NULL AFTER photo_filename;
+ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_places;
+ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
+ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
+ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
+--ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
+
+
+ALTER TABLE llx_mailing ADD COLUMN note_private text;
+ALTER TABLE llx_mailing ADD COLUMN note_public text;
+
+ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';

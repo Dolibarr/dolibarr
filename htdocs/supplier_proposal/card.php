@@ -286,8 +286,6 @@ if (empty($reshook)) {
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
 					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
-					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU', 2);
 					$object->socid = GETPOST('socid');
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->model_pdf = GETPOST('model');
@@ -1119,10 +1117,10 @@ if (empty($reshook)) {
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payments
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
-	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
+		//} elseif ($action == 'setremisepercent' && $usercancreate) {
+		//	$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), '', 2));
+		//} elseif ($action == 'setremiseabsolue' && $usercancreate) {
+		//	$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU', 2));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment mode
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -1222,8 +1220,6 @@ if ($action == 'create') {
 
 		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0)); // TODO maybe add default value option
 		$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-		$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
-		$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 		// Replicate extrafields
 		$objectsrc->fetch_optionals();
@@ -1339,7 +1335,7 @@ if ($action == 'create') {
 	print '<td colspan="2">';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
 	$datedelivery = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-	if (in_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
+	if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
 		$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
@@ -1404,8 +1400,8 @@ if ($action == 'create') {
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			$objectsrc->remise_absolue = $remise_absolue;
-			$objectsrc->remise_percent = $remise_percent;
+			//$objectsrc->remise_absolue = $remise_absolue;
+			//$objectsrc->remise_percent = $remise_percent;
 			$objectsrc->update_price(1, 'auto', 1);
 		}
 

@@ -61,6 +61,11 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/note.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Note");
+	$head[$h][2] = 'note';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing', 'remove');
