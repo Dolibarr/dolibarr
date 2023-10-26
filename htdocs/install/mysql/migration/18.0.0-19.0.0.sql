@@ -146,6 +146,9 @@ ALTER TABLE llx_resource ADD COLUMN max_users integer DEFAULT NULL AFTER photo_f
 ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER user_places;
 ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
 ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
+ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
+ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
 
 ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
