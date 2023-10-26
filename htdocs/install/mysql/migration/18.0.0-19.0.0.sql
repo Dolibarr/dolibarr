@@ -150,6 +150,10 @@ ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_count
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 --ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
 
+
+ALTER TABLE llx_mailing ADD COLUMN note_private text;
+ALTER TABLE llx_mailing ADD COLUMN note_public text;
+
 ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
