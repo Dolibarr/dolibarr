@@ -39,9 +39,12 @@ $id						= GETPOST('id', 'int');
 $action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
+$address				= GETPOST('address', 'alpha');
+$zip					= GETPOST('zipcode', 'alpha');
+$town					= GETPOST('town', 'alpha');
 $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
+$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -98,6 +101,9 @@ if (empty($reshook)) {
 				$action = 'create';
 			} else {
 				$object->ref                    = $ref;
+				$object->address				= $address;
+				$object->zip					= $zip;
+				$object->town					= $town;
 				$object->description            = $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
 				$object->country_id             = $country_id;
@@ -138,6 +144,9 @@ if (empty($reshook)) {
 			$res = $object->fetch($id);
 			if ($res > 0) {
 				$object->ref          			= $ref;
+				$object->address				= $address;
+				$object->zip					= $zip;
+				$object->town					= $town;
 				$object->description  			= $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
 				$object->country_id             = $country_id;
