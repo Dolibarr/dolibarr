@@ -134,6 +134,10 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
+-- Product/service managed in stock
+ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
+UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
 ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
