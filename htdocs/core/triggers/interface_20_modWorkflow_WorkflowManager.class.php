@@ -455,12 +455,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				//Build array of quantity received by product for a purchase order
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0)
+						if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0) {
 							continue;
-
+						}
+						
 						foreach ($shipping_array as $shipping) {
-							if (!is_array($shipping->lines) || count($shipping->lines) == 0)
+							if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
 								continue;
+							}
+							
 							foreach ($shipping->lines as $shippingline) {
 								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 							}
@@ -505,12 +508,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
 					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
-					if (!is_array($list) || empty($list))
+					if (!is_array($list) || empty($list)) {
 						continue;
+					}
 					$number_contracts_found = count($list);
-					if ($number_contracts_found == 0)
+					if ($number_contracts_found == 0) {
 						continue;
-
+					}
+					
 					foreach ($list as $linked_contract) {
 						$object->setContract($linked_contract->id);
 						// don't set '$contractid' so it is not used when creating an intervention.
