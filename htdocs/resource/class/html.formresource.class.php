@@ -2,6 +2,7 @@
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
