@@ -264,7 +264,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->datef), 'dayhour')."</td>";
 						print '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->line_total_ht)."</td>\n";
-						print '<td align="right">'.$supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
+						print '<td align="right">'.$supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5, $supplierinvoicestatic->getSommePaiement()).'</td>';
 						print "</tr>\n";
 						$i++;
 					}
