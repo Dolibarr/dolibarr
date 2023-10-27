@@ -132,7 +132,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	{
 		$this->event_date = dol_now();
 		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login . $object->name;
-		if ($key_text == 'UserEnabledDisabled') { // TODO should be refactored using an object property for event data.
+		if ($key_text == InterfaceLogevents::EVENT_ACTION_DICT['USER_ENABLEDISABLE']) { // TODO should be refactored using an object property for event data.
 			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
 		}
 		// Add more information into event description from the context property
