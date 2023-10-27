@@ -1543,7 +1543,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	if (isModEnabled('barcode') && getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE') && !empty($product_barcode)) {
-		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $product_barcode);
+		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $langs->trans("BarCode")." ".$product_barcode);
 	}
 
 	// Description long of product line
