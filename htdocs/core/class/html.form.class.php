@@ -6622,10 +6622,21 @@ class Form
 				$return .= '<select class="flat minwidth50imp maxwidth100" id="' . $htmlname . '" name="' . $htmlname . '"' . ($disabled ? ' disabled' : '') . $title . '>';
 			}
 
-			$selectedfound = false;
+			$fourn = boolval(0);
+			$assujtva = boolval(1);
+			if(!$societe_vendeuse->tva_assuj && $societe_vendeuse->fournisseur){
+				$fourn = 1;
+				$assujtva = 0;
+			}
+
 			foreach ($this->cache_vatrates as $rate) {
 				// Keep only 0 if seller is not subject to VAT
-				if ($disabled && $rate['txtva'] != 0) {
+				if (!$assujtva && $fourn) {
+					$return .= '<option value="0"';
+					$return .= '>';
+					$return .= '0';
+					$return .= '%';
+					$return .= '</option>';
 					continue;
 				}
 
