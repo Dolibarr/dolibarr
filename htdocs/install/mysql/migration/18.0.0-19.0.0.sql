@@ -134,6 +134,10 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
+-- Product/service managed in stock
+ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
+UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
 ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
@@ -149,6 +153,10 @@ ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
 ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 --ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
+
+
+ALTER TABLE llx_mailing ADD COLUMN note_private text;
+ALTER TABLE llx_mailing ADD COLUMN note_public text;
 
 ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;

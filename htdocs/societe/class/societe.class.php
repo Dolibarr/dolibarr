@@ -18,6 +18,7 @@
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5404,6 +5405,196 @@ class Societe extends CommonObject
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
+		}
+	}
+
+	/**
+	 *    Merge a company with another one, deleting the given company.
+	 *
+	 *    @param	int     $soc_origin_id		Company to merge the data from
+	 *    @return	int		-1 if error
+	 *
+	 *    @note The company given in parameter will be removed.
+	 *
+	 */
+	public function mergeCompany($soc_origin_id)
+	{
+		global $langs, $hookmanager, $user;
+
+		$error = 0;
+		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
+
+		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->begin();
+
+			// Recopy some data
+			$this->client = $this->client | $soc_origin->client;
+			$this->fournisseur = $this->fournisseur | $soc_origin->fournisseur;
+			$listofproperties = array(
+				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
+				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+				'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+				'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+				'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+				'model_pdf',
+			);
+			foreach ($listofproperties as $property) {
+				if (empty($this->$property)) {
+					$this->$property = $soc_origin->$property;
+				}
+			}
+
+			// Concat some data
+			$listofproperties = array(
+				'note_public', 'note_private'
+			);
+			foreach ($listofproperties as $property) {
+				$this->$property = dol_concatdesc($this->$property, $soc_origin->$property);
+			}
+
+			// Merge extrafields
+			if (is_array($soc_origin->array_options)) {
+				foreach ($soc_origin->array_options as $key => $val) {
+					if (empty($this->array_options[$key])) {
+						$this->array_options[$key] = $val;
+					}
+				}
+			}
+
+			// If alias name is not defined on target thirdparty, we can store in it the old name of company.
+			if (empty($this->name_bis) && $this->name != $soc_origin->name) {
+				$this->name_bis = $this->name;
+			}
+
+			// Merge categories
+			$static_cat = new Categorie($this->db);
+
+			$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
+			$custcats = $static_cat->containing($this->id, 'customer', 'id');
+			$custcats = array_merge($custcats, $custcats_ori);
+			$this->setCategories($custcats, 'customer');
+
+			$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+			$suppcats = $static_cat->containing($this->id, 'supplier', 'id');
+			$suppcats = array_merge($suppcats, $suppcats_ori);
+			$this->setCategories($suppcats, 'supplier');
+
+			// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+			if ($soc_origin->code_client == $this->code_client
+				|| $soc_origin->code_fournisseur == $this->code_fournisseur
+				|| $soc_origin->barcode == $this->barcode) {
+				dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+				$soc_origin->code_client = '';
+				$soc_origin->code_fournisseur = '';
+				$soc_origin->barcode = '';
+				$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+			}
+
+			// Update
+			$result = $this->update($this->id, $user, 0, 1, 1, 'merge');
+
+			if ($result < 0) {
+				$error++;
+			}
+
+			// Move links
+			if (!$error) {
+				$objects = array(
+					'Adherent' => '/adherents/class/adherent.class.php',
+					'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
+					'Societe' => '/societe/class/societe.class.php',
+					//'Categorie' => '/categories/class/categorie.class.php',
+					'ActionComm' => '/comm/action/class/actioncomm.class.php',
+					'Propal' => '/comm/propal/class/propal.class.php',
+					'Commande' => '/commande/class/commande.class.php',
+					'Facture' => '/compta/facture/class/facture.class.php',
+					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+					'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
+					'Mo' => '/mrp/class/mo.class.php',
+					'Contact' => '/contact/class/contact.class.php',
+					'Contrat' => '/contrat/class/contrat.class.php',
+					'Expedition' => '/expedition/class/expedition.class.php',
+					'Fichinter' => '/fichinter/class/fichinter.class.php',
+					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'Reception' => '/reception/class/reception.class.php',
+					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+					'Delivery' => '/delivery/class/delivery.class.php',
+					'Product' => '/product/class/product.class.php',
+					'Project' => '/projet/class/project.class.php',
+					'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
+					'User' => '/user/class/user.class.php',
+					'Account' => '/compta/bank/class/account.class.php',
+					'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
+				);
+
+				//First, all core objects must update their tables
+				foreach ($objects as $object_name => $object_file) {
+					if (is_array($object_file)) {
+						if (empty($object_file['enabled'])) {
+							continue;
+						}
+						$object_file = $object_file['file'];
+					}
+
+					require_once DOL_DOCUMENT_ROOT.$object_file;
+
+					if (!$error && !$object_name::replaceThirdparty($this->db, $soc_origin->id, $this->id)) {
+						$error++;
+						$this->error = $this->db->lasterror();
+						break;
+					}
+				}
+			}
+
+			// External modules should update their ones too
+			if (!$error) {
+				$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $this->id);
+				$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $this, $action);
+
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
+				$this->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id, 'mergefromname'=>$soc_origin->name);
+
+				// Call trigger
+				$result = $this->call_trigger('COMPANY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				// We finally remove the old thirdparty
+				if ($soc_origin->delete($soc_origin->id, $user) < 1) {
+					$this->error = $soc_origin->error;
+					$this->errors = $soc_origin->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 0;
+			} else {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorsThirdpartyMerge');
+				$this->db->rollback();
+				return -1;
+			}
 		}
 	}
 }

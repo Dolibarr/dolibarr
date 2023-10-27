@@ -303,6 +303,7 @@ ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account
 ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this third party (or set to a value deleted on Stripe side). Create (or re-attach) it first.
 ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character +
 ErrorTableNotFound=Table <b>%s</b> not found
+ErrorRefNotFound=Ref <b>%s</b> not found
 ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
