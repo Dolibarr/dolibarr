@@ -32,6 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
+	const event_action_dict = [
+		'USER_LOGIN' => 'UserLogged',
+		'USER_LOGIN_FAILED' => 'UserLoginFailed',
+		'USER_LOGOUT' => 'UserLogoff',
+		'USER_CREATE' => 'NewUserCreated',
+		'USER_MODIFY' => 'EventUserModified',
+		'USER_NEW_PASSWORD' => 'NewUserPassword',
+		'USER_ENABLEDISABLE' => 'UserEnabledDisabled',
+		'USER_DELETE' => 'UserDeleted',
+		'USERGROUP_CREATE' => 'NewGroupCreated',
+		'USERGROUP_MODIFY' => 'GroupModified',
+		'USERGROUP_DELETE' => 'GroupDeleted'
+	];
 	private string 	$event_label;
 	private string 	$event_desc;
 	private int 	$event_date;
@@ -81,60 +94,8 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		// Actions
-		switch ($action) {
-			case 'USER_LOGIN':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("UserLogged", $object, $langs, true);
-				break;
-			case 'USER_LOGIN_FAILED':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("UserLoginFailed", $object, $langs, true);
-				break;
-			case 'USER_LOGOUT':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("UserLogoff", $object, $langs, true);
-				break;
-			case 'USER_CREATE':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("NewUserCreated", $object, $langs, true);
-				break;
-			case 'USER_MODIFY':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("EventUserModified", $object, $langs, true);
-				break;
-			case 'USER_NEW_PASSWORD':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("NewUserPassword", $object, $langs, true);
-				break;
-			case 'USER_ENABLEDISABLE': // TODO maybe divide this action into 2 separate actions for better traceability
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				if ($object->statut == 0) {
-					$this->initEventData("UserEnabled", $object, $langs, true);
-				}
-				if ($object->statut == 1) {
-					$this->initEventData("UserDisabled", $object, $langs, true);
-				}
-				break;
-			case 'USER_DELETE':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("UserDeleted", $object, $langs, true);
-				break;
-			case 'USERGROUP_CREATE':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("NewGroupCreated", $object, $langs, false);
-				break;
-			case 'USERGROUP_MODIFY':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("GroupModified", $object, $langs, false);
-				break;
-			case 'USERGROUP_DELETE':
-				dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				$this->initEventData("GroupDeleted", $object, $langs, false);
-				break;
-			default:
-				dol_syslog("Unknown action. Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-				break;
-		}
+		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+		$this->initEventData(InterfaceLogevents::event_action_dict[$action], $object);
 
 		// Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
@@ -163,20 +124,36 @@ class InterfaceLogevents extends DolibarrTriggers
 	/**
 	 * Method called by runTrigger to initialize date, label & description data for event
 	 *
-	 * @param	string		$key				Text lang string
+	 * @param	string		$key_text				Action string
 	 * @param	Object		$object				Object
-	 * @param	Translate	$langs				Object langs
-	 * @param	bool		$user_else_group	Bool to define if localized string param is Object login or name
 	 * @return	void
 	 */
-	private function initEventData(string $key, Object $object, Translate $langs, bool $user_else_group): void
+	private function initEventData(string $key_text, Object $object): void
 	{
-		$langs->load("users");
 		$this->event_date = dol_now();
-		$this->event_label = $this->event_desc = $langs->transnoentities($key, $user_else_group ? $object->login : $object->name);
+		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login . $object->name;
+		if ($key_text == 'UserEnabledDisabled') {
+			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
+		}
 		// Add more information into event description from the context property
 		if (!empty($object->context['audit'])) {
 			$this->event_desc .= (empty($this->event_desc) ? '' : ' - ').$object->context['audit'];
 		}
+	}
+
+	/**
+	 * Get method for event action text key array
+	 *
+	 * @param	string	$event_text	input event text
+	 * @return	bool
+	 */
+	public static function isEventActionTextKey(string $event_text): bool
+	{
+		foreach (InterfaceLogevents::event_action_dict as $value) {
+			if (str_contains($event_text, $value)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
