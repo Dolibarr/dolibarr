@@ -488,7 +488,7 @@ if ($resql) {
 	print '</tr>';
 
 	if ($num) {
-		if (!GETPOSTISSET('sourcetype')) {
+		if ($sourcetype != 'salary') {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
@@ -497,7 +497,7 @@ if ($resql) {
 
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
-			if (!GETPOSTISSET('sourcetype') || empty($type)) {
+			if ($sourcetype != 'salary') {
 				$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 				$bac->fetch(0, $obj->socid);
 
