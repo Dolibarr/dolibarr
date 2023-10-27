@@ -993,6 +993,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
+	if(empty($conf->contrat->multidir_output[$object->entity])) $conf->contrat->multidir_output[$object->entity] = '';
 	$upload_dir = $conf->contrat->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -1093,6 +1094,8 @@ if ($action == 'create') {
 		$soc->fetch($socid);
 	}
 
+	// Initialize variable for PHP 8.2 compatibility 
+	$objectsrc = null;
 	if (GETPOST('origin') && GETPOST('originid', 'int')) {
 		// Parse element/subelement (ex: project_task)
 		$regs = array();
