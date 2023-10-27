@@ -608,7 +608,7 @@ class Skill extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILL_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILL_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
