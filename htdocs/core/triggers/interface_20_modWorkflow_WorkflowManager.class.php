@@ -521,9 +521,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						// don't set '$contractid' so it is not used when creating an intervention.
 					}
 
-					if ($number_contracts_found > 1 && empty(NOLOGIN))
+					if ($number_contracts_found > 1 && !defined('NOLOGIN')) {
 						setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
-
+					}
 					break;
 				}
 				if ($number_contracts_found == 0) {
