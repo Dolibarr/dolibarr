@@ -6630,7 +6630,6 @@ class Form
 			}
 
 			$selectedfound = false;
-
 			foreach ($this->cache_vatrates as $rate) {
 				// Keep only 0 if seller is not subject to VAT
 				if (!$assujtva && $fourn) {
