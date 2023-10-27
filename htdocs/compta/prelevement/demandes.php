@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
@@ -44,6 +45,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $type = GETPOST('type', 'aZ09');
+$sourcetype = GETPOST('sourcetype', 'aZ');
 
 $search_facture = GETPOST('search_facture', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
@@ -127,52 +129,66 @@ if ($type == 'bank-transfer') {
 }
 
 // List of requests
-
-$sql = "SELECT f.ref, f.rowid, f.total_ttc,";
-$sql .= " s.nom as name, s.rowid as socid,";
-$sql .= " pfd.date_demande as date_demande, pfd.amount, pfd.fk_user_demande";
-if ($type != 'bank-transfer') {
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+if ($sourcetype != 'salary') {
+	$sql = "SELECT f.ref, f.rowid, f.total_ttc,";
+	$sql .= " s.nom as name, s.rowid as socid,";
+	$sql .= " pfd.date_demande as date_demande, pfd.amount, pfd.fk_user_demande";
+	if ($type != 'bank-transfer') {
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+	} else {
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
+	}
+	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
+	$sql .= " WHERE s.rowid = f.fk_soc";
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	}
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
+	if (!$status) {
+		$sql .= " AND pfd.traite = 0";
+	}
+	$sql .= " AND pfd.ext_payment_id IS NULL";
+	if ($status) {
+		$sql .= " AND pfd.traite = ".((int) $status);
+	}
+	$sql .= " AND f.total_ttc > 0";
+	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+	}
+	if ($type != 'bank-transfer') {
+		$sql .= " AND pfd.fk_facture = f.rowid";
+	} else {
+		$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+	}
+	if ($search_facture) {
+		$sql .= natural_search("f.ref", $search_facture);
+	}
+	if ($search_societe) {
+		$sql .= natural_search("s.nom", $search_societe);
+	}
+	$sql .= $db->order($sortfield, $sortorder);
 } else {
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
+	$sql = "SELECT s.rowid,s.amount as total_ttc, pd.amount,";
+	$sql .= " s.fk_user, pd.date_demande, pd.fk_salary, CONCAT(u.firstname,' ',u.lastname) as nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."user as u, ";
+	$sql .= MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " WHERE s.rowid = pd.fk_salary";
+	$sql .= " AND u.rowid = s.fk_user";
+	$sql .=" AND s.paye = 0 AND pd.traite = 0";
+	if ($search_facture) {
+		$sql .= natural_search("s.rowid", $search_facture);
+	}
+	if ($search_societe) {
+		$sql .= natural_search("CONCAT(u.firstname,' ',u.lastname)", $search_societe);
+	}
 }
-$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= " WHERE s.rowid = f.fk_soc";
-$sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".((int) $socid);
-}
-if (!$status) {
-	$sql .= " AND pfd.traite = 0";
-}
-$sql .= " AND pfd.ext_payment_id IS NULL";
-if ($status) {
-	$sql .= " AND pfd.traite = ".((int) $status);
-}
-$sql .= " AND f.total_ttc > 0";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
-	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
-}
-if ($type != 'bank-transfer') {
-	$sql .= " AND pfd.fk_facture = f.rowid";
-} else {
-	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
-}
-if ($search_facture) {
-	$sql .= natural_search("f.ref", $search_facture);
-}
-if ($search_societe) {
-	$sql .= natural_search("s.nom", $search_societe);
-}
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -204,8 +220,11 @@ $newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/prele
 if ($type == 'bank-transfer') {
 	$newcardbutton = '<a class="marginrightonly" href="'.DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php">'.$langs->trans("Back").'</a>';
 }
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
+if ($sourcetype != 'salary') {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
+} else {
+	print '<form action="'.$_SERVER["PHP_SELF"].'?status=0&type=bank-transfer&sourcetype='.$sourcetype.'" method="POST"  id="searchFormList" name="searchFormList">';
+}
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -225,15 +244,15 @@ if ($type == 'bank-transfer') {
 	$label = 'NewPaymentByBankTransfer';
 	$typefilter = 'type='.$type;
 }
-$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php'.($typefilter ? '?'.$typefilter : ''));
+$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php'.($typefilter ? '?'.$typefilter : '').($sourcetype ? '&sourcetype='.$sourcetype : ''));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
 print '<table class="liste centpercent">';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
-print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
+print_liste_field_titre(($sourcetype ? "SalaryInvoice" : "Bill"), $_SERVER["PHP_SELF"]);
+print_liste_field_titre(($sourcetype ? "Employee" :"Company"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 print_liste_field_titre('');
@@ -251,26 +270,40 @@ print $searchpicto;
 print '</td>';
 print '</tr>';
 
+$userstatic = new User($db);
+$salarystatic = new salary($db);
+
 $i = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
 	}
-
-	$invoicestatic->fetch($obj->rowid);
-
+	if ($sourcetype != 'salary') {
+		$invoicestatic->fetch($obj->rowid);
+	} else {
+		$salarystatic->fetch($obj->fk_salary);
+		$userstatic->fetch($obj->fk_user);
+	}
 	print '<tr class="oddeven">';
 
 	// Ref facture
 	print '<td>';
-	print $invoicestatic->getNomUrl(1, 'withdraw');
+	if ($sourcetype != 'salary') {
+		print $invoicestatic->getNomUrl(1, 'withdraw');
+	} else {
+		print $salarystatic->getNomUrl(1, 'withdraw');
+	}
 	print '</td>';
 
 	print '<td>';
-	$thirdpartystatic->id = $obj->socid;
-	$thirdpartystatic->name = $obj->name;
-	print $thirdpartystatic->getNomUrl(1, 'customer');
+	if ($sourcetype != 'salary') {
+		$thirdpartystatic->id = $obj->socid;
+		$thirdpartystatic->name = $obj->name;
+		print $thirdpartystatic->getNomUrl(1, 'customer');
+	} else {
+		print $userstatic->getNomUrl(1, 'accountancy');
+	}
 	print '</td>';
 
 	print '<td class="right">';

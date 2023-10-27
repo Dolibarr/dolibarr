@@ -135,6 +135,7 @@ if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
+
 $sqlForSalary = "SELECT * FROM llx_salary as s, llx_prelevement_demande as pd WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
 $resql = $db->query($sql);
 
