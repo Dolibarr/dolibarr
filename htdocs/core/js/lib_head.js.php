@@ -253,14 +253,15 @@ function dpChangeDay(dateFieldID, format)
 
 /*
  * =================================================================
- * Function:
- * formatDate (javascript object Date(), format) Purpose: Returns a date in the
- * output format specified. The format string can use the following tags: Field |
- * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
- * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
- * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
- * (2 digits) Author: Laurent Destailleur Author: Matelli (see
- * http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+ * Function: formatDate(javascript object Date(), format)
+ * Purpose: Returns a date in the output format specified. The format string can use the following tags:
+ * Year | yyyy (4 digits), yy (2 digits)
+ * Month | MM (2 digits)
+ * Day of Month | dd (2 digits)
+ * Hour (1-12) | hh (2 digits) Hour (0-23) | HH (2 digits)
+ * Minute | mm (2 digits)
+ * Second | ss (2 digits)
+ * Author: Laurent Destailleur Author: Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
  * Licence: GPL
  * ==================================================================
  */
@@ -996,7 +997,7 @@ function document_preview(file, type, title)
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/webp"];
 	var showOriginalSizeButton = false;
 
-	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
+	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */

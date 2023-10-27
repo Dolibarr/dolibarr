@@ -37,7 +37,7 @@ if (!isModEnabled('api') ) {
 }
 
 // Test if explorer is not disabled
-if (!empty($conf->global->API_EXPLORER_DISABLED)) {
+if (getDolGlobalString('API_EXPLORER_DISABLED')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr API interfaces with module REST disabled");
 	print $langs->trans("WarningAPIExplorerDisabled").'.<br><br>';
@@ -46,7 +46,7 @@ if (!empty($conf->global->API_EXPLORER_DISABLED)) {
 }
 
 // Restrict API to some IPs
-if (!empty($conf->global->API_RESTRICT_ON_IP)) {
+if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {

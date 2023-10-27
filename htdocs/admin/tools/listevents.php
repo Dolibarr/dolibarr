@@ -123,8 +123,8 @@ if ($date_end !== '') {
 $arrayfields = array(
 	'e.prefix_session' => array(
 		'label'=>'UserAgent',
-		'checked'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
-		'enabled'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
+		'checked'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'enabled'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
 		'position'=>110
 	)
 );
