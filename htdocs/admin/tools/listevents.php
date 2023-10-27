@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -477,6 +478,10 @@ if ($result) {
 		// Description
 		$text = $langs->trans($obj->description);
 		$reg = array();
+		if (InterfaceLogevents::isEventActionTextKey($obj->description)) {
+			$val = explode(' : ', $obj->description);
+			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
+		}
 		if (preg_match('/\((.*)\)(.*)/i', $obj->description, $reg)) {
 			$val = explode(',', $reg[1]);
 			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
