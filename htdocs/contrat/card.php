@@ -993,7 +993,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	if(empty($conf->contrat->multidir_output[$object->entity])) $conf->contrat->multidir_output[$object->entity] = array ();
+	if(empty($conf->contrat->multidir_output[$object->entity])) $conf->contrat->multidir_output[$object->entity] = '';
 	$upload_dir = $conf->contrat->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
