@@ -262,7 +262,11 @@ if ($action == 'getProducts') {
 
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc' ;
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ', ps.reel';
+		if (getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+			$sql .= ', ps.reel';
+		} else {
+			$sql .= ', SUM(ps.reel) as reel';
+		}
 	}
 	/* this will be possible when field archive will be supported into llx_product_price
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -284,7 +288,9 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
-		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		}
 		$sql .= ')';
 	}
 
@@ -300,7 +306,7 @@ if ($action == 'getProducts') {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND p.tosell = 1';
-	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 		$sql .= ' AND ps.reel > 0';
 	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
@@ -309,6 +315,17 @@ if ($action == 'getProducts') {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
 	if ($reshook >= 0) {
 		$sql .= $hookmanager->resPrint;
+	}
+
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && !getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc';
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
+		if ($reshook >= 0) {
+			$sql .= $hookmanager->resPrint;
+		}
+		$sql .= ' HAVING SUM(ps.reel) > 0';
 	}
 
 	// load only one page of products
