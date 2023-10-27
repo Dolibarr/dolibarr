@@ -614,7 +614,7 @@ class ExtraFields
 				}
 			}
 
-			$result = null;
+			$result = 0;
 			if ($type != 'separate') { // No table update when separate type
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
