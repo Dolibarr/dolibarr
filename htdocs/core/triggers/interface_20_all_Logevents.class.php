@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
-	const event_action_dict = [
+	const EVENT_ACTION_DICT = [ // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
 		'USER_LOGIN' => 'UserLogged',
 		'USER_LOGIN_FAILED' => 'UserLoginFailed',
 		'USER_LOGOUT' => 'UserLogoff',
@@ -95,7 +95,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		// Actions
 		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-		$this->initEventData(InterfaceLogevents::event_action_dict[$action], $object);
+		$this->initEventData(InterfaceLogevents::EVENT_ACTION_DICT[$action], $object);
 
 		// Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
@@ -132,7 +132,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	{
 		$this->event_date = dol_now();
 		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login . $object->name;
-		if ($key_text == 'UserEnabledDisabled') {
+		if ($key_text == 'UserEnabledDisabled') { // TODO should be refactored using an object property for event data.
 			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
 		}
 		// Add more information into event description from the context property
@@ -142,14 +142,14 @@ class InterfaceLogevents extends DolibarrTriggers
 	}
 
 	/**
-	 * Get method for event action text key array
+	 * Check if text contains an event action key. Used for dynamic localization on frontend events list.
 	 *
 	 * @param	string	$event_text	input event text
 	 * @return	bool
 	 */
 	public static function isEventActionTextKey(string $event_text): bool
 	{
-		foreach (InterfaceLogevents::event_action_dict as $value) {
+		foreach (InterfaceLogevents::EVENT_ACTION_DICT as $value) {
 			if (str_contains($event_text, $value)) {
 				return true;
 			}
