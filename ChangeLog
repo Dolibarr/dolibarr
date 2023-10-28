@@ -32,7 +32,7 @@ Following changes may create regressions for some external modules, but were nec
 * Recheck setup of your module workflow to see if you need to enable the new setting to have shipment set to billed automatically when
   an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order), because this setup has changed.
 * It was possible to use a variable $soc or $right inside a php code condition of some extrafields properties, this is no more true (this 2 variables are no more global variables).
-
+* New hook files of modules actions_mymodule.class.php should "extends CommonHookActions"
 
 
 ***** ChangeLog for 18.0.2 compared to 18.0.1 *****
