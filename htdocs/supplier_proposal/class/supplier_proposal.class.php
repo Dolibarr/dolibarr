@@ -1616,7 +1616,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
-		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
+		$sql .= " date_cloture = NULL, fk_user_cloture = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

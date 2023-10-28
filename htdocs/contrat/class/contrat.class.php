@@ -455,7 +455,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_CLOSED) {
 				$contratline->date_end_real = $now;
 				$contratline->date_cloture = $now;	// For backward compatibility
-				$contratline->fk_user_cloture = $user->id;
+				$contratline->user_closing_id = $user->id;
 				$contratline->statut = ContratLigne::STATUS_CLOSED;
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
 				if ($result < 0) {
@@ -3784,7 +3784,7 @@ class ContratLigne extends CommonObjectLine
 		// Update object
 		$this->date_cloture = $date_end_real;
 		$this->date_end_real = $date_end_real;
-		$this->fk_user_cloture = $user->id;
+		$this->user_closing_id = $user->id;
 		$this->commentaire = $comment;
 
 		$error = 0;
