@@ -1414,7 +1414,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			'url'=>'/mymodule/myobject_list.php',
 			'langs'=>'mymodule@mymodule',
 			'position'=>1000+\$r,
-			'enabled'=>'\$conf->mymodule->enabled',
+			'enabled'=>'isModEnabled(\"mymodule\")',
 			'perms'=>'\$user->hasRight(\"mymodule\", \"myobject\", \"read\")',
 			'target'=>'',
 			'user'=>2,
@@ -1428,7 +1428,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
             'url'=>'/mymodule/myobject_list.php',
             'langs'=>'mymodule@mymodule',
             'position'=>1000+\$r,
-            'enabled'=>'\$conf->mymodule->enabled',
+            'enabled'=>'isModEnabled(\"mymodule\")',
 			'perms'=>'\$user->hasRight(\"mymodule\", \"myobject\", \"read\")',
             'target'=>'',
             'user'=>2,
@@ -1442,7 +1442,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
             'url'=>'/mymodule/myobject_card.php?action=create',
             'langs'=>'mymodule@mymodule',
             'position'=>1000+\$r,
-            'enabled'=>'\$conf->mymodule->enabled',
+            'enabled'=>'isModEnabled(\"mymodule\")',
 			'perms'=>'\$user->hasRight(\"mymodule\", \"myobject\", \"write\")',
             'target'=>'',
             'user'=>2
@@ -2745,7 +2745,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			}
 		}
 		if (GETPOST('enabled') == '1') {
-			$menuToAdd['enabled'] = "\$conf->".strtolower($module)."->enabled";
+			$menuToAdd['enabled'] = 'isModEnabled("'.strtolower($module).'")';
 		} else {
 			$menuToAdd['enabled'] = "0";
 		}
@@ -2827,7 +2827,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 				$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu');
 			}
 			if (GETPOST('enabled') != '0') {
-				$menuModify['enabled'] = "\$conf->".strtolower($module)."->enabled";
+				$menuModify['enabled'] = 'isModEnabled("'.strtolower($module).'")';
 			} else {
 				$menuModify['enabled'] = '0';
 			}
