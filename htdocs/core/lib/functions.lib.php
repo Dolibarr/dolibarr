@@ -1598,18 +1598,26 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion into a php string, build with double quotes "
+ *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
+ *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
-function dol_escape_php($stringtoescape)
+function dol_escape_php($stringtoescape, $stringforquotes = 2)
 {
 	if (is_null($stringtoescape)) {
 		return '';
 	}
 
-	return str_replace('"', "'", $stringtoescape);
+	if ($stringforquotes == 2) {
+		return str_replace('"', "'", $stringtoescape);
+	}
+	if ($stringforquotes == 1) {
+		return str_replace("'", "\'", str_replace('"', "'", $stringtoescape));
+	}
+
+	return 'Bad parameter for stringforquotes in dol_escape_php';
 }
 
 /**

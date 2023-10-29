@@ -1765,7 +1765,6 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname.'&nocache='.time());
-
 		exit;
 	}
 }
@@ -1808,7 +1807,6 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey) {
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname);
-
 		exit;
 	}
 }
@@ -2577,8 +2575,9 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
 	}
 	// load class and check if menu exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -2636,8 +2635,9 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
 	}
 	$error = 0;
 
@@ -2736,6 +2736,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			'target' => GETPOST('target', 'alpha'),
 			'user' => GETPOST('user', 'alpha'),
 		);
+
 		if (GETPOST('type') == 'left') {
 			unset($menuToAdd['prefix']);
 			if (empty(GETPOST('fk_menu'))) {
@@ -2757,11 +2758,19 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 		if ($checkcomment < 0) {
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 		} else {
-			reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
+			// Write all menus
+			$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuToAdd, null, 1);
+
 			clearstatcache(true);
 			if (function_exists('opcache_invalidate')) {
 				opcache_reset();
 			}
+			/*if ($result < 0) {
+				setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
+				header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
+				exit;
+			}*/
+
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 			setEventMessages($langs->trans('MenuAddedSuccesfuly'), null);
 			exit;
@@ -2769,13 +2778,12 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	}
 }
 
-// modify a menu
-if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST('tabobj')) {
+// Modify a menu entry
+if ($dirins && $action == "update_menu" && GETPOST('menukey', 'int') && GETPOST('tabobj')) {
 	$objectname =  GETPOST('tabobj');
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.strtolower($module);
 	$objects = dolGetListOfObjectClasses($destdir);
-
 
 	if (empty($cancel)) {
 		if (isModEnabled(strtolower($module))) {
@@ -2784,8 +2792,9 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
-			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+			exit;
 		}
 		$error = 0;
 		// for loading class and the menu wants to modify
@@ -2815,7 +2824,7 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 				'langs' => strtolower($module)."@".strtolower($module),
 				'position' => '',
 				'enabled' => GETPOST('enabled', 'alpha'),
-				'perms' => '',
+				'perms' => GETPOST('perms', 'alpha'),
 				'target' => GETPOST('target', 'alpha'),
 				'user' => GETPOST('user', 'alpha'),
 			);
@@ -2826,15 +2835,10 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 			} else {
 				$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu');
 			}
-			if (GETPOST('enabled') != '0') {
-				$menuModify['enabled'] = 'isModEnabled("'.strtolower($module).'")';
-			} else {
-				$menuModify['enabled'] = '0';
+			if ($menuModify['enabled'] === '') {
+				$menuModify['enabled'] = '1';
 			}
-			if (!empty(GETPOST('perms')) && !empty(GETPOST('objects'))) {
-				$menuModify['perms'] = '$user->hasRight("'.strtolower($module).'", "'.GETPOST('objects', 'alpha').'", "'.GETPOST('perms', 'alpha').'")';
-			}
-			if (empty(GETPOST('objects'))) {
+			if ($menuModify['perms'] === '') {
 				$menuModify['perms'] = '1';
 			}
 
@@ -2842,23 +2846,29 @@ if ($dirins && $action == "modify_menu" && GETPOST('menukey', 'int') && GETPOST(
 				$error++;
 				setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
 			}
+
 			if (!$error) {
 				//update menu
 				$checkComment = checkExistComment($moduledescriptorfile, 0);
+
 				if ($checkComment < 0) {
 					setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 				} else {
+					// Write all menus
 					$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
 
 					clearstatcache(true);
 					if (function_exists('opcache_invalidate')) {
 						opcache_reset();
 					}
+
 					if ($result < 0) {
 						setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
+						//var_dump($_SESSION);exit;
 						header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
 						exit;
 					}
+
 					setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
 					header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 					exit;
@@ -2881,8 +2891,9 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+		exit;
 	}
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
@@ -5023,7 +5034,7 @@ if ($module == 'initmodule') {
 				print '<table class="noborder small">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center tdsticky tdstickygray ');
 				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center');
 				print_liste_field_titre("LinkToParentMenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
@@ -5039,10 +5050,11 @@ if ($module == 'initmodule') {
 				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ', $langs->trans(''));
 
 				print "</tr>\n";
+
 				$r = count($menus)+1;
 				// for adding menu on module
 				print '<tr>';
-				print '<td class="center"><input type="hidden" readonly class="center maxwidth50" name="propenabled" value="#"></td>';
+				print '<td class="center tdsticky tdstickygray"><input type="hidden" readonly class="center maxwidth50" name="propenabled" value="#"></td>';
 				print '<td class="center">';
 				print '<select class="maxwidth50" name="type">';
 				print '<option value="">'.$langs->trans("........").'</option><option value="'.dol_escape_htmltag("left").'">left</option><option value="'.dol_escape_htmltag("top").'">top</option>';
@@ -5103,6 +5115,7 @@ if ($module == 'initmodule') {
 
 				//var_dump($menus);
 
+				// Loop on each menu entry
 				if (count($menus)) {
 					$i = 0;
 					foreach ($menus as $menu) {
@@ -5121,10 +5134,6 @@ if ($module == 'initmodule') {
 						$propTarget = !empty($menu['target']) ? $menu['target'] : GETPOST('target');
 						$propEnabled = !empty($menu['enabled']) ? $menu['enabled'] : GETPOST('enabled');
 
-						// Perms
-						$propPerms = str_replace(array('$user->hasRight(', ')'), '', $propPerms);
-						$arguments = explode(",", $propPerms);
-
 						$objPerms = (empty($arguments[1]) ? '' : trim($arguments[1]));
 						$valPerms = (empty($arguments[2]) ? '' : trim($arguments[2]));
 
@@ -5135,7 +5144,7 @@ if ($module == 'initmodule') {
 							print '<tr class="oddeven">';
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';
-							print '<input type="hidden" name="action" value="modify_menu">';
+							print '<input type="hidden" name="action" value="update_menu">';
 							print '<input type="hidden" name="tab" value="menus">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 							//print '<input type="hidden" name="tabobject" value="'.dol_escape_htmltag($tabobject).'">';
@@ -5174,7 +5183,7 @@ if ($module == 'initmodule') {
 							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.($menu['position']).'" readonly></td>';
 							// Enabled
 							print '<td class="nowraponall">';
-							print '<input type="text" class="maxwidth125" named="enabled" value="'.dol_escape_htmltag($propEnabled != '' ? $propEnabled : "isModEnabled('".dol_escape_htmltag($module)."')").'">';
+							print '<input type="text" class="maxwidth125" name="enabled" value="'.dol_escape_htmltag($propEnabled != '' ? $propEnabled : "isModEnabled('".dol_escape_htmltag($module)."')").'">';
 							$htmltext = '<u>'.$langs->trans("Examples").':</u><br>';
 							$htmltext .= '1 <span class="opacitymedium">(always enabled)</span><br>';
 							$htmltext .= '0 <span class="opacitymedium">(always disabled)</span><br>';
@@ -5218,6 +5227,7 @@ if ($module == 'initmodule') {
 								print '</select>';
 							}*/
 							print '</td>';
+							// Target
 							print '<td class="center"><input type="text" class="center maxwidth50" name="target" value="'.dol_escape_htmltag($propTarget).'"></td>';
 							print '<td class="center"><select class="center maxwidth10" name="user"><option value="2">'.$langs->trans("AllMenus").'</option><option value="0">'.$langs->trans("Internal").'</option><option value="1">'.$langs->trans("External").'</option></select></td>';
 							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite maxwidth75">';
@@ -5267,19 +5277,16 @@ if ($module == 'initmodule') {
 							print '</td>';
 
 							// Enabled
-							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
+							print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
 							print dol_escape_htmltag($menu['enabled']);
 							print '</td>';
 
 							// Perms
-							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
-							if (strpos($menu['perms'], "\$user->hasRight") !== 0) {
-								print '';
-							} else {
-								print (dol_escape_htmltag($langs->trans($crud[$valPerms])) );
-							}
+							print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
+							print dol_escape_htmltag($langs->trans($menu['perms']));
 							print '</td>';
 
+							// Target
 							print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['target']).'">';
 							print dol_escape_htmltag($menu['target']);
 							print '</td>';
@@ -5311,13 +5318,15 @@ if ($module == 'initmodule') {
 				print '</table>';
 				print '</div>';
 				print '</form>';
+
+
 				print '<script>
 				$(document).ready(function() {
 					//for fill in auto url
 					$("#leftmenu").on("input", function() {
 						var inputLeftMenu = $("#leftmenu").val();
-						if (inputLeftMenu !== "") {
-							var url = "/'.strtolower($module).'/"+ inputLeftMenu+".php";
+						if (inputLeftMenu !== \'\') {
+							var url = \''.dol_escape_js(strtolower($module)).'\' + inputLeftMenu + \'.php\';
 							$("#url").val(url);
 						}else {
 							$("#url").val("");
@@ -5356,7 +5365,7 @@ if ($module == 'initmodule') {
 						}
 					});
 				});
-				</scrip>';
+				</script>';
 
 				// display permissions for each object
 			} else {
@@ -6452,6 +6461,7 @@ if ($module == 'initmodule') {
 }
 
 print dol_get_fiche_end(); // End modules
+
 
 // End of page
 llxFooter();
