@@ -1697,6 +1697,7 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
