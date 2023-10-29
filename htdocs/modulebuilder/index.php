@@ -5033,22 +5033,29 @@ if ($module == 'initmodule') {
 				print '<div class="div-table-responsive">';
 				print '<table class="noborder small">';
 
+				$htmltextenabled = '<u>'.$langs->trans("Examples").':</u><br>';
+				$htmltextenabled .= '1 <span class="opacitymedium">(module always enabled)</span><br>';
+				$htmltextenabled .= '0 <span class="opacitymedium">(module always disabled)</span><br>';
+				$htmltextenabled .= 'isModEnabled(\''.dol_escape_htmltag(strtolower($module)).'\') <span class="opacitymedium">(enabled when module is enabled)</span>';
+				$htmltextperms = '<u>'.$langs->trans("Examples").':</u><br>';
+				$htmltextperms .= '1 <span class="opacitymedium">(access always allowed)</span><br>';
+				$htmltextperms .= '$user->hasright(\''.dol_escape_htmltag(strtolower($module)).'\', \'myobject\', \'read\') <span class="opacitymedium">(access allowed if user has permission module->object->read)</span>';
+
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center tdsticky tdstickygray ');
 				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center');
-				print_liste_field_titre("LinkToParentMenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("LinkToParentMenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'minwidth100 ');
 				print_liste_field_titre("mainmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("leftmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("URL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->transnoentitiesnoconv('DetailUrl'));
 				print_liste_field_titre("LanguageFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ', $langs->trans('DetailEnabled'));
-				print_liste_field_titre("Rights", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->trans('DetailRight'));
+				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ', $langs->trans('DetailEnabled').'<br><br>'.$htmltextenabled);
+				print_liste_field_titre("Rights", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->trans('DetailRight').'<br><br>'.$htmltextperms);
 				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->trans('DetailTarget'));
-				print_liste_field_titre("MenuForUsers", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ', $langs->trans('DetailUser'));
+				print_liste_field_titre("MenuForUsers", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center minwidth100 ', $langs->trans('DetailUser'));
 				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ', $langs->trans(''));
-
 				print "</tr>\n";
 
 				$r = count($menus)+1;
@@ -5072,18 +5079,14 @@ if ($module == 'initmodule') {
 				print '</td>';
 				print '<td class="left"><input type="text" class="left maxwidth50" name="mainmenu" value="'.(empty(GETPOST('mainmenu')) ? strtolower($module) : dol_escape_htmltag(GETPOST('mainmenu', 'alpha'))).'"></td>';
 				print '<td class="center"><input id="leftmenu" type="text" class="left maxwidth50" name="leftmenu" value="'.dol_escape_htmltag(GETPOST('leftmenu', 'alpha')).'"></td>';
-				print '<td class="left"><input id="url" type="text" class="left maxwidth50" name="url" value="'.dol_escape_htmltag(GETPOST('url', 'alpha')).'"></td>';
+				// URL
+				print '<td class="left"><input id="url" type="text" class="left maxwidth100" name="url" value="'.dol_escape_htmltag(GETPOST('url', 'alpha')).'"></td>';
 				print '<td class="left"><input type="text" class="left maxwidth75" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
 				// Position
 				print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.(1000+$r).'" readonly></td>';
 				// Enabled
 				print '<td class="center">';
 				print '<input type="enabled" class="maxwidth125" value="'.dol_escape_htmltag(GETPOSTISSET('enabled') ? GETPOST('enabled') : 'isModEnabled(\''.$module.'\')').'">';
-				$htmltext = '<u>'.$langs->trans("Examples").':</u><br>';
-				$htmltext .= '1 <span class="opacitymedium">(always enabled)</span><br>';
-				$htmltext .= '0 <span class="opacitymedium">(always disabled)</span><br>';
-				$htmltext .= 'isModEnabled(\''.dol_escape_htmltag($module).'\') <span class="opacitymedium">(enabled when module is enabled)</span><br>';
-				print $form->textwithpicto('', $htmltext);
 				/*
 				print '<select class="maxwidth" name="enabled">';
 				print '<option value="1" selected>'.$langs->trans("Show").'</option>';
@@ -5147,11 +5150,12 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="action" value="update_menu">';
 							print '<input type="hidden" name="tab" value="menus">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+							print '<input type="hidden" name="menukey" value="'.$i.'"/>';
 							//print '<input type="hidden" name="tabobject" value="'.dol_escape_htmltag($tabobject).'">';
 							print '<td class="tdsticky tdstickygray">';
 							print $i;
 							print '</td>';
-							print '<input type="hidden" name="menukey" value="'.$i.'"/>';
+							// Position (top, left)
 							print '<td class="center">
 									<select class="center maxwidth50" name="type">
 										<option value="'.dol_escape_htmltag($menu['type']).'">
@@ -5164,21 +5168,25 @@ if ($module == 'initmodule') {
 								print 'left';
 							}
 							print '</option></select></td>';
-							print '<td class="left"><input type="text" class="left maxwidth" name="titre" value="'.dol_escape_htmltag($propTitre).'"></td>';
-							print '<td class="left">';
-							print '<select name="fk_menu" class="left maxwidth">';
+							// Title
+							print '<td><input type="text" class="left maxwidth100" name="titre" value="'.dol_escape_htmltag($propTitre).'"></td>';
+							// Parent menu
+							print '<td>';
+							/*print '<select name="fk_menu" class="left maxwidth">';
 							print '<option value="'.dol_escape_htmltag($propFk_menu).'">'.dol_escape_htmltag($value).'</option>';
 							foreach ($menus as $obj) {
 								if ($obj['type'] == 'left' && $obj['leftmenu'] != $value && $obj['leftmenu'] != $menu['leftmenu']) {
 									print "<option value=".strtolower($obj['leftmenu']).">".$obj['leftmenu']."</option>";
 								}
 							}
-							print '</select>';
+							print '</select>';*/
+							print '<input type="text" name="fk_menu" class="maxwidth150" value="'.dol_escape_htmltag($propFk_menu).'">';
 							print '</td>';
-							print '<td class="left"><input type="text" class="left maxwidth50" name="mainmenu" value="'.dol_escape_htmltag($propMainmenu).'" readonly></td>';
-							print '<td class="left"><input type="text" class="left maxwidth50" name="leftmenu" value="'.dol_escape_htmltag($propLeftmenu).'" readonly></td>';
-							print '<td class="left"><input type="text" class="left maxwidth50" name="url" value="'.dol_escape_htmltag($propUrl).'"></td>';
-							print '<td class="left"><input type="text" class="left maxwidth50" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
+							print '<td><input type="text" class="left maxwidth50" name="mainmenu" value="'.dol_escape_htmltag($propMainmenu).'" readonly></td>';
+							print '<td><input type="text" class="left maxwidth50" name="leftmenu" value="'.dol_escape_htmltag($propLeftmenu).'" readonly></td>';
+							// URL
+							print '<td><input type="text" class="left maxwidth250" name="url" value="'.dol_escape_htmltag($propUrl).'"></td>';
+							print '<td><input type="text" class="left maxwidth50" name="langs" value="'.strtolower($module).'@'.strtolower($module).'" readonly></td>';
 							// Position
 							print '<td class="center"><input type="text" class="center maxwidth50 tdstickygray" name="position" value="'.($menu['position']).'" readonly></td>';
 							// Enabled
@@ -5198,7 +5206,7 @@ if ($module == 'initmodule') {
 							*/
 							print '</td>';
 							// Permissions
-							print '<td class="center nowraponall">';
+							print '<td class="nowraponall">';
 							print '<input type="text" name="perms" value="'.dol_escape_htmltag($propPerms).'">';
 							/*
 							if (!empty($objPerms)) {
@@ -5243,16 +5251,18 @@ if ($module == 'initmodule') {
 							print $i;
 							print '</td>';
 
-							print '<td>';
+							print '<td class="center">';
 							print dol_escape_htmltag($menu['type']);
 							print '</td>';
 
+							// Title
 							print '<td>';
 							print dol_escape_htmltag($menu['titre']);
 							print '</td>';
 
-							print '<td>';
-							print ($value == strtolower($module) ? '/' : $value);
+							// Parent menu
+							print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($menu['fk_menu']).'">';
+							print dol_escape_htmltag($menu['fk_menu']);
 							print '</td>';
 
 							print '<td>';
@@ -5263,7 +5273,7 @@ if ($module == 'initmodule') {
 							print dol_escape_htmltag($menu['leftmenu']);
 							print '</td>';
 
-							print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($menu['url']).'">';
+							print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($menu['url']).'">';
 							print dol_escape_htmltag($menu['url']);
 							print '</td>';
 
