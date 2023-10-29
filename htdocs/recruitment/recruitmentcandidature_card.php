@@ -396,6 +396,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 	}
 
+	if ($action == 'close') {
+		$langs->load("propal");
+
+		//Form to close proposal (signed or not)
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ConfirmClose'), $langs->trans('ConfirmCloseAsk'), 'confirm_close', $formquestion, '', 1, 250);
+	}
+
 	// Confirm create user
 	if ($action == 'create_user') {
 		$login = (GETPOSTISSET('login') ? GETPOST('login', 'alphanohtml') : $object->login);

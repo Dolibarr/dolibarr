@@ -2329,7 +2329,7 @@ class Project extends CommonObject
 	{
 		$sql = 'SELECT c.rowid, datec as datec, tms as datem,';
 		$sql .= ' date_close as datecloture,';
-		$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
+		$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_user_cloture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
