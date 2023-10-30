@@ -641,7 +641,6 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS").'</td><td>';
 	print $form->selectyesno('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS', getDolGlobalString('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS'), 1);
 	print '</td></tr>';
-
 	print '</table>';
 
 	print dol_get_fiche_end();
@@ -918,7 +917,6 @@ if ($action == 'edit') {
 		//Add user to select destinaries list
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
 		//Disable autoselect to
-		
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS").'</td><td>'.yn(!empty($conf->global->MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS)).'</td></tr>';
 
