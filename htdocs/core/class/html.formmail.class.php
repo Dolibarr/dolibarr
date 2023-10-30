@@ -1109,7 +1109,6 @@ class FormMail extends Form
 				if (!empty($this->withtofree)) {
 					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 				}
-				
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
 					if (is_array($val)) {
