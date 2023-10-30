@@ -644,7 +644,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Set $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
-		$sql = "SELECT l.rowid, cfd.fk_product, round(sum(cfd.qty), 2) as qty";
+		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
 		$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
@@ -658,7 +658,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($num) {
 				while ($i < $num) {
 					$objd = $db->fetch_object($resql);
-					$products_dispatched[$objd->rowid] = price2num($objd->qty, 5);
+					$products_dispatched[$objd->rowid] = price2num($objd->qty, 'MS');
 					$i++;
 				}
 			}
