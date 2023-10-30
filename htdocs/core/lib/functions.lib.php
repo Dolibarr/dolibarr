@@ -9616,8 +9616,8 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 		$tmparray = explode('_', $codelang);
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
-
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
+	return '<span class="saturatemedium paddingrightonly flag-sprite '.strtolower($flagImage).'"></span>';
+	// return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
 }
 
 /**
