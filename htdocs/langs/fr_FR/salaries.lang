@@ -25,3 +25,4 @@ SalariesAndPayments=Salaires et paiements
 ConfirmDeleteSalaryPayment=Voulez-vous supprimer ce paiement de salaire ?
 FillFieldFirst=Remplissez d'abord le champ de l'employé
 UpdateAmountWithLastSalary=Définir sur le montant du dernier salaire
+FillEndOfMonth=Remplir avec la fin du mois

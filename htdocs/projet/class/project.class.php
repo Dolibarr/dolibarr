@@ -2329,23 +2329,18 @@ class Project extends CommonObject
 	{
 		$sql = 'SELECT c.rowid, datec as datec, tms as datem,';
 		$sql .= ' date_close as datecloture,';
-		$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
+		$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_user_cloture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if (!empty($obj->fk_user_cloture)) {
-					$this->user_closing_id   = $obj->fk_user_cloture;
-				}
+				$this->id = $obj->rowid;
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_closing_id   = $obj->fk_user_cloture;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

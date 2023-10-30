@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
 $syslogModules = array();
 $activeModules = array();
 
-if (!empty($conf->global->SYSLOG_HANDLERS)) {
+if (getDolGlobalString('SYSLOG_HANDLERS')) {
 	$activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
 }
 

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->load("bills");
+$langs->loadLangs(array("banks", "bills", "compta"));
 
 $chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
@@ -208,7 +208,8 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype") : $charge->paiementtype, "paiementtype");
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
+	print $form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype") : $charge->paiementtype, "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusxx', 1);
 	print "</td>\n";
 	print '</tr>';
 
@@ -216,18 +217,20 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $charge->accountid, "accountid", 0, '', 2); // Show opend bank account list
+	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
-	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	if (empty($conf->dol_optimize_smallscreen)) {
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	}
 	print '</td>';
-	print '<td><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
+	print '<td><input name="num_payment" class="width100" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
+	print '<td class="tdtop"><textarea class="quatrevingpercent" name="note" wrap="soft" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
 	print '</tr>';
 
 	print '</table>';
@@ -240,6 +243,7 @@ if ($action == 'create') {
 	$num = 1;
 	$i = 0;
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
@@ -265,13 +269,13 @@ if ($action == 'create') {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
-		print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($objp->amount)."</span></td>";
 
-		print '<td class="right"><span class="amount">'.price($sumpaid)."</span></td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($sumpaid)."</span></td>";
 
-		print '<td class="right"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
 
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
@@ -304,6 +308,7 @@ if ($action == 'create') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	// Save payment button
 	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");

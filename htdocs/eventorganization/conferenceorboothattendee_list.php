@@ -537,7 +537,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($projectstatic->description);
+		print dol_htmlentitiesbr($projectstatic->description);
 		print '</td></tr>';
 
 		// Categories
