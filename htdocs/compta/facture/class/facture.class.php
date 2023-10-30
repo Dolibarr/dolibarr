@@ -135,13 +135,6 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
-	 * @deprecated
-	 * @see $fk_user_modif
-	 */
-	public $user_modification;
-
-	/**
-	 * @var int ID
 	 */
 	public $fk_user_modif;
 
@@ -2203,9 +2196,9 @@ class Facture extends CommonInvoice
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
-				$this->user_creation_id     = $obj->fk_user_author; // deprecated
-				$this->user_validation_id   = $obj->fk_user_valid; // deprecated
-				$this->user_modification    = $obj->fk_user_modif; // deprecated
+				$this->user_creation_id     = $obj->fk_user_author;
+				$this->user_validation_id   = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->fk_user_modif        = $obj->fk_user_modif;
@@ -2293,7 +2286,7 @@ class Facture extends CommonInvoice
 		$sql .= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
+		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc, p.barcode as product_barcode';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql .= ' WHERE l.fk_facture = '.((int) $this->id);
@@ -2319,6 +2312,7 @@ class Facture extends CommonInvoice
 				$line->product_ref      = $objp->product_ref; // Ref product
 				$line->libelle          = $objp->product_label; // deprecated
 				$line->product_label 	= $objp->product_label; // Label product
+				$line->product_barcode  = $objp->product_barcode; // Barcode number product
 				$line->product_desc     = $objp->product_desc; // Description product
 				$line->fk_product_type  = $objp->fk_product_type; // Type of product
 				$line->qty              = $objp->qty;
@@ -4655,18 +4649,11 @@ class Facture extends CommonInvoice
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-				if ($obj->fk_user_closing) {
-					$this->user_closing_id = $obj->fk_user_closing;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_closing;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

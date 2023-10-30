@@ -188,10 +188,10 @@ if (!empty($triggers)) {
 		//print 'module='.$module.' code='.$trigger['code'].'<br>';
 		if (isModEnabled($module)) {
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
-			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && !getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 				continue;
 			}
-			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && !getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 				continue;
 			}
 			if ($trigger['code'] == 'ACTION_CREATE') {

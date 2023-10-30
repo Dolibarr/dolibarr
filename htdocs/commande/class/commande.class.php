@@ -1911,7 +1911,6 @@ class Commande extends CommonOrder
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->user_modification    = $obj->fk_user_modif;	// deprecated
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->total_localtax1;
@@ -1920,8 +1919,8 @@ class Commande extends CommonOrder
 				$this->date = $this->db->jdate($obj->date_commande);
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
 				$this->date_creation		= $this->db->jdate($obj->date_creation);
-				$this->date_validation = $this->db->jdate($obj->date_valid);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_validation      = $this->db->jdate($obj->date_valid);
+				$this->date_modification    = $this->db->jdate($obj->tms);
 				$this->source				= $obj->source;
 				$this->billed				= $obj->billed;
 				$this->note = $obj->note_private; // deprecated

@@ -50,7 +50,7 @@ if (GETPOSTISSET('mode')) {
 	if ($mode =='common' || $mode =='commonkanban')
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 } else {
-	$mode = (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
+	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -114,7 +114,7 @@ $urldolibarrmodules = 'https://www.dolistore.com/';
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
 // Execution Time
-$max_execution_time_for_deploy = (empty($conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME) ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_execution_time_for_deploy = (!getDolGlobalString('MODULE_UPLOAD_MAX_EXECUTION_TIME') ? 300 : $conf->global->MODULE_UPLOAD_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_deploy) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_deploy=".$max_execution_time_for_deploy.". We try to increase it dynamically.");
@@ -550,7 +550,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (!empty($conf->global->MAIN_SETUP_MODULES_INFO)) {	// Show a custom message
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
 		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
 	}
 	if ($deschelp) {
@@ -818,7 +818,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				$action == 'checklastversion'
 				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
 				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
-				|| !empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
 			)
 		) {
 			$checkRes = $objMod->checkForUpdate();
@@ -986,7 +986,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print $objMod->getKanbanView($codeenabledisable, $codetoconfig);
 		} else {
 			print '<tr class="oddeven'.($warningstring ? ' info-box-content-warning' : '').'">'."\n";
-			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
+			if (getDolGlobalString('MAIN_MODULES_SHOW_LINENUMBERS')) {
 				print '<td class="width50">'.$linenum.'</td>';
 			}
 
@@ -1106,7 +1106,7 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
 		// $options is array with filter criterias
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
@@ -1312,7 +1312,7 @@ if ($mode == 'deploy') {
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button">';
 
-			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				if ($user->admin) {
 					$langs->load('other');
 					print ' ';

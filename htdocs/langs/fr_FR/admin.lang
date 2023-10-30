@@ -418,6 +418,7 @@ PDFLocaltax=Règles pour %s
 HideLocalTaxOnPDF=Cacher le taux de %s dans la colonne Taxe
 HideDescOnPDF=Cacher la description des produits
 HideRefOnPDF=Cacher la référence des produits
+ShowProductBarcodeOnPDF=Affiche le numéro de code-barre des produits
 HideDetailsOnPDF=Cacher les détails des prix sur lignes de produits
 PlaceCustomerAddressToIsoLocation=Utiliser la position standard française (La Poste) pour la position de l'adresse client
 Library=Bibliothèque

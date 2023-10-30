@@ -1598,18 +1598,26 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion into a php string, build with double quotes "
+ *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
+ *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
-function dol_escape_php($stringtoescape)
+function dol_escape_php($stringtoescape, $stringforquotes = 2)
 {
 	if (is_null($stringtoescape)) {
 		return '';
 	}
 
-	return str_replace('"', "'", $stringtoescape);
+	if ($stringforquotes == 2) {
+		return str_replace('"', "'", $stringtoescape);
+	}
+	if ($stringforquotes == 1) {
+		return str_replace("'", "\'", str_replace('"', "'", $stringtoescape));
+	}
+
+	return 'Bad parameter for stringforquotes in dol_escape_php';
 }
 
 /**
@@ -11374,8 +11382,10 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button
 	if (is_array($url)) {
+		$out = '';
+
 		if (count($url) > 1) {
-			$out = '<div class="dropdown inline-block dropdown-holder">';
+			$out .= '<div class="dropdown inline-block dropdown-holder">';
 			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction'.($userRight ? '' : 'Refused').'" title="'.dol_escape_htmltag($label).'" data-toggle="dropdown">'.($text ? $text : $label).'</a>';
 			$out .= '<div class="dropdown-content">';
 			foreach ($url as $subbutton) {

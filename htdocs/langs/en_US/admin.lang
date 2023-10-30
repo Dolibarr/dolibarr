@@ -418,6 +418,7 @@ PDFLocaltax=Rules for %s
 HideLocalTaxOnPDF=Hide %s rate in column Sale Tax / VAT
 HideDescOnPDF=Hide products description
 HideRefOnPDF=Hide products ref.
+ShowProductBarcodeOnPDF=Display the barcode number of the products
 HideDetailsOnPDF=Hide product lines details
 PlaceCustomerAddressToIsoLocation=Use french standard position (La Poste) for customer address position
 Library=Library
