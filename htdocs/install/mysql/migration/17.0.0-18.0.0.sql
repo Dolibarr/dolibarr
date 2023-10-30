@@ -460,8 +460,6 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN norsh integer DEFAULT 0 AFTER imap_encryption;
 
 -- payments on several expense reports
-ALTER TABLE llx_payment_expensereport;
-
 create table llx_expensereport_payment_expensereport
 (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
