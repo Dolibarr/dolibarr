@@ -906,7 +906,11 @@ foreach ($listofreferent as $key => $value) {
 					$total_ttc_by_line = $element->price * abs($element->qty);
 				} elseif ($tablename == 'projet_task') {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
-					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
+					$reg = array();
+					if (preg_replace('/^(\d+\.)\s\(.*\)/', $defaultvat, $reg)) {
+						$defaultvat = $reg[1];
+					}
+					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ((float) $defaultvat / 100)), 'MT');
 				} elseif ($key == 'loan') {
 					$total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
 				} else {

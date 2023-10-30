@@ -139,8 +139,8 @@ if ($id > 0 || !empty($ref)) {
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
-			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty";
-			$sql .= ", c.date_livraison";
+			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty,";
+			$sql .= " c.date_livraison as delivery_date";
 			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
@@ -260,7 +260,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
 						// delivery planned date
 						print '<td class="center">';
-						print dol_print_date($db->jdate($objp->date_livraison), 'dayhour');
+						print dol_print_date($db->jdate($objp->delivery_date), 'dayhour');
 						print '</td>';
 						print '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";

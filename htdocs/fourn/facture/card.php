@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -848,28 +849,35 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
 			if (!$error) {
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
-				$object->ref = GETPOST('ref', 'alphanohtml');
-				$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
+				$object->ref                = GETPOST('ref', 'alphanohtml');
+				$object->ref_supplier       = GETPOST('ref_supplier', 'alphanohtml');
+				$object->subtype            = GETPOST('subtype', 'alphanohtml');
 				$object->socid				= GETPOST('socid', 'int');
-				$object->libelle = GETPOST('label', 'alphanohtml');
+				$object->libelle            = GETPOST('label', 'alphanohtml');
 				$object->label				= GETPOST('label', 'alphanohtml');
-				$object->date = $dateinvoice;
-				$object->date_echeance = $datedue;
-				$object->note_public = GETPOST('note_public', 'restricthtml');
-				$object->note_private = GETPOST('note_private', 'restricthtml');
+				$object->date               = $dateinvoice;
+				$object->date_echeance      = $datedue;
+				$object->note_public        = GETPOST('note_public', 'restricthtml');
+				$object->note_private       = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
 				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 				$object->transport_mode_id	= GETPOST('transport_mode_id', 'int');
 
 				// Proprietes particulieres a facture avoir
@@ -946,23 +954,30 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
 			if (!$error) {
-				$object->socid = GETPOST('socid', 'int');
-				$object->type            = GETPOST('type', 'alphanohtml');
-				$object->ref             = GETPOST('ref', 'alphanohtml');
-				$object->date            = $dateinvoice;
-				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
-				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
-				$object->ref_supplier    = GETPOST('ref_supplier', 'alphanohtml');
-				$object->model_pdf = GETPOST('model', 'alphanohtml');
-				$object->fk_project = GETPOST('projectid', 'int');
+				$object->socid              = GETPOST('socid', 'int');
+				$object->type               = GETPOST('type', 'alphanohtml');
+				$object->subtype            = GETPOST('subtype', 'alphanohtml');
+				$object->ref                = GETPOST('ref', 'alphanohtml');
+				$object->date               = $dateinvoice;
+				$object->note_public        = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private       = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_supplier       = GETPOST('ref_supplier', 'alphanohtml');
+				$object->model_pdf          = GETPOST('model', 'alphanohtml');
+				$object->fk_project         = GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
-				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = price2num(GETPOST('amount'));
-				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
-				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
-				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->fk_account         = GETPOST('fk_account', 'int');
+				$object->amount             = price2num(GETPOST('amount'));
+				//$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
+				//$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				$object->fk_incoterms       = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
@@ -1002,12 +1017,19 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED') && empty(GETPOST("subtype"))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSubtype")), null, 'errors');
+				$action = 'create';
+			}
+
 			if (!$error) {
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation invoice
 				$object->socid				= GETPOST('socid', 'int');
 				$object->type				= GETPOST('type', 'alphanohtml');
+				$object->subtype            = GETPOST('subtype', 'alphanohtml');
 				$object->ref				= GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier		= GETPOST('ref_supplier', 'alphanohtml');
 				$object->socid				= GETPOST('socid', 'int');
@@ -2068,8 +2090,8 @@ if ($action == 'create') {
 		$cond_reglement_id = 0;
 		$mode_reglement_id = 0;
 		$fk_account = 0;
-		$remise_percent = 0;
-		$remise_absolue = 0;
+		//$remise_percent = 0;
+		//$remise_absolue = 0;
 		$transport_mode_id = 0;
 
 		// set from object source
@@ -2082,12 +2104,6 @@ if ($action == 'create') {
 		if (!empty($objectsrc->fk_account)) {
 			$fk_account = $objectsrc->fk_account;
 		}
-		if (!empty($objectsrc->remise_percent)) {
-			$remise_percent = $objectsrc->remise_percent;
-		}
-		if (!empty($objectsrc->remise_absolue)) {
-			$remise_absolue = $objectsrc->remise_absolue;
-		}
 		if (!empty($objectsrc->transport_mode_id)) {
 			$transport_mode_id = $objectsrc->transport_mode_id;
 		}
@@ -2095,8 +2111,6 @@ if ($action == 'create') {
 		if (empty($cond_reglement_id)
 			|| empty($mode_reglement_id)
 			|| empty($fk_account)
-			|| empty($remise_percent)
-			|| empty($remise_absolue)
 			|| empty($transport_mode_id)
 		) {
 			if ($origin == 'reception') {
@@ -2116,12 +2130,6 @@ if ($action == 'create') {
 					if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
 						$fk_account = $supplierOrder->fk_account;
 					}
-					if (empty($remise_percent) && !empty($supplierOrder->remise_percent)) {
-						$remise_percent = $supplierOrder->remise_percent;
-					}
-					if (empty($remise_absolue) && !empty($supplierOrder->remise_absolue)) {
-						$remise_absolue = $supplierOrder->remise_absolue;
-					}
 					if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
 						$transport_mode_id = $supplierOrder->transport_mode_id;
 					}
@@ -2138,12 +2146,6 @@ if ($action == 'create') {
 				}
 				if (empty($fk_account) && !empty($soc->fk_account)) {
 					$fk_account = $soc->fk_account;
-				}
-				if (empty($remise_percent) && !empty($soc->remise_supplier_percent)) {
-					$remise_percent = $soc->remise_supplier_percent;
-				}
-				if (empty($remise_absolue) && !empty($soc->remise_absolue)) {
-					$remise_absolue = $soc->remise_absolue;
 				}
 				if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
 					$transport_mode_id = $soc->transport_mode_id;
@@ -2171,11 +2173,11 @@ if ($action == 'create') {
 	} else {
 		$cond_reglement_id = !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
 		$mode_reglement_id = !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
-		$vat_reverse_charge = $societe->vat_reverse_charge;
+		$vat_reverse_charge = (empty($societe) ? '' : $societe->vat_reverse_charge);
 		$transport_mode_id = !empty($societe->transport_mode_supplier_id) ? $societe->transport_mode_supplier_id : 0;
 		$fk_account = !empty($societe->fk_account) ? $societe->fk_account : 0;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (getDolGlobalInt('MAIN_AUTOFILL_DATE') ? '' : -1) : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
@@ -2194,12 +2196,27 @@ if ($action == 'create') {
 		$mode_reglement_id = GETPOST("mode_reglement_id");
 	}
 
+	// If form was posted (but error returned), we must reuse the value posted in priority (standard Dolibarr behaviour)
+	if (!GETPOST('changecompany')) {
+		if (GETPOSTISSET('cond_reglement_id')) {
+			$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+		}
+		if (GETPOSTISSET('mode_reglement_id')) {
+			$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
+		}
+		if (GETPOSTISSET('cond_reglement_id')) {
+			$fk_account = GETPOST('fk_account', 'int');
+		}
+	}
+
 	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_public : null));
 	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_private : null));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
+
 	if (!empty($societe->id) && $societe->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">'."\n";
 	}
@@ -2242,6 +2259,7 @@ if ($action == 'create') {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
+						$("input[name=changecompany]").val("1");
 						$("form[name=add]").submit();
 					});
 				});
@@ -2558,6 +2576,14 @@ if ($action == 'create') {
 
 	print '</td></tr>';
 
+
+	// Invoice Subtype
+	if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+		print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
+		print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
+		print '</td></tr>';
+	}
+
 	if (!empty($societe->id) && $societe->id > 0) {
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
@@ -2582,7 +2608,8 @@ if ($action == 'create') {
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ?GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1);
+
 	print '</td></tr>';
 
 	// Due date
@@ -2594,13 +2621,14 @@ if ($action == 'create') {
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ?GETPOST('mode_reglement_id', 'int') : $mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
 	// Bank Account
 	if (isModEnabled("banque")) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -3164,6 +3192,7 @@ if ($action == 'create') {
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 		print '<span class="badgeneutral">';
 		print $object->getLibType();
+		print $object->getSubtypeLabel('facture_fourn');
 		print '</span>';
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
@@ -3875,7 +3904,7 @@ if ($action == 'create') {
 			$senderissupplier = 1;
 		}
 
-		// Show object lines
+		// Show object lines (result may vary according to hidden option MAIN_NO_INPUT_PRICE_WITH_TAX)
 		if (!empty($object->lines)) {
 			$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 		}

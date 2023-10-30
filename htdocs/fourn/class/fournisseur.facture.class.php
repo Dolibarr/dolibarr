@@ -14,6 +14,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,6 +256,7 @@ class FactureFournisseur extends CommonInvoice
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>30),
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>36),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'datef' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
@@ -527,6 +529,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", ref_ext";
 		$sql .= ", entity";
 		$sql .= ", type";
+		$sql .= ", subtype";
 		$sql .= ", libelle";
 		$sql .= ", fk_soc";
 		$sql .= ", datec";
@@ -553,6 +556,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->escape($this->type)."'";
+		$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -853,6 +857,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.ref_ext,";
 		$sql .= " t.entity,";
 		$sql .= " t.type,";
+		$sql .= " t.subtype,";
 		$sql .= " t.fk_soc,";
 		$sql .= " t.datec,";
 		$sql .= " t.datef,";
@@ -916,16 +921,17 @@ class FactureFournisseur extends CommonInvoice
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref ? $obj->ref : $obj->rowid; // We take rowid if ref is empty for backward compatibility
 
-				$this->ref_supplier = $obj->ref_supplier;
-				$this->ref_ext			= $obj->ref_ext;
+				$this->ref_supplier         = $obj->ref_supplier;
+				$this->ref_ext			    = $obj->ref_ext;
 				$this->entity				= $obj->entity;
 				$this->type					= empty($obj->type) ? self::TYPE_STANDARD : $obj->type;
+				$this->subtype				= $obj->subtype;
 				$this->socid				= $obj->fk_soc;
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->date					= $this->db->jdate($obj->datef);
 				$this->datep				= $this->db->jdate($obj->datef);
-				$this->tms = $this->db->jdate($obj->tms);
-				$this->libelle = $obj->label; // deprecated
+				$this->tms                  = $this->db->jdate($obj->tms);
+				$this->libelle              = $obj->label; // deprecated
 				$this->label				= $obj->label;
 				$this->paye					= $obj->paye;
 				$this->paid					= $obj->paye;
@@ -939,28 +945,28 @@ class FactureFournisseur extends CommonInvoice
 				$this->status				= $obj->status;
 				$this->statut				= $obj->status;	// For backward compatibility
 				$this->fk_statut			= $obj->status;	// For backward compatibility
-				$this->fk_user_author = $obj->fk_user_author;
+				$this->fk_user_author       = $obj->fk_user_author;
 				$this->author				= $obj->fk_user_author;
-				$this->fk_user_valid = $obj->fk_user_valid;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? '0' : '1';
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
-				$this->fk_project = $obj->fk_project;
+				$this->fk_project           = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
-				$this->cond_reglement_code = $obj->cond_reglement_code;
-				$this->cond_reglement = $obj->cond_reglement_label; // deprecated
+				$this->cond_reglement_code  = $obj->cond_reglement_code;
+				$this->cond_reglement       = $obj->cond_reglement_label; // deprecated
 				$this->cond_reglement_label = $obj->cond_reglement_label;
-				$this->cond_reglement_doc = $obj->cond_reglement_doc;
-				$this->fk_account = $obj->fk_account;
-				$this->mode_reglement_id = $obj->fk_mode_reglement;
-				$this->mode_reglement_code = $obj->mode_reglement_code;
-				$this->mode_reglement = $obj->mode_reglement_label;
+				$this->cond_reglement_doc   = $obj->cond_reglement_doc;
+				$this->fk_account           = $obj->fk_account;
+				$this->mode_reglement_id    = $obj->fk_mode_reglement;
+				$this->mode_reglement_code  = $obj->mode_reglement_code;
+				$this->mode_reglement       = $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
-				$this->note = $obj->note_private; // deprecated
+				$this->note                 = $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;
-				$this->note_public = $obj->note_public;
-				$this->model_pdf = $obj->model_pdf;
-				$this->import_key = $obj->import_key;
+				$this->note_public          = $obj->note_public;
+				$this->model_pdf            = $obj->model_pdf;
+				$this->import_key           = $obj->import_key;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
@@ -1038,45 +1044,43 @@ class FactureFournisseur extends CommonInvoice
 
 					$line = new SupplierInvoiceLine($this->db);
 
-					$line->id = $obj->rowid;
-					$line->rowid = $obj->rowid;
-					$line->description = $obj->description;
-					$line->date_start = $obj->date_start;
-					$line->date_end = $obj->date_end;
-
-					$line->product_ref = $obj->product_ref;
-					$line->ref = $obj->product_ref;
+					$line->id               = $obj->rowid;
+					$line->rowid            = $obj->rowid;
+					$line->description      = $obj->description;
+					$line->date_start       = $obj->date_start;
+					$line->date_end         = $obj->date_end;
+					$line->product_ref      = $obj->product_ref;
+					$line->ref              = $obj->product_ref;
 					$line->ref_supplier		= $obj->ref_supplier;
 					$line->libelle			= $obj->label;
 					$line->label  			= $obj->label;
 					$line->product_desc		= $obj->product_desc;
-					$line->subprice = $obj->pu_ht;
-					$line->pu_ht = $obj->pu_ht;
+					$line->subprice         = $obj->pu_ht;
+					$line->pu_ht            = $obj->pu_ht;
 					$line->pu_ttc			= $obj->pu_ttc;
-
-					$line->vat_src_code = $obj->vat_src_code;
+					$line->vat_src_code     = $obj->vat_src_code;
 					$line->tva_tx			= $obj->tva_tx;
 					$line->localtax1_tx		= $obj->localtax1_tx;
 					$line->localtax2_tx		= $obj->localtax2_tx;
 					$line->localtax1_type	= $obj->localtax1_type;
 					$line->localtax2_type	= $obj->localtax2_type;
 					$line->qty				= $obj->qty;
-					$line->remise_percent = $obj->remise_percent;
+					$line->remise_percent   = $obj->remise_percent;
 					$line->fk_remise_except = $obj->fk_remise_except;
-					//$line->tva				= $obj->total_tva; // deprecated
+					//$line->tva			= $obj->total_tva; // deprecated
 					$line->total_ht			= $obj->total_ht;
 					$line->total_ttc		= $obj->total_ttc;
 					$line->total_tva		= $obj->total_tva;
 					$line->total_localtax1	= $obj->total_localtax1;
 					$line->total_localtax2	= $obj->total_localtax2;
 					$line->fk_facture_fourn = $obj->fk_facture_fourn;
-					$line->fk_product = $obj->fk_product;
+					$line->fk_product       = $obj->fk_product;
 					$line->product_type		= $obj->product_type;
 					$line->product_label	= $obj->label;
-					$line->info_bits = $obj->info_bits;
+					$line->info_bits        = $obj->info_bits;
 					$line->fk_parent_line   = $obj->fk_parent_line;
 					$line->special_code		= $obj->special_code;
-					$line->rang = $obj->rang;
+					$line->rang             = $obj->rang;
 					$line->fk_unit          = $obj->fk_unit;
 
 					// Accountancy
@@ -1138,6 +1142,9 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->type)) {
 			$this->type = trim($this->type);
+		}
+		if (isset($this->subtype)) {
+			$this->subtype = trim($this->subtype);
 		}
 		if (isset($this->socid)) {
 			$this->socid = trim($this->socid);
@@ -1220,6 +1227,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : "null").",";
 		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen($this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
@@ -2532,21 +2540,10 @@ class FactureFournisseur extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				//$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
@@ -2623,7 +2620,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$return = array();
 
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.paye, pf.fk_paiementfourn";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiementfourn";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
 		$sql .= " WHERE f.entity = ".$conf->entity;
@@ -3142,7 +3139,7 @@ class FactureFournisseur extends CommonInvoice
 		// Clear fields
 		$object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
 		$object->author             = $user->id;
-		$object->user_valid         = 0;
+		$object->user_validation_id = 0;
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_validation    = '';
@@ -3331,7 +3328,9 @@ class FactureFournisseur extends CommonInvoice
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['thirdparty'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['thirdparty'].'</span>';
 		}

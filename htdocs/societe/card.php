@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022-2023  George Gkantinas	    <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +198,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
-		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);		// The thirdparty that we will delete
 
@@ -209,174 +209,13 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 				$error++;
 			}
-
 			if (!$error) {
-				// TODO Move the merge function into class of object.
-
-				$db->begin();
-
-				// Recopy some data
-				$object->client = $object->client | $soc_origin->client;
-				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
-				$listofproperties = array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
-					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
-					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-					'model_pdf', 'fk_projet'
-				);
-				foreach ($listofproperties as $property) {
-					if (empty($object->$property)) {
-						$object->$property = $soc_origin->$property;
-					}
-				}
-
-				// Concat some data
-				$listofproperties = array(
-					'note_public', 'note_private'
-				);
-				foreach ($listofproperties as $property) {
-					$object->$property = dol_concatdesc($object->$property, $soc_origin->$property);
-				}
-
-				// Merge extrafields
-				if (is_array($soc_origin->array_options)) {
-					foreach ($soc_origin->array_options as $key => $val) {
-						if (empty($object->array_options[$key])) {
-							$object->array_options[$key] = $val;
-						}
-					}
-				}
-
-				// If alias name is not defined on target thirdparty, we can store in it the old name of company.
-				if (empty($object->name_bis) && $object->name != $soc_origin->name) {
-					$object->name_bis = $soc_origin->name;
-				}
-
-				// Merge categories
-				$static_cat = new Categorie($db);
-
-				$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
-				$custcats = $static_cat->containing($object->id, 'customer', 'id');
-				$custcats = array_merge($custcats, $custcats_ori);
-				$object->setCategories($custcats, 'customer');
-
-				$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
-				$suppcats = $static_cat->containing($object->id, 'supplier', 'id');
-				$suppcats = array_merge($suppcats, $suppcats_ori);
-				$object->setCategories($suppcats, 'supplier');
-
-				// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
-				if ($soc_origin->code_client == $object->code_client
-					|| $soc_origin->code_fournisseur == $object->code_fournisseur
-					|| $soc_origin->barcode == $object->barcode) {
-					dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
-					$soc_origin->code_client = '';
-					$soc_origin->code_fournisseur = '';
-					$soc_origin->barcode = '';
-					$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
-				}
-
-				// Update
-				$result = $object->update($object->id, $user, 0, 1, 1, 'merge');
-
+				$result = $object->mergeCompany($soc_origin_id);
 				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
-				}
-
-				// Move links
-				if (!$error) {
-					// This list is also into the api_thirdparties.class.php
-					// TODO Mutualise the list into object societe.class.php
-					$objects = array(
-						'Adherent' => '/adherents/class/adherent.class.php',
-						'Don' => array('file' => '/don/class/don.class.php', 'enabled' => isModEnabled('don')),
-						'Societe' => '/societe/class/societe.class.php',
-						//'Categorie' => '/categories/class/categorie.class.php',
-						'ActionComm' => '/comm/action/class/actioncomm.class.php',
-						'Propal' => '/comm/propal/class/propal.class.php',
-						'Commande' => '/commande/class/commande.class.php',
-						'Facture' => '/compta/facture/class/facture.class.php',
-						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-						'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
-						'Mo' => '/mrp/class/mo.class.php',
-						'Contact' => '/contact/class/contact.class.php',
-						'Contrat' => '/contrat/class/contrat.class.php',
-						'Expedition' => '/expedition/class/expedition.class.php',
-						'Fichinter' => '/fichinter/class/fichinter.class.php',
-						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
-						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
-						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
-						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-						'Delivery' => '/delivery/class/delivery.class.php',
-						'Product' => '/product/class/product.class.php',
-						'Project' => '/projet/class/project.class.php',
-						'Ticket' => array('file' => '/ticket/class/ticket.class.php', 'enabled' => isModEnabled('ticket')),
-						'User' => '/user/class/user.class.php',
-						'Account' => '/compta/bank/class/account.class.php',
-						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
-					);
-
-					//First, all core objects must update their tables
-					foreach ($objects as $object_name => $object_file) {
-						if (is_array($object_file)) {
-							if (empty($object_file['enabled'])) {
-								continue;
-							}
-							$object_file = $object_file['file'];
-						}
-
-						require_once DOL_DOCUMENT_ROOT.$object_file;
-
-						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
-							$error++;
-							setEventMessages($db->lasterror(), null, 'errors');
-							break;
-						}
-					}
-				}
-
-				// External modules should update their ones too
-				if (!$error) {
-					$parameters = array('soc_origin' => $soc_origin->id, 'soc_dest' => $object->id);
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $object, $action);
-
-					if ($reshook < 0) {
-						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-						$error++;
-					}
-				}
-
-
-				if (!$error) {
-					$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id, 'mergefromname'=>$soc_origin->name);
-
-					// Call trigger
-					$result = $object->call_trigger('COMPANY_MODIFY', $user);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if (!$error) {
-					// We finally remove the old thirdparty
-					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
-						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
-						$error++;
-					}
-				}
-
-				if (!$error) {
-					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
-					$db->commit();
+					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					$langs->load("errors");
-					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
-					$db->rollback();
+					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 				}
 			}
 		}
@@ -1705,7 +1544,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Vat is used
 		print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
 		print '<td>';
-		print $form->selectyesno('assujtva_value', GETPOSTISSET('assujtva_value') ?GETPOST('assujtva_value', 'int') : 1, 1); // Assujeti par defaut en creation
+		print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"': 'checked="checked"') . ' value="1">'; // Assujeti par defaut en creation
 		print '</td>';
 		if ($conf->browser->layout == 'phone') {
 			print '</tr><tr>';
@@ -1755,21 +1594,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		//TODO: Place into a function to control showing by country or study better option
 		if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 			print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-			print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
+			print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-			print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
+			print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td></tr>';
 		} elseif ($mysoc->localtax1_assuj == "1") {
 			print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-			print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
+			print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td></tr>';
 		} elseif ($mysoc->localtax2_assuj == "1") {
 			print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-			print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
+			print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
 			print '</td></tr>';
 		}
 
@@ -2435,14 +2274,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// VAT is used
 			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectyesno('assujtva_value', $object->tva_assuj, 1);
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . ($object->tva_assuj ? 'checked="checked"': '') . ' value="1">';
 			print '</td></tr>';
 
 			// Local Taxes
 			//TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td>';
-				print $form->selectyesno('localtax1assuj_value', $object->localtax1_assuj, 1);
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
 				if (!isOnlyOneLocalTax(1)) {
 					print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2451,7 +2290,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 				print '</tr><tr>';
 				print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
-				print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1"></td></tr>';
 				if (!isOnlyOneLocalTax(2)) {
 					print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2460,7 +2299,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1") {
 				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td colspan="3">';
-				print $form->selectyesno('localtax1assuj_value', $object->localtax1_assuj, 1);
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
 				if (!isOnlyOneLocalTax(1)) {
 					print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2469,7 +2308,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1") {
 				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td colspan="3">';
-				print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1">';
 				if (!isOnlyOneLocalTax(2)) {
 					print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
 					$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -3311,6 +3150,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Subsidiaries list
 			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && empty($conf->global->SOCIETE_DISABLE_SHOW_SUBSIDIARIES)) {
+				print '<br>';
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 
@@ -3318,7 +3158,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+			$morehtmlcenter = '<div class="nowraponall">';
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id);
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+			$morehtmlcenter .= '</div>';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

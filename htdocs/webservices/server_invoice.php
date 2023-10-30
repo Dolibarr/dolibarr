@@ -365,8 +365,8 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
 						'thirdparty_id' => $invoice->socid,
-						'fk_user_author' => $invoice->user_author ? $invoice->user_author : '',
-						'fk_user_valid' => $invoice->user_valid ? $invoice->user_valid : '',
+						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
+						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
 						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
 						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
@@ -490,8 +490,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 						'id' => $invoice->id,
 						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
-						'fk_user_author' => $invoice->user_author ? $invoice->user_author : '',
-						'fk_user_valid' => $invoice->user_valid ? $invoice->user_valid : '',
+						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
+						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
 						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
 						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',

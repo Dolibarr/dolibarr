@@ -1565,11 +1565,15 @@ if ($action == 'create') {
 				$now = dol_now();
 				$timearray = dol_getdate($now);
 				if (!GETPOST('diday', 'int')) {
-					$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
+						$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+					} else {
+						$timewithnohour = dol_mktime($timearray['hours'], $timearray['minutes'], 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+					}
 				} else {
 					$timewithnohour = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 				}
-				if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+				if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 					print $form->selectDate($timewithnohour, 'di', 0, 0, 0, "addinter");
 				} else {
 					print $form->selectDate($timewithnohour, 'di', 1, 1, 0, "addinter");

@@ -40,12 +40,20 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
-if ($mode == 'customer' && !$user->hasRight('commande', 'lire')) {
+
+$usercanreadcustumerstatistic = $user->hasRight('commande', 'lire');
+$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'lire');
+if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+	$usercanreadcustumerstatistic = $user->hasRight('commande', 'commande', 'export');
+	$usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'export');
+}
+if ($mode == 'customer' && !$usercanreadcustumerstatistic) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
+if ($mode == 'supplier' && !$usercanreadsupplierstatistic) {
 	accessforbidden();
 }
+
 if ($mode == 'supplier') {
 	$object_status = GETPOST('object_status', 'array:int');
 	$object_status = implode(',', $object_status);

@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
@@ -120,7 +121,7 @@ class Documents extends DolibarrApi
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * Supported modules: invoice, order, proposal, contract
+	 * Supported modules: invoice, order, proposal, contract, shipment
 	 *
 	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
@@ -180,9 +181,9 @@ class Documents extends DolibarrApi
 		}
 
 		// --- Generates the document
-		$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 0 : 1;
-		$hidedesc = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 0 : 1;
-		$hideref = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 0 : 1;
+		$hidedetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 0 : 1;
+		$hidedesc = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 0 : 1;
+		$hideref = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 0 : 1;
 
 		$templateused = '';
 
@@ -244,6 +245,22 @@ class Documents extends DolibarrApi
 
 			if (!$result) {
 				throw new RestException(404, 'Contract not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
+			}
+		} elseif ($modulepart == 'expedition' || $modulepart == 'shipment') {
+			require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+
+			$tmpobject = new Expedition($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Shipment not found');
 			}
 
 			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
@@ -641,10 +658,6 @@ class Documents extends DolibarrApi
 			throw new RestException(400, 'Modulepart not provided.');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->ecm->upload) {
-			throw new RestException(401);
-		}
-
 		$newfilecontent = '';
 		if (empty($fileencoding)) {
 			$newfilecontent = $filecontent;
@@ -766,10 +779,17 @@ class Documents extends DolibarrApi
 				$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
 			}
 
-			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
-
-			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
-			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			// Test on permissions
+			if ($modulepart != 'ecm') {
+				$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
+				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
+				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			} else {
+				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
+					throw new RestException(401, 'Missing permission to upload files in ECM module');
+				}
+				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
 				throw new RestException(500, 'This value of modulepart ('.$modulepart.') does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
@@ -782,9 +802,17 @@ class Documents extends DolibarrApi
 				$modulepart = 'adherent';
 			}
 
-			$relativefile = $subdir;
-			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
-			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			// Test on permissions
+			if ($modulepart != 'ecm') {
+				$relativefile = $subdir;
+				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
+				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			} else {
+				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
+					throw new RestException(401, 'Missing permission to upload files in ECM module');
+				}
+				$upload_dir = $conf->medias->multidir_output[$conf->entity];
+			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
 				if (!empty($tmp['error'])) {
@@ -848,7 +876,7 @@ class Documents extends DolibarrApi
 		// Security:
 		// Disallow file with some extensions. We rename them.
 		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED)) {
+		if (isAFileWithExecutableContent($dest_file) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
 			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
 			if (!preg_match('/\/$/', $publicmediasdirwithslash)) {

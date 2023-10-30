@@ -46,7 +46,7 @@ if (empty($mode)) {
 	$mode = 'desc';
 }
 
-if (!$user->admin) {
+if (empty($user->admin)) {
 	accessforbidden();
 }
 
@@ -127,13 +127,13 @@ foreach ($modulesdir as $dir) {
 
 								// We discard modules according to features level (PS: if module is activated we always show it)
 								$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-								if ($objMod->version == 'development' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
+								if ($objMod->version == 'development' && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2))) {
 									$modulequalified = 0;
 								}
-								if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
+								if ($objMod->version == 'experimental' && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1))) {
 									$modulequalified = 0;
 								}
-								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) {
+								if (preg_match('/deprecated/', $objMod->version) && (!getDolGlobalString($const_name) && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 0))) {
 									$modulequalified = 0;
 								}
 
@@ -250,7 +250,7 @@ $moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 $text = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
-if (!empty($conf->global->$const_name)) {
+if (getDolGlobalString($const_name)) {
 	$text .= dol_print_date($objMod->getLastActivationDate(), 'dayhour');
 } else {
 	$text .= $langs->trans("Disabled");
@@ -261,7 +261,7 @@ if ($authorid > 0) {
 	$tmpuser = new User($db);
 	$tmpuser->fetch($authorid);
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
-	$text .= $tmpuser->getNomUrl(1);
+	$text .= $tmpuser->getNomUrl(-1);
 }
 $ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
 if ($ip) {

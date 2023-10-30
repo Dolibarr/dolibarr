@@ -82,7 +82,6 @@ if (!$sortorder) {
 
 
 $object = new Contrat($db);
-
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
@@ -91,6 +90,8 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
