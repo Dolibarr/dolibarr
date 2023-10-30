@@ -478,7 +478,7 @@ class Adherent extends CommonObject
 		$infos .= $langs->transnoentities("PhonePro").": ".$this->phone."\n";
 		$infos .= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
 		$infos .= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			$infos .= $langs->transnoentities("Login").": ".$this->login."\n";
 			$infos .= $langs->transnoentities("Password").": ".$this->pass."\n";
 		}
@@ -587,7 +587,7 @@ class Adherent extends CommonObject
 		$this->import_key = trim($this->import_key);
 
 		// Check parameters
-		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -595,7 +595,7 @@ class Adherent extends CommonObject
 		if (!$this->datec) {
 			$this->datec = $now;
 		}
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			if (empty($this->login)) {
 				$this->error = $langs->trans("ErrorWrongValueForParameterX", "Login");
 				return -1;
@@ -731,7 +731,7 @@ class Adherent extends CommonObject
 		$this->url = $this->url ?clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
-		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -817,7 +817,7 @@ class Adherent extends CommonObject
 			if (!$error && $this->pass) {
 				dol_syslog(get_class($this)."::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					$isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1;
+					$isencrypted = !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1;
 
 					// If password to set differs from the one found into database
 					$result = $this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
@@ -866,7 +866,7 @@ class Adherent extends CommonObject
 						//var_dump($this->login);exit;
 
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
-						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
 						}
 
@@ -1820,12 +1820,12 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Add line to draft invoice
 				$idprodsubscription = 0;
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled("product") || isModEnabled("service"))) {
+				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled("product") || isModEnabled("service"))) {
 					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
 				}
 
 				$vattouse = 0;
-				if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry') {
+				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
@@ -2104,7 +2104,7 @@ class Adherent extends CommonObject
 		$err = 0;
 
 		// mailman
-		if (!empty($conf->global->ADHERENT_USE_MAILMAN) && isModEnabled('mailmanspip')) {
+		if (getDolGlobalString('ADHERENT_USE_MAILMAN') && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_mailman($this);
 
 			if ($result < 0) {
@@ -2124,7 +2124,7 @@ class Adherent extends CommonObject
 		}
 
 		// spip
-		if (!empty($conf->global->ADHERENT_USE_SPIP) && isModEnabled('mailmanspip')) {
+		if (getDolGlobalString('ADHERENT_USE_SPIP') && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2156,7 +2156,7 @@ class Adherent extends CommonObject
 		$err = 0;
 
 		// mailman
-		if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
+		if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 			$result = $mailmanspip->del_to_mailman($this);
 			if ($result < 0) {
 				if (!empty($mailmanspip->error)) {
@@ -2223,7 +2223,7 @@ class Adherent extends CommonObject
 
 		$datas = array();
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowUser")];
 		}
@@ -2283,7 +2283,7 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpictoimg) {
 			$withpictoimg = 0;
 		}
 
@@ -2325,7 +2325,7 @@ class Adherent extends CommonObject
 		$linkstart .= '<a href="'.$url.'"';
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
@@ -2358,7 +2358,7 @@ class Adherent extends CommonObject
 			$result .= $picto;
 		}
 		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
 			}
@@ -2369,7 +2369,7 @@ class Adherent extends CommonObject
 			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';
 			}
 		}
@@ -2603,7 +2603,7 @@ class Adherent extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->ADHERENT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('ADHERENT_ADDON_PDF')) {
 				$modele = $conf->global->ADHERENT_ADDON_PDF;
 			}
 		}
@@ -2700,13 +2700,13 @@ class Adherent extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS].",".$conf->global->LDAP_MEMBER_DN;
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')]."," . getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 1) {
 			$dn = $conf->global->LDAP_MEMBER_DN;
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS];
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')];
 		}
 		return $dn;
 	}
@@ -2754,110 +2754,110 @@ class Adherent extends CommonObject
 				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (!empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
+				if (getDolGlobalString('LDAP_KEY_MEMBERS') && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
 			}
 		}
-		if ($this->firstname && !empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->firstname && getDolGlobalString('LDAP_MEMBER_FIELD_FIRSTNAME')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_FIRSTNAME')] = $this->firstname;
 		}
-		if ($this->poste && !empty($conf->global->LDAP_MEMBER_FIELD_TITLE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
+		if ($this->poste && getDolGlobalString('LDAP_MEMBER_FIELD_TITLE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_TITLE')] = $this->poste;
 		}
-		if ($this->company && !empty($conf->global->LDAP_MEMBER_FIELD_COMPANY)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->company;
+		if ($this->company && getDolGlobalString('LDAP_MEMBER_FIELD_COMPANY')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_COMPANY')] = $this->company;
 		}
-		if ($this->address && !empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
+		if ($this->address && getDolGlobalString('LDAP_MEMBER_FIELD_ADDRESS')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_ADDRESS')] = $this->address;
 		}
-		if ($this->zip && !empty($conf->global->LDAP_MEMBER_FIELD_ZIP)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
+		if ($this->zip && getDolGlobalString('LDAP_MEMBER_FIELD_ZIP')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_ZIP')] = $this->zip;
 		}
-		if ($this->town && !empty($conf->global->LDAP_MEMBER_FIELD_TOWN)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+		if ($this->town && getDolGlobalString('LDAP_MEMBER_FIELD_TOWN')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_TOWN')] = $this->town;
 		}
-		if ($this->country_code && !empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
+		if ($this->country_code && getDolGlobalString('LDAP_MEMBER_FIELD_COUNTRY')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_COUNTRY')] = $this->country_code;
 		}
 		foreach ($socialnetworks as $key => $value) {
 			if ($this->socialnetworks[$value['label']] && getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))) {
 				$info[getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))] = $this->socialnetworks[$value['label']];
 			}
 		}
-		if ($this->phone && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+		if ($this->phone && getDolGlobalString('LDAP_MEMBER_FIELD_PHONE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_PHONE')] = $this->phone;
 		}
-		if ($this->phone_perso && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
+		if ($this->phone_perso && getDolGlobalString('LDAP_MEMBER_FIELD_PHONE_PERSO')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_PHONE_PERSO')] = $this->phone_perso;
 		}
-		if ($this->phone_mobile && !empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
+		if ($this->phone_mobile && getDolGlobalString('LDAP_MEMBER_FIELD_MOBILE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_MOBILE')] = $this->phone_mobile;
 		}
-		if ($this->fax && !empty($conf->global->LDAP_MEMBER_FIELD_FAX)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
+		if ($this->fax && getDolGlobalString('LDAP_MEMBER_FIELD_FAX')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_FAX')] = $this->fax;
 		}
-		if ($this->note_private && !empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+		if ($this->note_private && getDolGlobalString('LDAP_MEMBER_FIELD_DESCRIPTION')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_private, 2);
 		}
-		if ($this->note_public && !empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = dol_string_nohtmltag($this->note_public, 2);
+		if ($this->note_public && getDolGlobalString('LDAP_MEMBER_FIELD_NOTE_PUBLIC')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_NOTE_PUBLIC')] = dol_string_nohtmltag($this->note_public, 2);
 		}
-		if ($this->birth && !empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth, 'dayhourldap');
+		if ($this->birth && getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')] = dol_print_date($this->birth, 'dayhourldap');
 		}
-		if (isset($this->statut) && !empty($conf->global->LDAP_FIELD_MEMBER_STATUS)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
+		if (isset($this->statut) && getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] = $this->statut;
 		}
-		if ($this->datefin && !empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin, 'dayhourldap');
+		if ($this->datefin && getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')] = dol_print_date($this->datefin, 'dayhourldap');
 		}
 
 		// When password is modified
 		if (!empty($this->pass)) {
-			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
-				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
+			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
 			}
-			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
-				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
 		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 				// Just for the default MD5 !
-				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
-					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
+				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
+					if ($this->pass_indatabase_crypted && getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 						// Create OpenLDAP MD5 password from Dolibarr MD5 password
 						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
-						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
+						$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
-				if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
-					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
-				if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
-					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 				}
 			}
 		}
 
 		// Subscriptions
-		if ($this->first_subscription_date && !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE] = dol_print_date($this->first_subscription_date, 'dayhourldap');
+		if ($this->first_subscription_date && getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')] = dol_print_date($this->first_subscription_date, 'dayhourldap');
 		}
-		if (isset($this->first_subscription_amount) && !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
+		if (isset($this->first_subscription_amount) && getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')] = $this->first_subscription_amount;
 		}
-		if ($this->last_subscription_date && !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE] = dol_print_date($this->last_subscription_date, 'dayhourldap');
+		if ($this->last_subscription_date && getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')] = dol_print_date($this->last_subscription_date, 'dayhourldap');
 		}
-		if (isset($this->last_subscription_amount) && !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
+		if (isset($this->last_subscription_amount) && getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')] = $this->last_subscription_amount;
 		}
 
 		return $info;
@@ -2884,6 +2884,7 @@ class Adherent extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -3001,7 +3002,7 @@ class Adherent extends CommonObject
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
 		}
-		if (empty($conf->global->MEMBER_REMINDER_EMAIL)) {
+		if (!getDolGlobalString('MEMBER_REMINDER_EMAIL')) {
 			$langs->load("agenda");
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -3252,7 +3253,9 @@ class Adherent extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'type')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';
 		}

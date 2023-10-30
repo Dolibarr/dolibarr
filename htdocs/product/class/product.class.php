@@ -15,6 +15,7 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@
 /**
  *    \file       htdocs/product/class/product.class.php
  *    \ingroup    produit
- *    \brief      File of class to manage predefined products or services
+ *    \brief      File of class to manage the predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -559,7 +560,7 @@ class Product extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
-		'mandatory_period' => array('type'=>'integer', 'label'=>'mandatory_period', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
+		'mandatory_period' => array('type'=>'integer', 'label'=>'mandatoryperiod', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
 	);
 
 	/**
@@ -570,14 +571,6 @@ class Product extends CommonObject
 	 * Service
 	 */
 	const TYPE_SERVICE = 1;
-	/**
-	 * Advanced feature: assembly kit
-	 */
-	const TYPE_ASSEMBLYKIT = 2;
-	/**
-	 * Advanced feature: stock kit
-	 */
-	const TYPE_STOCKKIT = 3;
 
 
 	/**
@@ -1324,6 +1317,42 @@ class Product extends CommonObject
 					}
 				}
 
+				if (!$this->hasbatch() && $this->oldcopy->hasbatch()) {
+					// Selection of all product stock mouvements that contains batchs
+					$sql = 'SELECT pb.qty, pb.fk_entrepot, pb.batch FROM '.MAIN_DB_PREFIX.'product_batch as pb';
+					$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON (ps.rowid = batch.fk_product_stock)';
+					$sql.= ' WHERE ps.fk_product = '.(int) $this->id;
+
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						$inventorycode = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+						while ($obj = $this->db->fetch_object($resql)) {
+							$value = $obj->qty;
+							$fk_entrepot = $obj->fk_entrepot;
+							$price = 0;
+							$dlc = '';
+							$dluo = '';
+							$batch = $obj->batch;
+
+							// To know how to revert stockMouvement (add or remove)
+							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
+							$label = $langs->trans('BatchStockMouvementAddInGlobal');
+							$res = $this->correct_stock_batch($user, $fk_entrepot, abs($value), $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '', null, 0, null, true);
+
+							if ($res > 0) {
+								$label = $langs->trans('BatchStockMouvementAddInGlobal');
+								$res = $this->correct_stock($user, $fk_entrepot, abs($value), (int) empty($addOremove), $label, $price, $inventorycode, '', null, 0);
+								if ($res < 0) {
+									$error++;
+								}
+							} else {
+								$error++;
+							}
+						}
+					}
+				}
+
 				// Actions on extra fields
 				if (!$error) {
 					$result = $this->insertExtraFields();
@@ -1421,7 +1450,7 @@ class Product extends CommonObject
 			$this->error = "Object must be fetched before calling delete";
 			return -1;
 		}
-		if (($this->type == Product::TYPE_PRODUCT && empty($user->rights->produit->supprimer)) || ($this->type == Product::TYPE_SERVICE && empty($user->rights->service->supprimer))) {
+		if (($this->type == Product::TYPE_PRODUCT && !$user->hasRight('produit', 'supprimer')) || ($this->type == Product::TYPE_SERVICE && !$user->hasRight('service', 'supprimer'))) {
 			$this->error = "ErrorForbidden";
 			return 0;
 		}
@@ -2830,7 +2859,7 @@ class Product extends CommonObject
 			$sql .= " SUM(mp.qty) as qty";
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
 			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
@@ -2953,14 +2982,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."propaldet as pd";
 		$sql .= ", ".$this->db->prefix()."propal as p";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.rowid = pd.fk_propal";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND pr.fk_statut != 0";
@@ -3028,14 +3057,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."supplier_proposaldet as pd";
 		$sql .= ", ".$this->db->prefix()."supplier_proposal as p";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.rowid = pd.fk_supplier_proposal";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND pr.fk_statut != 0";
@@ -3084,14 +3113,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."commandedet as cd";
 		$sql .= ", ".$this->db->prefix()."commande as c";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.rowid = cd.fk_commande";
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'commande').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3212,14 +3241,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseurdet as cd";
 		$sql .= ", ".$this->db->prefix()."commande_fournisseur as c";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.rowid = cd.fk_commande";
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3275,7 +3304,7 @@ class Product extends CommonObject
 		$sql .= ", ".$this->db->prefix()."commande as c";
 		$sql .= ", ".$this->db->prefix()."expedition as e";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE e.rowid = ed.fk_expedition";
@@ -3284,7 +3313,7 @@ class Product extends CommonObject
 		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'expedition').")";
 		$sql .= " AND ed.fk_origin_line = cd.rowid";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3359,14 +3388,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as fd";
 		$sql .= ", ".$this->db->prefix()."commande_fournisseur as cf";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE cf.rowid = fd.fk_commande";
 		$sql .= " AND cf.fk_soc = s.rowid";
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3420,13 +3449,13 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."mrp_production as mp";
 		$sql .= ", ".$this->db->prefix()."mrp_mo as m";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = m.fk_soc";
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE m.rowid = mp.fk_mo";
 		$sql .= " AND m.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mrp').")";
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND m.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3516,14 +3545,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."contratdet as cd";
 		$sql .= ", ".$this->db->prefix()."contrat as c";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.rowid = cd.fk_contrat";
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND c.statut != 0";
@@ -3590,14 +3619,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."facturedet as fd";
 		$sql .= ", ".$this->db->prefix()."facture as f";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.rowid = fd.fk_facture";
 		$sql .= " AND f.fk_soc = s.rowid";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND f.fk_statut != 0";
@@ -3665,14 +3694,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet_rec as fd";
 		$sql .= ", ".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.rowid = fd.fk_facture";
 		$sql .= " AND f.fk_soc = s.rowid";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND f.fk_statut != 0";
@@ -3739,14 +3768,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."facture_fourn_det as fd";
 		$sql .= ", ".$this->db->prefix()."facture_fourn as f";
 		$sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.rowid = fd.fk_facture_fourn";
 		$sql .= " AND f.fk_soc = s.rowid";
 		$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND f.fk_statut != 0";
@@ -3877,7 +3906,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.rowid = d.fk_facture";
@@ -3891,7 +3920,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND f.fk_soc = s.rowid";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3931,7 +3960,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.rowid = d.fk_facture_fourn";
@@ -3945,7 +3974,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND f.fk_soc = s.rowid";
 		$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -3983,7 +4012,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as prod";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.rowid = d.fk_propal";
@@ -3997,7 +4026,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -4036,7 +4065,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as prod";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.rowid = d.fk_supplier_proposal";
@@ -4050,7 +4079,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -4088,7 +4117,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.rowid = d.fk_commande";
@@ -4102,7 +4131,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity('commande').")";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -4140,7 +4169,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.rowid = d.fk_commande";
@@ -4154,7 +4183,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -4192,7 +4221,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 
@@ -4209,7 +4238,7 @@ class Product extends CommonObject
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
 
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -4246,7 +4275,7 @@ class Product extends CommonObject
 		if ($filteronproducttype >= 0) {
 			$sql .= ", ".$this->db->prefix()."product as p";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 
@@ -4262,7 +4291,7 @@ class Product extends CommonObject
 			$sql .= " AND p.rowid = d.fk_product AND p.fk_product_type = ".((int) $filteronproducttype);
 		}
 
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND d.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
@@ -4283,10 +4312,13 @@ class Product extends CommonObject
 	 * @param  int $id_fils Id of child product/service
 	 * @param  int $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
+	 * @param  int $notrigger	Disable triggers
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
@@ -4325,6 +4357,17 @@ class Product extends CommonObject
 					dol_print_error($this->db);
 					return -1;
 				} else {
+					if (!$notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('PRODUCT_SUBPRODUCT_ADD', $user);
+						if ($result < 0) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::addSubproduct error='.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+						// End call triggers
+
 					return 1;
 				}
 			} else {
@@ -4342,10 +4385,13 @@ class Product extends CommonObject
 	 * @param  int $id_fils Id of child product/service
 	 * @param  int $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
+	 * @param  int $notrigger	Disable triggers
 	 * @return int                < 0 if KO, > 0 if OK
 	 */
-	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
@@ -4370,6 +4416,17 @@ class Product extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		} else {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('PRODUCT_SUBPRODUCT_UPDATE', $user);
+				if ($result < 0) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(get_class($this).'::updateSubproduct error='.$this->error, LOG_ERR);
+					return -1;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		}
 	}
@@ -4380,10 +4437,13 @@ class Product extends CommonObject
 	 *
 	 * @param  int $fk_parent Id of parent product (child will no more be linked to it)
 	 * @param  int $fk_child  Id of child product
+	 * @param  int $notrigger	Disable triggers
 	 * @return int            < 0 if KO, > 0 if OK
 	 */
-	public function del_sousproduit($fk_parent, $fk_child)
+	public function del_sousproduit($fk_parent, $fk_child, $notrigger = 0)
 	{
+		global $user;
+
 		// phpcs:enable
 		if (!is_numeric($fk_parent)) {
 			$fk_parent = 0;
@@ -4420,6 +4480,18 @@ class Product extends CommonObject
 				}
 			}
 		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_SUBPRODUCT_DELETE', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::delSubproduct error='.$this->error, LOG_ERR);
+				return -1;
+			}
+			// End call triggers
+		}
+
 		return 1;
 	}
 
@@ -5101,6 +5173,9 @@ class Product extends CommonObject
 		if (!empty($this->label)) {
 			$datas['label']= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
 		}
+		if (!empty($this->description)) {
+			$datas['description']= '<br><b>'.$langs->trans('ProductDescription').':</b> '.dolGetFirstLineofText($this->description, 5);
+		}
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
@@ -5201,7 +5276,7 @@ class Product extends CommonObject
 		}
 		$params = [
 			'id' => $this->id,
-			'objecttype' => $this->element,
+			'objecttype' => (isset($this->type) ? ($this->type == 1 ? 'service' : 'product') : $this->element),
 			'option' => $option,
 			'nofetch' => 1,
 		];
@@ -5261,7 +5336,7 @@ class Product extends CommonObject
 				$result .= (img_object(($notooltip ? '' : $label), 'service', 'class="paddingright"', 0, 0, $notooltip ? 0 : 1));
 			}
 		}
-		$result .= dol_escape_htmltag($newref);
+		$result .= '<span class="aaa">'.dol_escape_htmltag($newref).'</span>';
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
@@ -5517,9 +5592,10 @@ class Product extends CommonObject
 	 * @param  int      $origin_id      Origin id of element
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @param  Extrafields $extrafields	Array of extrafields
+	 * @param  boolean  $force_update_batch   Force update batch
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -5539,7 +5615,7 @@ class Product extends CommonObject
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin
-			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
+			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct, 0, $force_update_batch);
 
 			if ($result >= 0) {
 				if ($extrafields) {
@@ -6083,7 +6159,7 @@ class Product extends CommonObject
 		if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 			$dirsociete = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 			foreach ($dirsociete as $dirroot) {
-				$res = dol_include_once($dirroot.$conf->global->BARCODE_PRODUCT_ADDON_NUM.'.php');
+				$res = dol_include_once($dirroot . getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM').'.php');
 				if ($res) {
 					break;
 				}
@@ -6288,7 +6364,8 @@ class Product extends CommonObject
 			1 => $baseprice
 		);
 
-		for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+		$nbofproducts = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+		for ($i = 1; $i <= $nbofproducts; $i++) {
 			$price = $baseprice;
 			$price_min = $baseprice;
 
@@ -6356,20 +6433,11 @@ class Product extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
-
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-
 				$this->ref = $obj->ref;
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
+
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
@@ -6449,7 +6517,9 @@ class Product extends CommonObject
 		$return .= '</div>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}

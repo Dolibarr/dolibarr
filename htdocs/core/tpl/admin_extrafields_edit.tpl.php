@@ -216,24 +216,12 @@ if ($size <= 255 && in_array($type, array('text', 'html'))) {
 }*/
 
 if (in_array($type, array_keys($typewecanchangeinto))) {
-	print '<select id="type" class="flat type" name="type">';
-	foreach ($type2label as $key => $val) {
-		$selected = '';
-		if ($key == (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : $type)) {
-			$selected = ' selected="selected"';
-		}
-
-		// Set $valhtml with the picto for the type
-		$valhtml = ($key ? getPictoForType($key) : '').$val;
-
-		if (in_array($key, $typewecanchangeinto[$type])) {
-			print '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.$val.'</option>';
-		} else {
-			print '<option value="'.$key.'" disabled="disabled"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.$val.'</option>';
-		}
+	// Combo with list of fields
+	if (empty($formadmin)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+		$formadmin = new FormAdmin($db);
 	}
-	print '</select>';
-	print ajax_combobox('type');
+	print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : $type, $typewecanchangeinto);
 } else {
 	print getPictoForType($type).$type2label[$type];
 	print '<input type="hidden" name="type" id="type" value="'.$type.'">';

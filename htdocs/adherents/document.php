@@ -153,7 +153,7 @@ if ($id > 0) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 

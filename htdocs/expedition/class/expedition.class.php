@@ -278,7 +278,7 @@ class Expedition extends CommonObject
 		if (!empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
 			$mybool = false;
 
-			$file = $conf->global->EXPEDITION_ADDON_NUMBER.".php";
+			$file = getDolGlobalString('EXPEDITION_ADDON_NUMBER') . ".php";
 			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
 
 			// Include file with class
@@ -616,7 +616,6 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
@@ -709,8 +708,8 @@ class Expedition extends CommonObject
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))) {
+		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'creer'))
+		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'shipping_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -730,6 +729,8 @@ class Expedition extends CommonObject
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$numref = $this->getNextNumRef($soc);
+		} elseif (!empty($this->ref)) {
+			$numref = $this->ref;
 		} else {
 			$numref = "EXP".$this->id;
 		}
@@ -1560,7 +1561,7 @@ class Expedition extends CommonObject
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
+		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
@@ -1622,6 +1623,7 @@ class Expedition extends CommonObject
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
 				$line->libelle        	= $obj->product_label; // TODO deprecated
+				$line->product_barcode  = $obj->product_barcode; // Barcode number product
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
@@ -1994,7 +1996,7 @@ class Expedition extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		if ($user->rights->expedition->creer) {
+		if ($user->hasRight('expedition', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2475,8 +2477,6 @@ class Expedition extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;
 			}

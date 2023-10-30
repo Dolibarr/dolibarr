@@ -56,7 +56,7 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
-		$production_mode = (empty($conf->global->API_PRODUCTION_MODE) ? false : true);
+		$production_mode = (!getDolGlobalString('API_PRODUCTION_MODE') ? false : true);
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -91,6 +91,29 @@ class DolibarrApi
 		} else {
 			return sanitizeVal($value, 'alphanohtml');
 		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Filter properties that will be returned on object
+	 *
+	 * @param   Object  $object			Object to clean
+	 * @param   String  $properties		Comma separated list of properties names
+	 * @return	Object					Object with cleaned properties
+	 */
+	protected function _filterObjectProperties($object, $properties)
+	{
+		// If properties is empty, we return all properties
+		if (empty($properties)) {
+			return $object;
+		}
+		// Else we filter properties
+		foreach (get_object_vars($object) as $key => $value) {
+			if (!in_array($key, explode(',', $properties))) {
+				unset($object->$key);
+			}
+		}
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

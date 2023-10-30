@@ -5,6 +5,7 @@
  * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,7 @@ class Notify
 		'PROPAL_CLOSE_SIGNED',
 		'PROPAL_CLOSE_REFUSED',
 		'FICHINTER_VALIDATE',
+		'FICHINTER_CLOSE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
@@ -450,11 +452,8 @@ class Notify
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$projtitle = '';
-			if (!empty($object->fk_project)) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-				$proj = new Project($this->db);
-				$proj->fetch($object->fk_project);
-				$projtitle = '('.$proj->title.')';
+			if (is_object($object->project) || $object->fetch_project() > 0) {
+				$projtitle = '('.$object->project->title.')';
 			}
 
 			if ($num > 0) {
@@ -481,7 +480,9 @@ class Notify
 							$outputlangs->loadLangs(array("main", "other"));
 						}
 
-						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
+						$appli = $mysoc->name;
+
+						$subject = '['.$appli.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -545,6 +546,12 @@ class Notify
 								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
+								break;
+							case 'FICHINTER_CLOSE':
+								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->ficheinter->dir_output;
+								$object_type = 'ficheinter';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -752,15 +759,14 @@ class Notify
 					continue;
 				}
 
+				$sendto = $val;
+
 				$threshold = (float) $reg[1];
 				if (!empty($object->total_ht) && $object->total_ht <= $threshold) {
 					dol_syslog("A notification is requested for notifcode = ".$notifcode." but amount = ".$object->total_ht." so lower than threshold = ".$threshold.". We discard this notification");
 					continue;
 				}
 
-				$param = 'NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_'.$reg[1];
-
-				$sendto = $conf->global->$param;
 				$notifcodedefid = dol_getIdFromCode($this->db, $notifcode, 'c_action_trigger', 'code', 'rowid');
 				if ($notifcodedefid <= 0) {
 					dol_print_error($this->db, 'Failed to get id from code');
@@ -771,7 +777,9 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
+				$appli = $mysoc->name;
+
+				$subject = '['.$appli.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
@@ -821,6 +829,12 @@ class Notify
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
+						break;
+					case 'FICHINTER_CLOSE':
+						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$dir_output = $conf->facture->dir_output;
+						$object_type = 'ficheinter';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
 					case 'ORDER_SUPPLIER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -969,7 +983,7 @@ class Notify
 
 					if ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
-						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($conf->global->$param)."')";
+						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
 						if (!$this->db->query($sql)) {
 							dol_print_error($this->db);
 						}

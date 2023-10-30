@@ -165,7 +165,7 @@ print dol_get_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -
  *  Numbering module
  */
 
-if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+if (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 	$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 }
 
@@ -260,7 +260,7 @@ foreach ($dirmodels as $reldir) {
 
 							print '<td class="center">';
 							//print "> ".$conf->global->SUPPLIER_PAYMENT_ADDON." - ".$file;
-							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || $conf->global->SUPPLIER_PAYMENT_ADDON.'.php' == $file) {
+							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . '.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).(!empty($module->scandir) ? '&scandir='.$module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';

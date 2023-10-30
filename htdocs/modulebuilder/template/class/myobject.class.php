@@ -69,12 +69,11 @@ class MyObject extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
 
-
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'),
-	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
 	 *  	'chkbxlst:...',
 	 *  	'varchar(x)',
 	 *  	'text', 'text:none', 'html',
@@ -402,15 +401,17 @@ class MyObject extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return 	int     				<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
+			$this->fetchLines($noextrafields);
 		}
 		return $result;
 	}
@@ -418,13 +419,14 @@ class MyObject extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines()
+	public function fetchLines($noextrafields = 0)
 	{
 		$this->lines = array();
 
-		$result = $this->fetchLinesCommon();
+		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
 
@@ -700,7 +702,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYOBJECT_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYMODULE_MYOBJECT_UNVALIDATE');
 	}
 
 	/**
@@ -724,7 +726,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYMODULE_MYOBJECT_CANCEL');
 	}
 
 	/**
@@ -748,8 +750,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYMODULE_MYOBJECT_REOPEN');
 	}
 
 	/**
@@ -761,7 +762,7 @@ class MyObject extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$datas = [];
 
@@ -772,7 +773,12 @@ class MyObject extends CommonObject
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (property_exists($this, 'ref')) {
+			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (property_exists($this, 'label')) {
+			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+		}
 
 		return $datas;
 	}
@@ -975,6 +981,10 @@ class MyObject extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		if (is_null($status)) {
+			return '';
+		}
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
@@ -1004,8 +1014,19 @@ class MyObject extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT rowid,";
-		$sql .= " date_creation as datec, tms as datem,";
-		$sql .= " fk_user_creat, fk_user_modif";
+		$sql .= " date_creation as datec, tms as datem";
+		if (!empty($this->fields['date_validation'])) {
+			$sql .= ", date_validation as datev";
+		}
+		if (!empty($this->fields['fk_user_creat'])) {
+			$sql .= ", fk_user_creat";
+		}
+		if (!empty($this->fields['fk_user_modif'])) {
+			$sql .= ", fk_user_modif";
+		}
+		if (!empty($this->fields['fk_user_valid'])) {
+			$sql .= ", fk_user_valid";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -1016,9 +1037,13 @@ class MyObject extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				$this->user_creation_id = $obj->fk_user_creat;
-				$this->user_modification_id = $obj->fk_user_modif;
-				if (!empty($obj->fk_user_valid)) {
+				if (!empty($this->fields['fk_user_creat'])) {
+					$this->user_creation_id = $obj->fk_user_creat;
+				}
+				if (!empty($this->fields['fk_user_modif'])) {
+					$this->user_modification_id = $obj->fk_user_modif;
+				}
+				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
 				$this->date_creation     = $this->db->jdate($obj->datec);

@@ -875,7 +875,7 @@ class BOM extends CommonObject
 		if (!empty($conf->global->BOM_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->BOM_ADDON.".php";
+			$file = getDolGlobalString('BOM_ADDON') . ".php";
 			$classname = $conf->global->BOM_ADDON;
 
 			// Include file with class
@@ -1280,6 +1280,7 @@ class BOM extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1617,9 +1618,6 @@ class BOM extends CommonObject
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
-		$prod = new Product($db);
-		$prod->fetch($this->fk_product);
-
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -1627,7 +1625,9 @@ class BOM extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
 			if ($this->bomtype == 0) {
@@ -1636,7 +1636,8 @@ class BOM extends CommonObject
 				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
 			}
 		}
-		if (property_exists($this, 'fk_product') && !is_null($this->fk_product)) {
+		if (!empty($arraydata['prod'])) {
+			$prod = $arraydata['prod'];
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
@@ -2073,7 +2074,9 @@ class BOMLine extends CommonObjectLine
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
+
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);

@@ -20,7 +20,7 @@
 
 /**
  * \file    htdocs/core/class/cgenericdic.class.php
- * \ingroup resource
+ * \ingroup core
  */
 
 // Put here all includes required by your class file
@@ -49,7 +49,7 @@ class CGenericDic extends CommonDict
 	public $code;
 
 	/**
-	 * @var string Type resource label
+	 * @var string Label
 	 */
 	public $label;
 

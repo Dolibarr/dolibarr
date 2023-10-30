@@ -511,7 +511,8 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								$lines[$i]->rang,
+								// we dont use the rank from orderline because we may have lines from several orders
+								-1,
 								false,
 								$lines[$i]->array_options,
 								$lines[$i]->fk_unit,
@@ -775,7 +776,7 @@ if ($sall) {
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
+$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as delivery_date, cf.date_valid, cf.date_approve,";
 $sql .= ' cf.localtax1 as total_localtax1, cf.localtax2 as total_localtax2,';
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
@@ -1205,6 +1206,7 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 	// Lines of title fields
@@ -1237,7 +1239,7 @@ if ($resql) {
 		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createsupplierbills">';
 
-		print '<table class="noborder" width="100%" >';
+		print '<table class="noborder centpercent">';
 		print '<tr>';
 		print '<td class="titlefield">';
 		print $langs->trans('DateInvoice');
@@ -1264,11 +1266,11 @@ if ($resql) {
 		print '</tr>';
 		print '</table>';
 
-		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
 		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
+		print '<br>';
 		print '<br>';
 	}
 
@@ -1712,7 +1714,7 @@ if ($resql) {
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
 		$objectstatic->date_commande = $db->jdate($obj->date_commande);
-		$objectstatic->delivery_date = $db->jdate($obj->date_livraison);
+		$objectstatic->delivery_date = $db->jdate($obj->delivery_date);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
@@ -1894,7 +1896,7 @@ if ($resql) {
 			// Plannned date of delivery
 			if (!empty($arrayfields['cf.date_livraison']['checked'])) {
 				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_livraison), 'day');
+				print dol_print_date($db->jdate($obj->delivery_date), 'day');
 				if ($objectstatic->statut == $objectstatic::STATUS_ORDERSENT || $objectstatic->statut == $objectstatic::STATUS_RECEIVED_PARTIALLY) {
 					if ($objectstatic->hasDelay()) {
 						print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");

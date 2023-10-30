@@ -1334,7 +1334,7 @@ class ActionComm extends CommonObject
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
+			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('agendadao'));
 
@@ -1410,7 +1410,7 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
@@ -1421,7 +1421,7 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($user->socid) {
@@ -1496,7 +1496,9 @@ class ActionComm extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->id;
+
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_mod;
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -1592,6 +1594,7 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -1695,6 +1698,7 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {

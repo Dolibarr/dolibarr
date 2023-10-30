@@ -263,7 +263,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// table of skillRank linked to current object
-	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . ((int) $id) . " AND objecttype='" . $db->escape($objecttype) . "'"));
+	$TSkillsJob = $skill->fetchAll('ASC', 't.rowid', 0, 0);
 
 	$TAlreadyUsedSkill = array();
 	if (is_array($TSkillsJob) && !empty($TSkillsJob)) {

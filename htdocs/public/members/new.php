@@ -145,7 +145,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
 		print '</div>';
 	}
 
@@ -408,7 +408,7 @@ if (empty($reshook) && $action == 'add') {
 					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
 					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 					$mailfile = new CMailFile(
-						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+						'['.$appli.'] ' . getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'),
 						$to,
 						$from,
 						$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
@@ -593,7 +593,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '</td></tr>'."\n";
 	} else {
 		$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-		print '<input type="hidden" id="typeid" name="typeid" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
+		print '<input type="hidden" id="typeid" name="typeid" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCETYPE').'">';
 	}
 
 	// Moral/Physic attribute
@@ -605,7 +605,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '</td></tr>'."\n";
 	} else {
 		//print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
-		print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
+		print '<input type="hidden" id="morphy" name="morphy" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY').'">';
 	}
 
 	// Company   // TODO : optional hide
@@ -692,9 +692,11 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 
 	// Public
-	$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-	$publiclabel = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
-	print '<tr><td>'.$publiclabel.'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+	if (!empty($conf->global->MEMBER_PUBLIC_ENABLED)) {
+		$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+		$publiclabel = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
+		print '<tr><td>'.$publiclabel.'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+	}
 
 	// Other attributes
 	$parameters['tpl_context']='public';	// define template context to public
@@ -776,7 +778,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 		print '<tr><td>'.$langs->trans("Subscription");
 		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="' . getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		print '</td><td class="nowrap">';
 

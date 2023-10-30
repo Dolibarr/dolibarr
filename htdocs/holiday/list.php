@@ -352,7 +352,7 @@ if (!empty($search_status) && $search_status != -1) {
 	$sql .= " AND cp.statut = '".$db->escape($search_status)."'\n";
 }
 
-if (empty($user->rights->holiday->readall)) {
+if (!$user->hasRight('holiday', 'readall')) {
 	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
 if ($id > 0) {
@@ -504,7 +504,7 @@ if ($id > 0) {		// For user tab
 
 	print dol_get_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
-	dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($fuser, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
 		print '<div class="underbanner clearboth"></div>';
@@ -521,10 +521,10 @@ if ($id > 0) {		// For user tab
 	print '<div class="tabsAction">';
 
 	$cancreate = 0;
-	if (!empty($user->rights->holiday->writeall)) {
+	if ($user->hasRight('holiday', 'writeall')) {
 		$cancreate = 1;
 	}
-	if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
+	if ($user->hasRight('holiday', 'write') && in_array($user_id, $childids)) {
 		$cancreate = 1;
 	}
 
@@ -541,7 +541,7 @@ if ($id > 0) {		// For user tab
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->hasRight('holiday', 'write'));
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 }
@@ -586,7 +586,7 @@ $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('sele
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $include = '';
-if (empty($user->rights->holiday->readall)) {
+if (!$user->hasRight('holiday', 'readall')) {
 	$include = 'hierarchyme'; // Can see only its hierarchyl
 }
 
@@ -816,7 +816,7 @@ $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->t
 // --------------------------------------------------------------------
 
 // If we ask a dedicated card and not allow to see it, we force on user.
-if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) {
+if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) {
 	$langs->load("errors");
 	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;

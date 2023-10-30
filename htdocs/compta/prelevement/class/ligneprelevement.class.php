@@ -37,6 +37,31 @@ class LignePrelevement
 	public $id;
 
 	/**
+	 * @var float Amount
+	 */
+	public $amount;
+
+	/**
+	 * @var int Socid
+	 */
+	public $socid;
+
+	/**
+	 * @var int Status of the line
+	 */
+	public $statut;
+
+	/**
+	 * @var string Ref of bon
+	 */
+	public $bon_ref;
+
+	/**
+	 * @var int ID of bon
+	 */
+	public $bon_rowid;
+
+	/**
 	 * @var DoliDB Database handler.
 	 */
 	public $db;

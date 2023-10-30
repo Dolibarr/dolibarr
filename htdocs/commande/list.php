@@ -180,8 +180,8 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>45),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>50),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
-	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
-	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
+	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60, 'csslist'=>'nowraponall'),
+	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65, 'csslist'=>'nowraponall'),
 	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled("expedition")),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
@@ -861,7 +861,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -879,7 +879,7 @@ $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -1161,7 +1161,7 @@ if ($sall) {
 	$param .= '&sall='.urlencode($sall);
 }
 if ($socid > 0) {
-	$param .= '&socid='.urlencode($socid);
+	$param .= '&socid='.((int) $socid);
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -1327,6 +1327,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $contextpage == 'orderlist' && $permissiontoadd);
 
 // Lines of title fields
@@ -2263,7 +2264,7 @@ while ($i < $imaxinloop) {
 
 		// Order date
 		if (!empty($arrayfields['c.date_commande']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
 			// Warning late icon and note
 			if ($generic_commande->hasDelay()) {
@@ -2277,7 +2278,7 @@ while ($i < $imaxinloop) {
 
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
 			print '</td>';
 			if (!$i) {

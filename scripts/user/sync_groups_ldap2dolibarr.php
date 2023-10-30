@@ -92,15 +92,15 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN to extract=".$conf->global->LDAP_GROUP_DN."\n";
+print "DN to extract=" . getDolGlobalString('LDAP_GROUP_DN')."\n";
 if (!empty($conf->global->LDAP_GROUP_FILTER)) {
-	print 'Filter=('.$conf->global->LDAP_GROUP_FILTER.')'."\n"; // Note: filter is defined into function getRecords
+	print 'Filter=(' . getDolGlobalString('LDAP_GROUP_FILTER').')'."\n"; // Note: filter is defined into function getRecords
 } else {
-	print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
+	print 'Filter=(' . getDolGlobalString('LDAP_KEY_GROUPS').'=*)'."\n";
 }
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
@@ -138,10 +138,10 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
-			$group->fetch('', $ldapgroup[$conf->global->LDAP_KEY_GROUPS]);
-			$group->name = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+			$group->fetch('', $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
+			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')];
 			$group->nom = $group->name; // For backward compatibility
-			$group->note = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION];
+			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')];
 			$group->entity = $conf->entity;
 
 			// print_r($ldapgroup);

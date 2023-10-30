@@ -156,7 +156,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnSynchroActive").'</td><td>';
 print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_SYNCHRO_ACTIVE'), 'activesynchro');
 print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPDnSynchroActiveExample").'</span>';
-if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && empty($conf->global->LDAP_USER_DN)) {
+if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && !getDolGlobalString('LDAP_USER_DN')) {
 	print '<br><span class="error">'.$langs->trans("LDAPSetupNotComplete").'</span>';
 }
 print '</td></tr>';
@@ -272,7 +272,7 @@ print '<br>';
  * Test de la connexion
  */
 if (function_exists("ldap_connect")) {
-	if (!empty($conf->global->LDAP_SERVER_HOST)) {
+	if (getDolGlobalString('LDAP_SERVER_HOST')) {
 		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
@@ -286,7 +286,7 @@ if (function_exists("ldap_connect")) {
 			print '<span class="ok">'.$langs->trans("LDAPTCPConnectOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT')).'</span>';
 			print '<br>';
 
-			if (!empty($conf->global->LDAP_ADMIN_DN) && !empty($conf->global->LDAP_ADMIN_PASS)) {
+			if (getDolGlobalString('LDAP_ADMIN_DN') && getDolGlobalString('LDAP_ADMIN_PASS')) {
 				if ($result == 2) {
 					print img_picto('', 'info').' ';
 					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';

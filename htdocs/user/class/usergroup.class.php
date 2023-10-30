@@ -895,13 +895,13 @@ class UserGroup extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
 			$dn = $conf->global->LDAP_GROUP_DN;
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
+			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
 		}
 		return $dn;
 	}
@@ -926,11 +926,11 @@ class UserGroup extends CommonObject
 
 		// Champs
 		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] = $this->name;
 		}
 		//if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
 		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note, 2);
 		}
 		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)) {
 			$valueofldapfield = array();
@@ -940,10 +940,10 @@ class UserGroup extends CommonObject
 				$info2 = $muser->_load_ldap_info();
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
 		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPID)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')] = $this->id;
 		}
 		return $info;
 	}
@@ -1027,7 +1027,9 @@ class UserGroup extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'members')) {
 			$return .= '<br><span class="info-box-status opacitymedium">'.(empty($this->nb_users) ? 0 : $this->nb_users).' '.$langs->trans('Users').'</span>';
 		}

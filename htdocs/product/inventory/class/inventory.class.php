@@ -309,6 +309,13 @@ class Inventory extends CommonObject
 				$sql .= " AND cp.fk_categorie IN (".$this->db->sanitize($this->categories_product).")";
 				$sql .= ")";
 			}
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				$sql .= " AND NOT EXISTS (";
+				$sql .= " SELECT pa.rowid";
+				$sql .= " FROM ".$this->db->prefix()."product_association as pa";
+				$sql .= " WHERE pa.fk_product_pere = ps.fk_product";
+				$sql .= ")";
+			}
 
 			$inventoryline = new InventoryLine($this->db);
 
@@ -675,7 +682,9 @@ class Inventory extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
@@ -712,23 +721,9 @@ class Inventory extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat > 0) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif > 0) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_creation = $muser;
-				}
-
-				if ($obj->fk_user_valid > 0) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

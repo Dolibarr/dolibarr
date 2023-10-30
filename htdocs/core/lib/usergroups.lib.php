@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2021       Anthony Berton      <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,10 +141,10 @@ function user_prepare_head(User $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user');
 
-	if ((isModEnabled('salaries') && !empty($user->rights->salaries->read))
-		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))
-		|| (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
-		|| (isModEnabled('holiday') && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
+	if ((isModEnabled('salaries') && $user->hasRight('salaries', 'read'))
+		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))
+		|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall')))
+		|| (isModEnabled('holiday') && $user->hasRight('holiday', 'read') && ($user->id == $object->id || $user->hasRight('holiday', 'readall')))
 		) {
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
@@ -336,14 +336,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$hoverdisabled = '';
 	if (empty($foruserprofile)) {
-		$hoverdisabled = (isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0');
+		$hoverdisabled = (getDolGlobalString('THEME_ELDY_USE_HOVER') == '0');
 	} else {
 		$hoverdisabled = (is_object($fuser) ? (empty($fuser->conf->THEME_ELDY_USE_HOVER) || $fuser->conf->THEME_ELDY_USE_HOVER == '0') : '');
 	}
 
 	$checkeddisabled = '';
 	if (empty($foruserprofile)) {
-		$checkeddisabled = (isset($conf->global->THEME_ELDY_USE_CHECKED) && $conf->global->THEME_ELDY_USE_CHECKED == '0');
+		$checkeddisabled = (getDolGlobalString('THEME_ELDY_USE_CHECKED') == '0');
 	} else {
 		$checkeddisabled = (is_object($fuser) ? (empty($fuser->conf->THEME_ELDY_USE_CHECKED) || $fuser->conf->THEME_ELDY_USE_CHECKED == '0') : '');
 	}
@@ -365,7 +365,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 		print '<tr>';
 		print '<td>'.$langs->trans("DefaultSkin").'</td>';
-		print '<td>'.$conf->global->MAIN_THEME.'</td>';
+		print '<td>' . getDolGlobalString('MAIN_THEME').'</td>';
 		print '<td class="nowrap left"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit ? '' : ' disabled').' type="checkbox" '.($selected_theme ? " checked" : "").'> <label for="check_MAIN_THEME">'.$langs->trans("UsePersonalValue").'</label></td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
@@ -529,7 +529,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			//print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
 			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE)?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:0, 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth500');
 		} else {
-			$listoftopmenumodes[$conf->global->THEME_TOPMENU_DISABLE_IMAGE];
+			$listoftopmenumodes[getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE')];
 			//print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"));
@@ -574,6 +574,29 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</td>';
 		print '</tr>';
 	}
+
+	// Table line height
+	/* removed. height of column must use padding of td and not lineheight that has bad side effect
+	if ($foruserprofile) {
+	} else {
+		$listoftopmenumodes = array(
+			'0' => $langs->transnoentitiesnoconv("Normal"),
+			'1' => $langs->transnoentitiesnoconv("LargeModern"),
+		);
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("TableLineHeight").'</td>';
+		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
+		if ($edit) {
+			//print ajax_constantonoff('THEME_ELDY_USECOMOACTROW', array(), null, 0, 0, 1);
+			print $form->selectarray('THEME_ELDY_USECOMOACTROW', $listoftopmenumodes, getDolGlobalString('THEME_ELDY_USECOMOACTROW'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300');
+		} else {
+			print $listoftopmenumodes[getDolGlobalString('THEME_ELDY_USECOMOACTROW')];
+		}
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
+		print '</td>';
+		print '</tr>';
+	}
+	*/
 
 	// Background color THEME_ELDY_BACKBODY
 	if ($foruserprofile) {
@@ -903,14 +926,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		//print '<input name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit) {
-			if (!empty($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_HOVER') == '1') {
 				$color = colorArrayToHex(colorStringToArray($colorbacklinepairhover));
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_HOVER) ? $conf->global->THEME_ELDY_USE_HOVER : ''), array()), '');
 			}
 			print $formother->selectColor($color, 'THEME_ELDY_USE_HOVER', '', 1, '', '', 'colorbacklinepairhover', $default).' ';
 		} else {
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_HOVER') == '1') {
 				$color = colorArrayToHex(colorStringToArray($colorbacklinepairhover));
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_HOVER) ? $conf->global->THEME_ELDY_USE_HOVER : ''), array()), '');
@@ -951,14 +974,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		//print '<input name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit) {
-			if (!empty($conf->global->THEME_ELDY_USE_CHECKED) && $conf->global->THEME_ELDY_USE_CHECKED == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_CHECKED') == '1') {
 				$color = 'e6edf0';
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_CHECKED) ? $conf->global->THEME_ELDY_USE_CHECKED : ''), array()), '');
 			}
 			print $formother->selectColor($color, 'THEME_ELDY_USE_CHECKED', '', 1, '', '', 'colorbacklinepairchecked', $default).' ';
 		} else {
-			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') {
+			if (getDolGlobalString('THEME_ELDY_USE_CHECKED') == '1') {
 				$color = 'e6edf0';
 			} else {
 				$color = colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_USE_CHECKED) ? $conf->global->THEME_ELDY_USE_CHECKED : ''), array()), '');

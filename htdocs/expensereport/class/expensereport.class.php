@@ -709,7 +709,7 @@ class ExpenseReport extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Classify the expense report as paid
+	 *  Classify the expense report as paid
 	 *
 	 *	@deprecated
 	 *  @see setPaid()
@@ -742,7 +742,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
 		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
-		dol_syslog(get_class($this)."::set_paid", LOG_DEBUG);
+		dol_syslog(get_class($this)."::setPaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
@@ -844,30 +844,11 @@ class ExpenseReport extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approbation = $this->db->jdate($obj->datea);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_creation) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creation);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-				if ($obj->fk_user_modification) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
-				if ($obj->fk_user_approve) {
-					$auser = new User($this->db);
-					$auser->fetch($obj->fk_user_approve);
-					$this->user_approve = $auser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_creation;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
+				$this->user_approve_id = $obj->fk_user_approve;
 			}
 			$this->db->free($resql);
 		} else {
@@ -2431,8 +2412,6 @@ class ExpenseReport extends CommonObject
 		if (!dol_strlen($modele)) {
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
 				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
 			}
@@ -2786,7 +2765,9 @@ class ExpenseReport extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_user_author') && !empty($this->id)) {
 			$return .= '<br><span class="info-box-label">'.$this->fk_user_author.'</span>';
 		}
