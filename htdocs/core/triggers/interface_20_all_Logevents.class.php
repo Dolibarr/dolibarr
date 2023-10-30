@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
-	const EVENT_ACTION_DICT = [ // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
+	const EVENT_ACTION_DICT = array( // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
 		'USER_LOGIN' => 'UserLogged',
 		'USER_LOGIN_FAILED' => 'UserLoginFailed',
 		'USER_LOGOUT' => 'UserLogoff',
@@ -44,10 +44,20 @@ class InterfaceLogevents extends DolibarrTriggers
 		'USERGROUP_CREATE' => 'NewGroupCreated',
 		'USERGROUP_MODIFY' => 'GroupModified',
 		'USERGROUP_DELETE' => 'GroupDeleted'
-	];
-	private string 	$event_label;
-	private string 	$event_desc;
-	private int 	$event_date;
+	);
+	/**
+	 * @var string	Label
+	 */
+	private $event_label;
+	/**
+	 * @var string	Description
+	 */
+	private $event_desc;
+	/**
+	 * @var int		Date
+	 */
+	private $event_date;
+
 
 	/**
 	 * Constructor
