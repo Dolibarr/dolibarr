@@ -638,14 +638,23 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Sync rates from API
 	 *
-	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
+	 * @param 	string  $key                Key to use. Come from getDolGlobalString("MULTICURRENCY_APP_ID")
 	 * @param   int     $addifnotfound      Add if not found
 	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
-	 * @return  int							<0 if KO, >0 if OK, if mode = "cron" OK is
+	 * @return  int							<0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
 	public function syncRates($key, $addifnotfound = 0, $mode = "")
 	{
 		global $conf, $db, $langs;
+
+		if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
+			if ($mode == "cron") {
+				$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
+			} else {
+				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
+			}
+			return -1;
+		}
 
 		if (empty($key)) {
 			$key = getDolGlobalString("MULTICURRENCY_APP_ID");
@@ -688,9 +697,9 @@ class MultiCurrency extends CommonObject
 				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 				if ($mode == "cron") {
 					$this->output = $langs->trans('multicurrency_syncronize_error', $response->error->info);
+				} else {
+					setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 				}
-				setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-
 				return -1;
 			}
 		} else {
