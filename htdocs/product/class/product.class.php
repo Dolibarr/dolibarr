@@ -1161,32 +1161,25 @@ class Product extends CommonObject
 					// Quantities in batch details are not same as stock quantity,
 					// so we add a default batch record to complete and get same qty in parent and child table
 					if ($ObjW->real <> $qty_batch) {
-						if ($this->status_batch == 2) {
-							// For serial type we show error and break stock loop
-							$error++;
-							$this->errors[] = $langs->trans("NoDefaultForSerialNumbersPossible");
-							break;
-						} else {
-							$ObjBatch = new Productbatch($this->db);
-							$ObjBatch->batch = $valueforundefinedlot;
-							$ObjBatch->qty = ($ObjW->real - $qty_batch);
-							$ObjBatch->fk_product_stock = $ObjW->id;
+						$ObjBatch = new Productbatch($this->db);
+						$ObjBatch->batch = $valueforundefinedlot;
+						$ObjBatch->qty = ($ObjW->real - $qty_batch);
+						$ObjBatch->fk_product_stock = $ObjW->id;
 
-							if ($ObjBatch->create($user, 1) < 0) {
-								$error++;
-								$this->errors = $ObjBatch->errors;
-							} else {
-								// we also add lot record if not exist
-								$ObjLot = new Productlot($this->db);
-								if ($ObjLot->fetch(0, $this->id, $valueforundefinedlot) == 0) {
-									$ObjLot->fk_product = $this->id;
-									$ObjLot->entity = $this->entity;
-									$ObjLot->fk_user_creat = $user->id;
-									$ObjLot->batch = $valueforundefinedlot;
-									if ($ObjLot->create($user, true) < 0) {
-										$error++;
-										$this->errors = $ObjLot->errors;
-									}
+						if ($ObjBatch->create($user, 1) < 0) {
+							$error++;
+							$this->errors = $ObjBatch->errors;
+						} else {
+							// we also add lot record if not exist
+							$ObjLot = new Productlot($this->db);
+							if ($ObjLot->fetch(0, $this->id, $valueforundefinedlot) == 0) {
+								$ObjLot->fk_product = $this->id;
+								$ObjLot->entity = $this->entity;
+								$ObjLot->fk_user_creat = $user->id;
+								$ObjLot->batch = $valueforundefinedlot;
+								if ($ObjLot->create($user, true) < 0) {
+									$error++;
+									$this->errors = $ObjLot->errors;
 								}
 							}
 						}
