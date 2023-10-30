@@ -479,7 +479,12 @@ if (empty($reshook)) {
 				$moline->array_options["options_".$key] = $value;
 			}
 			$moline->qty = GETPOST('qty_lineProduce', 'int');
-			$moline->update($user);
+			$res = $moline->update($user);
+			if ($res < 0){
+				setEventMessages($moline->error, $moline->errors, 'errors');
+				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			}
 			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
