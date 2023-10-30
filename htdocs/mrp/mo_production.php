@@ -61,6 +61,7 @@ $collapse = GETPOST('collapse', 'aZ09comma');
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
+$objectline = new MoLine($db);
 
 $hookmanager->initHooks(array('mocard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -204,6 +205,17 @@ if (empty($reshook)) {
 			}
 			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
 		}
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key]);
+			}
+		}
+		if (is_array($array_options) && count($array_options) > 0) $moline->array_options = $array_options;
 
 		$resultline = $moline->create($user, false); // Never use triggers here
 		if ($resultline <= 0) {
@@ -461,6 +473,11 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$res = $moline->fetch(GETPOST('lineid', 'int'));
 		if ($result > 0) {
+			$extrafields->fetch_name_optionals_label($moline->element);
+			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
+				$value = GETPOST('options_'.$key, 'alphanohtml');
+				$moline->array_options["options_".$key] = $value;
+			}
 			$moline->qty = GETPOST('qty_lineProduce', 'int');
 			$moline->update($user);
 			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -903,6 +920,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// SplitAll
 			print '<td></td>';
 			print '</tr>';
+
+			// Extrafields Line
+			if (is_object($objectline)) {
+				$extrafields->fetch_name_optionals_label($object->table_element_line);
+				$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
+				if (!empty($temps)){
+					print '<tr class="liste_titre"><td style="padding-top: 20px" colspan="9" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+					print $temps;
+					print '</td></tr>';
+				}
+			}
 		}
 
 		// Lines to consume
@@ -1007,6 +1035,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '<td></td>';
 						print '</tr>';
+
+						// Extrafields Line
+						if (!empty($extrafields)) {
+							$line->fetch_optionals();
+							$temps = $line->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
+							if (!empty($temps)) {
+								print '<td colspan="10"><div style="padding-top: 20px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+								print $temps;
+								print '</div></td>';
+							}
+						}
+
 					} else {
 						$suffix = '_' . $line->id;
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
@@ -1128,6 +1168,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 
 						print '</tr>';
+						// Extrafields Line
+						if (!empty($extrafields)) {
+							$line->fetch_optionals();
+							$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+							if (!empty($temps)) {
+								print '<td colspan="10"><div id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+								print $temps;
+								print '</div></td>';
+							}
+						}
 					}
 					// Show detailed of already consumed with js code to collapse
 					foreach ($arrayoflines as $line2) {

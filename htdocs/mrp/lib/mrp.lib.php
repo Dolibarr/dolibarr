@@ -45,6 +45,10 @@ function mrpAdminPrepareHead()
 	$head[$h][2] = 'mrp_extrafields';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/admin/mrp_production_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'mrp_production_extrafields';
+	$h++;
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(

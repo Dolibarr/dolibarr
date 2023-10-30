@@ -165,3 +165,11 @@ ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
 
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_datec(datec);
+
+CREATE TABLE llx_mrp_production_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
