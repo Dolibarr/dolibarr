@@ -150,7 +150,7 @@ class modMultiCurrency extends DolibarrModules
 		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 
 		$this->cronjobs = array(
-			0 =>array('priority'=>61, 'label'=>'MutltiCurrencyAutoUpdateCurrencies', 'jobtype'=>'method', 'class'=>'multicurrency/class/multicurrency.class.php', 'objectname'=>'MultiCurrency', 'method'=>'syncRates',             'parameters'=>'0,0,cron',      'comment'=>'Update all the currencies using the currencylayer API. An APi key needs to be given in the multi-currency module config on constant MULTICURRENCY_APP_ID', 'frequency'=>1, 'unitfrequency'=>2678400, 'status'=>$statusatinstall, 'test'=>'isModEnabled("cron")', 'datestart'=>$datestart),
+			0 =>array('priority'=>61, 'label'=>'MutltiCurrencyAutoUpdateCurrencies', 'jobtype'=>'method', 'class'=>'multicurrency/class/multicurrency.class.php', 'objectname'=>'MultiCurrency', 'method'=>'syncRates',             'parameters'=>'0,0,cron',      'comment'=>'Update all the currencies using the currencylayer API. An APi key needs to be given in the multi-currency module config page', 'frequency'=>1, 'unitfrequency'=>2678400, 'status'=>$statusatinstall, 'test'=>'isModEnabled("cron")', 'datestart'=>$datestart),
 		);
 
 		// Permissions

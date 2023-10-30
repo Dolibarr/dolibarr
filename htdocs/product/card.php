@@ -1944,7 +1944,45 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
-					print $form->selectarray('status_batch', $statutarray, (GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch));
+
+					print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch);
+
+					print '<span id="statusBatchWarning" class="warning" style="display: none;">';
+					print img_warning().'&nbsp;'.$langs->trans("WarningConvertFromBatchToSerial").'</span>';
+
+					print '<span id="statusBatchMouvToGlobal" class="warning" style="display: none;">';
+					print img_warning().'&nbsp;'.$langs->trans("WarningTransferBatchStockMouvToGlobal").'</span>';
+
+					if ($object->status_batch) {
+						// Display message to make user know that all batch will be move into global stock
+						print '<script type="text/javascript">
+							$(document).ready(function() {
+                                console.log($("#statusBatchWarning"))
+                                $("#status_batch").on("change", function() {
+                                    if ($("#status_batch")[0].value == 0){
+                                        $("#statusBatchMouvToGlobal").show()
+                                    } else {
+                                        $("#statusBatchMouvToGlobal").hide()
+                                    }
+                                })
+							})</script>';
+
+						// Display message to explain that if the product currently have a quantity higher or equal to 2, switching to this choice means we will still have a product with different objects of the same batch (while we want a unique serial number)
+						if ($object->status_batch == 1) {
+							print '<script type="text/javascript">
+							$(document).ready(function() {
+                                console.log($("#statusBatchWarning"))
+                                $("#status_batch").on("change", function() {
+                                    if ($("#status_batch")[0].value == 2){
+                                        $("#statusBatchWarning").show()
+                                    } else {
+                                        $("#statusBatchWarning").hide()
+                                    }
+                                })
+							})</script>';
+						}
+					}
+
 					print '</td></tr>';
 					if (!empty($object->status_batch) || !empty($conf->use_javascript_ajax)) {
 						$langs->load("admin");

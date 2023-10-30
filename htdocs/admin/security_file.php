@@ -55,7 +55,7 @@ $error = 0;
  * Actions
  */
 
-if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST('sendit') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	dol_add_file_process($upload_dir, 1, 0, 'userfile');
@@ -177,7 +177,7 @@ print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'<
 // Check command in inside safe_mode
 print '</td>';
 print '<td>';
-if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 	$langs->load("errors");
 	$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
 	$listdir = explode(';', ini_get('safe_mode_exec_dir'));
@@ -200,7 +200,7 @@ print '<td>'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
