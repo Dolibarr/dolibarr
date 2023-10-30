@@ -115,7 +115,7 @@ class Target extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'), 'validate'=>'1',),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'default'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'), 'validate'=>'1',),
 	);
 	public $rowid;
 	public $ref;
@@ -218,7 +218,7 @@ class Target extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             <0 if KO, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -229,10 +229,6 @@ class Target extends CommonObject
 			return $resultcreate;
 		}
 
-		$resultvalidate = $this->validate($user, $notrigger);
-		if ($resultvalidate <= 0) {
-			return $resultvalidate;
-		}
 		return $this->id;
 	}
 
@@ -303,25 +299,24 @@ class Target extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
-		if (!$error) {
-			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
-				$error++;
-			}
-		}
+		// if (!$error) {
+		// 	// copy internal contacts
+		// 	if ($this->copy_linked_contact($object, 'internal') < 0) {
+		// 		$error++;
+		// 	}
+		// }
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
+		// if (!$error) {
+		// 	// copy external contacts if same company
+		// 	if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+		// 		if ($this->copy_linked_contact($object, 'external') < 0) {
+		// 			$error++;
+		// 		}
+		// 	}
+		// }
 
 		unset($object->context['createfromclone']);
 
@@ -345,9 +340,10 @@ class Target extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+		if (empty($this->ref)) {
+			$this->ref = $this->id;
 		}
+
 		return $result;
 	}
 
@@ -388,7 +384,7 @@ class Target extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -718,7 +714,7 @@ class Target extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -768,7 +764,7 @@ class Target extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -912,8 +908,8 @@ class Target extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_target = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -930,47 +926,38 @@ class Target extends CommonObject
 	{
 		global $langs, $conf;
 
-		if (empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$conf->global->WEBHOOK_TARGET_ADDON = 'mod_target_standard';
+		$mybool = false;
+
+		$classname = getDolGlobalString('WEBHOOK_TARGET_ADDON', 'mod_target_standard');
+		$file = $classname.".php";
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/webhook/");
+
+			// Load file with numbering class (if found)
+			$mybool |= @include_once $dir.$file;
 		}
 
-		if (!empty($conf->global->WEBHOOK_TARGET_ADDON)) {
-			$mybool = false;
+		if ($mybool === false) {
+			dol_print_error('', "Failed to include file ".$file);
+			return '';
+		}
 
-			$file = $conf->global->WEBHOOK_TARGET_ADDON.".php";
-			$classname = $conf->global->WEBHOOK_TARGET_ADDON;
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			$numref = $obj->getNextValue($this);
 
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/webhook/");
-
-				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
-			}
-
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
 			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
 		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
+			print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
 			return "";
 		}
 	}

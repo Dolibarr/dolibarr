@@ -181,16 +181,25 @@ $formproduct = new FormProduct($db);
 
 $disabled = '';
 if (isModEnabled('productbatch')) {
+	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");
 	$disabled = ' disabled';
-	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
+
+	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
+	$descmode = $langs->trans('DeStockOnShipmentOnClosing');
+	if (!isModEnabled('reception')) {
+		// STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER
+		$incmode = $langs->trans('ReStockOnDispatchOrder');
+	} else {
+		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
+		$incmode = $langs->trans('StockOnReceptionOnClosing');
+	}
+	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
-//if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
-//{
+
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
-//}
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -198,6 +207,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="warehouse">';
 
 // Title rule for stock decrease
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
@@ -206,6 +216,7 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
@@ -221,12 +232,13 @@ if (isModEnabled('facture')) {
 		print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_BILL);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
 
+print '<!-- STOCK_CALCULATE_ON_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
@@ -242,14 +254,15 @@ if (isModEnabled('commande')) {
 		print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
-//if (!empty($conf->expedition->enabled))
+//if (isModEnabled('expedition'))
 //{
 
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
@@ -261,12 +274,12 @@ if (isModEnabled("expedition")) {
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
-
+print '<!-- STOCK_CALCULATE_ON_SHIPMENT_CLOSE -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
@@ -278,18 +291,19 @@ if (isModEnabled("expedition")) {
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
 
 // Title rule for stock increase
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
@@ -298,10 +312,11 @@ print '</tr>'."\n";
 
 $found = 0;
 
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_BILL -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -313,17 +328,17 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
 
-
+print '<!-- STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER -->';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
@@ -335,12 +350,13 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER);
 	}
 } else {
-	print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 }
 print "</td>\n</tr>\n";
 $found++;
 
 if (isModEnabled("reception")) {
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -369,10 +385,11 @@ if (isModEnabled("reception")) {
 	print "</td>\n</tr>\n";
 	$found++;
 } else {
+	print '<!-- STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+	if (isModEnabled("supplier_order")) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 		} else {
@@ -380,16 +397,18 @@ if (isModEnabled("reception")) {
 			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);
 		}
 	} else {
-		print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
 	}
 	print "</td>\n</tr>\n";
 	$found++;
 }
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockAvailability")."</td>\n";
@@ -452,6 +471,7 @@ if (isModEnabled("expedition")) {
 	print "</tr>\n";
 }
 print '</table>';
+print '</div>';
 
 print '<br>';
 
@@ -466,6 +486,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 }
 
 if ($virtualdiffersfromphysical) {
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
@@ -486,6 +507,7 @@ if ($virtualdiffersfromphysical) {
 	print "</td>\n";
 	print "</tr>\n";
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 }
@@ -524,8 +546,9 @@ if ($resql) {
 }
 
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -637,6 +660,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 
@@ -649,6 +673,7 @@ print '<input type="hidden" name="action" value="warehouse">';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -795,6 +820,7 @@ if (isModEnabled('productbatch')) {
 */
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

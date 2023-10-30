@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2020 Adminson Alicealalalamdskfldmjgdfgdfhfghgfh <testldr9@dolicloud.com>
- * Copyright (C) 2022       Frédéric France             <frederic.france@netlogic.fr>
+/* Copyright (C) 2019   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022   Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

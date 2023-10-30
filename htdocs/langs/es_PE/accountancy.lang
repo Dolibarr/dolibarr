@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - accountancy
-Accounting=Contabilizando
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna de archivo a exportar
 ACCOUNTING_EXPORT_DATE=Formato de fecha de archivo a exportar
 ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
@@ -9,8 +8,6 @@ ACCOUNTING_EXPORT_AMOUNT=Monto de exportación
 ACCOUNTING_EXPORT_DEVISE=Moneda de exportación
 ACCOUNTING_EXPORT_ENDLINE=Seleccionar el tipo de retorno de carro
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
-DefaultForService=Servicio por defecto
-DefaultForProduct=Producto por defecto
 Journals=Revistas
 JournalFinancial=Revistas financieras
 BackToChartofaccounts=Retornar gráfico de cuentas
@@ -34,12 +31,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comienza la clasificación de la página "
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncar el formulario de descripción de la cuenta de producto y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si establece el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
-ACCOUNTING_SELL_JOURNAL=Diario de Venta
-ACCOUNTING_PURCHASE_JOURNAL=Diario de Compra
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario diverso
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
-ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas

@@ -58,9 +58,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 $error=0;
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstcontract', 'alpha');
+	$maskconst = GETPOST('maskconstcontract', 'aZ09');
 	$maskvalue = GETPOST('maskcontract', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -254,7 +254,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -410,7 +410,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->CONTRACT_ADDON_PDF == $name) {
+								if (getDolGlobalString('CONTRACT_ADDON_PDF') == $name) {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -475,7 +475,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="right">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
@@ -503,13 +503,13 @@ print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '</td><td>';
+print '</td><td class="right">';
 print '<input class="flat minwidth200" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('CONTRACT_DRAFT_WATERMARK')).'">';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_hideClosedServiceByDefault", (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
 print '</td>';
 print '</tr>';
@@ -517,7 +517,7 @@ print '</tr>';
 // Allow online signing
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
-print '<td class="center">';
+print '<td class="right">';
 if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activited"), 'switch_on');
@@ -533,7 +533,7 @@ print '</tr>';
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center" colspan="2">';
+print '<td class="right">';
 print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';

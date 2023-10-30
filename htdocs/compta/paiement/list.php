@@ -261,7 +261,7 @@ if (GETPOST("orphelins", "alpha")) {
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -301,7 +301,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 
 if (GETPOST("orphelins")) {
@@ -416,7 +416,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 // Filter: Payment type
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1, 1, 1, '', 1);
+	print $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 	print '</td>';
 }
 
@@ -513,6 +513,7 @@ foreach ($arrayfields as $column) {
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
@@ -620,7 +621,11 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 		$totalarray['pos'][$checkedCount] = 'amount';
-		$totalarray['val']['amount'] += $objp->amount;
+		if (empty($totalarray['val']['amount'])) {
+			$totalarray['val']['amount'] = $objp->amount;
+		} else {
+			$totalarray['val']['amount'] += $objp->amount;
+		}
 	}
 
 	// Status

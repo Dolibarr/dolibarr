@@ -25,40 +25,11 @@
  */
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
-}
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal"));
+$langs->loadLangs(array("agenda"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -100,8 +71,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabled)) {
+if ($user->hasRight('bookcal', 'availabilities', 'read') && isModEnabled('bookcal')) {
 	$langs->load("orders");
+	/*$myobjectstatic = new Booking($db);
 
 	$sql = "SELECT rowid, `ref`, fk_soc, fk_project, description, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, last_main_doc, import_key, model_pdf, status, firstname, lastname, email, `start`, duration";
 	$sql .= " FROM ". MAIN_DB_PREFIX . 'bookcal_booking';
@@ -121,7 +93,6 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 		<th colspan="3">id</th>
 		<th colspan="3">ref</th>
 		<th colspan="3">name</th>
-		<th colspan="3">date</th>
 		<th colspan="3">hour</th>
 		<th colspan="3">duration</th>
 		<th colspan="3">description</th>
@@ -134,7 +105,6 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 
 				$myobjectstatic->id=$obj->rowid;
 				$myobjectstatic->ref=$obj->ref;
-				$myobjectstatic->date = $obj->start;
 				$myobjectstatic->firstname = $obj->firstname;
 				$myobjectstatic->lastname = $obj->lastname;
 				$myobjectstatic->start = $obj->start;
@@ -145,7 +115,7 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->id . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->ref . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->firstname . " " . $myobjectstatic->lastname . "</td>";
-				print '<td colspan="3" class="nowrap">' . $myobjectstatic->start . "</td>";
+				print '<td colspan="3" class="nowrap">' . dol_print_date($myobjectstatic->start, 'dayhourtext') . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->duration . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->description . "</td>";
 				$i++;
@@ -158,7 +128,7 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
-	}
+	}*/
 }
 //END MODULEBUILDER DRAFT MYOBJECT */
 
@@ -172,8 +142,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->bookcal->enabled))
-{
+if (isModEnabled('bookcal')) {
 	$sql = "SELECT rowid, `ref`, fk_soc, fk_project, description, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, last_main_doc, import_key, model_pdf, status, firstname, lastname, email, `start`, duration";
 	$sql .= " FROM ". MAIN_DB_PREFIX . 'bookcal_booking';
 	print "here2";

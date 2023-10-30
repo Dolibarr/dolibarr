@@ -39,9 +39,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -208,6 +206,8 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
 	}
 
+	$visibility = getDolGlobalString('PROJET_VISIBILITY');
+
 	$proj = new Project($db);
 	$thirdparty = new Societe($db);
 
@@ -224,6 +224,7 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
+			$thirdparty->email = GETPOST('email');
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
@@ -286,11 +287,17 @@ if (empty($reshook) && $action == 'add') {
 			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 		}
 
+		if ($visibility === "1") {
+			$proj->public = 1;
+		} elseif ($visibility === "0") {
+			$proj->public = 0;
+		} elseif (empty($visibility)) {
+			$proj->public = 1;
+		}
+
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
-		$proj->email       = GETPOST("email");
-		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
@@ -371,11 +378,10 @@ if (empty($reshook) && $action == 'add') {
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 					/*if ($result < 0) {
 						$error++;
@@ -417,7 +423,6 @@ if (empty($reshook) && $action == 'add') {
 }
 
 // Action called after a submitted was send and member created successfully
-// If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewLeadForm"));
@@ -452,7 +457,7 @@ print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
@@ -490,11 +495,11 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" required></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" required></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" required></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" required></td></tr>'."\n";
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'" required></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'" required></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
@@ -538,11 +543,11 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 }
 
 // Other attributes
-$tpl_context = 'public'; // define template context to public
+$parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Message").' <span style="color: red">*</span></td>';
+print '<td class="tdtop">'.$langs->trans("Message").' <span class="star">*</span></td>';
 print '<td class="tdtop"><textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_5.'" required>'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 

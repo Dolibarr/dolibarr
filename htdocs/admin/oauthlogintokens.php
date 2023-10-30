@@ -162,8 +162,10 @@ if ($mode == 'setup' && $user->admin) {
 		$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
 		$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
 		if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+			$keybeforeprovider = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 			$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
 		} else {
+			$keybeforeprovider = $keyforsupportedoauth2array;
 			$keyforprovider = '';
 		}
 		$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
@@ -179,13 +181,12 @@ if ($mode == 'setup' && $user->admin) {
 		$state = $shortscope;	// TODO USe a better state
 
 		// Define $urltorenew, $urltodelete, $urltocheckperms
-		// TODO Use array $supportedoauth2array
 		if ($keyforsupportedoauth2array == 'OAUTH_GITHUB_NAME') {
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
 
 			// Note: github does not accept csrf key inside the state parameter (only known values)
-			$urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+			$urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode($shortscope).'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://github.com/settings/applications/';
 		} elseif ($keyforsupportedoauth2array == 'OAUTH_GOOGLE_NAME') {
@@ -195,17 +196,9 @@ if ($mode == 'setup' && $user->admin) {
 			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode($state).'-'.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://security.google.com/settings/security/permissions';
-		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_TEST_NAME') {
-			$urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode($state).'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-			$urltodelete = '';
-			$urltocheckperms = '';
-		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_LIVE_NAME') {
-			$urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode($state).'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-			$urltodelete = '';
-			$urltocheckperms = '';
-		} elseif ($keyforsupportedoauth2array = 'OAUTH_OTHER_NAME') {
-			$urltorenew = $urlwithroot.'/core/modules/oauth/generic_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode($state).'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-			$urltodelete = '';
+		} elseif (!empty($supportedoauth2array[$keyforsupportedoauth2array]['returnurl'])) {
+			$urltorenew = $urlwithroot.$supportedoauth2array[$keyforsupportedoauth2array]['returnurl'].'?shortscope='.urlencode($shortscope).'&state='.urlencode($state).'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+			$urltodelete = $urlwithroot.$supportedoauth2array[$keyforsupportedoauth2array]['returnurl'].'?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = '';
 		} else {
 			$urltorenew = '';
@@ -213,18 +206,29 @@ if ($mode == 'setup' && $user->admin) {
 			$urltocheckperms = '';
 		}
 
-		$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+		if ($urltorenew) {
+			$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+		}
+		if ($urltodelete) {
+			$urltodelete .= '&keyforprovider='.urlencode($keyforprovider);
+		}
 
 		// Show value of token
 		$tokenobj = null;
 		// Token
 		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 		// Dolibarr storage
-		$storage = new DoliStorage($db, $conf);
+		$storage = new DoliStorage($db, $conf, $keyforprovider);
 		try {
+			// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
+			print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
 			$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+			//print $storage->token.'<br>';
+			//print $tokenobj->getExtraParams()['id_token'].'<br>';
+			//print $tokenobj->getAccessToken().'<br>';
 		} catch (Exception $e) {
 			// Return an error if token not found
+			//print $e->getMessage();
 		}
 
 		// Set other properties
@@ -315,7 +319,11 @@ if ($mode == 'setup' && $user->admin) {
 		// Links to delete/checks token
 		if (is_object($tokenobj)) {
 			//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
-			print '<a class="button smallpaddingimp" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+			if ($urltodelete) {
+				print '<a class="button smallpaddingimp" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span><br>';
+			}
 		}
 		// Request remote token
 		if ($urltorenew) {
@@ -337,7 +345,6 @@ if ($mode == 'setup' && $user->admin) {
 		print '<td colspan="2">';
 
 		if (is_object($tokenobj)) {
-			//var_dump($tokenobj);
 			$tokentoshow = $tokenobj->getAccessToken();
 			print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span><br>';
 			//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
@@ -353,7 +360,7 @@ if ($mode == 'setup' && $user->admin) {
 		if (is_object($tokenobj)) {
 			// Token refresh
 			print '<tr class="oddeven">';
-			print '<td'.($key['required'] ? ' class="required"' : '').'>';
+			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 			//var_dump($key);
 			print $langs->trans("TOKEN_REFRESH");
 			print '</td>';

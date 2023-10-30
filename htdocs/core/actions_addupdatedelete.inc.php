@@ -76,8 +76,20 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		}
 
 		// Set value to insert
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'restricthtml');
+		if (preg_match('/^text/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'nohtml');
+			}
+		} elseif (preg_match('/^html/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'restricthtml');
+			}
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
@@ -91,7 +103,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -190,7 +202,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type']!=='checkbox') {
 				continue; // The field was not submited to be saved
 			}
 		}
@@ -205,7 +217,14 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Set value to update
-		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
+		if (preg_match('/^text/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'nohtml');
+			}
+		} elseif (preg_match('/^html/', $object->fields[$key]['type'])) {
 			$tmparray = explode(':', $object->fields[$key]['type']);
 			if (!empty($tmparray[1])) {
 				$value = GETPOST($key, $tmparray[1]);
@@ -228,7 +247,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -271,6 +290,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 	}
 
+
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -285,7 +305,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$action = 'view';
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-			if ($urltogo && !$noback) {
+			if ($urltogo && empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;
 			}
@@ -330,25 +350,23 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
+	$error = 0;
 
-	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-		// This is properties of a date
-		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
-	}
-
-	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	} else {
+	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	if ($ret < 0) {
 		$error++;
-		setEventMessages($object->error, $object->errors, 'errors');
+		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
+	} else {
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		}
 	}
 }
 
@@ -424,7 +442,13 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	$result = $object->validate($user);
+	if ($object->element == 'inventory' && !empty($include_sub_warehouse)) {
+		// Can happen when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set
+		$result = $object->validate($user, false, $include_sub_warehouse);
+	} else {
+		$result = $object->validate($user);
+	}
+
 	if ($result >= 0) {
 		// Define output language
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -540,7 +564,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+		$objectutil = dol_clone($object, 1);
+		// We used native clone to keep this->db valid and allow to use later all the methods of object.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));

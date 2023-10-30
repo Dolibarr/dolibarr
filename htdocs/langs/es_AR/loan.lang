@@ -14,7 +14,4 @@ ListLoanAssociatedProject=Lista de préstamos asociados con el proyecto
 AddLoan=Crear préstamo
 FinancialCommitment=Compromiso financiero
 ConfigLoan=Configuración del módulo de préstamos
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable predeterminada para capital
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cuenta contable predeterminada para interés
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cuenta contable predeterminada para seguro
 CreateCalcSchedule=Editar compromiso financiero

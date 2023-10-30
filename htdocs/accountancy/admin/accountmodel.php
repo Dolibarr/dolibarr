@@ -296,11 +296,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
-
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
@@ -504,8 +499,8 @@ if ($id) {
 		print '<td>';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
+		print '<td></td>';
+		print '<td></td>';
 		print '</tr>';
 
 		// Line to enter new values
@@ -640,7 +635,8 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($value == 'type_template') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							}

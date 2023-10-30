@@ -2,7 +2,7 @@
 ContractsArea=Contracts area
 ListOfContracts=List of contracts
 AllContracts=All contracts
-ContractCard=Contract card
+ContractCard=Contract
 ContractStatusNotRunning=Not running
 ContractStatusDraft=Draft
 ContractStatusValidated=Validated

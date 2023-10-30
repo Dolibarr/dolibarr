@@ -32,8 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
-$langs->loadLangs(array('workstation', 'other'));
+$langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
 $id          = GETPOST('id', 'int');
@@ -78,11 +80,11 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Permissions
-$permissiontoread   =  $user->rights->workstation->workstation->read;
-$permissiontoadd    =  $user->rights->workstation->workstation->write;      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete =  $user->rights->workstation->workstation->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote     =  $user->rights->workstation->workstation->write;      // Used by the include of actions_setnotes.inc.php
-$permissiondellink  =  $user->rights->workstation->workstation->write;      // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
+$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DISABLED);
+$permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_dellink.inc.php
 
 $upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
 
@@ -148,8 +150,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -163,7 +163,7 @@ llxHeader('', $title, $help_url);
 
 // jquery code
 ?>
-	<script type="text/javascript">
+	<script>
 
 		jQuery(document).ready(function() {
 			jQuery("#type").change(function() {
@@ -190,6 +190,9 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
+	// Set default value of the property ref
+	$object->fields['ref']['default'] = $object->getNextNumRef();
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Workstation")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -343,14 +346,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled)) {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
 	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 	 $morehtmlref .= ' : ';
 	 if ($action == 'classify') {
-	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 0, 1, '', 'maxwidth300');
 	 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
 	 $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -358,7 +361,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	 $morehtmlref .= '</form>';
 	 } else {
-	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 	 }
 	 } else {
 	 if (! empty($object->fk_project)) {

@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 /**
  *	Class to build sending documents with model Eagle
  */
-class pdf_eagle extends ModelePdfStockTransfer
+class pdf_eagle extends ModelePDFStockTransfer
 {
 	/**
 	 * @var DoliDb Database handler
@@ -60,58 +60,23 @@ class pdf_eagle extends ModelePdfStockTransfer
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
+	 * @var int posx lot
 	 */
-	public $page_largeur;
+	public $posxlot;
 
 	/**
-	 * @var int page_hauteur
+	 * @var int posx weightvol
 	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe    object that emits
-	 */
-	public $emetteur;
-
+	public $posxweightvol;
+	public $posxwarehousesource;
+	public $posxwarehousedestination;
+	public $atLeastOneBatch;
 
 	/**
 	 *	Constructor
@@ -183,13 +148,13 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Object		$object			Object StockTransfer to generate (or id if old method)
-	 *	@param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *	@param		StockTransfer	$object				Object StockTransfer to generate (or id if old method)
+	 *	@param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int				$hidedetails		Do not show line details
+	 *  @param		int				$hidedesc			Do not show desc
+	 *  @param		int				$hideref			Do not show ref
+	 *  @return     int         	    				1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -207,7 +172,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
 
-		$nblines = count($object->lines);
+		$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
@@ -287,7 +252,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
-				$nblines = count($object->lines);
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -467,14 +432,14 @@ class pdf_eagle extends ModelePdfStockTransfer
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
-						$object->lines[$i]->weight         	= $object->lines[$i]->product->weight;
-						$object->lines[$i]->weight_units   	= $object->lines[$i]->product->weight_units;
-						$object->lines[$i]->length         	= $object->lines[$i]->product->length;
-						$object->lines[$i]->length_units   	= $object->lines[$i]->product->length_units;
-						$object->lines[$i]->surface        	= $object->lines[$i]->product->surface;
+						$object->lines[$i]->weight = $object->lines[$i]->product->weight;
+						$object->lines[$i]->weight_units = $object->lines[$i]->product->weight_units;
+						$object->lines[$i]->length = $object->lines[$i]->product->length;
+						$object->lines[$i]->length_units = $object->lines[$i]->product->length_units;
+						$object->lines[$i]->surface = $object->lines[$i]->product->surface;
 						$object->lines[$i]->surface_units = $object->lines[$i]->product->surface_units;
-						$object->lines[$i]->volume         	= $object->lines[$i]->product->volume;
-						$object->lines[$i]->volume_units   	= $object->lines[$i]->product->volume_units;
+						$object->lines[$i]->volume = $object->lines[$i]->product->volume;
+						$object->lines[$i]->volume_units = $object->lines[$i]->product->volume_units;
 						$object->lines[$i]->fk_unit = $object->lines[$i]->product->fk_unit;
 						//var_dump($object->lines[$i]);exit;
 					}
@@ -659,8 +624,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -680,12 +644,12 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
+	 *	@param	PDF				$pdf            Object PDF
+	 *	@param  StockTransfer	$object         Object invoice
+	 *	@param  int				$deja_regle     Montant deja regle
+	 *	@param	int				$posy			Position depart
+	 *	@param	Translate		$outputlangs	Objet langs
+	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -778,7 +742,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -868,10 +832,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 	}
 
 	/**
-￼	 * Used to know if at least one line of Stock Transfer object has a batch set
-￼	 *
-	 * @param	Object	$object	Stock Transfer object
-	 * @return	boolean	true if at least one line has batch set, false if not
+	 * Used to know if at least one line of Stock Transfer object has a batch set
+	 *
+	 * @param	StockTransfer	$object	Stock Transfer object
+	 * @return	boolean			true if at least one line has batch set, false if not
 ￼	 */
 	public function atLeastOneBatch($object)
 	{
@@ -880,7 +844,9 @@ class pdf_eagle extends ModelePdfStockTransfer
 
 		$atLeastOneBatch = false;
 
-		if (empty($conf->productbatch->enabled)) return false;
+		if (!isModEnabled('productbatch')) {
+			return false;
+		}
 
 		foreach ($object->lines as $line) {
 			if (!empty($line->batch)) {
@@ -895,10 +861,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  StockTransfer	$object     	Object to show
+	 *  @param  int	    		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
 	 *  @return	void
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
@@ -972,16 +938,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("StockTransferSheet");
+		$title = $outputlangs->transnoentities("StockTransferSheet").' '.$object->ref;
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('', '', $default_font_size + 1);
-
-		$posy += 5;
-
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Ref")." : ".$object->ref, '', 'R');
 
 		// Date prévue depart
 		if (!empty($object->date_prevue_depart)) {
@@ -1160,11 +1120,11 @@ class pdf_eagle extends ModelePdfStockTransfer
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	PDF			$pdf     			PDF
-	 *  @param	Object		$object				Object to show
-	 *  @param	Translate	$outputlangs		Object lang for output
-	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	int								Return height of bottom margin including footer text
+	 *  @param	PDF				$pdf     			PDF
+	 *  @param	StockTransfer	$object				Object to show
+	 *  @param	Translate		$outputlangs		Object lang for output
+	 *  @param	int				$hidefreetext		1=Hide free text
+	 *  @return	int									Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

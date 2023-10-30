@@ -51,10 +51,10 @@ $type = 'bom';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstbom = GETPOST('maskconstBom', 'alpha');
+	$maskconstbom = GETPOST('maskconstBom', 'aZ09');
 	$maskbom = GETPOST('maskBom', 'alpha');
 
-	if ($maskconstbom) {
+	if ($maskconstbom && preg_match('/_MASK$/', $maskconstbom)) {
 		$res = dolibarr_set_const($db, $maskconstbom, $maskbom, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -219,7 +219,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module

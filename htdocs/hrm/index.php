@@ -54,6 +54,7 @@ if (isModEnabled('holiday')) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager = new HookManager($db);
+
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
@@ -134,7 +135,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 			if ($i == 0) {
 				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 			}
-			print '<tr '.$bc[false].'>';
+			print '<tr>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 			if ($i == 0) {
 				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
@@ -238,6 +239,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$userstatic->photo = $obj->photo;
 				$userstatic->email = $obj->email;
 				$userstatic->statut = $obj->user_status;
+				$userstatic->status = $obj->user_status;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
@@ -249,8 +251,8 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-				print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-				print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';

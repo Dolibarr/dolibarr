@@ -18,6 +18,3 @@ InterestAmount=Juro
 CapitalRemain=Capital permanecem
 TermPaidAllreadyPaid =Este termo já está pago
 CantModifyInterestIfScheduleIsUsed =Você não pode alterar o interesse se usar o programador
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital contabilístico por padrão
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Interesse contabilístico por padrão
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Seguro contabilístico por padrão

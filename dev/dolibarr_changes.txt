@@ -185,6 +185,23 @@ with:
 			return strval($number);
 		}
 
+* Add this at begin of tcpdf_autoconfig.php
+
+	// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+	if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
+		if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} else {
+			// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
+			$_SERVER['DOCUMENT_ROOT'] = '/';
+		}
+	}
+	$_SERVER['DOCUMENT_ROOT'] = str_replace('//', '/', $_SERVER['DOCUMENT_ROOT']);
+	if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
+		$_SERVER['DOCUMENT_ROOT'] .= '/';
+	}
 
 
 TCPDI:
@@ -208,6 +225,11 @@ with
 	while (list($k, $v) = each($value[1])) {
 with
 	foreach ($value[1] as $k => $v) {
+
+* Fix by replacing 
+	if ($res[0] == PDF_TYPE_OBJECT)
+with
+	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
 
 
 

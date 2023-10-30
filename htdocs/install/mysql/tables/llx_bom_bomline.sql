@@ -26,6 +26,7 @@ CREATE TABLE llx_bom_bomline(
     disable_stock_change smallint DEFAULT 0, 
 	efficiency double(24,8) NOT NULL DEFAULT 1,
 	fk_unit integer NULL,
-	position integer NOT NULL DEFAULT 0
+	position integer NOT NULL DEFAULT 0,
+	fk_default_workstation integer DEFAULT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

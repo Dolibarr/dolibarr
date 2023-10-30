@@ -264,7 +264,7 @@ $daylight = round($c - $b);
 $val = ($a >= 0 ? '+' : '').$a;
 $val .= ' ('.($a == 'unknown' ? 'unknown' : ($a >= 0 ? '+' : '').($a * 3600)).')';
 $val .= ' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
-$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight === 'unknown' ? 'unknown' : ($a == $c ?yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
+$val .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.(is_null($daylight) ? 'unknown' : ($a == $c ?yn($daylight) : yn(0).($daylight ? '  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')' : '')));
 print $form->textwithtooltip($val, $txt, 2, 1, img_info(''));
 print '</td></tr>'."\n"; // value defined in http://fr3.php.net/manual/en/timezones.europe.php
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver').'</td></tr>'."\n";
@@ -429,10 +429,12 @@ foreach ($configfileparameters as $key => $value) {
 				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 				if (empty($dolibarr_main_prod)) {
-					print '<!-- '.$dolibarr_main_instance_unique_id.' -->';
+					print '<!-- '.$dolibarr_main_instance_unique_id.' (this will not be visible if $dolibarr_main_prod = 1 -->';
 					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
+					print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("ThisValueCanBeReadBecauseInstanceIsNotInProductionMode").'</span>';
 				} else {
 					print '**********';
+					print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("SeeConfFile").'</span>';
 				}
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');

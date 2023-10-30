@@ -65,7 +65,7 @@ if (empty($user->rights->takepos->run)) {
  */
 
 if ($action == "getTables") {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor = ".((int) $floor);
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
 	$resql = $db->query($sql);
 	$rows = array();
 	while ($row = $db->fetch_array($resql)) {
@@ -90,9 +90,9 @@ if ($action == "update") {
 		$top = 95;
 	}
 	if ($left > 3 or $top > 4) {
-		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos = ".((int) $left).", toppos = ".((int) $top)." WHERE rowid = ".((int) $place));
+		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET leftpos = ".((int) $left).", toppos = ".((int) $top)." WHERE rowid = ".((int) $place));
 	} else {
-		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place));
+		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables WHERE rowid = ".((int) $place));
 	}
 }
 
@@ -101,13 +101,13 @@ if ($action == "updatename") {
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
 	}
-	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
+	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
 if ($action == "add") {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
-	$db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
+	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names
 }
 
 

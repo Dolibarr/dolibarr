@@ -41,6 +41,10 @@ $id = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('id', 'int'
 $ref = GETPOST('ref', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 $canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
@@ -152,9 +156,12 @@ if ($object->id) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
+
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 

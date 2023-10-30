@@ -117,7 +117,7 @@ if ($action == 'update') {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".((int) GETPOST('rowid', 'int'));
 		$result = $db->query($sql);
-		if ($result > 0) {
+		if ($result) {
 			$db->commit();
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
@@ -226,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if (isset($optioncss) && $optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -427,7 +427,7 @@ if ($mode == 'overwrite') {
 				print ' &nbsp; ';
 				print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 			} else {
-				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().''.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
 				print ' &nbsp; ';
 				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 			}
@@ -463,7 +463,11 @@ if ($mode == 'searchkey') {
 	} else {
 		// Now search into translation array
 		foreach ($newlang->tab_translate as $key => $val) {
-			if ($transkey && !preg_match('/'.preg_quote($transkey, '/').'/i', $key)) {
+			$newtranskey = preg_replace('/\$$/', '', preg_replace('/^\^/', '', $transkey));
+			$newtranskeystart = preg_match('/^\^/', $transkey);
+			$newtranskeyend = preg_match('/\$$/', $transkey);
+			$regexstring = ($newtranskeystart ? '^' : '').preg_quote($newtranskey, '/').($newtranskeyend ? '$' : '');
+			if ($transkey && !preg_match('/'.$regexstring.'/i', $key)) {
 				continue;
 			}
 			if ($transvalue && !preg_match('/'.preg_quote($transvalue, '/').'/i', $val)) {
@@ -615,6 +619,10 @@ if ($mode == 'searchkey') {
 			print '<td>'.$val.'</td>';
 		}*/
 		print '</td></tr>'."\n";
+	}
+
+	if (empty($recordtoshow)) {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';

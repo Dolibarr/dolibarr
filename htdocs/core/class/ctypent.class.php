@@ -21,42 +21,22 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary type of thirdparty (used by imports)
  */
-class Ctypent // extends CommonObject
+class Ctypent extends CommonDict
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var int ID of country
 	 */
-	public $db;
+	public $country_id;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	//var $element='ctypent';			//!< Id that identify managed objects
-	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	public $code;
 	public $libelle;
-	public $active;
 	public $module;
-
-
-
 
 	/**
 	 *  Constructor
@@ -114,7 +94,7 @@ class Ctypent // extends CommonObject
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
-		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'")."";
+		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -227,8 +207,8 @@ class Ctypent // extends CommonObject
 		$sql = "UPDATE ".$this->db->prefix()."c_typent SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null").",";
-		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null")."";
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null").",";
+		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
 		$sql .= " WHERE id=".$this->id;
 
 		$this->db->begin();
