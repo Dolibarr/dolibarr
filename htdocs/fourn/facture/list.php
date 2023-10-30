@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
@@ -412,7 +413,7 @@ if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
-$sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
+$sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
 $sql .= " f.note_public, f.note_private,";
@@ -1440,6 +1441,7 @@ $facturestatic = new FactureFournisseur($db);
 $supplierstatic = new Fournisseur($db);
 $projectstatic = new Project($db);
 $userstatic = new User($db);
+$discount = new DiscountAbsolute($db);
 
 // Loop on record
 // --------------------------------------------------------------------
@@ -1480,8 +1482,9 @@ while ($i < $imaxinloop) {
 	$facturestatic->type = $obj->type;
 	$facturestatic->subtype = $obj->subtype;
 	$facturestatic->total_ht = $obj->total_ht;
-	$facturestatic->total_tva = $obj->total_tva;
+	$facturestatic->total_tva = $obj->total_vat;
 	$facturestatic->total_ttc = $obj->total_ttc;
+	$facturestatic->close_code = $obj->close_code;
 	$facturestatic->ref_supplier = $obj->ref_supplier;
 	$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 	$facturestatic->statut = $obj->fk_statut;
@@ -1521,15 +1524,15 @@ while ($i < $imaxinloop) {
 	$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 	$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
-	if ($facturestatic->status == Facture::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+	if ($facturestatic->status == FactureFournisseur::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 		$remaintopay = 0;
 		$multicurrency_remaintopay = 0;
 	}
-	if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consumed
-		$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
+	if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consumed
+		$remaincreditnote = $discount->getAvailableDiscounts($thirdparty, '', 'rc.fk_facture_source='.$facturestatic->id);
 		$remaintopay = -$remaincreditnote;
 		$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
-		$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
+		$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($thirdparty, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 		$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
 		$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 	}

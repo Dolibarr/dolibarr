@@ -147,7 +147,7 @@ if ($result) {
  */
 function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $totalSize)
 {
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog(__FUNCTION__, LOG_DEBUG);
 
 	// count all the parts of this file
 	$total_files = 0;

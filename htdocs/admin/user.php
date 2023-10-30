@@ -158,7 +158,7 @@ print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_MAIL_REQUIRED');
 } else {
-	if (empty($conf->global->USER_MAIL_REQUIRED)) {
+	if (!getDolGlobalString('USER_MAIL_REQUIRED')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -176,7 +176,7 @@ print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
 } else {
-	if (empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
+	if (!getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

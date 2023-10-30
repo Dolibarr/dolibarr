@@ -1558,7 +1558,8 @@ function dol_delete_preview($object)
 	}
 
 	if (empty($dir)) {
-		return 'ErrorObjectNoSupportedByFunction';
+		$object->error = $langs->trans('ErrorObjectNoSupportedByFunction');
+		return 0;
 	}
 
 	$refsan = dol_sanitizeFileName($object->ref);
@@ -2063,7 +2064,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 		$resql = $db->query($sql);
 		if (!$resql) {
 			$error++;
-			dol_syslog(__METHOD__.' '.$db->lasterror(), LOG_ERR);
+			dol_syslog(__FUNCTION__.' '.$db->lasterror(), LOG_ERR);
 		}
 	}
 
