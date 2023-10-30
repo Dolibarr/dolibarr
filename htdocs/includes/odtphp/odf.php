@@ -18,7 +18,6 @@ class OdfException extends Exception
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
  * @copyright  2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @copyright  2023 - Thomas Negre - contact@open-dsi.fr
  * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.5.0
  */
@@ -234,6 +233,7 @@ class Odf
         if ($fontDeclarations == null) $fontDeclarations = array();
 
         $odtResult = '';
+
         foreach ((array) $tags as $tag) {
             // Check if the current item is a tag or just plain text
             if (isset($tag['text'])) {
@@ -246,23 +246,23 @@ class Odf
                         break;
                     case 'strong':
                     case 'b':
-                        $odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                        $odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                         break;
                     case 'i':
                     case 'em':
-                        $odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                        $odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                         break;
                     case 'u':
-                        $odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                        $odtResult .= '<text:span text:style-name="underlineText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                         break;
                     case 's':
-                        $odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                        $odtResult .= '<text:span text:style-name="strikethroughText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                         break;
                     case 'sub':
-                        $odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                        $odtResult .= '<text:span text:style-name="subText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                         break;
                     case 'sup':
-                        $odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                        $odtResult .= '<text:span text:style-name="supText">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                         break;
                     case 'span':
                         if (isset($tag['attributes']['style'])) {
@@ -299,12 +299,12 @@ class Odf
                                 // Generate a unique id for the style (using microtime and random because some CPUs are really fast...)
                                 $key = floatval(str_replace('.', '', microtime(true))) + rand(0, 10);
                                 $customStyles[$key] = $odtStyles;
-                                $odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
+                                $odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
                             }
                         }
                         break;
                     default:
-                        $odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode);
+                        $odtResult .= $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations);
                         break;
                 }
             }
@@ -903,7 +903,7 @@ IMG;
                 pclose($handlein);
                 fclose($handle);
             }
-            dolChmod($outputfile);
+            if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
 
         if ($retval == 0) {
