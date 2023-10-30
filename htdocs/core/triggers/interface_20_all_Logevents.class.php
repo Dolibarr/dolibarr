@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
-	const EVENT_ACTION_DICT = [ // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
+	const EVENT_ACTION_DICT = array( // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
 		'USER_LOGIN' => 'UserLogged',
 		'USER_LOGIN_FAILED' => 'UserLoginFailed',
 		'USER_LOGOUT' => 'UserLogoff',
@@ -44,10 +44,20 @@ class InterfaceLogevents extends DolibarrTriggers
 		'USERGROUP_CREATE' => 'NewGroupCreated',
 		'USERGROUP_MODIFY' => 'GroupModified',
 		'USERGROUP_DELETE' => 'GroupDeleted'
-	];
-	private string 	$event_label;
-	private string 	$event_desc;
-	private int 	$event_date;
+	);
+	/**
+	 * @var string	Label
+	 */
+	private $event_label;
+	/**
+	 * @var string	Description
+	 */
+	private $event_desc;
+	/**
+	 * @var int		Date
+	 */
+	private $event_date;
+
 
 	/**
 	 * Constructor
@@ -124,11 +134,11 @@ class InterfaceLogevents extends DolibarrTriggers
 	/**
 	 * Method called by runTrigger to initialize date, label & description data for event
 	 *
-	 * @param	string		$key_text				Action string
+	 * @param	string		$key_text			Action string
 	 * @param	Object		$object				Object
 	 * @return	void
 	 */
-	private function initEventData(string $key_text, Object $object): void
+	private function initEventData($key_text, $object): void
 	{
 		$this->event_date = dol_now();
 		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
@@ -144,10 +154,10 @@ class InterfaceLogevents extends DolibarrTriggers
 	/**
 	 * Check if text contains an event action key. Used for dynamic localization on frontend events list.
 	 *
-	 * @param	string	$event_text	input event text
+	 * @param	string	$event_text		Input event text
 	 * @return	bool
 	 */
-	public static function isEventActionTextKey(string $event_text): bool
+	public static function isEventActionTextKey($event_text): bool
 	{
 		foreach (InterfaceLogevents::EVENT_ACTION_DICT as $value) {
 			if (str_contains($event_text, $value)) {
