@@ -90,7 +90,6 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOST('MAIN_MAIL_NO_WITH_TO_SELECTED', 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS', GETPOST('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS', 'int'), 'chaine', 0, '', $conf->entity);
-
 		// Send mode parameters
 		dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", GETPOST("MAIN_MAIL_SENDMODE", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOST("MAIN_MAIL_SMTP_PORT", 'int'), 'chaine', 0, '', $conf->entity);
