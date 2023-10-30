@@ -4368,14 +4368,13 @@ if ($module == 'initmodule') {
 									print '<td class="tdsticky tdstickygray">';
 									print dol_escape_htmltag($propname);
 									print '</td>';
-									print '<td>';
-									print dol_escape_htmltag($proplabel);
-									print '</td>';
 									if ($action == 'editproperty' && $propname == $propertykey) {
-										print '<td class="tdoverflowmax200">';
+										print '<td>';
 										print '<input type="hidden" name="propname" value="'.dol_escape_htmltag($propname).'">';
-										print '<input type="hidden" name="proplabel" value="'.dol_escape_htmltag($proplabel).'">';
-										print '<input name="proptype" value="'.dol_escape_htmltag($proptype).'"></input>';
+										print '<input name="proplabel" class="maxwidth125" value="'.dol_escape_htmltag($proplabel).'">';
+										print '</td>';
+										print '<td class="tdoverflowmax150">';
+										print '<input name="proptype" class="maxwidth125" value="'.dol_escape_htmltag($proptype).'"></input>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										print '<textarea name="proparrayofkeyval">';
@@ -4445,6 +4444,9 @@ if ($module == 'initmodule') {
 										print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 										print '</td>';
 									} else {
+										print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($proplabel).'">';
+										print dol_escape_htmltag($proplabel);
+										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										$pictoType = '';
 										$matches = array();
