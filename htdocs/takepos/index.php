@@ -53,6 +53,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
+$createdefaultpayment = GETPOST('createdefaultpayment', 'int');
 
 $hookmanager->initHooks(array('takeposfrontend'));
 if (empty($_SESSION["takeposterminal"])) {
@@ -76,6 +77,23 @@ if ($setcurrency != "") {
 $_SESSION["urlfrom"] = '/takepos/index.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
+
+if ($createdefaultpayment > 0) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	$cashaccount = new Account($db);
+	$cashaccount->ref = "cash_pos";
+	$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+	$cashaccount->courant = 2;
+	$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
+	$cashaccount->date_solde = dol_now();
+	$result = $cashaccount->create($user);
+	if ($result > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$_SESSION["takeposterminal"], $result, 'chaine', 0, '', $conf->entity);
+	} else {
+		setEventMessages($societe->error, $category->errors, 'errors');
+	}
+}
 
 $categorie = new Categorie($db);
 
@@ -947,6 +965,10 @@ $( document ).ready(function() {
 	if ($_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
+	
+	if (empty(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]))) {
+		print "ModalBox('TakeposNeedsPayment');";
+	}
 
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
@@ -1157,6 +1179,20 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<button type="button" class="block" onclick="CreditNote(); document.getElementById('ModalCreditNote').style.display = 'none';"><?php print $langs->trans("Yes"); ?></button>
 		<button type="button" class="block" onclick="document.getElementById('ModalCreditNote').style.display = 'none';"><?php print $langs->trans("No"); ?></button>
+	</div>
+</div>
+</div>
+
+<!-- Modal Needs Payment Mode -->
+<div id="TakeposNeedsPayment" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+		<span class="close" href="#" onclick="document.getElementById('TakeposNeedsPayment').style.display = 'none';">&times;</span>
+		<h3><?php print $langs->trans("TakeposNeedsPayment"); ?></h3>
+	</div>
+	<div class="modal-body">
+		<button type="button" class="block" onclick="location.href='index.php?createdefaultpayment=1'"><?php print $langs->trans("Yes"); ?></button>
+		<button type="button" class="block" onclick="document.getElementById('TakeposNeedsPayment').style.display = 'none';"><?php print $langs->trans("No"); ?></button>
 	</div>
 </div>
 </div>
