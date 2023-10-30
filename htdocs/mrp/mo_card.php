@@ -174,67 +174,27 @@ if (empty($reshook)) {
 
 		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.((int) $moline->fk_mo), 1));
 		exit;
-	}
-
-	if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
-		if (!($object->id > 0)) {
-			dol_print_error('', 'Error, object must be fetched before being deleted');
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && !empty($permissiontoadd)) {
+		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
+		$result = $object->cancel($user, 0, $also_cancel_consumed_and_produced_lines);
+		if ($result > 0) {
+			header("Location: " . dol_buildpath('/mrp/mo_card.php?id=' . $object->id, 1));
 			exit;
-		}
-
-		$error = 0;
-		$deleteChilds = GETPOST('deletechilds', 'boolean');
-
-		// Start the database transaction
-		$db->begin();
-
-		if ($deleteChilds === 'on') {
-			$TMoChildren = $object->getAllMoChilds();
-
-			foreach ($TMoChildren as $id => $childObject) {
-				if ($childObject->delete($user) == -1) {
-					$error++;
-					if (!empty($childObject->errors)) {
-						setEventMessages(null, $childObject->errors, 'errors');
-					} else {
-						setEventMessages($childObject->error, null, 'errors');
-					}
-				}
-			}
-		}
-
-		if (!$error) {
-			$result = $object->delete($user);
-
-			if ($result > 0) {
-				setEventMessages("RecordDeleted", null, 'mesgs');
-
-				if ($deleteChilds === 'on') {
-					setEventMessages("MoChildsDeleted", null, 'mesgs');
-				}
-
-				if (empty($noback)) {
-					header("Location: " . $backurlforlist);
-					exit;
-				}
-			} else {
-				$error++;
-				if (!empty($object->errors)) {
-					setEventMessages(null, $object->errors, 'errors');
-				} else {
-					setEventMessages($object->error, null, 'errors');
-				}
-			}
-		}
-
-		// Commit or rollback the database transaction based on whether there was an error
-		if ($error) {
-			$db->rollback();
 		} else {
-			$db->commit();
+			$action = '';
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
+		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
+		$result = $object->delete($user, 0, $also_cancel_consumed_and_produced_lines);
+		if ($result > 0) {
+			header("Location: " . $backurlforlist);
+			exit;
+		} else {
+			$action = '';
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -480,9 +440,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		else $label = $langs->trans("DeleteMoChild");
 
 		$formquestion = array(
-			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $label, 'value' => 0),
+			array(
+				'label' => $langs->trans('MoCancelConsumedAndProducedLines'),
+				'name' => 'alsoCancelConsumedAndProducedLines',
+				'type' => 'checkbox',
+				'value' => empty($conf->global->MO_ALSO_CANCEL_CONSUMED_AND_PRODUCED_LINES_BY_DEFAULT) ? 0 : 1
+			),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', $formquestion, 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
@@ -526,6 +491,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation to cancel
+	if ($action == 'cancel') {
+		$formquestion = array(
+			array(
+				'label' => $langs->trans('MoCancelConsumedAndProducedLines'),
+				'name' => 'alsoCancelConsumedAndProducedLines',
+				'type' => 'checkbox',
+				'value' => 0
+			),
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CancelMo'), $langs->trans('ConfirmCancelMo'), 'confirm_cancel', $formquestion, 0, 1);
 	}
 
 	// Clone confirmation
@@ -767,7 +745,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<a class="butActionRefused" href="#" title="'.$langs->trans("GoOnTabProductionToProduceFirst", $langs->transnoentitiesnoconv("Production")).'">'.$langs->trans("Close").'</a>'."\n";
 					}
 
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 				}
 
 				if ($object->status == $object::STATUS_PRODUCED || $object->status == $object::STATUS_CANCELED) {

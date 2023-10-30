@@ -21,6 +21,10 @@ use Rector\Php71\ValueObject\TwoNodeMatch;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use PhpParser\Node\Expr\BinaryOp\Greater;
+use PhpParser\Node\Expr\BinaryOp\GreaterOrEqual;
+use PhpParser\Node\Expr\BinaryOp\Smaller;
+use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 
 /**
  * Class with Rector custom rule to fix code
@@ -58,20 +62,20 @@ class GlobalToFunction extends AbstractRector
 	}
 
 	/**
-	 * getNodeTypes
+	 * Return a node type from https://github.com/rectorphp/php-parser-nodes-docs/
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function getNodeTypes(): array
 	{
-		return [Equal::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
 	}
 
 	/**
 	 * refactor
 	 *
-	 * @param Node $node A node
-	 * @return    Equal|Concat|ArrayDimFetch|void
+	 * @param Node 	$node 		A node
+	 * @return    				Equal|Concat|ArrayDimFetch|void
 	 */
 	public function refactor(Node $node)
 	{
@@ -128,14 +132,32 @@ class GlobalToFunction extends AbstractRector
 			/** @var Equal $node */
 			$node = $nodes->getFirstExpr();
 		}
-		if (!$node instanceof Equal) {
+
+		$typeofcomparison = '';
+		if ($node instanceof Equal) {
+			$typeofcomparison = 'Equal';
+		}
+		if ($node instanceof Greater) {
+			$typeofcomparison = 'Greater';
+		}
+		if ($node instanceof GreaterOrEqual) {
+			$typeofcomparison = 'GreaterOrEqual';
+		}
+		if ($node instanceof Smaller) {
+			$typeofcomparison = 'Smaller';
+		}
+		if ($node instanceof SmallerOrEqual) {
+			$typeofcomparison = 'SmallerOrEqual';
+		}
+		if (empty($typeofcomparison)) {
 			return;
-		};
+		}
 
 		if (!$this->isGlobalVar($node->left)) {
 			return;
 		}
 
+		// Test the type after the comparison conf->global->xxx to know the name of function
 		switch ($node->right->getType()) {
 			case 'Scalar_LNumber':
 				$funcName = 'getDolGlobalInt';
@@ -146,17 +168,57 @@ class GlobalToFunction extends AbstractRector
 			default:
 				return;
 		}
+
 		$constName = $this->getConstName($node->left);
 		if (empty($constName)) {
 			return;
 		}
-		return new Equal(
-			new FuncCall(
-				new Name($funcName),
-				[new Arg($constName)]
-			),
-			$node->right
-		);
+
+		if ($typeofcomparison == 'Equal') {
+			return new Equal(
+				new FuncCall(
+					new Name($funcName),
+					[new Arg($constName)]
+				),
+				$node->right
+			);
+		}
+		if ($typeofcomparison == 'Greater') {
+			return new Greater(
+				new FuncCall(
+					new Name($funcName),
+					[new Arg($constName)]
+					),
+				$node->right
+				);
+		}
+		if ($typeofcomparison == 'GreaterOrEqual') {
+			return new GreaterOrEqual(
+				new FuncCall(
+					new Name($funcName),
+					[new Arg($constName)]
+					),
+				$node->right
+				);
+		}
+		if ($typeofcomparison == 'Smaller') {
+			return new Smaller(
+				new FuncCall(
+					new Name($funcName),
+					[new Arg($constName)]
+					),
+				$node->right
+				);
+		}
+		if ($typeofcomparison == 'SmallerOrEqual') {
+			return new SmallerOrEqual(
+				new FuncCall(
+					new Name($funcName),
+					[new Arg($constName)]
+					),
+				$node->right
+				);
+		}
 	}
 
 	/**
@@ -190,10 +252,10 @@ class GlobalToFunction extends AbstractRector
 	}
 
 	/**
-	 * Check node is global access
+	 * Check if node is a global access with format conf->global->XXX
 	 *
-	 * @param Node $node A node
-	 * @return bool
+	 * @param Node 	$node 	A node
+	 * @return bool			Return true if noe is conf->global->XXX
 	 */
 	private function isGlobalVar($node)
 	{
@@ -214,8 +276,8 @@ class GlobalToFunction extends AbstractRector
 	}
 
 	/**
-	 * @param Node $node node to be parsed
-	 * @return Node|void
+	 * @param 	Node 		$node 	Node to be parsed
+	 * @return 	Node|void			Return the name of the constant
 	 */
 	private function getConstName($node)
 	{

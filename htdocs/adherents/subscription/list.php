@@ -276,7 +276,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/adherents/subscription/card.php?id='.$id);
@@ -431,7 +431,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 // Line numbering
-if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 

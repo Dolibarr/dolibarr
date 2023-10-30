@@ -102,8 +102,6 @@ class MultiCurrency extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 	/**
@@ -623,11 +621,11 @@ class MultiCurrency extends CommonObject
 		if ($conf->currency != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
 			$alternate_source = 'USD'.$conf->currency;
 			if (!empty($TRate->$alternate_source)) {
-				$coef = $TRate->USDUSD / $TRate->$alternate_source;
+				$coef = 1 / $TRate->$alternate_source;
 				foreach ($TRate as $attr => &$rate) {
 					$rate *= $coef;
 				}
-
+				$TRate->USDUSD = $coef;
 				return 1;
 			}
 
@@ -640,13 +638,27 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Sync rates from API
 	 *
-	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
+	 * @param 	string  $key                Key to use. Come from getDolGlobalString("MULTICURRENCY_APP_ID")
 	 * @param   int     $addifnotfound      Add if not found
-	 * @return  int							<0 if KO, >0 if OK
+	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
+	 * @return  int							<0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
-	public function syncRates($key, $addifnotfound = 0)
+	public function syncRates($key, $addifnotfound = 0, $mode = "")
 	{
 		global $conf, $db, $langs;
+
+		if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
+			if ($mode == "cron") {
+				$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
+			} else {
+				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
+			}
+			return -1;
+		}
+
+		if (empty($key)) {
+			$key = getDolGlobalString("MULTICURRENCY_APP_ID");
+		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
@@ -677,11 +689,17 @@ class MultiCurrency extends CommonObject
 					}
 				}
 
+				if ($mode == "cron") {
+					return 0;
+				}
 				return 1;
 			} else {
 				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
-				setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-
+				if ($mode == "cron") {
+					$this->output = $langs->trans('multicurrency_syncronize_error', $response->error->info);
+				} else {
+					setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+				}
 				return -1;
 			}
 		} else {
@@ -756,8 +774,6 @@ class CurrencyRate extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 	/**

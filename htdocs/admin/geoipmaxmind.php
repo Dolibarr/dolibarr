@@ -89,7 +89,7 @@ print '<br>';
 
 $version = '';
 $geoip = '';
-if (!empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE)) {
+if (getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE')) {
 	$geoip = new DolGeoIP('country', $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
 }
 

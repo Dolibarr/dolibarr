@@ -103,7 +103,7 @@ class AccountancyExport
 
 		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
+		$this->end_line = !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -201,9 +201,9 @@ class AccountancyExport
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT) ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV) ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
+					'ACCOUNTING_EXPORT_FORMAT' => !getDolGlobalString('ACCOUNTING_EXPORT_FORMAT') ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => !getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV') ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
+					'ACCOUNTING_EXPORT_ENDLINE' => !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
 					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
