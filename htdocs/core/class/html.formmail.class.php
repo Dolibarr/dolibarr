@@ -1109,6 +1109,7 @@ class FormMail extends Form
 				if (!empty($this->withtofree)) {
 					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 				}
+				
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
 					if (is_array($val)) {
@@ -1128,7 +1129,6 @@ class FormMail extends Form
 					$tmparray[$key]['labelhtml'] = $label;
 					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
 					$tmparray[$key]['labelhtml'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $tmparray[$key]['labelhtml']);
-
 					if (getDolGlobalInt('MAIN_MAIL_EXTERNAL_CONTACTS_DEFAULT_RECIPIENTS')) {
 						$contact_static = new Contact($this->db);
 						if ($contact_static->fetch($key) > 0) {
