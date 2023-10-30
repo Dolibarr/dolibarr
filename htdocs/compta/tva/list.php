@@ -218,7 +218,7 @@ if ($search_status != '' && $search_status >= 0) {
 $sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
 
 // Count total nb of records
-$nbtotalofrecords = '';
+$nbtotalofrecords = 0;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);

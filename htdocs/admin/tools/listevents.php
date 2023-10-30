@@ -240,7 +240,7 @@ if ($search_prefix_session) {
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = '';
+$nbtotalofrecords = 0;
 /*if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);

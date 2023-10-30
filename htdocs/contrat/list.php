@@ -461,7 +461,7 @@ if (empty($reshook)) {
 $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
-$nbtotalofrecords = '';
+$nbtotalofrecords = 0;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//$result = $db->query($sql);
 	//$nbtotalofrecords = $db->num_rows($result);

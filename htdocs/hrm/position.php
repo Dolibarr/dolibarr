@@ -415,7 +415,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
-	$nbtotalofrecords = '';
+	$nbtotalofrecords = 0;
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($resql);
@@ -976,7 +976,7 @@ function DisplayPositionList()
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
-	$nbtotalofrecords = '';
+	$nbtotalofrecords = 0;
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($resql);

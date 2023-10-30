@@ -983,7 +983,7 @@ class Categorie extends CommonObject
 		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$offset = 0;
-		$nbtotalofrecords = '';
+		$nbtotalofrecords = 0;
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);

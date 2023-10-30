@@ -2099,7 +2099,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$filter = array('t.fk_product' => $object->id, 't.fk_soc' => GETPOST('socid', 'int'));
 
 		// Count total nb of records
-		$nbtotalofrecords = '';
+		$nbtotalofrecords = 0;
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		}
@@ -2226,7 +2226,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<!-- list of all prices per customer -->'."\n";
 
 		// Count total nb of records
-		$nbtotalofrecords = '';
+		$nbtotalofrecords = 0;
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 		}

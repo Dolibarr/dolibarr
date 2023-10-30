@@ -330,7 +330,7 @@ class pdf_standard extends ModelePDFMovement
 		$sql .= $hookmanager->resPrint;
 		$sql .= $this->db->order($sortfield, $sortorder);
 
-		$nbtotalofrecords = '';
+		$nbtotalofrecords = 0;
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);

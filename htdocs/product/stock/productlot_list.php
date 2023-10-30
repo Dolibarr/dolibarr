@@ -299,7 +299,7 @@ $sql=preg_replace('/,\s*$/','', $sql);
 */
 
 // Count total nb of records
-$nbtotalofrecords = '';
+$nbtotalofrecords = 0;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
 	 $resql = $db->query($sql);
