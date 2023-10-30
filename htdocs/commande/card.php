@@ -2454,7 +2454,7 @@ if ($action == 'create' && $usercancreate) {
 		// Call Hook OrderCard
 		$parameters = array();
 		// Note that $action and $object may be modified by hook
-		$reshook = $hookmanager->executeHooks('OrderCard', $parameters, $object, $action);
+		$reshook = $hookmanager->executeHooks('tabContentViewOrder', $parameters, $object, $action);
 		if (empty($reshook)) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
