@@ -25,7 +25,7 @@ print '<!-- linesalesrepresentative.tpl.php -->';
 
 // Sale representative
 print '<tr><td>';
-print '<table class="nobordernopadding" width="100%"><tr><td>';
+print '<table class="nobordernopadding centpercent"><tr><td>';
 print $langs->trans('SalesRepresentatives');
 print '</td>';
 if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')) {
@@ -47,7 +47,7 @@ if ($action == 'editsalesrepresentatives') {
 		$arrayselected = $object->getSalesRepresentatives($user, 1);
 	}
 	print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
-	print '<input type="submit" class="button valignmiddle small" value="'.$langs->trans("Modify").'" />';
+	print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
@@ -59,7 +59,7 @@ if ($action == 'editsalesrepresentatives') {
 			$userstatic->login = $val['login'];
 			$userstatic->lastname = $val['lastname'];
 			$userstatic->firstname = $val['firstname'];
-			$userstatic->statut = $val['statut'];
+			$userstatic->status = $val['statut'];
 			$userstatic->photo = $val['photo'];
 			$userstatic->email = $val['email'];
 			$userstatic->office_phone = $val['office_phone'];
@@ -67,7 +67,7 @@ if ($action == 'editsalesrepresentatives') {
 			$userstatic->job = $val['job'];
 			$userstatic->entity = $val['entity'];
 			$userstatic->gender = $val['gender'];
-			print $userstatic->getNomUrl(-1);
+			print $userstatic->getNomUrl(-1, '', 0, 0, ($nbofsalesrepresentative > 1 ? 16 : (empty($conf->dol_optimize_smallscreen) ? 24 : 20)));
 			print ' ';
 		}
 	} else {

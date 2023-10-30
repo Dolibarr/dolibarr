@@ -496,7 +496,7 @@ class AccountingAccount extends CommonObject
 		$url = '';
 		$labelurl = '';
 		if (empty($option) || $option == 'ledger') {
-			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode((isset($this->account_number) ? $this->account_number : '')) . '&search_accountancy_code_end=' . urlencode((isset($this->account_number) ? $this->account_number : ''));
 			$labelurl = $langs->trans("ShowAccountingAccountInLedger");
 		} elseif ($option == 'journals') {
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
@@ -508,7 +508,7 @@ class AccountingAccount extends CommonObject
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -537,7 +537,7 @@ class AccountingAccount extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $labelurl;
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
@@ -599,6 +599,7 @@ class AccountingAccount extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -841,7 +842,7 @@ class AccountingAccount extends CommonObject
 					}
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
-				} elseif ($isSellerInEEC && $isBuyerInEEC && !empty($product->accountancy_code_sell_intra)) {
+				} elseif ($isSellerInEEC && $isBuyerInEEC && (($type == 'customer' && !empty($product->accountancy_code_sell_intra)) || ($type == 'supplier' && !empty($product->accountancy_code_buy_intra)))) {
 					// European intravat sale
 					if ($type == 'customer' && !empty($product->accountancy_code_sell_intra)) {
 						$code_p = $product->accountancy_code_sell_intra;
@@ -863,7 +864,7 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Level 3 (define $code_t): Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 				if (!empty($buyer->code_compta_product)) {
 					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
@@ -913,7 +914,7 @@ class AccountingAccount extends CommonObject
 			}
 
 			// If $suggestedid could not be guessed yet, we set it from the generic default accounting code $code_l
-			if (empty($suggestedid) && empty($code_p) && !empty($code_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
+			if (empty($suggestedid) && empty($code_p) && !empty($code_l) && !getDolGlobalString('ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC')) {
 				if (empty($this->accountingaccount_codetotid_cache[$code_l])) {
 					$tmpaccount = new self($this->db);
 					$result = $tmpaccount->fetch(0, $code_l, 1);

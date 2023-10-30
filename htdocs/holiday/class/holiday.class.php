@@ -191,7 +191,7 @@ class Holiday extends CommonObject
 		if (!empty($conf->global->HOLIDAY_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->HOLIDAY_ADDON.".php";
+			$file = getDolGlobalString('HOLIDAY_ADDON') . ".php";
 			$classname = $conf->global->HOLIDAY_ADDON;
 
 			// Include file with class
@@ -1379,7 +1379,7 @@ class Holiday extends CommonObject
 		//{
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -2299,21 +2299,9 @@ class Holiday extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approval = $this->db->jdate($obj->datea);
 
-				if (!empty($obj->fk_user_creation)) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creation);
-					$this->user_creation = $cuser;
-				}
-				if (!empty($obj->fk_user_valid)) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-				if (!empty($obj->fk_user_modification)) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_creation;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
 
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
@@ -2373,7 +2361,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut > 1";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2415,7 +2403,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->read_all)) {
+		if (!$user->hasRight('expensereport', 'read_all')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2467,19 +2455,24 @@ class Holiday extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.$arraydata['user']->getNomUrl(-1).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_type')) {
 			$return .= '<br>';
 			//$return .= '<span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= '<span class="info_box-label maxwidth100">'.$arraydata['labeltype'].'</span>';
+			$return .= '<div class="info_box-label tdoverflowmax100" title="'.dol_escape_htmltag($arraydata['labeltype']).'">'.dol_escape_htmltag($arraydata['labeltype']).'</div>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
-			$return .= '<br><span class="info-box-label small">'.dol_print_date($this->date_debut, 'day').'</span>';
+			$return .= '<span class="info-box-label small">'.dol_print_date($this->date_debut, 'day').'</span>';
 			$return .= ' <span class="opacitymedium small">'.$langs->trans("To").'</span> ';
 			$return .= '<span class="info-box-label small">'.dol_print_date($this->date_fin, 'day').'</span>';
+			if (!empty($arraydata['nbopenedday'])) {
+				$return .= ' ('.$arraydata['nbopenedday'].')';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

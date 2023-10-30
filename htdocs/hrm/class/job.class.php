@@ -540,7 +540,7 @@ class Job extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('JOB_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_JOB_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -740,7 +740,7 @@ class Job extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -885,6 +885,7 @@ class Job extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -953,7 +954,7 @@ class Job extends CommonObject
 		if (!empty($conf->global->hrm_JOB_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_JOB_ADDON.".php";
+			$file = getDolGlobalString('hrm_JOB_ADDON') . ".php";
 			$classname = $conf->global->hrm_JOB_ADDON;
 
 			// Include file with class
@@ -1080,7 +1081,9 @@ class Job extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		/*if (property_exists($this, 'deplacement')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';
 			$return .= ' : <span class="info-box-label ">'.$this->fields['deplacement']['arrayofkeyval'][$this->deplacement].'</span>';

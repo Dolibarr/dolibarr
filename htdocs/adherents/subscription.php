@@ -88,9 +88,9 @@ $defaultdelayunit = 'y';
 $hookmanager->initHooks(array('subscription'));
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 $datefrom = 0;
 $dateto = 0;
@@ -479,7 +479,7 @@ $adht->fetch($object->typeid);
 $head = member_prepare_head($object);
 
 $rowspan = 10;
-if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 	$rowspan++;
 }
 if (isModEnabled('societe')) {
@@ -507,7 +507,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Login
-if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 	print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 }
 
@@ -528,7 +528,7 @@ print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->
 print '</tr>';
 
 // Password
-if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 	print '<tr><td>'.$langs->trans("Password").'</td><td>';
 	if ($object->pass) {
 		print preg_replace('/./i', '*', $object->pass);
@@ -854,11 +854,11 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			$bankviainvoice = 1;
 		}
 	} else {
-		if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+		if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 			$bankviainvoice = 1;
-		} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled('banque')) {
+		} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled('banque')) {
 			$bankdirect = 1;
-		} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+		} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 			$invoiceonly = 1;
 		}
 	}
@@ -925,7 +925,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			array('label' => $langs->trans("AliasNames"), 'type' => 'text', 'name' => 'companyalias', 'value' => $companyalias, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"')
 		);
 		// If customer code was forced to "required", we ask it at creation to avoid error later
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$tmpcompany = new Societe($db);
 			$tmpcompany->name = $companyname;
 			$tmpcompany->get_codeclient($tmpcompany, 0);
@@ -990,9 +990,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$dateto) {
 		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$dateto = dol_get_last_day($currentyear, $currentmonth);
+			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$dateto = dol_get_last_day($currentyear);
+			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"));
 		} else {
 			$dateto = -1; // By default, no date is suggested
 		}
@@ -1049,10 +1049,10 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled('product') || isModEnabled('service'))) {
+				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
 					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
 					if ($result < 0) {
@@ -1079,10 +1079,10 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled('product')|| isModEnabled('service'))) {
+				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {
 					$prodtmp = new Product($db);
 					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
 					if ($result < 0) {
@@ -1167,7 +1167,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 		$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
-		$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? ' checked' : '')).'>';
+		$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? ' checked' : '')).'>';
 		$helpcontent = '';
 		$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 		$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";

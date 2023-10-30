@@ -93,7 +93,6 @@ if (!class_exists('FormSetup')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	}
 }
-
 $formSetup = new FormSetup($db);
 
 
@@ -121,7 +120,7 @@ $formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
 $formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
 
 // Setup conf MYMODULE_MYPARAM6
-$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+//$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey();
 
 // Setup conf MYMODULE_MYPARAM7
 $formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
@@ -171,7 +170,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  */
 
 // For retrocompatibility Dolibarr < 15.0
-if ( versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
+if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 }
 
@@ -456,8 +455,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";

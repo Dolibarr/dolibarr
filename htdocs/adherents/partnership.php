@@ -171,7 +171,7 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Login
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 	}
 

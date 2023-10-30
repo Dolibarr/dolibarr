@@ -520,6 +520,7 @@ if ($resql) {
 		$newcardbutton = '';
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -798,6 +799,9 @@ if ($resql) {
 						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 				// Ref
 				if (!empty($arrayfields['d.ref']['checked'])) {
@@ -953,16 +957,18 @@ if ($resql) {
 						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
-				}
-				if (!$i) {
-					$totalarray['nbfield']++;
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
 
 				print "</tr>\n";
 			}
-				$total_total_ht = $total_total_ht + $obj->total_ht;
-				$total_total_tva = $total_total_tva + $obj->total_tva;
-				$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+
+			$total_total_ht = $total_total_ht + $obj->total_ht;
+			$total_total_tva = $total_total_tva + $obj->total_tva;
+			$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+
 			$i++;
 		}
 	} else {

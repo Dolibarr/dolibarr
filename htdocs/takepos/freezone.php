@@ -54,7 +54,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place 
 $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'aZ09');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -72,7 +72,7 @@ $soc = new Societe($db);
 if ($invoice->socid > 0) {
 	$soc->fetch($invoice->socid);
 } else {
-	$soc->fetch($conf->global->$constforcompanyid);
+	$soc->fetch(getDolGlobalInt($constforcompanyid));
 }
 $vatRateDefault = get_default_tva($mysoc, $soc);
 
@@ -124,7 +124,7 @@ top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">
 <?php
 if ($action == "freezone") {
-	echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans('Price').'">';
+	echo '<input type="text" id="number" name="number" class="takepospay" style="width:15%;" placeholder="'.$langs->trans(getDolGlobalString("TAKEPOS_CHANGE_PRICE_HT") ? 'AmountHT' : 'AmountTTC').'">';
 }
 if ($action == "addnote") {
 	echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';

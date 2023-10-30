@@ -170,6 +170,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var BookKeepingLine[] Movement line array
+	 */
+	public $linesmvt = array();
+
+	/**
+	 * @var BookKeepingLine[] export line array
+	 */
+	public $linesexport = array();
+
+	/**
 	 * @var integer|string date of movement validated & lock
 	 */
 	public $date_validation;
@@ -305,7 +315,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
-		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
+		if (getDolGlobalString('ACCOUNTANCY_ENABLE_FKDOCDET')) {
 			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
 			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines
 		}
@@ -323,7 +333,7 @@ class BookKeeping extends CommonObject
 				$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 				$sqlnum .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'"; // For example doc_type = 'bank'
 				$sqlnum .= " AND fk_doc = ".((int) $this->fk_doc);
-				if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
+				if (getDolGlobalString('ACCOUNTANCY_ENABLE_FKDOCDET')) {
 					// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
 					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
 				}
@@ -488,7 +498,7 @@ class BookKeeping extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -498,7 +508,7 @@ class BookKeeping extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTransaction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1153,7 +1163,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
-	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
+	 * @param 	int 	$option 		option (0: aggregate by general account or 1: aggreegate by subaccount)
 	 * @return 	int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
@@ -1209,9 +1219,9 @@ class BookKeeping extends CommonObject
 		}
 
 		if (!empty($option)) {
-			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' AND t.subledger_account != ""';
-			$sql .= ' GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label';
+			$sql .= " AND t.subledger_account IS NOT NULL";
+			$sql .= " AND t.subledger_account <> ''";
+			$sql .= " GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
@@ -1237,8 +1247,10 @@ class BookKeeping extends CommonObject
 
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
-				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label;
+				if (!empty($option)) {
+					$line->subledger_account = $obj->subledger_account;
+					$line->subledger_label = $obj->subledger_label;
+				}
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 

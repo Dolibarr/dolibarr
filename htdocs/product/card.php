@@ -212,7 +212,7 @@ if ($cancel) {
 }
 
 $createbarcode = isModEnabled('barcode');
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) {
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'creer_advance')) {
 	$createbarcode = 0;
 }
 
@@ -460,7 +460,7 @@ if (empty($reshook)) {
 
 	// Quick edit for extrafields
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -493,7 +493,7 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
-					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
 					$action = "create";
 					$error++;
 			}
@@ -1369,7 +1369,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($modCodeProduct->code_auto)) {
 				$tmpcode = $modCodeProduct->getNextValue($object, $type);
 			}
-			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
 			if ($refalreadyexists) {
 				print $langs->trans("RefAlreadyExists");
 			}
@@ -1406,8 +1406,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
-				if ((!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-					|| (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
+				if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
+					|| (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 					$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 					$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
@@ -1430,7 +1430,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 										}
 						';
 					}
-					if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+					if (isset($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
 						print '
 										if (this.value == 2) {
 											$("#field_mask, #mask_option").toggleClass("hideobject");
@@ -1448,7 +1448,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		$showbarcode = isModEnabled('barcode');
-		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
 			$showbarcode = 0;
 		}
 
@@ -1626,7 +1626,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// State
 			if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
 				print '<tr>';
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 					print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td>';
 				} else {
 					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
@@ -1944,7 +1944,45 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
-					print $form->selectarray('status_batch', $statutarray, (GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch));
+
+					print $form->selectarray('status_batch', $statutarray, GETPOSTISSET('status_batch') ? GETPOST('status_batch') : $object->status_batch);
+
+					print '<span id="statusBatchWarning" class="warning" style="display: none;">';
+					print img_warning().'&nbsp;'.$langs->trans("WarningConvertFromBatchToSerial").'</span>';
+
+					print '<span id="statusBatchMouvToGlobal" class="warning" style="display: none;">';
+					print img_warning().'&nbsp;'.$langs->trans("WarningTransferBatchStockMouvToGlobal").'</span>';
+
+					if ($object->status_batch) {
+						// Display message to make user know that all batch will be move into global stock
+						print '<script type="text/javascript">
+							$(document).ready(function() {
+                                console.log($("#statusBatchWarning"))
+                                $("#status_batch").on("change", function() {
+                                    if ($("#status_batch")[0].value == 0){
+                                        $("#statusBatchMouvToGlobal").show()
+                                    } else {
+                                        $("#statusBatchMouvToGlobal").hide()
+                                    }
+                                })
+							})</script>';
+
+						// Display message to explain that if the product currently have a quantity higher or equal to 2, switching to this choice means we will still have a product with different objects of the same batch (while we want a unique serial number)
+						if ($object->status_batch == 1) {
+							print '<script type="text/javascript">
+							$(document).ready(function() {
+                                console.log($("#statusBatchWarning"))
+                                $("#status_batch").on("change", function() {
+                                    if ($("#status_batch")[0].value == 2){
+                                        $("#statusBatchWarning").show()
+                                    } else {
+                                        $("#statusBatchWarning").hide()
+                                    }
+                                })
+							})</script>';
+						}
+					}
+
 					print '</td></tr>';
 					if (!empty($object->status_batch) || !empty($conf->use_javascript_ajax)) {
 						$langs->load("admin");
@@ -1954,6 +1992,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 						$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
+						$mask = '';
 						if ($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
 							$mask = !empty($object->batch_mask) ? $object->batch_mask : getDolGlobalString('LOT_ADVANCED_MASK');
 						}
@@ -2013,7 +2052,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Barcode
 			$showbarcode = isModEnabled('barcode');
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
 				$showbarcode = 0;
 			}
 
@@ -2189,7 +2228,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// State
 				if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
 					print '<tr>';
-					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 						print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td>';
 					} else {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
@@ -2342,7 +2381,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Fiche en mode visu
 
 			$showbarcode = isModEnabled('barcode');
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
 				$showbarcode = 0;
 			}
 
@@ -2353,7 +2392,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = " fk_product_type = ".$object->type;
+			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
@@ -2441,8 +2480,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
-					if ((($object->status_batch == '1' && !empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && !empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)))) {
+					if ((($object->status_batch == '1' && !empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
+						|| ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced' && !empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
 						print $object->batch_mask;
 						print '</td></tr>';

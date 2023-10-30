@@ -302,8 +302,7 @@ class FichinterRec extends Fichinter
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= !empty($obj->model_pdf) ? $obj->model_pdf : "";
-				$this->modelpdf				= !empty($obj->model_pdf) ? $obj->model_pdf : ""; // deprecated
+				$this->model_pdf			= empty($obj->model_pdf) ? "" : $obj->model_pdf;
 				$this->rang = !empty($obj->rang) ? $obj->rang : "";
 				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
 				$this->frequency			= $obj->frequency;
@@ -585,7 +584,7 @@ class FichinterRec extends Fichinter
 	public function set_auto($user, $freq, $courant)
 	{
 		// phpcs:enable
-		if ($user->rights->fichinter->creer) {
+		if ($user->hasRight('fichinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";

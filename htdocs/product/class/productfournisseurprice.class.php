@@ -589,8 +589,12 @@ class ProductFournisseurPrice extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -707,28 +711,14 @@ class ProductFournisseurPrice extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);
@@ -765,7 +755,7 @@ class ProductFournisseurPrice extends CommonObject
 		if (!empty($conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON.".php";
+			$file = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON') . ".php";
 			$classname = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON;
 
 			// Include file with class

@@ -155,7 +155,7 @@ if ($action == 'add') {
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans(lang, transkey, transvalue, entity) VALUES ('".$db->escape($langcode)."','".$db->escape($transkey)."','".$db->escape($transvalue)."', ".((int) $conf->entity).")";
 		$result = $db->query($sql);
-		if ($result > 0) {
+		if ($result) {
 			$db->commit();
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
@@ -177,7 +177,7 @@ if ($action == 'add') {
 if ($action == 'delete') {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".((int) $id);
 	$result = $db->query($sql);
-	if ($result >= 0) {
+	if ($result) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
@@ -202,7 +202,7 @@ $param = '&mode='.urlencode($mode);
 
 $enabledisablehtml = '';
 $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation").' ';
-if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -319,11 +319,11 @@ if ($mode == 'overwrite') {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$disabled = '';
-	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+	if ($action == 'edit' || !getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 		$disabled = ' disabled="disabled"';
 	}
 	$disablededit = '';
-	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+	if ($action == 'edit' || !getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 		$disablededit = ' disabled';
 	}
 
@@ -583,7 +583,7 @@ if ($mode == 'searchkey') {
 				print '&nbsp;&nbsp;';
 				$htmltext = $langs->trans("OriginalValueWas", '<i>'.$newlangfileonly->tab_translate[$key].'</i>');
 				print $form->textwithpicto('', $htmltext, 1, 'info');
-			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+			} elseif (getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 				//print $key.'-'.$val;
 				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("TranslationOverwriteKey")).'</a>';
 			}
@@ -619,6 +619,10 @@ if ($mode == 'searchkey') {
 			print '<td>'.$val.'</td>';
 		}*/
 		print '</td></tr>'."\n";
+	}
+
+	if (empty($recordtoshow)) {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';

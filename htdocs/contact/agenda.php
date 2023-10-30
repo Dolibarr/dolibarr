@@ -176,7 +176,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 
 	// Confirm deleting contact
-	if ($user->rights->societe->contact->supprimer) {
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}

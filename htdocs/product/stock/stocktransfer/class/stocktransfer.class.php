@@ -87,6 +87,7 @@ class StockTransfer extends CommonObject
 	public $date_prevue_arrivee;
 	public $date_reelle_depart;
 	public $date_reelle_arrivee;
+	public $origin_type;
 
 
 	const STATUS_DRAFT      = 0;
@@ -128,12 +129,12 @@ class StockTransfer extends CommonObject
 		'rowid'                    => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity'                   => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>1, 'default'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref'                      => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label'                    => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200'/*, 'help'=>"Help text"*/, 'showoncombobox'=>'1',),
+		'label'                    => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'css'=>'minwidth100', 'csslist'=>'tdoverflowmax150'),
 		'description'              => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>3,),
-		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/,),
-		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource',),
-		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination'),
+		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/, 'picto'=>'company', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource', 'picto'=>'stock', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination', 'picto'=>'stock', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 		'note_public'              => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private'             => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation'            => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -352,7 +353,7 @@ class StockTransfer extends CommonObject
 	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
-	public function cmp($a, $b)
+	static public function cmp($a, $b)
 	{
 		if ($a->rang == $b->rang) {
 			return 0;
@@ -725,8 +726,12 @@ class StockTransfer extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -909,7 +914,7 @@ class StockTransfer extends CommonObject
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON;
 
 			// Include file with class
@@ -970,8 +975,8 @@ class StockTransfer extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'eagle';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFER_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
 			}

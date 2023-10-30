@@ -349,7 +349,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as pbacc ON s.fk_account = pbacc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as incoterm ON s.fk_incoterms = incoterm.rowid';
 		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
@@ -397,7 +397,7 @@ class modSociete extends DolibarrModules
 			'c.statut'=>"Status",
 			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
 			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.client'=>"Text", 's.fournisseur'=>"Text",
+			's.client'=>"Numeric", 's.fournisseur'=>"Numeric",
 			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
 			't.code'=>"List:c_stcomm:libelle:code",
 			'c.entity'=>'List:entity:label:rowid',
@@ -427,7 +427,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
@@ -436,7 +436,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('contact').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();

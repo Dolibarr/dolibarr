@@ -2,6 +2,7 @@
 /* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,66 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int		Sub type of invoice (A subtype code coming from llx_invoice_subtype table. May be used by some countries like Greece)
 	 */
 	public $subtype;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;
+
+	public $paye;
+
+	/**
+	 * Invoice date (date)
+	 *
+	 * @var integer
+	 */
+	public $date;
+
+	public $cond_reglement_id; // Id in llx_c_paiement
+	public $cond_reglement_code; // Code in llx_c_paiement
+	public $cond_reglement_label;
+	public $cond_reglement_doc; // Code in llx_c_paiement
+
+	public $mode_reglement_id;
+	public $mode_reglement_code; // Code in llx_c_paiement
+
+	public $totalpaid;			// duplicate with sumpayed
+	public $totaldeposits;		// duplicate with sumdeposit
+	public $totalcreditnotes;	// duplicate with sumcreditnote
+
+	public $sumpayed;
+	public $sumpayed_multicurrency;
+	public $sumdeposit;
+	public $sumdeposit_multicurrency;
+	public $sumcreditnote;
+	public $sumcreditnote_multicurrency;
+	public $remaintopay;
+
+	// Multicurrency
+	/**
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
+	public $close_code;
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
+	public $close_note;
+
 
 	/**
 	 * Standard invoice
@@ -103,18 +164,6 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
-	public $totalpaid;			// duplicate with sumpayed
-	public $totaldeposits;		// duplicate with sumdeposit
-	public $totalcreditnotes;	// duplicate with sumcreditnote
-
-	public $sumpayed;
-	public $sumpayed_multicurrency;
-	public $sumdeposit;
-	public $sumdeposit_multicurrency;
-	public $sumcreditnote;
-	public $sumcreditnote_multicurrency;
-	public $remaintopay;
-
 
 	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
@@ -143,6 +192,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
+	 *  @see getSumDepositsUsed(), getSumCreditNotesUsed()
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -187,12 +237,13 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all deposits invoices used by invoice.
-	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
-	 *      of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
+	 *  Return amount (with tax) of all deposits invoices used by invoice.
+	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
+	 *  of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
-	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *		@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
+	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
+	 *	@see getSommePaiement(), getSumCreditNotesUsed()
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
@@ -221,10 +272,11 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
+	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
-	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *		@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
 	{
@@ -335,9 +387,10 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return list of payments
 	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
 	 *  @return     array					Array with list of payments
 	 */
-	public function getListOfPayments($filtertype = '')
+	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
 		$retarray = array();
 
@@ -586,6 +639,78 @@ abstract class CommonInvoice extends CommonObject
 			$out .= '</span>';
 		}
 		return $out;
+	}
+
+	/**
+	 *	Return label of invoice subtype
+	 *
+	 *  @param		string		$table          table of invoice
+	 *	@return     string        				Label of invoice subtype
+	 */
+	public function getSubtypeLabel($table = '')
+	{
+		if ($table === 'facture' || $table === 'facture_fourn') {
+			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql .= " WHERE f.ref = '".$this->db->escape($this->ref)."'";
+
+			$resql = $this->db->query($sql);
+
+			if ($resql) {
+				$subtypeLabel = '';
+
+				while ($obj = $this->db->fetch_object($resql)) {
+					$subtypeLabel = $obj->label;
+				}
+
+				if (!empty($subtypeLabel)) {
+					print '  ' . $subtypeLabel;
+				}
+			} else {
+				dol_print_error($this->db);
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 *    	Retrieve a list of invoice subtype labels or codes.
+	 *
+	 *		@param	int		$mode		0=Return id+label, 1=Return code+id
+	 *    	@return array      			Array of subtypes
+	 */
+	public function getArrayOfInvoiceSubtypes($mode = 0)
+	{
+		global $mysoc;
+
+		$effs = array();
+
+		$sql = "SELECT rowid, code, label as label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . 'c_invoice_subtype';
+		$sql .= " WHERE active = 1 AND fk_country = ".((int) $mysoc->country_id)." AND entity IN(".getEntity('c_invoice_subtype').")";
+		$sql .= " ORDER by rowid, code";
+		dol_syslog(get_class($this) . '::getArrayOfInvoiceSubtypes', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($resql);
+				if (!$mode) {
+					$key = $objp->rowid;
+					$effs[$key] = $objp->label;
+				} else {
+					$key = $objp->code;
+					$effs[$key] = $objp->rowid;
+				}
+
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+
+		return $effs;
 	}
 
 	/**

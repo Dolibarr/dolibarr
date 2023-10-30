@@ -646,12 +646,12 @@ class Productlot extends CommonObject
 		$sql .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON (ed.rowid = edb.fk_expeditiondet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."expedition as exp ON (exp.rowid = ed.fk_expedition)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE exp.entity IN (".getEntity('expedition').")";
 		$sql .= " AND edb.batch = '".($this->db->escape($this->batch))."'";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND exp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND exp.fk_statut != 0";
@@ -721,12 +721,12 @@ class Productlot extends CommonObject
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseurdet as cfd ON (cfd.rowid = cfdi.fk_commandefourndet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseur as cf ON (cf.rowid = cfd.fk_commande)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE cf.entity IN (".getEntity('expedition').")";
 		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND cf.fk_statut != 0";
@@ -795,12 +795,12 @@ class Productlot extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
 		$sql .= " INNER JOIN ".$this->db->prefix()."reception as recep ON (recep.rowid = cfdi.fk_reception)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE recep.entity IN (".getEntity('reception').")";
 		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND recep.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND exp.fk_statut != 0";
@@ -875,7 +875,7 @@ class Productlot extends CommonObject
 			$sql .= " SUM(mp.qty) as qty";
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
 			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
@@ -987,9 +987,7 @@ class Productlot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $hookmanager, $db;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $langs, $conf, $hookmanager;
 
 		$result = '';
 		$params = [
@@ -1012,7 +1010,7 @@ class Productlot extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1046,7 +1044,7 @@ class Productlot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->batch;

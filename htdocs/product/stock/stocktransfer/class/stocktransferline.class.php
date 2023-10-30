@@ -721,8 +721,12 @@ class StockTransferLine extends CommonObjectLine
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -881,7 +885,7 @@ class StockTransferLine extends CommonObjectLine
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON;
 
 			// Include file with class

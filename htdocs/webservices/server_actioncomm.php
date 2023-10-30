@@ -295,7 +295,7 @@ function getActionComm($authentication, $id)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->agenda->allactions->read) {
+		if ($fuser->hasRight('agenda', 'allactions', 'read')) {
 			$actioncomm = new ActionComm($db);
 			$result = $actioncomm->fetch($id);
 			if ($result > 0) {
@@ -388,7 +388,7 @@ function getListActionCommType($authentication)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->agenda->myactions->read) {
+		if ($fuser->hasRight('agenda', 'myactions', 'read')) {
 			$cactioncomm = new CActionComm($db);
 			$result = $cactioncomm->liste_array('', 'code');
 			if ($result > 0) {

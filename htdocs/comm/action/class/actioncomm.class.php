@@ -1321,7 +1321,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
 	 *  @param		string	$limit			Limit number of answers
-	 *  @return		array|string			Error string if KO, array with actions if OK
+	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
@@ -1334,7 +1334,7 @@ class ActionComm extends CommonObject
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
+			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('agendadao'));
 
@@ -1410,7 +1410,7 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
@@ -1421,7 +1421,7 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($user->socid) {
@@ -1496,7 +1496,9 @@ class ActionComm extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->id;
+
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_mod;
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -1592,6 +1594,7 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -1695,6 +1698,7 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -1780,7 +1784,7 @@ class ActionComm extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1844,9 +1848,11 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return Picto of type of event
 	 *
+	 *  @param	string		$morecss			More CSS
+	 *  @param	string		$titlealt			Title alt
 	 *  @return	string							HTML String
 	 */
-	public function getTypePicto()
+	public function getTypePicto($morecss = 'pictofixedwidth paddingright', $titlealt = '')
 	{
 		global $conf;
 
@@ -1857,34 +1863,35 @@ class ActionComm extends CommonObject
 				$color = 'style="color: #'.$this->type_color.' !important;"';
 			}
 			if ($this->type_picto) {
-				$imgpicto = img_picto('', $this->type_picto, 'class="paddingright"');
+				$imgpicto = img_picto($titlealt, $this->type_picto, '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
 				if ($this->type_code == 'AC_RDV') {
-					$imgpicto = img_picto('', 'meeting', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'meeting', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_TEL') {
-					$imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_phoning', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_FAX') {
-					$imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
-					$imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_email', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_INT') {
-					$imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_intervention', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
-					$imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'object_conversation', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type != 'systemauto') {
-					$imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'user-cog', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} else {
-					$imgpicto = img_picto('', 'cog', $color, false, 0, 0, '', 'paddingright');
+					$imgpicto = img_picto($titlealt, 'cog', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				}
 			}
 		} else {
 			// 2 picto: 1 for auto, 1 for manual
 			if ($this->type != 'systemauto') {
-				$imgpicto = img_picto('', 'user-cog', '', false, 0, 0, '', 'paddingright');
+				$imgpicto = img_picto($titlealt, 'user-cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
-				$imgpicto = img_picto('', 'cog', '', false, 0, 0, '', 'paddingright');
+				$imgpicto = img_picto($titlealt, 'cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			}
 		}
+
 		return $imgpicto;
 	}
 
