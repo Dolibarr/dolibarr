@@ -4160,6 +4160,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/user/class/api_user.class.php',
 		'/partnership/class/api_partnership.class.php',
 		'/product/class/api_product.class.php',
+		'/recruitment/class/api_recruitment.class.php',
 		'/societe/class/api_contact.class.php',
 		'/societe/class/api_thirdparty.class.php',
 		'/support/online.php',

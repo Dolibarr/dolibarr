@@ -33,7 +33,7 @@ Following changes may create regressions for some external modules, but were nec
   an invoice from a shipment is validated (and if your process is to make invoice on shipment and not on order), because this setup has changed.
 * It was possible to use a variable $soc or $right inside a php code condition of some extrafields properties, this is no more true (this 2 variables are no more global variables).
 * New hook files of modules actions_mymodule.class.php should "extends CommonHookActions"
-* Endpoint for API /partnershipapi has been renamed into /partnerships to follow conventions
+* Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
 
 
 ***** ChangeLog for 18.0.2 compared to 18.0.1 *****
