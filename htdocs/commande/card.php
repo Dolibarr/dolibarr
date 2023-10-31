@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2023	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador      	<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
@@ -2451,7 +2451,8 @@ if ($action == 'create' && $usercancreate) {
 
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-		// Call Hook OrderCard
+
+		// Call Hook tabContentViewOrder
 		$parameters = array();
 		// Note that $action and $object may be modified by hook
 		$reshook = $hookmanager->executeHooks('tabContentViewOrder', $parameters, $object, $action);
