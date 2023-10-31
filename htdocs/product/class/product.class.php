@@ -39,6 +39,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 /**
@@ -1168,6 +1169,19 @@ class Product extends CommonObject
 						if ($ObjBatch->create($user, 1) < 0) {
 							$error++;
 							$this->errors = $ObjBatch->errors;
+						} else {
+							// we also add lot record if not exist
+							$ObjLot = new Productlot($this->db);
+							if ($ObjLot->fetch(0, $this->id, $valueforundefinedlot) == 0) {
+								$ObjLot->fk_product = $this->id;
+								$ObjLot->entity = $this->entity;
+								$ObjLot->fk_user_creat = $user->id;
+								$ObjLot->batch = $valueforundefinedlot;
+								if ($ObjLot->create($user, true) < 0) {
+									$error++;
+									$this->errors = $ObjLot->errors;
+								}
+							}
 						}
 					}
 				}
