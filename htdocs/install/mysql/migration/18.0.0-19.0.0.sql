@@ -34,7 +34,7 @@
 
 -- v18
 
-
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
 
 
 -- v19
