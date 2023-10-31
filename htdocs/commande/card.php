@@ -2451,7 +2451,8 @@ if ($action == 'create' && $usercancreate) {
 
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-		// Call Hook OrderCard
+
+		// Call Hook tabContentViewOrder
 		$parameters = array();
 		// Note that $action and $object may be modified by hook
 		$reshook = $hookmanager->executeHooks('tabContentViewOrder', $parameters, $object, $action);
