@@ -1319,7 +1319,9 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$locationTarget = '';
+
 			$db->begin();
+
 			$result = $object->valid($user, $idwarehouse);
 			if ($result >= 0) {
 				$error = 0;
