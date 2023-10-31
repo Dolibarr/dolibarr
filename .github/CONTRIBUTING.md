@@ -74,7 +74,7 @@ The keyword can be ommitted if your commit does not fit in any of the following 
 - Close/CLOSE: for closing a referenced feature request
 - New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Perf/PERF: for performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engeneering
+- Qual/QUAL: for quality code enhancement or re-engineering
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
