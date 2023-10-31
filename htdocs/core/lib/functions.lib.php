@@ -9896,15 +9896,15 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
 				$newtab = array();
 				// detect if position set in $values[1] ie : +(2)mytab@mymodule
+				$postab = $h;
 				$str = $values[1];
-				$tmp1 = strrchr($str, '(');
-				$res1 = substr($tmp1, 1, strpos($tmp1, ')') - 1);
-
-				if (is_numeric($res1)) {
-					$postab = (int) $res1;
-					$values[1] = '+' . substr($str, strpos($str, ')') + 1);
-				} else {
-					$postab = $h;
+				$tmp1 = strpos($str, '(');
+				if ($tmp1 > 0) {
+					$res1 = substr($tmp1, 1, strpos($tmp1, ')') - 1);
+					if (is_numeric($res1)) {
+						$postab = (int) $res1;
+						$values[1] = '+' . substr($str, strpos($str, ')') + 1);
+					}
 				}
 				if (count($values) == 6) {
 					// new declaration with permissions:
