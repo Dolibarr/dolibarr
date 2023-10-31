@@ -1853,312 +1853,318 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
-	print '<table class="border centpercent">';
+	// Call Hook tabContentCreateProposal
+	$parameters = array();
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('tabContentCreateProposal', $parameters, $object, $action);
+	if (empty($reshook)) {
+		print '<table class="border centpercent">';
 
-	// Reference
-	print '<tr class="field_ref"><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td class="valuefieldcreate">'.$langs->trans("Draft").'</td></tr>';
+		// Reference
+		print '<tr class="field_ref"><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td class="valuefieldcreate">'.$langs->trans("Draft").'</td></tr>';
 
-	// Ref customer
-	print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
-	print '<input type="text" name="ref_client" value="'.(!empty($ref_client)?$ref_client:GETPOST('ref_client')).'"></td>';
-	print '</tr>';
-
-	// Third party
-	print '<tr class="field_socid">';
-	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans('Customer').'</td>';
-	$shipping_method_id = 0;
-	if ($socid > 0) {
-		print '<td class="valuefieldcreate">';
-		print $soc->getNomUrl(1, 'customer');
-		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-		print '</td>';
-		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
-			$shipping_method_id = $soc->shipping_method_id;
-		}
-		//$warehouse_id       = $soc->warehouse_id;
-	} else {
-		print '<td class="valuefieldcreate">';
-		$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
-		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
-		// reload page to retrieve customer informations
-		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
-			print '<script>
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					console.log("We have changed the company - Reload page");
-					var socid = $(this).val();
-					// reload page
-					$("input[name=action]").val("create");
-					$("input[name=changecompany]").val("1");
-					$("form[name=addprop]").submit();
-				});
-			});
-			</script>';
-		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
-		print '</td>';
-	}
-	print '</tr>'."\n";
-
-	if ($socid > 0) {
-		// Contacts (ask contact only if thirdparty already defined).
-		print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DefaultContact").'</td><td class="valuefieldcreate">';
-		print img_picto('', 'contact', 'class="pictofixedwidth"');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
-		print '</td></tr>';
-
-		// Third party discounts info line
-		print '<tr class="field_discount_info"><td class="titlefieldcreate">'.$langs->trans('Discounts').'</td><td class="valuefieldcreate">';
-
-		$absolute_discount = $soc->getAvailableDiscounts();
-
-		$thirdparty = $soc;
-		$discount_type = 0;
-		$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
-		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
-		print '</td></tr>';
-	}
-
-	// Date
-	print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
-	print img_picto('', 'action', 'class="pictofixedwidth"');
-	print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
-	print '</td></tr>';
-
-	// Validaty duration
-	print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="pictofixedwidth"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
-
-	// Terms of payment
-	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
-	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
-	print '</td></tr>';
-
-	// Mode of payment
-	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
-	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
-	print '</td></tr>';
-
-	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && isModEnabled("banque")) {
-		print '<tr class="field_fk_account"><td class="titlefieldcreate">'.$langs->trans('BankAccount').'</td><td class="valuefieldcreate">';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
-		print '</td></tr>';
-	}
-
-	// Source / Channel - What trigger creation
-	print '<tr class="field_demand_reason_id"><td class="titlefieldcreate">'.$langs->trans('Source').'</td><td class="valuefieldcreate">';
-	print img_picto('', 'question', 'class="pictofixedwidth"');
-	$form->selectInputReason((GETPOSTISSET('demand_reason_id') ? GETPOST('demand_reason_id', 'int') : ''), 'demand_reason_id', "SRC_PROP", 1, 'maxwidth200 widthcentpercentminusx');
-	print '</td></tr>';
-
-	// Delivery delay
-	print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
-	if (isModEnabled('commande')) {
-		print ' ('.$langs->trans('AfterOrder').')';
-	}
-	print '</td><td class="valuefieldcreate">';
-	print img_picto('', 'clock', 'class="pictofixedwidth"');
-	$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOST('availability_id', 'int') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
-	print '</td></tr>';
-
-	// Shipping Method
-	if (isModEnabled("expedition")) {
-		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
-			$shipping_method_id = $soc->shipping_method_id;
-		}
-		print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">'.$langs->trans('SendingMethod').'</td><td class="valuefieldcreate">';
-		print img_picto('', 'dolly', 'class="pictofixedwidth"');
-		$form->selectShippingMethod((GETPOSTISSET('shipping_method_id') ? GETPOST('shipping_method_id', 'int') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
-		print '</td></tr>';
-	}
-
-	// Warehouse
-	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-		$formproduct = new FormProduct($db);
-		print '<tr class="field_warehouse_id"><td class="titlefieldcreate">'.$langs->trans('Warehouse').'</td><td class="valuefieldcreate">';
-		print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
-		print '</td></tr>';
-	}
-
-	// Delivery date (or manufacturing)
-	print '<tr class="field_date_livraison"><td class="titlefieldcreate">'.$langs->trans("DeliveryDate").'</td>';
-	print '<td class="valuefieldcreate">';
-	print img_picto('', 'action', 'class="pictofixedwidth"');
-	if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
-		$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
-		$syear = date("Y", $tmpdte);
-		$smonth = date("m", $tmpdte);
-		$sday = date("d", $tmpdte);
-		print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
-	} else {
-		print $form->selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
-	}
-	print '</td></tr>';
-
-	// Project
-	if (isModEnabled('project')) {
-		$langs->load("projects");
-		print '<tr class="field_projectid">';
-		print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
-		print '</td>';
+		// Ref customer
+		print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
+		print '<input type="text" name="ref_client" value="'.(!empty($ref_client)?$ref_client:GETPOST('ref_client')).'"></td>';
 		print '</tr>';
-	}
 
-	// Incoterms
-	if (isModEnabled('incoterm')) {
-		print '<tr class="field_incoterm_id">';
-		print '<td class="titlefieldcreate"><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
-		print '<td  class="valuefieldcreate maxwidthonsmartphone">';
-		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
-		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''));
-		print '</td></tr>';
-	}
-
-	// Template to use by default
-	print '<tr class="field_model">';
-	print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
-	print '<td class="valuefieldcreate">';
-	print img_picto('', 'pdf', 'class="pictofixedwidth"');
-	$liste = ModelePDFPropales::liste_modeles($db);
-	$preselected = (!empty($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT) ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : getDolGlobalString("PROPALE_ADDON_PDF"));
-	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-	print "</td></tr>";
-
-	// Multicurrency
-	if (isModEnabled("multicurrency")) {
-		print '<tr class="field_currency">';
-		print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
-		print '<td class="valuefieldcreate maxwidthonsmartphone">';
-		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0);
-		print '</td></tr>';
-	}
-
-	// Public note
-	print '<tr class="field_note_public">';
-	print '<td class="titlefieldcreate tdtop">'.$langs->trans('NotePublic').'</td>';
-	print '<td class="valuefieldcreate">';
-	$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc) ? $objectsrc->note_public : (!empty($conf->global->PROPALE_ADDON_NOTE_PUBLIC_DEFAULT) ? $conf->global->PROPALE_ADDON_NOTE_PUBLIC_DEFAULT : null)), 'restricthtml');
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
-	print $doleditor->Create(1);
-
-	// Private note
-	if (empty($user->socid)) {
-		print '<tr class="field_note_private">';
-		print '<td class="titlefieldcreate tdtop">'.$langs->trans('NotePrivate').'</td>';
-		print '<td class="valuefieldcreate">';
-		$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc)) ? $objectsrc->note_private : null));
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
-		print $doleditor->Create(1);
-		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
-		print '</td></tr>';
-	}
-
-	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
-	// Lines from source
-	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
-		// TODO for compatibility
-		if ($origin == 'contrat') {
-			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-			//$objectsrc->remise_absolue = $remise_absolue;	// deprecated
-			//$objectsrc->remise_percent = $remise_percent;
-			$objectsrc->update_price(1, 'auto', 1);
-		}
-
-		print "\n<!-- ".$classname." info -->";
-		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-
-		$newclassname = $classname;
-		if ($newclassname == 'Propal') {
-			$newclassname = 'CommercialProposal';
-		} elseif ($newclassname == 'Commande') {
-			$newclassname = 'Order';
-		} elseif ($newclassname == 'Expedition') {
-			$newclassname = 'Sending';
-		} elseif ($newclassname == 'Fichinter') {
-			$newclassname = 'Intervention';
-		}
-
-		print '<tr><td>'.$langs->trans($newclassname).'</td><td>'.$objectsrc->getNomUrl(1).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
-		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) { 		// Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
-		}
-
-		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) { 		// Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
-		}
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
-
-		if (isModEnabled("multicurrency")) {
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
-		}
-	}
-
-	print "</table>\n";
-
-
-	/*
-	 * Combobox for copy function
-	 */
-
-	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) {
-		print '<input type="hidden" name="createmode" value="empty">';
-	}
-
-	if (!empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) {
-		print '<br><table>';
-
-		// For backward compatibility
-		print '<tr>';
-		print '<td><input type="radio" name="createmode" value="copy"></td>';
-		print '<td>'.$langs->trans("CopyPropalFrom").' </td>';
-		print '<td>';
-		$liste_propal = array();
-		$liste_propal [0] = '';
-
-		$sql = "SELECT p.rowid as id, p.ref, s.nom";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal p";
-		$sql .= ", ".MAIN_DB_PREFIX."societe s";
-		$sql .= " WHERE s.rowid = p.fk_soc";
-		$sql .= " AND p.entity IN (".getEntity('propal').")";
-		$sql .= " AND p.fk_statut <> 0";
-		$sql .= " ORDER BY Id";
-
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$row = $db->fetch_row($resql);
-				$propalRefAndSocName = $row[1]." - ".$row[2];
-				$liste_propal[$row[0]] = $propalRefAndSocName;
-				$i++;
+		// Third party
+		print '<tr class="field_socid">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans('Customer').'</td>';
+		$shipping_method_id = 0;
+		if ($socid > 0) {
+			print '<td class="valuefieldcreate">';
+			print $soc->getNomUrl(1, 'customer');
+			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+			print '</td>';
+			if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
+				$shipping_method_id = $soc->shipping_method_id;
 			}
-			print $form->selectarray("copie_propal", $liste_propal, 0);
+			//$warehouse_id       = $soc->warehouse_id;
 		} else {
-			dol_print_error($db);
+			print '<td class="valuefieldcreate">';
+			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+			// reload page to retrieve customer informations
+			if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
+				print '<script>
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
+						var socid = $(this).val();
+						// reload page
+						$("input[name=action]").val("create");
+						$("input[name=changecompany]").val("1");
+						$("form[name=addprop]").submit();
+					});
+				});
+				</script>';
+			}
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			print '</td>';
+		}
+		print '</tr>'."\n";
+
+		if ($socid > 0) {
+			// Contacts (ask contact only if thirdparty already defined).
+			print '<tr class="field_contactid"><td class="titlefieldcreate">'.$langs->trans("DefaultContact").'</td><td class="valuefieldcreate">';
+			print img_picto('', 'contact', 'class="pictofixedwidth"');
+			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
+			print '</td></tr>';
+
+			// Third party discounts info line
+			print '<tr class="field_discount_info"><td class="titlefieldcreate">'.$langs->trans('Discounts').'</td><td class="valuefieldcreate">';
+
+			$absolute_discount = $soc->getAvailableDiscounts();
+
+			$thirdparty = $soc;
+			$discount_type = 0;
+			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
+			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+			print '</td></tr>';
+		}
+
+		// Date
+		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
+		print img_picto('', 'action', 'class="pictofixedwidth"');
+		print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
+		print '</td></tr>';
+
+		// Validaty duration
+		print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="pictofixedwidth"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
+
+		// Terms of payment
+		print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
+		print img_picto('', 'payment', 'class="pictofixedwidth"');
+		// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
+		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
+		print '</td></tr>';
+
+		// Mode of payment
+		print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
+		print img_picto('', 'bank', 'class="pictofixedwidth"');
+		print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+		print '</td></tr>';
+
+		// Bank Account
+		if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && isModEnabled("banque")) {
+			print '<tr class="field_fk_account"><td class="titlefieldcreate">'.$langs->trans('BankAccount').'</td><td class="valuefieldcreate">';
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print '</td></tr>';
+		}
+
+		// Source / Channel - What trigger creation
+		print '<tr class="field_demand_reason_id"><td class="titlefieldcreate">'.$langs->trans('Source').'</td><td class="valuefieldcreate">';
+		print img_picto('', 'question', 'class="pictofixedwidth"');
+		$form->selectInputReason((GETPOSTISSET('demand_reason_id') ? GETPOST('demand_reason_id', 'int') : ''), 'demand_reason_id', "SRC_PROP", 1, 'maxwidth200 widthcentpercentminusx');
+		print '</td></tr>';
+
+		// Delivery delay
+		print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
+		if (isModEnabled('commande')) {
+			print ' ('.$langs->trans('AfterOrder').')';
+		}
+		print '</td><td class="valuefieldcreate">';
+		print img_picto('', 'clock', 'class="pictofixedwidth"');
+		$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOST('availability_id', 'int') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		print '</td></tr>';
+
+		// Shipping Method
+		if (isModEnabled("expedition")) {
+			if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
+				$shipping_method_id = $soc->shipping_method_id;
+			}
+			print '<tr class="field_shipping_method_id"><td class="titlefieldcreate">'.$langs->trans('SendingMethod').'</td><td class="valuefieldcreate">';
+			print img_picto('', 'dolly', 'class="pictofixedwidth"');
+			$form->selectShippingMethod((GETPOSTISSET('shipping_method_id') ? GETPOST('shipping_method_id', 'int') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+			print '</td></tr>';
+		}
+
+		// Warehouse
+		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			print '<tr class="field_warehouse_id"><td class="titlefieldcreate">'.$langs->trans('Warehouse').'</td><td class="valuefieldcreate">';
+			print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
+			print '</td></tr>';
+		}
+
+		// Delivery date (or manufacturing)
+		print '<tr class="field_date_livraison"><td class="titlefieldcreate">'.$langs->trans("DeliveryDate").'</td>';
+		print '<td class="valuefieldcreate">';
+		print img_picto('', 'action', 'class="pictofixedwidth"');
+		if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
+			$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
+			$syear = date("Y", $tmpdte);
+			$smonth = date("m", $tmpdte);
+			$sday = date("d", $tmpdte);
+			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
+		} else {
+			print $form->selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
 		}
 		print '</td></tr>';
 
-		print '<tr><td class="tdtop"><input type="radio" name="createmode" value="empty" checked></td>';
-		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
-		print '</table>';
+		// Project
+		if (isModEnabled('project')) {
+			$langs->load("projects");
+			print '<tr class="field_projectid">';
+			print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+			print '</td>';
+			print '</tr>';
+		}
+
+		// Incoterms
+		if (isModEnabled('incoterm')) {
+			print '<tr class="field_incoterm_id">';
+			print '<td class="titlefieldcreate"><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
+			print '<td  class="valuefieldcreate maxwidthonsmartphone">';
+			print img_picto('', 'incoterm', 'class="pictofixedwidth"');
+			print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms) ? $soc->location_incoterms : ''));
+			print '</td></tr>';
+		}
+
+		// Template to use by default
+		print '<tr class="field_model">';
+		print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+		print '<td class="valuefieldcreate">';
+		print img_picto('', 'pdf', 'class="pictofixedwidth"');
+		$liste = ModelePDFPropales::liste_modeles($db);
+		$preselected = (!empty($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT) ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : getDolGlobalString("PROPALE_ADDON_PDF"));
+		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+		print "</td></tr>";
+
+		// Multicurrency
+		if (isModEnabled("multicurrency")) {
+			print '<tr class="field_currency">';
+			print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+			print '<td class="valuefieldcreate maxwidthonsmartphone">';
+			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0);
+			print '</td></tr>';
+		}
+
+		// Public note
+		print '<tr class="field_note_public">';
+		print '<td class="titlefieldcreate tdtop">'.$langs->trans('NotePublic').'</td>';
+		print '<td class="valuefieldcreate">';
+		$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc) ? $objectsrc->note_public : (!empty($conf->global->PROPALE_ADDON_NOTE_PUBLIC_DEFAULT) ? $conf->global->PROPALE_ADDON_NOTE_PUBLIC_DEFAULT : null)), 'restricthtml');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		print $doleditor->Create(1);
+
+		// Private note
+		if (empty($user->socid)) {
+			print '<tr class="field_note_private">';
+			print '<td class="titlefieldcreate tdtop">'.$langs->trans('NotePrivate').'</td>';
+			print '<td class="valuefieldcreate">';
+			$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc)) ? $objectsrc->note_private : null));
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			print $doleditor->Create(1);
+			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
+			print '</td></tr>';
+		}
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+		// Lines from source
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+			// TODO for compatibility
+			if ($origin == 'contrat') {
+				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
+				//$objectsrc->remise_absolue = $remise_absolue;	// deprecated
+				//$objectsrc->remise_percent = $remise_percent;
+				$objectsrc->update_price(1, 'auto', 1);
+			}
+
+			print "\n<!-- ".$classname." info -->";
+			print "\n";
+			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
+			print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
+			print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
+			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+
+			$newclassname = $classname;
+			if ($newclassname == 'Propal') {
+				$newclassname = 'CommercialProposal';
+			} elseif ($newclassname == 'Commande') {
+				$newclassname = 'Order';
+			} elseif ($newclassname == 'Expedition') {
+				$newclassname = 'Sending';
+			} elseif ($newclassname == 'Fichinter') {
+				$newclassname = 'Intervention';
+			}
+
+			print '<tr><td>'.$langs->trans($newclassname).'</td><td>'.$objectsrc->getNomUrl(1).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
+			if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) { 		// Localtax1
+				print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
+			}
+
+			if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) { 		// Localtax2
+				print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
+			}
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
+
+			if (isModEnabled("multicurrency")) {
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
+			}
+		}
+
+		print "</table>\n";
+
+
+		/*
+		 * Combobox for copy function
+		 */
+
+		if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) {
+			print '<input type="hidden" name="createmode" value="empty">';
+		}
+
+		if (!empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) {
+			print '<br><table>';
+
+			// For backward compatibility
+			print '<tr>';
+			print '<td><input type="radio" name="createmode" value="copy"></td>';
+			print '<td>'.$langs->trans("CopyPropalFrom").' </td>';
+			print '<td>';
+			$liste_propal = array();
+			$liste_propal [0] = '';
+
+			$sql = "SELECT p.rowid as id, p.ref, s.nom";
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal p";
+			$sql .= ", ".MAIN_DB_PREFIX."societe s";
+			$sql .= " WHERE s.rowid = p.fk_soc";
+			$sql .= " AND p.entity IN (".getEntity('propal').")";
+			$sql .= " AND p.fk_statut <> 0";
+			$sql .= " ORDER BY Id";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$row = $db->fetch_row($resql);
+					$propalRefAndSocName = $row[1]." - ".$row[2];
+					$liste_propal[$row[0]] = $propalRefAndSocName;
+					$i++;
+				}
+				print $form->selectarray("copie_propal", $liste_propal, 0);
+			} else {
+				dol_print_error($db);
+			}
+			print '</td></tr>';
+
+			print '<tr><td class="tdtop"><input type="radio" name="createmode" value="empty" checked></td>';
+			print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
+			print '</table>';
+		}
 	}
 
 	print dol_get_fiche_end();
