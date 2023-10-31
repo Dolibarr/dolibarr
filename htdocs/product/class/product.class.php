@@ -5811,6 +5811,8 @@ class Product extends CommonObject
 		$reshook = $hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
 		if ($reshook > 0) {
 			$this->stock_theorique = $hookmanager->resArray['stock_theorique'];
+		} elseif (isset($hookmanager->resArray['stock_stats_hook'])) {
+			$this->stock_theorique += $hookmanager->resArray['stock_stats_hook'];
 		}
 
 		return 1;
