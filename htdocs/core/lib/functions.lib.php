@@ -9895,15 +9895,18 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
 				$newtab = array();
-				// detect if position set in $values[1] ie : +(2)mytab@mymodule
 				$postab = $h;
+				// detect if position set in $values[1] ie : +(2)mytab@mymodule (first tab is 0, second is one, ...)
 				$str = $values[1];
-				$tmp1 = strpos($str, '(');
-				if ($tmp1 > 0) {
-					$res1 = substr($tmp1, 1, strpos($tmp1, ')') - 1);
-					if (is_numeric($res1)) {
-						$postab = (int) $res1;
-						$values[1] = '+' . substr($str, strpos($str, ')') + 1);
+				$posstart = strpos($str, '(');
+				if ($posstart > 0) {
+					$posend = strpos($str, ')');
+					if ($posstart > 0) {
+						$res1 = substr($str, $posstart + 1, $posend - $posstart -1);
+						if (is_numeric($res1)) {
+							$postab = (int) $res1;
+							$values[1] = '+' . substr($str, $posend + 1);
+						}
 					}
 				}
 				if (count($values) == 6) {
