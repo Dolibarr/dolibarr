@@ -382,17 +382,27 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$db->begin();
+
 	$result = $object->delete($user);
 
 	if ($result > 0) {
+		$db->commit();
+
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
 		if (empty($noback)) {
+			if (empty($backurlforlist)) {
+				print 'Error backurlforlist is not defined';
+				exit;
+			}
 			header("Location: " . $backurlforlist);
 			exit;
 		}
 	} else {
+		$db->rollback();
+
 		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');
