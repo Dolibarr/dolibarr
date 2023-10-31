@@ -1691,10 +1691,10 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head('');
 
-	// Call Hook tabContentViewSupplierOrder
+	// Call Hook tabContentCreateSupplierOrder
 	$parameters = array();
 	// Note that $action and $object may be modified by hook
-	$reshook = $hookmanager->executeHooks('tabContentViewSupplierOrder', $parameters, $object, $action);
+	$reshook = $hookmanager->executeHooks('tabContentCreateSupplierOrder', $parameters, $object, $action);
 	if (empty($reshook)) {
 		print '<table class="border centpercent">';
 
