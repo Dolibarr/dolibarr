@@ -3574,7 +3574,7 @@ if ($action == 'create') {
 		}
 
 		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
-		$sql .= ' c.id as paiement_type, c.code as payment_code,';
+		$sql .= ' c.id as payment_type, c.code as payment_code,';
 		$sql .= ' pf.amount,';
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -3621,7 +3621,7 @@ if ($action == 'create') {
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
-					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
+					$s = $form->form_modes_reglement(null, $objp->payment_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
 					print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($s).'">';
 					print $s;
 					print '</td>';
