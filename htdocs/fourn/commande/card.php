@@ -1691,181 +1691,186 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head('');
 
-	print '<table class="border centpercent">';
-
-	// Ref
-	print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
-
-	// Third party
-	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
-	print '<td>';
-
-	if (!empty($societe->id) && $societe->id > 0) {
-		print $societe->getNomUrl(1, 'supplier');
-		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
-	} else {
-		$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
-		print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
-		// reload page to retrieve customer informations
-		if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
-			print '<script>
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					console.log("We have changed the company - Reload page");
-					// reload page
-					$("input[name=action]").val("create");
-					$("form[name=add]").submit();
-				});
-			});
-			</script>';
-		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
-	}
-	print '</td>';
-
-	if (!empty($societe->id) && $societe->id > 0) {
-		// Discounts for third party
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
-
-		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
-
-		$thirdparty = $societe;
-		$discount_type = 1;
-		$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid'));
-		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
-
-		print '</td></tr>';
-	}
-
-	// Ref supplier
-	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
-	print '</tr>';
-
-	// Payment term
-	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
-	print '</td></tr>';
-
-	// Payment mode
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
-	print '</td></tr>';
-
-	// Planned delivery date
-	print '<tr><td>';
-	print $langs->trans('DateDeliveryPlanned');
-	print '</td>';
-	print '<td>';
-	$usehourmin = 0;
-	if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
-		$usehourmin = 1;
-	}
-	print img_picto('', 'action', 'class="pictofixedwidth"');
-	print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, '', "set");
-	print '</td></tr>';
-
-	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && isModEnabled("banque")) {
-		$langs->load("bank");
-		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-		print '</td></tr>';
-	}
-
-	// Project
-	if (isModEnabled('project')) {
-		$formproject = new FormProjets($db);
-
-		$langs->load('projects');
-		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
-		print '</td></tr>';
-	}
-
-	// Incoterms
-	if (isModEnabled('incoterm')) {
-		$fkincoterms = (!empty($object->fk_incoterms) ? $object->fk_incoterms : ($socid > 0 ? $societe->fk_incoterms : ''));
-		$locincoterms = (!empty($object->location_incoterms) ? $object->location_incoterms : ($socid > 0 ? $societe->location_incoterms : ''));
-		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
-		print '<td class="maxwidthonsmartphone">';
-		print img_picto('', 'incoterm', 'class="pictofixedwidth"');
-		print $form->select_incoterms($fkincoterms, $locincoterms);
-		print '</td></tr>';
-	}
-
-	// Multicurrency
-	if (isModEnabled("multicurrency")) {
-		print '<tr>';
-		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
-		print '<td class="maxwidthonsmartphone">';
-		print img_picto('', 'currency', 'class="pictofixedwidth"');
-		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
-		print '</td></tr>';
-	}
-
-	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
-	print '<td>';
-	$doleditor = new DolEditor('note_public', isset($note_public) ? $note_public : GETPOST('note_public', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
-	print $doleditor->Create(1);
-	print '</td>';
-	//print '<textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea>';
-	print '</tr>';
-
-	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
-	print '<td>';
-	$doleditor = new DolEditor('note_private', isset($note_private) ? $note_private : GETPOST('note_private', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
-	print $doleditor->Create(1);
-	print '</td>';
-	//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
-	print '</tr>';
-
-	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
-		print "\n<!-- ".$classname." info -->";
-		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-
-		$newclassname = $classname;
-		print '<tr><td>'.$langs->trans($newclassname).'</td><td>'.$objectsrc->getNomUrl(1, 'supplier').'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
-		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) { 		// Localtax1 RE
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1)."</td></tr>";
-		}
-
-		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) { 		// Localtax2 IRPF
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2)."</td></tr>";
-		}
-
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
-
-		if (isModEnabled("multicurrency")) {
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva).'</td></tr>';
-			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc).'</td></tr>';
-		}
-	}
-
-	// Other options
+	// Call Hook tabContentViewSupplierOrder
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('tabContentViewSupplierOrder', $parameters, $object, $action);
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'create');
+		print '<table class="border centpercent">';
+
+		// Ref
+		print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
+
+		// Third party
+		print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
+		print '<td>';
+
+		if (!empty($societe->id) && $societe->id > 0) {
+			print $societe->getNomUrl(1, 'supplier');
+			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
+		} else {
+			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+			// reload page to retrieve customer informations
+			if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
+				print '<script>
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
+						// reload page
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
+					});
+				});
+				</script>';
+			}
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		}
+		print '</td>';
+
+		if (!empty($societe->id) && $societe->id > 0) {
+			// Discounts for third party
+			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
+
+			$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
+
+			$thirdparty = $societe;
+			$discount_type = 1;
+			$backtopage = urlencode($_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid'));
+			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+			print '</td></tr>';
+		}
+
+		// Ref supplier
+		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
+		print '</tr>';
+
+		// Payment term
+		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
+		print img_picto('', 'payment', 'class="pictofixedwidth"');
+		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
+		print '</td></tr>';
+
+		// Payment mode
+		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+		print img_picto('', 'bank', 'class="pictofixedwidth"');
+		$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
+		print '</td></tr>';
+
+		// Planned delivery date
+		print '<tr><td>';
+		print $langs->trans('DateDeliveryPlanned');
+		print '</td>';
+		print '<td>';
+		$usehourmin = 0;
+		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+			$usehourmin = 1;
+		}
+		print img_picto('', 'action', 'class="pictofixedwidth"');
+		print $form->selectDate($datelivraison ? $datelivraison : -1, 'liv_', $usehourmin, $usehourmin, '', "set");
+		print '</td></tr>';
+
+		// Bank Account
+		if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && isModEnabled("banque")) {
+			$langs->load("bank");
+			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+			$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+			print '</td></tr>';
+		}
+
+		// Project
+		if (isModEnabled('project')) {
+			$formproject = new FormProjets($db);
+
+			$langs->load('projects');
+			print '<tr><td>'.$langs->trans('Project').'</td><td>';
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+			print '</td></tr>';
+		}
+
+		// Incoterms
+		if (isModEnabled('incoterm')) {
+			$fkincoterms = (!empty($object->fk_incoterms) ? $object->fk_incoterms : ($socid > 0 ? $societe->fk_incoterms : ''));
+			$locincoterms = (!empty($object->location_incoterms) ? $object->location_incoterms : ($socid > 0 ? $societe->location_incoterms : ''));
+			print '<tr>';
+			print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
+			print '<td class="maxwidthonsmartphone">';
+			print img_picto('', 'incoterm', 'class="pictofixedwidth"');
+			print $form->select_incoterms($fkincoterms, $locincoterms);
+			print '</td></tr>';
+		}
+
+		// Multicurrency
+		if (isModEnabled("multicurrency")) {
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+			print '<td class="maxwidthonsmartphone">';
+			print img_picto('', 'currency', 'class="pictofixedwidth"');
+			print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+			print '</td></tr>';
+		}
+
+		print '<tr><td>'.$langs->trans('NotePublic').'</td>';
+		print '<td>';
+		$doleditor = new DolEditor('note_public', isset($note_public) ? $note_public : GETPOST('note_public', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		print $doleditor->Create(1);
+		print '</td>';
+		//print '<textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea>';
+		print '</tr>';
+
+		print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
+		print '<td>';
+		$doleditor = new DolEditor('note_private', isset($note_private) ? $note_private : GETPOST('note_private', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+		print $doleditor->Create(1);
+		print '</td>';
+		//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+		print '</tr>';
+
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+			print "\n<!-- ".$classname." info -->";
+			print "\n";
+			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
+			print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
+			print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
+			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+
+			$newclassname = $classname;
+			print '<tr><td>'.$langs->trans($newclassname).'</td><td>'.$objectsrc->getNomUrl(1, 'supplier').'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
+			if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) { 		// Localtax1 RE
+				print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1)."</td></tr>";
+			}
+
+			if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) { 		// Localtax2 IRPF
+				print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2)."</td></tr>";
+			}
+
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
+
+			if (isModEnabled("multicurrency")) {
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc).'</td></tr>';
+			}
+		}
+
+		// Other options
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
+		if (empty($reshook)) {
+			print $object->showOptionals($extrafields, 'create');
+		}
+
+		// Bouton "Create Draft"
+		print "</table>\n";
 	}
-
-	// Bouton "Create Draft"
-	print "</table>\n";
-
 	print dol_get_fiche_end();
 
 	print $form->buttonsSaveCancel("CreateDraft");
