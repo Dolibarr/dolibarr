@@ -107,7 +107,7 @@ NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into Chan
 or
 Short description (when the commit is not introducing feature nor closing a bug)
 
-Long description (Can span accross multiple lines).
+Long description (Can span across multiple lines).
 </pre>
 
 ### Pull Requests
