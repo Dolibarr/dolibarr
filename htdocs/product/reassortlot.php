@@ -830,11 +830,17 @@ while ($i < $imaxinloop) {
 	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 	if (is_null($objp->stock_physique)) {
 		if (!empty($objp->reel)) {
-			print price2num($objp->reel, 'MS').($objp->stock_physique < 0 ? ' '.img_warning() : '');
+			if ($objp->reel < 0) { print '<span class="warning">'; }
+			print price2num($objp->reel, 'MS');
+			if ($objp->reel < 0) { print '</span>'; }
+			print ($objp->stock_physique < 0 ? ' '.img_warning() : '');
 		}
 	} else {
 		if (!empty($objp->stock_physique)) {
-			print price2num($objp->stock_physique, 'MS').($objp->stock_physique < 0 ? ' '.img_warning() : (($objp->stock_physique > 1 && $objp->tobatch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')): ''));
+			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			print price2num($objp->stock_physique, 'MS');
+			if ($objp->stock_physique < 0) { print '</span>'; }
+			print ($objp->stock_physique < 0 ? ' '.img_warning() : (($objp->stock_physique > 1 && $objp->tobatch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')): ''));
 		}
 	}
 	print '</td>';
