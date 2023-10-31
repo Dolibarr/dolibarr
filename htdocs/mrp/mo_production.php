@@ -480,7 +480,7 @@ if (empty($reshook)) {
 			}
 			$moline->qty = GETPOST('qty_lineProduce', 'int');
 			$res = $moline->update($user);
-			if ($res < 0){
+			if ($res < 0) {
 				setEventMessages($moline->error, $moline->errors, 'errors');
 				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
@@ -930,7 +930,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if (is_object($objectline)) {
 				$extrafields->fetch_name_optionals_label($object->table_element_line);
 				$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
-				if (!empty($temps)){
+				if (!empty($temps)) {
 					print '<tr class="liste_titre"><td style="padding-top: 20px" colspan="9" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 					print $temps;
 					print '</td></tr>';
@@ -1051,7 +1051,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '</div></td>';
 							}
 						}
-
 					} else {
 						$suffix = '_' . $line->id;
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
