@@ -2209,9 +2209,10 @@ class Product extends CommonObject
 	 * @param  int    $ignore_autogen    Used to avoid infinite loops
 	 * @param  array  $localtaxes_array  Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 * @param  string $newdefaultvatcode Default vat code
+	 * @param  int    $notrigger         Disable triggers
 	 * @return int                            <0 if KO, >0 if OK
 	 */
-	public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '')
+	public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -2380,10 +2381,12 @@ class Product extends CommonObject
 				$this->level = $level; // Store level of price edited for trigger
 
 				// Call trigger
-				$result = $this->call_trigger('PRODUCT_PRICE_MODIFY', $user);
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
+				if (!$notrigger) {
+					$result = $this->call_trigger('PRODUCT_PRICE_MODIFY', $user);
+					if ($result < 0) {
+						$this->db->rollback();
+						return -1;
+					}
 				}
 				// End call triggers
 
@@ -5825,7 +5828,7 @@ class Product extends CommonObject
 		$reshook = $hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
 		if ($reshook > 0) {
 			$this->stock_theorique = $hookmanager->resArray['stock_theorique'];
-		} elseif (isset($hookmanager->resArray['stock_stats_hook'])) {
+		} elseif ($reshook == 0 && isset($hookmanager->resArray['stock_stats_hook'])) {
 			$this->stock_theorique += $hookmanager->resArray['stock_stats_hook'];
 		}
 
