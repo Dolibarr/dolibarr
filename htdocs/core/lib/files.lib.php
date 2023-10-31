@@ -1038,7 +1038,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
 					$ecmfile->fullpath_orig = $srcfile;
-					$ecmfile->gen_or_uploaded = 'upload';
+					$ecmfile->gen_or_uploaded = 'uploaded';
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
 					} else {
