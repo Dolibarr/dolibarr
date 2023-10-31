@@ -1814,7 +1814,7 @@ if ($action == 'create' && $usercancreate) {
 
 	print dol_get_fiche_head('');
 
-	// Call Hook tabContentViewOrder
+	// Call Hook tabContentCreateOrder
 	$parameters = array();
 	// Note that $action and $object may be modified by hook
 	$reshook = $hookmanager->executeHooks('tabContentCreateOrder', $parameters, $object, $action);
