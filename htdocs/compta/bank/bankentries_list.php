@@ -713,7 +713,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 $nbtotalofpages = 0;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);

@@ -97,7 +97,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
 $sql .= " WHERE e.entity IN (".getEntity('establishment').')';
 
 // Count total nb of records
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);

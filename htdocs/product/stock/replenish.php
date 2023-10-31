@@ -532,7 +532,7 @@ if ($includeproductswithoutdesiredqty == 'on') {
 	$includeproductswithoutdesiredqtychecked = 'checked';
 }
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

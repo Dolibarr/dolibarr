@@ -578,7 +578,7 @@ if ($action != "create" && $action != "edit") {
 	$title = $langs->transnoentitiesnoconv("Skilldets");
 	$morejs = array();
 	$morecss = array();
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = '';
 
 	// Build and execute select
 	// --------------------------------------------------------------------

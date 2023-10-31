@@ -100,7 +100,7 @@ $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 $sql .= " GROUP BY year, month, df";
 $sql .= " ORDER BY year DESC, month DESC, df DESC";
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

@@ -592,7 +592,7 @@ if ($object->fetch($id) >= 0) {
 
 
 	// Count total nb of records
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = '';
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);

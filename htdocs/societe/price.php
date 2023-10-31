@@ -451,7 +451,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		);
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = '';
 		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
@@ -535,7 +535,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 
 		// Count total nb of records
-		$nbtotalofrecords = 0;
+		$nbtotalofrecords = '';
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}

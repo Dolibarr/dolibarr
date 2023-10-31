@@ -558,7 +558,7 @@ $title_page .= ')';
 llxHeader('', $title_page);
 
 // List
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	// TODO Perf Replace this by a count
 	if ($type == 'sub') {

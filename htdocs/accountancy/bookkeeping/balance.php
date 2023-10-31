@@ -253,7 +253,7 @@ llxHeader('', $title_page);
 
 if ($action != 'export_csv') {
 	// List
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = '';
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		if ($type == 'sub') {
 			$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);

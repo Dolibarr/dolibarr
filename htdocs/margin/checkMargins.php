@@ -229,7 +229,7 @@ if ($search_ref) {
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
