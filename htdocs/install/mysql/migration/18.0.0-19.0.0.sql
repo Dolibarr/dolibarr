@@ -160,9 +160,9 @@ ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 ALTER TABLE llx_mailing ADD COLUMN note_private text;
 ALTER TABLE llx_mailing ADD COLUMN note_public text;
 
-ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
-ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
-ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_user_rib ADD COLUMN intermediary_bic varchar(11) AFTER bic;
+ALTER TABLE llx_bank_account ADD COLUMN intermediary_bic varchar(11) AFTER bic;
+ALTER TABLE llx_societe_rib ADD COLUMN intermediary_bic varchar(11) AFTER bic;
 
 UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
 
