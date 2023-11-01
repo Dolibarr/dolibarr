@@ -5247,12 +5247,12 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Return clicable link of object (with eventually picto)
+	 *    Return clickable link of object (with eventually picto)
 	 *
 	 * @param	int		$withpicto				Add picto into link
 	 * @param	string	$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
 	 * @param	int		$maxlength				Maxlength of ref
-	 * @param 	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param 	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values when clicking
 	 * @param	int		$notooltip				No tooltip
 	 * @param  	string  $morecss            	''=Add more css on link
 	 * @param	int		$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
