@@ -130,6 +130,7 @@ class UserBankAccount extends Account
 		$sql .= ",number='".$this->db->escape($this->number)."'";
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",intermediary_bic='".$this->db->escape($this->intermediary_bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
@@ -168,7 +169,7 @@ class UserBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation, ur.proprio";
+		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.intermediary_bic, ur.iban_prefix as iban, ur.domiciliation, ur.proprio";
 		$sql .= ", ur.owner_address, ur.label, ur.datec, ur.tms as datem";
 		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
 		$sql .= ', c.code as country_code, c.label as country';

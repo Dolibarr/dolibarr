@@ -853,6 +853,15 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			}
 		}
 		print '</td>';
+		// Intermediary BIC
+		print '<td>';
+		print dol_escape_htmltag($account->intermediary_bic);
+		if (!empty($account->intermediary_bic)) {
+			if (!checkIntermediarySwiftForAccount($account)) {
+				print ' '.img_picto($langs->trans("IntermediarySwiftNotValid"), 'warning');
+			}
+		}
+		print '</td>';
 
 		// Currency
 		print '<td>'.$account->currency_code.'</td>';

@@ -294,6 +294,27 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
 }
 
 /**
+ *      Check Intermediary SWIFT informations for a bank account
+ *
+ *      @param  Account     $account    A bank account (used to get intermediary BIC/SWIFT)
+ *      @param	string		$intermediary_swift		Intermediary Swift value (used to get intermediary BIC/SWIFT, param $account non used if provided)
+ *      @return boolean                 True if informations are valid, false otherwise
+ */
+function checkIntermediarySwiftForAccount(Account $account = null, $intermediary_swift = null)
+{
+	if ($account == null && $intermediary_swift == null) {
+		return false;
+	} elseif ($intermediary_swift == null) {
+		$intermediary_swift = $account->intermediary_bic;
+	}
+	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $intermediary_swift)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
  *      Check IBAN number informations for a bank account.
  *
  *      @param  Account     $account    	A bank account

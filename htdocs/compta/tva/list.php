@@ -172,7 +172,7 @@ $help_url = '';
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye as status, t.fk_typepayment as type, t.fk_account,';
-$sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
+$sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.intermediary_bic, ba.currency_code, ba.clos,';
 $sql.= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
 
@@ -215,7 +215,7 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND t.paye = ".((int) $search_status);
 }
 
-$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
+$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.intermediary_bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
 
 // Count total nb of records
 $nbtotalofrecords = '';

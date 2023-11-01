@@ -99,37 +99,38 @@ class CompanyBankAccount extends Account
 		'number' => array('type'=>'varchar(255)', 'label'=>'Number', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'cle_rib' => array('type'=>'varchar(5)', 'label'=>'Clerib', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'bic' => array('type'=>'varchar(20)', 'label'=>'Bic', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'iban_prefix' => array('type'=>'varchar(34)', 'label'=>'Ibanprefix', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'domiciliation' => array('type'=>'varchar(255)', 'label'=>'Domiciliation', 'enabled'=>'1', 'position'=>75, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'proprio' => array('type'=>'varchar(60)', 'label'=>'Proprio', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'owner_address' => array('type'=>'varchar(255)', 'label'=>'Owneraddress', 'enabled'=>'1', 'position'=>85, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'default_rib' => array('type'=>'smallint(6)', 'label'=>'Defaultrib', 'enabled'=>'1', 'position'=>90, 'notnull'=>1, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'state_id' => array('type'=>'integer', 'label'=>'Stateid', 'enabled'=>'1', 'position'=>95, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'fk_country' => array('type'=>'integer', 'label'=>'Fkcountry', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1', 'css'=>'maxwidth500 widthcentpercentminusxx',),
-		'currency_code' => array('type'=>'varchar(3)', 'label'=>'Currencycode', 'enabled'=>'1', 'position'=>105, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'rum' => array('type'=>'varchar(32)', 'label'=>'Rum', 'enabled'=>'1', 'position'=>110, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'date_rum' => array('type'=>'date', 'label'=>'Daterum', 'enabled'=>'1', 'position'=>115, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'frstrecur' => array('type'=>'varchar(16)', 'label'=>'Frstrecur', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'intermediary_bic' => array('type'=>'varchar(20)', 'label'=>'Intermediary bic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'iban_prefix' => array('type'=>'varchar(34)', 'label'=>'Ibanprefix', 'enabled'=>'1', 'position'=>75, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'domiciliation' => array('type'=>'varchar(255)', 'label'=>'Domiciliation', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'proprio' => array('type'=>'varchar(60)', 'label'=>'Proprio', 'enabled'=>'1', 'position'=>85, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'owner_address' => array('type'=>'varchar(255)', 'label'=>'Owneraddress', 'enabled'=>'1', 'position'=>90, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'default_rib' => array('type'=>'smallint(6)', 'label'=>'Defaultrib', 'enabled'=>'1', 'position'=>95, 'notnull'=>1, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'state_id' => array('type'=>'integer', 'label'=>'Stateid', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'fk_country' => array('type'=>'integer', 'label'=>'Fkcountry', 'enabled'=>'1', 'position'=>105, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1', 'css'=>'maxwidth500 widthcentpercentminusxx',),
+		'currency_code' => array('type'=>'varchar(3)', 'label'=>'Currencycode', 'enabled'=>'1', 'position'=>110, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'rum' => array('type'=>'varchar(32)', 'label'=>'Rum', 'enabled'=>'1', 'position'=>115, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'date_rum' => array('type'=>'date', 'label'=>'Daterum', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'frstrecur' => array('type'=>'varchar(16)', 'label'=>'Frstrecur', 'enabled'=>'1', 'position'=>125, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>900, 'notnull'=>0, 'visible'=>-2, 'alwayseditable'=>'1',),
-		'last_four' => array('type'=>'varchar(4)', 'label'=>'Lastfour', 'enabled'=>'1', 'position'=>130, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'card_type' => array('type'=>'varchar(255)', 'label'=>'Cardtype', 'enabled'=>'1', 'position'=>135, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'cvn' => array('type'=>'varchar(255)', 'label'=>'Cvn', 'enabled'=>'1', 'position'=>140, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'exp_date_month' => array('type'=>'integer', 'label'=>'Expdatemonth', 'enabled'=>'1', 'position'=>145, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'exp_date_year' => array('type'=>'integer', 'label'=>'Expdateyear', 'enabled'=>'1', 'position'=>150, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'country_code' => array('type'=>'varchar(10)', 'label'=>'Countrycode', 'enabled'=>'1', 'position'=>155, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'approved' => array('type'=>'integer', 'label'=>'Approved', 'enabled'=>'1', 'position'=>160, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>'1', 'position'=>165, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'ending_date' => array('type'=>'date', 'label'=>'Endingdate', 'enabled'=>'1', 'position'=>170, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'max_total_amount_of_all_payments' => array('type'=>'double(24,8)', 'label'=>'Maxtotalamountofallpayments', 'enabled'=>'1', 'position'=>175, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'preapproval_key' => array('type'=>'varchar(255)', 'label'=>'Preapprovalkey', 'enabled'=>'1', 'position'=>180, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'starting_date' => array('type'=>'date', 'label'=>'Startingdate', 'enabled'=>'1', 'position'=>185, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'total_amount_of_all_payments' => array('type'=>'double(24,8)', 'label'=>'Totalamountofallpayments', 'enabled'=>'1', 'position'=>190, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'stripe_card_ref' => array('type'=>'varchar(128)', 'label'=>'Stripecardref', 'enabled'=>'1', 'position'=>195, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'last_four' => array('type'=>'varchar(4)', 'label'=>'Lastfour', 'enabled'=>'1', 'position'=>135, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'card_type' => array('type'=>'varchar(255)', 'label'=>'Cardtype', 'enabled'=>'1', 'position'=>140, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'cvn' => array('type'=>'varchar(255)', 'label'=>'Cvn', 'enabled'=>'1', 'position'=>145, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'exp_date_month' => array('type'=>'integer', 'label'=>'Expdatemonth', 'enabled'=>'1', 'position'=>150, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'exp_date_year' => array('type'=>'integer', 'label'=>'Expdateyear', 'enabled'=>'1', 'position'=>155, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'country_code' => array('type'=>'varchar(10)', 'label'=>'Countrycode', 'enabled'=>'1', 'position'=>160, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'approved' => array('type'=>'integer', 'label'=>'Approved', 'enabled'=>'1', 'position'=>165, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>'1', 'position'=>170, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'ending_date' => array('type'=>'date', 'label'=>'Endingdate', 'enabled'=>'1', 'position'=>175, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'max_total_amount_of_all_payments' => array('type'=>'double(24,8)', 'label'=>'Maxtotalamountofallpayments', 'enabled'=>'1', 'position'=>180, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'preapproval_key' => array('type'=>'varchar(255)', 'label'=>'Preapprovalkey', 'enabled'=>'1', 'position'=>185, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'starting_date' => array('type'=>'date', 'label'=>'Startingdate', 'enabled'=>'1', 'position'=>190, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'total_amount_of_all_payments' => array('type'=>'double(24,8)', 'label'=>'Totalamountofallpayments', 'enabled'=>'1', 'position'=>195, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'stripe_card_ref' => array('type'=>'varchar(128)', 'label'=>'Stripecardref', 'enabled'=>'1', 'position'=>200, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'comment' => array('type'=>'varchar(255)', 'label'=>'Comment', 'enabled'=>'1', 'position'=>205, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'ipaddress' => array('type'=>'varchar(68)', 'label'=>'Ipaddress', 'enabled'=>'1', 'position'=>210, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'stripe_account' => array('type'=>'varchar(128)', 'label'=>'Stripeaccount', 'enabled'=>'1', 'position'=>215, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
-		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>230),
+		'comment' => array('type'=>'varchar(255)', 'label'=>'Comment', 'enabled'=>'1', 'position'=>210, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'ipaddress' => array('type'=>'varchar(68)', 'label'=>'Ipaddress', 'enabled'=>'1', 'position'=>215, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'stripe_account' => array('type'=>'varchar(128)', 'label'=>'Stripeaccount', 'enabled'=>'1', 'position'=>220, 'notnull'=>0, 'visible'=>-1, 'alwayseditable'=>'1',),
+		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>235),
 	);
 	public $id;
 	public $type;
@@ -156,6 +157,7 @@ class CompanyBankAccount extends Account
 	public $number;
 	public $cle_rib;
 	public $bic;
+	public $intermediary_bic;
 	public $iban_prefix;
 	public $domiciliation;
 	public $proprio;
@@ -360,6 +362,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",number='".$this->db->escape($this->number)."'";
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",intermediary_bic='".$this->db->escape($this->intermediary_bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
@@ -424,7 +427,7 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+		$sql = "SELECT rowid, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, intermediary_bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site";
 		$sql .= " ,last_main_doc";

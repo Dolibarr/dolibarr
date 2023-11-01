@@ -140,6 +140,12 @@ class Account extends CommonObject
 	public $bic;
 
 	/**
+	 * Intermediary BIC/Swift code
+	 * @var string
+	 */
+	public $intermediary_bic;
+
+	/**
 	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database (TODO Rename field in database)
 	 * @var string
 	 */
@@ -318,36 +324,37 @@ class Account extends CommonObject
 		'number' =>array('type'=>'varchar(255)', 'label'=>'Number', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'cle_rib' =>array('type'=>'varchar(5)', 'label'=>'Cle rib', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'bic' =>array('type'=>'varchar(11)', 'label'=>'Bic', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'iban_prefix' =>array('type'=>'varchar(34)', 'label'=>'Iban prefix', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
-		'country_iban' =>array('type'=>'varchar(2)', 'label'=>'Country iban', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'cle_iban' =>array('type'=>'varchar(2)', 'label'=>'Cle iban', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'domiciliation' =>array('type'=>'varchar(255)', 'label'=>'Domiciliation', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'state_id' =>array('type'=>'integer', 'label'=>'StateId', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'fk_pays' =>array('type'=>'integer', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>95),
-		'proprio' =>array('type'=>'varchar(60)', 'label'=>'Proprio', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'owner_address' =>array('type'=>'varchar(255)', 'label'=>'Owner address', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'owner_zip' =>array('type'=>'varchar(25)', 'label'=>'Owner zip', 'enabled'=>1, 'visible'=>-1, 'position'=>106),
-		'owner_town' =>array('type'=>'varchar(50)', 'label'=>'Owner town', 'enabled'=>1, 'visible'=>-1, 'position'=>107),
-		'owner_country_id' =>array('type'=>'integer', 'label'=>'Owner country', 'enabled'=>1, 'visible'=>-1, 'position'=>108),
-		'courant' =>array('type'=>'smallint(6)', 'label'=>'Courant', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>110),
-		'clos' =>array('type'=>'smallint(6)', 'label'=>'Clos', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>115),
-		'rappro' =>array('type'=>'smallint(6)', 'label'=>'Rappro', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
-		'url' =>array('type'=>'varchar(128)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'account_number' =>array('type'=>'varchar(32)', 'label'=>'Account number', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
-		'fk_accountancy_journal' =>array('type'=>'integer', 'label'=>'Accountancy journal ID', 'enabled'=>1, 'visible'=>-1, 'position'=>132),
-		'accountancy_journal' =>array('type'=>'varchar(20)', 'label'=>'Accountancy journal', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
-		'currency_code' =>array('type'=>'varchar(3)', 'label'=>'Currency code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>140),
-		'min_allowed' =>array('type'=>'integer', 'label'=>'Min allowed', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
-		'min_desired' =>array('type'=>'integer', 'label'=>'Min desired', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'comment' =>array('type'=>'text', 'label'=>'Comment', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>156),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>157),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>165),
-		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>170),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>175),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
-		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'intermediary_bic' =>array('type'=>'varchar(11)', 'label'=>'Intermediary bic', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'iban_prefix' =>array('type'=>'varchar(34)', 'label'=>'Iban prefix', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'country_iban' =>array('type'=>'varchar(2)', 'label'=>'Country iban', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'cle_iban' =>array('type'=>'varchar(2)', 'label'=>'Cle iban', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'domiciliation' =>array('type'=>'varchar(255)', 'label'=>'Domiciliation', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'state_id' =>array('type'=>'integer', 'label'=>'StateId', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'fk_pays' =>array('type'=>'integer', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>100),
+		'proprio' =>array('type'=>'varchar(60)', 'label'=>'Proprio', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+		'owner_address' =>array('type'=>'varchar(255)', 'label'=>'Owner address', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		'owner_zip' =>array('type'=>'varchar(25)', 'label'=>'Owner zip', 'enabled'=>1, 'visible'=>-1, 'position'=>111),
+		'owner_town' =>array('type'=>'varchar(50)', 'label'=>'Owner town', 'enabled'=>1, 'visible'=>-1, 'position'=>112),
+		'owner_country_id' =>array('type'=>'integer', 'label'=>'Owner country', 'enabled'=>1, 'visible'=>-1, 'position'=>113),
+		'courant' =>array('type'=>'smallint(6)', 'label'=>'Courant', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>115),
+		'clos' =>array('type'=>'smallint(6)', 'label'=>'Clos', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>120),
+		'rappro' =>array('type'=>'smallint(6)', 'label'=>'Rappro', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'url' =>array('type'=>'varchar(128)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'account_number' =>array('type'=>'varchar(32)', 'label'=>'Account number', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+		'fk_accountancy_journal' =>array('type'=>'integer', 'label'=>'Accountancy journal ID', 'enabled'=>1, 'visible'=>-1, 'position'=>137),
+		'accountancy_journal' =>array('type'=>'varchar(20)', 'label'=>'Accountancy journal', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+		'currency_code' =>array('type'=>'varchar(3)', 'label'=>'Currency code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>145),
+		'min_allowed' =>array('type'=>'integer', 'label'=>'Min allowed', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+		'min_desired' =>array('type'=>'integer', 'label'=>'Min desired', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
+		'comment' =>array('type'=>'text', 'label'=>'Comment', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>161),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>162),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>170),
+		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>175),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>180),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>185),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -413,6 +420,8 @@ class Account extends CommonObject
 				$string .= $this->cle_rib.' ';
 			} elseif ($val == 'BIC') {
 				$string .= $this->bic.' ';
+			} elseif ($val == 'IntermediaryBIC') {
+				$string .= $this->intermediary_bic.' ';
 			} elseif ($val == 'IBAN') {
 				$string .= $this->iban.' ';
 			}
@@ -721,6 +730,7 @@ class Account extends CommonObject
 		$sql .= ", number";
 		$sql .= ", cle_rib";
 		$sql .= ", bic";
+		$sql .= ", intermediary_bic";
 		$sql .= ", iban_prefix";
 		$sql .= ", domiciliation";
 		$sql .= ", pti_in_ctti";
@@ -751,6 +761,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->number)."'";
 		$sql .= ", '".$this->db->escape($this->cle_rib)."'";
 		$sql .= ", '".$this->db->escape($this->bic)."'";
+		$sql .= ", '".$this->db->escape($this->intermediary_bic)."'";
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->domiciliation)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
@@ -877,6 +888,7 @@ class Account extends CommonObject
 		$sql .= ",number='".$this->db->escape($this->number)."'";
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",intermediary_bic='".$this->db->escape($this->intermediary_bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
@@ -964,6 +976,7 @@ class Account extends CommonObject
 		$sql .= ",number='".$this->db->escape($this->number)."'";
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",intermediary_bic='".$this->db->escape($this->intermediary_bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
@@ -1004,7 +1017,7 @@ class Account extends CommonObject
 		}
 
 		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
-		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
+		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.intermediary_bic, ba.iban_prefix as iban,";
 		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
@@ -1030,39 +1043,40 @@ class Account extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
-				$this->id            = $obj->rowid;
-				$this->rowid         = $obj->rowid;
-				$this->ref           = $obj->ref;
-				$this->label         = $obj->label;
-				$this->type          = $obj->courant;
-				$this->courant       = $obj->courant;
-				$this->bank          = $obj->bank;
-				$this->clos          = $obj->clos;
-				$this->rappro        = $obj->rappro;
-				$this->url           = $obj->url;
+				$this->id           	= $obj->rowid;
+				$this->rowid         	= $obj->rowid;
+				$this->ref         	  	= $obj->ref;
+				$this->label        	= $obj->label;
+				$this->type         	= $obj->courant;
+				$this->courant       	= $obj->courant;
+				$this->bank          	= $obj->bank;
+				$this->clos          	= $obj->clos;
+				$this->rappro        	= $obj->rappro;
+				$this->url          	= $obj->url;
 
-				$this->code_banque   = $obj->code_banque;
-				$this->code_guichet  = $obj->code_guichet;
-				$this->number        = $obj->number;
-				$this->cle_rib       = $obj->cle_rib;
-				$this->bic           = $obj->bic;
-				$this->iban          = $obj->iban;
-				$this->domiciliation = $obj->address;
-				$this->address       = $obj->address;
-				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->proprio;
-				$this->owner_address = $obj->owner_address;
-				$this->owner_zip     = $obj->owner_zip;
-				$this->owner_town    = $obj->owner_town;
+				$this->code_banque   	= $obj->code_banque;
+				$this->code_guichet  	= $obj->code_guichet;
+				$this->number           = $obj->number;
+				$this->cle_rib          = $obj->cle_rib;
+				$this->bic              = $obj->bic;
+				$this->intermediary_bic = $obj->intermediary_bic;
+				$this->iban          	= $obj->iban;
+				$this->domiciliation	= $obj->address;
+				$this->address       	= $obj->address;
+				$this->pti_in_ctti   	= $obj->pti_in_ctti;
+				$this->proprio       	= $obj->proprio;
+				$this->owner_address 	= $obj->owner_address;
+				$this->owner_zip     	= $obj->owner_zip;
+				$this->owner_town    	= $obj->owner_town;
 				$this->owner_country_id = $obj->owner_country_id;
 
-				$this->state_id        = $obj->state_id;
-				$this->state_code      = $obj->state_code;
-				$this->state           = $obj->state;
+				$this->state_id        	= $obj->state_id;
+				$this->state_code      	= $obj->state_code;
+				$this->state          	= $obj->state;
 
-				$this->country_id    = $obj->country_id;
-				$this->country_code  = $obj->country_code;
-				$this->country       = $obj->country;
+				$this->country_id    	= $obj->country_id;
+				$this->country_code  	= $obj->country_code;
+				$this->country       	= $obj->country;
 
 				$this->account_number = $obj->account_number;
 				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
@@ -1574,6 +1588,10 @@ class Account extends CommonObject
 			$error++;
 			$this->error_message = 'SwiftNotValid';
 		}
+		if (!checkIntermediarySwiftForAccount($this)) {
+			$error++;
+			$this->error_message = 'IntermediarySwiftNotValid';
+		}
 
 		if (! $error) {
 			return 1;
@@ -1747,6 +1765,7 @@ class Account extends CommonObject
 		if ($includeibanbic) {
 			$fieldarray[] = 'IBAN';
 			$fieldarray[] = 'BIC';
+			$fieldarray[] = 'IntermediaryBIC';
 		}
 		//}
 
@@ -1808,25 +1827,26 @@ class Account extends CommonObject
 	public function initAsSpecimen()
 	{
 		// Example of IBAN FR7630001007941234567890185
-		$this->specimen        = 1;
-		$this->ref             = 'MBA';
-		$this->label           = 'My Big Company Bank account';
-		$this->bank            = 'MyBank';
-		$this->courant         = Account::TYPE_CURRENT;
-		$this->clos            = Account::STATUS_OPEN;
-		$this->code_banque     = '30001';
-		$this->code_guichet    = '00794';
-		$this->number          = '12345678901';
-		$this->cle_rib         = '85';
-		$this->bic             = 'AA12';
-		$this->iban            = 'FR7630001007941234567890185';
-		$this->domiciliation   = 'Banque de France';
-		$this->proprio         = 'Owner';
-		$this->owner_address   = 'Owner address';
-		$this->owner_zip       = 'Owner zip';
-		$this->owner_town      = 'Owner town';
+		$this->specimen         = 1;
+		$this->ref              = 'MBA';
+		$this->label            = 'My Big Company Bank account';
+		$this->bank             = 'MyBank';
+		$this->courant          = Account::TYPE_CURRENT;
+		$this->clos             = Account::STATUS_OPEN;
+		$this->code_banque      = '30001';
+		$this->code_guichet     = '00794';
+		$this->number           = '12345678901';
+		$this->cle_rib          = '85';
+		$this->bic              = 'AA12';
+		$this->intermediary_bic = 'AA13';
+		$this->iban             = 'FR7630001007941234567890185';
+		$this->domiciliation    = 'Banque de France';
+		$this->proprio          = 'Owner';
+		$this->owner_address    = 'Owner address';
+		$this->owner_zip        = 'Owner zip';
+		$this->owner_town       = 'Owner town';
 		$this->owner_country_id = 'Owner country_id';
-		$this->country_id      = 1;
+		$this->country_id       = 1;
 	}
 
 	/**

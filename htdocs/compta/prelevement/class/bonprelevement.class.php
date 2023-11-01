@@ -1999,12 +1999,12 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Write recipient (thirdparty concerned by request)
 	 *
-	 *	@param	string		$row_code_client	soc.code_client as code,
-	 *	@param	string		$row_nom			pl.client_nom AS name,
-	 *	@param	string		$row_address		soc.address AS adr,
-	 *	@param	string		$row_zip			soc.zip
-	 *  @param	string		$row_town			soc.town
-	 *	@param	string		$row_country_code	c.code AS country,
+	 *	@param	string		$row_code_client  	soc.code_client as code,
+	 *	@param	string		$row_nom		    pl.client_nom AS name,
+	 *	@param	string		$row_address	    soc.address AS adr,
+	 *	@param	string		$row_zip		    soc.zip
+	 *  @param	string		$row_town		    soc.town
+	 *	@param	string		$row_country_code   c.code AS country,
 	 *	@param	string		$row_cb				pl.code_banque AS cb,		Not used for SEPA
 	 *	@param	string		$row_cg				pl.code_guichet AS cg,		Not used for SEPA
 	 *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA

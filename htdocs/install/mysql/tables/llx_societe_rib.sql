@@ -38,7 +38,7 @@ create table llx_societe_rib
   cle_rib        varchar(5),    -- key of bank account
 
   bic               varchar(20),    -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
-  bic_intermediate  varchar(11),    -- 11 according to ISO 9362. Same as bic but for intermediate bank
+  intermediary_bic  varchar(11),    -- 11 according to ISO 9362. Same as bic but for intermediary bank
   iban_prefix       varchar(34),    -- full iban. 34 according to ISO 13616
 
   domiciliation  varchar(255),

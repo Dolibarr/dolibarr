@@ -853,6 +853,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if ($account->getCountryCode() == 'IN') {
 		$bickey = "SWIFT";
 	}
+	$intermediary_bickey = "IntermediaryBICNumber";
 
 	// Get format of bank account according to its country
 	$usedetailedbban = $account->useDetailedBBAN();
@@ -868,7 +869,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			$cury += 3;
 		}
 
-		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN)) {    // Note that some countries still need bank number, BIC/IBAN not enougth for them
+		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN)) {    // Note that some countries still need bank number, BIC/IBAN not enough for them
 			// Note:
 			// bank = code_banque (FR), sort code (GB, IR. Example: 12-34-56)
 			// desk = code guichet (FR), used only when $usedetailedbban = 1
@@ -899,7 +900,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 					// Key
 					$tmplength = 15;
 					$content = $account->cle_rib;
-				} elseif ($val == 'IBAN' || $val == 'BIC') {
+				} elseif ($val == 'IBAN' || $val == 'BIC' || $val == 'IntermediaryBIC') {
 					// Key
 					$tmplength = 0;
 					$content = '';
@@ -985,6 +986,13 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+		$cury += 3;
+	}
+
+	if (!empty($account->intermediary_bic)) {
+		$pdf->SetFont('', 'B', $default_font_size - 3);
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($intermediary_bickey).': '.$outputlangs->convToOutputCharset($account->intermediary_bic), 0, 'L', 0);
 	}
 
 	return $pdf->getY();
