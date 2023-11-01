@@ -3,18 +3,41 @@
 # Count number of commits per user and per versions (using date for version detection)
 #
 
-Releases=("17.0" "18.0" "develop")
-Dates=("2022-08-15", "2023-02-01" "2023-08-31" "2050-01-01")
+Releases=("3.9" "4.0" "5.0" "6.0" "7.0" "8.0" "9.0" "10.0" "11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0" "develop")
 let "counter = 0"
 
+echo "Copy script into /tmp/github_commits_perversion.sh"
+cp $0 /tmp/github_commits_perversion.sh
+
+mkdir /tmp/git
+cd /tmp/git
+git clone https://github.com/Dolibarr/dolibarr.git
+
+cd /tmp/git/dolibarr
+
+firstline=1
 for i in "${Releases[@]}"
 do
-  echo "=== Version $i (counter $counter): git shortlog -s -n  --after=${Dates[counter]} --before=${Dates[counter+1]}"
-  git shortlog -s -n  --after=${Dates[counter]} --before=${Dates[counter+1]} | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
-  cat /tmp/github_commits_perversion.txt
+  if [ $firstline -eq 1 ]; then
+    firstline=0
+  	continue
+  fi
+  
+  #echo "=== Version $i (counter $counter):"
+  echo "=== Version $i (counter $counter):"
+  echo "Get common commit ID between origin/${Releases[counter]} and origin/${Releases[counter+1]}"
+  echo "git merge-base origin/${Releases[counter]} origin/${Releases[counter+1]}"
+  commitidcommon=`git merge-base origin/${Releases[counter]} origin/${Releases[counter+1]}`
+  echo "Found commitid=$commitidcommon"
+  
+  echo "Checkout into version $i"
+  git checkout $i  
+  #git shortlog -s -n  --after=YYYY-MM-DD --before=YYYY-MM-DD | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
+  git shortlog -s -n $commitidcommon.. | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
+  #cat /tmp/github_commits_perversion.txt
   echo "Total for version $i:"
   echo -n "- Nb of commits: " 
-  git log --pretty=oneline --after=${Dates[counter]} --before=${Dates[counter+1]} | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion2.txt
+  git log $commitidcommon.. --pretty=oneline | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion2.txt
   cat /tmp/github_commits_perversion2.txt | wc -l
   echo -n "- Nb of different authors: " 
   awk ' { print $2 } ' < /tmp/github_commits_perversion.txt | sort -u | wc -l
