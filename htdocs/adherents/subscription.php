@@ -211,6 +211,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
+	$defaultdelay = $adht->duration_value;
+	$defaultdelayunit = $adht->duration_unit;
 	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
@@ -468,6 +470,8 @@ if ($rowid > 0) {
 	}
 
 	$adht->fetch($object->typeid);
+	$defaultdelay = $adht->duration_value;
+	$defaultdelayunit = $adht->duration_unit;
 
 	$head = member_prepare_head($object);
 

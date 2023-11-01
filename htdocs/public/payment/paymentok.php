@@ -399,6 +399,9 @@ if ($ispaymentok) {
 		$result1 = $object->fetch((int) $tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
+		$defaultdelay = $adht->duration_value;
+		$defaultdelayunit = $adht->duration_unit;
+		
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
 
 		if ($result1 > 0 && $result2 > 0) {
