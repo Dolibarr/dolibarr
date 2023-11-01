@@ -311,7 +311,6 @@ if (empty($reshook)) {
 		} else {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
-		
 		// Update stock for batch products
 		if (isModEnabled('productbatch')) {
 			require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
@@ -331,9 +330,6 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	
-	
-
 	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
 		$creditnote = new Facture($db);
 		$creditnote->socid = $invoice->socid;
@@ -529,7 +525,7 @@ if (empty($reshook)) {
 		// Local Taxes
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
-		
+
 		if (isModEnabled('productbatch') && isModEnabled('stock')) {
 			$batchid = GETPOST('batchid', 'int');
 
@@ -864,7 +860,7 @@ if (empty($reshook)) {
 
 		$invoice->fetch($placeid);
 	}
-	
+
 	if ($action=="setbatchid") {
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code=".((int) $batchid)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
