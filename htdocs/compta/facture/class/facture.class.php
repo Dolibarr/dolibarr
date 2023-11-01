@@ -2274,14 +2274,12 @@ class Facture extends CommonInvoice
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.ref_ext,';
 		$sql .= ' l.situation_percent, l.fk_prev_id,';
-		$sql .= ' l.rang, l.special_code,';
+		$sql .= ' l.rang, l.special_code, l.batch, l.fk_warehouse,';
 		$sql .= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql .= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.fk_unit,';
@@ -2350,6 +2348,9 @@ class Facture extends CommonInvoice
 				$line->situation_percent = $objp->situation_percent;
 				$line->fk_prev_id = $objp->fk_prev_id;
 				$line->fk_unit = $objp->fk_unit;
+
+				$line->batch = $objp->batch;
+				$line->fk_warehouse = $objp->fk_warehouse;
 
 				// Accountancy
 				$line->fk_accounting_account = $objp->fk_code_ventilation;
@@ -6014,15 +6015,33 @@ class FactureLigne extends CommonInvoiceLine
 
 	public $remise_percent;
 
-	public $special_code; // Liste d'options non cumulabels:
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: ??
+	/**
+	 * List of special options to define line:
+	 * 1: shipment cost lines
+	 * 2: ecotaxe
+	 * 3: ??
+	 * idofmodule: a meaning for the module
+	 */
+	public $special_code;
+
+	/**
+	 * @var string		To store the batch to consume in stock when using a POS module
+	 */
+	public $batch;
+	/**
+	 * @var string		To store the warehouse where to consume stock when using a POS module
+	 */
+	public $fk_warehouse;
+
 
 	public $origin;
 	public $origin_id;
 
+	/**
+	 * @var integer		Id in table llx_accounting_bookeeping to know accounting account for product line
+	 */
 	public $fk_code_ventilation = 0;
+
 
 	public $date_start;
 	public $date_end;
