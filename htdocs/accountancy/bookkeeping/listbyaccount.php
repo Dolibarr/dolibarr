@@ -168,8 +168,8 @@ $arrayfields = array(
 	't.debit'=>array('label'=>$langs->trans("AccountingDebit"), 'checked'=>1),
 	't.credit'=>array('label'=>$langs->trans("AccountingCredit"), 'checked'=>1),
 	't.balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1),
-	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>0, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>-1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>-1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
