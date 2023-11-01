@@ -3,6 +3,46 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 18.0.3 compared to 18.0.2 *****
+FIX: #25793 Cannot add time spent (#26405)
+FIX: #26100 Ticket - On edit, list of closed project must be excluded (#26223)
+FIX: #26170
+FIX: #26195 Various payment - List of project excluded those assigned to third parties (#26222)
+FIX: #26349 add_customer_ref_on_linked_shipment
+FIX: avoid warning + CSRF
+FIX: avoid warning if module not activated
+FIX: Bad name for trigger in HRM module
+FIX: check tva_tx before comparing price_min_ttc (#25220)
+FIX: Compare the result of the send mail file function
+FIX: dol_eval with function starting with !
+FIX: Error handling for computed values on import (#24897)
+FIX: Error not returned on sales with takepos and batch module enabled
+FIX: error of webhook not returned
+FIX: firstname and lastname were not saved in attendee subscription
+FIX: HTML in ODT templates (#26181)
+FIX: Link to list of movement from the inventory code
+FIX: Mass import of stock from a file must accept empty source
+FIX: Max version of PHP (#26327)
+FIX: missing load group members for ldap synchro (#26167)
+FIX: missing project entity filter (Issue #26243) (#26247)
+FIX: modification of complementary attributes in invoices (#26180)
+FIX: On object validation, ecm index are not updated for uploaded files
+FIX: Propal's negative quantities
+FIX: public subscription page should not display acceptation for public register when it is not enabled (#26354)
+FIX: regression on rounding stocks fields on product list
+FIX: removed a non expected hidden input field in stockatdate page
+FIX: src_object_id and ttype not filed when uploading a file with API.
+FIX: suggested end for membership can be before subscription start (#26351)
+FIX: Supplier card - VAT Reserve Charge - Undefined function isInEEC() (#26379)
+FIX: syntax error
+FIX: template invoice list extrafield filters (backport v17) (#26227)
+FIX: Tooltip for search syntax must not appear on date fields
+FIX: upload of files src_object_type
+FIX: use event.key instead event.wich to avoid keyboard difference
+FIX: Use of line->insert instead of line->create
+FIX: user creation when LDAP is configured (#26332)
+FIX: Wrong backtopage given for the stocktransfer button from the stocktransfer list (#26271)
+
 ***** ChangeLog for 18.0.2 compared to 18.0.1 *****
 FIX: 17.0 PHP8: supplier invoice class
 FIX: #24908 #25824
