@@ -837,21 +837,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $stringescaped;
 		print '</td>';
 		// IBAN
-		print '<td>'.getIbanHumanReadable($account);
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(getIbanHumanReadable($account)).'">';
 		if (!empty($account->iban)) {
 			if (!checkIbanForAccount($account)) {
 				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
 			}
 		}
+		print getIbanHumanReadable($account);
 		print '</td>';
 		// BIC
-		print '<td>';
-		print dol_escape_htmltag($account->bic);
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($account->bic).'">';
 		if (!empty($account->bic)) {
 			if (!checkSwiftForAccount($account)) {
 				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
 			}
 		}
+		print dol_escape_htmltag($account->bic);
 		print '</td>';
 
 		// Currency
@@ -898,15 +899,15 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
-	//print '<div class="fichecenter">';
-
 	print '<div class="underbanner clearboth"></div>';
+	print '<br>';
+
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
+	print '<td><input size="30" type="text" name="label" value="'.$account->label.'" autofocus></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
+	print '<tr><td class="">'.$langs->trans("BankName").'</td>';
 	print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// Currency
@@ -950,37 +951,57 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 	}
 	print '</td></tr>';
 
+
 	// Show fields of bank account
-	foreach ($account->getFieldsToShow() as $val) {
+	$bankaccount = $account;
+	// Code here is similare than into paymentmodes.php for third-parties
+	foreach ($bankaccount->getFieldsToShow(1) as $val) {
+		$require = false;
+		$tooltip = '';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
-			$content = $account->code_banque;
+			$content = $bankaccount->code_banque;
 		} elseif ($val == 'DeskCode') {
 			$name = 'code_guichet';
 			$size = 8;
-			$content = $account->code_guichet;
+			$content = $bankaccount->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$name = 'number';
 			$size = 18;
-			$content = $account->number;
+			$content = $bankaccount->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$name = 'cle_rib';
 			$size = 3;
-			$content = $account->cle_rib;
+			$content = $bankaccount->cle_rib;
+		} elseif ($val == 'IBAN') {
+			$name = 'iban';
+			$size = 30;
+			$content = $bankaccount->iban;
+			if ($bankaccount->needIBAN()) {
+				$require = true;
+			}
+			$tooltip = $langs->trans("Example").':<br>CH93 0076 2011 6238 5295 7<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
+		} elseif ($val == 'BIC') {
+			$name = 'bic';
+			$size = 12;
+			$content = $bankaccount->bic;
+			if ($bankaccount->needIBAN()) {
+				$require = true;
+			}
+			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
 		}
-
-		print '<td>'.$langs->trans($val).'</td>';
+		print '<tr>';
+		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
+		if ($tooltip) {
+			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+		} else {
+			print $langs->trans($val);
+		}
+		print '</td>';
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
-
-	// IBAN
-	print '<tr><td class="fieldrequired">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
-
-	print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
@@ -1002,7 +1023,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Modify");
+	print $form->buttonsSaveCancel($action == 'create' ? "Create" : "Modify");
 }
 
 if ($id && $action == 'edit' && $user->hasRight('user', 'user', 'creer')) {
