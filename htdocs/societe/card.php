@@ -1342,7 +1342,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		$selected = (GETPOSTISSET('client') ?GETPOST('client', 'int') : $object->client);
-		print $formcompany->selectProspectCustomerType($selected);
+		$reshook = $hookmanager->executeHooks('selectProspectCustomerType');
+		if (empty($reshook)) {
+			print $formcompany->selectProspectCustomerType($selected);
+		}
 		print '</td>';
 
 		if ($conf->browser->layout == 'phone') {
@@ -2061,7 +2064,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Prospect/Customer
 			print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $formcompany->selectProspectCustomerType($object->client);
+			$reshook = $hookmanager->executeHooks('selectProspectCustomerType', array('client_type' => $object->client));
+			if (empty($reshook)) {
+				print $formcompany->selectProspectCustomerType($object->client);
+			}
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -2624,7 +2630,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		// Type Prospect/Customer/Supplier
 		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
-		print $object->getTypeUrl(1);
+		$reshook = $hookmanager->executeHooks('getTypeUrl', array('client_type' => $object->client));
+		if (empty($reshook)) {
+			print $object->getTypeUrl(1);
+		}
 		print '</td></tr>';
 
 		// Prefix
