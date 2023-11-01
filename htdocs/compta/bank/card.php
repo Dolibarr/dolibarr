@@ -553,6 +553,10 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
 		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOSTISSET('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
+		// Intermediary BIC
+		print '<tr><td>'.$langs->trans($intermediary_bickey).'</td>';
+		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="intermediary_bic" value="'.(GETPOSTISSET('intermediary_bic') ?GETPOST('intermediary_bic', 'alpha') : $object->intermediary_bic).'"></td></tr>';
+		
 		// Show fields of bank account
 		$sizecss = '';
 		foreach ($object->getFieldsToShow() as $val) {
@@ -796,6 +800,18 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
 			print '<td>'.$object->bic.'&nbsp;';
 			if (!empty($object->bic)) {
+				if (!checkSwiftForAccount($object)) {
+					print img_picto($langs->trans("SwiftNotValid"), 'warning');
+				} else {
+					print img_picto($langs->trans("SwiftValid"), 'info');
+				}
+			}
+			print '</td></tr>';
+
+			// Intermediary BIC
+			print '<tr><td>'.$langs->trans($intermediary_bickey).'</td>';
+			print '<td>'.$object->intermediary_bic.'&nbsp;';
+			if (!empty($object->intermediary_bic)) {
 				if (!checkSwiftForAccount($object)) {
 					print img_picto($langs->trans("SwiftNotValid"), 'warning');
 				} else {
@@ -1133,6 +1149,13 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans($bickey), $tooltip);
 			print '</td>';
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
+
+			// Intermediary BIC
+			print '<tr><td>';
+			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
+			print $form->textwithpicto($langs->trans($intermediary_bickey), $tooltip);
+			print '</td>';
+			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="intermediary_bic" value="'.(GETPOSTISSET('intermediary_bic') ? GETPOST('intermediary_bic',  'alphanohtml') : $object->intermediary_bic).'"></td></tr>';
 
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {

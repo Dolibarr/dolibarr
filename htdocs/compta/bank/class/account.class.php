@@ -140,6 +140,12 @@ class Account extends CommonObject
 	public $bic;
 
 	/**
+	 * Intermediary BIC/Swift code
+	 * @var string
+	 */
+	public $intermediary_bic;
+
+	/**
 	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database (TODO Rename field in database)
 	 * @var string
 	 */
@@ -721,6 +727,7 @@ class Account extends CommonObject
 		$sql .= ", number";
 		$sql .= ", cle_rib";
 		$sql .= ", bic";
+		$sql .= ", intermediary_bic";
 		$sql .= ", iban_prefix";
 		$sql .= ", domiciliation";
 		$sql .= ", pti_in_ctti";
