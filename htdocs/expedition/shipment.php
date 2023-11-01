@@ -791,7 +791,7 @@ if ($id > 0 || !empty($ref)) {
 						}
 						print '</td>';
 					} elseif ($objp->fk_product > 0 && $type == Product::TYPE_SERVICE && !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES) && isModEnabled('stock')) {
-						print '<td><span class="opacitymedium">('.$langs->trans("Service").')</span></td>';
+						print '<td class="center"><span class="opacitymedium">('.$langs->trans("Service").')</span></td>';
 					} else {
 						print '<td>&nbsp;</td>';
 					}
