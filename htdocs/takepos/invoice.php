@@ -316,12 +316,12 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			foreach ($invoice->lines as $line) {
-				if ($line->special_code > 0) {
+				if ($line->batch && $line->fk_warehouse > 0) {
 					$prod_batch = new Productbatch($db);
-					$prod_batch->fetch($line->special_code);
+					$prod_batch->fetch($line->batch);
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->special_code);
+					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
 				} else {
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
@@ -862,7 +862,8 @@ if (empty($reshook)) {
 	}
 
 	if ($action=="setbatchid") {
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code=".((int) $batchid)." where rowid=".((int) $idoflineadded);
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".((int) $batchid).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
