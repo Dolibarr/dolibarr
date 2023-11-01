@@ -22,7 +22,7 @@
  */
 
 /**
- * Class to manage accounting accounts
+ * Class to manage accounting journals
  */
 class AccountingJournal extends CommonObject
 {
@@ -210,7 +210,7 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param	int		$withlabel		0=No label, 1=Include label of journal
@@ -263,7 +263,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel) {
+		if ($withlabel == 1 && !empty($this->label)) {
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
 		}
 

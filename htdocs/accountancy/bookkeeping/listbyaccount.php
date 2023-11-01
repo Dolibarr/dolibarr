@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,11 +160,12 @@ $arrayfields = array(
 	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
 	't.doc_ref'=>array('label'=>$langs->trans("Piece"), 'checked'=>1),
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
-	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
-	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
-	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
+	't.lettering_code'=>array('label'=>$langs->trans("Lettering"), 'checked'=>1),
+	't.debit'=>array('label'=>$langs->trans("AccountingDebit"), 'checked'=>1),
+	't.credit'=>array('label'=>$langs->trans("AccountingCredit"), 'checked'=>1),
+	't.balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1),
+	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>0),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>0, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
@@ -194,6 +195,8 @@ if ($user->socid > 0) {
 if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
+
+$error = 0;
 
 
 /*
@@ -254,12 +257,12 @@ if (empty($reshook)) {
 		$search_date_validation_endyear = '';
 		$search_date_validation_endmonth = '';
 		$search_date_validation_endday = '';
+		$search_lettering_code = '';
 		$search_debit = '';
 		$search_credit = '';
-		$search_lettering_code = '';
 		$search_not_reconciled = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 	}
 
 	// Must be after the remove filter action, before the export.
@@ -319,6 +322,10 @@ if (empty($reshook)) {
 			$param .= '&search_ledger_code[]='.urlencode($code);
 		}
 	}
+	if (!empty($search_lettering_code)) {
+		$filter['t.lettering_code'] = $search_lettering_code;
+		$param .= '&search_lettering_code='.urlencode($search_lettering_code);
+	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
 		$param .= '&search_debit='.urlencode($search_debit);
@@ -326,10 +333,6 @@ if (empty($reshook)) {
 	if (!empty($search_credit)) {
 		$filter['t.credit'] = $search_credit;
 		$param .= '&search_credit='.urlencode($search_credit);
-	}
-	if (!empty($search_lettering_code)) {
-		$filter['t.lettering_code'] = $search_lettering_code;
-		$param .= '&search_lettering_code='.urlencode($search_lettering_code);
 	}
 	if (!empty($search_not_reconciled)) {
 		$filter['t.reconciled_option'] = $search_not_reconciled;
@@ -608,6 +611,7 @@ $num = count($object->lines);
 //}
 
 // Print form confirm
+$formconfirm = '';
 print $formconfirm;
 
 // List of mass actions available
@@ -701,9 +705,14 @@ if (preg_match('/^asc/i', $sortorder)) {
 	$sortorder = "desc";
 }
 
+// Warning to explain why list of record is not consistent with the other list view (missing a lot of lines)
+if ($type == 'sub') {
+	print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
+}
+
 $moreforfilter = '';
 
-// Accountancy account
+// Search on accountancy custom groups or account
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
@@ -741,12 +750,12 @@ print '<tr class="liste_titre_filter">';
 
 // Movement number
 if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" class="width50" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth75');
 	print '</td>';
 }
 // Date document
@@ -768,6 +777,13 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.label_operation']['checked'])) {
 	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="'.dol_escape_htmltag($search_label_operation).'"/></td>';
 }
+// Lettering code
+if (!empty($arrayfields['t.lettering_code']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
+	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
+	print '</td>';
+}
 // Debit
 if (!empty($arrayfields['t.debit']['checked'])) {
 	print '<td class="liste_titre right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
@@ -776,12 +792,9 @@ if (!empty($arrayfields['t.debit']['checked'])) {
 if (!empty($arrayfields['t.credit']['checked'])) {
 	print '<td class="liste_titre right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
 }
-// Lettering code
-if (!empty($arrayfields['t.lettering_code']['checked'])) {
-	print '<td class="liste_titre center">';
-	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
-	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
-	print '</td>';
+// Balance
+if (!empty($arrayfields['t.balance']['checked'])) {
+	print '<td></td>';
 }
 // Date export
 if (!empty($arrayfields['t.date_export']['checked'])) {
@@ -825,7 +838,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax80imp ');
 }
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -839,14 +852,17 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.label_operation']['checked'])) {
 	print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
 }
+if (!empty($arrayfields['t.lettering_code']['checked'])) {
+	print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['t.debit']['checked'])) {
 	print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, '', $sortfield, $sortorder, 'right ');
 }
 if (!empty($arrayfields['t.credit']['checked'])) {
 	print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, '', $sortfield, $sortorder, 'right ');
 }
-if (!empty($arrayfields['t.lettering_code']['checked'])) {
-	print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['t.balance']['checked'])) {
+	print_liste_field_titre($arrayfields['t.balance']['label'], "", "", "", $param, '', $sortfield, $sortorder, 'right ');
 }
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -864,17 +880,22 @@ print $hookmanager->resPrint;
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
-
-$total_debit = 0;
-$total_credit = 0;
-$sous_total_debit = 0;
-$sous_total_credit = 0;
 $displayed_account_number = null; // Start with undefined to be able to distinguish with empty
 
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+
 $totalarray = array();
+$totalarray['val'] = array ();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+$sous_total_debit = 0;
+$sous_total_credit = 0;
+$totalarray['val']['totaldebit'] = 0;
+$totalarray['val']['totalcredit'] = 0;
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 
@@ -889,12 +910,15 @@ while ($i < min($num, $limit)) {
 	//if (empty($accountg)) $accountg = '-';
 
 	$colspan = 0;			// colspan before field 'label of operation'
-	$colspanend = 3;		// colspan after debit/credit
+	$colspanend = 1;		// colspan after debit/credit
 	if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
 	if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
 	if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
 	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
 	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspan++; }
+
+	if (!empty($arrayfields['t.balance']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
@@ -909,9 +933,9 @@ while ($i < min($num, $limit)) {
 			} else {
 				print '<td class="right" colspan="' . $colspan . '">' . $langs->trans("TotalForAccount") . ' ' . length_accountg($displayed_account_number) . ':</td>';
 			}
-			print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-			print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
-			print '<td colspan="'.$colspanend.'"></td>';
+			print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
+			if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
 			print '</tr>';
 			// Show balance of last shown account
 			$balance = $sous_total_debit - $sous_total_credit;
@@ -919,16 +943,16 @@ while ($i < min($num, $limit)) {
 			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
 			if ($balance > 0) {
 				print '<td class="nowraponall right">';
-				print price($sous_total_debit - $sous_total_credit);
+				print price(price2num($sous_total_debit - $sous_total_credit, 'MT'));
 				print '</td>';
 				print '<td></td>';
 			} else {
 				print '<td></td>';
 				print '<td class="nowraponall right">';
-				print price($sous_total_credit - $sous_total_debit);
+				print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 				print '</td>';
 			}
-			print '<td colspan="'.$colspanend.'"></td>';
+			if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
 			print '</tr>';
 		}
 
@@ -937,7 +961,9 @@ while ($i < min($num, $limit)) {
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : count($arrayfields)+1).'" class="tdforbreak">';
 		if ($type == 'sub') {
 			if ($line->subledger_account != "" && $line->subledger_account != '-1') {
-				print $line->subledger_label . ' : ' . length_accounta($line->subledger_account);
+				print empty($line->subledger_label) ? '<span class="error">'.$langs->trans("Unknown").'</span>' : $line->subledger_label;
+				print ' : ';
+				print length_accounta($line->subledger_account);
 			} else {
 				// Should not happen: subledger account must be null or a non empty value
 				print '<span class="error">' . $langs->trans("Unknown");
@@ -1081,9 +1107,17 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
+	// Lettering code
+	if (!empty($arrayfields['t.lettering_code']['checked'])) {
+		print '<td class="center">'.$line->lettering_code.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
 	// Amount debit
 	if (!empty($arrayfields['t.debit']['checked'])) {
-		print '<td class="right nowraponall amount">'.($line->debit ? price($line->debit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1095,7 +1129,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked'])) {
-		print '<td class="right nowraponall amount">'.($line->credit ? price($line->credit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1105,12 +1139,16 @@ while ($i < min($num, $limit)) {
 		$totalarray['val']['totalcredit'] += $line->credit;
 	}
 
-	// Lettering code
-	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center">'.$line->lettering_code.'</td>';
+	// Amount balance
+	if (!empty($arrayfields['t.balance']['checked'])) {
+		print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit + $line->debit - $sous_total_credit - $line->credit, 'MT')).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalbalance';
+		};
+		$totalarray['val']['totalbalance'] += $line->debit - $line->credit;
 	}
 
 	// Exported operation date
@@ -1167,9 +1205,9 @@ while ($i < min($num, $limit)) {
 if ($num > 0 && $colspan > 0) {
 	print '<tr class="liste_total">';
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
-	print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-	print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
-	print '<td colspan="'.$colspanend.'"></td>';
+	print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
+	if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
 	print '</tr>';
 	// Show balance of last shown account
 	$balance = $sous_total_debit - $sous_total_credit;
@@ -1177,23 +1215,46 @@ if ($num > 0 && $colspan > 0) {
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
 	if ($balance > 0) {
 		print '<td class="nowraponall right">';
-		print price($sous_total_debit - $sous_total_credit);
+		print price(price2num($sous_total_debit - $sous_total_credit, 'MT'));
 		print '</td>';
 		print '<td></td>';
 	} else {
 		print '<td></td>';
 		print '<td class="nowraponall right">';
-		print price($sous_total_credit - $sous_total_debit);
+		print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 		print '</td>';
 	}
-	print '<td colspan="'.$colspanend.'"></td>';
+	if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
 	print '</tr>';
+}
+
+
+// Clean total values to round them
+if (!empty($totalarray['val']['totaldebit'])) {
+	$totalarray['val']['totaldebit'] = price2num($totalarray['val']['totaldebit'], 'MT');
+}
+if (!empty($totalarray['val']['totalcredit'])) {
+	$totalarray['val']['totalcredit'] = price2num($totalarray['val']['totalcredit'], 'MT');
+}
+if (!empty($totalarray['val']['totalbalance'])) {
+	$totalarray['val']['totalbalance'] = price2num($totalarray['val']['totaldebit'] - $totalarray['val']['totalcredit'], 'MT');
 }
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
+$parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
