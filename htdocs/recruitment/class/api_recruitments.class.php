@@ -34,7 +34,7 @@ dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Recruitment extends DolibarrApi
+class Recruitments extends DolibarrApi
 {
 	/**
 	 * @var RecruitmentJobPosition $jobposition {@type RecruitmentJobPosition}

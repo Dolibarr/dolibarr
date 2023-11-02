@@ -246,29 +246,31 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			}
 		}
 
-		// Copy last html.formsetup.class.php' to backport folder
-		$tryToCopyFromSetupClass = true;
-		$backportDest = $destdir .'/backport/v16/core/class';
-		$backportFileSrc = DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-		$backportFileDest = $backportDest.'/html.formsetup.class.php';
-		$result = dol_mkdir($backportDest);
+		// Copy last 'html.formsetup.class.php' to backport folder
+		if (getDolGlobalInt('MODULEBUILDER_SUPPORT_COMPATIBILITY_V16')) {
+			$tryToCopyFromSetupClass = true;
+			$backportDest = $destdir .'/backport/v16/core/class';
+			$backportFileSrc = DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+			$backportFileDest = $backportDest.'/html.formsetup.class.php';
+			$result = dol_mkdir($backportDest);
 
-		if ($result < 0) {
-			$error++;
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToCreateDir", $backportDest), null, 'errors');
-			$tryToCopyFromSetupClass = false;
-		}
+			if ($result < 0) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailToCreateDir", $backportDest), null, 'errors');
+				$tryToCopyFromSetupClass = false;
+			}
 
-		if ($tryToCopyFromSetupClass) {
-			$result = dol_copy($backportFileSrc, $backportFileDest);
-			if ($result <= 0) {
-				if ($result < 0) {
-					$error++;
-					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorFailToCopyFile", $backportFileSrc, $backportFileDest), null, 'errors');
-				} else {
-					setEventMessages($langs->trans("FileDidAlreadyExist", $backportFileDest), null, 'warnings');
+			if ($tryToCopyFromSetupClass) {
+				$result = dol_copy($backportFileSrc, $backportFileDest);
+				if ($result <= 0) {
+					if ($result < 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorFailToCopyFile", $backportFileSrc, $backportFileDest), null, 'errors');
+					} else {
+						setEventMessages($langs->trans("FileDidAlreadyExist", $backportFileDest), null, 'warnings');
+					}
 				}
 			}
 		}
@@ -289,9 +291,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 
 		dol_delete_file($destdir.'/admin/myobject_extrafields.php');
 
-		dol_delete_file($destdir.'/sql/data.sql');
-		dol_delete_file($destdir.'/sql/update_x.x.x-y.y.y.sql');
-
 		dol_delete_file($destdir.'/class/actions_'.strtolower($modulename).'.class.php');
 		dol_delete_file($destdir.'/class/api_'.strtolower($modulename).'.class.php');
 
@@ -301,7 +300,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 
 		dol_delete_file($destdir.'/scripts/'.strtolower($modulename).'.php');
 
-		dol_delete_file($destdir.'/test/phpunit/'.$modulename.'FunctionnalTest.php');
+		dol_delete_file($destdir.'/sql/data.sql');
+		dol_delete_file($destdir.'/sql/update_x.x.x-y.y.y.sql');
 
 		// Delete some files related to Object (because the previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
@@ -311,6 +311,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/'.strtolower($modulename).'_myobject.lib.php');
+		dol_delete_file($destdir.'/test/phpunit/functionnal/'.$modulename.'FunctionnalTest.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
@@ -319,10 +320,11 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		dol_delete_file($destdir.'/class/myobject.class.php');
 
 		dol_delete_dir($destdir.'/class', 1);
-		dol_delete_dir($destdir.'/sql', 1);
-		dol_delete_dir($destdir.'/scripts', 1);
-		dol_delete_dir($destdir.'/js', 1);
 		dol_delete_dir($destdir.'/css', 1);
+		dol_delete_dir($destdir.'/js', 1);
+		dol_delete_dir($destdir.'/scripts', 1);
+		dol_delete_dir($destdir.'/sql', 1);
+		dol_delete_dir($destdir.'/test/phpunit/functionnal', 1);
 		dol_delete_dir($destdir.'/test/phpunit', 1);
 		dol_delete_dir($destdir.'/test', 1);
 	}

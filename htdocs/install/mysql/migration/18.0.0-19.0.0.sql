@@ -34,7 +34,7 @@
 
 -- v18
 
-
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
 
 
 -- v19
@@ -175,3 +175,6 @@ CREATE TABLE llx_mrp_production_extrafields
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
+
+ALTER TABLE llx_facturedet ADD COLUMN batch varchar(128) NULL;		-- To store the batch to consume in stock when using a POS module
+ALTER TABLE llx_facturedet ADD COLUMN fk_warehouse integer NULL;	-- To store the warehouse where to consume stock when using a POS module

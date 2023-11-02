@@ -623,7 +623,7 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Upload a file.
+	 * Upload a document.
 	 *
 	 * Test sample for invoice: { "filename": "mynewfile.txt", "modulepart": "invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample for supplier invoice: { "filename": "mynewfile.txt", "modulepart": "supplier_invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
@@ -908,7 +908,7 @@ class Documents extends DolibarrApi
 
 		$moreinfo = array('note_private' => 'File uploaded using API /documents from IP '.getUserRemoteIP());
 		if (!empty($object) && is_object($object) && $object->id > 0) {
-			$moreinfo['src_object_type'] = $modulepartorig;
+			$moreinfo['src_object_type'] = $object->table_element;
 			$moreinfo['src_object_id'] = $object->id;
 		}
 

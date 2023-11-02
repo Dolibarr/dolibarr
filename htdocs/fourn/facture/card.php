@@ -227,10 +227,16 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$db->begin();
+
 			$result = $object->validate($user, '', $idwarehouse);
 			if ($result < 0) {
+				$db->rollback();
+
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$db->commit();
+
 				// Define output language
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
@@ -2655,6 +2661,7 @@ if ($action == 'create') {
 
 	// Vat reverse-charge by default
 	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 		// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
 		if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
@@ -3574,7 +3581,7 @@ if ($action == 'create') {
 		}
 
 		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
-		$sql .= ' c.id as paiement_type, c.code as payment_code,';
+		$sql .= ' c.id as payment_type, c.code as payment_code,';
 		$sql .= ' pf.amount,';
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -3621,7 +3628,7 @@ if ($action == 'create') {
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
-					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
+					$s = $form->form_modes_reglement(null, $objp->payment_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
 					print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($s).'">';
 					print $s;
 					print '</td>';
