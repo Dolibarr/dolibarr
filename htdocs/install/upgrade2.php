@@ -499,6 +499,15 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_contractdet_rank();
 			}
+
+			// Scripts for 19.0
+			/*
+			$afterversionarray = explode('.', '18.0.9');
+			$beforeversionarray = explode('.', '19.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
+			*/
 		}
 
 
@@ -4149,7 +4158,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/compta/facture/class/api_invoice.class.php',
 		'/commande/class/api_commande.class.php',
 		'/user/class/api_user.class.php',
+		'/partnership/class/api_partnership.class.php',
 		'/product/class/api_product.class.php',
+		'/recruitment/class/api_recruitment.class.php',
 		'/societe/class/api_contact.class.php',
 		'/societe/class/api_thirdparty.class.php',
 		'/support/online.php',

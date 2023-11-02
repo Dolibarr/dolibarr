@@ -764,7 +764,7 @@ if ($id > 0 || !empty($ref)) {
 
 					// Qty remains to ship
 					print '<td class="center">';
-					if ($type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if ($type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)|| !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 						$toBeShipped[$objp->fk_product] = $objp->qty - $qtyAlreadyShipped;
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];
@@ -790,6 +790,8 @@ if ($id > 0 || !empty($ref)) {
 							}
 						}
 						print '</td>';
+					} elseif ($objp->fk_product > 0 && $type == Product::TYPE_SERVICE && !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES) && isModEnabled('stock')) {
+						print '<td class="center"><span class="opacitymedium">('.$langs->trans("Service").')</span></td>';
 					} else {
 						print '<td>&nbsp;</td>';
 					}

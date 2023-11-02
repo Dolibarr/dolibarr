@@ -1598,18 +1598,26 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion into a php string, build with double quotes "
+ *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
+ *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
-function dol_escape_php($stringtoescape)
+function dol_escape_php($stringtoescape, $stringforquotes = 2)
 {
 	if (is_null($stringtoescape)) {
 		return '';
 	}
 
-	return str_replace('"', "'", $stringtoescape);
+	if ($stringforquotes == 2) {
+		return str_replace('"', "'", $stringtoescape);
+	}
+	if ($stringforquotes == 1) {
+		return str_replace("'", "\'", str_replace('"', "'", $stringtoescape));
+	}
+
+	return 'Bad parameter for stringforquotes in dol_escape_php';
 }
 
 /**
@@ -8525,6 +8533,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
+			'__NEXT_MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp5['month'])),
 			'__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
 		));
 	}
@@ -9883,6 +9894,21 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
+				$newtab = array();
+				$postab = $h;
+				// detect if position set in $values[1] ie : +(2)mytab@mymodule (first tab is 0, second is one, ...)
+				$str = $values[1];
+				$posstart = strpos($str, '(');
+				if ($posstart > 0) {
+					$posend = strpos($str, ')');
+					if ($posstart > 0) {
+						$res1 = substr($str, $posstart + 1, $posend - $posstart -1);
+						if (is_numeric($res1)) {
+							$postab = (int) $res1;
+							$values[1] = '+' . substr($str, $posend + 1);
+						}
+					}
+				}
 				if (count($values) == 6) {
 					// new declaration with permissions:
 					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
@@ -9932,9 +9958,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							}
 						}
 
-						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
-						$head[$h][1] = $label;
-						$head[$h][2] = str_replace('+', '', $values[1]);
+						$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
+						$newtab[1] = $label;
+						$newtab[2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
 				} elseif (count($values) == 5) {       // case deprecated
@@ -9965,11 +9991,13 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$label = $langs->trans($values[2]);
 					}
 
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
-					$head[$h][1] = $label;
-					$head[$h][2] = str_replace('+', '', $values[1]);
+					$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
+					$newtab[1] = $label;
+					$newtab[2] = str_replace('+', '', $values[1]);
 					$h++;
 				}
+				// set tab at its position
+				$head = array_merge(array_slice($head, 0, $postab), array($newtab), array_slice($head, $postab));
 			} elseif ($mode == 'remove' && preg_match('/^\-/', $values[1])) {
 				if ($values[0] != $type) {
 					continue;
@@ -11374,8 +11402,10 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button
 	if (is_array($url)) {
+		$out = '';
+
 		if (count($url) > 1) {
-			$out = '<div class="dropdown inline-block dropdown-holder">';
+			$out .= '<div class="dropdown inline-block dropdown-holder">';
 			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction'.($userRight ? '' : 'Refused').'" title="'.dol_escape_htmltag($label).'" data-toggle="dropdown">'.($text ? $text : $label).'</a>';
 			$out .= '<div class="dropdown-content">';
 			foreach ($url as $subbutton) {

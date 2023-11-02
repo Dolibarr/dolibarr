@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,24 +81,23 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						setEventMessages($langs->trans("OrderExists"), null, 'warnings');
 					}
 					return $ret;
-				} else {
-					include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-					$newobject = new Commande($this->db);
-
-					$newobject->context['createfrompropal'] = 'createfrompropal';
-					$newobject->context['origin'] = $object->element;
-					$newobject->context['origin_id'] = $object->id;
-
-					$ret = $newobject->createFromProposal($object, $user);
-					if ($ret < 0) {
-						$this->error = $newobject->error;
-						$this->errors[] = $newobject->error;
-					}
-
-					$object->clearObjectLinkedCache();
-
-					return $ret;
 				}
+
+				include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$newobject = new Commande($this->db);
+
+				$newobject->context['createfrompropal'] = 'createfrompropal';
+				$newobject->context['origin'] = $object->element;
+				$newobject->context['origin_id'] = $object->id;
+
+				$ret = $newobject->createFromProposal($object, $user);
+				if ($ret < 0) {
+					$this->setErrorsFromObject($newobject);
+				}
+
+				$object->clearObjectLinkedCache();
+
+				return $ret;
 			}
 		}
 
@@ -114,8 +114,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$ret = $newobject->createFromOrder($object, $user);
 				if ($ret < 0) {
-					$this->error = $newobject->error;
-					$this->errors[] = $newobject->error;
+					$this->setErrorsFromObject($newobject);
 				}
 
 				$object->clearObjectLinkedCache();
@@ -375,30 +374,28 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$order = new Commande($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				//Build array of quantity shipped by product for an order
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type == 'shipping' && is_array($shipping_array) && count($shipping_array) > 0) {
-							/** @var Expedition[] $shipping_array */
-							foreach ($shipping_array as $shipping) {
-								if ($shipping->status <= 0) {
-									continue;
-								}
-								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
-									foreach ($shipping->lines as $shippingline) {
-										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-									}
-								}
+						if ($type != 'shipping' || !is_array($shipping_array) || count($shipping_array) == 0) {
+							continue;
+						}
+						/** @var Expedition[] $shipping_array */
+						foreach ($shipping_array as $shipping) {
+							if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
+								continue;
+							}
+
+							foreach ($shipping->lines as $shippingline) {
+								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 							}
 						}
 					}
@@ -422,8 +419,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					//No diff => mean everythings is shipped
 					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $order->error;
-						$this->errors = $order->errors;
+						$this->setErrorsFromObject($order);
 						return $ret;
 					}
 				}
@@ -448,26 +444,28 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$order = new CommandeFournisseur($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
 				if ($ret < 0) {
-					$this->error = $order->error;
-					$this->errors = $order->errors;
+					$this->setErrorsFromObject($order);
 					return $ret;
 				}
 				//Build array of quantity received by product for a purchase order
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type == 'reception' && is_array($shipping_array) && count($shipping_array) > 0) {
-							foreach ($shipping_array as $shipping) {
-								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
-									foreach ($shipping->lines as $shippingline) {
-										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-									}
-								}
+						if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0) {
+							continue;
+						}
+
+						foreach ($shipping_array as $shipping) {
+							if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
+								continue;
+							}
+
+							foreach ($shipping->lines as $shippingline) {
+								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 							}
 						}
 					}
@@ -491,8 +489,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					//No diff => mean everythings is received
 					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $order->error;
-						$this->errors = $order->errors;
+						$this->setErrorsFromObject($order);
 						return $ret;
 					}
 				}
@@ -511,22 +508,23 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
 					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
-					if (is_array($list) && !empty($list)) {
-						$number_contracts_found = count($list);
-						if ($number_contracts_found == 1) {
-							foreach ($list as $linked_contract) {
-								$object->setContract($linked_contract->id);
-							}
-							break;
-						} elseif ($number_contracts_found > 1) {
-							foreach ($list as $linked_contract) {
-								$object->setContract($linked_contract->id);
-								// don't set '$contractid' so it is not used when creating an intervention.
-							}
-							if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
-							break;
-						}
+					if (!is_array($list) || empty($list)) {
+						continue;
 					}
+					$number_contracts_found = count($list);
+					if ($number_contracts_found == 0) {
+						continue;
+					}
+
+					foreach ($list as $linked_contract) {
+						$object->setContract($linked_contract->id);
+						// don't set '$contractid' so it is not used when creating an intervention.
+					}
+
+					if ($number_contracts_found > 1 && !defined('NOLOGIN')) {
+						setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+					}
+					break;
 				}
 				if ($number_contracts_found == 0) {
 					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');

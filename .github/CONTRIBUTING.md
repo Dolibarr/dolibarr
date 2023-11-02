@@ -18,7 +18,7 @@ Default **language here is english**. So please prepare your contributions in en
 
 
 
-<a name="code"></a>Code
+<a name="code"></a>Submit code
 ---------------------
 
 ### Basic workflow
@@ -35,12 +35,14 @@ Default **language here is english**. So please prepare your contributions in en
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
-If you're fixing a bug, it is preferred that you cook your fix and pull request it
-against the oldest version affected that's still supported.
+If you're fixing a bug, it is preferred that you cook your fix and pull request it against an oldest version affected.
 
-We officially support versions N, N − 1 and N − 2 for N the latest version available.
+We recommend to push it into N - 2 for N the latest version available, if not possible into version N - 1, and finally into develop.
+This is just a recommendation, currently, if you push a bug fix on a very old version, it is still merged and propagated into
+higher versions. 
 
-Choose your base branch accordingly.
+The rule N - 2 is just a tip if you don't know which version to choose to get the best the best compromise between ease of correction 
+and number of potential beneficiaries of the correction.
 
 ### General rules
 Please don't edit the ChangeLog file. File will be generated from all commit messages during release process by the project manager.
@@ -72,7 +74,7 @@ The keyword can be ommitted if your commit does not fit in any of the following 
 - Close/CLOSE: for closing a referenced feature request
 - New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Perf/PERF: for performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engeneering
+- Qual/QUAL: for quality code enhancement or re-engineering
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
@@ -93,7 +95,7 @@ Feel free to express technical details, use cases or anything relevant to the cu
 
 This section can span multiple lines.
 
-Try to keep lines under 120 characters.
+If your PR is a change on interface, you must also paste a screenshot showing the new screen.
 
 #### Examples
 <pre>
@@ -105,7 +107,7 @@ NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into Chan
 or
 Short description (when the commit is not introducing feature nor closing a bug)
 
-Long description (Can span accross multiple lines).
+Long description (Can span across multiple lines).
 </pre>
 
 ### Pull Requests
@@ -133,7 +135,8 @@ If your PR has errors reported by the Continuous Integration Platform, it means 
 If the PR is valid, and is kept open for a long time, a tag will also be added on the PR to describe the status of your PR and why the PR is kept open. By putting your mouse on the tag, you will get a full explanation of the tag/status that explain why your PR has not been integrated yet.
 In most cases, it gives you information of things you have to do to have the PR taken into consideration (for example a change is requested, a conflict is expected to be solved, some questions were asked). If you have a yellow, red flag of purple flag, don't expect to have your PR validated. You must first provide the answer the tag ask you. The majority of open PR are waiting an action of the author of the PR.
 
-Statistics on Dolibarr project shows that 95% of submitted PR are reviewed and tagged. Average answer delay is also one of the best among Open source projects (just few days before having the Answer Tag set). This is one of the most important ratio of answered PR in Open Source world for a major project. Don't expect the core team to reach the 100%. A so high ratio is very rare on a so popular project and with the increasing popularity of Dolibarr, this ratio will probably decrease in future to a more common level.
+Statistics on Dolibarr project shows that 95% of submitted PR are reviewed and tagged. Average answer delay is also one of the best among Open source projects (just few days before having the Answer Tag set). This is one of the most important ratio of answered PR in Open Source world for a major project. Don't expect the core team to reach the 100%. 
+A so high ratio is very rare on a so popular project and with the increasing popularity of Dolibarr, this ratio will probably decrease in future to a more common level.
 
 
 ### Resources
