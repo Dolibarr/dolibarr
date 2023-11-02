@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
@@ -106,7 +105,7 @@ class ProductAttributeValue extends CommonObjectLine
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -260,10 +259,10 @@ class ProductAttributeValue extends CommonObjectLine
 	/**
 	 * Returns all product attribute values of a product attribute
 	 *
-	 * @param	int		$prodattr_id		Product attribute id
-	 * @param	bool	$only_used			Fetch only used attribute values
+	 * @param 	int 	$prodattr_id	 	Product attribute id
+	 * @param 	bool 	$only_used 			Fetch only used attribute values
 	 * @param	int		$returnonlydata		0: return object, 1: return only data
-	 * @return								ProductAttributeValue[]
+	 * @return 	ProductAttributeValue[]		Array of object
 	 */
 	public function fetchAllByProductAttribute($prodattr_id, $only_used = false, $returnonlydata = 0)
 	{

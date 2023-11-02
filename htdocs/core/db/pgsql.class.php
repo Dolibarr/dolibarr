@@ -50,11 +50,19 @@ class DoliDBPgsql extends DoliDB
 	//! Version min database
 	const VERSIONMIN = '9.0.0'; // Version min database
 
+	/**
+	 * @var boolean $unescapeslashquot  			Set this to 1 when calling SQL queries, to say that SQL is not standard but already escaped for Mysql. Used by Postgresql driver
+	 */
+	public $unescapeslashquot = false;
+	/**
+	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of sting using '' and not \'
+	 */
+	public $standard_conforming_strings = false;
+
+
 	/** @var resource|boolean Resultset of last query */
 	private $_results;
 
-	public $unescapeslashquot;
-	public $standard_conforming_strings;
 
 
 	/**
@@ -146,10 +154,10 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *  @param  string	$line   			SQL request line to convert
 	 *  @param  string	$type				Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 *  @param	bool	$unescapeslashquot	Unescape slash quote with quote quote
+	 *  @param	bool	$unescapeslashquot	Unescape "slash quote" with "quote quote"
 	 *  @return string   					SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
+	public function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
 	{
 		global $conf;
 
@@ -559,7 +567,7 @@ class DoliDBPgsql extends DoliDB
 					$this->lasterror = $this->error();
 					$this->lasterrno = $this->errno();
 
-					if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) {
+					if (getDolGlobalInt('SYSLOG_LEVEL') < LOG_DEBUG) {
 						dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 					}
 					dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
@@ -722,18 +730,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *	Escape a string to insert data
-	 *
-	 *	@param	string	$stringtoencode		String to escape
-	 *	@return	string						String escaped
-	 *  @deprecated
-	 */
-	public function escapeunderscore($stringtoencode)
-	{
-		return str_replace('_', '\_', (string) $stringtoencode);
-	}
-
-	/**
 	 *	Escape a string to insert data into a like
 	 *
 	 *	@param	string	$stringtoencode		String to escape
@@ -741,7 +737,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
 	/**
@@ -756,6 +752,24 @@ class DoliDBPgsql extends DoliDB
 	{
 		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
+
+	/**
+	 *	Format a SQL REGEXP
+	 *
+	 *	@param	string	$subject        string tested
+	 *	@param	string  $pattern        SQL pattern to match
+	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@return	string          		SQL string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = false)
+	{
+		if ($sqlstring) {
+			return "(". $subject ." ~ '" . $pattern . "')";
+		}
+
+		return "('". $subject ."' ~ '" . $pattern . "')";
+	}
+
 
 	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
@@ -887,10 +901,10 @@ class DoliDBPgsql extends DoliDB
 		global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
-		$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
+		//$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
 
 		//Encryption key
-		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
+		//$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
 
 		$return = $value;
 		return $return;
@@ -966,6 +980,34 @@ class DoliDBPgsql extends DoliDB
 		if ($result) {
 			while ($row = $this->fetch_row($result)) {
 				$listtables[] = $row[0];
+			}
+		}
+		return $listtables;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		// phpcs:enable
+		$listtables = array();
+
+		$escapedlike = '';
+		if ($table) {
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$escapedlike = " AND table_name LIKE '".$this->escape($tmptable)."'";
+		}
+		$result = pg_query($this->db, "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
+		if ($result) {
+			while ($row = $this->fetch_row($result)) {
+				$listtables[] = $row;
 			}
 		}
 		return $listtables;
@@ -1177,7 +1219,7 @@ class DoliDBPgsql extends DoliDB
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
 		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('int', 'date', 'datetime')) && $field_desc['value']) {
+			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
 				$sql .= "(".$field_desc['value'].")";
 			}
 		}
@@ -1219,23 +1261,25 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if (in_array($field_desc['type'], array('double', 'varchar')) && $field_desc['value']) {
-			$sql .= "(".$field_desc['value'].")";
+		$sql .= " ALTER COLUMN ".$this->escape($field_name)." TYPE ".$field_desc['type'];
+		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
+				$sql .= "(".$field_desc['value'].")";
+			}
 		}
 
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$table." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";
 				$this->query($sqlbis);
 			} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$table." SET ".$this->escape($field_name)." = ".((int) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->escape($field_name)." IS NULL";
 				$this->query($sqlbis);
 			}
 		}
 
-		if ($field_desc['default'] != '') {
+		if (isset($field_desc['default']) && $field_desc['default'] != '') {
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
 				$sql .= " DEFAULT ".$this->escape($field_desc['default']);
 			} elseif ($field_desc['type'] != 'text') {

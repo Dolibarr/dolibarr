@@ -38,7 +38,7 @@ function printDropdownBookmarksList()
 
 	$authorized_var=array('limit','optioncss','contextpage');
 	$url = $_SERVER["PHP_SELF"];
-	$url_param=array();
+	$url_param = array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
 		if (is_array($_GET)) {
 			foreach ($_GET as $key => $val) {
@@ -52,6 +52,7 @@ function printDropdownBookmarksList()
 			}
 		}
 	}
+
 	$tmpurl = '';
 	// No urlencode, all param $url will be urlencoded later
 	if ($sortfield) {
@@ -60,7 +61,7 @@ function printDropdownBookmarksList()
 	if ($sortorder) {
 		$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
 	}
-	if (is_array($_POST)) {
+	if (!empty($_POST) && is_array($_POST)) {
 		foreach ($_POST as $key => $val) {
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
@@ -78,21 +79,16 @@ function printDropdownBookmarksList()
 
 	$url .= ($tmpurl ? '?'.$tmpurl : '');
 	if (!empty($url_param)) {
-		$url .= '&'.implode('&', $url_param);
+		$url .= (strpos($url, '?') > 0 ? '&' : '?').implode('&', $url_param);
 	}
 
 	$searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
 	$searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' onsubmit="return false"' : '').'>';
 	$searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
 
-
-	// Url to list bookmark
-	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
-	$listbtn .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
-
 	// Url to go on create new bookmark page
 	$newbtn = '';
-	if (!empty($user->rights->bookmark->creer)) {
+	if ($user->hasRight('bookmark', 'creer')) {
 		if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
 			//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
 			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
@@ -101,6 +97,12 @@ function printDropdownBookmarksList()
 		}
 	}
 
+	// Url to list/edit bookmark
+	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
+	$listbtn .= img_picto('', 'edit', 'class="paddingright opacitymedium"').$langs->trans('EditBookmarks').'</a>';
+
+	$bookmarkList = '';
+	$bookmarkNb = 0;
 	// Menu with list of bookmarks
 	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
@@ -115,6 +117,7 @@ function printDropdownBookmarksList()
 				$bookmarkList .= dol_escape_htmltag($obj->title);
 				$bookmarkList .= '</a>';
 				$i++;
+				$bookmarkNb++;
 			}
 			$bookmarkList .= '</div>';
 
@@ -124,10 +127,10 @@ function printDropdownBookmarksList()
 			//$searchForm .= '<option>--'.$langs->trans("Bookmarks").'--</option>';
 			$searchForm .= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 			$searchForm .= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
-			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
-			$searchForm .= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
+			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->hasRight('bookmark', 'creer') ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
+			$searchForm .= dol_escape_htmltag($user->hasRight('bookmark', 'creer') ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 			// Url to go on create new bookmark page
-			if (!empty($user->rights->bookmark->creer)) {
+			if ($user->hasRight('bookmark', 'creer')) {
 				if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
 					$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
 					$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
@@ -140,6 +143,7 @@ function printDropdownBookmarksList()
 				$searchForm .= dol_escape_htmltag($obj->title);
 				$searchForm .= '</option>';
 				$i++;
+				$bookmarkNb++;
 			}
 			$searchForm .= '</select>';
 		}
@@ -192,27 +196,27 @@ function printDropdownBookmarksList()
 			';
 
 		$html .= '
-			<!-- Menu Body -->
-			<div class="bookmark-body dropdown-body">
-			'.$bookmarkList.'
-			</div>
-			';
-
-		$html .= '
-			<!-- Menu Footer-->
+			<!-- Menu bookmark tools-->
 			<div class="bookmark-footer">
 					'.$newbtn.$listbtn.'
-				<div style="clear:both;"></div>
+				<div class="clearboth"></div>
 			</div>
 		';
 
+		$html .= '
+				<!-- Menu Body bookmarks -->
+				<div class="bookmark-body dropdown-body">'.$bookmarkList.'
+				<span id="top-bookmark-search-nothing-found" class="'.($bookmarkNb ? 'hidden-search-result ' : '').'opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
+				</div>
+				';
+
 		$html .= '<!-- script to open/close the popup -->
 				<script>
-				$( document ).on("keyup", "#top-bookmark-search-input", function () {
+				jQuery(document).on("keyup", "#top-bookmark-search-input", function () {
+					console.log("keyup in bookmark search input");
 
 					var filter = $(this).val(), count = 0;
-					$("#dropdown-bookmarks-list .bookmark-item").each(function () {
-
+					jQuery("#dropdown-bookmarks-list .bookmark-item").each(function () {
 						if ($(this).text().search(new RegExp(filter, "i")) < 0) {
 							$(this).addClass("hidden-search-result");
 						} else {
@@ -220,7 +224,12 @@ function printDropdownBookmarksList()
 							count++;
 						}
 					});
-					$("#top-bookmark-search-filter-count").text(count);
+					jQuery("#top-bookmark-search-filter-count").text(count);
+					if (count == 0) {
+						jQuery("#top-bookmark-search-nothing-found").removeClass("hidden-search-result");
+					} else {
+						jQuery("#top-bookmark-search-nothing-found").addClass("hidden-search-result");
+					}
 				});
 				</script>';
 	}

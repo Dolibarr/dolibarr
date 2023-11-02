@@ -35,10 +35,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
 	/**
-	 * Issuer
-	 * @var Societe
+	 * @var int tab_top
 	 */
-	public $emetteur;
+	public $tab_top;
+
+	/**
+	 * @var int tab_height
+	 */
+	public $tab_height;
+
+	/**
+	 * @var int line_height
+	 */
+	public $line_height;
+
+	/**
+	 * @var int line per page
+	 */
+	public $line_per_page;
+
+	/**
+	 * @var Account bank account
+	 */
+	public $account;
+
+	/**
+	 * @var array lines
+	 */
+	public $lines;
 
 	/**
 	 *	Constructor
@@ -47,7 +71,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));
@@ -63,10 +87,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
@@ -155,7 +179,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->transnoentities("CheckReceipt")." ".$number);
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -203,9 +227,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$this->errors = $hookmanager->errors;
 		}
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 
@@ -401,13 +423,13 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  @param	Object		$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	void
+	 *  @return	mixed
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 
 		// Line of free text
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);

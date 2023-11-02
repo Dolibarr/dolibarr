@@ -27,9 +27,6 @@
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
@@ -37,6 +34,7 @@ if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
 
@@ -51,7 +49,7 @@ $conf->dol_use_jmobile = GETPOST('dol_use_jmobile', 'int');
 // Security check
 global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) {
-	accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page', 0, 0, 1);
+	httponly_accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page');
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -112,7 +110,7 @@ if (empty($reshook)) {
 
 	// Visible
 	$alwayscheckedmodules = array('barcode', 'bookmark', 'categorie', 'externalrss', 'fckeditor', 'geoipmaxmind', 'gravatar', 'memcached', 'syslog', 'user', 'webservices'); // Technical module we always want
-	$alwaysuncheckedmodules = array('dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'skype', 'website'); // Module we dont want by default
+	$alwaysuncheckedmodules = array('dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'socialnetworks', 'website'); // Module we dont want by default
 	// Not visible
 	$alwayshiddencheckedmodules = array('accounting', 'api', 'barcode', 'blockedlog', 'bookmark', 'clicktodial', 'comptabilite', 'cron', 'document', 'domain', 'externalrss', 'externalsite', 'fckeditor', 'geoipmaxmind', 'gravatar', 'label', 'ldap',
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
@@ -136,7 +134,6 @@ $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
-$dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 
@@ -164,10 +161,10 @@ foreach ($modulesdir as $dir) {
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && !getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 
@@ -176,7 +173,6 @@ foreach ($modulesdir as $dir) {
 							$filename[$i] = $modName;
 							$orders[$i]  = $objMod->family."_".$j; // Tri par famille puis numero module
 							//print "x".$modName." ".$orders[$i]."\n<br>";
-							$dirmod[$i] = $dirroot;
 							$j++;
 							$i++;
 						}
@@ -370,10 +366,10 @@ foreach ($demoprofiles as $profilearray) {
 				if (!empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
+				if ($val->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && !getDolGlobalString($const_name)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
+				if ($val->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && !getDolGlobalString($const_name)) {
 					$modulequalified = 0;
 				}
 				if (!$modulequalified) {
@@ -436,14 +432,14 @@ print '<br>';
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
 	if (empty($conf->dol_use_jmobile)) {
 		print '<div align="center">'."\n";
 		print '<script><!--'."\n";
-		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
-		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
-		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
-		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
+		print 'google_ad_client = "' . getDolGlobalString('MAIN_GOOGLE_AD_CLIENT').'";'."\n";
+		print 'google_ad_slot = "' . getDolGlobalString('MAIN_GOOGLE_AD_SLOT').'";'."\n";
+		print 'google_ad_width = ' . getDolGlobalString('MAIN_GOOGLE_AD_WIDTH').';'."\n";
+		print 'google_ad_height = ' . getDolGlobalString('MAIN_GOOGLE_AD_HEIGHT').';'."\n";
 		print '//-->'."\n";
 		print '</script>'."\n";
 		print '<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>'."\n";

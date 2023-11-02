@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CardDAV;
 
 /**
- * IDirectory interface
+ * IDirectory interface.
  *
  * Implement this interface to have an addressbook marked as a 'directory'. A
  * directory is an (often) global addressbook.
@@ -15,6 +17,6 @@ namespace Sabre\CardDAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IDirectory extends IAddressBook {
-
+interface IDirectory extends IAddressBook
+{
 }

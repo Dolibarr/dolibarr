@@ -26,6 +26,7 @@
  *      \brief      Autocreate actions for agenda module setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -52,6 +53,9 @@ $type = 'action';
 /*
  *	Actions
  */
+
+$error = 0;
+$errors = array();
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -178,7 +182,7 @@ if ($action == 'set') {
 $formactions = new FormActions($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -192,9 +196,8 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
- *  Documents models for supplier orders
+ *  Miscellaneous
  */
-
 
 // Define array def of models
 $def = array();
@@ -307,7 +310,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		}
 	}
 	print '</table><br>';
+
+	print load_fiche_titre($langs->trans('MiscellaneousOptions'), '', '');
 }
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -327,7 +333,7 @@ print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltex
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, getDolGlobalString('AGENDA_DEFAULT_VIEW'));
 print '</td></tr>'."\n";
 
 // Manual or automatic
@@ -337,20 +343,20 @@ print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 //print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');	Do not use ajax here, we need to reload page to change other combo list
-if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print '</td></tr>'."\n";
 
-if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 	print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="right nowrap">'."\n";
-	$formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
+	$formactions->select_type_actions(getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT'), "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
 	print '</td></tr>'."\n";
 }
 
@@ -367,7 +373,7 @@ if (!is_array($result) && $result < 0) {
 } elseif (count($result) > 0) {
 	$defval = reset($result)->value;
 }
-$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
+$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200 onrightofpage');
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_TYPE
@@ -376,11 +382,11 @@ print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
 $multiselect = 0;
-if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {
+if (getDolGlobalString('MAIN_ENABLE_MULTISELECT_TYPE')) {
 	// We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-	$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 }
-$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1, $multiselect);
+$formactions->select_type_actions(getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE'), "AGENDA_DEFAULT_FILTER_TYPE", '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 1, $multiselect);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS
@@ -389,18 +395,17 @@ print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
-$formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
+$formactions->form_select_status_action('agenda', getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'), 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";
 
 print '</table>';
-
-print dol_get_fiche_end();
 
 print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
-print "<br>";
+
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

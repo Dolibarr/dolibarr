@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 
 
 /**
- *       \class 		mod_codeproduct_elephant
- *       \brief 		Class to manage product code with elephant rule
+ *  Class to manage product code with elephant rule
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
@@ -119,7 +118,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(!empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT) ? $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
 		$texte .= '</tr>';
 
@@ -139,7 +138,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs		Object langs
-	 * @param	product		$objproduct		Object product
+	 * @param	Product		$objproduct		Object product
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */

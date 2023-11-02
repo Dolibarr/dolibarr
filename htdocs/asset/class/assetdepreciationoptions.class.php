@@ -163,8 +163,8 @@ class AssetDepreciationOptions extends CommonObject
 				}
 
 				// Unset required option (notnull) if field disabled
-				if (!empty($mode_info['enabled_field'])) {
-					$info = explode(':', $mode_info['enabled_field']);
+				if (!empty($field_info['enabled_field'])) {
+					$info = explode(':', $field_info['enabled_field']);
 					if ($this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
@@ -272,7 +272,7 @@ class AssetDepreciationOptions extends CommonObject
 				$deprecation_options[$mode_key][$field_key] = $field_value;
 
 				// Validation of fields values
-				if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+				if (getDolGlobalInt('MAIN_FEATURE_LEVEL') >= 2 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 					if (!$error && !empty($field_info['validate']) && is_callable(array($this, 'validateField'))) {
 						if (!$this->validateField($mode_info['fields'], $field_key, $value)) {
 							$error++;
@@ -318,11 +318,6 @@ class AssetDepreciationOptions extends CommonObject
 		// Clean parameters
 		$asset_id = $asset_id > 0 ? $asset_id : 0;
 		$asset_model_id = $asset_model_id > 0 ? $asset_model_id : 0;
-
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$hookmanager->initHooks(array('assetdepreciationoptionsdao'));
 		$parameters = array('asset_id' => $asset_id, 'asset_model_id' => $asset_model_id);
@@ -392,11 +387,6 @@ class AssetDepreciationOptions extends CommonObject
 		// Clean parameters
 		$mode = strtolower(trim($mode));
 
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('assetdepreciationoptionsdao'));
 		$parameters = array('mode' => $mode);
 		$reshook = $hookmanager->executeHooks('getGeneralDepreciationInfoForMode', $parameters, $this); // Note that $action and $object may have been modified by some hooks
@@ -428,7 +418,7 @@ class AssetDepreciationOptions extends CommonObject
 	public function updateDeprecationOptions($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{
 		global $langs, $hookmanager;
-		dol_syslog(__METHOD__ . " user_id={$user->id}, asset_id=$asset_id, asset_model_id=$asset_model_id, notrigger=$notrigger");
+		dol_syslog(__METHOD__ . " user_id=".$user->id.", asset_id=".$asset_id.", asset_model_id=".$asset_model_id.", notrigger=".$notrigger);
 
 		$error = 0;
 		$this->errors = array();
@@ -436,11 +426,6 @@ class AssetDepreciationOptions extends CommonObject
 		// Clean parameters
 		$asset_id = $asset_id > 0 ? $asset_id : 0;
 		$asset_model_id = $asset_model_id > 0 ? $asset_model_id : 0;
-
-		if (!is_object($hookmanager)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$hookmanager->initHooks(array('assetdepreciationoptionsdao'));
 		$parameters = array('user' => $user, 'asset_id' => $asset_id, 'asset_model_id' => $asset_model_id);

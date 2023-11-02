@@ -22,6 +22,7 @@
  *		\brief      Page to edit relative discount of a customer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -223,7 +224,6 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			print '<table class="noborder centpercent">';
-			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
@@ -244,7 +244,7 @@ if ($socid > 0) {
 					$i++;
 				}
 			} else {
-				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
@@ -274,7 +274,6 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			print '<table class="noborder centpercent">';
-			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
@@ -295,7 +294,7 @@ if ($socid > 0) {
 					$i++;
 				}
 			} else {
-				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";

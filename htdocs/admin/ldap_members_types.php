@@ -26,6 +26,7 @@
  *		\brief      Page to setup LDAP synchronization for members types
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -105,7 +106,7 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'memberstypes', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembersTypes").'</span><br>';
@@ -126,7 +127,7 @@ print "</tr>\n";
 // DN pour les types de membres
 print '<!-- LDAP_MEMBER_TYPE_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
-print '<input size="48" type="text" name="membertype" value="'.$conf->global->LDAP_MEMBER_TYPE_DN.'">';
+print '<input size="48" type="text" name="membertype" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_DN').'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypepDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -134,7 +135,7 @@ print '</tr>';
 // List of object class used to define attributes in structure
 print '<!-- LDAP_MEMBER_TYPE_OBJECT_CLASS -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeObjectClassList").'</span></td><td>';
-print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS.'">';
+print '<input size="48" type="text" name="objectclass" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS').'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypeObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -155,21 +156,21 @@ print "</tr>\n";
 
 // Common name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
-print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME.'">';
+print '<input size="25" type="text" name="fieldfullname" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Description
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
-print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION.'">';
+print '<input size="25" type="text" name="fielddescription" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION').'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBER_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // User group
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
-print '<input size="25" type="text" name="fieldmembertypemembers" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS.'">';
+print '<input size="25" type="text" name="fieldmembertypemembers" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS').'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS) ? ' checked' : '')."></td>";
 print '</tr>';

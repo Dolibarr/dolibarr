@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +24,12 @@
  *       \brief      Page of MO referring product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'products', 'companies'));
@@ -62,6 +65,14 @@ if (!$sortfield) {
 	$sortfield = "c.date_valid";
 }
 
+$search_month = GETPOST('search_month', 'int');
+$search_year = GETPOST('search_year', 'int');
+
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	$search_month = '';
+	$search_year = '';
+}
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
@@ -73,6 +84,7 @@ $staticmo = new Mo($db);
 $staticmoligne = new MoLine($db);
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
@@ -119,7 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -138,6 +150,12 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
 		$sql .= " AND cd.fk_product = ".((int) $product->id);
+		if (!empty($search_month)) {
+			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize($search_month).')';
+		}
+		if (!empty($search_year)) {
+			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize($search_year).')';
+		}
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
@@ -151,7 +169,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Count total nb of records
 		$totalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $db->query($sql);
 			$totalofrecords = $db->num_rows($result);
 		}
@@ -162,10 +180,10 @@ if ($id > 0 || !empty($ref)) {
 		if ($result) {
 			$num = $db->num_rows($result);
 
-			$option .= '&id='.$product->id;
+			$option = '&id='.$product->id;
 
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$option .= '&limit='.urlencode($limit);
+				$option .= '&limit='.((int) $limit);
 			}
 			if (!empty($search_month)) {
 				$option .= '&search_month='.urlencode($search_month);
@@ -188,6 +206,18 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($page)) {
 				$option .= '&page='.urlencode($page);
 			}
+
+			print '<div class="liste_titre liste_titre_bydiv centpercent">';
+			print '<div class="divsearchfield">';
+			print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
+			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+			print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+			print '<div style="vertical-align: middle; display: inline-block">';
+			print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+			print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+			print '</div>';
+			print '</div>';
+			print '</div>';
 
 			$i = 0;
 			print '<div class="div-table-responsive">';

@@ -40,18 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_invoice_odt extends ModelePDFFactures
 {
 	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -65,7 +53,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -148,17 +136,18 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->FACTURE_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -174,7 +163,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=FACTURE_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
@@ -187,15 +178,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="FACTURE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -274,24 +260,24 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			if (file_exists($dir)) {
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile = basename($srctemplatepath);
-				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
+				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
@@ -300,8 +286,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				dol_mkdir($conf->facture->dir_temp);
 				if (!is_writable($conf->facture->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->facture->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->facture->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -334,10 +320,41 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$object->fetchObjectLinked('', '', '', '');
 				//print_r($object->linkedObjects['propal']); exit;
 
-				if (isset($object->linkedObjects['propal'][0])) {
-					$propal_object = $object->linkedObjects['propal'][0];
-				} else {
-					$propal_object = null;
+				$propal_object = null;
+				if (!empty($object->linkedObjects['propal'])) {
+					$array_propal_object = $object->linkedObjects['propal'];
+					if (isset($array_propal_object) && is_array($array_propal_object) && count($array_propal_object) > 0) {
+						$tmparrayofvalue = array_values($array_propal_object);
+						$propal_object = $tmparrayofvalue[0];
+					}
+				}
+
+				// and determine category of operation
+				$categoryOfOperation = 0;
+				$nbProduct = 0;
+				$nbService = 0;
+				foreach ($object->lines as $line) {
+					// determine category of operation
+					if ($categoryOfOperation < 2) {
+						$lineProductType = $line->product_type;
+						if ($lineProductType == Product::TYPE_PRODUCT) {
+							$nbProduct++;
+						} elseif ($lineProductType == Product::TYPE_SERVICE) {
+							$nbService++;
+						}
+						if ($nbProduct > 0 && $nbService > 0) {
+							// mixed products and services
+							$categoryOfOperation = 2;
+						}
+					}
+				}
+
+				// determine category of operation
+				if ($categoryOfOperation <= 0) {
+					// only services
+					if ($nbProduct == 0 && $nbService > 0) {
+						$categoryOfOperation = 1;
+					}
 				}
 
 				// Make substitution
@@ -363,7 +380,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
@@ -413,15 +430,18 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// TODO Search all tags {object_...:xxxx} into template then loop on this found tags to analyze them and the the corresponding
 				// property of object and use the xxxx to know how to format it.
 				// Before that, we hard code this substitution as if we have found them into the template.
-				$tmparray['object_PREVIOUS_MONTH'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%m');
-				$tmparray['object_MONTH'] = dol_print_date($this->date, '%m');
-				$tmparray['object_NEXT_MONTH'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%m');
-				$tmparray['object_PREVIOUS_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%B');
-				$tmparray['object_MONTH_TEXT'] = dol_print_date($this->date, '%B');
-				$tmparray['object_NEXT_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%B');
-				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
-				$tmparray['object_YEAR'] = dol_print_date($this->date, '%Y');
-				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
+
+				$tmparray['object_PREVIOUS_MONTH'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%m');
+				$tmparray['object_MONTH'] = dol_print_date($object->date, '%m');
+				$tmparray['object_NEXT_MONTH'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%m');
+				$tmparray['object_PREVIOUS_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%B');
+				$tmparray['object_MONTH_TEXT'] = dol_print_date($object->date, '%B');
+				$tmparray['object_NEXT_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%B');
+				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($object->date, -1, 'y'), '%Y');
+				$tmparray['object_YEAR'] = dol_print_date($object->date, '%Y');
+				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y');
+				$tmparray['object_productorservice_operation'] = $outputlangs->transnoentities("MentionCategoryOfOperations" . $categoryOfOperation);
+
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
@@ -518,9 +538,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 

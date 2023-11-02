@@ -24,6 +24,7 @@
  *	   \brief	   Page reporting TO by Products & Services
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -417,12 +418,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '</td>';
 
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListeTitle', $parameters);
-	print $hookmanager->resPrint;
-
-	print '</td></tr>';
+	print '</tr>';
 
 	// Array header
 	print "<tr class=\"liste_titre\">";

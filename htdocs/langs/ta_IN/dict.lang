@@ -137,7 +137,7 @@ CountryLV=லாட்வியா
 CountryLB=லெபனான்
 CountryLS=லெசோதோ
 CountryLR=லைபீரியா
-CountryLY=லிபியன்
+CountryLY=Libya
 CountryLI=லிச்சென்ஸ்டீன்
 CountryLT=லிதுவேனியா
 CountryLU=லக்சம்பர்க்
@@ -247,10 +247,13 @@ CountryJE=ஜெர்சி
 CountryME=மாண்டினீக்ரோ
 CountryBL=செயின்ட் பார்தெலமி
 CountryMF=செயின்ட் மார்ட்டின்
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=திருமதி.
+CivilityMMEShort=Mrs.
 CivilityMR=திரு.
+CivilityMRShort=Mr.
 CivilityMLE=செல்வி.
 CivilityMTRE=குரு
 CivilityDR=டாக்டர்

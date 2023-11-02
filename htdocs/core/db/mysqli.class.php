@@ -36,10 +36,12 @@ class DoliDBMysqli extends DoliDB
 	public $db;
 	//! Database type
 	public $type = 'mysqli';
+
 	//! Database label
 	const LABEL = 'MySQL or MariaDB';
 	//! Version min database
 	const VERSIONMIN = '5.0.3';
+
 	/** @var bool|mysqli_result Resultset of last query */
 	private $_results;
 
@@ -49,9 +51,9 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param      string	$type		Type of database (mysql, pgsql...)
 	 *	@param	    string	$host		Address of database server
-	 *	@param	    string	$user		Nom de l'utilisateur autorise
-	 *	@param	    string	$pass		Mot de passe
-	 *	@param	    string	$name		Nom de la database
+	 *	@param	    string	$user		Name of database user
+	 *	@param	    string	$pass		Password of database user
+	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
 	 */
 	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
@@ -110,15 +112,28 @@ class DoliDBMysqli extends DoliDB
 				$this->ok = true;
 
 				// If client is old latin, we force utf8
-				$clientmustbe = empty($conf->db->dolibarr_main_db_character_set) ? 'utf8' : $conf->db->dolibarr_main_db_character_set;
+				$clientmustbe = empty($conf->db->character_set) ? 'utf8' : $conf->db->character_set;
 				if (preg_match('/latin1/', $clientmustbe)) {
 					$clientmustbe = 'utf8';
 				}
 
-				if ($this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation
+				$disableforcecharset = 0;	// Set to 1 to test without charset forcing
+				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
+					try {
+						//print "You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the one of the database ".$this->db->character_set_name();
+						dol_syslog(get_class($this)."::DoliDBMysqli You should set the \$dolibarr_main_db_character_set and \$dolibarr_main_db_collation for the PHP to the one of the database ".$this->db->character_set_name(), LOG_WARNING);
+						$this->db->set_charset($clientmustbe); // This set charset, but with a bad collation
+					} catch (Exception $e) {
+						print 'Failed to force character set to '.$clientmustbe." according to setup to match the one of the server database.<br>\n";
+						print $e->getMessage();
+						print "<br>\n";
+						if ($clientmustbe != 'utf8') {
+							print 'Edit conf/conf.php file to set a charset "utf8" instead of "'.$clientmustbe.'".'."\n";
+						}
+						exit;
+					}
 
-					$collation = $conf->db->dolibarr_main_db_collation;
+					$collation = (empty($conf) ? 'utf8_unicode_ci' : $conf->db->dolibarr_main_db_collation);
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -135,12 +150,12 @@ class DoliDBMysqli extends DoliDB
 				dol_syslog(get_class($this)."::DoliDBMysqli : Select_db error ".$this->error, LOG_ERR);
 			}
 		} else {
-			// Pas de selection de base demandee, ok ou ko
+			// No selection of database done. We may only be connected or not (ok or ko) to the server.
 			$this->database_selected = false;
 
 			if ($this->connected) {
 				// If client is old latin, we force utf8
-				$clientmustbe = empty($conf->db->dolibarr_main_db_character_set) ? 'utf8' : $conf->db->dolibarr_main_db_character_set;
+				$clientmustbe = empty($conf->db->character_set) ? 'utf8' : $conf->db->character_set;
 				if (preg_match('/latin1/', $clientmustbe)) {
 					$clientmustbe = 'utf8';
 				}
@@ -187,7 +202,7 @@ class DoliDBMysqli extends DoliDB
 	 *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 *  @return    string   		SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl')
+	public function convertSQLFromMysql($line, $type = 'ddl')
 	{
 		return $line;
 	}
@@ -231,12 +246,16 @@ class DoliDBMysqli extends DoliDB
 
 		//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-		// Can also be
-		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
-		// return mysqli::real_connect($host, $user, $pass, $db, $port);
 		$tmp = false;
 		try {
-			$tmp = new mysqli($host, $login, $passwd, $name, $port);
+			if (!class_exists('mysqli')) {
+				dol_print_error('', 'Driver mysqli for PHP not available');
+			}
+			if (strpos($host, 'ssl://') === 0) {
+				$tmp = new mysqliDoli($host, $login, $passwd, $name, $port);
+			} else {
+				$tmp = new mysqli($host, $login, $passwd, $name, $port);
+			}
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
@@ -336,7 +355,7 @@ class DoliDBMysqli extends DoliDB
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
 
-				if ($conf->global->SYSLOG_LEVEL < LOG_DEBUG) {
+				if (getDolGlobalInt('SYSLOG_LEVEL') < LOG_DEBUG) {
 					dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 				}
 				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror, LOG_ERR);
@@ -421,7 +440,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return $resultset->num_rows;
+		return isset($resultset->num_rows) ? $resultset->num_rows : 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -475,18 +494,6 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
-	 *	Escape a string to insert data
-	 *
-	 *	@param	string	$stringtoencode		String to escape
-	 *	@return	string						String escaped
-	 *  @deprecated
-	 */
-	public function escapeunderscore($stringtoencode)
-	{
-		return str_replace('_', '\_', (string) $stringtoencode);
-	}
-
-	/**
 	 *	Escape a string to insert data into a like
 	 *
 	 *	@param	string	$stringtoencode		String to escape
@@ -494,7 +501,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
 	/**
@@ -510,35 +517,35 @@ class DoliDBMysqli extends DoliDB
 		} else {
 			// Constants to convert a MySql error code to a generic Dolibarr error code
 			$errorcode_map = array(
-			1004 => 'DB_ERROR_CANNOT_CREATE',
-			1005 => 'DB_ERROR_CANNOT_CREATE',
-			1006 => 'DB_ERROR_CANNOT_CREATE',
-			1007 => 'DB_ERROR_ALREADY_EXISTS',
-			1008 => 'DB_ERROR_CANNOT_DROP',
-			1022 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-			1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
-			1044 => 'DB_ERROR_ACCESSDENIED',
-			1046 => 'DB_ERROR_NODBSELECTED',
-			1048 => 'DB_ERROR_CONSTRAINT',
-			1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
-			1051 => 'DB_ERROR_NOSUCHTABLE',
-			1054 => 'DB_ERROR_NOSUCHFIELD',
-			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-			1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-			1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-			1064 => 'DB_ERROR_SYNTAX',
-			1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
-			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-			1091 => 'DB_ERROR_NOSUCHFIELD',
-			1100 => 'DB_ERROR_NOT_LOCKED',
-			1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
-			1146 => 'DB_ERROR_NOSUCHTABLE',
-			1215 => 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT',
-			1216 => 'DB_ERROR_NO_PARENT',
-			1217 => 'DB_ERROR_CHILD_EXISTS',
-			1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating a user that already existing
-			1451 => 'DB_ERROR_CHILD_EXISTS',
-			1826 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+				1004 => 'DB_ERROR_CANNOT_CREATE',
+				1005 => 'DB_ERROR_CANNOT_CREATE',
+				1006 => 'DB_ERROR_CANNOT_CREATE',
+				1007 => 'DB_ERROR_ALREADY_EXISTS',
+				1008 => 'DB_ERROR_CANNOT_DROP',
+				1022 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+				1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+				1044 => 'DB_ERROR_ACCESSDENIED',
+				1046 => 'DB_ERROR_NODBSELECTED',
+				1048 => 'DB_ERROR_CONSTRAINT',
+				1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+				1051 => 'DB_ERROR_NOSUCHTABLE',
+				1054 => 'DB_ERROR_NOSUCHFIELD',
+				1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+				1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+				1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+				1064 => 'DB_ERROR_SYNTAX',
+				1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+				1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
+				1091 => 'DB_ERROR_NOSUCHFIELD',
+				1100 => 'DB_ERROR_NOT_LOCKED',
+				1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
+				1146 => 'DB_ERROR_NOSUCHTABLE',
+				1215 => 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT',
+				1216 => 'DB_ERROR_NO_PARENT',
+				1217 => 'DB_ERROR_CHILD_EXISTS',
+				1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating a user that already existing
+				1451 => 'DB_ERROR_CHILD_EXISTS',
+				1826 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
 			);
 
 			if (isset($errorcode_map[$this->db->errno])) {
@@ -728,6 +735,38 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *  List tables into a database
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Nmae of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		// phpcs:enable
+		$listtables = array();
+
+		$like = '';
+		if ($table) {
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$like = "LIKE '".$this->escape($tmptable)."'";
+		}
+		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+
+		$sql = "SHOW FULL TABLES FROM `".$tmpdatabase."` ".$like.";";
+
+		$result = $this->query($sql);
+		if ($result) {
+			while ($row = $this->fetch_row($result)) {
+				$listtables[] = $row;
+			}
+		}
+		return $listtables;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
@@ -769,6 +808,9 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$pk = '';
+		$sqluq = $sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
@@ -942,17 +984,17 @@ class DoliDBMysqli extends DoliDB
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
 				$this->query($sqlbis);
 			} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
 				$this->query($sqlbis);
 			}
 
 			$sql .= " NOT NULL";
 		}
 
-		if ($field_desc['default'] != '') {
+		if (isset($field_desc['default']) && $field_desc['default'] != '') {
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
 				$sql .= " DEFAULT ".$this->escape($field_desc['default']);
 			} elseif ($field_desc['type'] != 'text') {
@@ -1047,7 +1089,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function getDefaultCharacterSetDatabase()
 	{
-		$resql = $this->query('SHOW VARIABLES LIKE \'character_set_database\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'character_set_database'");
 		if (!$resql) {
 			// version Mysql < 4.1.1
 			return $this->forcecharset;
@@ -1090,7 +1132,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function getDefaultCollationDatabase()
 	{
-		$resql = $this->query('SHOW VARIABLES LIKE \'collation_database\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'collation_database'");
 		if (!$resql) {
 			// version Mysql < 4.1.1
 			return $this->forcecollate;
@@ -1133,7 +1175,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$fullpathofdump = '/pathtomysqldump/mysqldump';
 
-		$resql = $this->query('SHOW VARIABLES LIKE \'basedir\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
@@ -1151,7 +1193,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		$fullpathofimport = '/pathtomysql/mysql';
 
-		$resql = $this->query('SHOW VARIABLES LIKE \'basedir\'');
+		$resql = $this->query("SHOW VARIABLES LIKE 'basedir'");
 		if ($resql) {
 			$liste = $this->fetch_array($resql);
 			$basedir = $liste['Value'];
@@ -1206,5 +1248,35 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		return $result;
+	}
+}
+
+/**
+ * Class to make SSL connection
+ */
+class mysqliDoli extends mysqli
+{
+	/**
+	 *	Constructor.
+	 *	This create an opened connexion to a database server and eventually to a database
+	 *
+	 *	@param	    string	$host		Address of database server
+	 *	@param	    string	$user		Name of database user
+	 *	@param	    string	$pass		Password of database user
+	 *	@param	    string	$name		Name of database
+	 *	@param	    int		$port		Port of database server
+	 *	@param	    string	$socket		Socket
+	 */
+	public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+	{
+		$flags = 0;
+		parent::init();
+		if (strpos($host, 'ssl://') === 0) {
+			$host = substr($host, 6);
+			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+			parent::ssl_set(null, null, "", null, null);
+			$flags = MYSQLI_CLIENT_SSL;
+		}
+		parent::real_connect($host, $user, $pass, $name, $port, $socket, $flags);
 	}
 }

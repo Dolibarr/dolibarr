@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - propal
+ProposalsDraft=Cotizaciones en borrador
+LastModifiedProposals=Últimas %s cotizaciones modificadas
+PropalsOpened=Abierto
+PropalStatusDraft=Borrador (Necesita ser validado)
+PropalStatusBilled=Facturada
+PropalStatusBilledShort=Facturada
+TypeContact_propal_external_BILLING=Contacto de factura de cliente

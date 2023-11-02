@@ -23,6 +23,7 @@
  * 	\brief      Page to show a leave information
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -54,10 +55,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {

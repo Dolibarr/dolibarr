@@ -98,7 +98,7 @@ class Asset extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2', 'validate'=>'1',),
-		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
+		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
 		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'validate'=>'1',),
 		'acquisition_type' => array('type'=>'smallint', 'label'=>'AssetAcquisitionType', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetAcquisitionTypeNew', '1'=>'AssetAcquisitionTypeOccasion'), 'validate'=>'1',),
 		'asset_type' => array('type'=>'smallint', 'label'=>'AssetType', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetTypeIntangible', '1'=>'AssetTypeTangible', '2'=>'AssetTypeInProgress', '3'=>'AssetTypeFinancial'), 'validate'=>'1',),
@@ -155,22 +155,12 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	public $user_cloture_id;
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_asset';
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('asset_assetdet');
+	/**
+	 * @var Asset object oldcopy
+	 */
+	public $oldcopy;
+
 
 	/**
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
@@ -192,10 +182,10 @@ class Asset extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -410,7 +400,7 @@ class Asset extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -652,6 +642,8 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		// Old request with 'WITH'
+		/*
 		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 		$sql .= " SELECT DISTINCT fk_docdet";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -661,6 +653,14 @@ class Asset extends CommonObject
 		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+		$sql .= " ORDER BY ad.depreciation_date ASC";
+		*/
+
+		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
+		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
 
@@ -708,6 +708,8 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		// Old request with 'WITH'
+		/*
 		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 		$sql .= " SELECT DISTINCT fk_docdet";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -716,6 +718,13 @@ class Asset extends CommonObject
 		$sql .= "SELECT COUNT(*) AS has_bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+		$sql .= " AND iab.fk_docdet IS NOT NULL";
+		*/
+
+		$sql = "SELECT COUNT(*) AS has_bookkeeping";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " AND iab.fk_docdet IS NOT NULL";
 
@@ -866,6 +875,9 @@ class Asset extends CommonObject
 			foreach ($options->deprecation_options as $mode_key => $fields) {
 				// Get last depreciation lines save in bookkeeping
 				//-----------------------------------------------------
+
+				// Old request with 'WITH'
+				/*
 				$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 				$sql .= " SELECT fk_docdet";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -879,6 +891,17 @@ class Asset extends CommonObject
 				$sql .= " AND iab.fk_docdet IS NOT NULL";
 				$sql .= " ORDER BY ad.depreciation_date DESC";
 				$sql .= " LIMIT 1";
+				*/
+
+				$sql = "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+				$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
+				$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+				$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND iab.fk_docdet IS NOT NULL";
+				$sql .= " ORDER BY ad.depreciation_date DESC";
+				$sql .= " LIMIT 1";
+
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
@@ -973,8 +996,8 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
-				$nb_days_in_month = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
+				$nb_days_in_year = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_YEAR') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
+				$nb_days_in_month = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_MONTH') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
 				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
@@ -1166,15 +1189,15 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $this->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1229,15 +1252,15 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $this->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1289,7 +1312,7 @@ class Asset extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1299,7 +1322,7 @@ class Asset extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAsset");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1339,7 +1362,7 @@ class Asset extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1409,7 +1432,7 @@ class Asset extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("asset@asset");
+			//$langs->load("assets");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
 			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
@@ -1443,12 +1466,10 @@ class Asset extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->user_creation_id = $obj->fk_user_author;
-				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_cloture_id = $obj->fk_user_cloture;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);
@@ -1492,16 +1513,16 @@ class Asset extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("asset@asset");
+		$langs->load("assets");
 
-		if (empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (!getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
 		}
 
-		if (!empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->ASSET_ASSET_ADDON.".php";
+			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";
 			$classname = $conf->global->ASSET_ASSET_ADDON;
 
 			// Include file with class
@@ -1557,7 +1578,7 @@ class Asset extends CommonObject
 	//      $result = 0;
 	//      $includedocgeneration = 1;
 	//
-	//      $langs->load("asset@asset");
+	//      $langs->load("assets");
 	//
 	//      if (!dol_strlen($modele)) {
 	//          $modele = 'standard_asset';

@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
@@ -54,6 +53,16 @@ class ProductCombination2ValuePair
 	public $fk_prod_attr_val;
 
 	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors
+	 */
+	public $errors = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param   DoliDB $db     Database handler
@@ -84,9 +93,11 @@ class ProductCombination2ValuePair
 
 	/**
 	 * Creates a product combination 2 value pair
-	 * @return int <0 KO, >0 OK
+	 *
+	 * @param	User	$user		User that create
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function create()
+	public function create($user)
 	{
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_attribute_combination2val
 		(fk_prod_combination, fk_prod_attr, fk_prod_attr_val)

@@ -26,6 +26,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -45,7 +46,7 @@ $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -430,9 +431,9 @@ if ($id) {
 		print '<td>';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
 		print '</tr>';
 
 		// Line to enter new values
@@ -586,7 +587,8 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
 							} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
@@ -608,12 +610,6 @@ if ($id) {
 					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
 					if (isset($obj->code) && $id != 10) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'RECEP') {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'EF0') {
 							$iserasable = 0;
 							$canbedisabled = 0;
 						}

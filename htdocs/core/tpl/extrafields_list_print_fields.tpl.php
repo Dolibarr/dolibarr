@@ -23,7 +23,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 				$tmpkey = 'options_'.$key;
 
-				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey)) {
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && isset($obj->$tmpkey) && !is_numeric($obj->$tmpkey)) {
 					$datenotinstring = $obj->$tmpkey;
 					if (!is_numeric($obj->$tmpkey)) {	// For backward compatibility
 						$datenotinstring = $db->jdate($datenotinstring);
@@ -34,11 +34,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
-					//global $obj, $object;
-					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					//var_dump($obj);
-					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '0');
+					$objectoffield = $object; //For compatibily with the computed formula
+					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
@@ -67,7 +64,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						// we keep position for the first line
 						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
 					}
-					if (is_numeric($obj->$tmpkey)) {
+					if (isset($obj->$tmpkey) && is_numeric($obj->$tmpkey)) {
 						if (!isset($totalarray['totalizable'][$key]['total'])) {
 							$totalarray['totalizable'][$key]['total'] = 0;
 						}

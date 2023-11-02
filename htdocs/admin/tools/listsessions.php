@@ -26,6 +26,7 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -189,7 +190,7 @@ if ($savehandler == 'files') {
 print '<div class="tabsAction">';
 
 
-if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
+if (!getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock&token='.newToken().'">'.$langs->trans("LockNewSessions").'</a>';
 } else {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock&token='.newToken().'">'.$langs->trans("UnlockNewSessions").'</a>';

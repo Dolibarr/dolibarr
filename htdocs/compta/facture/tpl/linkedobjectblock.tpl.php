@@ -66,11 +66,14 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			echo $langs->trans("CustomerInvoice");
 			break;
 	}
+	if (!empty($showImportButton) && !empty($conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)) {
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+	}
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref left">'.$objectlink->ref_client.'</td>';
+	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dol_escape_htmltag($objectlink->ref_client).'">'.dol_escape_htmltag($objectlink->ref_client).'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
-	print '<td class="linkedcol-amount right">';
+	print '<td class="linkedcol-amount right nowraponall">';
 	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
 		if ($objectlink->statut != 3) {
 			// If not abandonned

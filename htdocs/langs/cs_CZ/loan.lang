@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = Pokud používáte plán, nemůžete změnit zájem
 # Admin
 ConfigLoan=Konfigurace modulu úvěru
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Účetní účetní kapitál ve výchozím nastavení
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Účetní účetní zájem implicitně
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Účetní účetní pojištění implicitně
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Úprava finančního závazku

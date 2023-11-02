@@ -44,7 +44,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -54,7 +54,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	if (!$cancel) {
 		if ($codeventil < 0) {
 			$codeventil = 0;
@@ -101,7 +101,7 @@ $formaccounting = new FormAccounting($db);
 if (!empty($id)) {
 	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
 	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " ppe.accountancy_code_sell as code_sell,";
 	} else {
 		$sql .= " p.accountancy_code_sell as code_sell,";
@@ -109,7 +109,7 @@ if (!empty($id)) {
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";

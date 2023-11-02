@@ -28,6 +28,7 @@
  *	\brief      Setup page to configure company social networks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -83,6 +84,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
@@ -93,6 +96,7 @@ $head = company_admin_prepare_head();
 print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MoreNetworksAvailableWithModule")."</span><br>\n";
 print "<br>\n";
 
 
@@ -123,7 +127,7 @@ foreach ($listofnetworks as $key => $value) {
 		print '<td><label for="'.$key.'url">'.$langs->trans(ucfirst($key)).'</label></td>';
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
-		print '<td class="nowraponall"><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
+		print '<td class="nowraponall"><span class="paddingright fab '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
 		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';
 		print '</td><td>';
 		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';

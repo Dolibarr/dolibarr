@@ -22,6 +22,7 @@
  *  \brief      Page of third party projects
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -62,12 +63,12 @@ if ($id) {
 	}
 	$socid = $object->thirdparty->id;
 	$title = $langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = contact_prepare_head($object);
@@ -81,14 +82,14 @@ if ($id) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS) && !empty($socid)) {
-		$object->thirdparty->fetch($socid);
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		$objsoc = new Societe($db);
+		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
-		if ($object->thirdparty->id > 0) {
-			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'contact');
+		if ($objsoc->id > 0) {
+			$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';

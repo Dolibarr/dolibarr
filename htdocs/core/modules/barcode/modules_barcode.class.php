@@ -22,6 +22,7 @@
  *   \brief      File with parent classes for barcode document modules and numbering modules
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
@@ -50,45 +51,8 @@ abstract class ModeleBarCode
 /**
  *	Parent class for barcode numbering models
  */
-abstract class ModeleNumRefBarCode
+abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**     Return default description of numbering model
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Descriptive text
-	 */
-	public function info($langs)
-	{
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**     Return model name
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Model name
-	 */
-	public function getNom($langs)
-	{
-		return empty($this->name) ? $this->nom : $this->name;
-	}
-
-	/**     Return a numbering example
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Example
-	 */
-	public function getExample($langs)
-	{
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
 	/**
 	 *  Return next value available
 	 *
@@ -100,30 +64,6 @@ abstract class ModeleNumRefBarCode
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
-	}
-
-	/**     Return version of module
-	 *
-	 *      @return     string      Version
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
 	}
 
 	/**

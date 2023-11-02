@@ -26,6 +26,7 @@
  * \brief      List of products or services by popularity
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -112,7 +113,13 @@ $head[$h][2] = 'chart';
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
-$head[$h][1] = $langs->trans("ProductsPerPopularity");
+$head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
+if ((string) $type == '0') {
+	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+}
+if ((string) $type == '1') {
+	$head[$h][1] = $langs->trans("ServicesPerPopularity");
+}
 $head[$h][2] = 'popularity';
 $h++;
 
@@ -213,7 +220,7 @@ print "</tr>\n";
 if ($mode && $mode != '-1') {
 	foreach ($infoprod as $prodid => $vals) {
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+		if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $prodid);

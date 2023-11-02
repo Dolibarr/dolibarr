@@ -54,6 +54,10 @@
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_facture set date_pointoftax = NULL where DATE(STR_TO_DATE(date_pointoftax, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
 
 
 -- Requests to clean corrupted data
@@ -319,7 +323,7 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 a
 UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
 
 
-UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
+UPDATE llx_element_time set element_datehour = element_date where element_datehour IS NULL and element_date IS NOT NULL;
 
 UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
 UPDATE llx_projet set fk_opp_status = (SELECT rowid FROM llx_c_lead_status WHERE code='PROSP') where fk_opp_status IS NULL and opp_amount > 0;
@@ -393,8 +397,8 @@ update llx_expedition set date_valid = date_creation where fk_statut = 1 and dat
 update llx_expedition set date_valid = NOW() where fk_statut = 1 and date_valid IS NULL;
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
--- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
-update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid);
+-- select pt.rowid, pt.duration_effective, SUM(ptt.element_duration) as y from llx_projet_task as pt, llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task' group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
+update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.element_duration) as y from llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task') where pt.duration_effective <> (select SUM(ptt.element_duration) as y from llx_element_time as ptt where ptt.fk_element = pt.rowid and ptt.elementtype = 'task');
  
 
 -- Remove duplicate of shipment mode (keep the one with tracking defined)
@@ -426,7 +430,7 @@ UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilati
 UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 
 
--- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
+-- VMYSQL4.1 update llx_element_time set element_datehour = element_date where element_datehour < element_date or element_datehour > DATE_ADD(element_date, interval 1 day);
 
 
 -- Clean product prices
@@ -491,7 +495,7 @@ UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 
 
 -- Backport a change of value into the hourly rate. 
--- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
+-- update llx_element_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 
 
 -- select * from llx_facturedet as fd, llx_product as p where fd.fk_product = p.rowid AND fd.product_type != p.fk_product_type;
@@ -584,4 +588,82 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 -- Sequence to fix the content of llx_bank.amount_main_currency (sign was wrong with some version)
 -- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
+
+
+
+-- Delete duplicate entries into llx_c_transport_mode
+-- VMYSQL4.1 DELETE T1 FROM llx_c_transport_mode as T1, llx_c_transport_mode as T2 where T1.entity = T2.entity AND T1.code = T2.code and T1.rowid > T2.rowid;
+-- VPGSQL8.2 DELETE FROM llx_c_transport_mode as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_c_transport_mode GROUP BY code, entity);
+
+-- Delete department of regions linked to no coutry, then delete region with no country
+DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country));
+DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
+
+
+-- Drop duplicate indexes not named correctly and create the only one we should have
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_2;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_3;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_4;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_5;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_6;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_7;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_8;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_9;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_10;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_11;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_12;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_13;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_14;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_15;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_16;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_17;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_18;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_19;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_20;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_21;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_22;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_23;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_24;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_25;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_26;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_27;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_28;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_29;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_30;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_31;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_32;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_33;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_34;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_35;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_36;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_37;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_38;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_39;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_40;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_41;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_42;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_43;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_44;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_45;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_46;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_47;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_48;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_49;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_50;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_51;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_52;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_53;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_54;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_55;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_56;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_57;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_58;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_59;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_60;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_61;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
+alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
 

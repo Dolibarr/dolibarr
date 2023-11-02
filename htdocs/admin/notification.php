@@ -26,6 +26,7 @@
  *		\brief      Page to setup notification module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -177,7 +178,7 @@ print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_set
 print '<span class="opacitymedium">';
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
 print $langs->trans("NotificationsDescGlobal").'<br>';
@@ -200,7 +201,7 @@ print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="width150 quatrevingtpercentminusx" type="email" name="email_from" value="'.getDolGlobalString('NOTIFICATION_EMAIL_FROM').'">';
-if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
+if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
 print '</td>';
@@ -361,7 +362,7 @@ print $form->buttonsSaveCancel("Save", '');
 
 	print '<div class="opacitymedium">';
 	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
 	}
 	print '</div>';
@@ -384,7 +385,7 @@ print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', 'email');
 print '<div class="info">';
 print $langs->trans("Note").':<br>';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
 }
 print '</div>';
@@ -426,11 +427,13 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');
+	} elseif ($notifiedevent['elementtype'] == 'agenda') {
+		$elementPicto = 'action';
 	}
 
 	$labelfortrigger = 'AmountHT';
 	$codehasnotrigger = 0;
-	if (preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+	if (preg_match('/^(ACTION|HOLIDAY)/', $notifiedevent['code'])) {
 		$codehasnotrigger++;
 	}
 

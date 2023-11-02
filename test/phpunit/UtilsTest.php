@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,12 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return UserTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -78,7 +80,7 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -92,7 +94,7 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -105,7 +107,7 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -121,7 +123,7 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -139,14 +141,14 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Utils($this->savdb);
+		$localobject=new Utils($db);
 		$result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 1);
 		print var_export($result, true);
 		$this->assertEquals($result['result'], 0);
 		$this->assertEquals($result['error'], '');
 		//$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-		$localobject=new Utils($this->savdb);
+		$localobject=new Utils($db);
 		$result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 2);
 		print var_export($result, true);
 		$this->assertEquals($result['result'], 0);

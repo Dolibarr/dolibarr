@@ -35,6 +35,8 @@ class modGeneratePassNone extends ModeleGenPassword
 	 */
 	public $id;
 
+	public $picto = 'fa-keyboard';
+
 	/**
 	 * Minimum length (text visible by end user)
 	 *
@@ -48,16 +50,6 @@ class modGeneratePassNone extends ModeleGenPassword
 	 * @var integer
 	 */
 	public $length2;
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
 
 	/**
 	 *	Constructor

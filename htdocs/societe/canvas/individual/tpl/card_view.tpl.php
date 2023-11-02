@@ -74,7 +74,7 @@ if ($this->control->tpl['action_delete']) {
 </tr>
 <?php } ?>
 
-<?php if (!empty($conf->barcode->enabled)) { ?>
+<?php if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>
@@ -131,7 +131,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['typent']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>
@@ -144,7 +144,7 @@ if ($this->control->tpl['action_delete']) {
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -162,7 +162,7 @@ if ($this->control->tpl['action_delete']) {
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -174,7 +174,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (!empty($conf->adherent->enabled)) { ?>
+<?php if (isModEnabled('adherent')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
@@ -186,11 +186,11 @@ if ($this->control->tpl['action_delete']) {
 <?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
-<?php if ($user->rights->societe->creer) { ?>
+<?php if ($user->hasRight('societe', 'creer')) { ?>
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
-<?php if ($user->rights->societe->supprimer) { ?>
+<?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php } else { ?>
@@ -209,8 +209,8 @@ if ($this->control->tpl['action_delete']) {
  */
 $filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed = $user->rights->societe->lire;
-$delallowed = $user->rights->societe->creer;
+$genallowed = $user->hasRight('societe', 'lire');
+$delallowed = $user->hasRight('societe', 'creer');
 
 print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>

@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 $includecustom=0;
 $includeconstants=array();
+$buildzip=0;
 
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
@@ -84,7 +85,7 @@ while ($i < $argc) {
 }
 
 if (empty($release)) {
-	print "Error: Missing release paramater\n";
+	print "Error: Missing release parameter\n";
 	print "Usage: ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
 	exit -1;
 }

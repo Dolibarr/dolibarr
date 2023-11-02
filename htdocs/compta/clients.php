@@ -23,6 +23,7 @@
  *	\brief      Show list of customers to add an new invoice
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -35,7 +36,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-if (!$user->rights->facture->lire) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
@@ -94,16 +95,16 @@ if ($mode == 'search') {
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
 $sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";
 }
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (dol_strlen($stcomm)) {
@@ -132,7 +133,7 @@ if ($resql) {
 
 	$langs->load('commercial');
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 

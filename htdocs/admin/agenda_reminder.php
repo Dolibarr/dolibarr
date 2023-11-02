@@ -21,6 +21,7 @@
  *      \brief      Page to setup agenda reminder options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -149,7 +150,6 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
-
 $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'reminders', $langs->trans("Agenda"), -1, 'action');
@@ -171,7 +171,7 @@ print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
-if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
@@ -191,7 +191,7 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="right">'."\n";
 
-	if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+	if (!getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
@@ -206,8 +206,8 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
-if (!empty($conf->cron->enabled)) {
-	if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+if (isModEnabled('cron')) {
+	if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		if ($job->id > 0) {
 			if ($job->status == $job::STATUS_ENABLED) {
 				print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
@@ -219,10 +219,10 @@ print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
-	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+	if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		// Get the max frequency of reminder

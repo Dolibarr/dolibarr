@@ -59,9 +59,8 @@ class Receptions extends DolibarrApi
 	 * Return an array with reception informations
 	 *
 	 * @param       int         $id         ID of reception
-	 * @return 	array|mixed data without useless information
-	 *
-	 * @throws 	RestException
+	 * @return		Object					Object with cleaned properties
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -89,17 +88,18 @@ class Receptions extends DolibarrApi
 	 *
 	 * Get a list of receptions
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
-	 * @param string   	       $thirdparty_ids	    Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
+	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of reception objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -122,7 +122,7 @@ class Receptions extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."reception as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."reception AS t LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -145,11 +145,10 @@ class Receptions extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -173,7 +172,7 @@ class Receptions extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$reception_static = new Reception($this->db);
 				if ($reception_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($reception_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($reception_static), $properties);
 				}
 				$i++;
 			}
@@ -386,13 +385,11 @@ class Receptions extends DolibarrApi
 	/**
 	 * Delete a line to given reception
 	 *
-	 *
 	 * @param int   $id             Id of reception to update
 	 * @param int   $lineid         Id of line to delete
+	 * @return array
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -412,23 +409,27 @@ class Receptions extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
+		// TODO Check the lineid $lineid is a line of object
 
 		$updateRes = $this->reception->deleteline(DolibarrApiAccess::$user, $lineid);
-		if ($updateRes > 0) {
-			return $this->get($id);
-		} else {
+		if ($updateRes < 0) {
 			throw new RestException(405, $this->reception->error);
 		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Line deleted'
+			)
+		);
 	}
 
 	/**
 	 * Update reception general fields (won't touch lines of reception)
 	 *
-	 * @param int   $id             Id of reception to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param int   $id						Id of reception to update
+	 * @param array $request_data			Datas
+	 * @return		Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -462,7 +463,6 @@ class Receptions extends DolibarrApi
 	 * Delete reception
 	 *
 	 * @param   int     $id         Reception ID
-	 *
 	 * @return  array
 	 */
 	public function delete($id)
@@ -497,12 +497,12 @@ class Receptions extends DolibarrApi
 	 * This may record stock movements if module stock is enabled and option to
 	 * decrease stock on reception is on.
 	 *
-	 * @param   int $id             Reception ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int		$id             Reception ID
+	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @return  array
+	 * @return  Object
 	 * \todo An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -625,12 +625,12 @@ class Receptions extends DolibarrApi
 	/**
 	* Close a reception (Classify it as "Delivered")
 	*
-	* @param   int     $id             Reception ID
-	* @param   int     $notrigger      Disabled triggers
+	* @param	int     $id             Reception ID
+	* @param	int     $notrigger      Disabled triggers
 	*
 	* @url POST    {id}/close
 	*
-	* @return  int
+	* @return  Object
 	*/
 	public function close($id, $notrigger = 0)
 	{
@@ -643,7 +643,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('reception', $this->commande->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -652,7 +652,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when closing Reception: '.$this->reception->error);
 		}
 
 		// Reload reception
@@ -710,7 +710,7 @@ class Receptions extends DolibarrApi
 	private function _validate($data)
 	{
 		$reception = array();
-		foreach (Shipments::$FIELDS as $field) {
+		foreach (Receptions::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

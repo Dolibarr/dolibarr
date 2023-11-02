@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,23 +18,22 @@
  */
 
 /**
- *       \file       htdocs/bookmarks/card.php
- *       \brief      Page display/creation of bookmarks
- *       \ingroup    bookmark
+ *    \file       htdocs/bookmarks/card.php
+ *    \ingroup    bookmark
+ *    \brief      Page display/creation of bookmarks
  */
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'other'));
 
-// Security check
-if (empty($user->rights->bookmark->lire)) {
-	restrictedArea($user, 'bookmarks');
-}
 
+// Get Parameters
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
@@ -45,10 +44,20 @@ $userid = GETPOST("userid", "int");
 $position = GETPOST("position", "int");
 $backtopage = GETPOST('backtopage', 'alpha');
 
+
+// Initialize Objects
 $object = new Bookmark($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+// Security check
+restrictedArea($user, 'bookmark', $object);
+
+$permissiontoread = $user->hasRight('bookmark', 'lire');
+$permissiontoadd = $user->hasRight('bookmark', 'creer');
+$permissiontodelete = $user->hasRight('bookmark', 'supprimer');
+
 
 
 /*
@@ -124,6 +133,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 }
 
 
+
 /*
  * View
  */
@@ -176,9 +186,10 @@ if ($action == 'create') {
 	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
-	// Owner
+	// Visibility / Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
+	print img_picto('', 'user', 'class="pictofixedwidth"');
+	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
 	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	// Position
@@ -269,14 +280,16 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	}
 	print '</td></tr>';
 
+	// Visibility / owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($action == 'edit' && $user->admin) {
-		print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user', 'class="pictofixedwidth"');
+		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
 	} else {
 		if ($object->fk_user > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
-			print $fuser->getNomUrl(1);
+			print $fuser->getNomUrl(-1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
 		}
@@ -313,13 +326,13 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit
-	if ($user->rights->bookmark->creer && $action != 'edit') {
+	if ($permissiontoadd && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
-	if ($user->rights->bookmark->supprimer && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+	if ($permissiontodelete && $action != 'edit') {
+		print '<a class="butActionDelete" href="list.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';
