@@ -914,7 +914,7 @@ class dolReceiptPrinter extends Printer
 						$action = '';
 						$reshook = $hookmanager->executeHooks('sendToPrinterAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-						if (!$reshook || $reshook < 0 ) {					
+						if (!$reshook || $reshook < 0 ) {
 							$this->printer->text($vals[$tplline]['tag']);
 							$this->printer->text($vals[$tplline]['value']);
 							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
