@@ -546,6 +546,7 @@ dropdown-holder {
 	margin-left: auto !important;
 }
 .dropdown-content .butAction {
+    display: flex;
 	background: none;
 	color: #000 !important;
 }
