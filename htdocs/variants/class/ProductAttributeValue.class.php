@@ -290,6 +290,8 @@ class ProductAttributeValue extends CommonObjectLine
 
 		$query = $this->db->query($sql);
 
+		$sql .= " ORDER BY v.position ASC";
+
 		while ($result = $this->db->fetch_object($query)) {
 			if (empty($returnonlydata)) {
 				$tmp = new ProductAttributeValue($this->db);
