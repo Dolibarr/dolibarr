@@ -235,11 +235,8 @@ class BonPrelevement extends CommonObject
 		$line_id = 0;
 
 		// Add lines
-		if (!empty($sourcetype)) {
-			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
-		} else {
-			$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, '');
-		}
+		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
+
 
 		if ($result == 0) {
 			if ($line_id > 0) {
@@ -958,8 +955,13 @@ class BonPrelevement extends CommonObject
 			}
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
-			$sql .= ", s.nom as name";
-			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
+			if ($sourcetype != 'salary') {
+				$sql .= ", s.nom as name";
+				$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
+			} else {
+				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
+				$sql .= ", f.ref, sr.bic, sr.iban_prefix";
+			}
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
 					$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -987,7 +989,9 @@ class BonPrelevement extends CommonObject
 			}
 			$sql .= " AND pd.traite = 0";
 			$sql .= " AND pd.ext_payment_id IS NULL";
-			$sql .= " AND sr.type = 'ban' ";
+			if ($sourcetype != 'salary') {
+				$sql .= " AND sr.type = 'ban' ";
+			}
 			if ($did > 0) {
 				$sql .= " AND pd.rowid = ".((int) $did);
 			}
@@ -1231,11 +1235,9 @@ class BonPrelevement extends CommonObject
 						 * $fac[11] : IBAN
 						 * $fac[12] : frstrcur
 						 */
-						if (!empty($sourcetype)) {
-							$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
-						} else {
-							$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, '');
-						}
+
+						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
+
 						if ($ri <> 0) {
 							$error++;
 						}
@@ -1264,7 +1266,7 @@ class BonPrelevement extends CommonObject
 
 				dol_syslog(__METHOD__." Init direct debit or credit transfer file for ".count($factures_prev)." invoices", LOG_DEBUG);
 
-				if (count($factures_prev) > 0 || !empty($sourcetype)) {
+				if (count($factures_prev) > 0) {
 					$this->date_echeance = $datetimeprev;
 					$this->reference_remise = $ref;
 
@@ -1288,10 +1290,8 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					if ($sourcetype == 'salary') {
 						$userid = $this->context['factures_prev'][0][2];
-						$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid);
-					} else {
-						$result = $this->generate($format, $executiondate, $type);
 					}
+					$result = $this->generate($format, $executiondate, $type, $fk_bank_account, $userid);
 					if ($result < 0) {
 						//var_dump($this->error);
 						//var_dump($this->invoice_in_error);
@@ -1605,7 +1605,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public function generate($format = 'ALL', $executiondate = 0, $type = 'direct-debit', $fk_bank_account = 0, $user_dest = 0)
 	{
-		global $conf, $langs, $mysoc, $sourcetype;
+		global $conf, $langs, $mysoc;
 
 		//TODO: Optimize code to read lines in a single function
 
