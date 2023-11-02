@@ -157,13 +157,6 @@ class Facture extends CommonInvoice
 	 */
 	public $ref_customer;
 
-	//public $remise_absolue;
-
-	/**
-	 * @deprecated
-	 */
-	//public $remise_percent;
-
 	public $total_ht;
 	public $total_tva;
 	public $total_localtax1;
