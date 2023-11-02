@@ -386,9 +386,6 @@ if ($ispaymentok) {
 		// Create complementary actions (this include creation of thirdparty)
 		// Send confirmation email
 
-		$defaultdelay = 1;
-		$defaultdelayunit = 'y';
-
 		// Record subscription
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -398,6 +395,9 @@ if ($ispaymentok) {
 
 		$result1 = $object->fetch((int) $tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
+
+		$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+		$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
 

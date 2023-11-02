@@ -79,9 +79,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
 
-$defaultdelay = 1;
-$defaultdelayunit = 'y';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
 
@@ -211,6 +208,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
+	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+	$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
@@ -468,6 +467,9 @@ if ($rowid > 0) {
 	}
 
 	$adht->fetch($object->typeid);
+
+	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+	$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 
 	$head = member_prepare_head($object);
 
