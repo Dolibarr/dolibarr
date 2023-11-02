@@ -1360,492 +1360,498 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		print dol_get_fiche_head('');
 
-		print '<table class="border centpercent">';
+		// Call Hook tabContentCreateProduct
+		$parameters = array();
+		// Note that $action and $object may be modified by hook
+		$reshook = $hookmanager->executeHooks('tabContentCreateProduct', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<table class="border centpercent">';
 
-		if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
-			print '<tr>';
-			$tmpcode = '';
-			if (!empty($modCodeProduct->code_auto)) {
-				$tmpcode = $modCodeProduct->getNextValue($object, $type);
+			if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
+				print '<tr>';
+				$tmpcode = '';
+				if (!empty($modCodeProduct->code_auto)) {
+					$tmpcode = $modCodeProduct->getNextValue($object, $type);
+				}
+				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+				if ($refalreadyexists) {
+					print $langs->trans("RefAlreadyExists");
+				}
+				print '</td></tr>';
 			}
-			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
-			if ($refalreadyexists) {
-				print $langs->trans("RefAlreadyExists");
-			}
+
+			// Label
+			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
+
+			// On sell
+			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
+			$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+			print $form->selectarray('statut', $statutarray, GETPOST('statut'));
 			print '</td></tr>';
-		}
 
-		// Label
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
-
-		// On sell
-		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-		print $form->selectarray('statut', $statutarray, GETPOST('statut'));
-		print '</td></tr>';
-
-		// To buy
-		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-		print $form->selectarray('statut_buy', $statutarray, GETPOST('statut_buy'));
-		print '</td></tr>';
-
-		// Batch number management
-		if (isModEnabled('productbatch')) {
-			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
-			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
-			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
+			// To buy
+			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
+			$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+			print $form->selectarray('statut_buy', $statutarray, GETPOST('statut_buy'));
 			print '</td></tr>';
-			// Product specific batch number management
-			$status_batch = GETPOST('status_batch');
-			if ($status_batch !== '0') {
-				$langs->load("admin");
-				$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
-				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
-				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
-				$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
-				if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
-					|| (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced')) {
-					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-					$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
-					$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
-					print '<td id="field_mask">';
-					print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
-					print '<script type="text/javascript">
-								$(document).ready(function() {
-									$("#field_mask, #mask_option").addClass("hideobject");
-									$("#status_batch").on("change", function () {
-										console.log("We change batch status");
-										var optionSelected = $("option:selected", this);
-										var valueSelected = this.value;
+
+			// Batch number management
+			if (isModEnabled('productbatch')) {
+				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
+				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
+				print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
+				print '</td></tr>';
+				// Product specific batch number management
+				$status_batch = GETPOST('status_batch');
+				if ($status_batch !== '0') {
+					$langs->load("admin");
+					$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
+					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
+					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
+					if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
+						|| (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced')) {
+						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
+						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
+						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
+						print '<td id="field_mask">';
+						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+						print '<script type="text/javascript">
+									$(document).ready(function() {
 										$("#field_mask, #mask_option").addClass("hideobject");
-					';
-					if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
-						print '
-										if (this.value == 1) {
-											$("#field_mask, #mask_option").toggleClass("hideobject");
-											$("#batch_mask_input").val("'.$inherited_mask_lot.'");
-										}
+										$("#status_batch").on("change", function () {
+											console.log("We change batch status");
+											var optionSelected = $("option:selected", this);
+											var valueSelected = this.value;
+											$("#field_mask, #mask_option").addClass("hideobject");
 						';
-					}
-					if (isset($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+						if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+							print '
+											if (this.value == 1) {
+												$("#field_mask, #mask_option").toggleClass("hideobject");
+												$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+											}
+							';
+						}
+						if (isset($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+							print '
+											if (this.value == 2) {
+												$("#field_mask, #mask_option").toggleClass("hideobject");
+												$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+											}
+							';
+						}
 						print '
-										if (this.value == 2) {
-											$("#field_mask, #mask_option").toggleClass("hideobject");
-											$("#batch_mask_input").val("'.$inherited_mask_sn.'");
-										}
-						';
-					}
-					print '
+										})
 									})
-								})
-							</script>';
-					print '</td></tr>';
+								</script>';
+						print '</td></tr>';
+					}
 				}
 			}
-		}
 
-		$showbarcode = isModEnabled('barcode');
-		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
-			$showbarcode = 0;
-		}
+			$showbarcode = isModEnabled('barcode');
+			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
+				$showbarcode = 0;
+			}
 
-		if ($showbarcode) {
-			print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
-			if (GETPOSTISSET('fk_barcode_type')) {
-				$fk_barcode_type = GETPOST('fk_barcode_type')?GETPOST('fk_barcode_type'):0;
-			} else {
-				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
-					$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
+			if ($showbarcode) {
+				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
+				if (GETPOSTISSET('fk_barcode_type')) {
+					$fk_barcode_type = GETPOST('fk_barcode_type')?GETPOST('fk_barcode_type'):0;
 				} else {
-					$fk_barcode_type=0;
+					if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
+						$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
+					} else {
+						$fk_barcode_type=0;
+					}
 				}
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+				$formbarcode = new FormBarCode($db);
+				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
+				print '</td>';
+				print '</tr><tr>';
+				print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
+				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
+				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
+					$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
+				}
+				print img_picto('', 'barcode', 'class="pictofixedwidth"');
+				print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+				print '</td></tr>';
 			}
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
-			$formbarcode = new FormBarCode($db);
-			print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
-			print '</td>';
-			print '</tr><tr>';
-			print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
-			$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
-				$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
+
+			// Description (used in invoice, propal...)
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+			$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
+			$doleditor->Create();
+			print "</td></tr>";
+
+			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
+				// Public URL
+				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
+				print img_picto('', 'globe', 'class="pictofixedwidth"');
+				print '<input type="text" name="url" class="quatrevingtpercent" value="'.GETPOST('url').'">';
+				print '</td></tr>';
 			}
-			print img_picto('', 'barcode', 'class="pictofixedwidth"');
-			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
-			print '</td></tr>';
-		}
 
-		// Description (used in invoice, propal...)
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
-		$doleditor->Create();
-		print "</td></tr>";
-
-		if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
-			// Public URL
-			print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
-			print img_picto('', 'globe', 'class="pictofixedwidth"');
-			print '<input type="text" name="url" class="quatrevingtpercent" value="'.GETPOST('url').'">';
-			print '</td></tr>';
-		}
-
-		if ($type != 1 && isModEnabled('stock')) {
-			// Default warehouse
-			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
-			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOST('type', 'int')).'">';
-			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
-			print '</a>';
-			print '</td>';
-			print '</tr>';
-
-			if (empty($conf->global->PRODUCT_DISABLE_STOCK_LEVELS)) {
-				// Stock min level
-				print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
-				print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
+			if ($type != 1 && isModEnabled('stock')) {
+				// Default warehouse
+				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
+				print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOST('type', 'int')).'">';
+				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
+				print '</a>';
 				print '</td>';
 				print '</tr>';
 
-				// Stock desired level
-				print '<tr><td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
-				print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
-				print '</td></tr>';
-			}
-		} else {
-			if (empty($conf->global->PRODUCT_DISABLE_STOCK_LEVELS)) {
-				print '<input name="seuil_stock_alerte" type="hidden" value="0">';
-				print '<input name="desiredstock" type="hidden" value="0">';
-			}
-		}
+				if (empty($conf->global->PRODUCT_DISABLE_STOCK_LEVELS)) {
+					// Stock min level
+					print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
+					print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
+					print '</td>';
+					print '</tr>';
 
-		if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
-				// Default workstation
-				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
-				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
-				print '</td></tr>';
-		}
-
-		// Duration
-		if ($type == 1) {
-			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-			print img_picto('', 'clock', 'class="pictofixedwidth"');
-			print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
-			print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
-
-			// Mandatory period
-			print ' &nbsp; &nbsp; &nbsp; ';
-			print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
-			print '<label for="mandatoryperiod">';
-			$htmltooltip = $langs->trans("mandatoryHelper");
-			print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
-			print '</label>';
-
-			print '</td></tr>';
-		}
-
-		if ($type != 1) {	// Nature, Weight and volume only applies to products and not to services
-			if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
-				// Nature
-				print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-				print $formproduct->selectProductNature('finished', $object->finished);
-				print '</td></tr>';
-			}
-		}
-
-		if ($type != 1) {
-			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
-				// Brut Weight
-				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-				print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-				print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-				print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
-				print '</td></tr>';
-			}
-
-			// Brut Length
-			if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
-				print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
-				print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
-				print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
-				print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
-				print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
-				print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ?GETPOST('size_units', 'alpha') : '0', 0, 2);
-				print '</td></tr>';
-			}
-			if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
-				// Brut Surface
-				print '<tr><td>'.$langs->trans("Surface").'</td><td>';
-				print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-				print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ?GETPOST('surface_units', 'alpha') : '0', 0, 2);
-				print '</td></tr>';
-			}
-			if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
-				// Brut Volume
-				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-				print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-				print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ?GETPOST('volume_units', 'alpha') : '0', 0, 2);
-				print '</td></tr>';
-			}
-
-			if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
-				// Net Measure
-				print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
-				print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-				print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ?GETPOST('net_measure_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
-				print '</td></tr>';
-			}
-		}
-
-		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
-			print '<td>';
-			print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, 'units');
-			print '</td></tr>';
-		}
-
-		// Custom code
-		if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type)) {
-			print '<tr><td class="wordbreak">'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td></tr>';
-
-			// Origin country
-			print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
-			print '<td>';
-			print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx maxwidth500');
-			if ($user->admin) {
-				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			}
-			print '</td></tr>';
-
-			// State
-			if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
-				print '<tr>';
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-					print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td>';
-				} else {
-					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
+					// Stock desired level
+					print '<tr><td>'.$form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1).'</td><td>';
+					print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
+					print '</td></tr>';
 				}
-
-				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state($object->state_id, $object->country_code);
-				print '</tr>';
-			}
-		}
-
-		// Quality control
-		if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
-			print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth50" value="'.GETPOST('lifetime').'"></td></tr>';
-			print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth50" value="'.GETPOST('qc_frequency').'"></td></tr>';
-		}
-
-		// Other attributes
-		$parameters = array('colspan' => ' colspan="2"', 'cols'=>2);
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (empty($reshook)) {
-			print $object->showOptionals($extrafields, 'create', $parameters);
-		}
-
-		// Note (private, no output on invoices, propales...)
-		//if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
-		//{
-			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
-
-			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_8, '90%');
-			$doleditor->Create();
-
-			print "</td></tr>";
-		//}
-
-		if (isModEnabled('categorie')) {
-			// Categories
-			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-			print "</td></tr>";
-		}
-
-		print '</table>';
-
-		print '<hr>';
-
-		if (empty($conf->global->PRODUCT_DISABLE_PRICES)) {
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				// We do no show price array on create when multiprices enabled.
-				// We must set them on prices tab.
-				print '<table class="border centpercent">';
-				// VAT
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("VATRate").'</td><td>';
-				$defaultva = get_default_tva($mysoc, $mysoc);
-				print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
-				print '</td></tr>';
-
-				print '</table>';
-
-				print '<br>';
 			} else {
-				print '<table class="border centpercent">';
-
-				// Price
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
-				print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
-				print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
-				print '</td></tr>';
-
-				// Min price
-				print '<tr><td>'.$langs->trans("MinPrice").'</td>';
-				print '<td><input name="price_min" class="maxwidth50" value="'.$object->price_min.'">';
-				print '</td></tr>';
-
-				// VAT
-				print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-				$defaultva = get_default_tva($mysoc, $mysoc);
-				print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
-				print '</td></tr>';
-
-				print '</table>';
-
-				print '<br>';
+				if (empty($conf->global->PRODUCT_DISABLE_STOCK_LEVELS)) {
+					print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+					print '<input name="desiredstock" type="hidden" value="0">';
+				}
 			}
-		}
 
-		// Accountancy codes
-		print '<!-- accountancy codes -->'."\n";
-		print '<table class="border centpercent">';
-
-		if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
-			if (isModEnabled('accounting')) {
-				// Accountancy_code_sell
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
-				print '<td>';
-				if ($type == 0) {
-					$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_ACCOUNT"));
-				} else {
-					$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_ACCOUNT"));
-				}
-				print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
-				print '</td></tr>';
-
-				// Accountancy_code_sell_intra
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-					print '<td>';
-					if ($type == 0) {
-						$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT"));
-					} else {
-						$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT"));
-					}
-					print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+			if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
+					// Default workstation
+					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+					print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+					print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
 					print '</td></tr>';
-				}
+			}
 
-				// Accountancy_code_sell_export
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-				print '<td>';
-				if ($type == 0) {
-					$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT"));
-				} else {
-					$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT"));
-				}
-				print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
-				print '</td></tr>';
+			// Duration
+			if ($type == 1) {
+				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
+				print img_picto('', 'clock', 'class="pictofixedwidth"');
+				print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
+				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
 
-				// Accountancy_code_buy
-				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-				print '<td>';
-				if ($type == 0) {
-					$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_ACCOUNT"));
-				} else {
-					$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_SERVICE_BUY_ACCOUNT"));
-				}
-				print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
-				print '</td></tr>';
+				// Mandatory period
+				print ' &nbsp; &nbsp; &nbsp; ';
+				print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				print '<label for="mandatoryperiod">';
+				$htmltooltip = $langs->trans("mandatoryHelper");
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+				print '</label>';
 
-				// Accountancy_code_buy_intra
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
-					print '<td>';
-					if ($type == 0) {
-						$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT"));
-					} else {
-						$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT"));
-					}
-					print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
-					print '</td></tr>';
-				}
-
-				// Accountancy_code_buy_export
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
-				print '<td>';
-				if ($type == 0) {
-					$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT"));
-				} else {
-					$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT"));
-				}
-				print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
-				print '</td></tr>';
-			} else {// For external software
-				if (!empty($accountancy_code_sell)) {
-					$object->accountancy_code_sell = $accountancy_code_sell;
-				}
-				if (!empty($accountancy_code_sell_intra)) {
-					$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
-				}
-				if (!empty($accountancy_code_sell_export)) {
-					$object->accountancy_code_sell_export = $accountancy_code_sell_export;
-				}
-				if (!empty($accountancy_code_buy)) {
-					$object->accountancy_code_buy = $accountancy_code_buy;
-				}
-				if (!empty($accountancy_code_buy_intra)) {
-					$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
-				}
-				if (!empty($accountancy_code_buy_export)) {
-					$object->accountancy_code_buy_export = $accountancy_code_buy_export;
-				}
-
-				// Accountancy_code_sell
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
-				print '</td></tr>';
-
-				// Accountancy_code_sell_intra
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-					print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
-					print '</td></tr>';
-				}
-
-				// Accountancy_code_sell_export
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
-				print '</td></tr>';
-
-				// Accountancy_code_buy
-				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_buy" value="'.$object->accountancy_code_buy.'">';
-				print '</td></tr>';
-
-				// Accountancy_code_buy_intra
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
-					print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_buy_intra" value="'.$object->accountancy_code_buy_intra.'">';
-					print '</td></tr>';
-				}
-
-				// Accountancy_code_buy_export
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_buy_export" value="'.$object->accountancy_code_buy_export.'">';
 				print '</td></tr>';
 			}
+
+			if ($type != 1) {	// Nature, Weight and volume only applies to products and not to services
+				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+					// Nature
+					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+					print $formproduct->selectProductNature('finished', $object->finished);
+					print '</td></tr>';
+				}
+			}
+
+			if ($type != 1) {
+				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
+					// Brut Weight
+					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+					print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
+					print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
+					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ?GETPOST('weight_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
+					print '</td></tr>';
+				}
+
+				// Brut Length
+				if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
+					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
+					print img_picto('', 'fa-ruler', 'class="pictofixedwidth"');
+					print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
+					print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
+					print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
+					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ?GETPOST('size_units', 'alpha') : '0', 0, 2);
+					print '</td></tr>';
+				}
+				if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
+					// Brut Surface
+					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+					print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
+					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ?GETPOST('surface_units', 'alpha') : '0', 0, 2);
+					print '</td></tr>';
+				}
+				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
+					// Brut Volume
+					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+					print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
+					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ?GETPOST('volume_units', 'alpha') : '0', 0, 2);
+					print '</td></tr>';
+				}
+
+				if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
+					// Net Measure
+					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
+					print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
+					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ?GETPOST('net_measure_units', 'alpha') : (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? 0 : $conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
+					print '</td></tr>';
+				}
+			}
+
+			// Units
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
+				print '<td>';
+				print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, 'units');
+				print '</td></tr>';
+			}
+
+			// Custom code
+			if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type)) {
+				print '<tr><td class="wordbreak">'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td></tr>';
+
+				// Origin country
+				print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
+				print '<td>';
+				print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
+				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx maxwidth500');
+				if ($user->admin) {
+					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				}
+				print '</td></tr>';
+
+				// State
+				if (empty($conf->global->PRODUCT_DISABLE_STATE)) {
+					print '<tr>';
+					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
+						print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td>';
+					} else {
+						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td>';
+					}
+
+					print img_picto('', 'state', 'class="pictofixedwidth"');
+					print $formcompany->select_state($object->state_id, $object->country_code);
+					print '</tr>';
+				}
+			}
+
+			// Quality control
+			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth50" value="'.GETPOST('lifetime').'"></td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth50" value="'.GETPOST('qc_frequency').'"></td></tr>';
+			}
+
+			// Other attributes
+			$parameters = array('colspan' => ' colspan="2"', 'cols'=>2);
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+			if (empty($reshook)) {
+				print $object->showOptionals($extrafields, 'create', $parameters);
+			}
+
+			// Note (private, no output on invoices, propales...)
+			//if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
+			//{
+				print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+
+				// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+				$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_8, '90%');
+				$doleditor->Create();
+
+				print "</td></tr>";
+			//}
+
+			if (isModEnabled('categorie')) {
+				// Categories
+				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print "</td></tr>";
+			}
+
+			print '</table>';
+
+			print '<hr>';
+
+			if (empty($conf->global->PRODUCT_DISABLE_PRICES)) {
+				if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+					// We do no show price array on create when multiprices enabled.
+					// We must set them on prices tab.
+					print '<table class="border centpercent">';
+					// VAT
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("VATRate").'</td><td>';
+					$defaultva = get_default_tva($mysoc, $mysoc);
+					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+					print '</td></tr>';
+
+					print '</table>';
+
+					print '<br>';
+				} else {
+					print '<table class="border centpercent">';
+
+					// Price
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
+					print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
+					print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
+					print '</td></tr>';
+
+					// Min price
+					print '<tr><td>'.$langs->trans("MinPrice").'</td>';
+					print '<td><input name="price_min" class="maxwidth50" value="'.$object->price_min.'">';
+					print '</td></tr>';
+
+					// VAT
+					print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
+					$defaultva = get_default_tva($mysoc, $mysoc);
+					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+					print '</td></tr>';
+
+					print '</table>';
+
+					print '<br>';
+				}
+			}
+
+			// Accountancy codes
+			print '<!-- accountancy codes -->'."\n";
+			print '<table class="border centpercent">';
+
+			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
+				if (isModEnabled('accounting')) {
+					// Accountancy_code_sell
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+					print '<td>';
+					if ($type == 0) {
+						$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_ACCOUNT"));
+					} else {
+						$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_ACCOUNT"));
+					}
+					print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+					print '</td></tr>';
+
+					// Accountancy_code_sell_intra
+					if ($mysoc->isInEEC()) {
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+						print '<td>';
+						if ($type == 0) {
+							$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT"));
+						} else {
+							$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT"));
+						}
+						print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+						print '</td></tr>';
+					}
+
+					// Accountancy_code_sell_export
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+					print '<td>';
+					if ($type == 0) {
+						$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT"));
+					} else {
+						$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT"));
+					}
+					print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+					print '</td></tr>';
+
+					// Accountancy_code_buy
+					print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+					print '<td>';
+					if ($type == 0) {
+						$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_ACCOUNT"));
+					} else {
+						$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_SERVICE_BUY_ACCOUNT"));
+					}
+					print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+					print '</td></tr>';
+
+					// Accountancy_code_buy_intra
+					if ($mysoc->isInEEC()) {
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
+						print '<td>';
+						if ($type == 0) {
+							$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT"));
+						} else {
+							$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT"));
+						}
+						print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+						print '</td></tr>';
+					}
+
+					// Accountancy_code_buy_export
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
+					print '<td>';
+					if ($type == 0) {
+						$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT"));
+					} else {
+						$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT"));
+					}
+					print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+					print '</td></tr>';
+				} else {// For external software
+					if (!empty($accountancy_code_sell)) {
+						$object->accountancy_code_sell = $accountancy_code_sell;
+					}
+					if (!empty($accountancy_code_sell_intra)) {
+						$object->accountancy_code_sell_intra = $accountancy_code_sell_intra;
+					}
+					if (!empty($accountancy_code_sell_export)) {
+						$object->accountancy_code_sell_export = $accountancy_code_sell_export;
+					}
+					if (!empty($accountancy_code_buy)) {
+						$object->accountancy_code_buy = $accountancy_code_buy;
+					}
+					if (!empty($accountancy_code_buy_intra)) {
+						$object->accountancy_code_buy_intra = $accountancy_code_buy_intra;
+					}
+					if (!empty($accountancy_code_buy_export)) {
+						$object->accountancy_code_buy_export = $accountancy_code_buy_export;
+					}
+
+					// Accountancy_code_sell
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
+					print '</td></tr>';
+
+					// Accountancy_code_sell_intra
+					if ($mysoc->isInEEC()) {
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+						print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
+						print '</td></tr>';
+					}
+
+					// Accountancy_code_sell_export
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
+					print '</td></tr>';
+
+					// Accountancy_code_buy
+					print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_buy" value="'.$object->accountancy_code_buy.'">';
+					print '</td></tr>';
+
+					// Accountancy_code_buy_intra
+					if ($mysoc->isInEEC()) {
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
+						print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_buy_intra" value="'.$object->accountancy_code_buy_intra.'">';
+						print '</td></tr>';
+					}
+
+					// Accountancy_code_buy_export
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth150" name="accountancy_code_buy_export" value="'.$object->accountancy_code_buy_export.'">';
+					print '</td></tr>';
+				}
+			}
+			print '</table>';
 		}
-		print '</table>';
 
 		print dol_get_fiche_end();
 
