@@ -2400,400 +2400,405 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
+			// Call Hook tabContentViewProduct
+			$parameters = array();
+			// Note that $action and $object may be modified by hook
+			$reshook = $hookmanager->executeHooks('tabContentViewProduct', $parameters, $object, $action);
+			if (empty($reshook)) {
+				print '<div class="fichecenter">';
+				print '<div class="fichehalfleft">';
 
-			print '<div class="fichecenter">';
-			print '<div class="fichehalfleft">';
+				print '<div class="underbanner clearboth"></div>';
+				print '<table class="border tableforfield centpercent">';
 
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield centpercent">';
-
-			// Type
-			if (isModEnabled("product") && isModEnabled("service")) {
-				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefield">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
-				print '</td><td>';
-				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
-				print '</td></tr>';
-			}
-
-			if ($showbarcode) {
-				// Barcode type
-				print '<tr><td class="nowrap">';
-				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-				print $langs->trans("BarcodeType");
-				print '</td>';
-				if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
-				}
-				print '</tr></table>';
-				print '</td><td>';
-				if ($action == 'editbarcodetype' || $action == 'editbarcode') {
-					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
-					$formbarcode = new FormBarCode($db);
+				// Type
+				if (isModEnabled("product") && isModEnabled("service")) {
+					$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+					print '<tr><td class="titlefield">';
+					print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+					print '</td><td>';
+					print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+					print '</td></tr>';
 				}
 
-				$fk_barcode_type = '';
-				if ($action == 'editbarcodetype') {
-					print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
-					$fk_barcode_type = $object->barcode_type;
-				} else {
-					$object->fetch_barcode();
-					$fk_barcode_type = $object->barcode_type;
-					print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
-				}
-				print '</td></tr>'."\n";
-
-				// Barcode value
-				print '<tr><td class="nowrap">';
-				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-				print $langs->trans("BarcodeValue");
-				print '</td>';
-				if (($action != 'editbarcode') && $usercancreate && $createbarcode) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
-				}
-				print '</tr></table>';
-				print '</td><td>';
-				if ($action == 'editbarcode') {
-					$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
-						$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
+				if ($showbarcode) {
+					// Barcode type
+					print '<tr><td class="nowrap">';
+					print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+					print $langs->trans("BarcodeType");
+					print '</td>';
+					if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) {
+						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+					}
+					print '</tr></table>';
+					print '</td><td>';
+					if ($action == 'editbarcodetype' || $action == 'editbarcode') {
+						require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+						$formbarcode = new FormBarCode($db);
 					}
 
-					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="action" value="setbarcode">';
-					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-					print '<input class="width300" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
-					print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
-					print '</form>';
-				} else {
-					print showValueWithClipboardCPButton($object->barcode);
-				}
-				print '</td></tr>'."\n";
-			}
+					$fk_barcode_type = '';
+					if ($action == 'editbarcodetype') {
+						print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
+						$fk_barcode_type = $object->barcode_type;
+					} else {
+						$object->fetch_barcode();
+						$fk_barcode_type = $object->barcode_type;
+						print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
+					}
+					print '</td></tr>'."\n";
 
-			// Batch number management (to batch)
-			if (isModEnabled('productbatch')) {
-				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
-					print $object->getLibStatut(0, 2);
+					// Barcode value
+					print '<tr><td class="nowrap">';
+					print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+					print $langs->trans("BarcodeValue");
+					print '</td>';
+					if (($action != 'editbarcode') && $usercancreate && $createbarcode) {
+						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+					}
+					print '</tr></table>';
+					print '</td><td>';
+					if ($action == 'editbarcode') {
+						$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
+						if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
+							$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
+						}
+
+						print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<input type="hidden" name="action" value="setbarcode">';
+						print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
+						print '<input class="width300" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+						print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
+						print '</form>';
+					} else {
+						print showValueWithClipboardCPButton($object->barcode);
+					}
+					print '</td></tr>'."\n";
+				}
+
+				// Batch number management (to batch)
+				if (isModEnabled('productbatch')) {
+					if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
+						print $object->getLibStatut(0, 2);
+						print '</td></tr>';
+						if ((($object->status_batch == '1' && !empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
+							|| ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced' && !empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)))) {
+							print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
+							print $object->batch_mask;
+							print '</td></tr>';
+						}
+					}
+				}
+
+				if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
+					// Accountancy sell code
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancySellCode");
+					print '</td><td>';
+					if (isModEnabled('accounting')) {
+						if (!empty($object->accountancy_code_sell)) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+
+							print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+						}
+					} else {
+						print $object->accountancy_code_sell;
+					}
 					print '</td></tr>';
-					if ((($object->status_batch == '1' && !empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
-						|| ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced' && !empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)))) {
-						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
-						print $object->batch_mask;
+
+					// Accountancy sell code intra-community
+					if ($mysoc->isInEEC()) {
+						print '<tr><td class="nowrap">';
+						print $langs->trans("ProductAccountancySellIntraCode");
+						print '</td><td>';
+						if (isModEnabled('accounting')) {
+							if (!empty($object->accountancy_code_sell_intra)) {
+								$accountingaccount2 = new AccountingAccount($db);
+								$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
+
+								print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+							}
+						} else {
+							print $object->accountancy_code_sell_intra;
+						}
+						print '</td></tr>';
+					}
+
+					// Accountancy sell code export
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancySellExportCode");
+					print '</td><td>';
+					if (isModEnabled('accounting')) {
+						if (!empty($object->accountancy_code_sell_export)) {
+							$accountingaccount3 = new AccountingAccount($db);
+							$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
+
+							print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
+						}
+					} else {
+						print $object->accountancy_code_sell_export;
+					}
+					print '</td></tr>';
+
+					// Accountancy buy code
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancyBuyCode");
+					print '</td><td>';
+					if (isModEnabled('accounting')) {
+						if (!empty($object->accountancy_code_buy)) {
+							$accountingaccount4 = new AccountingAccount($db);
+							$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
+
+							print $accountingaccount4->getNomUrl(0, 1, 1, '', 1);
+						}
+					} else {
+						print $object->accountancy_code_buy;
+					}
+					print '</td></tr>';
+
+					// Accountancy buy code intra-community
+					if ($mysoc->isInEEC()) {
+						print '<tr><td class="nowrap">';
+						print $langs->trans("ProductAccountancyBuyIntraCode");
+						print '</td><td>';
+						if (isModEnabled('accounting')) {
+							if (!empty($object->accountancy_code_buy_intra)) {
+								$accountingaccount5 = new AccountingAccount($db);
+								$accountingaccount5->fetch('', $object->accountancy_code_buy_intra, 1);
+
+								print $accountingaccount5->getNomUrl(0, 1, 1, '', 1);
+							}
+						} else {
+							print $object->accountancy_code_buy_intra;
+						}
+						print '</td></tr>';
+					}
+
+					// Accountancy buy code export
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancyBuyExportCode");
+					print '</td><td>';
+					if (isModEnabled('accounting')) {
+						if (!empty($object->accountancy_code_buy_export)) {
+							$accountingaccount6 = new AccountingAccount($db);
+							$accountingaccount6->fetch('', $object->accountancy_code_buy_export, 1);
+
+							print $accountingaccount6->getNomUrl(0, 1, 1, '', 1);
+						}
+					} else {
+						print $object->accountancy_code_buy_export;
+					}
+					print '</td></tr>';
+				}
+
+				// Description
+				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+
+				// Public URL
+				if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
+					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
+					print dol_print_url($object->url, '_blank', 128);
+					print '</td></tr>';
+				}
+
+				// Default warehouse
+				if ($object->isProduct() && isModEnabled('stock')) {
+					$warehouse = new Entrepot($db);
+					$warehouse->fetch($object->fk_default_warehouse);
+
+					print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+					print (!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+					print '</td>';
+				}
+
+				if ($object->isService() && isModEnabled('workstation')) {
+					$workstation = new Workstation($db);
+					$res = $workstation->fetch($object->fk_default_workstation);
+
+					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+					print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
+					print '</td>';
+				}
+
+				// Parent product.
+				if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
+					$combination = new ProductCombination($db);
+
+					if ($combination->fetchByFkProductChild($object->id) > 0) {
+						$prodstatic = new Product($db);
+						$prodstatic->fetch($combination->fk_product_parent);
+
+						// Parent product
+						print '<tr><td>'.$langs->trans("ParentProduct").'</td><td>';
+						print $prodstatic->getNomUrl(1);
 						print '</td></tr>';
 					}
 				}
-			}
 
-			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
-				// Accountancy sell code
-				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancySellCode");
-				print '</td><td>';
-				if (isModEnabled('accounting')) {
-					if (!empty($object->accountancy_code_sell)) {
-						$accountingaccount = new AccountingAccount($db);
-						$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+				print '</table>';
+				print '</div>';
+				print '<div class="fichehalfright">';
 
-						print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+				print '<div class="underbanner clearboth"></div>';
+				print '<table class="border tableforfield centpercent">';
+
+				if ($object->isService()) {
+					// Duration
+					print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
+					print $object->duration_value;
+					if ($object->duration_value > 1) {
+						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+					} elseif ($object->duration_value > 0) {
+						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 					}
+					print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
+
+					// Mandatory period
+					if ($object->duration_value > 0) {
+						print ' &nbsp; &nbsp; &nbsp; ';
+					}
+					$htmltooltip = $langs->trans("mandatoryHelper");
+					print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
+					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+
+					print '</td></tr>';
 				} else {
-					print $object->accountancy_code_sell;
+					if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+						// Nature
+						print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+						print $object->getLibFinished();
+						print '</td></tr>';
+					}
 				}
-				print '</td></tr>';
 
-				// Accountancy sell code intra-community
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="nowrap">';
-					print $langs->trans("ProductAccountancySellIntraCode");
-					print '</td><td>';
-					if (isModEnabled('accounting')) {
-						if (!empty($object->accountancy_code_sell_intra)) {
-							$accountingaccount2 = new AccountingAccount($db);
-							$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
+				if (!$object->isService() && isModEnabled('bom') && $object->finished) {
+					print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+					if ($object->fk_default_bom) {
+						$bom_static = new BOM($db);
+						$bom_static->fetch($object->fk_default_bom);
+						print $bom_static->getNomUrl(1);
+					}
+					print '</td></tr>';
+				}
 
-							print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+				if (!$object->isService()) {
+					// Brut Weight
+					if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
+						print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
+						if ($object->weight != '') {
+							print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
+						} else {
+							print '&nbsp;';
 						}
-					} else {
-						print $object->accountancy_code_sell_intra;
+						print "</td></tr>\n";
 					}
-					print '</td></tr>';
-				}
 
-				// Accountancy sell code export
-				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancySellExportCode");
-				print '</td><td>';
-				if (isModEnabled('accounting')) {
-					if (!empty($object->accountancy_code_sell_export)) {
-						$accountingaccount3 = new AccountingAccount($db);
-						$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
-
-						print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
-					}
-				} else {
-					print $object->accountancy_code_sell_export;
-				}
-				print '</td></tr>';
-
-				// Accountancy buy code
-				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancyBuyCode");
-				print '</td><td>';
-				if (isModEnabled('accounting')) {
-					if (!empty($object->accountancy_code_buy)) {
-						$accountingaccount4 = new AccountingAccount($db);
-						$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
-
-						print $accountingaccount4->getNomUrl(0, 1, 1, '', 1);
-					}
-				} else {
-					print $object->accountancy_code_buy;
-				}
-				print '</td></tr>';
-
-				// Accountancy buy code intra-community
-				if ($mysoc->isInEEC()) {
-					print '<tr><td class="nowrap">';
-					print $langs->trans("ProductAccountancyBuyIntraCode");
-					print '</td><td>';
-					if (isModEnabled('accounting')) {
-						if (!empty($object->accountancy_code_buy_intra)) {
-							$accountingaccount5 = new AccountingAccount($db);
-							$accountingaccount5->fetch('', $object->accountancy_code_buy_intra, 1);
-
-							print $accountingaccount5->getNomUrl(0, 1, 1, '', 1);
+					if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
+						// Brut Length
+						print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
+						if ($object->length != '' || $object->width != '' || $object->height != '') {
+							print $object->length;
+							if ($object->width) {
+								print " x ".$object->width;
+							}
+							if ($object->height) {
+								print " x ".$object->height;
+							}
+							print ' '.measuringUnitString(0, "size", $object->length_units);
+						} else {
+							print '&nbsp;';
 						}
-					} else {
-						print $object->accountancy_code_buy_intra;
+						print "</td></tr>\n";
 					}
-					print '</td></tr>';
-				}
-
-				// Accountancy buy code export
-				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancyBuyExportCode");
-				print '</td><td>';
-				if (isModEnabled('accounting')) {
-					if (!empty($object->accountancy_code_buy_export)) {
-						$accountingaccount6 = new AccountingAccount($db);
-						$accountingaccount6->fetch('', $object->accountancy_code_buy_export, 1);
-
-						print $accountingaccount6->getNomUrl(0, 1, 1, '', 1);
-					}
-				} else {
-					print $object->accountancy_code_buy_export;
-				}
-				print '</td></tr>';
-			}
-
-			// Description
-			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
-
-			// Public URL
-			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
-				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
-				print dol_print_url($object->url, '_blank', 128);
-				print '</td></tr>';
-			}
-
-			// Default warehouse
-			if ($object->isProduct() && isModEnabled('stock')) {
-				$warehouse = new Entrepot($db);
-				$warehouse->fetch($object->fk_default_warehouse);
-
-				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print (!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
-				print '</td>';
-			}
-
-			if ($object->isService() && isModEnabled('workstation')) {
-				$workstation = new Workstation($db);
-				$res = $workstation->fetch($object->fk_default_workstation);
-
-				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
-				print '</td>';
-			}
-
-			// Parent product.
-			if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
-				$combination = new ProductCombination($db);
-
-				if ($combination->fetchByFkProductChild($object->id) > 0) {
-					$prodstatic = new Product($db);
-					$prodstatic->fetch($combination->fk_product_parent);
-
-					// Parent product
-					print '<tr><td>'.$langs->trans("ParentProduct").'</td><td>';
-					print $prodstatic->getNomUrl(1);
-					print '</td></tr>';
-				}
-			}
-
-			print '</table>';
-			print '</div>';
-			print '<div class="fichehalfright">';
-
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield centpercent">';
-
-			if ($object->isService()) {
-				// Duration
-				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
-				print $object->duration_value;
-				if ($object->duration_value > 1) {
-					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-				} elseif ($object->duration_value > 0) {
-					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
-				}
-				print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
-
-				// Mandatory period
-				if ($object->duration_value > 0) {
-					print ' &nbsp; &nbsp; &nbsp; ';
-				}
-				$htmltooltip = $langs->trans("mandatoryHelper");
-				print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
-				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
-
-				print '</td></tr>';
-			} else {
-				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
-					// Nature
-					print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-					print $object->getLibFinished();
-					print '</td></tr>';
-				}
-			}
-
-			if (!$object->isService() && isModEnabled('bom') && $object->finished) {
-				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
-				if ($object->fk_default_bom) {
-					$bom_static = new BOM($db);
-					$bom_static->fetch($object->fk_default_bom);
-					print $bom_static->getNomUrl(1);
-				}
-				print '</td></tr>';
-			}
-
-			if (!$object->isService()) {
-				// Brut Weight
-				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
-					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
-					if ($object->weight != '') {
-						print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
-					} else {
-						print '&nbsp;';
-					}
-					print "</td></tr>\n";
-				}
-
-				if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
-					// Brut Length
-					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
-					if ($object->length != '' || $object->width != '' || $object->height != '') {
-						print $object->length;
-						if ($object->width) {
-							print " x ".$object->width;
+					if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
+						// Brut Surface
+						print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+						if ($object->surface != '') {
+							print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
+						} else {
+							print '&nbsp;';
 						}
-						if ($object->height) {
-							print " x ".$object->height;
+						print "</td></tr>\n";
+					}
+					if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
+						// Brut Volume
+						print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+						if ($object->volume != '') {
+							print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
+						} else {
+							print '&nbsp;';
 						}
-						print ' '.measuringUnitString(0, "size", $object->length_units);
-					} else {
-						print '&nbsp;';
+						print "</td></tr>\n";
 					}
-					print "</td></tr>\n";
-				}
-				if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
-					// Brut Surface
-					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
-					if ($object->surface != '') {
-						print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
-					} else {
-						print '&nbsp;';
+
+					if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
+						// Net Measure
+						print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td>';
+						if ($object->net_measure != '') {
+							print $object->net_measure." ".measuringUnitString($object->net_measure_units);
+						} else {
+							print '&nbsp;';
+						}
+						print '</td></tr>';
 					}
-					print "</td></tr>\n";
-				}
-				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
-					// Brut Volume
-					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-					if ($object->volume != '') {
-						print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
-					} else {
-						print '&nbsp;';
-					}
-					print "</td></tr>\n";
 				}
 
-				if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
-					// Net Measure
-					print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td>';
-					if ($object->net_measure != '') {
-						print $object->net_measure." ".measuringUnitString($object->net_measure_units);
-					} else {
-						print '&nbsp;';
+				// Unit
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					$unit = $object->getLabelOfUnit();
+
+					print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
+					if ($unit !== '') {
+						print $langs->trans($unit);
 					}
 					print '</td></tr>';
 				}
-			}
 
-			// Unit
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-				$unit = $object->getLabelOfUnit();
+				// Custom code
+				if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) {
+					print '<tr><td>'.$langs->trans("CustomCode").'</td><td>'.$object->customcode.'</td></tr>';
 
-				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
-				if ($unit !== '') {
-					print $langs->trans($unit);
+					// Origin country code
+					print '<tr><td>'.$langs->trans("Origin").'</td><td>'.getCountry($object->country_id, 0, $db);
+					if (!empty($object->state_id)) {
+						print ' - '.getState($object->state_id, 0, $db);
+					}
+					print '</td></tr>';
 				}
-				print '</td></tr>';
-			}
 
-			// Custom code
-			if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) {
-				print '<tr><td>'.$langs->trans("CustomCode").'</td><td>'.$object->customcode.'</td></tr>';
-
-				// Origin country code
-				print '<tr><td>'.$langs->trans("Origin").'</td><td>'.getCountry($object->country_id, 0, $db);
-				if (!empty($object->state_id)) {
-					print ' - '.getState($object->state_id, 0, $db);
+				// Quality Control
+				if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+					print '<tr><td>'.$langs->trans("LifeTime").'</td><td>'.$object->lifetime.'</td></tr>';
+					print '<tr><td>'.$langs->trans("QCFrequency").'</td><td>'.$object->qc_frequency.'</td></tr>';
 				}
-				print '</td></tr>';
+
+				// Other attributes
+				$parameters = array();
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+				// Categories
+				if (isModEnabled('categorie')) {
+					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
+					print "</td></tr>";
+				}
+
+				// Note private
+				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+					print '<!-- show Note --> '."\n";
+					print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>'.(dol_textishtml($object->note_private) ? $object->note_private : dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
+					print '<!-- End show Note --> '."\n";
+				}
+
+				print "</table>\n";
+				print '</div>';
+
+				print '</div>';
+				print '<div class="clearboth"></div>';
 			}
-
-			// Quality Control
-			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
-				print '<tr><td>'.$langs->trans("LifeTime").'</td><td>'.$object->lifetime.'</td></tr>';
-				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td>'.$object->qc_frequency.'</td></tr>';
-			}
-
-			// Other attributes
-			$parameters = array();
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
-			// Categories
-			if (isModEnabled('categorie')) {
-				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-				print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
-				print "</td></tr>";
-			}
-
-			// Note private
-			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
-				print '<!-- show Note --> '."\n";
-				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>'.(dol_textishtml($object->note_private) ? $object->note_private : dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
-				print '<!-- End show Note --> '."\n";
-			}
-
-			print "</table>\n";
-			print '</div>';
-
-			print '</div>';
-			print '<div class="clearboth"></div>';
 
 			print dol_get_fiche_end();
 		}
