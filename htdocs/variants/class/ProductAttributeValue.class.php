@@ -288,9 +288,9 @@ class ProductAttributeValue extends CommonObjectLine
 			$sql .= " AND c2v.rowid IS NOT NULL AND p.tosell = 1";
 		}
 
-		$query = $this->db->query($sql);
-
 		$sql .= " ORDER BY v.position ASC";
+
+		$query = $this->db->query($sql);
 
 		while ($result = $this->db->fetch_object($query)) {
 			if (empty($returnonlydata)) {
