@@ -201,7 +201,7 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj && $obj->rowid) {
-			setEventMessages('ErrorThisBankReceiptIsAlreadyUsed', null, 'errors');
+			setEventMessages('ErrorBankReceiptAlreadyExists', null, 'errors');
 			$error++;
 		}
 	} else {
