@@ -19,6 +19,7 @@
 
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recrutement
+Recruitment = Recrutement
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Gestion et suivi des campagnes de recrutement
 
