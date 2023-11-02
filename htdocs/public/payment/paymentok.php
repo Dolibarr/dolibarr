@@ -430,7 +430,7 @@ if ($ispaymentok) {
 
 		$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
 		$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
-		
+
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
 
 		if ($result1 > 0 && $result2 > 0) {
