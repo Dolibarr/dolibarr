@@ -3189,10 +3189,10 @@ if ($action == 'create') {
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-		// Call Hook tabContentViewSupplierOrder
+		// Call Hook tabContentViewSupplierInvoice
 		$parameters = array();
 		// Note that $action and $object may be modified by hook
-		$reshook = $hookmanager->executeHooks('tabContentViewSupplierOrder', $parameters, $object, $action);
+		$reshook = $hookmanager->executeHooks('tabContentViewSupplierInvoice', $parameters, $object, $action);
 		if (empty($reshook)) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
