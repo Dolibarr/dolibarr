@@ -810,7 +810,7 @@ class CurrencyRate extends CommonObjectLine
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((float) $this->rate).',';
-		$sql .= ' '.((float) $this->rate_indirect).','; 
+		$sql .= ' '.((float) $this->rate_indirect).',';
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".((int) $fk_multicurrency).",";
 		$sql .= " ".((int) $this->entity);
