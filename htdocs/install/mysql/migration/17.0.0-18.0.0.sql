@@ -121,6 +121,8 @@ ALTER TABLE llx_bordereau_cheque ADD COLUMN type VARCHAR(6) DEFAULT 'CHQ';
 -- Element time
 ALTER TABLE llx_projet_task_time RENAME TO llx_element_time;
 
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
+
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_element_time set task_date = NULL where DATE(STR_TO_DATE(task_date, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
