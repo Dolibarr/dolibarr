@@ -751,6 +751,11 @@ class CurrencyRate extends CommonObjectLine
 	public $rate;
 
 	/**
+	 * @var double Rate Indirect
+	 */
+	public $rate_indirect;
+
+	/**
 	 * @var integer    Date synchronisation
 	 */
 	public $date_sync;
@@ -799,11 +804,13 @@ class CurrencyRate extends CommonObjectLine
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= ' rate,';
+		$sql .= ' rate_indirect,';
 		$sql .= ' date_sync,';
 		$sql .= ' fk_multicurrency,';
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((float) $this->rate).',';
+		$sql .= ' '.((float) $this->rate_indirect).','; 
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".((int) $fk_multicurrency).",";
 		$sql .= " ".((int) $this->entity);
@@ -853,7 +860,7 @@ class CurrencyRate extends CommonObjectLine
 	{
 		dol_syslog('CurrencyRate::fetch', LOG_DEBUG);
 
-		$sql = "SELECT cr.rowid, cr.rate, cr.date_sync, cr.fk_multicurrency, cr.entity";
+		$sql = "SELECT cr.rowid, cr.rate, cr.rate_indirect, cr.date_sync, cr.fk_multicurrency, cr.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS cr";
 		$sql .= " WHERE cr.rowid = ".((int) $id);
 
@@ -866,6 +873,7 @@ class CurrencyRate extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->rate = $obj->rate;
+				$this->rate_indirect = $obj->rate_indirect;
 				$this->date_sync = $this->db->jdate($obj->date_sync);
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->entity = $obj->entity;
