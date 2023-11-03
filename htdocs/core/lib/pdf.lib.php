@@ -1534,14 +1534,19 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
 		$prodser->get_sousproduits_arbo();
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
+			$outputlangs->load('mrp');
 			$tmparrayofsubproducts = reset($prodser->sousprods);
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
+						$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].
+						(isset($object->lines[$i]->qty) && !empty($object->lines[$i]->qty) ? ('x'.$subprodval[1]*$object->lines[$i]->qty.'='.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$object->lines[$i]->qty): ''));
 				}
 			} else {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
+						$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].
+						(isset($object->lines[$i]->qty) && !empty($object->lines[$i]->qty) ? ('x'.$subprodval[1]*$object->lines[$i]->qty .'='.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$object->lines[$i]->qty): ''));
 				}
 			}
 		}
