@@ -8725,13 +8725,15 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 						$method = $param_arr[2];
 						$id = (int) $param_arr[3];
 
-						// load class file and init object in memory
-						if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
-							require_once DOL_DOCUMENT_ROOT . $path;
-							if (class_exists($class)) {
-								$memory_object_list[$class] = array(
-									'list' => array(),
-								);
+						// load class file and init object list in memory
+						if (!isset($memory_object_list[$class])) {
+							if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
+								require_once DOL_DOCUMENT_ROOT . $path;
+								if (class_exists($class)) {
+									$memory_object_list[$class] = array(
+										'list' => array(),
+									);
+								}
 							}
 						}
 
