@@ -544,6 +544,7 @@ if ($action == 'create') {
 		if ($object->getCountryCode() == 'IN') {
 			$bickey = "SWIFT";
 		}
+		$intermediary_bickey = "IntermediaryBICNumber";
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
@@ -783,6 +784,7 @@ if ($action == 'create') {
 			if ($object->getCountryCode() == 'IN') {
 				$bickey = "SWIFT";
 			}
+			$intermediary_bickey = "IntermediaryBICNumber";
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
@@ -1135,6 +1137,7 @@ if ($action == 'create') {
 			if ($object->getCountryCode() == 'IN') {
 				$bickey = "SWIFT";
 			}
+			$intermediary_bickey = "IntermediaryBICNumber";
 
 			// IBAN
 			print '<tr><td>';

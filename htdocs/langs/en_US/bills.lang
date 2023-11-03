@@ -488,6 +488,7 @@ CustomerIBAN=IBAN of customer
 SupplierIBAN=IBAN of vendor
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT code
+IntermediaryBICNumber=Intermediary BIC/SWIFT code
 ExtraInfos=Extra infos
 RegulatedOn=Regulated on
 ChequeNumber=Check N°
