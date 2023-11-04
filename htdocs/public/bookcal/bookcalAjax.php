@@ -15,7 +15,7 @@
  */
 
 /**
- *	\file       /htdocs/core/ajax/bookcalAjax.php
+ *	\file       /htdocs/public/bookcal/bookcalAjax.php
  *	\brief      File to make Ajax action on Book cal
  */
 
@@ -31,23 +31,22 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-// Do not check anti CSRF attack test
+// If there is no need to load and show top and left menu
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-// If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
-
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$idavailability = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $datetocheckbooking = GETPOST('datetocheck', 'int');
 $error = 0;
 
@@ -58,6 +57,7 @@ $error = 0;
 
 $result = "{}";
 
+
 /*
  * Actions
  */
@@ -66,23 +66,28 @@ top_httphead('application/json');
 
 if ($action == 'verifyavailability') {
 	$response = array();
-	if (empty($idavailability)) {
+	if (empty($id)) {
 		$error++;
 		$response["code"] = "MISSING_ID";
 		$response["message"] = "Missing parameter id";
 		header('HTTP/1.0 400 Bad Request');
+		echo json_encode($response);
+		exit;
 	}
 	if (empty($datetocheckbooking)) {
 		$error++;
 		$response["code"] = "MISSING_DATE_AVAILABILITY";
 		$response["message"] = "Missing parameter datetocheck";
 		header('HTTP/1.0 400 Bad Request');
+		echo json_encode($response);
+		exit;
 	}
 	if (!$error) {
 		$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
+
 		$sql = "SELECT b.datep, b.id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as b";
-		$sql .= " WHERE fk_bookcal_availability = ".((int) $idavailability);
+		$sql .= " WHERE fk_bookcal_availability IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bookcal_availabilities WHERE fk_bookcal_calendar = ".((int) $id).")";
 		$sql .= " AND b.datep >= '".$db->idate($datetocheckbooking)."'";
 		$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
 
@@ -112,12 +117,12 @@ if ($action == 'verifyavailability') {
 			dol_print_error($db);
 		}
 	}
-	$result = json_encode($response);
+	$result = $response;
 }
+
 
 /*
  * View
  */
-//None
 
 echo json_encode($result);

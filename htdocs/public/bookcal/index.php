@@ -51,9 +51,7 @@ $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-
-$availability = new Availabilities($db);
-$result = $availability->fetch($id);
+$id_availability = GETPOST('id_availability', 'int');
 
 $year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
 $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
@@ -70,6 +68,10 @@ $backtopage = GETPOST("backtopage", "alpha");
 $object = new Calendar($db);
 $result = $object->fetch($id);
 
+$availability = new Availabilities($db);
+if ($id_availability > 0) {
+	$result = $availability->fetch($id_availability);
+}
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -314,12 +316,12 @@ if ($action == 'afteradd') {
 		print '<form name="formsearch" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
-		$nav = "<a href=\"?id=".$id."&year=".$prev_year."&month=".$prev_month.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
-		$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
+		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";
+		$nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
 		$nav .= " </span>\n";
-		$nav .= " &nbsp; <a href=\"?id=".$id."&year=".$next_year."&month=".$next_month.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
+		$nav .= ' &nbsp; <a href="?id='.$id."&year=".$next_year."&month=".$next_month.$param.'"><i class="fa fa-chevron-right"></i></a>'."\n";
 		if (empty($conf->dol_optimize_smallscreen)) {
-			$nav .= " &nbsp; <a href=\"?id=".$id."&year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
+			$nav .= ' &nbsp; <a href="?id='.$id."&year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
 		}
 		$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 		$nav .= '<button type="submit" class="liste_titre button_search valignmiddle" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
@@ -338,8 +340,10 @@ if ($action == 'afteradd') {
 	print '<tr>';
 	print '<td>';
 
-	print '<h2>'.(!empty($availability->label) ? $availability->label : $availability->ref).'</h2>';
-	print '<span>'.$langs->trans("AppointmentDuration", $availability->duration).'</span>';
+	//print '<h2>'.(!empty($availability->label) ? $availability->label : $availability->ref).'</h2>';
+	$defaultduration = 30;
+	print '<span>'.$langs->trans("AppointmentDuration", $defautduration).'</span>';
+
 	if ($action == 'create') {
 		print '<br>';
 		if (empty($datetimebooking)) {
@@ -400,8 +404,16 @@ if ($action == 'afteradd') {
 		echo ' </tr>'."\n";
 		$todayarray = dol_getdate($now, 'fast');
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
-		$availabilities_start = $availability->start;
-		$availabilities_end = $availability->end;
+
+		// TODO Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
+		$arrayofavailabledays = array();
+
+		$arrayofavailabledays[dol_mktime(0, 0, 0, 4, 9, 2024)] = dol_mktime(0, 0, 0, 4, 9, 2023);
+		$arrayofavailabledays[dol_mktime(0, 0, 0, 11, 9, 2024)] = dol_mktime(0, 0, 0, 11, 9, 2023);
+
+		// TODO Now complete the array with units already reserved and set transparency to 0
+		// select in actioncomm all events for user linked to an availability range into the calendar $id
+
 
 		for ($iter_week = 0; $iter_week < 6; $iter_week++) {
 			echo " <tr>\n";
@@ -410,8 +422,7 @@ if ($action == 'afteradd') {
 				$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
 			} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
 				$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
-			} else // If number of the current day is in next month
-			{
+			} else {// If number of the current day is in next month
 				$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
 			}
 			// Get week number for the targeted date '$currdate0'
@@ -440,7 +451,8 @@ if ($action == 'afteradd') {
 					if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $month && $todayarray['year'] == $year) {
 						$today = 1;
 					}
-					if ($curtime > $todaytms && $availabilities_start <= $curtime && $availabilities_end >= $curtime) {
+					//var_dump($curtime); var_dump($todaytms); var_dump($arrayofavailabledays);
+					if ($curtime > $todaytms && in_array($curtime, $arrayofavailabledays)) {
 						$style .= ' cal_available cursorpointer';
 					}
 					if ($curtime < $todaytms) {
@@ -470,7 +482,8 @@ if ($action == 'afteradd') {
 		}
 		print '</table>';
 		print '</td>';
-		print '<td>';
+
+		print '<td>'; // Column visible after selection of a day
 		print '<div class="center hidden bookingtab" style="height:50%">';
 		print '<div  style="margin-top:8px;max-height:330px" class="div-table-responsive-no-min">';
 		print '<form name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -480,6 +493,7 @@ if ($action == 'afteradd') {
 		print '<input type="hidden" id="datechosen" name="datechosen" value="">';
 		print '<input type="hidden" id="datetimechosen" name="datetimechosen" value="">';
 
+		//var_dump($availability);
 		$hoursavailabilities_start = $availability->startHour;
 		$hoursavailabilities_end = $availability->endHour;
 		$hoursavailabilities_duration = $availability->duration;
@@ -487,7 +501,7 @@ if ($action == 'afteradd') {
 			for ($j=0; $j < 60 ; $j += $hoursavailabilities_duration) {
 				$timestring = ($i < 10 ? '0'.$i : $i).':'.($j < 10 ? '0'.$j : $j);
 				$timestringid = ($i < 10 ? '0'.$i : $i).''.($j < 10 ? '0'.$j : $j);
-				print '<span id="'.$timestringid.'" class="btnformbooking"><input type="submit" class="button" name="timebooking" value="'.$timestring.'"><br></span>';
+				print '<span id="'.$timestringid.'" data-availability="'.$availability->id.'" class="btnformbooking"><input type="submit" class="button" name="timebooking" value="'.$timestring.'"><br></span>';
 			}
 		}
 		print '</form>';
@@ -510,11 +524,12 @@ if ($action == 'afteradd') {
 	}';
 	print '$(document).ready(function() {
 		$(".cal_available").on("click", function(){
+			console.log("We click on cal_available");
 			$(".cal_chosen").removeClass("cal_chosen");
 			$(this).addClass("cal_chosen");
 			$.ajax({
 				type: "POST",
-				url: "'.DOL_URL_ROOT.'/core/ajax/bookcalAjax.php",
+				url: "'.DOL_URL_ROOT.'/public/bookcal/bookcalAjax.php",
 				data: {
 					action: "verifyavailability",
 					id: '.$id.',
