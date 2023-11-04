@@ -22,12 +22,11 @@
  * \brief		Setup page to configure loan module
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
@@ -77,7 +76,7 @@ if ($action == 'update') {
 llxHeader();
 
 $form = new Form($db);
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -101,14 +100,14 @@ foreach ($list as $key) {
 
 	// Param
 	$label = $langs->trans($key);
-	print '<td><label for="' . $key . '">' . $label . '</label></td>';
+	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value
 	print '<td>';
-	if (isModEnabled('accounting')) {
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+	if (!empty($conf->accounting->enabled)) {
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	} else {
-		print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . getDolGlobalString($key) . '">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 	print '</td></tr>';
 }
@@ -118,7 +117,7 @@ print '</tr>';
 print '</form>';
 print "</table>\n";
 
-print '<br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 // End of page
 llxFooter();

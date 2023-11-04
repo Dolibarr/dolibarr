@@ -23,7 +23,6 @@
  *  \brief      Page to add payment of an expense report
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
@@ -76,8 +75,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-
-	if (isModEnabled("banque") && !($accountid > 0)) {
+	if (!empty($conf->banque->enabled) && !($accountid > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 	}
@@ -89,16 +87,14 @@ if ($action == 'add_payment') {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
-				if (GETPOST($key)) {
-					$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
-					$total += price2num(GETPOST($key));
-				}
+				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
+				$total += price2num($_POST[$key]);
 			}
 		}
 
 		if (count($amounts) <= 0) {
 			$error++;
-			setEventMessages('ErrorNoPaymentDefined', null, 'errors');
+			$errmsg = 'ErrorNoPaymentDefined';
 		}
 
 		if (!$error) {
@@ -113,7 +109,6 @@ if ($action == 'add_payment') {
 			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
 			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
 			$payment->note_public    = GETPOST("note_public", 'restricthtml');
-			$payment->fk_bank        = $accountid;
 
 			if (!$error) {
 				$paymentid = $payment->create($user);
@@ -125,7 +120,7 @@ if ($action == 'add_payment') {
 
 			if (!$error) {
 				$result = $payment->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountid, '', '');
-				if ($result <= 0) {
+				if (!$result > 0) {
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
 				}
@@ -135,7 +130,7 @@ if ($action == 'add_payment') {
 				$payment->fetch($paymentid);
 				if ($expensereport->total_ttc - $payment->amount == 0) {
 					$result = $expensereport->setPaid($expensereport->id, $user);
-					if (!($result > 0)) {
+					if (!$result > 0) {
 						setEventMessages($payment->error, $payment->errors, 'errors');
 						$error++;
 					}
@@ -175,7 +170,7 @@ if ($action == 'create' || empty($action)) {
 
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript">';
+		print "\n".'<script type="text/javascript" language="javascript">';
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
 		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
@@ -207,7 +202,7 @@ if ($action == 'create' || empty($action)) {
 	print '<table class="border centpercent">'."\n";
 
 	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut, $expensereport->date_fin, "", $langs, 0).'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($expensereport->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($expensereport->total_ttc, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
@@ -217,18 +212,16 @@ if ($action == 'create' || empty($action)) {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free($resql);
+		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td><span class="amount">'.price($sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td><span class="amount">'.price($total - $sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total - $sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	print '</table>';
 
 	print '</div>';
 
 	print dol_get_fiche_end();
-
-	print '<br>';
 
 	print dol_get_fiche_head();
 
@@ -246,12 +239,11 @@ if ($action == 'create' || empty($action)) {
 	print "</td>\n";
 	print '</tr>';
 
-	if (isModEnabled("banque")) {
+	if (!empty($conf->banque->enabled)) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 		print '<td colspan="2">';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : 0, "accountid", 0, '', 2); // Show open bank account list
+		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : $expensereport->accountid, "accountid", 0, '', 2); // Show open bank account list
 		print '</td></tr>';
 	}
 
@@ -285,7 +277,7 @@ if ($action == 'create' || empty($action)) {
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$total_ttc = 0;
+	$total = 0;
 	$totalrecu = 0;
 
 	while ($i < $num) {
@@ -306,7 +298,7 @@ if ($action == 'create' || empty($action)) {
 			}
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
-			print '<input type="text" class="width75" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST($namef).'">';
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
 		} else {
 			print '-';
 		}
@@ -314,8 +306,9 @@ if ($action == 'create' || empty($action)) {
 
 		print "</tr>\n";
 
+		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $sumpaid;
+		$totalrecu += $objp->am;
 		$i++;
 	}
 	if ($i > 1) {
@@ -331,7 +324,11 @@ if ($action == 'create' || empty($action)) {
 
 	print "</table>";
 
-	print $form->buttonsSaveCancel();
+	print '<br><div class="center">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print "</form>\n";
 }

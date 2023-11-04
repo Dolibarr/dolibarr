@@ -12,40 +12,30 @@ use OAuth\Common\Http\Uri\UriInterface;
 
 class Microsoft extends AbstractService
 {
-    const SCOPE_BASIC = 'basic';
-    const SCOPE_OFFLINE_ACCESS = 'offline_access';
-    const SCOPE_SIGNIN = 'signin';
-    const SCOPE_BIRTHDAY = 'birthday';
-    const SCOPE_CALENDARS = 'calendars';
-    const SCOPE_CALENDARS_UPDATE = 'calendars_update';
-    const SCOPE_CONTACTS_BIRTHDAY = 'contacts_birthday';
-    const SCOPE_CONTACTS_CREATE = 'contacts_create';
-    const SCOPE_CONTACTS_CALENDARS = 'contacts_calendars';
-    const SCOPE_CONTACTS_PHOTOS = 'contacts_photos';
-    const SCOPE_CONTACTS_SKYDRIVE = 'contacts_skydrive';
-    const SCOPE_EMAIL = 'email';
-    const SCOPE_EVENTS_CREATE = 'events_create';
-    const SCOPE_MESSENGER = 'messenger';
-    const SCOPE_OPENID = 'openid';
-    const SCOPE_PHONE_NUMBERS = 'phone_numbers';
-    const SCOPE_PHOTOS = 'photos';
-    const SCOPE_POSTAL_ADDRESSES = 'postal_addresses';
-    const SCOPE_PROFILE = 'profile';
-    const SCOPE_SHARE = 'share';
-    const SCOPE_SKYDRIVE = 'skydrive';
-    const SCOPE_SKYDRIVE_UPDATE = 'skydrive_update';
-    const SCOPE_WORK_PROFILE = 'work_profile';
-    const SCOPE_APPLICATIONS = 'applications';
-    const SCOPE_APPLICATIONS_CREATE = 'applications_create';
-    const SCOPE_IMAP = 'imap';
-    const SOCPE_IMAP_ACCESSASUSERALL = 'https://outlook.office365.com/IMAP.AccessAsUser.All';
-    const SOCPE_SMTPSEND = 'https://outlook.office365.com/SMTP.Send';
-    const SOCPE_USERREAD = 'User.Read';
-    const SOCPE_MAILREAD = 'Mail.Read';
-    const SOCPE_MAILSEND = 'Mail.Send';
-
-    protected $storage;
-
+    const SCOPE_BASIC = 'wl.basic';
+    const SCOPE_OFFLINE = 'wl.offline_access';
+    const SCOPE_SIGNIN = 'wl.signin';
+    const SCOPE_BIRTHDAY = 'wl.birthday';
+    const SCOPE_CALENDARS = 'wl.calendars';
+    const SCOPE_CALENDARS_UPDATE = 'wl.calendars_update';
+    const SCOPE_CONTACTS_BIRTHDAY = 'wl.contacts_birthday';
+    const SCOPE_CONTACTS_CREATE = 'wl.contacts_create';
+    const SCOPE_CONTACTS_CALENDARS = 'wl.contacts_calendars';
+    const SCOPE_CONTACTS_PHOTOS = 'wl.contacts_photos';
+    const SCOPE_CONTACTS_SKYDRIVE = 'wl.contacts_skydrive';
+    const SCOPE_EMAILS = 'wl.emails';
+    const SCOPE_EVENTS_CREATE = 'wl.events_create';
+    const SCOPE_MESSENGER = 'wl.messenger';
+    const SCOPE_PHONE_NUMBERS = 'wl.phone_numbers';
+    const SCOPE_PHOTOS = 'wl.photos';
+    const SCOPE_POSTAL_ADDRESSES = 'wl.postal_addresses';
+    const SCOPE_SHARE = 'wl.share';
+    const SCOPE_SKYDRIVE = 'wl.skydrive';
+    const SCOPE_SKYDRIVE_UPDATE = 'wl.skydrive_update';
+    const SCOPE_WORK_PROFILE = 'wl.work_profile';
+    const SCOPE_APPLICATIONS = 'wl.applications';
+    const SCOPE_APPLICATIONS_CREATE = 'wl.applications_create';
+    const SCOPE_IMAP = 'wl.imap';
 
     /**
      * MS uses some magical not officialy supported scope to get even moar info like full emailaddresses.
@@ -58,8 +48,7 @@ class Microsoft extends AbstractService
      *
      * Considering this scope is not officially supported: use with care
      */
-    const SCOPE_CONTACTS_EMAILS = 'contacts_emails';
-
+    const SCOPE_CONTACTS_EMAILS = 'wl.contacts_emails';
 
     public function __construct(
         CredentialsInterface $credentials,
@@ -69,8 +58,6 @@ class Microsoft extends AbstractService
         UriInterface $baseApiUri = null
     ) {
         parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri);
-
-        $this->storage = $storage;
 
         if (null === $baseApiUri) {
             $this->baseApiUri = new Uri('https://apis.live.net/v5.0/');
@@ -82,11 +69,7 @@ class Microsoft extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-    	$tenant = $this->storage->getTenant();
-
-    	//return new Uri('https://login.live.com/oauth20_authorize.srf');
-        //return new Uri('https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize');
-        return new Uri('https://login.microsoftonline.com/'.$tenant.'/oauth2/v2.0/authorize');
+        return new Uri('https://login.live.com/oauth20_authorize.srf');
     }
 
     /**
@@ -94,11 +77,7 @@ class Microsoft extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-    	$tenant = $this->storage->getTenant();
-
-        //return new Uri('https://login.live.com/oauth20_token.srf');
-        //return new Uri('https://login.microsoftonline.com/organizations/oauth2/v2.0/token');
-        return new Uri('https://login.microsoftonline.com/'.$tenant.'/oauth2/v2.0/token');
+        return new Uri('https://login.live.com/oauth20_token.srf');
     }
 
     /**
@@ -121,7 +100,6 @@ class Microsoft extends AbstractService
         } elseif (isset($data['error'])) {
             throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
         }
-        //print $data['access_token'];exit;
 
         $token = new StdOAuth2Token();
         $token->setAccessToken($data['access_token']);

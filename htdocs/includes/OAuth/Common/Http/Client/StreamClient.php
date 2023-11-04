@@ -57,7 +57,6 @@ class StreamClient extends AbstractClient
         }
         $extraHeaders['Content-length'] = 'Content-length: '.strlen($requestBody);
 
-        //var_dump($requestBody); var_dump($extraHeaders);var_dump($method);exit;
         $context = $this->generateStreamContext($requestBody, $extraHeaders, $method);
 
         $level = error_reporting(0);

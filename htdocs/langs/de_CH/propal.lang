@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - propal
+ProposalsOpened=Offene Angebote
 ProposalCard=Angebotskarte
+NewPropal=Neues Angebot
 Prospect=Lead
 LastPropals=%s neueste Angebote
 LastModifiedProposals=%s neueste geänderte Offerten
@@ -12,11 +14,10 @@ PropalStatusNotSignedShort=Nicht unterzeichnet
 PropalsToClose=Zu schliessende Angebote
 ListOfProposals=Liste der Angebote
 ActionsOnPropal=Ereignisse zum Angebot
-AddToDraftProposals=Zu Angebots-Entwurf hinzufügen
 DefaultProposalDurationValidity=Standardmässige Gültigkeitsdatuer (Tage)
 AvailabilityPeriod=Verfügbarkeitszeitraum
 SetAvailability=Verfügbarkeitszeitraum definieren
 OtherProposals=Andere Angebote
-DefaultModelPropalClosed=Standard-Template, wenn sie ein Angebot schliessen wollen (ohne Rechnung)
 DefaultModelPropalToBill=Standard-Template, wenn Sie ein Angebot schliessen wollen (zur Verrechung)
+DefaultModelPropalClosed=Standard-Template, wenn sie ein Angebot schliessen wollen (ohne Rechnung)
 ProposalCustomerSignature=Schriftliche Annahme, Firmenstempel, Datum und Unterschrift

@@ -24,7 +24,6 @@
  *		\brief      Onglet vcard d'un contact
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -45,6 +44,7 @@ if ($result <= 0) {
 	exit;
 }
 
+$physicalperson = 1;
 
 $company = new Societe($db);
 if ($contact->socid) {
@@ -92,27 +92,22 @@ if ($company->id) {
 	} elseif (empty(trim($contact->email))) {
 		// when contact e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
+	} elseif (strtolower(end(explode("@", $contact->email))) == strtolower(end(explode("@", $company->email)))) {
+		// when e-mail domain of contact and company are the same, use contact e-mail at first (and company e-mail at second)
+		$v->setEmail($contact->email);
+
+		// support by Microsoft Outlook (2019 and possible earlier)
+		$v->setEmail($company->email, 'INTERNET');
 	} else {
-		$tmpcontact = explode("@", trim($contact->email));
-		$tmpcompany = explode("@", trim($company->email));
+		// when e-mail of contact and company complete different use company e-mail at first (and contact e-mail at second)
+		$v->setEmail($company->email);
 
-		if (strtolower(end($tmpcontact)) == strtolower(end($tmpcompany))) {
-			// when e-mail domain of contact and company are the same, use contact e-mail at first (and company e-mail at second)
-			$v->setEmail($contact->email);
-
-			// support by Microsoft Outlook (2019 and possible earlier)
-			$v->setEmail($company->email, 'INTERNET');
-		} else {
-			// when e-mail of contact and company complete different use company e-mail at first (and contact e-mail at second)
-			$v->setEmail($company->email);
-
-			// support by Microsoft Outlook (2019 and possible earlier)
-			$v->setEmail($contact->email, 'INTERNET');
-		}
+		// support by Microsoft Outlook (2019 and possible earlier)
+		$v->setEmail($contact->email, 'INTERNET');
 	}
 
 	// Si contact lie a un tiers non de type "particulier"
-	if ($company->typent_code != 'TE_PRIVATE') {
+	if ($contact->typent_code != 'TE_PRIVATE') {
 		$v->setOrg($company->name);
 	}
 }

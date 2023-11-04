@@ -22,7 +22,6 @@
  *	\brief      Page fiche de valorisation du stock dans l'entrepot
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
@@ -106,7 +105,7 @@ if ($id > 0) {
 	/* ************************************************************************** */
 
 	print "<div class=\"graph\">\n";
-	$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$year = strftime("%Y", time());
 
 	$file = $conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 

@@ -82,7 +82,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -95,7 +95,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -108,7 +108,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -124,7 +124,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}
@@ -173,9 +173,9 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || !empty($result['faultstring'])) {
+		if (! $result || ! empty($result['faultstring'])) {
 			//var_dump($soapclient);
-			print 'Error: '.$soapclient->error_str;
+			print $soapclient->error_str;
 			print "\n<br>\n";
 			print $soapclient->request;
 			print "\n<br>\n";
@@ -183,7 +183,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 			print "\n";
 		}
 
-		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
+		print __METHOD__." count(result)=".count($result)."\n";
 		$this->assertEquals('OK', $result['result']['result_code']);
 
 		return $result;

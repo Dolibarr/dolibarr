@@ -77,7 +77,7 @@ background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZ
 }";
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass, false);
+dom.importCssString(exports.cssText, exports.cssClass);
 
 });                (function() {
                     window.require(["ace/theme/gruvbox"], function(m) {

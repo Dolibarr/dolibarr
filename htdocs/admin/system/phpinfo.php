@@ -24,7 +24,6 @@
  *		\brief      Page des infos systeme de php
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -34,6 +33,7 @@ $langs->loadLangs(array("admin", "install", "errors"));
 if (!$user->admin) {
 	accessforbidden();
 }
+
 
 
 /*
@@ -183,22 +183,6 @@ print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
-$functions = ["easter_date"];
-$name      = "Calendar";
-
-print "<tr>";
-print "<td>".$name."</td>";
-print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
-print "</tr>";
-
-$functions = ["simplexml_load_string"];
-$name      = "Xml";
-
-print "<tr>";
-print "<td>".$name."</td>";
-print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
-print "</tr>";
-
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	$functions = ["locale_get_primary_language", "locale_get_region"];
 	$name      = "Intl";
@@ -211,14 +195,6 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 $functions = ["imap_open"];
 $name      = "IMAP";
-
-print "<tr>";
-print "<td>".$name."</td>";
-print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
-print "</tr>";
-
-$functions = array();
-$name      = "zip";
 
 print "<tr>";
 print "<td>".$name."</td>";
@@ -250,19 +226,9 @@ foreach ($phparray as $key => $value) {
 	//var_dump($value);
 	foreach ($value as $keyparam => $keyvalue) {
 		if (!is_array($keyvalue)) {
-			$keytoshow = $keyparam;
-			$valtoshow = $keyvalue;
-			// Hide value of session cookies
-			if (in_array($keyparam, array('HTTP_COOKIE', 'Cookie', "\$_SERVER['HTTP_COOKIE']", 'Authorization'))) {
-				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-			}
-			if (preg_match('/'.preg_quote('$_COOKIE[\'DOLSESSID_', '/').'/i', $keyparam)) {
-				$keytoshow = $keyparam;
-				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-			}
-
 			print '<tr class="oddeven">';
-			print '<td>'.$keytoshow.'</td>';
+			print '<td>'.$keyparam.'</td>';
+			$valtoshow = $keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') {
 				$valtoshow = dol_trunc($keyvalue, 80);
 			}

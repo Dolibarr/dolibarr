@@ -50,6 +50,8 @@ abstract class ModelePDFBom extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'bom';
 		$list = array();
 
@@ -85,7 +87,7 @@ abstract class ModeleNumRefBoms
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Descriptive text
+	 *	@return     string      Texte descripif
 	 */
 	public function info()
 	{

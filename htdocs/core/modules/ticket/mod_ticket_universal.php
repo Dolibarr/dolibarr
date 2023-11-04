@@ -55,7 +55,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return string      Descriptive text
+	 *  @return string      Texte descripif
 	 */
 	public function info()
 	{
@@ -81,9 +81,9 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.$conf->global->TICKET_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -127,18 +127,15 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = getDolGlobalString("TICKET_UNIVERSAL_MASK");
+		$mask = $conf->global->TICKET_UNIVERSAL_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		// Get entities
-		$entity = getEntity('ticketnumber', 1, $ticket);
-
 		$date = empty($ticket->datec) ? dol_now() : $ticket->datec;
-		$numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client, $date, 'next', false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client, $date);
 
 		return $numFinal;
 	}

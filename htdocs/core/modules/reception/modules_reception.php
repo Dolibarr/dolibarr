@@ -43,6 +43,8 @@ abstract class ModelePdfReception extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'reception';
 		$list = array();
 
@@ -108,10 +110,10 @@ abstract class ModelNumRefReception
 	 *	Returns next value assigned
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
+	 *	@param	Object		$shipment	Shipment object
 	 *	@return	string					Value
 	 */
-	public function getNextValue($objsoc, $reception)
+	public function getNextValue($objsoc, $shipment)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

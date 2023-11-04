@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2022		Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +31,7 @@ print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';
 print '<td class="linecolvat right">'.$this->tpl['vat_rate'].'</td>';
 print '<td class="linecoluht right">'.$this->tpl['price'].'</td>';
-if (isModEnabled("multicurrency")) {
+if (!empty($conf->multicurrency->enabled)) {
 	print '<td class="linecoluht_currency right">'.$this->tpl['multicurrency_price'].'</td>';
 }
 
@@ -42,7 +41,6 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 }
 
 print '<td class="linecoldiscount right">'.$this->tpl['remise_percent'].'</td>';
-print '<td class="linecolht right">'.$this->tpl['total_ht'].'</td>';
 
 $selected = 1;
 if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {

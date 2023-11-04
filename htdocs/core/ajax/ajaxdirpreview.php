@@ -77,7 +77,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
+		if (!$result > 0) {
 			//dol_print_error($db,$ecmdir->error);
 			//exit;
 		}
@@ -90,7 +90,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$relativepath = '';
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
+		if (!$result > 0) {
 			dol_print_error($db, $ecmdir->error);
 			exit;
 		}
@@ -104,10 +104,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 
-if (empty($url)) {	// autoset $url but it is better to have it defined before into filemanager.tpl.php (not possible when in auto tree)
-	if (!empty($module) && $module == 'medias' && !GETPOST('website')) {
-		$url = DOL_URL_ROOT.'/ecm/index_medias.php';
-	} elseif (GETPOSTISSET('website')) {
+if (empty($url)) {
+	if (GETPOSTISSET('website')) {
 		$url = DOL_URL_ROOT.'/website/index.php';
 	} else {
 		$url = DOL_URL_ROOT.'/ecm/index.php';
@@ -133,19 +131,14 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	exit;
 }
 
-if (empty($modulepart)) {
-	$modulepart = $module;
-}
-
 // Check permissions
 if ($modulepart == 'ecm') {
-	if (!$user->hasRight('ecm', 'read')) {
+	if (!$user->rights->ecm->read) {
 		accessforbidden();
 	}
-} elseif ($modulepart == 'medias' || $modulepart == 'website') {
+}
+if ($modulepart == 'medias') {
 	// Always allowed
-} else {
-	accessforbidden();
 }
 
 
@@ -179,7 +172,7 @@ if (!dol_is_dir($upload_dir)) {
 	exit;*/
 }
 
-print '<!-- ajaxdirpreview type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
+print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param = ($sortfield ? '&sortfield='.urlencode($sortfield) : '').($sortorder ? '&sortorder='.urlencode($sortorder) : '');
@@ -211,8 +204,6 @@ if ($type == 'directory') {
 		'contract',
 		'product',
 		'tax',
-		'tax-vat',
-		'salaries',
 		'project',
 		'project_task',
 		'fichinter',
@@ -227,14 +218,13 @@ if ($type == 'directory') {
 
 	$parameters = array('modulepart'=>$module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
-		$automodules[] = $hookmanager->resArray['module'];
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
+		$automodules[]=$hookmanager->resArray['module'];
 	}
 
 	// TODO change for multicompany sharing
 	if ($module == 'company') {
 		$upload_dir = $conf->societe->dir_output;
-		$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts.
 	} elseif ($module == 'invoice') {
 		$upload_dir = $conf->facture->dir_output;
 	} elseif ($module == 'invoice_supplier') {
@@ -253,15 +243,10 @@ if ($type == 'directory') {
 		$upload_dir = $conf->product->dir_output;
 	} elseif ($module == 'tax') {
 		$upload_dir = $conf->tax->dir_output;
-		$excludefiles[] = '^vat$'; // The subdir 'vat' contains files of vats.
-	} elseif ($module == 'tax-vat') {
-		$upload_dir = $conf->tax->dir_output.'/vat';
-	} elseif ($module == 'salaries') {
-		$upload_dir = $conf->salaries->dir_output;
 	} elseif ($module == 'project') {
-		$upload_dir = $conf->project->dir_output;
+		$upload_dir = $conf->projet->dir_output;
 	} elseif ($module == 'project_task') {
-		$upload_dir = $conf->project->dir_output;
+		$upload_dir = $conf->projet->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
 	} elseif ($module == 'user') {
@@ -295,6 +280,10 @@ if ($type == 'directory') {
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
+		if ($module == 'company') {
+			$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts with no id of thirdparty.
+		}
+
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
@@ -322,7 +311,7 @@ if ($type == 'directory') {
 			$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
 			if (GETPOSTISSET('website') || GETPOSTISSET('file_manager')) {
 				$param .= '&file_manager=1';
-				if (!preg_match('/website=/', $param) && GETPOST('website', 'alpha')) {
+				if (!preg_match('/website=/', $param)) {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
@@ -345,13 +334,13 @@ if ($type == 'directory') {
 		if ($section) {
 			$param .= '&section='.$section;
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
-				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
+				$param .= '&search_doc_ref='.$search_doc_ref;
 			}
 
 			$textifempty = $langs->trans('NoFileFound');
 		} elseif ($section === '0') {
 			if ($module == 'ecm') {
-				$textifempty = '<br><div class="center"><span class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</span></div><br>';
+				$textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
 			} else {
 				$textifempty = $langs->trans('NoFileFound');
 			}
@@ -362,31 +351,31 @@ if ($type == 'directory') {
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
-			$perm = ($user->hasRight("website", "write") || $user->hasRight("emailing", "creer"));
+			$perm = ($user->rights->website->write || $user->rights->emailing->creer);
 			$title = 'none';
 		} elseif ($module == 'ecm') { // DMS/ECM -> manual structure
-			if ($user->hasRight("ecm", "read")) {
+			if ($user->rights->ecm->read) {
 				// Buttons: Preview
 				$useinecm = 2;
 			}
 
-			if ($user->hasRight("ecm", "upload")) {
+			if ($user->rights->ecm->upload) {
 				// Buttons: Preview + Delete
 				$useinecm = 4;
 			}
 
-			if ($user->hasRight("ecm", "setup")) {
+			if ($user->rights->ecm->setup) {
 				// Buttons: Preview + Delete + Edit
 				$useinecm = 5;
 			}
 
-			$perm = $user->hasRight("ecm", "upload");
+			$perm = $user->rights->ecm->upload;
 			$modulepart = 'ecm';
 			$title = ''; // Use default
 		} else {
 			$useinecm = 5;
 			$modulepart = 'ecm';
-			$perm = $user->hasRight("ecm", "upload");
+			$perm = $user->rights->ecm->upload;
 			$title = ''; // Use default
 		}
 
@@ -413,9 +402,9 @@ if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 
 //$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
-if ($useajax || $action == 'deletefile') {
+if ($useajax || $action == 'delete') {
 	$urlfile = '';
-	if ($action == 'deletefile') {
+	if ($action == 'delete') {
 		$urlfile = GETPOST('urlfile', 'alpha');
 	}
 
@@ -448,7 +437,7 @@ if ($useajax || $action == 'deletefile') {
 
 if ($useajax) {
 	print '<!-- ajaxdirpreview.php: js to manage preview of doc -->'."\n";
-	print '<script nonce="'.getNonce().'" type="text/javascript">';
+	print '<script type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
 	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks

@@ -41,7 +41,7 @@ abstract class ModeleNumRefPayments
 	/**
 	 *	Return the default description of numbering module
 	 *
-	 *	@return     string      Descriptive text
+	 *	@return     string      Texte descripif
 	 */
 	public function info()
 	{

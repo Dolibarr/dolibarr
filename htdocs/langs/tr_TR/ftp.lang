@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP İstemcisi modülü kurulumu
+NewFTPClient=Yeni FTP bağlantı kurulumu
+FTPArea=FTP Alanı
+FTPAreaDesc=Bu ekran bir FTP sunucusunun görünümünü sergiler.
+SetupOfFTPClientModuleNotComplete=FTP istemci modülünün kurulumu eksik görünüyor
+FTPFeatureNotSupportedByYourPHP=PHP'niz FTP işlevlerini desteklemiyor
+FailedToConnectToFTPServer=FTP sunucusuna bağlanamadı (sunucu %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Tanımlı kullanıcı adı/parola ile FTP sunucusunda oturum açılamadı
+FTPFailedToRemoveFile=<b>%s</b> dosyası kaldırılamadı.
+FTPFailedToRemoveDir=<b>%s</b> dizini kaldırılamadı: izinleri kontrol edin ve dizinin boş olduğundan emin olun.
+FTPPassiveMode=Pasif mod
+ChooseAFTPEntryIntoMenu=Menüden bir FTP sitesi seçin...
+FailedToGetFile=%s dosyaları alınamadı

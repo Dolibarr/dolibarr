@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
@@ -26,12 +27,6 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-// DDOS protection
-$size = (int) $_SERVER['CONTENT_LENGTH'];
-if ($size > 10000) {
-	$langs->loadLangs(array("errors", "install"));
-	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
-}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -65,18 +60,7 @@ $php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('SendNewPassword');
 
-// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
-$arrayofjs = array();
-
-$disablenofollow = 1;
-if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) {
-	$disablenofollow = 0;
-}
-if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	$disablenofollow = 0;
-}
-
-top_htmlhead('', $titleofpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
+print top_htmlhead('', $titleofpage);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -115,7 +99,7 @@ $(document).ready(function () {
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if (!empty($disablenofollow)) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
+	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 }
 echo dol_escape_htmltag($title);
 if (!empty($disablenofollow)) {
@@ -233,19 +217,15 @@ if (!empty($morelogincontent)) {
 
 
 <div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
-<?php
-if ($mode == 'dolibarr' || !$disabled) {
-	if ($action != 'validatenewpassword' && empty($message)) {
-		print '<span class="passwordmessagedesc opacitymedium">';
-		print $langs->trans('SendNewPasswordDesc');
-		print '</span>';
-	}
-} else {
-	print '<div class="warning center">';
-	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
-	print '</div>';
-}
-?>
+<?php if ($mode == 'dolibarr' || !$disabled) { ?>
+	<span class="passwordmessagedesc">
+	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
+	</span>
+<?php } else { ?>
+	<div class="warning center">
+	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
+	</div>
+<?php } ?>
 </div>
 
 
@@ -253,7 +233,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 
 <?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
-	<?php dol_htmloutput_mesg($message, '', '', 1); ?>
+	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
 	</div>
 <?php } ?>
 
@@ -278,7 +258,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 }
 
 // Google Analytics
-// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
+// TODO Add a hook here
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {

@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2015	    Ion Agorria             <ion@agorria.com>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2015	  Ion Agorria		  <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +21,6 @@
  *  \brief		Page for configuring dynamic prices
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -184,9 +182,9 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 			print '</tr>';
 		}
 	} else {
-		print '<tr><td colspan="4"><span class="opacitymedium">';
+		print '<tr colspan="7"><td class="opacitymedium">';
 		print $langs->trans("None");
-		print '</span></td></tr>';
+		print '</td></tr>';
 	}
 	print '</table>';
 
@@ -230,8 +228,10 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 	print '</table>';
 
 	//Form Buttons
-	print $form->buttonsSaveCancel();
-
+	print '<br><div class="center">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 	print '</form>';
 }
 
@@ -349,8 +349,10 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
 	print '</table>';
 
 	//Form Buttons
-	print $form->buttonsSaveCancel();
-
+	print '<br><div class="center">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 	print '</form>';
 }
 

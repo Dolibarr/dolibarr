@@ -23,7 +23,6 @@
  *  \brief      Page for statistics of module trips and expenses
  */
 
-// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class.php';
@@ -62,7 +61,7 @@ if ($userid > 0) {
 	}
 }
 
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -164,7 +163,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->rights->societe->client->voir || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -261,7 +260,7 @@ if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
+print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -303,7 +302,7 @@ foreach ($data as $val) {
 print '</table>';
 print '</div>';
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
@@ -320,8 +319,8 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div>';
-print '<div class="clearboth"></div>';
+print '</div></div></div>';
+print '<div style="clear:both"></div>';
 
 
 print dol_get_fiche_end();

@@ -1,25 +1,4 @@
 <?php
-/* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-/**
- *	\file       htdocs/debugbar/class/DataCollector/TraceableDB.php
- *	\brief      Class for debugbar DB
- *	\ingroup    debugbar
- */
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
@@ -123,12 +102,11 @@ class TraceableDB extends DoliDB
 	/**
 	 * Start transaction
 	 *
-	 * @param	string	$textinlog		Add a small text into log. '' by default.
-	 * @return  int         			1 if transaction successfuly opened or already opened, 0 if error
+	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin($textinlog = '')
+	public function begin()
 	{
-		return $this->db->begin($textinlog);
+		return $this->db->begin();
 	}
 
 	/**
@@ -273,14 +251,14 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 *	Escape a string to insert data into a like
+	 * Escape a string to insert data
 	 *
-	 *	@param	string	$stringtoencode		String to escape
-	 *	@return	string						String escaped
+	 * @param   string $stringtoencode String to escape
+	 * @return  string                        String escaped
 	 */
-	public function escapeforlike($stringtoencode)
+	public function escapeunderscore($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return $this->db->escapeunderscore($stringtoencode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -321,18 +299,17 @@ class TraceableDB extends DoliDB
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string 	$query          SQL query string
-	 * @param   int    	$usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                                 	Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string 	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @param	int		$result_mode	Result mode
-	 * @return  resource               	Resultset of answer
+	 * @param   string $query          SQL query string
+	 * @param   int    $usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                                 Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string $type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @return  resource               Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
+	public function query($query, $usesavepoint = 0, $type = 'auto')
 	{
 		$this->startTracing();
 
-		$resql = $this->db->query($query, $usesavepoint, $type, $result_mode);
+		$resql = $this->db->query($query, $usesavepoint, $type);
 
 		$this->endTracing($query, $resql);
 
@@ -629,13 +606,13 @@ class TraceableDB extends DoliDB
 
 	/**
 	 * Encrypt sensitive data in database
-	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
+	 * Warning: This function includes the escape, so it must use direct value
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param   string 			$fieldorvalue 	Field name or value to encrypt
+	 * @param  	int 			$withQuotes 	Return string with quotes
+	 * @return 	string                     		XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 1)
+	public function encrypt($fieldorvalue, $withQuotes = 0)
 	{
 		return $this->db->encrypt($fieldorvalue, $withQuotes);
 	}
@@ -670,7 +647,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function free($resultset = null)
 	{
-		$this->db->free($resultset);
+		return $this->db->free($resultset);
 	}
 
 	/**
@@ -706,10 +683,10 @@ class TraceableDB extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns the current line (as an object) for the resultset cursor
+	 * Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 * @param   resource|Connection	 		$resultset    	Handler of the desired SQL request
-	 * @return  Object                 						Object result line or false if KO or end of cursor
+	 * @param   resource $resultset    Curseur de la requete voulue
+	 * @return  Object                 Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{

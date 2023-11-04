@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- * or see https://www.gnu.org/
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -24,7 +24,6 @@
  *  \ingroup    takepos
  *  \brief      File with Simple ref numbering module for takepos
  */
-
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -64,27 +63,24 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	{
 		global $langs;
 
-		$textinfo = $langs->trans('SimpleNumRefModelDesc', $this->prefix.'0-');
-		$textinfo .= '<br>'.$langs->trans('EachTerminalHasItsOwnCounter');
-
-		return $textinfo;
+		return $langs->trans('SimpleNumRefModelDesc', $this->prefix.'0-');
 	}
 
 	/**
-	 * Return an example of numbering module values
+	 *  Return an example of numbering module values
 	 *
-	 * @return     string      Example.
+	 * @return     string      Example
 	 */
 	public function getExample()
 	{
-		return $this->prefix.'0-0501-0001';		// TC0-0501-0001
+		return $this->prefix.'0-0501-0001';
 	}
 
 	/**
-	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
-	 *  of conflicts that will prevent this numbering from working.
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
 	 *
-	 * @return     boolean     false if KO (there is a conflict), true if OK
+	 * @return     boolean     false si conflit, true si ok
 	 */
 	public function canBeActivated()
 	{
@@ -93,14 +89,14 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 		$pryymm = '';
 		$max = '';
 
-		$pos_source = 0;	// POS source = Terminal ID
+		$pos_source = 0;
 
 		// First, we get the max value
-		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
+		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
 
 		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-%")."'";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
@@ -122,29 +118,25 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	}
 
 	/**
-	 * Return next value.
-	 * Note to increase perf of this numbering engine:
-	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'TC' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
-	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
+	 *  Return next value
 	 *
 	 * @param   Societe     $objsoc     Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Next ref value or last ref if $mode is 'last'
+	 * @return  string      Next value
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
 		global $db;
 
-		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;	// POS source = Terminal ID
+		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
 
 		// First, we get the max value
-		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
+		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
 		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-%")."'";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-%'";
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-		//$sql .= " and module_source = 'takepos'";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -169,7 +161,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			$ref = '';
 			$sql  = "SELECT ref as ref";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-".$num)."'";
+			$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-".$num."'";
 			$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 			$sql .= " ORDER BY ref DESC";
 

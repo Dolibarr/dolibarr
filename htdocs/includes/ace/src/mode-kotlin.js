@@ -781,8 +781,6 @@ var Mode = function() {
 oop.inherits(Mode, TextMode);
 
 (function() {
-    this.lineCommentStart = "//";
-    this.blockComment = {start: "/*", end: "*/"};
     this.$id = "ace/mode/kotlin";
 }).call(Mode.prototype);
 

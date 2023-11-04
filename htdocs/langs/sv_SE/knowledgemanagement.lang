@@ -18,37 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Kunskapsbas
+ModuleKnowledgeManagementName = Kunskapshanteringssystem
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Hantera en kunskapsbas eller helpdesk-bas
+ModuleKnowledgeManagementDesc=Hantera en kunskapshanterings- (KM) eller Help-Desk-bas
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Konfiguration av kunskapsbas
-Settings = Inställningar
-KnowledgeManagementSetupPage = Inställningar för kunskapsbas
+KnowledgeManagementSetup = Konfigurationssystem för kunskapshantering
+Settings = inställningar
+KnowledgeManagementSetupPage = Kunskapshanteringssystem inställningssida
 
 
 #
 # About page
 #
 About = Om
-KnowledgeManagementAbout = Om kunskapsbasen
-KnowledgeManagementAboutPage = Kunskapsbasens om-sida
+KnowledgeManagementAbout = Om kunskapshantering
+KnowledgeManagementAboutPage = Kunshantering om sidan
 
-KnowledgeManagementArea = Kunskapsbas
+KnowledgeManagementArea = Kunskapshantering
 MenuKnowledgeRecord = Kunskapsbas
 ListKnowledgeRecord = Lista över artiklar
 NewKnowledgeRecord = Ny artikel
-ValidateReply = Bekräfta lösning
+ValidateReply = Validera lösningen
 KnowledgeRecords = Artiklar
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafält för artikel
-GroupOfTicket=Grupp av ärenden
-YouCanLinkArticleToATicketCategory=Du kan länka artikeln till en ärendegrupp (så att artikeln markeras på alla ärenden i denna grupp)
-SuggestedForTicketsInGroup=Föreslås vid skapande av ärende
-
-SetObsolete=Ange som föråldrad
-ConfirmCloseKM=Bekräftar du att denna artikel är föråldrad och skall stängas?
-ConfirmReopenKM=Vill du återställa den här artikeln till statusen "Bekräftad"?
+GroupOfTicket=Grupp av biljetter
+YouCanLinkArticleToATicketCategory=Du kan länka en artikel till en biljettgrupp (så artikeln kommer att föreslås under kvalificeringen av nya biljetter)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

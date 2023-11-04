@@ -18,9 +18,9 @@
  */
 
 /**
- * \file       htdocs/core/lib/propal.lib.php
- * \brief      Ensemble de fonctions de base pour le module propal
- * \ingroup    propal
+ *	\file       htdocs/core/lib/propal.lib.php
+ *	\brief      Ensemble de fonctions de base pour le module propal
+ *	\ingroup    propal
  */
 
 /**
@@ -42,8 +42,8 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && isModEnabled('expedition_bon') && $user->rights->expedition->lire)
-		|| (isModEnabled("expedition") && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
+	if ((empty($conf->commande->enabled) && ((!empty($conf->expedition->enabled) && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+		|| (!empty($conf->expedition->enabled) && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
@@ -73,7 +73,7 @@ function propal_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'add', 'core');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -110,8 +110,6 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'add', 'external');
-
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'remove');
 
 	return $head;
@@ -124,11 +122,7 @@ function propal_prepare_head($object)
  */
 function propal_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('propal');
-	$extrafields->fetch_name_optionals_label('propaldet');
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -146,19 +140,11 @@ function propal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['propal']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$nbExtrafields = $extrafields->attributes['propaldet']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
@@ -181,7 +167,7 @@ function getCustomerProposalPieChart($socid = 0)
 
 	$result= '';
 
-	if (!isModEnabled('propal') || empty($user->rights->propal->lire)) {
+	if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) {
 		return '';
 	}
 
@@ -192,15 +178,15 @@ function getCustomerProposalPieChart($socid = 0)
 	$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	if ($user->socid) {
-		$sql .= ' AND p.fk_soc = '.((int) $user->socid);
+		$sql .= ' AND p.fk_soc = '.$user->socid;
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";

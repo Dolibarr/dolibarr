@@ -23,8 +23,6 @@
  * \brief   Home accounting module
  */
 
-
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -41,17 +39,17 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 /*
-if (!isModEnabled('accounting')) {
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
 */
-if (!isModEnabled('comptabilite') && !isModEnabled('accounting') && !isModEnabled('asset') && !isModEnabled('intracommreport')) {
+if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
 	accessforbidden();
 }
-if (!$user->hasRight('compta', 'resultat', 'lire') && !$user->hasRight('accounting', 'comptarapport', 'lire') && !$user->hasRight('accounting', 'mouvements', 'lire') && !$user->hasRight('asset', 'read') && !$user->hasRight('intracommreport', 'read')) {
+if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->comptarapport->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
 	accessforbidden();
 }
 
@@ -79,16 +77,11 @@ if (GETPOST('addbox')) {
  * View
  */
 
-$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
+$help_url = '';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
-if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
-	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
-
-	print '<span class="opacitymedium">'.$langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices")."</span>\n";
-	print "<br>";
-} elseif (isModEnabled('accounting')) {
+if ($conf->accounting->enabled) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
@@ -102,7 +95,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
-		$showtutorial .= '<script type="text/javascript">
+		$showtutorial .= '<script type="text/javascript" language="javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
 	            jQuery( "#idfaq" ).toggle({
@@ -113,17 +106,15 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 	    </script>';
 	}
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
-	if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
-		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
-		print "<br>";
-	}
+	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
 	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
-	if ($user->hasRight('accounting', 'chartofaccount')) {
+	if (!empty($user->rights->accounting->chartofaccount)) {
+		print "<br>\n"; print "<br>\n";
+
 		print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 		print '<hr>';
 		print "<br>\n";
@@ -168,8 +159,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 		$s = str_replace('{s}', $textlink, $s);
 		print $s;
 		print "<br>\n";
-
-		if (isModEnabled('tax')) {
+		if (!empty($conf->tax->enabled)) {
 			$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, '{s}');
@@ -177,7 +167,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 			print $s;
 			print "<br>\n";
 		}
-		if (isModEnabled('expensereport')) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
+		if (!empty($conf->expensereport->enabled)) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '{s}');
 			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);
@@ -216,7 +206,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 	print $s;
 	print "<br>\n";
 
-	if (isModEnabled('expensereport') || isModEnabled('deplacement')) {
+	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled)) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '{s}')."\n";
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>', $s);
@@ -269,8 +259,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 } else {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
-	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
-	print "<br>";
+	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span><br>\n";
 }
 
 // End of page

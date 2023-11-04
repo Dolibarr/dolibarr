@@ -18,37 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Система управління знаннями
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Керуйте базою управління знаннями (KM) або Help-Desk
+ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Налаштування системи управління знаннями
+KnowledgeManagementSetup = Knowledge Management System setup
 Settings = Налаштування
-KnowledgeManagementSetupPage = Сторінка налаштування системи управління знаннями
+KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
 # About page
 #
-About = Про
-KnowledgeManagementAbout = Про управління знаннями
-KnowledgeManagementAboutPage = Управління знаннями про сторінку
+About = About
+KnowledgeManagementAbout = About Knowledge Management
+KnowledgeManagementAboutPage = Knowledge Management about page
 
-KnowledgeManagementArea = Управління знаннями
-MenuKnowledgeRecord = База знань
-ListKnowledgeRecord = Список статей
-NewKnowledgeRecord = Нова стаття
-ValidateReply = Перевірте рішення
-KnowledgeRecords = статті
-KnowledgeRecord = стаття
-KnowledgeRecordExtraFields = Додаткові поля для ст
-GroupOfTicket=Група квитків
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Пропонується для квитків, коли група
-
-SetObsolete=Встановити як застаріле
-ConfirmCloseKM=Ви підтверджуєте закриття цієї статті як застарілу?
-ConfirmReopenKM=Ви бажаєте відновити цю статтю до статусу «Перевірено»?
+KnowledgeManagementArea = Knowledge Management
+MenuKnowledgeRecord = Knowledge base
+ListKnowledgeRecord = List of articles
+NewKnowledgeRecord = New article
+ValidateReply = Validate solution
+KnowledgeRecords = Articles
+KnowledgeRecord = Article
+KnowledgeRecordExtraFields = Extrafields for Article
+GroupOfTicket=Group of tickets
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

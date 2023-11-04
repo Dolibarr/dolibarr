@@ -23,7 +23,6 @@
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 
 /**
@@ -162,17 +161,17 @@ class DataPolicy
 		$from = $user->getFullName($langs).' <'.$user->email.'>';
 
 		$sendto = $contact->email;
-		$code = dol_hash($contact->email, 'md5');
+		$code = md5($contact->email);
 		if (!empty($contact->default_lang)) {
 			$l = $contact->default_lang;
 		} else {
 			$l = $langs->defaultlang;
 		}
 		// TODO Use a dolibarr email template
-		$s = "DATAPOLICYSUBJECT_".$l;
-		$ma = "DATAPOLICYCONTENT_".$l;
-		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
-		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
+		$s = "DATAPOLICIESSUBJECT_".$l;
+		$ma = "DATAPOLICIESCONTENT_".$l;
+		$la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
+		$lr = 'TXTLINKDATAPOLICIESREFUSE_'.$l;
 
 		$subject = $conf->global->$s;
 		$message = $conf->global->$ma;
@@ -183,8 +182,8 @@ class DataPolicy
 		$deliveryreceipt = 0;
 
 		$substitutionarray = array(
-			'__LINKACCEPT__' => '<a href="'.dol_buildpath('/public/datapolicy/index.php?action=1&c='.$contact->id.'&l='.$l.'&key='.$code, 3).'" target="_blank" rel="noopener noreferrer">'.$linka.'</a>',
-			'__LINKREFUSED__' => '<a href="'.dol_buildpath('/public/datapolicy/index.php?action=2&c='.$contact->id.'&l='.$l.'&key='.$code, 3).'" target="_blank" rel="noopener noreferrer">'.$linkr.'</a>',
+			'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&c='.$contact->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linka.'</a>',
+			'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&c='.$contact->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linkr.'</a>',
 			'__FIRSTNAME__' => $contact->firstname,
 			'__NAME__' => $contact->lastname,
 			'__CIVILITY__' => $contact->civility,
@@ -239,17 +238,17 @@ class DataPolicy
 
 		$sendto = $societe->email;
 
-		$code = dol_hash($societe->email, 'md5');
+		$code = md5($societe->email);
 		if (!empty($societe->default_lang)) {
 			$l = $societe->default_lang;
 		} else {
 			$l = $langs->defaultlang;
 		}
 		// TODO Use a dolibarr email template
-		$s = "DATAPOLICYSUBJECT_".$l;
-		$ma = "DATAPOLICYCONTENT_".$l;
-		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
-		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
+		$s = "DATAPOLICIESSUBJECT_".$l;
+		$ma = "DATAPOLICIESCONTENT_".$l;
+		$la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
+		$lr = 'TXTLINKDATAPOLICIESREFUSE_'.$l;
 
 		$subject = $conf->global->$s;
 		$message = $conf->global->$ma;
@@ -260,8 +259,8 @@ class DataPolicy
 		$deliveryreceipt = 0;
 
 		$substitutionarray = array(
-			'__LINKACCEPT__' => '<a href="'.dol_buildpath('/public/datapolicy/index.php?action=1&s='.$societe->id.'&l='.$l.'&key='.$code, 3).'" target="_blank" rel="noopener noreferrer">'.$linka.'</a>',
-			'__LINKREFUSED__' => '<a href="'.dol_buildpath('/public/datapolicy/index.php?action=2&s='.$societe->id.'&l='.$l.'&key='.$code, 3).'" target="_blank" rel="noopener noreferrer">'.$linkr.'</a>',
+			'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&s='.$societe->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linka.'</a>',
+			'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&s='.$societe->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linkr.'</a>',
 		);
 		$subject = make_substitutions($subject, $substitutionarray);
 		$message = make_substitutions($message, $substitutionarray);
@@ -312,17 +311,17 @@ class DataPolicy
 
 		$sendto = $adherent->email;
 
-		$code = dol_hash($adherent->email, 'md5');
+		$code = md5($adherent->email);
 		if (!empty($adherent->default_lang)) {
 			$l = $adherent->default_lang;
 		} else {
 			$l = $langs->defaultlang;
 		}
 		// TODO Use a dolibarr email template
-		$s = 'TXTLINKDATAPOLICYSUBJECT_'.$l;
-		$ma = 'TXTLINKDATAPOLICYMESSAGE_'.$l;
-		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
-		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
+		$s = 'TXTLINKDATAPOLICIESSUBJECT_'.$l;
+		$ma = 'TXTLINKDATAPOLICIESMESSAGE_'.$l;
+		$la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
+		$lr = 'TXTLINKDATAPOLICIESREFUSE_'.$l;
 
 		$subject = $conf->global->$s;
 		$message = $conf->global->$ma;
@@ -333,8 +332,8 @@ class DataPolicy
 		$deliveryreceipt = 0;
 
 		$substitutionarray = array(
-			'__LINKACCEPT__' => '<a href="'.dol_buildpath('/public/datapolicy/index.php?action=1&a='.$adherent->id.'&l='.$l.'&key='.$code, 3).'" target="_blank" rel="noopener noreferrer">'.$linka.'</a>',
-			'__LINKREFUSED__' => '<a href="'.dol_buildpath('/public/datapolicy/index.php?action=2&a='.$adherent->id.'&l='.$l.'&key='.$code, 3).'" target="_blank" rel="noopener noreferrer">'.$linkr.'</a>',
+			'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&a='.$adherent->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linka.'</a>',
+			'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&a='.$adherent->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linkr.'</a>',
 		);
 		$subject = make_substitutions($subject, $substitutionarray);
 		$message = make_substitutions($message, $substitutionarray);

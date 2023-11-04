@@ -21,7 +21,7 @@ CountryNL=Hollandia
 CountryHU=Magyarország
 CountryRU=Oroszország
 CountrySE=Svédország
-CountryCI=Elefántcsontpart
+CountryCI=Ivoiry Coast
 CountrySN=Szenegál
 CountryAR=Argentína
 CountryCM=Kamerun
@@ -250,9 +250,7 @@ CountryMF=Szent Márton
 
 ##### Civilities #####
 CivilityMME=Asszony
-CivilityMMEShort=Asszony
 CivilityMR=Úr
-CivilityMRShort=Úr
 CivilityMLE=Kisasszony
 CivilityMTRE=Mester
 CivilityDR=Doktor

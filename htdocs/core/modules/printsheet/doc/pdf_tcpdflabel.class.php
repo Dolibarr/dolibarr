@@ -317,7 +317,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
-		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
 			$pdf->SetCompression(false);
 		}
 
@@ -360,7 +360,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// Output to file
 		$pdf->Output($file, 'F');
 
-		dolChmod($file);
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
+		}
+
 
 		$this->result = array('fullpath'=>$file);
 

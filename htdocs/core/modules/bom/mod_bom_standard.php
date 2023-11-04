@@ -25,7 +25,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/bom/modules_bom.php';
 
 /**
- *	Class to manage the Standard numbering rule for BOM
+ *	Class to manage customer order numbering rules standard
  */
 class mod_bom_standard extends ModeleNumRefboms
 {

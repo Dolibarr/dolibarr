@@ -15,59 +15,59 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/** @var boolean	$force_install_nophpinfo 		Hide PHP informations */
+/** @var bool Hide PHP informations */
 $force_install_nophpinfo = true;
 
-/** @var int	$force_install_noedit 				1 = Lock and hide environment variables, 2 = Lock all set variables */
+/** @var int 1 = Lock and hide environment variables, 2 = Lock all set variables */
 $force_install_noedit = 2;
 
-/** @var string	$force_install_message	 			Information message */
+/** @var string Information message */
 $force_install_message = 'Welcome to your Dolibarr install';
 
-/** @var string	$force_install_main_data_root 		Data root absolute path (documents folder) */
+/** @var string Data root absolute path (documents folder) */
 $force_install_main_data_root = null;
 
-/** @var boolean	$force_install_mainforcehttps	Force HTTPS */
+/** @var bool Force HTTPS */
 $force_install_mainforcehttps = true;
 
-/** @var string	$force_install_database				Database name */
+/** @var string Database name */
 $force_install_database = 'dolibarr';
 
-/** @var string $force_install_type					Database driver (mysql|mysqli|pgsql|mssql|sqlite|sqlite3) */
+/** @var string Database driver (mysql|mysqli|pgsql|mssql|sqlite|sqlite3) */
 $force_install_type = 'mysqli';
 
-/** @var string $force_install_dbserver				Database server host */
+/** @var string Database server host */
 $force_install_dbserver = 'localhost';
 
-/** @var int $force_install_port					Database server port */
+/** @var int Database server port */
 $force_install_port = 3306;
 
-/** @var string $force_install_prefix				Database tables prefix */
+/** @var string Database tables prefix */
 $force_install_prefix = 'llx_';
 
-/** @var bool $force_install_createdatabase			Force database creation */
+/** @var bool Force database creation */
 $force_install_createdatabase = true;
 
-/** @var string $force_install_databaselogin		Database username */
+/** @var string Database username */
 $force_install_databaselogin = 'root';
 
-/** @var string $force_install_databasepass			Database password */
+/** @var string Database password */
 $force_install_databasepass = '';
 
-/** @var bool $force_install_createuser				Force database user creation */
+/** @var bool Force database user creation */
 $force_install_createuser = false;
 
-/** @var string $force_install_databaserootlogin	Database root username */
+/** @var string Database root username */
 $force_install_databaserootlogin = 'root';
 
-/** @var string $force_install_databaserootpass		Database root password */
+/** @var string Database root password */
 $force_install_databaserootpass = '';
 
-/** @var string $force_install_dolibarrlogin		Dolibarr super-administrator username */
+/** @var string Dolibarr super-administrator username */
 $force_install_dolibarrlogin = 'admin';
 
-/** @var bool $force_install_lockinstall			Force install locking */
+/** @var bool Force install locking */
 $force_install_lockinstall = true;
 
-/** @var string $force_install_module				Enable module(s) (Comma separated class names list) */
+/** @var string Enable module(s) (Comma separated class names list) */
 $force_install_module = 'modSociete,modFournisseur,modFacture';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -46,7 +45,7 @@ $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
 // Security access
-if (!$user->hasRight('accounting', 'chartofaccount')) {
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -59,8 +58,8 @@ $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
 $active = 1;
 
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -76,8 +75,6 @@ if (empty($sortorder)) {
 }
 
 $error = 0;
-
-$search_country_id = GETPOST('search_country_id', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
@@ -124,7 +121,7 @@ $tabrowid[35] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[35] = isModEnabled('accounting');
+$tabcond[35] = !empty($conf->accounting->enabled);
 
 // List of help for fields
 $tabhelp = array();
@@ -168,17 +165,43 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Check that all fields are filled
 	$ok = 1;
-
+	foreach ($listfield as $f => $value) {
+		if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
+			$fieldnamekey = 'Label';
+		}
+		if ($fieldnamekey == 'code') {
+			$fieldnamekey = 'Code';
+		}
+		if ($fieldnamekey == 'nature') {
+			$fieldnamekey = 'NatureOfJournal';
+		}
+	}
 	// Other checks
 	if (GETPOSTISSET("code")) {
 		if (GETPOST("code") == '0') {
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
+		/*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
+		{
+			$ok = 0;
+			$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
+		}*/
 	}
 	if (!GETPOST('label', 'alpha')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 		$ok = 0;
+	}
+
+	// Clean some parameters
+	if ($_POST["accountancy_code"] <= 0) {
+		$_POST["accountancy_code"] = ''; // If empty, we force to null
+	}
+	if ($_POST["accountancy_code_sell"] <= 0) {
+		$_POST["accountancy_code_sell"] = ''; // If empty, we force to null
+	}
+	if ($_POST["accountancy_code_buy"] <= 0) {
+		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 	}
 
 	// Si verif ok et action add, on ajoute la ligne
@@ -212,13 +235,16 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
+			if ($value == 'entity') {
+				$_POST[$listfieldvalue[$i]] = $conf->entity;
+			}
 			if ($i) {
 				$sql .= ",";
 			}
-			if (GETPOST($listfieldvalue[$i]) == '') {
+			if ($_POST[$listfieldvalue[$i]] == '') {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
+				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			}
 			$i++;
 		}
@@ -228,7 +254,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$result = $db->query($sql);
 		if ($result) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			$_POST = array('id'=>$id); // Clean $_POST array, we keep only id
+			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -255,15 +281,24 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
+			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
+				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+			} elseif ($field == 'entity') {
+				$_POST[$listfieldvalue[$i]] = $conf->entity;
+			}
 			if ($i) {
 				$sql .= ",";
 			}
-			$sql .= $field." = ";
-			$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
+			$sql .= $field."=";
+			if ($_POST[$listfieldvalue[$i]] == '' && !($listfieldvalue[$i] == 'code' && $id == 10)) {
+				$sql .= "null"; // For vat, we want/accept code = ''
+			} else {
+				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+			}
 			$i++;
 		}
 		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
-		$sql .= " AND entity = ".((int) $conf->entity);
+		$sql .= " AND entity = ".$conf->entity;
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -288,7 +323,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	}
 
 	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
-	$sql .= " AND entity = ".((int) $conf->entity);
+	$sql .= " AND entity = ".$conf->entity;
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -375,7 +410,7 @@ if ($action == 'delete') {
 if ($id) {
 	// Complete requete recherche valeurs avec critere de tri
 	$sql = $tabsql[$id];
-	$sql .= " WHERE a.entity = ".((int) $conf->entity);
+	$sql .= " WHERE a.entity = ".$conf->entity;
 
 	// If sort order is "country", we use country_code instead
 	if ($sortfield == 'country') {
@@ -418,7 +453,7 @@ if ($id) {
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 				} else {
@@ -431,9 +466,9 @@ if ($id) {
 		print '<td>';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td>';
-		print '<td></td>';
-		print '<td></td>';
-		print '<td></td>';
+		print '<td style="min-width: 26px;"></td>';
+		print '<td style="min-width: 26px;"></td>';
+		print '<td style="min-width: 26px;"></td>';
 		print '</tr>';
 
 		// Line to enter new values
@@ -459,7 +494,7 @@ if ($id) {
 		}
 
 		print '<td colspan="4" class="right">';
-		print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -475,9 +510,9 @@ if ($id) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$param = '&id='.((int) $id);
+		$param = '&id='.$id;
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.urlencode($search_country_id);
+			$param .= '&search_country_id='.$search_country_id;
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
@@ -571,13 +606,13 @@ if ($id) {
 					print '<td class="center" colspan="4">';
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error; $errors = $hookmanager->errors;
@@ -587,8 +622,7 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$tmpvar = $fieldlist[$field];
-							$valuetoshow = $obj->$tmpvar;
+							$valuetoshow = $obj->{$fieldlist[$field]};
 							if ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
 							} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
@@ -601,7 +635,7 @@ if ($id) {
 							$class = 'tddict';
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
+								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
 							}
 						}
 					}
@@ -610,6 +644,12 @@ if ($id) {
 					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
 					if (isset($obj->code) && $id != 10) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
+							$iserasable = 0;
+							$canbedisabled = 0;
+						} elseif ($obj->code == 'RECEP') {
+							$iserasable = 0;
+							$canbedisabled = 0;
+						} elseif ($obj->code == 'EF0') {
 							$iserasable = 0;
 							$canbedisabled = 0;
 						}

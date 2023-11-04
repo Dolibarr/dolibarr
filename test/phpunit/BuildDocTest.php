@@ -108,7 +108,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 
@@ -121,7 +121,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		if (! $conf->propal->enabled) {
 			print __METHOD__." propal module not enabled\n"; die(1);
 		}
-		if (! $conf->project->enabled) {
+		if (! $conf->projet->enabled) {
 			print __METHOD__." project module not enabled\n"; die(1);
 		}
 		if (! $conf->expedition->enabled) {
@@ -144,7 +144,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -157,7 +157,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -172,7 +172,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}
@@ -377,7 +377,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$conf->project->dir_output.='/temp';
+		$conf->projet->dir_output.='/temp';
 		$localobject=new Project($this->savdb);
 		$localobject->initAsSpecimen();
 

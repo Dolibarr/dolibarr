@@ -165,12 +165,6 @@ var SwiftHighlightRules = function() {
 
     this.$rules = {
         start: [
-            string('"""', {
-                escape: /\\(?:[0\\tnr"']|u{[a-fA-F1-9]{0,8}})/,
-                interpolation: {lead: "\\", open: "(", close: ")"},
-                error: /\\./,
-                multiline: true
-            }),
             string('"', {
                 escape: /\\(?:[0\\tnr"']|u{[a-fA-F1-9]{0,8}})/,
                 interpolation: {lead: "\\", open: "(", close: ")"},

@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Configurarea modulului client FTP
+NewFTPClient=Creează o nouă conexiune FTP
+FTPArea=FTP
+FTPAreaDesc=Acest ecran afișează conţinutul unui server FTP
+SetupOfFTPClientModuleNotComplete=Configurarea clientului FTP pare incompletă
+FTPFeatureNotSupportedByYourPHP=Versiunea PHP a dvs. nu are suport pentru funcţii FTP
+FailedToConnectToFTPServer=Conectarea la serverul FTP a eșuat (server: %s, port: %s)
+FailedToConnectToFTPServerWithCredentials=Autentificarea la serverul FTP a eșuat folosind utilizatorul / parola definite
+FTPFailedToRemoveFile=Fișierul <b>%s</b> nu poate fi șters.
+FTPFailedToRemoveDir=Directorul <b>%s</b> nu poate fi șters (Verificaţi permisiunile şi faptul că directorul este gol).
+FTPPassiveMode=Mod pasiv
+ChooseAFTPEntryIntoMenu=Alegeți o intrare FTP în meniul ...
+FailedToGetFile=Nu se pot da fișierele %s

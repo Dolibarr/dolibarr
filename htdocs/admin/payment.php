@@ -22,7 +22,6 @@
  *		\brief      Page to setup invoices payments
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
@@ -51,9 +50,9 @@ if (empty($conf->global->PAYMENT_ADDON)) {
  */
 
 if ($action == 'updateMask') {
-	$maskconstpayment = GETPOST('maskconstpayment', 'aZ09');
+	$maskconstpayment = GETPOST('maskconstpayment', 'alpha');
 	$maskpayment = GETPOST('maskpayment', 'alpha');
-	if ($maskconstpayment && preg_match('/_MASK$/', $maskconstpayment)) {
+	if ($maskconstpayment) {
 		$res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -179,7 +178,7 @@ foreach ($dirmodels as $reldir) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
 							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+								print $langs->trans($tmp);
 							} else {
 								print $tmp;
 							}
@@ -274,7 +273,11 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<br>';
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '</div>';
+print '<br>';
 
 print '</form>';
 

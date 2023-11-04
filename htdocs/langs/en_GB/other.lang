@@ -1,3 +1,0 @@
-# Dolibarr language file - Source file is en_US - other
-ExternalSiteModuleNotComplete=Module "External Site" was not configured properly.
-FTPFailedToRemoveFile=Failed to delete file <b>%s</b>.

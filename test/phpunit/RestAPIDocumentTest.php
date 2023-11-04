@@ -81,7 +81,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -94,7 +94,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -106,7 +106,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 	 * Init phpunit tests.
 	 * @return void
 	 */
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -138,7 +138,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 	 * End phpunit tests.
 	 * @return void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		echo __METHOD__."\n";
 	}

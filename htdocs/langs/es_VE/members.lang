@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - members
+MembersTickets=Membership address sheet
 MemberStatusDraftShort=A validar
 MemberStatusActiveShort=Validada
 MemberStatusNoSubscriptionShort=Validada

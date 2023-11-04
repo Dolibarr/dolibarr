@@ -22,7 +22,6 @@
  *  \brief      Printing
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
@@ -60,7 +59,7 @@ foreach ($result as $driver) {
 	$langs->load($driver);
 	$printer = new $classname($db);
 	$keyforprinteractive = $printer->active;
-	if ($keyforprinteractive && getDolGlobalString($keyforprinteractive)) {
+	if ($keyforprinteractive && $conf->global->$keyforprinteractive) {
 		//$printer->listJobs('commande');
 		$result = $printer->listJobs();
 		print $printer->resprint;

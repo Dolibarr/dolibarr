@@ -25,7 +25,7 @@ color: #777;\
 .ace-ambiance .ace_fold-widget.ace_start,\
 .ace-ambiance .ace_fold-widget.ace_end,\
 .ace-ambiance .ace_fold-widget.ace_closed{\
-background: none !important;\
+background: none;\
 border: none;\
 box-shadow: none;\
 }\
@@ -169,11 +169,10 @@ background-image: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICA
 }\
 .ace-ambiance .ace_indent-guide {\
 background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWNQUFD4z6Crq/sfAAuYAuYl+7lfAAAAAElFTkSuQmCC\") right repeat-y;\
-}\
-";
+}";
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass, false);
+dom.importCssString(exports.cssText, exports.cssClass);
 
 });                (function() {
                     window.require(["ace/theme/ambiance"], function(m) {

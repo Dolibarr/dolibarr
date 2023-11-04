@@ -50,6 +50,8 @@ abstract class ModelePDFWorkstation extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'workstation';
 		$list = array();
 
@@ -85,7 +87,7 @@ abstract class ModeleNumRefWorkstation
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Descriptive text
+	 *	@return     string      Texte descripif
 	 */
 	public function info()
 	{

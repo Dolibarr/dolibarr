@@ -28,12 +28,9 @@
  */
 function knowledgemanagementAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf;
 
 	$langs->load("knowledgemanagement");
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('knowledgemanagement_knowledgerecord');
 
 	$h = 0;
 	$head = array();
@@ -46,12 +43,13 @@ function knowledgemanagementAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/knowledgerecord_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['knowledgemanagement_knowledgerecord']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'extra';
 	$h++;
+
+	/*$head[$h][0] = DOL_URL_ROOT.'/knowledgemanagement/admin/about.php';
+	$head[$h][1] = $langs->trans("About");
+	$head[$h][2] = 'about';
+	$h++;*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -62,8 +60,6 @@ function knowledgemanagementAdminPrepareHead()
 	//	'entity:-tabname:Title:@knowledgemanagement:/knowledgemanagement/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'knowledgemanagement');
-
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'knowledgemanagement', 'remove');
 
 	return $head;
 }

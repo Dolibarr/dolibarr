@@ -24,7 +24,6 @@
  *	\brief      Main page for ECM section area
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
@@ -33,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
+$langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
 // Get parameters
 $socid = GETPOST('socid', 'int');
@@ -46,8 +45,8 @@ $section_dir = GETPOST('section_dir', 'alpha');
 $overwritefile = GETPOST('overwritefile', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -59,13 +58,13 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "name";
+	$sortfield = "fullname";
 }
 
 $ecmdir = new EcmDirectory($db);
 if ($section > 0) {
 	$result = $ecmdir->fetch($section);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -322,15 +321,12 @@ $moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
 
-$head = ecm_prepare_dasboard_head(null);
+$head = ecm_prepare_dasboard_head('');
 print dol_get_fiche_head($head, 'index', '', -1, '');
 
 
 // Add filemanager component
 $module = 'ecm';
-if (empty($url)) {
-	$url = DOL_URL_ROOT.'/ecm/index.php'; // Must be an url without param
-}
 include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page

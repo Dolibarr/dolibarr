@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- * or see https://www.gnu.org/
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
@@ -26,7 +26,6 @@
  *	\ingroup    takepos
  *	\brief      File with Universal ref numbering module for takepos
  */
-
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -52,17 +51,17 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	public $nom = 'Universal';
 
 	/**
-	 *  return description of the numbering model
+	 *  Renvoi la description du modele de numerotation
 	 *
-	 * @return     string      Descriptive text
+	 * @return     string      Texte descripif
 	 */
 	public function info()
 	{
-		global $db, $langs;
+		global $conf, $langs;
 
 		$langs->load('cashdesk@cashdesk');
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -78,11 +77,11 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$tooltip .= $langs->trans('GenericMaskCodes5');
 		$tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
 
-		// Setting up the prefix
+		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->TAKEPOS_REF_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -93,7 +92,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	}
 
 	/**
-	 * Return an example of numbering
+	 * Renvoi un exemple de numerotation
 	 *
 	 * @return     string      Example
 	 */
@@ -120,14 +119,14 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string      Value if KO, <0 if KO
 	 */
-	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
+	public function getNextValue($objsoc = 0, $invoice = null, $mode = 'next')
 	{
-		global $db;
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// We define search criteria counter
-		$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
+		// On defini critere recherche compteur
+		$mask = $conf->global->TAKEPOS_REF_UNIVERSAL_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -137,10 +136,9 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		// Get entities
 		$entity = getEntity('invoicenumber', 1, $invoice);
 
-		$date = (empty($invoice->date) ? dol_now() : $invoice->date);
 		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
 		$mask = str_replace('{TN}', $pos_source, $mask);
-		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $date, $mode, false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $invoice->date, $mode, false, null, $entity);
 
 		return $numFinal;
 	}

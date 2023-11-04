@@ -66,7 +66,6 @@ span.badgeneutral {
 	background-color: #e4e4e4;
 	color: #666;
 	border-radius: 10px;
-	white-space: nowrap;
 }
 
 
@@ -246,7 +245,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
 			$thisBadgeTextColor = '#212529';
-			$thisBadgeBackgroundColor = "";
+			$thisBadgeBackgroundColor = "#fff";
 		}
 
 		if (in_array((string) $statusName, array('0', '5', '9'))) {

@@ -20,60 +20,57 @@
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekrytering
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Hantera och följ rekryteringar för utannonserade tjänster
+ModuleRecruitmentDesc = Hantera och följ rekryteringskampanjer för nya jobb
 
 #
 # Admin page
 #
-RecruitmentSetup = Inställningar för rekrytering
+RecruitmentSetup = Rekryteringsinställning
 Settings = inställningar
-RecruitmentSetupPage = Ange huvudalternativ för rekryteringsmodulen
+RecruitmentSetupPage = Ange här inställningen av huvudalternativ för rekryteringsmodulen
 RecruitmentArea=Rekryteringsområde
-PublicInterfaceRecruitmentDesc=Publika sidor med tjänster är offentliga webbadresser för att visa upp lediga tjänster. Det finns en annan länk för varje ledig position som finns i varje tjänst.
-EnablePublicRecruitmentPages=Aktivera publika sidor med lediga tjänster
+PublicInterfaceRecruitmentDesc=Offentliga sidor med jobb är offentliga webbadresser för att visa och svara på öppna jobb. Det finns en annan länk för varje öppet jobb som finns i varje jobb.
+EnablePublicRecruitmentPages=Aktivera offentliga sidor med öppna jobb
 
 #
 # About page
 #
 About = Om
-RecruitmentAbout = Om rekryteringen
-RecruitmentAboutPage = Rekryteringens om-sida
+RecruitmentAbout = Om rekrytering
+RecruitmentAboutPage = Rekrytering om sida
 NbOfEmployeesExpected=Förväntat antal anställda
-JobLabel=Etikett för tjänsten
+JobLabel=Etikett för jobbet
 WorkPlace=Arbetsplats
 DateExpected=Förväntat datum
 FutureManager=Framtida chef
 ResponsibleOfRecruitement=Ansvarig för rekrytering
-IfJobIsLocatedAtAPartner=Finns tjänsten på en partnerplats
+IfJobIsLocatedAtAPartner=Om jobbet finns på en partnerplats
 PositionToBeFilled=Befattning
-PositionsToBeFilled=Befattningar
-ListOfPositionsToBeFilled=Lista över befattningar
-NewPositionToBeFilled=Nya befattningar
+PositionsToBeFilled=Jobbpositioner
+ListOfPositionsToBeFilled=Lista över anställningar
+NewPositionToBeFilled=Nya jobbpositioner
 
-JobOfferToBeFilled=Befattning att tillsätta
-ThisIsInformationOnJobPosition=Information om den befattning som ska tillsättas
+JobOfferToBeFilled=Jobb som ska fyllas
+ThisIsInformationOnJobPosition=Information om den anställning som ska fyllas
 ContactForRecruitment=Kontakt för rekrytering
-EmailRecruiter=E-post till rekryterare
+EmailRecruiter=E-postrekryterare
 ToUseAGenericEmail=Att använda ett generiskt e-postmeddelande. Om det inte definieras kommer e-postmeddelandet till den ansvariga för rekryteringen att användas
 NewCandidature=Ny ansökan
-ListOfCandidatures=Lista ansökningar
-Remuneration=Lön
-RequestedRemuneration=Önskad lön
-ProposedRemuneration=Föreslagen lön
-ContractProposed=Avtals föreslag
-ContractSigned=Avtal signerat
-ContractRefused=Avtal nekat
+ListOfCandidatures=Lista över ansökningar
+RequestedRemuneration=Begärd ersättning
+ProposedRemuneration=Föreslagen ersättning
+ContractProposed=Avtalsförslag
+ContractSigned=Kontrakt undertecknat
+ContractRefused=Avtal nekades
 RecruitmentCandidature=Ansökan
-JobPositions=Befattningar
+JobPositions=Jobbpositioner
 RecruitmentCandidatures=Applikationer
-InterviewToDo=Kontakter att följa
-AnswerCandidature=Svar på ansökan
+InterviewToDo=Intervju att göra
+AnswerCandidature=Ansökan svar
 YourCandidature=Din ansökan
 YourCandidatureAnswerMessage=Tack för din ansökan. <br> ...
-JobClosedTextCandidateFound=Ansökan har avslutats och positionen är tillsatt.
-JobClosedTextCanceled=Befattningen är tillsatt.
-ExtrafieldsJobPosition=Kompletterande attribut (befattningar)
-ExtrafieldsApplication=Kompletterande attribut (ansökningar)
-MakeOffer=Ge ett erbjudande
-WeAreRecruiting=Vi rekryterar! Detta är en lista över lediga tjänster som ska tillsättas...
-NoPositionOpen=Inga lediga tjänster för tillfället
+JobClosedTextCandidateFound=Jobbet är stängt. Anställningen har fyllts.
+JobClosedTextCanceled=Jobbet är stängt.
+ExtrafieldsJobPosition=Kompletterande attribut (jobbpositioner)
+ExtrafieldsApplication=Kompletterande attribut (jobbansökningar)
+MakeOffer=Göra ett erbjudande

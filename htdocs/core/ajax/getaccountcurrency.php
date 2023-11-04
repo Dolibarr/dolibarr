@@ -30,7 +30,6 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 
 $id = GETPOST('id', 'int');

@@ -81,7 +81,8 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
     /**
      * Constructor.
      *
-     * @param string $charset
+     * @param Swift_CharacterReaderFactory $factory
+     * @param string                       $charset
      */
     public function __construct(Swift_CharacterReaderFactory $factory, $charset)
     {
@@ -105,6 +106,8 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
 
     /**
      * Set the CharacterReaderFactory for multi charset support.
+     *
+     * @param Swift_CharacterReaderFactory $factory
      */
     public function setCharacterReaderFactory(Swift_CharacterReaderFactory $factory)
     {
@@ -125,6 +128,8 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
 
     /**
      * @see Swift_CharacterStream::importByteStream()
+     *
+     * @param Swift_OutputByteStream $os
      */
     public function importByteStream(Swift_OutputByteStream $os)
     {
@@ -215,7 +220,7 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
     public function readBytes($length)
     {
         $read = $this->read($length);
-        if (false !== $read) {
+        if ($read !== false) {
             $ret = array_map('ord', str_split($read, 1));
 
             return $ret;
@@ -247,16 +252,16 @@ class Swift_CharacterStream_NgCharacterStream implements Swift_CharacterStream
         if (!isset($this->charReader)) {
             $this->charReader = $this->charReaderFactory->getReaderFor(
                 $this->charset);
-            $this->map = [];
+            $this->map = array();
             $this->mapType = $this->charReader->getMapType();
         }
         $ignored = '';
         $this->datas .= $chars;
         $this->charCount += $this->charReader->getCharPositions(substr($this->datas, $this->datasSize), $this->datasSize, $this->map, $ignored);
-        if (false !== $ignored) {
-            $this->datasSize = \strlen($this->datas) - \strlen($ignored);
+        if ($ignored !== false) {
+            $this->datasSize = strlen($this->datas) - strlen($ignored);
         } else {
-            $this->datasSize = \strlen($this->datas);
+            $this->datasSize = strlen($this->datas);
         }
     }
 }

@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/core/lib/eventorganization.lib.php
+ * \file    eventorganization/lib/eventorganization.lib.php
  * \ingroup eventorganization
  * \brief   Library files with common functions for EventOrganization
  */
@@ -29,11 +28,7 @@
  */
 function eventorganizationAdminPrepareHead()
 {
-	global $langs, $conf, $db;
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('actioncomm');
-	$extrafields->fetch_name_optionals_label('eventorganization_conferenceorboothattendee');
+	global $langs, $conf;
 
 	$langs->load("eventorganization");
 
@@ -48,19 +43,11 @@ function eventorganizationAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_confbooth_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("EventOrganizationConfOrBooth").")";
-	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'eventorganization_extrafields';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_confboothattendee_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Attendees").")";
-	$nbExtrafields = $extrafields->attributes['eventorganization_conferenceorboothattendee']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'conferenceorboothattendee_extrafields';
 	$h++;
 

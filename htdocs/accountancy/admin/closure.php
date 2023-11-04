@@ -22,7 +22,6 @@
  * \brief		Setup page to configure accounting expert module
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -32,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta", "admin", "accountancy"));
 
 // Security check
-if (!$user->hasRight('accounting', 'chartofaccount')) {
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -110,7 +109,7 @@ foreach ($list_account_main as $key) {
 	print '</td>';
 	// Value
 	print '<td>'; // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 }
@@ -125,7 +124,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 print '</form>';
 

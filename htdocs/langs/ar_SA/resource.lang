@@ -5,7 +5,7 @@ DeleteResource=حذف الموارد
 ConfirmDeleteResourceElement=تأكيد حذف المورد لهذا العنصر
 NoResourceInDatabase=أي مورد في قاعدة البيانات.
 NoResourceLinked=ربط أي مورد
-ActionsOnResource=أحداث حول هذا المورد
+
 ResourcePageIndex=قائمة الموارد
 ResourceSingular=مورد
 ResourceCard=بطاقة الموارد
@@ -30,10 +30,7 @@ DictionaryResourceType=نوع الموارد
 
 SelectResource=حدد الموارد
 
-IdResource=معرف المورد
-AssetNumber=رقم سري
-ResourceTypeCode=رمز نوع المورد
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
 ImportDataset_resource_1=مصادر
-
-ErrorResourcesAlreadyInUse=بعض الموارد قيد الاستخدام
-ErrorResourceUseInEvent=%s المستخدم في حدث %s

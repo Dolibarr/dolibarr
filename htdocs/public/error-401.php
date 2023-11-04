@@ -21,12 +21,7 @@
 	Sorry. You are not allowed to access this resource.
 
 	<br>
-	<br>
-	
-	No esta autorizado para acceder a este recurso.
-
-	<br>
-	<?php print isset($_SERVER["HTTP_REFERER"]) ? 'You come from '.htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8').'.' : ''; ?>
+	<?php print isset($_SERVER["HTTP_REFERER"]) ? 'You come from '.htmlentities($_SERVER["HTTP_REFERER"]).'.' : ''; ?>
 
 	<hr>
 

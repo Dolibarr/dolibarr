@@ -79,7 +79,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 
@@ -87,7 +87,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(1);
 		}
 
-		if (!empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+		if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
 			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(1);
 		}
 
@@ -105,7 +105,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -118,7 +118,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -134,7 +134,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}

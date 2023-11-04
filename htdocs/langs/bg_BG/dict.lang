@@ -21,7 +21,7 @@ CountryNL=Холандия
 CountryHU=Унгария
 CountryRU=Русия
 CountrySE=Швеция
-CountryCI=Ivory Coast
+CountryCI=Кот д'Ивоар
 CountrySN=Сенегал
 CountryAR=Аржентина
 CountryCM=Камерун
@@ -250,9 +250,7 @@ CountryMF=Свети Мартин
 
 ##### Civilities #####
 CivilityMME=г-жа
-CivilityMMEShort=г-жа
 CivilityMR=г-н
-CivilityMRShort=г-н
 CivilityMLE=г-ца
 CivilityMTRE=м-р
 CivilityDR=д-р

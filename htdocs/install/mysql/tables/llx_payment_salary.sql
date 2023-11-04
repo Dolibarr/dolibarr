@@ -23,7 +23,7 @@ create table llx_payment_salary
   tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           datetime,                   -- Create date
   fk_user         integer DEFAULT NULL,
-  datep           datetime,                   -- payment date
+  datep           date,                       -- payment date
   datev           date,                       -- value date (this field should not be here, only into bank tables)
   salary          double(24,8),               -- salary of user when payment was done
   amount          double(24,8) NOT NULL DEFAULT 0,

@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP немесе SFTP клиент модулін орнату
+NewFTPClient=Жаңа FTP/FTPS қосылымын орнату
+FTPArea=FTP/FTPS аймағы
+FTPAreaDesc=Бұл экран FTP және SFTP серверінің көрінісін көрсетеді.
+SetupOfFTPClientModuleNotComplete=FTP немесе SFTP клиенттік модулін орнату аяқталмаған сияқты
+FTPFeatureNotSupportedByYourPHP=Сіздің PHP FTP немесе SFTP функцияларын қолдамайды
+FailedToConnectToFTPServer=Серверге қосылу мүмкін болмады (%s сервері, %s порты)
+FailedToConnectToFTPServerWithCredentials=Анықталған логин/парольмен серверге кіру сәтсіз аяқталды
+FTPFailedToRemoveFile=<b> %s </b> файлы жойылмады.
+FTPFailedToRemoveDir=<b> %s </b> каталогын жою мүмкін болмады: рұқсаттарды тексеріңіз және каталог бос екенін тексеріңіз.
+FTPPassiveMode=Пассивті режим
+ChooseAFTPEntryIntoMenu=Мәзірден FTP/SFTP сайтын таңдаңыз ...
+FailedToGetFile=%s файлдары алынбады

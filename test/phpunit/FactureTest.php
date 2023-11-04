@@ -79,14 +79,14 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!isModEnabled('facture')) {
+		if (empty($conf->facture->enabled)) {
 			print __METHOD__." module customer invoice must be enabled.\n"; die(1);
 		}
-		if (!empty($conf->ecotaxdeee->enabled)) {
+		if (! empty($conf->ecotaxdeee->enabled)) {
 			print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(1);
 		}
 
@@ -100,7 +100,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -113,7 +113,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -129,7 +129,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}

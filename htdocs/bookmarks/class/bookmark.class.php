@@ -60,7 +60,7 @@ class Bookmark extends CommonObject
 	public $id;
 
 	/**
-	 * @var int User ID. If > 0, bookmark of one user. If == 0, bookmark public (for everybody)
+	 * @var int User ID
 	 */
 	public $fk_user;
 
@@ -233,14 +233,15 @@ class Bookmark extends CommonObject
 	/**
 	 *      Removes the bookmark
 	 *
-	 *      @param      User	$user     	User deleting
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @param      int		$id     Id removed bookmark
+	 *      @return     int         	<0 si ko, >0 si ok
 	 */
-	public function delete($user)
+	public function remove($id)
 	{
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
+		dol_syslog("Bookmark::remove", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -253,18 +254,18 @@ class Bookmark extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
-	 * @param 	int 	$origin_id 	Old thirdparty id
-	 * @param 	int 	$dest_id 	New thirdparty id
-	 * @return 	bool
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'bookmark'
 		);
 
-		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -343,7 +344,7 @@ class Bookmark extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('mybookmarkdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

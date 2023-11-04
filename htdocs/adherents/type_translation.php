@@ -25,7 +25,6 @@
  *	\brief      Member translation page
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -35,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('members', 'languages'));
 
-$id = GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $ref = GETPOST('ref', 'alphanohtml');
@@ -62,16 +61,11 @@ if ($cancel == $langs->trans("Cancel")) {
 if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
-	$result = $object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id);
-		exit;
-	}
+	$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 }
 
 // Add translation
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
+if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -82,11 +76,11 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('
 	if ($forcelangprod == $current_lang) {
 		$object->label		 = GETPOST("libelle", 'alphanohtml');
 		$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		//$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	} else {
 		$object->multilangs[$forcelangprod]["label"] = GETPOST("libelle", 'alphanohtml');
 		$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		//$object->multilangs[$forcelangprod]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		$object->multilangs[$forcelangprod]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	}
 
 	// backup into database
@@ -99,7 +93,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('
 }
 
 // Edit translation
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
+if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
@@ -125,7 +119,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->hasRight(
 }
 
 // Delete translation
-if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->hasRight('adherent', 'configurer')) {
+if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$langtodelete = GETPOST('langdel', 'alpha');
@@ -190,10 +184,10 @@ print dol_get_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+	if ($user->rights->produit->creer || $user->rights->service->creer) {
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
 		}
 	}
 }
@@ -226,7 +220,7 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 			print '</td></tr>';
@@ -234,7 +228,13 @@ if ($action == 'edit') {
 		}
 	}
 
-	print $form->buttonsSaveCancel();
+	print '<br>';
+
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 } elseif ($action != 'create') {
@@ -271,7 +271,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
+if ($action == 'create' && $user->rights->adherent->configurer) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -289,7 +289,7 @@ if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" class="minwidth300" value="'.dol_escape_htmltag(GETPOST("libelle", 'alphanohtml')).'"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -297,7 +297,11 @@ if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 

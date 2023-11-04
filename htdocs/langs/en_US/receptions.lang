@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionDescription=Vendor reception management (Create reception documents)
-ReceptionsSetup=Vendor Reception setup
+ReceptionsSetup=Product Reception setup
 RefReception=Ref. reception
 Reception=Reception
 Receptions=Receptions
@@ -32,7 +31,6 @@ StatusReceptionDraftShort=Draft
 StatusReceptionValidatedShort=Validated
 StatusReceptionProcessedShort=Processed
 ReceptionSheet=Reception sheet
-ValidateReception=Validate reception
 ConfirmDeleteReception=Are you sure you want to delete this reception?
 ConfirmValidateReception=Are you sure you want to validate this reception with reference <b>%s</b>?
 ConfirmCancelReception=Are you sure you want to cancel this reception?
@@ -40,7 +38,7 @@ StatsOnReceptionsOnlyValidated=Statistics conducted on receptions only validated
 SendReceptionByEMail=Send reception by email
 SendReceptionRef=Submission of reception %s
 ActionsOnReception=Events on reception
-ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order.
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the order card.
 ReceptionLine=Reception line
 ProductQtyInReceptionAlreadySent=Product quantity from open sales order already sent
 ProductQtyInSuppliersReceptionAlreadyRecevied=Product quantity from open supplier order already received

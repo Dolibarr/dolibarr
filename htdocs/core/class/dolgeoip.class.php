@@ -45,7 +45,7 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$geoipversion = '2'; // 'php', or geoip version '2'
+		$geoipversion = '2'; // 'php', or '2'
 		if (!empty($conf->global->GEOIP_VERSION)) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
@@ -86,8 +86,8 @@ class DolGeoIP
 				dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
 				return 0;
 			}
-		} elseif (function_exists('geoip_open') && defined('GEOIP_STANDARD')) {
-			$this->gi = geoip_open($datfile, constant('GEOIP_STANDARD'));
+		} elseif (function_exists('geoip_open')) {
+			$this->gi = geoip_open($datfile, GEOIP_STANDARD);
 		} elseif (function_exists('geoip_country_code_by_name')) {
 			$this->gi = 'NOGI'; // We are using embedded php geoip functions
 			//print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
@@ -144,12 +144,10 @@ class DolGeoIP
 						return '';
 					}
 				} else {
-					if (function_exists('geoip_country_code_by_addr_v6')) {
-						return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
-					} elseif (function_exists('geoip_country_code_by_name_v6')) {
+					if (!function_exists('geoip_country_code_by_addr_v6')) {
 						return strtolower(geoip_country_code_by_name_v6($this->gi, $ip));
 					}
-					return '';
+					return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
 				}
 			}
 		}
@@ -183,7 +181,7 @@ class DolGeoIP
 				return '';
 			}
 		} else {
-			return strtolower(geoip_country_code_by_name($name));
+			return geoip_country_code_by_name($this->gi, $name);
 		}
 	}
 

@@ -1,3 +1,0 @@
---
--- Script run when an upgrade of Dolibarr is done. Whatever is the Dolibarr version.
---

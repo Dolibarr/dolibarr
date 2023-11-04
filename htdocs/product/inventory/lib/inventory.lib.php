@@ -52,8 +52,6 @@ function inventoryAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory', 'remove');
-
 	return $head;
 }
 

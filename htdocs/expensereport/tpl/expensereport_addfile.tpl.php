@@ -2,14 +2,7 @@
 // Add line to upload new file
 print '<!-- expensereport_addfile.tpl.php -->'."\n";
 print '<tr class="truploadnewfilenow'.(empty($tredited) ? ' oddeven nohover' : ' '.$tredited).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
-
-// Num line
-if ($action == 'editline') {
-	print '<td></td>';
-}
-
-// Upload section
-print '<td colspan="'.($action == 'editline' ? $colspan - 1 : $colspan).'">';
+print '<td colspan="'.$colspan.'">';
 
 $modulepart = 'expensereport';
 $permission = $user->rights->expensereport->creer;

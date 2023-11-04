@@ -86,7 +86,7 @@ abstract class ModeleNumRefRecruitmentCandidature
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Descriptive text
+	 *	@return     string      Texte descripif
 	 */
 	public function info()
 	{

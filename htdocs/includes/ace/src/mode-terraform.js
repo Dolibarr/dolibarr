@@ -40,15 +40,11 @@ var TerraformHighlightRules = function () {
 
             {
                 token: "singleline.comment.terraform",
-                regex: '#.*$'
-            },
-            {
-                token: "singleline.comment.terraform",
-                regex: '//.*$'
+                regex: '#(.)*$'
             },
             {
                 token: "multiline.comment.begin.terraform",
-                regex: /\/\*/,
+                regex: '^\\s*\\/\\*',
                 push: "blockComment"
             },
             {
@@ -70,7 +66,11 @@ var TerraformHighlightRules = function () {
             {include: "variables"}
         ],
         blockComment: [{
-            regex: /\*\//,
+            regex: "^\\s*\\/\\*",
+            token: "multiline.comment.begin.terraform",
+            push: "blockComment"
+        }, {
+            regex: "\\*\\/\\s*$",
             token: "multiline.comment.end.terraform",
             next: "pop"
         }, {
@@ -383,9 +383,6 @@ oop.inherits(Mode, TextMode);
 
 
 (function () {
-    this.lineCommentStart = ["#", "//"];
-    this.blockComment = {start: "/*", end: "*/"};
-    
     this.$id = "ace/mode/terraform";
 }).call(Mode.prototype);
 

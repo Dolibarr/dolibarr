@@ -55,6 +55,8 @@ abstract class ModelePDFProductBatch extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'product_batch';
 		$list = array();
 
@@ -87,7 +89,7 @@ abstract class ModeleNumRefBatch
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Descriptive text
+	 *	@return     string      Texte descripif
 	 */
 	public function info()
 	{
@@ -123,7 +125,7 @@ abstract class ModeleNumRefBatch
 	 *	Returns next assigned value
 	 *
 	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Productlot	$object		Object we need next value for
+	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
 	public function getNextValue($objsoc, $object)

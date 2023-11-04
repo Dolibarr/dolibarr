@@ -25,7 +25,6 @@
  *		\brief      Page to setup the bank module
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -54,9 +53,9 @@ if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
  */
 
 if ($action == 'updateMask') {
-	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'aZ09');
+	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'alpha');
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
-	if ($maskconstchequereceipts && preg_match('/_MASK$/', $maskconstchequereceipts)) {
+	if ($maskconstchequereceipts) {
 		$res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -175,7 +174,7 @@ foreach ($dirmodels as $reldir) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
 							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+								print $langs->trans($tmp);
 							} else {
 								print $tmp;
 							}
@@ -211,7 +210,7 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if (getDolGlobalString('CHEQUERECEIPTS_ADDON').'.php' == $file) {  // If module is the one used, we show existing errors
+							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
 									dol_htmloutput_mesg($module->error, '', 'error', 1);
 								}
@@ -262,14 +261,14 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnChequeReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</table>';
 print "<br>";

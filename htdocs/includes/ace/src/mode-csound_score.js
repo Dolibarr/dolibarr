@@ -300,7 +300,7 @@ var CsoundScoreHighlightRules = function(embeddedRulePrefix) {
     start.push(
         {
             token : "keyword.control.csound-score",
-            regex : /[aBbCdefiqstvxy]/
+            regex : /[abCdefiqstvxy]/
         }, {
             token : "invalid.illegal.csound-score",
             regex : /w/
@@ -448,7 +448,6 @@ oop.inherits(Mode, TextMode);
     this.lineCommentStart = ";";
     this.blockComment = {start: "/*", end: "*/"};
 
-    this.$id = "ace/mode/csound_score";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

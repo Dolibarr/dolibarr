@@ -21,7 +21,7 @@ CountryNL=Hà Lan
 CountryHU=Hungary
 CountryRU=Nga
 CountrySE=Thụy Điển
-CountryCI=Ivory Coast
+CountryCI=Ivoiry Coast
 CountrySN=Senegal
 CountryAR=Argentina
 CountryCM=Cameroon
@@ -250,9 +250,7 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Bà
-CivilityMMEShort=Bà
 CivilityMR=Ông
-CivilityMRShort=Ông
 CivilityMLE=Cô
 CivilityMTRE=Thạc sĩ
 CivilityDR=Tiến sĩ

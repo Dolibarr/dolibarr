@@ -26,29 +26,21 @@
  *   \ingroup    societe
  */
 
-
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-
-// Load translation files required by the page
-$langs->load("companies");
-
-
-// Get parameters
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
+$langs->load("companies");
 
-// Initialize objects
+$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+
 $object = new Societe($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Permissions
-$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartynote', 'globalcard'));
@@ -58,20 +50,14 @@ if ($user->socid > 0) {
 	unset($action);
 	$socid = $user->socid;
 }
-
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
-}
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
@@ -91,7 +77,7 @@ if ($object->id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (isModEnabled('notification')) {
+	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");
 	}
 
@@ -127,7 +113,7 @@ if ($object->id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		}
 		print '</td></tr>';
 	}
@@ -138,7 +124,7 @@ if ($object->id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		}
 		print '</td></tr>';
 	}

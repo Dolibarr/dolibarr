@@ -1,0 +1,61 @@
+/*
+ * TPV ticket.css
+ */
+body {
+    font-size: 1.5em;
+    position: relative;
+}
+
+.entete { /* 		position: relative; */
+
+}
+
+.address { /* 			float: left; */
+    font-size: 12px;
+}
+
+.date_heure {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 16px;
+}
+
+.infos {
+    position: relative;
+}
+
+.liste_articles {
+    width: 100%;
+    border-bottom: 1px solid #000;
+    text-align: center;
+}
+
+.liste_articles tr.titres th {
+    border-bottom: 1px solid #000;
+}
+
+.liste_articles td.total {
+    text-align: right;
+}
+
+.totaux {
+    margin-top: 20px;
+    width: 30%;
+    float: right;
+    text-align: right;
+}
+
+.lien {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+@media print {
+    .lien {
+            display: none;
+    }
+}
+

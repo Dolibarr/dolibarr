@@ -21,7 +21,7 @@ CountryNL=Holland
 CountryHU=Ungverjaland
 CountryRU=Rússland
 CountrySE=Svíþjóð
-CountryCI=Ivory Coast
+CountryCI=Ivoiry Coast
 CountrySN=Senegal
 CountryAR=Argentina
 CountryCM=Kamerún
@@ -250,9 +250,7 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Frú
-CivilityMMEShort=Frú
 CivilityMR=Herra
-CivilityMRShort=Herra
 CivilityMLE=Fröken
 CivilityMTRE=Master
 CivilityDR=Doctor

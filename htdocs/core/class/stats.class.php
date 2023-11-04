@@ -34,13 +34,6 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
-	 *  @param	int		$year 			number
-	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * 	@return int						value
-	 */
-	protected abstract function getNbByMonth($year, $format = 0);
-
-	/**
 	 * Return nb of elements by month for several years
 	 *
 	 * @param 	int		$endyear		Start year
@@ -55,7 +48,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return array();
+			return -1;
 		}
 
 		$datay = array();
@@ -103,8 +96,7 @@ abstract class Stats
 				$data[$i][] = $datay[$endyear][($i + $sm) % 12][0];
 				$year = $startyear;
 				while ($year <= $endyear) {
-					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
-					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
+					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
 					$year++;
 				}
 			}
@@ -119,7 +111,10 @@ abstract class Stats
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
 			fclose($fp);
-			dolChmod($newpathofdestfile);
+			if (!empty($conf->global->MAIN_UMASK)) {
+				$newmask = $conf->global->MAIN_UMASK;
+			}
+			@chmod($newpathofdestfile, octdec($newmask));
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -127,13 +122,6 @@ abstract class Stats
 		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
-
-	/**
-	 * @param	int		$year			year number
-	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	int						value
-	 */
-	protected abstract function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
@@ -153,7 +141,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return array();
+			return -1;
 		}
 
 		$datay = array();
@@ -202,8 +190,7 @@ abstract class Stats
 				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
 				$year = $startyear;
 				while ($year <= $endyear) {
-					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
-					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
+					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
 					$year++;
 				}
 			}
@@ -219,7 +206,10 @@ abstract class Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				dolChmod($newpathofdestfile);
+				if (!empty($conf->global->MAIN_UMASK)) {
+					$newmask = $conf->global->MAIN_UMASK;
+				}
+				@chmod($newpathofdestfile, octdec($newmask));
 			} else {
 				dol_syslog("Failed to write cache file", LOG_ERR);
 			}
@@ -228,12 +218,6 @@ abstract class Stats
 
 		return $data;
 	}
-
-	/**
-	 * @param	int     $year           year number
-	 * @return 	array					array of values
-	 */
-	protected abstract function getAverageByMonth($year);
 
 	/**
 	 * Return average of entity by month for several years
@@ -245,7 +229,7 @@ abstract class Stats
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
 		if ($startyear > $endyear) {
-			return array();
+			return -1;
 		}
 
 		$datay = array();
@@ -326,7 +310,10 @@ abstract class Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				dolChmod($newpathofdestfile);
+				if (!empty($conf->global->MAIN_UMASK)) {
+					$newmask = $conf->global->MAIN_UMASK;
+				}
+				@chmod($newpathofdestfile, octdec($newmask));
 			}
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -350,7 +337,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -379,7 +366,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -433,7 +420,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -473,6 +460,7 @@ abstract class Stats
 		return $data;
 	}
 
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *     Return the amount per month for a given year
@@ -490,7 +478,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -548,7 +536,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -604,7 +592,7 @@ abstract class Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -627,33 +615,6 @@ abstract class Stats
 			dol_print_error($this->db);
 		}
 
-		return $result;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-	/**
-	 *  Returns the summed amounts per year for a given number of past years ending now
-	 *  @param  string  $sql    SQL
-	 *  @return array
-	 */
-	protected function _getAmountByYear($sql)
-	{
-		$result = array();
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$row = $this->db->fetch_row($resql);
-				$j = (int) $row[0];
-				$result[] = [
-					0 => (int) $row[0],
-					1 => (int) $row[1],
-				];
-				$i++;
-			}
-			$this->db->free($resql);
-		}
 		return $result;
 	}
 }

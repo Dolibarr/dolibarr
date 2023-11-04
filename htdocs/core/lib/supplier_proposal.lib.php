@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +59,7 @@ function supplier_proposal_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'add', 'core');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -97,8 +96,6 @@ function supplier_proposal_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'add', 'external');
-
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'remove');
 
 	return $head;
@@ -111,11 +108,7 @@ function supplier_proposal_prepare_head($object)
  */
 function supplier_proposal_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('supplier_proposal');
-	$extrafields->fetch_name_optionals_label('supplier_proposaldet');
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -133,19 +126,11 @@ function supplier_proposal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['supplier_proposal']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposaldet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$nbExtrafields = $extrafields->attributes['supplier_proposaldet']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 

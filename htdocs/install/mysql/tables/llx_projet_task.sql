@@ -35,7 +35,6 @@ create table llx_projet_task
   planned_workload		real DEFAULT 0,
   progress				integer DEFAULT 0,				-- percentage increase
   priority				integer DEFAULT 0,				-- priority
-  budget_amount         double(24,8),
   fk_user_creat			integer,						-- user who created the task
   fk_user_modif			integer,						-- user who modify the task
   fk_user_valid			integer,						-- user who validated the task
@@ -44,6 +43,5 @@ create table llx_projet_task
   note_public			text,
   rang                  integer DEFAULT 0,
   model_pdf        		varchar(255),
-  import_key			varchar(14),						-- Import key
-  status 				integer DEFAULT 1 NOT NULL
+  import_key			varchar(14)						-- Import key
 )ENGINE=innodb;

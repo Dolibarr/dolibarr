@@ -22,7 +22,6 @@
  *  \brief      Page to add payment of a donation
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
@@ -67,7 +66,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -79,7 +78,7 @@ if ($action == 'add_payment') {
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num(GETPOST($key));
+				$amounts[$other_chid] = price2num($_POST[$key]);
 			}
 		}
 
@@ -95,7 +94,7 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
 			$payment->chid         = $chid;
-			$payment->datep     = $datepaid;
+			$payment->datepaid     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
 			$payment->paymenttype  = GETPOST("paymenttype", 'int');
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
@@ -111,8 +110,8 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
-				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
-				if (!($result > 0)) {
+				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $_POST['accountid'], '', '');
+				if (!$result > 0) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
 					$error++;
@@ -150,7 +149,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$sumpaid = $obj->total;
-	$db->free($resql);
+	$db->free();
 }
 
 
@@ -163,7 +162,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript">';
+		print "\n".'<script type="text/javascript" language="javascript">';
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
 		print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
@@ -192,14 +191,14 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype") : $object->fk_typepayment, "paymenttype");
+	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype") : $object->paymenttype, "paymenttype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : "0", "accountid", 0, '', 2); // Show open bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->accountid, "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
 	// Number
@@ -281,7 +280,11 @@ if ($action == 'create') {
 
 	print "</table>";
 
-	print $form->buttonsSaveCancel();
+	print '<br><div class="center">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print "</form>\n";
 }

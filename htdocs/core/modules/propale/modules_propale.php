@@ -53,6 +53,8 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'propal';
 		$list = array();
 
@@ -65,7 +67,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 
 
 /**
- *	Parent class for numbering rules of proposals
+ *	Classe mere des modeles de numerotation des references de propales
  */
 abstract class ModeleNumRefPropales
 {
@@ -85,9 +87,9 @@ abstract class ModeleNumRefPropales
 	}
 
 	/**
-	 *  Returns the default description of the numbering pattern
+	 *  Renvoi la description par defaut du modele de numerotation
 	 *
-	 * 	@return     string      Descriptive text
+	 * 	@return     string      Texte descripif
 	 */
 	public function info()
 	{

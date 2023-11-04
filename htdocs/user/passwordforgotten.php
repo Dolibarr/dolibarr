@@ -25,12 +25,11 @@
 
 define("NOLOGIN", 1); // This means this output page does not require to be logged.
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (isModEnabled('ldap')) {
+if (!empty($conf->ldap->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
 
@@ -51,8 +50,6 @@ if (!$mode) {
 
 $username = GETPOST('username', 'alphanohtml');
 $passworduidhash = GETPOST('passworduidhash', 'alpha');
-$setnewpassword = GETPOST('setnewpassword', 'aZ09');
-
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -92,7 +89,7 @@ if (empty($reshook)) {
 		$edituser = new User($db);
 		$result = $edituser->fetch('', $username);
 		if ($result < 0) {
-			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
+			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
 		} else {
 			global $dolibarr_main_instance_unique_id;
 
@@ -100,7 +97,7 @@ if (empty($reshook)) {
 			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
-				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
+				$_SESSION['dol_loginmesg'] = $langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
 
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -113,11 +110,10 @@ if (empty($reshook)) {
 			}
 		}
 	}
-
-	// Action to set a temporary password and send email for reset
+	// Action modif mot de passe
 	if ($action == 'buildnewpassword' && $username) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
 		// Verify code
 		if (!$ok) {
@@ -131,34 +127,36 @@ if (empty($reshook)) {
 				$result = $edituser->fetch('', '', '', 1, -1, $username);
 			}
 
-			// Set the message to show (must be the same if login/email exists or not
-			// to avoid to guess them.
-			$messagewarning = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
-			if (!$isanemail) {
-				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
-			} else {
-				$messagewarning .= $langs->trans("IfEmailExistPasswordRequestSent");
-			}
-			$messagewarning .= '</div>';
-
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				$message .= $messagewarning;
+				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
+				if (!$isanemail) {
+					$message .= $langs->trans("IfLoginExistPasswordRequestSent");
+				} else {
+					$message .= $langs->trans("IfEmailExistPasswordRequestSent");
+				}
+				$message .= '</div>';
 				$username = '';
 			} else {
-				if (empty($edituser->email)) {
-					$message .= $messagewarning;
+				if (!$edituser->email) {
+					$message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if ($newpassword < 0) {
-						// Technical failure
+						// Failed
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
-							$message .= $messagewarning;
+							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
+							if (!$isanemail) {
+								$message .= $langs->trans("IfLoginExistPasswordRequestSent");
+							} else {
+								$message .= $langs->trans("IfEmailExistPasswordRequestSent");
+							}
+							//$message .= $langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email));
+							$message .= '</div>';
 							$username = '';
 						} else {
-							// Technical failure
 							$message .= '<div class="error">'.$edituser->error.'</div>';
 						}
 					}
@@ -238,8 +236,4 @@ $parameters = array('entity' => GETPOST('entity', 'int'));
 $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 $moreloginextracontent = $hookmanager->resPrint;
 
-if (empty($setnewpassword)) {
-	include $template_dir.'passwordforgotten.tpl.php'; // To use native PHP
-} else {
-	include $template_dir.'passwordreset.tpl.php'; // To use native PHP
-}
+include $template_dir.'passwordforgotten.tpl.php'; // To use native PHP

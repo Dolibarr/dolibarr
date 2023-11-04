@@ -34,7 +34,6 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -48,6 +47,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
+
+if (empty($conf->stripe->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 // You can find your endpoint's secret in your webhook settings
@@ -73,26 +77,11 @@ if (isset($_GET['connect'])) {
 	}
 }
 
-if (empty($conf->stripe->enabled)) {
-	httponly_accessforbidden('Module Stripe not enabled');
-}
-
 if (empty($endpoint_secret)) {
-	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The WEBHOOK_KEY is not defined.', 400, 1);
+	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The WEBHOOK_KEY is not defined.';
+	http_response_code(400); // PHP 5.4 or greater
+	exit();
 }
-
-if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
-	// We set the user to use for all ipn actions in Dolibarr
-	$user = new User($db);
-	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
-	$user->getrights();
-} else {
-	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
-}
-
-
-// TODO Add a check on a security key
-
 
 
 /*
@@ -109,17 +98,24 @@ try {
 	$event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
 } catch (\UnexpectedValueException $e) {
 	// Invalid payload
-	httponly_accessforbidden('Invalid payload', 400);
+	http_response_code(400); // PHP 5.4 or greater
+	exit();
 } catch (\Stripe\Error\SignatureVerification $e) {
-	httponly_accessforbidden('Invalid signature', 400);
+	// Invalid signature
+	http_response_code(400); // PHP 5.4 or greater
+	exit();
 }
 
 // Do something with $event
 
 $langs->load("main");
 
+// TODO Do we really need a user in setup just to have a name to fill an email topic when it is a technical system notification email
+$user = new User($db);
+$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
+$user->getrights();
 
-if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
+if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($event->account)."%'";
@@ -148,7 +144,6 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 }
 
-top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type = ".$event->type);
 
@@ -189,10 +184,11 @@ if ($event->type == 'payout.created') {
 
 		$ret = $mailfile->sendfile();
 
+		http_response_code(200); // PHP 5.4 or greater
 		return 1;
 	} else {
 		$error++;
-		http_response_code(500);
+		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
 } elseif ($event->type == 'payout.paid') {
@@ -280,10 +276,11 @@ if ($event->type == 'payout.created') {
 
 		$ret = $mailfile->sendfile();
 
+		http_response_code(200); // PHP 5.4 or greater
 		return 1;
 	} else {
 		$error++;
-		http_response_code(500);
+		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
 } elseif ($event->type == 'customer.source.created') {
@@ -388,4 +385,4 @@ if ($event->type == 'payout.created') {
 	// This event is deprecated.
 }
 
-// End of page. Default return HTTP code will be 200
+http_response_code(200); // PHP 5.4 or greater

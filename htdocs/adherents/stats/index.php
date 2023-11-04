@@ -23,7 +23,6 @@
  *		\brief      Page of subscription members statistics
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
@@ -47,7 +46,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = strftime("%Y", time());
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
@@ -209,7 +208,7 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
@@ -224,8 +223,8 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div>';
-print '<div class="clearboth"></div>';
+print '</div></div></div>';
+print '<div style="clear:both"></div>';
 
 
 print dol_get_fiche_end();

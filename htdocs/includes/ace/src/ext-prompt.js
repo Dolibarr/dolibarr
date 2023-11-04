@@ -364,7 +364,7 @@ dom.importCssString("\
     line-height: 1.4;\
     background: #25282c;\
     color: #c1c1c1;\
-}", "autocompletion.css", false);
+}", "autocompletion.css");
 
 exports.AcePopup = AcePopup;
 exports.$singleLineEditor = $singleLineEditor;
@@ -430,9 +430,8 @@ exports.getCompletionPrefix = function (editor) {
 
 });
 
-define("ace/snippets",["require","exports","module","ace/lib/dom","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/range_list","ace/keyboard/hash_handler","ace/tokenizer","ace/clipboard","ace/editor"], function(require, exports, module) {
+define("ace/snippets",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/range_list","ace/keyboard/hash_handler","ace/tokenizer","ace/clipboard","ace/lib/dom","ace/editor"], function(require, exports, module) {
 "use strict";
-var dom = require("./lib/dom");
 var oop = require("./lib/oop");
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var lang = require("./lib/lang");
@@ -577,9 +576,7 @@ var SnippetManager = function() {
                 {regex: "\\|" + escape("\\|") + "*\\|", onMatch: function(val, state, stack) {
                     var choices = val.slice(1, -1).replace(/\\[,|\\]|,/g, function(operator) {
                         return operator.length == 2 ? operator[1] : "\x00";
-                    }).split("\x00").map(function(value){
-                        return {value: value};
-                    });
+                    }).split("\x00");
                     stack[0].choices = choices;
                     return [choices[0]];
                 }, next: "start"},
@@ -1050,12 +1047,6 @@ var SnippetManager = function() {
             }
             snippetMap[scope].push(s);
 
-            if (s.prefix)
-                s.tabTrigger = s.prefix;
-
-            if (!s.content && s.body)
-                s.content = Array.isArray(s.body) ? s.body.join("\n") : s.body;
-
             if (s.tabTrigger && !s.trigger) {
                 if (!s.guard && /^\w/.test(s.tabTrigger))
                     s.guard = "\\b";
@@ -1072,13 +1063,10 @@ var SnippetManager = function() {
             s.endTriggerRe = new RegExp(s.endTrigger);
         }
 
-        if (Array.isArray(snippets)) {
+        if (snippets && snippets.content)
+            addSnippet(snippets);
+        else if (Array.isArray(snippets))
             snippets.forEach(addSnippet);
-        } else {
-            Object.keys(snippets).forEach(function(key) {
-                addSnippet(snippets[key]);
-            });
-        }
         
         this._signal("registerSnippets", {scope: scope});
     };
@@ -1128,7 +1116,7 @@ var SnippetManager = function() {
                     snippet.tabTrigger = val.match(/^\S*/)[0];
                     if (!snippet.name)
                         snippet.name = val;
-                } else if (key) {
+                } else {
                     snippet[key] = val;
                 }
             }
@@ -1277,17 +1265,18 @@ var TabstopManager = function(editor) {
         
         this.selectedTabstop = ts;
         var range = ts.firstNonLinked || ts;
-        if (ts.choices) range.cursor = range.start;
         if (!this.editor.inVirtualSelectionMode) {
             var sel = this.editor.multiSelect;
-            sel.toSingleRange(range);
+            sel.toSingleRange(range.clone());
             for (var i = 0; i < ts.length; i++) {
                 if (ts.hasLinkedRanges && ts[i].linked)
                     continue;
                 sel.addRange(ts[i].clone(), true);
             }
+            if (sel.ranges[0])
+                sel.addRange(sel.ranges[0].clone());
         } else {
-            this.editor.selection.fromOrientedRange(range);
+            this.editor.selection.setRange(range);
         }
         
         this.editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
@@ -1414,14 +1403,14 @@ var moveRelative = function(point, start) {
 };
 
 
-dom.importCssString("\
+require("./lib/dom").importCssString("\
 .ace_snippet-marker {\
     -moz-box-sizing: border-box;\
     box-sizing: border-box;\
     background: rgba(194, 193, 208, 0.09);\
     border: 1px dotted rgba(211, 208, 235, 0.62);\
     position: absolute;\
-}", "snippets.css", false);
+}");
 
 exports.snippetManager = new SnippetManager();
 
@@ -1518,7 +1507,6 @@ var Autocomplete = function() {
         } else if (keepPopupPosition && !prefix) {
             this.detach();
         }
-        this.changeTimer.cancel();
     };
 
     this.detach = function() {
@@ -1581,15 +1569,13 @@ var Autocomplete = function() {
         if (!data)
             return false;
 
-        var completions = this.completions;
-        this.editor.startOperation({command: {name: "insertMatch"}});
         if (data.completer && data.completer.insertMatch) {
             data.completer.insertMatch(this.editor, data);
         } else {
-            if (completions.filterText) {
+            if (this.completions.filterText) {
                 var ranges = this.editor.selection.getAllRanges();
                 for (var i = 0, range; range = ranges[i]; i++) {
-                    range.start.column -= completions.filterText.length;
+                    range.start.column -= this.completions.filterText.length;
                     this.editor.session.remove(range);
                 }
             }
@@ -1598,9 +1584,7 @@ var Autocomplete = function() {
             else
                 this.editor.execCommand("insertstring", data.value || data);
         }
-        if (this.completions == completions)
-            this.detach();
-        this.editor.endOperation();
+        this.detach();
     };
 
 
@@ -1696,14 +1680,19 @@ var Autocomplete = function() {
             return this.openPopup(this.editor, "", keepPopupPosition);
         }
         var _id = this.gatherCompletionsId;
-        var detachIfFinished = function(results) {
-            if (!results.finished) return;
-            return this.detach();
-        }.bind(this);
+        this.gatherCompletions(this.editor, function(err, results) {
+            var detachIfFinished = function() {
+                if (!results.finished) return;
+                return this.detach();
+            }.bind(this);
 
-        var processResults = function(results) {
             var prefix = results.prefix;
-            var matches = results.matches;
+            var matches = results && results.matches;
+
+            if (!matches || !matches.length)
+                return detachIfFinished();
+            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
+                return;
 
             this.completions = new FilteredList(matches);
 
@@ -1713,39 +1702,14 @@ var Autocomplete = function() {
             this.completions.setFilter(prefix);
             var filtered = this.completions.filtered;
             if (!filtered.length)
-                return detachIfFinished(results);
+                return detachIfFinished();
             if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
-                return detachIfFinished(results);
+                return detachIfFinished();
             if (this.autoInsert && filtered.length == 1 && results.finished)
                 return this.insertMatch(filtered[0]);
 
             this.openPopup(this.editor, prefix, keepPopupPosition);
-        }.bind(this);
-
-        var isImmediate = true;
-        var immediateResults = null;
-        this.gatherCompletions(this.editor, function(err, results) {
-            var prefix = results.prefix;
-            var matches = results && results.matches;
-
-            if (!matches || !matches.length)
-                return detachIfFinished(results);
-            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
-                return;
-            if (isImmediate) {
-                immediateResults = results;
-                return;
-            }
-
-            processResults(results);
         }.bind(this));
-        
-        isImmediate = false;
-        if (immediateResults) {
-            var results = immediateResults;
-            immediateResults = null;
-            processResults(results);
-        }
     };
 
     this.cancelContextMenu = function() {
@@ -2034,7 +1998,7 @@ margin: 0px;\
 .ace_optionsMenuEntry button:hover{\
 background: #f0f0f0;\
 }";
-dom.importCssString(cssText, "settings_menu.css", false);
+dom.importCssString(cssText);
 
 module.exports.overlayPage = function overlayPage(editor, contentElement, callback) {
     var closer = document.createElement('div');
@@ -2133,23 +2097,22 @@ var supportedModes = {
     ABC:         ["abc"],
     ActionScript:["as"],
     ADA:         ["ada|adb"],
-    Alda:        ["alda"],
     Apache_Conf: ["^htaccess|^htgroups|^htpasswd|^conf|htaccess|htgroups|htpasswd"],
-    Apex:        ["apex|cls|trigger|tgr"],
-    AQL:         ["aql"],
     AsciiDoc:    ["asciidoc|adoc"],
-    ASL:         ["dsl|asl|asl.json"],
+    ASL:         ["dsl|asl"],
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
+    Apex:        ["apex|cls|trigger|tgr"],
+    AQL:         ["aql"],
     BatchFile:   ["bat|cmd"],
     C_Cpp:       ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search:    ["c9search_results"],
+    Crystal:     ["cr"],
     Cirru:       ["cirru|cr"],
     Clojure:     ["clj|cljs"],
     Cobol:       ["CBL|COB"],
     coffee:      ["coffee|cf|cson|^Cakefile"],
     ColdFusion:  ["cfm"],
-    Crystal:     ["cr"],
     CSharp:      ["cs"],
     Csound_Document: ["csd"],
     Csound_Orchestra: ["orc"],
@@ -2196,8 +2159,8 @@ var supportedModes = {
     Jade:        ["jade|pug"],
     Java:        ["java"],
     JavaScript:  ["js|jsm|jsx"],
-    JSON:        ["json"],
     JSON5:       ["json5"],
+    JSON:        ["json"],
     JSONiq:      ["jq"],
     JSP:         ["jsp"],
     JSSM:        ["jssm|jssm_state"],
@@ -2205,7 +2168,6 @@ var supportedModes = {
     Julia:       ["jl"],
     Kotlin:      ["kt|kts"],
     LaTeX:       ["tex|latex|ltx|bib"],
-    Latte:       ["latte"],
     LESS:        ["less"],
     Liquid:      ["liquid"],
     Lisp:        ["lisp"],
@@ -2220,36 +2182,32 @@ var supportedModes = {
     Mask:        ["mask"],
     MATLAB:      ["matlab"],
     Maze:        ["mz"],
-    MediaWiki:   ["wiki|mediawiki"],
     MEL:         ["mel"],
-    MIPS:        ["s|asm"],
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
     Nginx:       ["nginx|conf"],
-    Nim:         ["nim"],
     Nix:         ["nix"],
+    Nim:         ["nim"],
     NSIS:        ["nsi|nsh"],
     Nunjucks:    ["nunjucks|nunjs|nj|njk"],
     ObjectiveC:  ["m|mm"],
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
+    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
-    PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
     PHP_Laravel_blade: ["blade.php"],
+    PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
+    Puppet:      ["epp|pp"],
     Pig:         ["pig"],
     Powershell:  ["ps1"],
     Praat:       ["praat|praatscript|psc|proc"],
-    Prisma:      ["prisma"],
     Prolog:      ["plg|prolog"],
     Properties:  ["properties"],
     Protobuf:    ["proto"],
-    Puppet:      ["epp|pp"],
     Python:      ["py"],
-    QML:         ["qml"],
     R:           ["r"],
-    Raku:        ["raku|rakumod|rakutest|p6|pl6|pm6"],
     Razor:       ["cshtml|asp"],
     RDoc:        ["Rd"],
     Red:         ["red|reds"],
@@ -2261,13 +2219,11 @@ var supportedModes = {
     SCAD:        ["scad"],
     Scala:       ["scala|sbt"],
     Scheme:      ["scm|sm|rkt|oak|scheme"],
-    Scrypt:      ["scrypt"],
     SCSS:        ["scss"],
     SH:          ["sh|bash|^.bashrc"],
     SJS:         ["sjs"],
     Slim:        ["slim|skim"],
     Smarty:      ["smarty|tpl"],
-    Smithy:      ["smithy"],
     snippets:    ["snippets"],
     Soy_Template:["soy"],
     Space:       ["space"],
@@ -2283,7 +2239,7 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["twig|swig"],
+    Twig:        ["latte|twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
@@ -2315,7 +2271,6 @@ var nameOverrides = {
     Perl6: "Perl 6",
     AutoHotKey: "AutoHotkey / AutoIt"
 };
-
 var modesByName = {};
 for (var name in supportedModes) {
     var data = supportedModes[name];
@@ -2631,10 +2586,13 @@ prompt.commands = function(editor, callback) {
             var platform = handler.platform;
             var cbn = handler.byName;
             for (var i in cbn) {
-                var key = cbn[i].bindKey;
-                if (typeof key !== "string") {
-                    key = key && key[platform] || "";
+                var key;
+                if (cbn[i].bindKey && cbn[i].bindKey[platform] !== null) {
+                    key = cbn[i].bindKey["win"];
+                } else {
+                    key = "";
                 }
+
                 var commands = cbn[i];
                 var description = commands.description || normalizeName(commands.name);
                 if (!Array.isArray(commands))
@@ -2791,7 +2749,7 @@ dom.importCssString(".ace_prompt_container {\
     background: white;\
     border-radius: 2px;\
     box-shadow: 0px 2px 3px 0px #555;\
-}", "promtp.css", false);
+}");
 
 
 exports.prompt = prompt;

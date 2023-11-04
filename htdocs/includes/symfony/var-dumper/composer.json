@@ -20,14 +20,9 @@
         "symfony/polyfill-mbstring": "~1.0"
     },
     "require-dev": {
-        "ext-iconv": "*",
-        "twig/twig": "~1.34|~2.4"
-    },
-    "conflict": {
-        "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0"
+        "twig/twig": "~1.20|~2.0"
     },
     "suggest": {
-        "ext-iconv": "To convert non-UTF-8 strings to UTF-8 (or symfony/polyfill-iconv in case ext-iconv cannot be used).",
         "ext-symfony_debug": ""
     },
     "autoload": {
@@ -40,7 +35,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "3.2-dev"
+            "dev-master": "3.0-dev"
         }
     }
 }

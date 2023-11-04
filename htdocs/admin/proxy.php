@@ -22,7 +22,6 @@
  *		\brief      Page  setup proxy to use for external web access
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -96,10 +95,9 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'proxy', '', -1);
 
-print '<br>';
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript">';
+	print "\n".'<script type="text/javascript" language="javascript">';
 	print 'jQuery(document).ready(function () {
                 function initfields()
                 {
@@ -199,7 +197,9 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</div>';
 
 print '</form>';
 

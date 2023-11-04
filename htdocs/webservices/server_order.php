@@ -183,6 +183,7 @@ $order_fields = array(
 	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
 	'ref_client' => array('name'=>'ref_client', 'type'=>'xsd:string'),
 	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
+	'ref_int' => array('name'=>'ref_int', 'type'=>'xsd:string'),
 	'thirdparty_id' => array('name'=>'thirdparty_id', 'type'=>'xsd:int'),
 	'status' => array('name'=>'status', 'type'=>'xsd:int'),
 	'billed' => array('name'=>'billed', 'type'=>'xsd:string'),
@@ -437,6 +438,7 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'ref' => $order->ref,
 					'ref_client' => $order->ref_client,
 					'ref_ext' => $order->ref_ext,
+					'ref_int' => $order->ref_int,
 					'thirdparty_id' => $order->socid,
 					'status' => $order->statut,
 
@@ -591,6 +593,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'ref' => $order->ref,
 					'ref_client' => $order->ref_client,
 					'ref_ext' => $order->ref_ext,
+					'ref_int' => $order->ref_int,
 					'socid' => $order->socid,
 					'status' => $order->statut,
 
@@ -741,9 +744,9 @@ function createOrder($authentication, $order)
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-				foreach ($extrafields->attributes[$elementtype]['label'] as $tmpkey => $tmplabel) {
-					$tmpkey = 'options_'.$tmpkey;
-					$newline->array_options[$tmpkey] = $line[$tmpkey];
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+					$key = 'options_'.$key;
+					$newline->array_options[$key] = $line[$key];
 				}
 			}
 

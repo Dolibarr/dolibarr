@@ -18,37 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Sistem za upravljanje znanja
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Upravljajte bazo upravljanja znanja (KM) ali službe za pomoč uporabnikom
+ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Nastavitev sistema za upravljanje znanja
-Settings = nastavitve
-KnowledgeManagementSetupPage = Stran z nastavitvami sistema za upravljanje znanja
+KnowledgeManagementSetup = Knowledge Management System setup
+Settings = Settings
+KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
 # About page
 #
 About = O programu
-KnowledgeManagementAbout = O upravljanju znanja
-KnowledgeManagementAboutPage = Upravljanje znanja o strani
+KnowledgeManagementAbout = About Knowledge Management
+KnowledgeManagementAboutPage = Knowledge Management about page
 
-KnowledgeManagementArea = Upravljanje znanja
-MenuKnowledgeRecord = Baza znanja
-ListKnowledgeRecord = Seznam člankov
-NewKnowledgeRecord = Nov članek
-ValidateReply = Potrdite rešitev
-KnowledgeRecords = Članki
+KnowledgeManagementArea = Knowledge Management
+MenuKnowledgeRecord = Knowledge base
+ListKnowledgeRecord = List of articles
+NewKnowledgeRecord = New article
+ValidateReply = Validate solution
+KnowledgeRecords = Articles
 KnowledgeRecord = Artikel
-KnowledgeRecordExtraFields = Dodatna polja za člen
-GroupOfTicket=Skupina vstopnic
-YouCanLinkArticleToATicketCategory=Članek lahko povežete s skupino vstopnic (tako da bo članek označen na vseh vstopnicah v tej skupini)
-SuggestedForTicketsInGroup=Priporočeno pri ustvarjanju zahtevka
-
-SetObsolete=Nastavi kot zastarelo
-ConfirmCloseKM=Ali potrjujete, da je ta članek zaprt kot zastarel?
-ConfirmReopenKM=Ali želite obnoviti ta članek v status "Potrjen"?
+KnowledgeRecordExtraFields = Extrafields for Article
+GroupOfTicket=Group of tickets
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

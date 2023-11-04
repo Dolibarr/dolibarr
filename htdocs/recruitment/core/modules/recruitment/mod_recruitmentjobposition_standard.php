@@ -26,7 +26,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobpo
 
 
 /**
- *	Class to manage the Standard numbering rule for Job positions
+ *	Class to manage customer order numbering rules standard
  */
 class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosition
 {

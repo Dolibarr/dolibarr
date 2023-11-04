@@ -24,14 +24,14 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
-				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
+				$align = $extrafields->getAlignFlag($key);
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
 
-				print '<td class="liste_titre'.($cssclass ? ' '.$cssclass : '').'">';
+				print '<td class="liste_titre'.($align ? ' '.$align : '').'">';
 				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
-				if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
+				if (in_array($typeofextrafield, array('varchar', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
 					$searchclass = '';
-					if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url'))) {
+					if (in_array($typeofextrafield, array('varchar'))) {
 						$searchclass = 'searchstring';
 					}
 					if (in_array($typeofextrafield, array('int', 'double'))) {

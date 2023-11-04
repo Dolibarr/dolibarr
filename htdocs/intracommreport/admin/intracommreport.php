@@ -13,16 +13,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- *    \file       htdocs/intracommreport/admin/intracommreport.php
- *    \ingroup    intracommreport
- *    \brief      Page to setup the module intracomm report
+ *      \file		htdocs/admin/intracommreport.php
+ *      \ingroup	intracommreport
+ *      \brief		Page to setup the module intracomm report
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/intracommreport.lib.php';
@@ -31,12 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "intracommreport"));
 
-// Access Control
 if (!$user->admin) {
 	accessforbidden();
 }
 
-// Get Parameters
 $action = GETPOST('action', 'aZ09');
 
 // Parameters INTRACOMMREPORT_* and others
@@ -84,7 +81,6 @@ if ($action == 'update') {
 	}
 }
 
-
 /*
  * View
  */
@@ -121,7 +117,7 @@ foreach ($list_DEB as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td>';
 
 	print '</tr>';
@@ -185,7 +181,7 @@ foreach ($list_DES as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td>';
 
 	print '</tr>';

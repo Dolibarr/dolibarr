@@ -6,4 +6,4 @@ To upgrade ckeditor:
 - Choose skin mona-lisa
 - Choose all languages
 - Download
-- Replace files and remove dir 'samples'.
+- Repalce files and remove dir 'samples'.

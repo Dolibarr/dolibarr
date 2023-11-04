@@ -48,7 +48,7 @@ class modModuleBuilder extends DolibarrModules
 		$this->module_position = '90';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "A RAD (Rapid Application Development - low-code and no-code) tool to help developers or advanced users to build their own module/application.";
+		$this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -102,18 +102,16 @@ class modModuleBuilder extends DolibarrModules
 		//------------------
 		$this->menu = array();
 
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools',
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
 			'type'=>'left',
 			'titre'=>'ModuleBuilder',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'tools',
-			'leftmenu'=>'devtools_modulebuilder',
-			'url'=>'/modulebuilder/index.php?mainmenu=tools&amp;leftmenu=devtools',
+			'mainmenu'=>'home',
+			'leftmenu'=>'admintools_modulebuilder',
+			'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
 			'langs'=>'modulebuilder',
 			'position'=>100,
-			'perms'=>'$user->hasRight("modulebuilder", "run")',
-			//'enabled'=>'isModEnabled("modulebuilder") && preg_match(\'/^(devtools|all)/\',$leftmenu)',
-			'enabled'=>'isModEnabled("modulebuilder")',
+			'perms'=>'1',
+			'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
 			'target'=>'_modulebuilder',
 			'user'=>0);
 	}

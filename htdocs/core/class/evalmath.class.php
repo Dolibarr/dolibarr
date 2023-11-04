@@ -113,8 +113,7 @@ class EvalMath
 
 	// constants
 	public $fb = array( // built-in functions
-		'sin', 'sinh', 'arcsin', 'asin', 'arcsinh', 'asinh', 'cos', 'cosh', 'arccos', 'acos', 'arccosh', 'acosh', 'tan', 'tanh', 'arctan', 'atan', 'arctanh', 'atanh', 'sqrt', 'abs', 'ln', 'log', 'intval', 'ceil',
-	);
+	'sin', 'sinh', 'arcsin', 'asin', 'arcsinh', 'asinh', 'cos', 'cosh', 'arccos', 'acos', 'arccosh', 'acosh', 'tan', 'tanh', 'arctan', 'atan', 'arctanh', 'atanh', 'sqrt', 'abs', 'ln', 'log', 'intval');
 
 	/**
 	 * Constructor
@@ -145,10 +144,6 @@ class EvalMath
 	 */
 	public function evaluate($expr)
 	{
-		if (empty($expr)) {
-			return false;
-		}
-
 		$this->last_error = null;
 		$this->last_error_code = null;
 		$expr = trim($expr);
@@ -198,9 +193,9 @@ class EvalMath
 	}
 
 	/**
-	 * Function vars
+	 * vars
 	 *
-	 * @return array	Output
+	 * @return string Output
 	 */
 	public function vars()
 	{
@@ -211,9 +206,9 @@ class EvalMath
 	}
 
 	/**
-	 * Function funcs
+	 * vars
 	 *
-	 * @return array	Output
+	 * @return string Output
 	 */
 	private function funcs()
 	{
@@ -229,8 +224,8 @@ class EvalMath
 	/**
 	 * Convert infix to postfix notation
 	 *
-	 * @param 	string 			$expr		Expression
-	 * @return 	boolean|array 				Output
+	 * @param string $expr		Expression
+	 * @return string 			Output
 	 */
 	private function nfx($expr)
 	{
@@ -367,19 +362,22 @@ class EvalMath
 			}
 			$output[] = $op;
 		}
-
 		return $output;
 	}
 
 	/**
-	 * Evaluate postfix notation
+	 * evaluate postfix notation
 	 *
-	 * @param array $tokens      	Expression
+	 * @param string $tokens      	Expression
 	 * @param array $vars       	Array
 	 * @return string 				Output
 	 */
 	private function pfx($tokens, $vars = array())
 	{
+		if ($tokens == false) {
+			return false;
+		}
+
 		$stack = new EvalMathStack();
 
 		foreach ($tokens as $token) { // nice and easy
@@ -481,6 +479,7 @@ class EvalMath
  */
 class EvalMathStack
 {
+
 	public $stack = array();
 
 	public $count = 0;
@@ -488,8 +487,8 @@ class EvalMathStack
 	/**
 	 * push
 	 *
-	 * @param 	string 	$val		Val
-	 * @return 	void
+	 * @param string $val		Val
+	 * @return void
 	 */
 	public function push($val)
 	{
@@ -514,15 +513,14 @@ class EvalMathStack
 	/**
 	 * last
 	 *
-	 * @param 	int 	$n		N
-	 * @return 	mixed 			Stack
+	 * @param int $n	N
+	 * @return mixed 	Stack
 	 */
 	public function last($n = 1)
 	{
 		if (isset($this->stack[$this->count - $n])) {
 			return $this->stack[$this->count - $n];
 		}
-
-		return '';
+		return;
 	}
 }

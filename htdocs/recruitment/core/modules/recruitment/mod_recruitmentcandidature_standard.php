@@ -26,7 +26,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentcandi
 
 
 /**
- *	Class to manage the Standard numbering rule for Job application
+ *	Class to manage customer order numbering rules standard
  */
 class mod_recruitmentcandidature_standard extends ModeleNumRefRecruitmentCandidature
 {
@@ -36,7 +36,7 @@ class mod_recruitmentcandidature_standard extends ModeleNumRefRecruitmentCandida
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'JOA';
+	public $prefix = 'JOC';
 
 	/**
 	 * @var string Error code (or message)

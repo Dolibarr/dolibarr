@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP- eller SFTP-klientmodulinställning
+NewFTPClient=Ny FTP / FTPS-anslutningsinstallation
+FTPArea=FTP / FTPS-område
+FTPAreaDesc=Denna skärm visar en vy av en FTP et SFTP-server.
+SetupOfFTPClientModuleNotComplete=Installationen av FTP- eller SFTP-klientmodulen verkar vara ofullständig
+FTPFeatureNotSupportedByYourPHP=Din PHP stöder inte FTP- eller SFTP-funktioner
+FailedToConnectToFTPServer=Det gick inte att ansluta till servern (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Det gick inte att logga in på servern med definierat inloggning / lösenord
+FTPFailedToRemoveFile=Misslyckades med att ta bort fil <b>%s.</b>
+FTPFailedToRemoveDir=Misslyckades med att ta bort katalogen <b> %s </b>: kolla behörigheter och att katalogen är tom.
+FTPPassiveMode=Passivt läge
+ChooseAFTPEntryIntoMenu=Välj en FTP / SFTP-webbplats från menyn ...
+FailedToGetFile=Filhämtning misslyckades %s

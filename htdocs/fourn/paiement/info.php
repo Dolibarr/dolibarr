@@ -18,26 +18,20 @@
  */
 
 /**
- *    \file       htdocs/fourn/paiement/info.php
- *    \ingroup    facture, fournisseur
- *    \brief      Tab for Supplier Payment Information
+ *   	\file       htdocs/fourn/paiement/info.php
+ *		\ingroup    facture
+ *		\brief      Onglet info d'un paiement fournisseur
  */
 
-
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-
-// Load translation files required by the page
 $langs->loadLangs(array("bills", "suppliers", "companies"));
 
-// Get Parameters
 $id = GETPOST('id', 'int');
 
-// Initialize Objects
 $object = new PaiementFourn($db);
 
 // Load object

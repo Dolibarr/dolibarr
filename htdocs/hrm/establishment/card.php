@@ -20,7 +20,6 @@
  *  \brief      	Page to show an establishment
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
@@ -61,7 +60,7 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (!isModEnabled('hrm')) accessforbidden();
+if (empty($conf->hrm->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 
 
@@ -136,14 +135,14 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$result = $object->update($user);
 
 			if ($result > 0) {
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
 		exit;
 	}
 }
@@ -179,7 +178,7 @@ if ($action == 'create') {
 
 	// Entity
 	/*
-	if (isModEnabled('multicompany')) {
+	if (! empty($conf->multicompany->enabled)) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -255,7 +254,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if ((!empty($id) || !empty($ref)) && $action == 'edit') {
+if (($id || $ref) && $action == 'edit') {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = establishment_prepare_head($object);
@@ -283,7 +282,7 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 
 			// Entity
 			/*
-			if (isModEnabled('multicompany')) {
+			if (! empty($conf->multicompany->enabled)) {
 				print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
 				print $object->entity > 0 ? $object->entity : $conf->entity;
@@ -327,7 +326,11 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 
 			print dol_get_fiche_end();
 
-			print $form->buttonsSaveCancel();
+			print '<div class="center">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
 			print '</form>';
 		}
@@ -372,7 +375,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Entity
 	/*
-	if (!isModEnabled('multicompany') {
+	if ($conf->multicompany->enabled) {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("Entity").'</td>';
 		print '<td>'.$object->entity.'</td>';
@@ -420,13 +423,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 * Action bar
 	 */
 	print '<div class="tabsAction">';
-
-	// Modify
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
-
-	// Delete
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
-
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
 	print '</div>';
 }
 

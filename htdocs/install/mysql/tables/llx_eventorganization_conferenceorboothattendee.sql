@@ -1,4 +1,4 @@
--- Copyright (C) 2021-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) ---Put here your own copyright and developer email---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,20 +22,16 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	fk_actioncomm integer,
 	fk_project integer NOT NULL,
 	fk_invoice integer NULL,
-	email varchar(128),
-    email_company varchar(128),
-	firstname varchar(100),
-	lastname varchar(100),
+	email varchar(100),
 	date_subscription datetime, 
 	amount double DEFAULT NULL, 
 	note_public text, 
 	note_private text, 
 	date_creation datetime NOT NULL, 
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+	tms timestamp, 
 	fk_user_creat integer, 
 	fk_user_modif integer, 
 	last_main_doc varchar(255), 
-	ip varchar(250),              --ip used to create record (for public submission page)
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	status smallint NOT NULL

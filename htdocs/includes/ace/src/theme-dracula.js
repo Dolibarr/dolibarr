@@ -124,7 +124,7 @@ background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgb
 exports.$selectionColorConflict = true;
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass, false);
+dom.importCssString(exports.cssText, exports.cssClass);
 });                (function() {
                     window.require(["ace/theme/dracula"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {

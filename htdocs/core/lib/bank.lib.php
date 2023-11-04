@@ -4,7 +4,6 @@
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +25,6 @@
  * \ingroup    bank
  * \brief      Ensemble de fonctions de base pour le module banque
  */
-
 
 /**
  * Prepare array with list of tabs
@@ -68,7 +66,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+	if ($object->courant != Account::TYPE_CASH) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -131,12 +129,7 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user, $db;
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('bank_account');
-	$extrafields->fetch_name_optionals_label('bank');
-
+	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
@@ -158,21 +151,8 @@ function bank_admin_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankAccounts").')';
-	$nbExtrafields = $extrafields->attributes['bank_account']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
+	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankTransactions").')';
-	$nbExtrafields = $extrafields->attributes['bank']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
-	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
@@ -292,13 +272,11 @@ function checkSwiftForAccount($account)
  *      @param  Account     $account    A bank account
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkIbanForAccount(Account $account)
+function checkIbanForAccount($account)
 {
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
-	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
-
-	$iban = new PHP_IBAN\IBAN($ibantocheck);
+	$iban = new IBAN($account->iban);
 	$check = $iban->Verify();
 
 	if ($check) {
@@ -306,24 +284,6 @@ function checkIbanForAccount(Account $account)
 	} else {
 		return false;
 	}
-}
-
-/**
- * Returns the iban human readable
- *
- * @param Account $account Account object
- * @return string
- */
-function getIbanHumanReadable(Account $account)
-{
-	if ($account->getCountryCode() == 'FR') {
-		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
-		$iban = new PHP_IBAN\IBAN($ibantoprint);
-		return $iban->HumanFormat();
-	}
-
-	return $account->iban;
 }
 
 /**
@@ -360,7 +320,7 @@ function checkBanForAccount($account)
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
-			$s += ((int) $code) * $coef[$i];
+			$s += (0 + (int) $code) * $coef[$i];
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97);

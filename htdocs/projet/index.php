@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -24,7 +24,6 @@
  *       \brief      Main project home page
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -57,8 +56,8 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
@@ -119,11 +118,10 @@ $morehtml = '';
 $morehtml .= '<form name="projectform" method="POST">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
-$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
+$morehtml .= '<SELECT name="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
-$morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
 $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml .= '</form>';
 
@@ -189,8 +187,9 @@ if ($resql) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-// Statistics
+/*
+ * Statistics
+ */
 include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
@@ -198,10 +197,10 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -240,6 +239,8 @@ if ($resql) {
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
 			$projectstatic->title = $obj->title;
+			$projectstatic->dateo = $obj->dateo;
+			$projectstatic->datep = $obj->datep;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
 
@@ -259,7 +260,7 @@ if ($resql) {
 			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowraponall">';
+			print '<td width="96" class="nobordernopadding nowrap">';
 			print $projectstatic->getNomUrl(1);
 			print '</td>';
 
@@ -289,10 +290,7 @@ if ($resql) {
 			print '</td>';
 
 			// Date
-			$datem = $db->jdate($obj->datem);
-			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
-			print dol_print_date($datem, 'day', 'tzuserrel');
-			print '</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
 
 			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
@@ -310,7 +308,7 @@ if ($resql) {
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
-// List of open projects per thirdparty
+
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
@@ -422,7 +420,7 @@ if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA)) {
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook

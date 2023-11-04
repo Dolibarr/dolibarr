@@ -103,7 +103,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return	void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 	}
 
@@ -314,7 +314,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 	}
 }

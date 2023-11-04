@@ -72,3 +72,5 @@ PriceQtyMin=Precio para cantidad mín.
 PriceQtyMinCurrency=Precio (moneda) para esta cant. (sin descuento)
 PredefinedProductsToSell=Producto Predefinido
 SuppliersPrices=Precio de Proveedor
+IncludingProductWithTag=Including products/services with the tag
+UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers

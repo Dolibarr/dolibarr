@@ -1,6 +1,5 @@
 -- ========================================================================
 -- Copyright (C) 2020 	   Open-Dsi  <support@open-dsi.fr>
--- Copyright (C) 2022 	   Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +20,7 @@ create table llx_c_stcommcontact
 (
   id       integer      PRIMARY KEY,
   code     varchar(12)  NOT NULL,
-  libelle  varchar(128),
+  libelle  varchar(30),
   picto    varchar(128),
   active   tinyint default 1  NOT NULL
 )ENGINE=innodb;

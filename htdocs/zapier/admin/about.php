@@ -21,9 +21,9 @@
  */
 
 /**
- *    \file       htdocs/zapier/admin/about.php
- *    \ingroup    zapier
- *    \brief      About page of module Zapier.
+ * \file    zapier/admin/about.php
+ * \ingroup zapier
+ * \brief   About page of module Zapier.
  */
 
 // Load Dolibarr environment
@@ -35,21 +35,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once '../lib/zapier.lib.php';
 
 // Translations
-$langs->loadLangs(array('admin', 'errors', 'zapier'));
+$langs->loadLangs(array("errors", "admin", "zapier"));
 
 // Access control
 if (!$user->admin) {
 	accessforbidden();
 }
 
-if (empty($conf->zapier->enabled)) accessforbidden();
-if (empty($user->admin)) accessforbidden();
-
-
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+if (empty($conf->zapier->enabled)) accessforbidden();
+if (empty($user->admin)) accessforbidden();
 
 
 /*

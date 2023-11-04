@@ -25,6 +25,9 @@
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');
 }
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
@@ -52,13 +55,12 @@ function llxFooterVierge()
 	print '</body></html>';
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Security check
-if (!isModEnabled('don')) {
-	httponly_accessforbidden('Module Donation not enabled');
+if (empty($conf->don->enabled)) {
+	accessforbidden('', 0, 0, 1);
 }
 
 

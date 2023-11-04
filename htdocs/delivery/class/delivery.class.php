@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
  *
@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (isModEnabled("propal")) {
+if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -105,13 +105,6 @@ class Delivery extends CommonObject
 	 * @var string model pdf
 	 */
 	public $model_pdf;
-
-	public $commande_id;
-
-	/**
-	 * @var array statuts labels
-	 */
-	public $statuts;
 
 	public $lines = array();
 
@@ -535,8 +528,6 @@ class Delivery extends CommonObject
 	public function create_from_sending($user, $sending_id)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
 
@@ -643,7 +634,7 @@ class Delivery extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			if ($this->db->query($sql)) {
-				$this->update_price(1);
+				$this->update_price();
 
 				return 1;
 			} else {
@@ -726,24 +717,6 @@ class Delivery extends CommonObject
 	}
 
 	/**
-	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
-	 * @since v18
-	 * @return array
-	 */
-	public function getTooltipContentArray($params)
-	{
-		global $conf, $langs;
-
-		$datas = [];
-
-		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
-		$datas['picto'] .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
-
-		return $datas;
-	}
-
-	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -752,22 +725,12 @@ class Delivery extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $hookmanager;
+		global $langs;
 
 		$result = '';
 
-		$params = [
-			'id' => $this->id,
-			'objecttype' => $this->element,
-		];
-		$classfortooltip = 'classfortooltip';
-		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
-		}
-		$label = implode($this->getTooltipContentArray($params));
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/delivery/card.php?id='.$this->id;
 
@@ -783,34 +746,25 @@ class Delivery extends CommonObject
 		}
 		//}
 
-		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= ($linkstart.img_object($label, $this->picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
+			$result .= ($linkstart.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';
 		}
 		$result .= $linkstart.$this->ref.$linkend;
-
-		global $action;
-		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
-		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			$result = $hookmanager->resPrint;
-		} else {
-			$result .= $hookmanager->resPrint;
-		}
 		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines insto $this->lines.
+	 *	Load lines
 	 *
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function fetch_lines()
 	{
@@ -832,9 +786,9 @@ class Delivery extends CommonObject
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
 				$line = new DeliveryLine($this->db);
+
+				$obj = $this->db->fetch_object($resql);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
@@ -851,7 +805,7 @@ class Delivery extends CommonObject
 				$line->product_type		= $obj->fk_product_type;
 				$line->fk_origin_line = $obj->fk_origin_line;
 
-				$line->price = $obj->subprice;
+				$line->price = $obj->price;
 				$line->total_ht = $obj->total_ht;
 
 				// units
@@ -876,11 +830,9 @@ class Delivery extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-
-			return 1;
-		} else {
-			return -1;
 		}
+
+		return $this->lines;
 	}
 
 
@@ -1005,25 +957,25 @@ class Delivery extends CommonObject
 		$sqlSourceLine .= ", p.ref, p.label";
 		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine .= " WHERE fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
+		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
 		if ($resultSourceLine) {
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
-			$array = array();
+			$resultArray = array();
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
 				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
-				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
-				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']."det as cd";
+				$sql .= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
+				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
-				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
+				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
+				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
 				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 
@@ -1117,35 +1069,18 @@ class Delivery extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
-	 * @param 	int 	$origin_id 	Old thirdparty id
-	 * @param 	int 	$dest_id 	New thirdparty id
-	 * @return 	bool
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'delivery'
 		);
 
-		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
-	}
-
-	/**
-	 * Function used to replace a product id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
-	 * @return bool
-	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'deliverydet'
-		);
-
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }
 
@@ -1171,6 +1106,14 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $table_element = 'deliverydet';
 
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
+	public $price;
+	public $fk_product;
+	public $origin_id;
+
 	/**
 	 * @var string delivery note lines label
 	 */
@@ -1192,24 +1135,10 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $libelle;
 
-	// From llx_expeditiondet
-	public $qty;
-	public $qty_asked;
-	public $qty_shipped;
-
-	public $fk_product;
-	public $product_desc;
-	public $product_type;
-	public $product_ref;
-	public $product_label;
-
-	public $fk_origin_line;
-	public $origin_id;
-
-	public $price;
-
 	public $origin_line_id;
 
+	public $product_ref;
+	public $product_label;
 
 	/**
 	 *	Constructor

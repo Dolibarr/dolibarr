@@ -27,7 +27,6 @@
  *  \brief      Page of product events
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -43,7 +42,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -55,8 +54,8 @@ if ($user->socid) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -72,7 +71,7 @@ if (!$sortorder) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productagenda'));
+$hookmanager->initHooks(array('agendathirdparty'));
 
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -137,14 +136,14 @@ if ($id > 0 || $ref) {
 
 	$title = $langs->trans("Agenda");
 
-	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
+	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
 
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title, $help_url);
 
-	if (isModEnabled('notification')) {
+	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");
 	}
 	$type = $langs->trans('Product');
@@ -187,21 +186,30 @@ if ($id > 0 || $ref) {
 	$objcon = new stdClass();
 
 	$out = '';
-	$morehtmlcenter = '';
-	if (isModEnabled('agenda')) {
-		$permok = $user->rights->agenda->myactions->create;
-		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
-			if (get_class($objproduct) == 'Product') {
-				$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
-			}
-			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
+	$permok = $user->rights->agenda->myactions->create;
+	if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
+		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		if (get_class($objproduct) == 'Product') {
+			$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
 		}
+		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
+		//$out.=$langs->trans("AddAnAction").' ';
+		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
+		//$out.="</a>";
+	}
 
-		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create');
+
+	//print '<div class="tabsAction">';
+	//print '</div>';
+
+
+	$morehtmlcenter = '';
+	if (!empty($conf->agenda->enabled)) {
+		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&id='.$id;

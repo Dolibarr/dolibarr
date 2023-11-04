@@ -24,8 +24,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
 	public $require_admin = 0;
 
-	public $enabled = 'isModEnabled("mymodule")';
-
+	public $enabled = 0;
 	public $require_module = array();
 
 	/**
@@ -46,15 +45,19 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
-		$this->enabled = isModEnabled('mymodule');
+		if (is_array($conf->modules)) {
+			$this->enabled = in_array('mymodule', $conf->modules) ? 1 : 0;
+		}
 	}
 
 
 	/**
-	 *  Displays the filter form that appears in the mailing recipient selection page
+	 *  Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
 	 *
-	 *  @return     string      Return select zone
+	 *  @return     string      Retourne zone select
 	 */
 	public function formFilter()
 	{
@@ -80,7 +83,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
 
 	/**
-	 *  Returns url link to file of the source of the recipient of the mailing
+	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
 	 *  @param      int         $id     ID
 	 *  @return     string              Url lien
@@ -104,15 +107,15 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$target = array();
 		$j = 0;
 
-		$sql = " select rowid as id, label, firstname, lastname";
+		$sql = " select rowid as id, email, firstname, lastname, plan, partner";
 		$sql .= " from ".MAIN_DB_PREFIX."myobject";
-		$sql .= " where email IS NOT NULL AND email <> ''";
+		$sql .= " where email IS NOT NULL AND email != ''";
 		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
 			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
 		}
 		$sql .= " ORDER BY email";
 
-		// Store recipients in target
+		// Stocke destinataires dans target
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -129,10 +132,10 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 						'name' => $obj->lastname,
 						'id' => $obj->id,
 						'firstname' => $obj->firstname,
-						'other' => $obj->label,
+						'other' => $obj->plan.';'.$obj->partner,
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
-						'source_type' => 'myobject@mymodule'
+						'source_type' => 'dolicloud'
 					);
 					$old = $obj->email;
 					$j++;
@@ -183,14 +186,13 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  For example if this selector is used to extract 500 different
 	 *  emails from a text file, this function must return 500.
 	 *
-	 *  @param		string			$sql 		Not use here
-	 *  @return 	int                 		Nb of recipients or -1 if KO
+	 *  @param  string  $filter     Filter
+	 *  @param  string	$option     Options
+	 *  @return int                 Nb of recipients or -1 if KO
 	 */
-	public function getNbOfRecipients($sql = '')
+	public function getNbOfRecipients($filter = 1, $option = '')
 	{
-		$sql = "select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''";
-
-		$a = parent::getNbOfRecipients($sql);
+		$a = parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
 
 		if ($a < 0) {
 			return -1;

@@ -26,7 +26,7 @@ dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
 
 /**
- *	Class to manage the Standard numbering rule for MyObject
+ *	Class to manage customer order numbering rules standard
  */
 class mod_myobject_standard extends ModeleNumRefMyObject
 {

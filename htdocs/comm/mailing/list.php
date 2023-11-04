@@ -22,29 +22,23 @@
  *       \brief      Liste des mailings
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 
 // Load translation files required by the page
-$langs->load('mails');
+$langs->load("mails");
 
-// Get Parameters
-$massaction = GETPOST('massaction', 'alpha');
-$optioncss 	= GETPOST('optioncss', 'alpha');
-
-// Pagination
-$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield 	= GETPOST('sortfield', 'aZ09comma');
-$sortorder 	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$optioncss = GETPOST('optioncss', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -52,12 +46,10 @@ if (!$sortfield) {
 	$sortfield = "m.date_creat";
 }
 
-// Search Fields
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
 $filteremail = GETPOST('filteremail', 'alpha');
 
-// Initialize objects
 $object = new Mailing($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -111,7 +103,7 @@ if (empty($reshook)) {
 		}*/
 		$search_ref = '';
 		$search_all = '';
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -134,9 +126,7 @@ if (empty($reshook)) {
  * View
  */
 
-// Page Header
-$help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
-llxHeader('', $langs->trans("Mailing"), $help_url);
+llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $form = new Form($db);
 
@@ -196,7 +186,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$title = $langs->trans("EMailings");
+	$title = $langs->trans("ListOfEMailings");
 	if ($filteremail) {
 		$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 	}
@@ -287,7 +277,7 @@ if ($resql) {
 		print '</td>';
 
 		// Title
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+		print '<td>'.$obj->title.'</td>';
 
 		// Date creation
 		print '<td class="center">';
@@ -296,7 +286,7 @@ if ($resql) {
 
 		// Nb of email
 		if (!$filteremail) {
-			print '<td class="center nowraponall">';
+			print '<td class="center">';
 			$nbemail = $obj->nbemail;
 			/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{

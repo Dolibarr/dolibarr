@@ -35,31 +35,10 @@ class CompanyBankAccount extends Account
 {
 	public $socid;
 
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'societe_rib';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'societe_rib';
-
-	/** @var bool $default_rib  1 = this object is the third party's default bank information */
 	public $default_rib;
-
-	/**
-	 * Value 'FRST' or 'RCUR' (For SEPA mandate). Warning, in database, we store 'RECUR'.
-	 *
-	 * @var string
-	 */
 	public $frstrecur;
-
 	public $rum;
 	public $date_rum;
-
-	public $stripe_card_ref;	// ID of BAN into an external payment system
-	public $stripe_account;		// Account of the external payment system
 
 	/**
 	 * Date creation record (datec)
@@ -74,13 +53,6 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datem;
-
-	/**
-	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently
-	 *                             named triggers
-	 * @see CommonObject::call_trigger()
-	 */
-	const TRIGGER_PREFIX = 'COMPANY_RIB';
 
 
 	/**
@@ -100,27 +72,17 @@ class CompanyBankAccount extends Account
 
 
 	/**
-	 * Create bank information record.
+	 * Create bank information record
 	 *
 	 * @param   User   $user		User
 	 * @param   int    $notrigger   1=Disable triggers
-	 * @return	int					<0 if KO, > 0 if OK (ID of newly created company bank account information)
+	 * @return	int					<0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
-		$now = dol_now();
-
+		$now	= dol_now();
 		$error = 0;
-
-		// Check paramaters
-		if (empty($this->socid)) {
-			$this->error = 'BadValueForParameter';
-			$this->errors[] = $this->error;
-			return -1;
-		}
-
-		// Correct ->default_rib to not set the new account as default, if there is already 1. We want to be sure to have always 1 default for type = 'ban'.
-		// If we really want the new bank account to be the default, we must set it by calling setDefault() after creation.
+		// Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".((int) $this->socid)." AND default_rib = 1 AND type = 'ban'";
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -132,9 +94,6 @@ class CompanyBankAccount extends Account
 				$this->default_rib = 1;
 			}
 		}
-
-
-		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
 		$sql .= " VALUES (".((int) $this->socid).", 'ban', '".$this->db->idate($now)."')";
@@ -150,20 +109,19 @@ class CompanyBankAccount extends Account
 						$error++;
 					}
 					// End call triggers
+
+					if (!$error) {
+						return 1;
+					} else {
+						return 0;
+					}
+				} else {
+					return 1;
 				}
 			}
 		} else {
-			$error++;
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return $this->id;
-		} else {
-			$this->db->rollback();
-			return -1;
+			print $this->db->error();
+			return 0;
 		}
 	}
 
@@ -176,7 +134,7 @@ class CompanyBankAccount extends Account
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 
@@ -190,8 +148,6 @@ class CompanyBankAccount extends Account
 		if (dol_strlen($this->owner_address) > 255) {
 			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 		}
-
-		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
 		$sql .= " bank = '".$this->db->escape($this->bank)."'";
@@ -215,9 +171,7 @@ class CompanyBankAccount extends Account
 		} else {
 			$sql .= ",label = NULL";
 		}
-		$sql .= ",stripe_card_ref = '".$this->db->escape($this->stripe_card_ref)."'";
-		$sql .= ",stripe_account = '".$this->db->escape($this->stripe_account)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -228,22 +182,16 @@ class CompanyBankAccount extends Account
 					$error++;
 				}
 				// End call triggers
-			}
-		} else {
-			$error++;
-			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$this->error = $langs->trans('ErrorDuplicateField');
+				if (!$error) {
+					return 1;
+				} else {
+					return -1;
+				}
 			} else {
-				$this->error = $this->db->lasterror();
+				return 1;
 			}
-			$this->errors[] = $this->error;
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return 1;
 		} else {
-			$this->db->rollback();
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -264,12 +212,12 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
-		$sql .= " stripe_card_ref, stripe_account";
+		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
-		} elseif ($socid > 0) {
+		}
+		if ($socid) {
 			$sql .= " WHERE fk_soc  = ".((int) $socid);
 			if ($default > -1) {
 				$sql .= " AND default_rib = ".((int) $default);
@@ -306,8 +254,6 @@ class CompanyBankAccount extends Account
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
 				$this->date_rum        = $this->db->jdate($obj->date_rum);
-				$this->stripe_card_ref = $obj->stripe_card_ref;
-				$this->stripe_account  = $obj->stripe_account;
 			}
 			$this->db->free($resql);
 
@@ -327,6 +273,8 @@ class CompanyBankAccount extends Account
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
@@ -344,7 +292,7 @@ class CompanyBankAccount extends Account
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " WHERE rowid  = ".$this->id;
 
 			if (!$this->db->query($sql)) {
 				$error++;
@@ -376,7 +324,7 @@ class CompanyBankAccount extends Account
 				$rib = $this->label." : ";
 			}
 
-			$rib .= $this->iban;
+			$rib .= (string) $this;
 		}
 
 		return $rib;
@@ -385,13 +333,12 @@ class CompanyBankAccount extends Account
 	/**
 	 * Set a BAN as Default
 	 *
-	 * @param   int     $rib    			RIB id
-	 * @param	string	$resetolddefaultfor	Reset if we have already a default value for type = 'ban'
-	 * @return  int             			0 if KO, 1 if OK
+	 * @param   int     $rib    RIB id
+	 * @return  int             0 if KO, 1 if OK
 	 */
-	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
+	public function setAsDefault($rib = 0)
 	{
-		$sql1 = "SELECT rowid as id, fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
@@ -405,14 +352,13 @@ class CompanyBankAccount extends Account
 				$this->db->begin();
 
 				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
-				$sql2 .= " WHERE fk_soc = ".((int) $obj->fk_soc);
-				if ($resetolddefaultfor) {
-					$sql2 .= " AND type = '".$this->db->escape($resetolddefaultfor)."'";
-				}
+				$sql2 .= " WHERE type = 'ban' AND fk_soc = ".((int) $obj->fk_soc);
+				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result2 = $this->db->query($sql2);
 
 				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
 				$sql3 .= " WHERE rowid = ".((int) $obj->id);
+				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result3 = $this->db->query($sql3);
 
 				if (!$result2 || !$result3) {
@@ -460,6 +406,6 @@ class CompanyBankAccount extends Account
 		$this->date_rum        = dol_now() - 10000;
 		$this->frstrecur       = 'FRST';
 
-		$this->socid           = 1;
+		$this->socid = 0;
 	}
 }

@@ -44,7 +44,6 @@ create table llx_facture_fourn
   remise				double(24,8)     DEFAULT 0,
 
   close_code			varchar(16),		              -- Code motif cloture sans paiement complet
-  close_missing_amount	double(24,8),					  -- Amount missing when closing with a not complete payment
   close_note			varchar(128),		              -- Commentaire cloture sans paiement complet
 
   tva					double(24,8)     DEFAULT 0,
@@ -62,7 +61,6 @@ create table llx_facture_fourn
   fk_user_valid			integer,                       -- user validating
   fk_user_closing		integer,					   -- user closing
 
-  fk_fac_rec_source		integer,					   -- facture rec source
   fk_facture_source		integer,                       -- facture origine si facture avoir
   fk_projet				integer,                       -- projet auquel est associee la facture
 
@@ -85,7 +83,7 @@ create table llx_facture_fourn
   extraparams			varchar(255),					-- for stock other parameters with json format
   
   fk_multicurrency		integer,
-  multicurrency_code			varchar(3),
+  multicurrency_code			varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

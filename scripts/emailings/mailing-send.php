@@ -71,8 +71,6 @@ if (empty($conf->global->MAILING_LIMIT_SENDBYCLI)) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
-$langs->loadLangs(array("main", "mails"));
-
 
 /*
  * Main
@@ -82,15 +80,10 @@ $langs->loadLangs(array("main", "mails"));
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if (!empty($conf->global->MAILING_DELAY)) {
-	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' seconds has been set between each email'."\n";
+	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
 }
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
-}
-
-if (!empty($dolibarr_main_db_readonly)) {
-	print "Error: instance in read-only mode\n";
-	exit(-1);
 }
 
 $user = new User($db);
@@ -170,8 +163,6 @@ if ($resql) {
 						$error++;
 					}
 
-					$thirdpartystatic = new Societe($db);
-
 					// Look on each email and sent message
 					$i = 0;
 					while ($i < $num2) {
@@ -204,15 +195,6 @@ if ($resql) {
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
-						if ($obj->source_type == "thirdparty") {
-							$result = $thirdpartystatic->fetch($obj->source_id);
-
-							if ($result > 0) {
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
-							} else {
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
-							}
-						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
@@ -309,8 +291,7 @@ if ($resql) {
 						}
 						// Fabrication du mail
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$upload_dir_tmp = $upload_dir;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
 
 						if ($mail->error) {
 							$res = 0;

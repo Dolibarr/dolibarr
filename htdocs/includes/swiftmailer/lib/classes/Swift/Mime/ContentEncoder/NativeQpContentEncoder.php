@@ -16,16 +16,16 @@
 class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_ContentEncoder
 {
     /**
-     * @var string|null
+     * @var null|string
      */
     private $charset;
 
     /**
-     * @param string|null $charset
+     * @param null|string $charset
      */
     public function __construct($charset = null)
     {
-        $this->charset = $charset ?: 'utf-8';
+        $this->charset = $charset ? $charset : 'utf-8';
     }
 
     /**
@@ -50,8 +50,9 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      */
     public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
     {
-        if ('utf-8' !== $this->charset) {
-            throw new RuntimeException(sprintf('Charset "%s" not supported. NativeQpContentEncoder only supports "utf-8"', $this->charset));
+        if ($this->charset !== 'utf-8') {
+            throw new RuntimeException(
+                sprintf('Charset "%s" not supported. NativeQpContentEncoder only supports "utf-8"', $this->charset));
         }
 
         $string = '';
@@ -86,8 +87,9 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
      */
     public function encodeString($string, $firstLineOffset = 0, $maxLineLength = 0)
     {
-        if ('utf-8' !== $this->charset) {
-            throw new RuntimeException(sprintf('Charset "%s" not supported. NativeQpContentEncoder only supports "utf-8"', $this->charset));
+        if ($this->charset !== 'utf-8') {
+            throw new RuntimeException(
+                sprintf('Charset "%s" not supported. NativeQpContentEncoder only supports "utf-8"', $this->charset));
         }
 
         return $this->standardize(quoted_printable_encode($string));
@@ -105,9 +107,9 @@ class Swift_Mime_ContentEncoder_NativeQpContentEncoder implements Swift_Mime_Con
         // transform CR or LF to CRLF
         $string = preg_replace('~=0D(?!=0A)|(?<!=0D)=0A~', '=0D=0A', $string);
         // transform =0D=0A to CRLF
-        $string = str_replace(["\t=0D=0A", ' =0D=0A', '=0D=0A'], ["=09\r\n", "=20\r\n", "\r\n"], $string);
+        $string = str_replace(array("\t=0D=0A", ' =0D=0A', '=0D=0A'), array("=09\r\n", "=20\r\n", "\r\n"), $string);
 
-        switch (\ord(substr($string, -1))) {
+        switch ($end = ord(substr($string, -1))) {
             case 0x09:
                 $string = substr_replace($string, '=09', -1);
                 break;

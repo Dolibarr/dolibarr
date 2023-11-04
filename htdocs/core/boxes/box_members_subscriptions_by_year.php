@@ -67,7 +67,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
+		$this->hidden = !($user->rights->adherent->lire);
 	}
 
 	/**
@@ -179,24 +179,23 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $Number[$key],
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right amount"',
-						'text' => price($value),
+						'td' => 'class="right"',
+						'text' => '<span class="amount">'.price($value).'</span>',
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right amount"',
-						'text' => price(price2num($value / $Number[$key], 'MT')),
+						'td' => 'class="right"',
+						'text' => '<span class="amount">'.price(price2num($value / $Number[$key], 'MT')).'</span>',
 					);
 					$line++;
 				}
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="left" colspan="4"',
+						'td' => 'class="center"',
 						'text' => $langs->trans("NoRecordedMembers"),
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
-						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total"),
 					);
@@ -205,12 +204,12 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $numb,
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total nowraponall right amount"',
-						'text' => price($tot),
+						'td' => 'class="liste_total right"',
+						'text' => '<span class="amount">'.price($tot).'</span>',
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total nowraponall right amount"',
-						'text' => price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')),
+						'td' => 'class="liste_total right"',
+						'text' => '<span class="amount">'.price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')).'</span>',
 					);
 				}
 			} else {

@@ -49,7 +49,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db;
+		global $db, $conf;
 		$this->db = $db;
 		$this->myobject = new MyObject($this->db);
 	}
@@ -155,9 +155,8 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -218,7 +217,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
+		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
@@ -260,7 +259,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
+		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);
@@ -293,9 +292,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($this->myobject->delete(DolibarrApiAccess::$user) == 0) {
-			throw new RestException(409, 'Error when deleting MyObject : '.$this->myobject->error);
-		} elseif ($this->myobject->delete(DolibarrApiAccess::$user) < 0) {
+		if (!$this->myobject->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
 		}
 

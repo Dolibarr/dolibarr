@@ -41,20 +41,7 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
-$pdluoid = GETPOST('pdluoid', 'int');
-
-$pdluo = new Productbatch($db);
-
-if ($pdluoid > 0) {
-	$result = $pdluo->fetch($pdluoid);
-	if ($result > 0) {
-		$pdluoid = $pdluo->id;
-	} else {
-		dol_print_error($db, $pdluo->error, $pdluo->errors);
-	}
-}
-
-print '<script type="text/javascript">
+print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
 			function init_price()
 			{
@@ -63,24 +50,7 @@ print '<script type="text/javascript">
 			}
 			init_price();
 			jQuery("#mouvement").change(function() {
-				console.log("We change the direction of movement");
 				init_price();
-			});
-			jQuery("#nbpiece").keyup(function(event) {
-				console.log("We enter a qty on "+event.which);
-				if ( event.which == 54 ) {  /* char - */
-					console.log("We set direction to value 1");
-					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("-", ""));
-
-					jQuery("#mouvement option").removeAttr("selected").change();
-					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
-					jQuery("#mouvement").trigger("change");
-				} else if ( event.which == 187 ) {  /* char + */
-					console.log("We set direction to value 0");
-					jQuery("#mouvement option").removeAttr("selected").change();
-					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
-					jQuery("#mouvement").trigger("change");
-				}
 			});
 		});
 		</script>';
@@ -95,9 +65,6 @@ print dol_get_fiche_head();
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="correct_stock">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-if ($pdluoid) {
-	print '<input type="hidden" name="pdluoid" value="'.$pdluoid.'">';
-}
 print '<table class="border centpercent">';
 
 // Warehouse or product
@@ -109,7 +76,11 @@ if ($object->element == 'product') {
 	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	}
-	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
+	print img_picto('', 'stock').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
+	print '<option value="0">'.$langs->trans("Add").'</option>';
+	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
+	print '</select>';
 	print '</td>';
 }
 if ($object->element == 'stock') {
@@ -117,19 +88,14 @@ if ($object->element == 'stock') {
 	print '<td>';
 	print img_picto('', 'product');
 	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES) ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
-	print '</td>';
-}
-print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
-print '<td>';
-if ($object->element == 'product' || $object->element == 'stock') {
-	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
+	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';
-	print ajax_combobox("mouvement");
+	print '</td>';
 }
-print '<input name="nbpiece" id="nbpiece" class="center valignmiddle maxwidth75" value="'.GETPOST("nbpiece").'">';
-print '</td>';
+print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
+print '<td><input name="nbpiece" id="nbpiece" class="maxwidth75" value="'.GETPOST("nbpiece").'"></td>';
 print '</tr>';
 
 // If product is a Kit, we ask if we must disable stock change of subproducts
@@ -144,35 +110,26 @@ if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $object->element == 'product'
 }
 
 // Serial / Eat-by date
-if (ismodEnabled('productbatch') &&
+if (!empty($conf->productbatch->enabled) &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
 ) {
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
-	if ($pdluoid > 0) {
-		// If form was opened for a specific pdluoid, field is disabled
-		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
-		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
-	} else {
-		print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
-	}
+	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 	print '</td>';
 	print '</tr>';
-
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
-		// If form was opened for a specific pdluoid, field is disabled
-		print $form->selectDate(($pdluo->id > 0 ? $pdluo->sellby : $sellbyselected), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
+		print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
 		print '</td>';
 	}
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<td>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-		// If form was opened for a specific pdluoid, field is disabled
-		print $form->selectDate(($pdluo->id > 0 ? $pdluo->eatby : $eatbyselected), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
+		print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
 		print '</td>';
 	}
 	print '</tr>';
@@ -181,12 +138,12 @@ if (ismodEnabled('productbatch') &&
 // Purchase price and project
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
-print '<td colspan="'.(!empty($conf->project->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->project->enabled)) {
+print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+if (!empty($conf->projet->enabled)) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');
-	$formproject->select_projects(-1, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300 widthcentpercentminusx');
+	$formproject->select_projects(-1, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
 	print '</td>';
 }
 print '</tr>';
@@ -196,7 +153,7 @@ $valformovementlabel = ((GETPOST("label") && (GETPOST('label') != $langs->trans(
 print '<tr>';
 print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
-print '<input type="text" name="label" class="minwidth400" value="'.dol_escape_htmltag($valformovementlabel).'">';
+print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 print '</td>';
 print '<td>'.$langs->trans("InventoryCode").'</td>';
 print '<td>';

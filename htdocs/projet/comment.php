@@ -23,7 +23,6 @@
  *	\brief      Page of a project task
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -104,13 +103,13 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
+if ($object->thirdparty->id > 0) {
+	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->rights->projet->all->lire) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -126,27 +125,25 @@ print '<table class="border centpercent">';
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 if ($object->public) {
-	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 	print $langs->trans('SharedProject');
 } else {
-	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 	print $langs->trans('PrivateProject');
+}
+print '</td></tr>';
+
+// Date start - end
+print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+print dol_print_date($object->date_start, 'day');
+$end = dol_print_date($object->date_end, 'day');
+if ($end) {
+	print ' - '.$end;
 }
 print '</td></tr>';
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
+if (strcmp($object->budget_amount, '')) {
 	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
-}
-print '</td></tr>';
-
-// Date start - end project
-print '<tr><td>'.$langs->trans("Dates").'</td><td>';
-print dol_print_date($object->date_start, 'day');
-$end = dol_print_date($object->date_end, 'day');
-if ($end) {
-	print ' - '.$end;
 }
 print '</td></tr>';
 
@@ -158,6 +155,7 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
+print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
@@ -168,7 +166,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if (isModEnabled('categorie')) {
+if ($conf->categorie->enabled) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
@@ -181,6 +179,7 @@ print '</td></tr>';
 
 print '</table>';
 
+print '</div>';
 print '</div>';
 print '</div>';
 

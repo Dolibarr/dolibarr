@@ -16,19 +16,17 @@
  */
 
 /**
- *    \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
- *    \brief       Page reporting purchase turnover by thirdparty
+ *       \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
+ *       \brief       Page reporting purchase turnover by thirdparty
  */
 
-
-// Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
@@ -40,7 +38,6 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-// Sort Order
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
@@ -49,7 +46,6 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "nom";
 }
-
 
 $socid = GETPOST('socid', 'int');
 
@@ -63,17 +59,13 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 // Hook
 $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 
-
-// Search Parameters
+// Date range
+$year = GETPOST("year", 'int');
+$month = GETPOST("month", 'int');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
 $search_country = GETPOST("search_country", 'alpha');
-
-
-// Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
 $date_startyear = GETPOST("date_startyear", 'alpha');
 $date_startmonth = GETPOST("date_startmonth", 'alpha');
 $date_startday = GETPOST("date_startday", 'alpha');
@@ -153,6 +145,7 @@ $headerparams['date_startday'] = $date_startday;
 $headerparams['date_endyear'] = $date_endyear;
 $headerparams['date_endmonth'] = $date_endmonth;
 $headerparams['date_endday'] = $date_endday;
+$headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
@@ -167,7 +160,6 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink = '';
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -176,10 +168,10 @@ foreach ($allparams as $key => $value) {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (isModEnabled('comptabilite')) {
+if (!empty($conf->comptabilite->enabled)) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -230,11 +222,9 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '';
 }
 
-$exportlink = '';
-
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -249,9 +239,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	$sql .= " AND f.type IN (0,2)";
@@ -276,9 +266,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	} elseif ($selected_cat) { 	// Into a specific category
-		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE p.rowid = pf.fk_paiementfourn";
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
@@ -317,29 +307,22 @@ $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
-$catotal_ht = 0;
-$catotal = 0;
-
 dol_syslog("supplier_turnover_by_thirdparty", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
+$result = $db->query($sql);
+if ($result) {
+	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-
-		$amount_ht[$obj->socid] = (empty($obj->amount) ? 0 : $obj->amount);
-		$amount[$obj->socid] = $obj->amount_ttc;
-		//$name[$obj->socid] = $obj->name.' '.$obj->firstname;
-
-		$address_zip[$obj->socid] = $obj->zip;
-		$address_town[$obj->socid] = $obj->town;
-		$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-
-		$catotal_ht +=  (empty($obj->amount) ? 0 : $obj->amount);
-		$catotal += $obj->amount_ttc;
-
-		$i++;
+		$obj = $db->fetch_object($result);
+			$amount_ht[$obj->socid] = $obj->amount;
+			$amount[$obj->socid] = $obj->amount_ttc;
+			$name[$obj->socid] = $obj->name.' '.$obj->firstname;
+			$address_zip[$obj->socid] = $obj->zip;
+			$address_town[$obj->socid] = $obj->town;
+			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
+			$catotal_ht += $obj->amount;
+			$catotal += $obj->amount_ttc;
+			$i++;
 	}
 } else {
 	dol_print_error($db);
@@ -604,13 +587,13 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (isModEnabled('supplier_proposal') && $key > 0) {
+		if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && $key > 0) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) && $key > 0) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';

@@ -26,7 +26,6 @@
  *		\brief      Page to setup LDAP synchronization for groups
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -114,14 +113,14 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'groups', '', -1);
+print dol_get_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
 
 
-print '<span class="opacitymedium">'.$langs->trans("LDAPDescGroups").'</span><br>';
+print $langs->trans("LDAPDescGroups").'<br>';
 print '<br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -211,7 +210,7 @@ print info_admin($langs->trans("LDAPDescValues"));
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
@@ -219,7 +218,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 	$butlabel = $langs->trans("LDAPTestSynchroGroup");
 	$testlabel = 'testgroup';
 	$key = $conf->global->LDAP_KEY_GROUPS;
@@ -227,7 +226,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$objectclass = $conf->global->LDAP_GROUP_OBJECT_CLASS;
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
-} elseif (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+} elseif ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
 	$butlabel = $langs->trans("LDAPTestSearch");
 	$testlabel = 'testsearchgroup';
 	$key = $conf->global->LDAP_KEY_GROUPS;
@@ -261,12 +260,12 @@ if (function_exists("ldap_connect")) {
 
 			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
-				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
+				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
 			} else {
 				print img_picto('', 'error').' ';
-				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</span><br>';
+				print '</font><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -276,9 +275,9 @@ if (function_exists("ldap_connect")) {
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
-			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</span><br>';
+			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}
@@ -332,9 +331,9 @@ if (function_exists("ldap_connect")) {
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
-			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</span><br>';
+			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

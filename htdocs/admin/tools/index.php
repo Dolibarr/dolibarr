@@ -22,7 +22,6 @@
  * 		\brief      Page d'accueil de l'espace outils admin
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page

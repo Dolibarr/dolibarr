@@ -96,14 +96,12 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$tooltip = '';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_DIGITARIA_MASK_SUPPLIER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_DIGITARIA_MASK_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param3" value="COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER">';
 		$texte .= '<input type="hidden" name="param4" value="COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER">';
-		$texte .= '<input type="hidden" name="param5" value="COMPANY_DIGITARIA_CLEAN_WORDS">';
-		$texte .= '<table class="nobordernopadding centpercent">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER.'">', $tooltip, 1, 1);
 		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER.'">', $tooltip, 1, 1);
 		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER.'">', $tooltip, 1, 1);
@@ -127,24 +125,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
-		$texte .= '</tr>';
-
-		$texte .= '<tr><td>';
-		$texte .= "<br>\n";
-
-		$texthelp  = $langs->trans("RemoveSpecialWordsHelp");
-		$texttitle = $langs->trans("RemoveSpecialWords");
-
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
-		$texte .= "<br>\n";
-		$texte .= '<textarea class="flat" cols="60" name="value5">';
-		if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_WORDS)) {
-			$texte .= $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS;
-		}
-		$texte .= '</textarea>';
+		$texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte .= '</tr></table>';
-
 		$texte .= '</form>';
 
 		return $texte;
@@ -209,11 +191,6 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 				return -1;
 			}
 
-			// Clean declared words
-			if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_WORDS)) {
-				$cleanWords = explode(";", $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS);
-				$codetouse = str_replace($cleanWords, "", $codetouse);
-			}
 			// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
 			if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
 				$codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
@@ -224,7 +201,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			}
 
 			$this->code = $prefix.strtoupper(substr($codetouse, 0, $width));
-			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
+			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code);
 
 			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
 			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
@@ -275,33 +252,17 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		global $conf;
-
 		if ($type == 'supplier') {
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$typethirdparty = 'accountancy_code_supplier';
-			} else {
-				$typethirdparty = 'code_compta_fournisseur';
-			}
+			$typethirdparty = 'code_compta_fournisseur';
 		} elseif ($type == 'customer') {
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$typethirdparty = 'accountancy_code_customer';
-			} else {
-				$typethirdparty = 'code_compta';
-			}
+			$typethirdparty = 'code_compta';
 		} else {
 			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
 
-		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
-		} else {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
-		}
-		$sql .= " AND entity IN (".getEntity('societe').")";
+		$sql = "SELECT ".$typethirdparty." FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE ".$typethirdparty." = '".$db->escape($code)."'";
 
 		$resql = $db->query($sql);
 		if ($resql) {

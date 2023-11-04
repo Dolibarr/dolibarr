@@ -51,6 +51,8 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'ficheinter';
 		$list = array();
 
@@ -120,11 +122,9 @@ abstract class ModeleNumRefFicheinter
 	/**
 	 * 	Return the next assigned value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 * 	@return     string      Value
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue()
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

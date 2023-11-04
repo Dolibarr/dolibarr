@@ -58,7 +58,7 @@ if ($in_bookkeeping == '') {
 $now = dol_now();
 
 // Security check
-if (!isModEnabled('accounting')) {
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -445,8 +445,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"'.$langs->transnoentitiesnoconv("Piece").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("AccountAccounting").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("LabelOperation").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("AccountingDebit").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("AccountingCredit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("Debit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("Credit").'"'.$sep;
 	print "\n";
 
 	foreach ($taber as $key => $val) {
@@ -496,16 +496,14 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
+	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
-	llxHeader('', dol_string_nohtmltag($title));
-
-	$nom = $title;
+	$nom = $langs->trans("ExpenseReportsJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
@@ -523,7 +521,7 @@ if (empty($action) || $action == 'view') {
 		print $desc;
 		print '</div>';
 	}
-	print '<div class="tabsAction tabsActionNoBottom centerimp">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
@@ -569,8 +567,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
-	print '<td class="right">'.$langs->trans("AccountingDebit")."</td>";
-	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
+	print '<td class="right">'.$langs->trans("Debit")."</td>";
+	print '<td class="right">'.$langs->trans("Credit")."</td>";
 	print "</tr>\n";
 
 	$r = '';

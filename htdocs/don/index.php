@@ -24,7 +24,6 @@
  *  \brief      Home page of donation module
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
@@ -35,10 +34,10 @@ $hookmanager->initHooks(array('donationindex'));
 
 $langs->load("donations");
 
-$donation_static = new Don($db);
-
 // Security check
 $result = restrictedArea($user, 'don');
+
+$donation_static = new Don($db);
 
 
 /*
@@ -91,7 +90,7 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a search into global search combo so we can remove this
-	if (isModEnabled('don') && $user->rights->don->lire) {
+	if (!empty($conf->don->enabled) && $user->rights->don->lire) {
 		$listofsearchfields['search_donation'] = array('text'=>'Donation');
 	}
 
@@ -107,7 +106,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a s
 			print '<tr '.$bc[false].'>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
 			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
+				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 			}
 			print '</tr>';
 			$i++;
@@ -191,7 +190,7 @@ print '</tr>';
 print "</table>";
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $max = 10;
@@ -253,7 +252,7 @@ if ($resql) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardDonation', $parameters, $object); // Note that $action and $object may have been modified by hook

@@ -24,7 +24,6 @@
  *	\brief      Home page of vendor proposal area
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
@@ -67,15 +66,15 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE p.fk_soc = s.rowid";
 $sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 if ($user->socid) {
-	$sql .= ' AND p.fk_soc = '.((int) $user->socid);
+	$sql .= ' AND p.fk_soc = '.$user->socid;
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND p.fk_statut IN (0,1,2,3,4)";
@@ -90,7 +89,7 @@ if ($resql) {
 	$dataseries = array();
 	$colorseries = array();
 	$vals = array();
-	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for sales orders), 3=Closed (Sent/Received, billed or not)
+	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 		if ($row) {
@@ -163,11 +162,11 @@ if ($resql) {
 /*
  * Draft askprice
  */
-if (isModEnabled('supplier_proposal')) {
+if (!empty($conf->supplier_proposal->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -176,7 +175,7 @@ if (isModEnabled('supplier_proposal')) {
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -212,7 +211,7 @@ if (isModEnabled('supplier_proposal')) {
 	}
 }
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $max = 5;
@@ -225,7 +224,7 @@ $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, 
 $sql .= " date_cloture as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
@@ -234,7 +233,7 @@ $sql .= " AND c.entity = ".$conf->entity;
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
@@ -298,7 +297,7 @@ if ($resql) {
 /*
  * Opened askprice
  */
-if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
+if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
 	$langs->load("supplier_proposal");
 
 	$now = dol_now();
@@ -306,13 +305,13 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql .= " AND p.fk_statut = 1";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -386,7 +385,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 	}
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardSupplierProposal', $parameters, $object); // Note that $action and $object may have been modified by hook

@@ -58,7 +58,16 @@ define("ace/mode/asl_highlight_rules",["require","exports","module","ace/lib/oop
     var ASLHighlightRules = function() {
         var keywords = (
             "Default|DefinitionBlock|Device|Method|Else|ElseIf|For|Function|If|Include|Method|Return|" +
-            "Scope|Switch|Case|While|Break|BreakPoint|Continue|NoOp|Wait|True|False|" +
+            "Scope|Switch|Case|While|Break|BreakPoint|Continue|NoOp|Wait"
+        );
+
+        var keywordOperators = (
+            "Add|And|Decrement|Divide|Increment|Index|LAnd|LEqual|LGreater|LGreaterEqual|" +
+            "LLess|LLessEqual|LNot|LNotEqual|LOr|Mod|Multiply|NAnd|NOr|Not|Or|RefOf|Revision|" +
+            "ShiftLeft|ShiftRight|Subtract|XOr|DerefOf"
+        );
+
+        var buildinFunctions = (
             "AccessAs|Acquire|Alias|BankField|Buffer|Concatenate|ConcatenateResTemplate|" +
             "CondRefOf|Connection|CopyObject|CreateBitField|CreateByteField|CreateDWordField|" +
             "CreateField|CreateQWordField|CreateWordField|DataTableRegion|Debug|" +
@@ -72,12 +81,6 @@ define("ace/mode/asl_highlight_rules",["require","exports","module","ace/lib/oop
             "Store|ThermalZone|Timer|ToBCD|ToBuffer|ToDecimalString|ToInteger|ToPLD|ToString|" +
             "ToUUID|UARTSerialBusV2|Unicode|Unload|VendorLong|VendorShort|WordBusNumber|WordIO|" +
             "WordSpace"
-        );
-
-        var keywordOperators = (
-            "Add|And|Decrement|Divide|Increment|Index|LAnd|LEqual|LGreater|LGreaterEqual|" +
-            "LLess|LLessEqual|LNot|LNotEqual|LOr|Mod|Multiply|NAnd|NOr|Not|Or|RefOf|Revision|" +
-            "ShiftLeft|ShiftRight|Subtract|XOr|DerefOf"
         );
 
         var flags = (
@@ -118,12 +121,8 @@ define("ace/mode/asl_highlight_rules",["require","exports","module","ace/lib/oop
             "ThermalZoneObj|BuffFieldObj|DDBHandleObj"
         );
 
-        var builtinConstants = (
+        var buildinConstants = (
             "__FILE__|__PATH__|__LINE__|__DATE__|__IASL__"
-        );
-
-        var strNumbers = (
-            "One|Ones|Zero"
         );
 
         var deprecated = (
@@ -132,11 +131,11 @@ define("ace/mode/asl_highlight_rules",["require","exports","module","ace/lib/oop
 
         var keywordMapper = this.createKeywordMapper({
             "keyword": keywords,
-            "constant.numeric": strNumbers,
             "keyword.operator": keywordOperators,
-            "constant.language": builtinConstants,
+            "function.buildin": buildinFunctions,
+            "constant.language": buildinConstants,
             "storage.type": storageTypes,
-            "constant.library": flags,
+            "constant.character": flags,
             "invalid.deprecated": deprecated
         }, "identifier");
 
@@ -175,13 +174,13 @@ define("ace/mode/asl_highlight_rules",["require","exports","module","ace/lib/oop
                     regex : /0[xX][0-9a-fA-F]+\b/
                 }, {
                     token : "constant.numeric",
-                    regex : /[0-9]+\b/
+                    regex : /(One(s)?|Zero|True|False|[0-9]+)\b/
                 }, {
                     token : keywordMapper,
                     regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
                 }, {
                     token : "keyword.operator",
-                    regex : /[!\~\*\/%+-<>\^|=&]/
+                    regex : "/|!|\\$|%|&|\\||\\*|\\-\\-|\\-|\\+\\+|\\+|~|==|=|!=|\\^|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\\|\\||\\?\\:|\\*=|%=|\\+=|\\-=|&=|\\^=|\\|="
                 }, {
                     token : "lparen",
                     regex : "[[({]"

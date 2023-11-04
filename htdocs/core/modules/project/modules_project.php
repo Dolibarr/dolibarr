@@ -103,6 +103,8 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'project';
 		$list = array();
 
@@ -126,11 +128,6 @@ abstract class ModeleNumRefProjects
 	public $error = '';
 
 	/**
-	 * @var string $version
-	 */
-	public $version;
-
-	/**
 	 *  Return if a module can be used or not
 	 *
 	 *  @return		boolean     true if module can be used
@@ -141,9 +138,9 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  Returns the default description of the numbering pattern
+	 *  Renvoi la description par defaut du modele de numerotation
 	 *
-	 *  @return     string      Descriptive text
+	 *  @return     string      Texte descripif
 	 */
 	public function info()
 	{

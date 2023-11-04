@@ -33,7 +33,6 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 
 $output		= GETPOST('output', 'alpha');

@@ -13,8 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
@@ -22,18 +26,13 @@
  * \brief   File for API management of hook.
  */
 
-use Luracast\Restler\RestException;
-
-require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
-
-
 /**
  * API class for zapier hook
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Zapier extends DolibarrApi
+class ZapierApi extends DolibarrApi
 {
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -66,8 +65,8 @@ class Zapier extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id 	ID of hook
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int             $id ID of hook
+	 * @return  array|mixed     data without useless information
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException
@@ -197,9 +196,8 @@ class Zapier extends DolibarrApi
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";

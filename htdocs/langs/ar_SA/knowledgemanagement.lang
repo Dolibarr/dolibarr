@@ -18,37 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = نظام إدارة المعرفة
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=إدارة إدارة المعرفة (KM) أو قاعدة مكتب المساعدة
+ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = إعداد نظام إدارة المعرفة
+KnowledgeManagementSetup = Knowledge Management System setup
 Settings = إعدادات
-KnowledgeManagementSetupPage = صفحة إعداد نظام إدارة المعرفة
+KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
 # About page
 #
 About = حول
-KnowledgeManagementAbout = حول إدارة المعرفة
-KnowledgeManagementAboutPage = إدارة المعرفة حول الصفحة
+KnowledgeManagementAbout = About Knowledge Management
+KnowledgeManagementAboutPage = Knowledge Management about page
 
-KnowledgeManagementArea = إدارة المعرفة
-MenuKnowledgeRecord = قاعدة المعرفة
-ListKnowledgeRecord = قائمة المقالات
-NewKnowledgeRecord = مقال جديد
-ValidateReply = تحقق من صحة الحل
-KnowledgeRecords = مقالات
+KnowledgeManagementArea = Knowledge Management
+MenuKnowledgeRecord = Knowledge base
+ListKnowledgeRecord = List of articles
+NewKnowledgeRecord = New article
+ValidateReply = Validate solution
+KnowledgeRecords = Articles
 KnowledgeRecord = عنصر
-KnowledgeRecordExtraFields = Extrafields للمادة
-GroupOfTicket=مجموعة التذاكر
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=اقترح للتذاكر عندما تكون المجموعة
-
-SetObsolete=تعيين كما عفا عليها الزمن
-ConfirmCloseKM=هل تؤكد أن إغلاق هذا المقال قد عفا عليه الزمن؟
-ConfirmReopenKM=هل تريد استعادة هذه المقالة إلى الحالة "تم التحقق منها"؟
+KnowledgeRecordExtraFields = Extrafields for Article
+GroupOfTicket=Group of tickets
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

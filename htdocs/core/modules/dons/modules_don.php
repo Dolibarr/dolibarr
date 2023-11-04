@@ -50,6 +50,8 @@ abstract class ModeleDon extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'donation';
 		$list = array();
 
@@ -82,9 +84,9 @@ abstract class ModeleNumRefDons
 	}
 
 	/**
-	 * 	Returns the default description of the numbering pattern
+	 * 	Renvoi la description par defaut du modele de numerotation
 	 *
-	 *  @return     string      Descriptive text
+	 *  @return     string      Texte descripif
 	 */
 	public function info()
 	{

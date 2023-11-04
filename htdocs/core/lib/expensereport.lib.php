@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +43,7 @@ function expensereport_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'add', 'core');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -80,8 +79,6 @@ function expensereport_prepare_head($object)
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
 
@@ -131,13 +128,10 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
  */
 function expensereport_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('expensereport');
 
 	$h = 0;
 
@@ -146,10 +140,12 @@ function expensereport_admin_prepare_head()
 	$head[$h][2] = 'expensereport';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
-	$head[$h][1] = $langs->trans("ExpenseReportsRules");
-	$head[$h][2] = 'expenserules';
-	$h++;
+	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE)) {
+		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
+		$head[$h][1] = $langs->trans("ExpenseReportsRules");
+		$head[$h][2] = 'expenserules';
+		$h++;
+	}
 
 	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
@@ -166,10 +162,6 @@ function expensereport_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['expensereport']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
-	}
 	$head[$h][2] = 'attributes';
 	$h++;
 

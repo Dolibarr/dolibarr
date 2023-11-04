@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=ຕັ້ງການເຊື່ອມຕໍ່ກັບເວັບໄຊທ external ພາຍນອກ
+ExternalSiteURL=URL ເວັບໄຊພາຍນອກຂອງເນື້ອຫາ iframe ຂອງ HTML
+ExternalSiteModuleNotComplete=ໂມດູນ ExternalSite ບໍ່ໄດ້ຖືກຕັ້ງຄ່າຢ່າງຖືກຕ້ອງ.
+ExampleMyMenuEntry=ລາຍການເມນູຂອງຂ້ອຍ

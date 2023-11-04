@@ -20,7 +20,6 @@
  *	\brief       Page reporting purchase turnover
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -40,12 +39,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOST('year', 'int');
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), "%Y");
-	$month_current = dol_print_date(dol_now(), "%m");
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), "%m");
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -57,7 +56,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOSTISSET("month") ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
+		$month_start = GETPOST("month") ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		if (!GETPOST('month')) {
 			if (!GETPOST("year") && $month_start > $month_current) {
 				$year_start--;
@@ -66,8 +65,6 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$month_end = $month_start - 1;
 			if ($month_end < 1) {
 				$month_end = 12;
-			} else {
-				$year_end++;
 			}
 		} else {
 			$month_end = $month_start;
@@ -104,7 +101,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$modecompta = 'BOOKKEEPING';
 }
 if (GETPOST("modecompta")) {
@@ -115,10 +112,10 @@ if (GETPOST("modecompta")) {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (isModEnabled('comptabilite')) {
+if (!empty($conf->comptabilite->enabled)) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -143,7 +140,7 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("PurchaseTurnover");
 	$calcmode = $langs->trans("CalcModeDebt");
-	if (isModEnabled('accounting')) {
+	if (!empty($conf->accounting->enabled)) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
 		$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', $calcmode);
 		$calcmode = str_replace('{link2}', '</a>', $calcmode);
@@ -186,12 +183,9 @@ $moreparam = array();
 if (!empty($modecompta)) {
 	$moreparam['modecompta'] = $modecompta;
 }
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
-$exportlink = '';
-
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
-
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -313,7 +307,7 @@ print '</tr>';
 $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$nowyear = strftime("%Y", dol_now());
 $nowyearmonth = strftime("%Y-%m", dol_now());
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
@@ -350,7 +344,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Valeur CA du mois w/o VAT
 				print '<td class="right">';
-				if (!empty($cum_ht[$case])) {
+				if ($cum_ht[$case]) {
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
 				} else {
@@ -365,7 +359,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 			// Valeur CA du mois
 			print '<td class="right">';
-			if (!empty($cum[$case])) {
+			if ($cum[$case]) {
 				$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 				if ($modecompta != 'BOOKKEEPING') {
 					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
@@ -385,22 +379,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 			// Pourcentage du mois
 			if ($annee_decalage > $minyear && $case <= $casenow) {
-				if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
+				if ($cum[$caseprev] && $cum[$case]) {
 					$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
 					//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
 					print '<td class="borderrightlight right">'.($percent >= 0 ? "+$percent" : "$percent").'%</td>';
 				}
-				if (!empty($cum[$caseprev]) && empty($cum[$case])) {
+				if ($cum[$caseprev] && !$cum[$case]) {
 					print '<td class="borderrightlight right">-100%</td>';
 				}
-				if (empty($cum[$caseprev]) && !empty($cum[$case])) {
+				if (!$cum[$caseprev] && $cum[$case]) {
 					//print '<td class="right">+Inf%</td>';
 					print '<td class="borderrightlight right">-</td>';
 				}
-				if (isset($cum[$caseprev]) && empty($cum[$caseprev]) && empty($cum[$case])) {
+				if (isset($cum[$caseprev]) && !$cum[$caseprev] && !$cum[$case]) {
 					print '<td class="borderrightlight right">+0%</td>';
 				}
-				if (!isset($cum[$caseprev]) && empty($cum[$case])) {
+				if (!isset($cum[$caseprev]) && !$cum[$case]) {
 					print '<td class="borderrightlight right">-</td>';
 				}
 			} else {
@@ -418,16 +412,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			}
 		}
 
-		if (empty($total_ht[$annee])) {
-			$total_ht[$annee] = ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
-		} else {
-			$total_ht[$annee] += ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
-		}
-		if (empty($total[$annee])) {
-			$total[$annee] = (empty($cum[$case]) ? 0 : $cum[$case]);
-		} else {
-			$total[$annee] += (empty($cum[$case]) ? 0 : $cum[$case]);
-		}
+		$total_ht[$annee] += ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
+		$total[$annee] += $cum[$case];
 	}
 
 	print '</tr>';

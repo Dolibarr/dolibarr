@@ -1,38 +1,34 @@
 <?php
 
 /* foo.twig */
-class __TwigTemplate_VarDumperFixture_u75a09 extends Twig\Template
+class __TwigTemplate_VarDumperFixture_u75a09 extends Twig_Template
 {
-	private $path;
+    public function __construct(Twig_Environment $env)
+    {
+        parent::__construct($env);
 
-	public function __construct(Twig\Environment $env = null, $path = null)
-	{
-		if (null !== $env) {
-			parent::__construct($env);
-		}
-		$this->parent = false;
-		$this->blocks = array();
-		$this->path = $path;
-	}
+        $this->parent = false;
 
-	protected function doDisplay(array $context, array $blocks = array())
-	{
-		// line 2
-		throw new \Exception('Foobar');
-	}
+        $this->blocks = array(
+        );
+    }
 
-	public function getTemplateName()
-	{
-		return 'foo.twig';
-	}
+    protected function doDisplay(array $context, array $blocks = array())
+    {
+        // line 2
+        throw new \Exception('Foobar');
+    }
 
-	public function getDebugInfo()
-	{
-		return array(20 => 1, 21 => 2);
-	}
+    public function getTemplateName()
+    {
+        return 'foo.twig';
+    }
 
-	public function getSourceContext()
-	{
-		return new Twig\Source("   foo bar\n     twig source\n\n", 'foo.twig', $this->path ?: __FILE__);
-	}
+    public function getDebugInfo()
+    {
+        return array (19 => 2);
+    }
 }
+/* foo bar*/
+/*     twig source*/
+/* */

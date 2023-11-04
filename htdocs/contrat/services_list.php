@@ -36,12 +36,10 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 $optioncss = GETPOST('optioncss', 'aZ09');
-$mode = GETPOST("mode");
 
-$massaction = GETPOST('massaction', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -56,13 +54,9 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$filter = GETPOST("filter", 'alpha');
+$mode = GETPOST("mode");
+$filter = GETPOST("filter");
 $search_name = GETPOST("search_name", 'alpha');
-$search_subprice = GETPOST("search_subprice", 'alpha');
-$search_qty = GETPOST("search_qty", 'alpha');
-$search_total_ht = GETPOST("search_total_ht", 'alpha');
-$search_total_tva = GETPOST("search_total_tva", 'alpha');
-$search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
@@ -110,6 +104,7 @@ $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '') {
 	$tmp = explode('&', $search_status);
+	$mode = $tmp[0];
 	if (empty($tmp[1])) {
 		$filter = '';
 	} else {
@@ -119,6 +114,14 @@ if ($search_status != '') {
 		if ($tmp[1] == 'filter=expired') {
 			$filter = 'expired';
 		}
+	}
+} else {
+	$search_status = $mode;
+	if ($filter == 'expired') {
+		$search_status .= '&filter=expired';
+	}
+	if ($filter == 'notexpired') {
+		$search_status .= '&filter=notexpired';
 	}
 }
 
@@ -132,13 +135,13 @@ $arrayfields = array(
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>90),
 	'cd.tva_tx'=>array('label'=>"VATRate", 'checked'=>-1, 'position'=>100),
 	'cd.subprice'=>array('label'=>"PriceUHT", 'checked'=>-1, 'position'=>105),
-	'cd.qty'=>array('label'=>"Qty", 'checked'=>1, 'position'=>108),
-	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109, 'isameasure'=>1),
+	'cd.qty'=>array('label'=>"Qty", 'checked'=>-1, 'position'=>108),
+	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109),
 	'cd.total_tva'=>array('label'=>"TotalVAT", 'checked'=>-1, 'position'=>110),
-	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>1, 'position'=>150),
-	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>1, 'position'=>160),
-	'cd.date_fin_validite'=>array('label'=>"DateEndPlannedShort", 'checked'=>1, 'position'=>170),
-	'cd.date_cloture'=>array('label'=>"DateEndRealShort", 'checked'=>1, 'position'=>180),
+	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode == "0"), 'position'=>150),
+	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode > 0), 'position'=>160),
+	'cd.date_fin_validite'=>array('label'=>"DateEndPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode < 5), 'position'=>170),
+	'cd.date_cloture'=>array('label'=>"DateEndRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode >= 5), 'position'=>180),
 	//'cd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'cd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
@@ -159,7 +162,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
 	$massaction = '';
 }
 
@@ -176,11 +179,6 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_product_category = 0;
 		$search_name = "";
-		$search_subprice = "";
-		$search_qty = "";
-		$search_total_ht = "";
-		$search_total_tva = "";
-		$search_total_ttc = "";
 		$search_contract = "";
 		$search_service = "";
 		$search_status = -1;
@@ -200,8 +198,9 @@ if (empty($reshook)) {
 		$opclotureday = "";
 		$opclotureyear = "";
 		$filter_opcloture = "";
+		$mode = '';
 		$filter = '';
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 }
@@ -217,9 +216,9 @@ $form = new Form($db);
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref_supplier,";
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
-$sql .= " cd.rowid, cd.description, cd.statut, cd.product_type as type,";
-$sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.tobuy, p.tosell, p.barcode, p.entity as pentity,";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+$sql .= " cd.rowid, cd.description, cd.statut,";
+$sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity,";
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " sc.fk_soc, sc.fk_user,";
 }
 $sql .= " cd.date_ouverture_prevue,";
@@ -236,7 +235,7 @@ $sql .= " cd.tms as date_update";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 	}
 }
 // Add fields from hooks
@@ -245,33 +244,33 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."contratdet as cd";
-if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cd.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
 }
-$sql .= " WHERE c.entity IN (".getEntity($object->element).")";
+$sql .= " WHERE c.entity = ".$conf->entity;
 $sql .= " AND c.rowid = cd.fk_contrat";
 if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 $sql .= " AND c.fk_soc = s.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($search_status == "0") {
+if ($mode == "0") {
 	$sql .= " AND cd.statut = 0";
 }
-if ($search_status == "4") {
+if ($mode == "4") {
 	$sql .= " AND cd.statut = 4";
 }
-if ($search_status == "5") {
+if ($mode == "5") {
 	$sql .= " AND cd.statut = 5";
 }
 if ($filter == "expired") {
@@ -280,38 +279,18 @@ if ($filter == "expired") {
 if ($filter == "notexpired") {
 	$sql .= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
-if ($search_subprice) {
-	$sql .= natural_search("cd.subprice", $search_subprice, 1);
-}
-if ($search_qty) {
-	$sql .= natural_search("cd.qty", $search_qty, 1);
-}
-if ($search_total_ht) {
-	$sql .= natural_search("cd.total_ht", $search_total_ht, 1);
-}
-if ($search_total_tva) {
-	$sql .= natural_search("cd.total_tva", $search_total_tva, 1);
-}
-if ($search_total_ttc) {
-	$sql .= natural_search("cd.total_ttc", $search_total_ttc, 1);
-}
 if ($search_name) {
-	$sql .= natural_search("s.nom", $search_name);
+	$sql .= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
 }
 if ($search_contract) {
-	$sql .= natural_search("c.ref", $search_contract);
+	$sql .= " AND c.ref LIKE '%".$db->escape($search_contract)."%' ";
 }
 if ($search_service) {
-	$sql .= natural_search(array("p.ref", "p.description", "cd.description"), $search_service);
+	$sql .= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 }
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-
-$filter_dateouvertureprevue = '';
-$filter_date1 = '';
-$filter_date2 = '';
-$filter_opcloture = '';
 
 $filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
 $filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
@@ -341,25 +320,25 @@ if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $fil
 	$sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."'";
 }
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue == ' BETWEEN ') {
-	$sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."' AND '".$db->idate($filter_dateouvertureprevue_end)."'";
+	$sql .= " AND '".$db->idate($filter_dateouvertureprevue_end)."'";
 }
 if (!empty($filter_op1) && $filter_op1 != -1 && $filter_op1 != ' BETWEEN ' && $filter_date1_start != '') {
 	$sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."'";
 }
 if (!empty($filter_op1) && $filter_op1 == ' BETWEEN ') {
-	$sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."' AND '".$db->idate($filter_date1_end)."'";
+	$sql .= " AND '".$db->idate($filter_date1_end)."'";
 }
 if (!empty($filter_op2) && $filter_op2 != -1 && $filter_op2 != ' BETWEEN ' && $filter_date2_start != '') {
 	$sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."'";
 }
 if (!empty($filter_op2) && $filter_op2 == ' BETWEEN ') {
-	$sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."' AND '".$db->idate($filter_date2_end)."'";
+	$sql .= " AND '".$db->idate($filter_date2_end)."'";
 }
 if (!empty($filter_opcloture) && $filter_opcloture != ' BETWEEN ' && $filter_opcloture != -1 && $filter_datecloture_start != '') {
 	$sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."'";
 }
 if (!empty($filter_opcloture) && $filter_opcloture == ' BETWEEN ') {
-	$sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
+	$sql .= " AND '".$db->idate($filter_datecloture_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -390,7 +369,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 /*
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->id;
@@ -407,35 +386,17 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.$limit;
 }
-if ($mode) {
-	$param .= '&amp;mode='.urlencode($mode);
-}
 if ($search_contract) {
 	$param .= '&amp;search_contract='.urlencode($search_contract);
 }
 if ($search_name) {
 	$param .= '&amp;search_name='.urlencode($search_name);
 }
-if ($search_subprice) {
-	$param .= '&amp;search_subprice='.urlencode($search_subprice);
-}
-if ($search_qty) {
-	$param .= '&amp;search_qty='.urlencode($search_qty);
-}
-if ($search_total_ht) {
-	$param .= '&amp;search_total_ht='.urlencode($search_total_ht);
-}
-if ($search_total_tva) {
-	$param .= '&amp;search_total_tva='.urlencode($search_total_tva);
-}
-if ($search_total_ttc) {
-	$param .= '&amp;search_total_ttc='.urlencode($search_total_ttc);
-}
 if ($search_service) {
 	$param .= '&amp;search_service='.urlencode($search_service);
 }
-if ($search_status) {
-	$param .= '&amp;search_status='.urlencode($search_status);
+if ($mode) {
+	$param .= '&amp;mode='.urlencode($mode);
 }
 if ($filter) {
 	$param .= '&amp;filter='.urlencode($filter);
@@ -453,20 +414,19 @@ if (!empty($filter_opcloture) && $filter_opcloture != -1) {
 	$param .= '&amp;filter_opcloture='.urlencode($filter_opcloture);
 }
 if ($filter_dateouvertureprevue_start != '') {
-	$param .= '&amp;opouvertureprevueday='.((int) $opouvertureprevueday).'&amp;opouvertureprevuemonth='.((int) $opouvertureprevuemonth).'&amp;opouvertureprevueyear='.((int) $opouvertureprevueyear);
+	$param .= '&amp;opouvertureprevueday='.$opouvertureprevueday.'&amp;opouvertureprevuemonth='.$opouvertureprevuemonth.'&amp;opouvertureprevueyear='.$opouvertureprevueyear;
 }
 if ($filter_date1_start != '') {
-	$param .= '&amp;op1day='.((int) $op1day).'&amp;op1month='.((int) $op1month).'&amp;op1year='.((int) $op1year);
+	$param .= '&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
 }
 if ($filter_date2_start != '') {
-	$param .= '&amp;op2day='.((int) $op2day).'&amp;op2month='.((int) $op2month).'&amp;op2year='.((int) $op2year);
+	$param .= '&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 }
 if ($filter_datecloture_start != '') {
-	$param .= '&amp;opclotureday='.((int) $op2day).'&amp;opcloturemonth='.((int) $op2month).'&amp;opclotureyear='.((int) $op2year);
+	$param .= '&amp;opclotureday='.$op2day.'&amp;opcloturemonth='.$op2month.'&amp;opclotureyear='.$op2year;
 }
-
 if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+	$param .= '&optioncss='.$optioncss;
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -493,22 +453,22 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $title = $langs->trans("ListOfServices");
-if ($search_status == "0") {
+if ($mode == "0") {
 	$title = $langs->trans("ListOfInactiveServices"); // Must use == "0"
 }
-if ($search_status == "4" && $filter != "expired") {
+if ($mode == "4" && $filter != "expired") {
 	$title = $langs->trans("ListOfRunningServices");
 }
-if ($search_status == "4" && $filter == "expired") {
+if ($mode == "4" && $filter == "expired") {
 	$title = $langs->trans("ListOfExpiredServices");
 }
-if ($search_status == "5") {
+if ($mode == "5") {
 	$title = $langs->trans("ListOfClosedServices");
 }
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, '', '', $limit);
 
-if (!empty($sall)) {
+if ($sall) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
@@ -516,15 +476,14 @@ if (!empty($sall)) {
 }
 
 $morefilter = '';
-$moreforfilter = '';
 
 // If the user can view categories of products
-if (isModEnabled('categorie') && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$tmptitle = $langs->trans('IncludingProductWithTag');
+	$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
+	$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
 
@@ -550,126 +509,6 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-
-print '<tr class="liste_titre">';
-if (!empty($arrayfields['c.ref']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="hidden" name="filter" value="'.$filter.'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<input type="text" class="flat maxwidth75" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
-	print '</td>';
-}
-// Service label
-if (!empty($arrayfields['p.description']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth100" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
-	print '</td>';
-}
-// detail lines
-if (!empty($arrayfields['cd.tva_tx']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.subprice']['checked'])) {
-	print '<td class="liste_titre right">';
-	print '<input type="text" class="flat maxwidth50 right" name="search_subprice" value="'.dol_escape_htmltag($search_subprice).'">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.qty']['checked'])) {
-	print '<td class="liste_titre right">';
-	print '<input type="text" class="flat maxwidth50 right" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.total_ht']['checked'])) {
-	print '<td class="liste_titre right">';
-	print '<input type="text" class="flat maxwidth50" name="search_total_ht" value="'.dol_escape_htmltag($search_total_ht).'">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.total_tva']['checked'])) {
-	print '<td class="liste_titre right">';
-	print '<input type="text" class="flat maxwidth50" name="search_total_tva" value="'.dol_escape_htmltag($search_total_tva).'">';
-	print '</td>';
-}
-// Third party
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
-	print '</td>';
-}
-
-if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
-	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1, 0, 0, '', 0, 0, 0, '', 'width50');
-	print ' ';
-	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
-	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
-	print '</td>';
-}
-if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
-	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1, 0, 0, '', 0, 0, 0, '', 'width50');
-	print ' ';
-	$filter_date1 = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
-	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
-	print '</td>';
-}
-if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
-	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1, 0, 0, '', 0, 0, 0, '', 'width50');
-	print ' ';
-	$filter_date2 = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
-	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
-	print '</td>';
-}
-if (!empty($arrayfields['cd.date_cloture']['checked'])) {
-	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1, 0, 0, '', 0, 0, 0, '', 'width50');
-	print ' ';
-	$filter_date_cloture = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
-	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);
-	print '</td>';
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
-// Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-if (!empty($arrayfields['cd.datec']['checked'])) {
-	// Date creation
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.tms']['checked'])) {
-	// Date modification
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-if (!empty($arrayfields['status']['checked'])) {
-	// Status
-	print '<td class="liste_titre right parentonrightofpage">';
-	$arrayofstatus = array(
-		'0'=>$langs->trans("ServiceStatusInitial"),
-		'4'=>$langs->trans("ServiceStatusRunning"),
-		'4&filter=notexpired'=>$langs->trans("ServiceStatusNotLate"),
-		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
-		'5'=>$langs->trans("ServiceStatusClosed")
-	);
-	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
-	print '</td>';
-}
-// Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
-print "</tr>\n";
-
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
@@ -684,13 +523,13 @@ if (!empty($arrayfields['cd.subprice']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['cd.qty']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
+	print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['cd.total_ht']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
+	print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
+	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
@@ -725,12 +564,127 @@ if (!empty($arrayfields['status']['checked'])) {
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
+print '<tr class="liste_titre">';
+if (!empty($arrayfields['c.ref']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="hidden" name="filter" value="'.$filter.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+	print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
+	print '</td>';
+}
+// Service label
+if (!empty($arrayfields['p.description']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
+	print '</td>';
+}
+// detail lines
+if (!empty($arrayfields['cd.tva_tx']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['cd.subprice']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['cd.qty']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['cd.total_ht']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['cd.total_tva']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Third party
+if (!empty($arrayfields['s.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+	print '</td>';
+}
+
+
+if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
+	print '<td class="liste_titre center">';
+	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1);
+	print ' ';
+	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
+	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
+	print '</td>';
+}
+if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
+	print '<td class="liste_titre center">';
+	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1);
+	print ' ';
+	$filter_date1 = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
+	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
+	print '</td>';
+}
+if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
+	print '<td class="liste_titre center">';
+	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1);
+	print ' ';
+	$filter_date2 = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
+	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
+	print '</td>';
+}
+if (!empty($arrayfields['cd.date_cloture']['checked'])) {
+	print '<td class="liste_titre center">';
+	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1);
+	print ' ';
+	$filter_date_cloture = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
+	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);
+	print '</td>';
+}
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters = array('arrayfields'=>$arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (!empty($arrayfields['cd.datec']['checked'])) {
+	// Date creation
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['cd.tms']['checked'])) {
+	// Date modification
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['status']['checked'])) {
+	// Status
+	print '<td class="liste_titre right">';
+	$arrayofstatus = array(
+		'0'=>$langs->trans("ServiceStatusInitial"),
+		'4'=>$langs->trans("ServiceStatusRunning"),
+		'4&filter=notexpired'=>$langs->trans("ServiceStatusNotLate"),
+		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
+		'5'=>$langs->trans("ServiceStatusClosed")
+	);
+	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	print '</td>';
+}
+// Action column
+print '<td class="liste_titre maxwidthsearch">';
+$searchpicto = $form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
+print '</td>';
+print "</tr>\n";
 
 $contractstatic = new Contrat($db);
 $productstatic = new Product($db);
 
 $i = 0;
-$totalarray = array('nbfield'=>0, 'cd.qty'=>0, 'cd.total_ht'=>0, 'cd.total_tva'=>0);
+$totalarray = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -745,16 +699,6 @@ while ($i < min($num, $limit)) {
 	$companystatic->client = $obj->client;
 	$companystatic->fournisseur = $obj->fournisseur;
 
-	$productstatic->id = $obj->pid;
-	$productstatic->type = $obj->ptype;
-	$productstatic->ref = $obj->pref;
-	$productstatic->entity = $obj->pentity;
-	$productstatic->status = $obj->tosell;
-	$productstatic->status_buy = $obj->tobuy;
-	$productstatic->label = $obj->label;
-	$productstatic->description = $obj->description;
-	$productstatic->barcode = $obj->barcode;
-
 	print '<tr class="oddeven">';
 
 	// Ref
@@ -768,12 +712,16 @@ while ($i < min($num, $limit)) {
 	}
 	// Service
 	if (!empty($arrayfields['p.description']['checked'])) {
-		print '<td class="tdoverflowmax300">';
+		print '<td>';
 		if ($obj->pid > 0) {
+			$productstatic->id = $obj->pid;
+			$productstatic->type = $obj->ptype;
+			$productstatic->ref = $obj->pref;
+			$productstatic->entity = $obj->pentity;
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
 			if (!empty($obj->description) && !empty($conf->global->PRODUCT_DESC_IN_LIST)) {
-				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
+				print '<br>'.dol_nl2br($obj->description);
 			}
 		} else {
 			if ($obj->type == 0) {
@@ -790,7 +738,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	if (!empty($arrayfields['cd.tva_tx']['checked'])) {
-		print '<td class="right nowraponall">';
+		print '<td class="right">';
 		print price2num($obj->tva_tx).'%';
 		print '</td>';
 		if (!$i) {
@@ -798,7 +746,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['cd.subprice']['checked'])) {
-		print '<td class="right nowraponall">';
+		print '<td class="right">';
 		print price($obj->subprice);
 		print '</td>';
 		if (!$i) {
@@ -806,22 +754,15 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['cd.qty']['checked'])) {
-		print '<td class="right nowraponall">';
+		print '<td class="right">';
 		print $obj->qty;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		if (!$i) {
-			$totalarray['pos'][$totalarray['nbfield']] = 'cd.qty';
-		}
-		if (!$i) {
-			$totalarray['val']['cd.qty'] = $obj->qty;
-		}
-		$totalarray['val']['cd.qty'] += $obj->qty;
 	}
 	if (!empty($arrayfields['cd.total_ht']['checked'])) {
-		print '<td class="right nowraponall">';
+		print '<td class="right">';
 		print '<span class="amount">'.price($obj->total_ht).'</span>';
 		print '</td>';
 		if (!$i) {
@@ -833,7 +774,7 @@ while ($i < min($num, $limit)) {
 		$totalarray['val']['cd.total_ht'] += $obj->total_ht;
 	}
 	if (!empty($arrayfields['cd.total_tva']['checked'])) {
-		print '<td class="right nowraponall">';
+		print '<td class="right">';
 		print '<span class="amount">'.price($obj->total_tva).'</span>';
 		print '</td>';
 		if (!$i) {
@@ -857,7 +798,7 @@ while ($i < min($num, $limit)) {
 
 	// Start date
 	if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center">';
 		print ($obj->date_ouverture_prevue ?dol_print_date($db->jdate($obj->date_ouverture_prevue), 'dayhour') : '&nbsp;');
 		if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)) && $obj->statut == 0) {
 			print ' '.img_picto($langs->trans("Late"), "warning");
@@ -870,14 +811,14 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
-		print '<td class="center nowraponall">'.($obj->date_ouverture ?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour') : '&nbsp;').'</td>';
+		print '<td class="center">'.($obj->date_ouverture ?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour') : '&nbsp;').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// End date
 	if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
-		print '<td class="center nowraponall">'.($obj->date_fin_validite ?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour') : '&nbsp;');
+		print '<td class="center">'.($obj->date_fin_validite ?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour') : '&nbsp;');
 		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) {
 			$warning_delay = $conf->contrat->services->expires->warning_delay / 3600 / 24;
 			$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
@@ -892,7 +833,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Close date (real end date)
 	if (!empty($arrayfields['cd.date_cloture']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_cloture), 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_cloture), 'dayhour').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -915,7 +856,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['cd.tms']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -956,17 +897,6 @@ while ($i < min($num, $limit)) {
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
-
-// If no record found
-if ($num == 0) {
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
-}
 
 $db->free($resql);
 

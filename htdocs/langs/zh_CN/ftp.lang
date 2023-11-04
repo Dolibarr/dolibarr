@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP客户端模块设置
+NewFTPClient=新建FTP链接
+FTPArea=FTP 区
+FTPAreaDesc=这个屏幕显示您的FTP服务器查看内容
+SetupOfFTPClientModuleNotComplete=模块的FTP客户端安装程序似乎是不完整
+FTPFeatureNotSupportedByYourPHP=您的PHP不支持FTP功能
+FailedToConnectToFTPServer=无法连接到FTP服务器（服务器%s，港口%s）
+FailedToConnectToFTPServerWithCredentials=无法登录到FTP服务器的定义登陆/密码
+FTPFailedToRemoveFile=无法删除文件<b>%s。</b>
+FTPFailedToRemoveDir=无法删除目录<b>%s（</b>检查权限和目录是空的）。
+FTPPassiveMode=被动模式
+ChooseAFTPEntryIntoMenu=在菜单中选择一个FTP选项
+FailedToGetFile=获取文件失败 %s

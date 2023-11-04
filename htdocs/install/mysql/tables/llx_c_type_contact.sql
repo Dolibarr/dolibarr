@@ -1,7 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2005     Patrick Rouillon     <patrick.rouillon.net>
 -- Copyright (C) 2005     Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2022 	  Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,11 +28,11 @@
 
 create table llx_c_type_contact
 (
-  rowid      	integer     AUTO_INCREMENT PRIMARY KEY,
+  rowid      	integer     PRIMARY KEY,
   element       varchar(30) NOT NULL,
   source        varchar(8)  DEFAULT 'external' NOT NULL,
   code          varchar(32) NOT NULL,
-  libelle 	    varchar(128)	NOT NULL,
+  libelle 	    varchar(64)	NOT NULL,
   active  	    tinyint DEFAULT 1  NOT NULL,
   module        varchar(32) NULL,
   position      integer NOT NULL DEFAULT 0

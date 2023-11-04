@@ -21,7 +21,7 @@ CountryNL=เนเธอร์แลนด์
 CountryHU=ฮังการี
 CountryRU=รัสเซีย
 CountrySE=สวีเดน
-CountryCI=Ivory Coast
+CountryCI=Ivoiry ชายฝั่ง
 CountrySN=ประเทศเซเนกัล
 CountryAR=อาร์เจนตินา
 CountryCM=แคเมอรูน
@@ -250,9 +250,7 @@ CountryMF=เซนต์มาร์ติน
 
 ##### Civilities #####
 CivilityMME=นาง
-CivilityMMEShort=นาง
 CivilityMR=นาย
-CivilityMRShort=นาย
 CivilityMLE=นางสาว
 CivilityMTRE=เจ้านาย
 CivilityDR=คุณหมอ

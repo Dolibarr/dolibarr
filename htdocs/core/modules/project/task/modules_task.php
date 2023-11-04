@@ -49,6 +49,8 @@ abstract class ModelePDFTask extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'project_task';
 		$list = array();
 
@@ -82,9 +84,9 @@ abstract class ModeleNumRefTask
 	}
 
 	/**
-	 *  Returns the default description of the numbering pattern
+	 *  Renvoi la description par defaut du modele de numerotation
 	 *
-	 *  @return     string      Descriptive text
+	 *  @return     string      Texte descripif
 	 */
 	public function info()
 	{

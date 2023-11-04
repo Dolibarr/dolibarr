@@ -10,7 +10,7 @@ use \Spoofchecker;
 class SpoofCheckValidation implements EmailValidation
 {
     /**
-     * @var InvalidEmail|null
+     * @var InvalidEmail
      */
     private $error;
 
@@ -21,9 +21,6 @@ class SpoofCheckValidation implements EmailValidation
         }
     }
 
-    /**
-     * @psalm-suppress InvalidArgument
-     */
     public function isValid($email, EmailLexer $emailLexer)
     {
         $checker = new Spoofchecker();
@@ -36,9 +33,6 @@ class SpoofCheckValidation implements EmailValidation
         return $this->error === null;
     }
 
-    /**
-     * @return InvalidEmail|null
-     */
     public function getError()
     {
         return $this->error;

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
- * Copyright (C) 2019		Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,22 +20,15 @@
  */
 
 /**
- *    \file	      htdocs/fourn/commande/index.php
- *    \ingroup    commande fournisseur
- *    \brief      Home page of supplier's orders area
+ *	 \file	   htdocs/fourn/commande/index.php
+ *	 \ingroup	commande fournisseur
+ *	 \brief	  Home page of supplier's orders area
  */
 
-
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-
-
-// Load translation files required by the page
-$langs->loadLangs(array("suppliers", "orders"));
-
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Security check
 $orderid = GETPOST('orderid');
@@ -49,6 +42,8 @@ $hookmanager = new HookManager($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('orderssuppliersindex'));
 
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders"));
 
 
 /*
@@ -72,15 +67,15 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(cf.rowid) as nb, fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cf.fk_soc = s.rowid";
 $sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
 if ($user->socid) {
-	$sql .= ' AND cf.fk_soc = '.((int) $user->socid);
+	$sql .= ' AND cf.fk_soc = '.$user->socid;
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cf.fk_statut";
@@ -177,11 +172,11 @@ if ($resql) {
  * Draft orders
  */
 
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -190,7 +185,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 	if (!empty($socid)) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -224,12 +219,12 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
  */
 
 $sql = "SELECT";
-if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= " DISTINCT";
 }
 $sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
@@ -277,7 +272,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -288,7 +283,7 @@ $max = 5;
 $sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
@@ -297,7 +292,7 @@ $sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 if (!empty($socid)) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
@@ -360,12 +355,12 @@ if ($resql) {
  $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 $sql.=" FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity IN (".getEntity("supplier_order").")";
 $sql.= " AND c.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
-if (empty($user->rights->societe->client->voir) && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 $sql.= " ORDER BY c.rowid DESC";
 
 $resql=$db->query($sql);
@@ -422,7 +417,7 @@ print "</table></div><br>";
 }
 */
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardOrdersSuppliers', $parameters, $object); // Note that $action and $object may have been modified by hook

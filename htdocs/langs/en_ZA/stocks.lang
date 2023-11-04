@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - stocks
+WarehouseAskWarehouseDuringOrder=Set a warehouse on Sales Orders
+VirtualStockAtDate=Virtual stock at a future date

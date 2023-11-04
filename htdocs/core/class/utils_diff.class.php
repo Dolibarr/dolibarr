@@ -12,7 +12,6 @@
 
 /**
  * A class containing functions for computing diffs and formatting the output.
- * We can compare 2 strings or 2 files (as one string or line by line)
  */
 class Diff
 {
@@ -237,7 +236,7 @@ class Diff
 	 * within 'span' elements, deletions are contained within 'del' elements, and
 	 * insertions are contained within 'ins' elements. The parameters are:
 	 *
-	 * @param	array	$diff      	the diff array
+	 * @param	string	$diff      	the diff array
 	 * @param	string	$separator 	the separator between lines; this optional parameter defaults to '<br>'
 	 * @return	string				HTML string
 	 */
@@ -247,7 +246,6 @@ class Diff
 		$html = '';
 
 		// loop over the lines in the diff
-		$element = 'unknown';
 		foreach ($diff as $line) {
 			// extend the HTML with the line
 			switch ($line[1]) {
@@ -261,7 +259,10 @@ class Diff
 					$element = 'ins';
 					break;
 			}
-			$html .= '<'.$element.'>'.dol_escape_htmltag($line[0]).'</'.$element.'>';
+			$html .=
+			'<'.$element.'>'
+			. htmlspecialchars($line[0])
+				. '</'.$element.'>';
 
 			// extend the HTML with the separator
 			$html .= $separator;
@@ -274,7 +275,7 @@ class Diff
 	/**
 	 * Returns a diff as an HTML table. The parameters are:
 	 *
-	 * @param	array	$diff        	the diff array
+	 * @param	string	$diff        	the diff array
 	 * @param	string	$indentation 	indentation to add to every line of the generated HTML; this optional parameter defaults to ''
 	 * @param	string	$separator   	the separator between lines; this optional parameter defaults to '<br>'
 	 * @return	string					HTML string
@@ -284,12 +285,9 @@ class Diff
 		// initialise the HTML
 		$html = $indentation."<table class=\"diff\">\n";
 
-		$rightCell = $leftCell = '';
-
 		// loop over the lines in the diff
 		$index = 0;
-		$nbdiff = count($diff);
-		while ($index < $nbdiff) {
+		while ($index < count($diff)) {
 			// determine the line type
 			switch ($diff[$index][1]) {
 				// display the content on the left and right
@@ -367,7 +365,7 @@ class Diff
 	 * Returns the content of the cell, for use in the toTable function. The
 	 * parameters are:
 	 *
-	 * @param	array	$diff        	the diff array
+	 * @param	string	$diff        	the diff array
 	 * @param	string	$indentation 	indentation to add to every line of the generated HTML
 	 * @param	string	$separator   	the separator between lines
 	 * @param	string	$index       	the current index, passes by reference

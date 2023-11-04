@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2021		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +34,9 @@ class mod_member_simple extends ModeleNumRefMembers
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr';
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * prefix
-	 *
-	 * @var string
-	 */
-	public $prefix = '';
+	public $prefix = 'MEM';
 
 	/**
 	 * @var string Error code (or message)
@@ -50,14 +44,17 @@ class mod_member_simple extends ModeleNumRefMembers
 	public $error = '';
 
 	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom = 'Simple';
+
+	/**
 	 * @var string model name
 	 */
 	public $name = 'Simple';
 
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
 
 	/**
 	 *  Return description of numbering module
@@ -67,7 +64,7 @@ class mod_member_simple extends ModeleNumRefMembers
 	public function info()
 	{
 		global $langs;
-		return $langs->trans("SimpleRefNumRefModelDesc");
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -78,7 +75,7 @@ class mod_member_simple extends ModeleNumRefMembers
 	 */
 	public function getExample()
 	{
-		return "1";
+		return $this->prefix."0501-0001";
 	}
 
 
@@ -95,9 +92,11 @@ class mod_member_simple extends ModeleNumRefMembers
 		$coyymm = '';
 		$max = '';
 
-		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
+		$posindice = strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -106,7 +105,7 @@ class mod_member_simple extends ModeleNumRefMembers
 				$max = $row[0];
 			}
 		}
-		if (!$coyymm || preg_match('/[0-9][0-9][0-9][0-9]/i', $coyymm)) {
+		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -120,31 +119,65 @@ class mod_member_simple extends ModeleNumRefMembers
 	 *  Return next value
 	 *
 	 *  @param  Societe		$objsoc		Object third party
-	 *  @param  Member		$object		Object we need next value for
+	 *  @param  Object		$object		Object we need next value for
 	 *  @return	string					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $conf, $db;
+		global $db, $conf;
 
-		// the ref of a member is the rowid
-		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
+		/*
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-		$sql .= " WHERE entity = ".(int) $conf->entity;
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$max = intval($obj->max) + 1;
+				$max = intval($obj->max);
 			} else {
-				$max = 1;
+				$max = 0;
 			}
 		} else {
 			dol_syslog("mod_member_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}
-		$max = str_pad((string) $max, getDolGlobalInt('MEMBER_MOD_SIMPLE_LPAD'), "0", STR_PAD_LEFT);
-		return $max;
+
+		$date = empty($object->date_c) ? dol_now() : $object->date_c;
+
+		//$yymm = strftime("%y%m",time());
+		$yymm = strftime("%y%m", $date);
+
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
+
+		dol_syslog("mod_member_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
+		return $this->prefix.$yymm."-".$num;
+		*/
+
+		// For the moment, the ref of a member is the rowid
+		$sql = "SELECT MAX(rowid) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
+			dol_syslog("mod_member_simple::getNextValue", LOG_DEBUG);
+			return -1;
+		}
+		return ($max + 1);
 	}
 }

@@ -27,14 +27,15 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
      *
      * @var array
      */
-    private $whitelist = [];
+    private $whitelist = array();
 
     /**
      * Create a new RedirectingPlugin.
      *
      * @param mixed $recipient
+     * @param array $whitelist
      */
-    public function __construct($recipient, array $whitelist = [])
+    public function __construct($recipient, array $whitelist = array())
     {
         $this->recipient = $recipient;
         $this->whitelist = $whitelist;
@@ -62,6 +63,8 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
 
     /**
      * Set a list of regular expressions to whitelist certain recipients.
+     *
+     * @param array $whitelist
      */
     public function setWhitelist(array $whitelist)
     {
@@ -80,6 +83,8 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
 
     /**
      * Invoked immediately before the Message is sent.
+     *
+     * @param Swift_Events_SendEvent $evt
      */
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
@@ -108,11 +113,11 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
         // Add each hard coded recipient
         $to = $message->getTo();
         if (null === $to) {
-            $to = [];
+            $to = array();
         }
 
         foreach ((array) $this->recipient as $recipient) {
-            if (!\array_key_exists($recipient, $to)) {
+            if (!array_key_exists($recipient, $to)) {
                 $message->addTo($recipient);
             }
         }
@@ -121,7 +126,8 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
     /**
      * Filter header set against a whitelist of regular expressions.
      *
-     * @param string $type
+     * @param Swift_Mime_SimpleHeaderSet $headerSet
+     * @param string                     $type
      */
     private function filterHeaderSet(Swift_Mime_SimpleHeaderSet $headerSet, $type)
     {
@@ -133,11 +139,13 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
     /**
      * Filtered list of addresses => name pairs.
      *
+     * @param array $recipients
+     *
      * @return array
      */
     private function filterNameAddresses(array $recipients)
     {
-        $filtered = [];
+        $filtered = array();
 
         foreach ($recipients as $address => $name) {
             if ($this->isWhitelisted($address)) {
@@ -151,11 +159,13 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
     /**
      * Matches address against whitelist of regular expressions.
      *
+     * @param $recipient
+     *
      * @return bool
      */
     protected function isWhitelisted($recipient)
     {
-        if (\in_array($recipient, (array) $this->recipient)) {
+        if (in_array($recipient, (array) $this->recipient)) {
             return true;
         }
 
@@ -170,6 +180,8 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
 
     /**
      * Invoked immediately after the Message is sent.
+     *
+     * @param Swift_Events_SendEvent $evt
      */
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {

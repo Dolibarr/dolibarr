@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2016  Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  *
  * Install functional test using PHPUnit's Selenium
@@ -46,7 +47,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return	void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		// Make sure we backup and remove the configuration file to force new install.
 		@rename('htdocs/conf/conf.php', sys_get_temp_dir() . '/conf.php');
@@ -74,7 +75,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		// Remove the generated configuration and restore the backed up file.
 		@unlink('htdocs/conf/conf.php');

@@ -35,18 +35,27 @@ use Egulias\EmailValidator\Warning\TLD;
 class DomainPart extends Parser
 {
     const DOMAIN_MAX_LENGTH = 254;
-    const LABEL_MAX_LENGTH = 63;
-
-    /**
-     * @var string
-     */
     protected $domainPart = '';
 
     public function parse($domainPart)
     {
         $this->lexer->moveNext();
 
-        $this->performDomainStartChecks();
+        if ($this->lexer->token['type'] === EmailLexer::S_DOT) {
+            throw new DotAtStart();
+        }
+
+        if ($this->lexer->token['type'] === EmailLexer::S_EMPTY) {
+            throw new NoDomainPart();
+        }
+        if ($this->lexer->token['type'] === EmailLexer::S_HYPHEN) {
+            throw new DomainHyphened();
+        }
+
+        if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS) {
+            $this->warnings[DeprecatedComment::CODE] = new DeprecatedComment();
+            $this->parseDomainComments();
+        }
 
         $domain = $this->doParseDomainPart();
 
@@ -68,50 +77,11 @@ class DomainPart extends Parser
         $this->domainPart = $domain;
     }
 
-    private function performDomainStartChecks()
-    {
-        $this->checkInvalidTokensAfterAT();
-        $this->checkEmptyDomain();
-
-        if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS) {
-            $this->warnings[DeprecatedComment::CODE] = new DeprecatedComment();
-            $this->parseDomainComments();
-        }
-    }
-
-    private function checkEmptyDomain()
-    {
-        $thereIsNoDomain = $this->lexer->token['type'] === EmailLexer::S_EMPTY ||
-            ($this->lexer->token['type'] === EmailLexer::S_SP &&
-            !$this->lexer->isNextToken(EmailLexer::GENERIC));
-
-        if ($thereIsNoDomain) {
-            throw new NoDomainPart();
-        }
-    }
-
-    private function checkInvalidTokensAfterAT()
-    {
-        if ($this->lexer->token['type'] === EmailLexer::S_DOT) {
-            throw new DotAtStart();
-        }
-        if ($this->lexer->token['type'] === EmailLexer::S_HYPHEN) {
-            throw new DomainHyphened();
-        }
-    }
-
-    /**
-     * @return string
-     */
     public function getDomainPart()
     {
         return $this->domainPart;
     }
 
-    /**
-     * @param string $addressLiteral
-     * @param int $maxGroups
-     */
     public function checkIPV6Tag($addressLiteral, $maxGroups = 8)
     {
         $prev = $this->lexer->getPrevious();
@@ -155,13 +125,9 @@ class DomainPart extends Parser
         }
     }
 
-    /**
-     * @return string
-     */
     protected function doParseDomainPart()
     {
         $domain = '';
-        $label = '';
         $openedParenthesis = 0;
         do {
             $prev = $this->lexer->getPrevious();
@@ -192,12 +158,7 @@ class DomainPart extends Parser
                 $this->parseDomainLiteral();
             }
 
-            if ($this->lexer->token['type'] === EmailLexer::S_DOT) {
-                $this->checkLabelLength($label);
-                $label = '';
-            } else {
-                $label .= $this->lexer->token['value'];
-            }
+            $this->checkLabelLength($prev);
 
             if ($this->isFWS()) {
                 $this->parseFWS();
@@ -205,17 +166,12 @@ class DomainPart extends Parser
 
             $domain .= $this->lexer->token['value'];
             $this->lexer->moveNext();
-            if ($this->lexer->token['type'] === EmailLexer::S_SP) {
-                throw new CharNotAllowed();
-            }
-        } while (null !== $this->lexer->token['type']);
-
-        $this->checkLabelLength($label);
+        } while ($this->lexer->token);
 
         return $domain;
     }
 
-    private function checkNotAllowedChars(array $token)
+    private function checkNotAllowedChars($token)
     {
         $notAllowed = [EmailLexer::S_BACKSLASH => true, EmailLexer::S_SLASH=> true];
         if (isset($notAllowed[$token['type']])) {
@@ -223,9 +179,6 @@ class DomainPart extends Parser
         }
     }
 
-    /**
-     * @return string|false
-     */
     protected function parseDomainLiteral()
     {
         if ($this->lexer->isNextToken(EmailLexer::S_COLON)) {
@@ -242,9 +195,6 @@ class DomainPart extends Parser
         return $this->doParseDomainLiteral();
     }
 
-    /**
-     * @return string|false
-     */
     protected function doParseDomainLiteral()
     {
         $IPv6TAG = false;
@@ -312,11 +262,6 @@ class DomainPart extends Parser
         return $addressLiteral;
     }
 
-    /**
-     * @param string $addressLiteral
-     *
-     * @return string|false
-     */
     protected function checkIPV4Tag($addressLiteral)
     {
         $matchesIP  = array();
@@ -334,18 +279,16 @@ class DomainPart extends Parser
                 return false;
             }
             // Convert IPv4 part to IPv6 format for further testing
-            $addressLiteral = substr($addressLiteral, 0, (int) $index) . '0:0';
+            $addressLiteral = substr($addressLiteral, 0, $index) . '0:0';
         }
 
         return $addressLiteral;
     }
 
-    protected function checkDomainPartExceptions(array $prev)
+    protected function checkDomainPartExceptions($prev)
     {
         $invalidDomainTokens = array(
             EmailLexer::S_DQUOTE => true,
-            EmailLexer::S_SQUOTE => true,
-            EmailLexer::S_BACKTICK => true,
             EmailLexer::S_SEMICOLON => true,
             EmailLexer::S_GREATERTHAN => true,
             EmailLexer::S_LOWERTHAN => true,
@@ -377,9 +320,6 @@ class DomainPart extends Parser
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function hasBrackets()
     {
         if ($this->lexer->token['type'] !== EmailLexer::S_OPENBRACKET) {
@@ -395,29 +335,14 @@ class DomainPart extends Parser
         return true;
     }
 
-    /**
-     * @param string $label
-     */
-    protected function checkLabelLength($label)
+    protected function checkLabelLength($prev)
     {
-        if ($this->isLabelTooLong($label)) {
+        if ($this->lexer->token['type'] === EmailLexer::S_DOT &&
+            $prev['type'] === EmailLexer::GENERIC &&
+            strlen($prev['value']) > 63
+        ) {
             $this->warnings[LabelTooLong::CODE] = new LabelTooLong();
         }
-    }
-
-    /**
-     * @param string $label
-     * @return bool
-     */
-    private function isLabelTooLong($label)
-    {
-        if (preg_match('/[^\x00-\x7F]/', $label)) {
-            idn_to_ascii($label, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46, $idnaInfo);
-
-            return (bool) ($idnaInfo['errors'] & IDNA_ERROR_LABEL_TOO_LONG);
-        }
-
-        return strlen($label) > self::LABEL_MAX_LENGTH;
     }
 
     protected function parseDomainComments()

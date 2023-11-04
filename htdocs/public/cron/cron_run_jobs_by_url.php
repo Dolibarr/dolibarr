@@ -23,7 +23,6 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
-
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
@@ -41,11 +40,6 @@ if (!defined('NOLOGIN')) {
 }
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
-
-// So log file will have a suffix
-if (!defined('USESUFFIXINLOG')) {
-	define('USESUFFIXINLOG', '_cron');
 }
 
 // For MultiCompany module.
@@ -73,10 +67,6 @@ global $langs, $conf;
 // Language Management
 $langs->loadLangs(array("admin", "cron", "dict"));
 
-// Security check
-if (empty($conf->cron->enabled)) {
-	httponly_accessforbidden('Module Cron not enabled');
-}
 
 
 
@@ -93,7 +83,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != getDolGlobalString('CRON_KEY')) {
+if ($key != $conf->global->CRON_KEY) {
 	echo 'Securitykey is wrong.';
 	exit;
 }
@@ -135,25 +125,33 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);
 	exit;
 }
 
+$qualifiedjobs = array();
+foreach ($object->lines as $val) {
+	if (!verifCond($val->test)) {
+		continue;
+	}
+	$qualifiedjobs[] = $val;
+}
+
 // TODO Duplicate code. This sequence of code must be shared with code into cron_run_jobs.php script.
 
 // current date
-$nbofjobs = count($object->lines);
+$nbofjobs = count($qualifiedjobs);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
-if (is_array($object->lines) && (count($object->lines) > 0)) {
+if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 	$savconf = dol_clone($conf);
 
 	// Loop over job
-	foreach ($object->lines as $line) {
+	foreach ($qualifiedjobs as $line) {
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -181,10 +179,6 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				}
 				$user->getrights();
 			}
-		}
-
-		if (!verifCond($line->test)) {
-			continue;
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database

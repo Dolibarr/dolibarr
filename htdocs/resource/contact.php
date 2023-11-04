@@ -3,10 +3,8 @@
  * Copyright (C) 2007-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
- *
- */
 
-/**
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -24,10 +22,9 @@
 /**
  *       \file       htdocs/resource/contact.php
  *       \ingroup    resource
- *       \brief      Contacts management tab for resources
+ *       \brief      Onglet de gestion des contacts des resources
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -35,35 +32,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'resource', 'sendings'));
+$langs->loadLangs(array('resource', 'sendings', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$object = new DolResource($db);
-
-// Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
-
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'resource', $object->id, 'resource');
+$result = restrictedArea($user, 'resource', $id, 'resource');
 
-// Security check
-if (!$user->rights->resource->read) {
-	accessforbidden();
-}
-
+$object = new DolResource($db);
+$result = $object->fetch($id, $ref);
 
 
 /*
- * Actions
+ * Add a new contact
  */
 
-// Add a new contact
 if ($action == 'addcontact' && $user->rights->resource->write) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
@@ -111,9 +99,13 @@ $userstatic = new User($db);
 
 llxHeader('', $langs->trans("Resource"));
 
-// View and edit mode
+// Mode vue et edition
 
 if ($id > 0 || !empty($ref)) {
+	$soc = new Societe($db);
+	$soc->fetch($object->socid);
+
+
 	$head = resource_prepare_head($object);
 	print dol_get_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 

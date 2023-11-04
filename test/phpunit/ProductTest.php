@@ -78,7 +78,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 
@@ -96,7 +96,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -109,7 +109,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	*/
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}
@@ -199,7 +199,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$localobject->note_private = 'New private note after update';
 		$result=$localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0, 'Error '.$localobject->error);
+		$this->assertLessThan($result, 0);
 
 		return $localobject;
 	}

@@ -121,7 +121,7 @@ color: #777;\
 .ace-chaos .ace_fold-widget.ace_start,\
 .ace-chaos .ace_fold-widget.ace_end,\
 .ace-chaos .ace_fold-widget.ace_closed{\
-background: none !important;\
+background: none;\
 border: none;\
 box-shadow: none;\
 }\
@@ -151,7 +151,7 @@ color: #000;\
 ";
 
 var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass, false);
+dom.importCssString(exports.cssText, exports.cssClass);
 
 });                (function() {
                     window.require(["ace/theme/chaos"], function(m) {

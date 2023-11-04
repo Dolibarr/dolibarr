@@ -25,7 +25,6 @@
  * \brief 		Page of supplier invoice statistics for a product
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -51,8 +50,8 @@ $hookmanager->initHooks(array('productstatssupplierinvoice'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -132,7 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div class="clearboth"></div>';
+		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
 
@@ -140,13 +139,13 @@ if ($id > 0 || !empty($ref)) {
 		if ($user->rights->fournisseur->facture->lire) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as line_total_ht,";
 			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle as label, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn_det as d";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
@@ -159,7 +158,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(f.datef) IN ('.$db->sanitize($search_year).')';
 			}
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
@@ -184,10 +183,11 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option .= '&id='.$product->id;
-
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.urlencode($limit);
+				}
+				if (!empty($id)) {
+					$option .= '&id='.$product->id;
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);

@@ -35,12 +35,9 @@ create table llx_entrepot
   fk_pays         integer DEFAULT 0,
   phone           varchar(20),                  -- phone number
   fax             varchar(20),                  -- fax number
-  barcode         varchar(180) DEFAULT NULL,          -- barcode
-  fk_barcode_type integer      DEFAULT NULL,          -- barcode type
-  warehouse_usage integer DEFAULT 1,            -- 1=internal, 2=external (virtual warehouse or stock out of company)           
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   fk_user_author  integer,
   model_pdf       varchar(255),
-  import_key	  varchar(14),
+  import_key	    varchar(14),
   fk_parent       integer DEFAULT 0
 )ENGINE=innodb;

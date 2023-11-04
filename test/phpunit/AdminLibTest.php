@@ -46,7 +46,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class AdminLibTest extends PHPUnit\Framework\TestCase
 {
-	protected $backupGlobalsBlacklist = array('conf', 'user', 'langs', 'db');
 	protected $savconf;
 	protected $savuser;
 	protected $savlangs;
@@ -70,7 +69,6 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		$this->savdb=$db;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-
 		//print " - db ".$db->db;
 		print "\n";
 	}
@@ -80,7 +78,7 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass(): void
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -93,7 +91,7 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass(): void
+	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -106,7 +104,7 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp(): void
+	protected function setUp()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -121,7 +119,7 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown(): void
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}
@@ -167,9 +165,6 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
 		print "Enable module modExpenseReport";
 		$moduledescriptor=new modExpenseReport($db);
-
-		$result = $moduledescriptor->remove();
-
 		$result = $moduledescriptor->init();
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -178,9 +173,6 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
 		print "Enable module modAPI";
 		$moduledescriptor=new modApi($db);
-
-		$result = $moduledescriptor->remove();
-
 		$result = $moduledescriptor->init();
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result);

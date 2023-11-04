@@ -2,7 +2,6 @@
 /* Copyright (C) 2016      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -52,10 +50,6 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
 $delete_product = GETPOST('delete_product', 'alpha');
-$subaction = GETPOST('subaction', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
@@ -70,10 +64,10 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
-$selected = "";
+$selectedvariant = $_SESSION['addvariant_'.$object->id];
+
 // Security check
-if (!isModEnabled('variants')) {
+if (empty($conf->variants->enabled)) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
@@ -90,9 +84,6 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
 /*
@@ -115,19 +106,8 @@ if ($action == 'add') {
 }
 if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on select combination
 	$action = 'add';
-	$attribute_id = GETPOST('attribute', 'int');
-	$attribute_value_id = GETPOST('value', 'int');
-	if ($attribute_id> 0 && $attribute_value_id > 0) {
-		$feature = $attribute_id . '-' . $attribute_value_id;
-		$selectedvariant[$feature] = $feature;
-		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
-	}
-}
-if ($action == 'create' && $subaction == 'delete') {	// We click on select combination
-	$action = 'add';
-	$feature = GETPOST('feature', 'intcomma');
-	if (isset($selectedvariant[$feature])) {
-		unset($selectedvariant[$feature]);
+	if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1') {
+		$selectedvariant[GETPOST('attribute').':'.GETPOST('value')] = GETPOST('attribute').':'.GETPOST('value');
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
 	}
 }
@@ -138,9 +118,9 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 
 $productCombination2ValuePairs1 = array();
 
-if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
+if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha')) {	// We click on Create all defined combinations
 	//$features = GETPOST('features', 'array');
-	$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
+	$features = $_SESSION['addvariant_'.$object->id];
 
 	if (!$features) {
 		if ($action == 'create') {
@@ -155,7 +135,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
@@ -166,8 +146,13 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 		//First, sanitize
 		foreach ($features as $feature) {
-			$explode = explode('-', $feature);
-			if ($prodattr->fetch($explode[0]) <= 0 || $prodattr_val->fetch($explode[1]) <= 0) {
+			$explode = explode(':', $feature);
+
+			if ($prodattr->fetch($explode[0]) < 0) {
+				continue;
+			}
+
+			if ($prodattr_val->fetch($explode[1]) < 0) {
 				continue;
 			}
 
@@ -209,11 +194,14 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$bulkaction = $massaction;
 	$error = 0;
 
+
+
 	$db->begin();
 
 	foreach ($toselect as $prodid) {
 		// need create new of Product to prevent rename dir behavior
 		$prodstatic = new Product($db);
+
 		if ($prodstatic->fetch($prodid) < 0) {
 			continue;
 		}
@@ -221,50 +209,33 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		if ($bulkaction == 'on_sell') {
 			$prodstatic->status = 1;
 			$res = $prodstatic->update($prodstatic->id, $user);
-			if ($res <= 0) {
-				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-				$error++;
-				break;
-			}
 		} elseif ($bulkaction == 'on_buy') {
 			$prodstatic->status_buy = 1;
 			$res = $prodstatic->update($prodstatic->id, $user);
-			if ($res <= 0) {
-				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-				$error++;
-				break;
-			}
 		} elseif ($bulkaction == 'not_sell') {
 			$prodstatic->status = 0;
 			$res = $prodstatic->update($prodstatic->id, $user);
-			if ($res <= 0) {
-				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-				$error++;
-				break;
-			}
 		} elseif ($bulkaction == 'not_buy') {
 			$prodstatic->status_buy = 0;
 			$res = $prodstatic->update($prodstatic->id, $user);
-			if ($res <= 0) {
-				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-				$error++;
-				break;
-			}
 		} elseif ($bulkaction == 'delete') {
 			$res = $prodstatic->delete($user, $prodstatic->id);
-			if ($res <= 0) {
-				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-				$error++;
-				break;
-			}
 		} else {
+			break;
+		}
+
+		if ($res <= 0) {
+			$error++;
 			break;
 		}
 	}
 
 	if ($error) {
 		$db->rollback();
-		if (empty($prodstatic->error)) {
+
+		if ($prodstatic->error) {
+			setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+		} else {
 			setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 		}
 	} else {
@@ -280,7 +251,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if ($conf->global->PRODUIT_MULTIPRICES) {
 		$level_price_impact = array_map('price2num', $level_price_impact);
 
 		$prodcomb->variation_price = $level_price_impact[1];
@@ -293,7 +264,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if ($conf->global->PRODUIT_MULTIPRICES) {
 		$prodcomb->combination_price_levels = array();
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
@@ -371,12 +342,9 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-$title = $langs->trans("Variant");
-
-llxHeader("", $title);
-
-
 if (!empty($id) || !empty($ref)) {
+	llxHeader("", "", $langs->trans("CardProduct".$object->type));
+
 	$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 		$showbarcode = 0;
@@ -399,7 +367,7 @@ if (!empty($id) || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Type
-	if (isModEnabled("product") && isModEnabled("service")) {
+	if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
 		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
@@ -463,7 +431,7 @@ if (!empty($id) || !empty($ref)) {
 	print "</table>\n";
 
 	print '</div>';
-	print '<div class="clearboth"></div>';
+	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();
 
@@ -474,20 +442,23 @@ if (!empty($id) || !empty($ref)) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
 			// print dol_get_fiche_head();
-			$features = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : array();
+			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
 			if (!empty($features)) {
-				$toprint = array();
 				foreach ($features as $feature) {
-					$explode = explode('-', $feature);
-					if ($prodattr->fetch($explode[0]) <= 0 || $prodattr_val->fetch($explode[1]) <= 0) {
+					$explode = explode(':', $feature);
+
+					if ($prodattr->fetch($explode[0]) < 0) {
 						continue;
 					}
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #ddd;">' . $prodattr->label.' : '.$prodattr_val->value .
-						' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&subaction=delete&feature='.urlencode($feature).'">' . img_delete() . '</a></li>';
+
+					if ($prodattr_val->fetch($explode[1]) < 0) {
+						continue;
+					}
+
+					$listofvariantselected .= '<i>'.$prodattr->label.'</i>:'.$prodattr_val->value.' ';
 				}
-				$listofvariantselected .= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 			}
 			$listofvariantselected .= '</div>';
 			//print dol_get_fiche_end();
@@ -496,7 +467,7 @@ if (!empty($id) || !empty($ref)) {
 		}
 
 		if ($action == 'add') {
-			$prodattr_all = $prodattr->fetchAll();
+			$prodattr_all = $prodattr->fetchAll(1);
 
 			if (!$selected) {
 				$selected = $prodattr_all[key($prodattr_all)]->id;
@@ -511,7 +482,7 @@ if (!empty($id) || !empty($ref)) {
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
 			variants_selected = {
 				index: [],
 				info: []
@@ -586,8 +557,9 @@ if (!empty($id) || !empty($ref)) {
 
 		print load_fiche_titre($title);
 
-		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"] .'?id='.$object->id.'">'."\n";
+		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
 		if ($valueid > 0) {
 			print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
@@ -614,7 +586,7 @@ if (!empty($id) || !empty($ref)) {
 
 			$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 			print $form->textwithpicto('', $htmltext);
-			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
+			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
 			print $langs->trans("Create");
 			print '</a>';*/
 
@@ -632,7 +604,7 @@ if (!empty($id) || !empty($ref)) {
 					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 					print $form->textwithpicto('', $htmltext);
 					/*
-						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
+						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
 						print $langs->trans("Create");
 						print '</a>';
 					*/
@@ -833,9 +805,10 @@ if (!empty($id) || !empty($ref)) {
 
 
 		// List of variants
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"] .'?id='.$object->id.'">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="massaction">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// List of mass actions available
@@ -851,16 +824,16 @@ if (!empty($id) || !empty($ref)) {
 
 		$aaa = '';
 		if (count($productCombinations)) {
-			$aaa = '<select id="bulk_action" name="massaction" class="flat">';
+			$aaa = '<label for="massaction">'.$langs->trans('BulkActions').'</label>';
+			$aaa .= '<select id="bulk_action" name="massaction" class="flat">';
 			$aaa .= '	<option value="nothing">&nbsp;</option>';
-			$aaa .= '	<option value="not_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnBuy'))).'">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
-			$aaa .= '	<option value="not_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusNotOnSell'))).'">'.$langs->trans('ProductStatusNotOnSell').'</option>';
-			$aaa .= '	<option value="on_buy" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusOnBuy'))).'">'.$langs->trans('ProductStatusOnBuy').'</option>';
-			$aaa .= '	<option value="on_sell" data-html="'.dol_escape_htmltag(img_picto($langs->trans("SetToStatus"), 'stop-circle', 'class="pictofixedwidth"').$langs->trans('SetToStatus', $langs->transnoentitiesnoconv('ProductStatusOnSell'))).'">'.$langs->trans('ProductStatusOnSell').'</option>';
-			$aaa .= '	<option value="delete" data-html="'.dol_escape_htmltag(img_picto($langs->trans("Delete"), 'delete', 'class="pictofixedwidth"').$langs->trans('Delete')).'">'.$langs->trans('Delete').'</option>';
+			$aaa .= '	<option value="not_buy">'.$langs->trans('ProductStatusNotOnBuy').'</option>';
+			$aaa .= '	<option value="not_sell">'.$langs->trans('ProductStatusNotOnSell').'</option>';
+			$aaa .= '	<option value="on_buy">'.$langs->trans('ProductStatusOnBuy').'</option>';
+			$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
+			$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
 			$aaa .= '</select>';
-			$aaa .= ajax_combobox("bulk_action");
-			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button small">';
+			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
 		}
 		$massactionbutton = $aaa;
 
@@ -914,11 +887,11 @@ if (!empty($id) || !empty($ref)) {
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
 				print '<td class="right">';
-				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
+				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
 				print '<td class="nowrap center">';
-				if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				if ($productCombinations || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($prodstatic->id, $arrayofselected)) {
 						$selected = 1;
@@ -935,6 +908,9 @@ if (!empty($id) || !empty($ref)) {
 		print '</div>';
 		print '</form>';
 	}
+} else {
+	llxHeader();
+	// not found
 }
 
 // End of page

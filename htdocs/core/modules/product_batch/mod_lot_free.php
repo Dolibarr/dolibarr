@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/core/modules/product_batch/mod_lot_free.php
+ *       \file       htdocs/core/modules/product/mod_lot_free.php
  *       \ingroup    productbatch
  *       \brief      File containing class for numbering model of Lot free
  */
@@ -27,15 +26,16 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
 
 /**
- *	\class mod_lot_free
- *	\brief Class allowing lot_free management of batch numbers
+ *	\class 		mod_codeproduct_leopard
+ *	\brief 		Classe permettant la gestion leopard des codes produits
  */
 class mod_lot_free extends ModeleNumRefBatch
 {
 	/*
-	 * Please note this module is used by default if no module has been defined in the configuration
+	 * Attention ce module est utilise par defaut si aucun module n'a
+	 * ete definit dans la configuration
 	 *
-	 * Its operation must therefore remain as open as possible
+	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
 
@@ -44,10 +44,7 @@ class mod_lot_free extends ModeleNumRefBatch
 	 */
 	public $name = 'lot_free';
 
-	/**
-	 * @var string Code modifiable
-	 */
-	public $code_modifiable;
+	public $code_modifiable; // Code modifiable
 
 	public $code_modifiable_invalide; // Code modifiable si il est invalide
 
@@ -96,12 +93,13 @@ class mod_lot_free extends ModeleNumRefBatch
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Productlot	$object		Object we need next value for
+	 * @param	product		$objproduct		Object product
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
-	public function getNextValue($objsoc, $object)
+	public function getNextValue($objproduct = 0, $type = -1)
 	{
+		global $langs;
 		return '';
 	}
 }

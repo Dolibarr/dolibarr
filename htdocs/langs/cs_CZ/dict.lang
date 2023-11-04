@@ -21,7 +21,7 @@ CountryNL=Nizozemsko
 CountryHU=Maďarsko
 CountryRU=Rusko
 CountrySE=Švédsko
-CountryCI=Ivory Coast
+CountryCI=Ivoiry
 CountrySN=Senegal
 CountryAR=Argentina
 CountryCM=Kamerun
@@ -250,9 +250,7 @@ CountryMF=Svatý Martin
 
 ##### Civilities #####
 CivilityMME=Paní
-CivilityMMEShort=Paní
 CivilityMR=Pan
-CivilityMRShort=Pan
 CivilityMLE=Slečna
 CivilityMTRE=Hlavní
 CivilityDR=Lékař

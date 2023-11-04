@@ -703,8 +703,8 @@ class Lessc
 					// has default value
 					$value = $a[2];
 				} else {
+					$this->throwError("Failed to assign arg ".$a[1]);
 					$value = null; // :(
-					$this->throwError("Failed to assign arg ".$a[1]);	// This end function by throwing an exception
 				}
 
 				$value = $this->reduce($value);
@@ -1011,7 +1011,6 @@ class Lessc
 		if ($list[0] == "list" && isset($list[2][$idx - 1])) {
 			return $list[2][$idx - 1];
 		}
-		return '';
 	}
 
 	protected function lib_isnumber($value)
@@ -1119,7 +1118,8 @@ class Lessc
 				if (isset($items[0])) {
 					return $this->lib_e($items[0]);
 				}
-				$this->throwError("unrecognised input");	// This end function by throwing an exception
+				$this->throwError("unrecognised input");
+				return null;
 			case "string":
 				$arg[1] = "";
 				return $arg;
@@ -1306,7 +1306,6 @@ class Lessc
 		if (!is_null($color = $this->coerceColor($value))) {
 			return isset($color[4]) ? $color[4] : 1;
 		}
-		return '';
 	}
 
 	// set the alpha of the color
@@ -1837,7 +1836,6 @@ class Lessc
 				}
 				return null;
 		}
-		return null;
 	}
 
 	// make something string like into a string
@@ -1933,8 +1931,6 @@ class Lessc
 			array_unshift($strRight[2], $left);
 			return $strRight;
 		}
-
-		return '';
 	}
 
 
@@ -1958,8 +1954,6 @@ class Lessc
 		if ($op == '+' || $op == '*') {
 			return $this->op_color_number($op, $rgt, $lft);
 		}
-
-		return array();
 	}
 
 	protected function op_color_number($op, $lft, $rgt)
@@ -2762,7 +2756,7 @@ class lessc_parser
 
 			// media
 			if ($this->literal('@media')) {
-				if ($this->mediaQueryList($mediaQueries)
+				if (($this->mediaQueryList($mediaQueries) || true)
 					&& $this->literal('{')
 					) {
 						$media = $this->pushSpecialBlock("media");
@@ -2776,7 +2770,7 @@ class lessc_parser
 
 			if ($this->literal("@", false) && $this->keyword($dirName)) {
 				if ($this->isDirective($dirName, $this->blockDirectives)) {
-					if ($this->openString("{", $dirValue, null, array(";")) &&
+					if (($this->openString("{", $dirValue, null, array(";")) || true) &&
 						$this->literal("{")
 						) {
 							$dir = $this->pushSpecialBlock("directive");
@@ -2814,7 +2808,7 @@ class lessc_parser
 
 				// opening parametric mixin
 		if ($this->tag($tag, true) && $this->argumentDef($args, $isVararg) &&
-					$this->guards($guards) &&
+					($this->guards($guards) || true) &&
 					$this->literal('{')
 					) {
 				$block = $this->pushBlock($this->fixTags(array($tag)));
@@ -2877,8 +2871,8 @@ class lessc_parser
 
 					// mixin
 		if ($this->mixinTags($tags) &&
-						$this->argumentDef($argv, $isVararg) &&
-						$this->keyword($suffix) && $this->end()
+						($this->argumentDef($argv, $isVararg) || true) &&
+						($this->keyword($suffix) || true) && $this->end()
 						) {
 				$tags = $this->fixTags($tags);
 				$this->append(array('mixin', $tags, $argv, $suffix), $s);
@@ -3140,7 +3134,7 @@ class lessc_parser
 	}
 
 		// an import statement
-	protected function import(&$out, $value = '')
+	protected function import(&$out)
 	{
 		if (!$this->literal('@import')) {
 			return false;
@@ -3154,8 +3148,6 @@ class lessc_parser
 			$out = array("import", $value);
 			return true;
 		}
-
-		return false;
 	}
 
 	protected function mediaQueryList(&$out)
@@ -3174,7 +3166,7 @@ class lessc_parser
 		$expressions = null;
 		$parts = array();
 
-		if ((($this->literal("only") && ($only = true)) || ($this->literal("not") && ($not = true))) && $this->keyword($mediaType)) {
+		if (($this->literal("only") && ($only = true) || $this->literal("not") && ($not = true) || true) && $this->keyword($mediaType)) {
 			$prop = array("mediaType");
 			if (isset($only)) {
 				$prop[] = "only";
@@ -3213,7 +3205,7 @@ class lessc_parser
 		$value = null;
 		if ($this->literal("(") &&
 			$this->keyword($feature) &&
-			($this->literal(":") && $this->expression($value)) &&
+			($this->literal(":") && $this->expression($value) || true) &&
 			$this->literal(")")
 			) {
 				$out = array("mediaExp", $feature);

@@ -24,7 +24,6 @@
  *		\brief      Page to setup extra fields of category
  */
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -64,7 +63,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Categories");
 
-$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías|DE:Modul_Kategorien';
+$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
 llxHeader('', $langs->trans("Categories"), $help_url);
 
 
@@ -79,6 +78,13 @@ require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
+
+// Buttons
+if ($action != 'create' && $action != 'edit') {
+	print '<div class="tabsAction">';
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+	print "</div>";
+}
 
 // Creation of an optional field
 if ($action == 'create') {

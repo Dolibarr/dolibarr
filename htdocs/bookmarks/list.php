@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2022 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,107 +16,84 @@
  */
 
 /**
- *    \file       htdocs/bookmarks/list.php
- *    \ingroup    bookmark
- *    \brief      Page to display list of bookmarks
+ *       \file       htdocs/bookmarks/list.php
+ *       \brief      Page to display list of bookmarks
+ *       \ingroup    bookmark
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
-// Get Parameters
-$id = GETPOST("id", 'int');
-
-$action 	= GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
-$confirm 	= GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');
-$optioncss 	= GETPOST('optioncss', 'alpha');
-$mode 		= GETPOST('mode', 'aZ09');
+
+// Security check
+if (!$user->rights->bookmark->lire) {
+	restrictedArea($user, 'bookmarks');
+}
+$optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
-	// If $page is not defined, or '' or -1 or if we click on clear filters
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
-}
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'b.position';
+	$sortfield = 'position';
 }
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-// Initialize Objects
+$id = GETPOST("id", 'int');
+
 $object = new Bookmark($db);
-if ($id > 0) {
-	$object->fetch($id);
-}
 
-// Security check
-restrictedArea($user, 'bookmark', $object);
-
-// Permissions
-$permissiontoread = $user->hasRight('bookmark', 'lire');
-$permissiontoadd = $user->hasRight('bookmark', 'creer');
-$permissiontodelete = ($user->hasRight('bookmark', 'supprimer') || ($permissiontoadd && $object->fk_user == $user->id));
+$permissiontoread = $user->rights->bookmark->lire;
+$permissiontoadd = $user->rights->bookmark->write;
+$permissiontodelete = $user->rights->bookmark->delete;
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) {
-	$action = 'list';
-	$massaction = '';
-}
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
-	$massaction = '';
-}
-
-if ($action == 'delete' && $permissiontodelete) {
-	$object->fetch($id);
-	$res = $object->delete($user);
+if ($action == 'delete') {
+	$res = $object->remove($id);
 	if ($res > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action = '';
 	}
 }
-
 
 
 /*
  * View
  */
 
-$form = new Form($db);
+$userstatic = new User($db);
 
-$title = $langs->trans("Bookmarks");
+$title = $langs->trans("ListOfBookmarks");
 
 llxHeader('', $title);
 
 $sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql .= " u.login, u.lastname, u.firstname";
-
-$sqlfields = $sql; // $sql fields to remove for count total
-
 $sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql .= " WHERE 1=1";
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
@@ -124,42 +101,34 @@ if (!$user->admin) {
 	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
 }
 
+$sql .= $db->order($sortfield.", position", $sortorder);
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-	$resql = $db->query($sqlforcount);
-	if ($resql) {
-		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
-	} else {
-		dol_print_error($db);
-	}
-
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
-	$db->free($resql);
 }
-
-// Complete request and execute it with limit
-$sql .= $db->order($sortfield.", position", $sortorder);
-if ($limit) {
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
+	$num = $nbtotalofrecords;
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
 }
 
-$resql = $db->query($sql);
-if (!$resql) {
-	dol_print_error($db);
-	exit;
-}
-
-$num = $db->num_rows($resql);
-
-$param = '';
+$param = "";
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -167,7 +136,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+	$param = '&optioncss='.urlencode($optioncss);
 }
 
 $moreforfilter = '';
@@ -179,7 +148,7 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if (!empty($permissiontodelete)) {
+if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
@@ -187,7 +156,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -196,29 +165,29 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bookmark', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-print '<tr class="liste_titre">';
+print "<tr class=\"liste_titre\">";
 //print "<td>&nbsp;</td>";
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "b.target", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("Visibility", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "b.dateb", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
+print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
+print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, 'align="left"', $sortfield, $sortorder);
+print_liste_field_titre("Target", '', '', '', '', 'align="center"');
+print_liste_field_titre("Visibility", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('');
 print "</tr>\n";
+
+$cacheOfUsers = array();
 
 $i = 0;
 while ($i < min($num, $limit)) {
@@ -230,35 +199,37 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Id
-	print '<td class="nowraponall">';
+	print '<td class="left">';
 	print $object->getNomUrl(1);
 	print '</td>';
 
-	$linkintern = 1;
-	if (preg_match('/^http/i', $obj->url)) {
-		$linkintern = 0;
-	}
+	$linkintern = 0;
 	$title      = $obj->title;
 	$link       = $obj->url;
-	$canedit    = $permissiontoadd;
-	$candelete  = $permissiontodelete;
+	$canedit    = $user->rights->bookmark->supprimer;
+	$candelete  = $user->rights->bookmark->creer;
 
 	// Title
-	print '<td class="tdoverflowmax200" alt="'.dol_escape_htmltag($title).'">';
-	print dol_escape_htmltag($title);
+	print "<td>";
+	$linkintern = 1;
+	if ($linkintern) {
+		print '<a href="'.$obj->url.'">';
+	}
+	print $title;
+	if ($linkintern) {
+		print "</a>";
+	}
 	print "</td>\n";
 
 	// Url
 	print '<td class="tdoverflowmax200">';
-	if (empty($linkintern)) {
-		print img_picto('', 'url', 'class="pictofixedwidth"');
-		print '<a class="" href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
-	} else {
-		//print img_picto('', 'rightarrow', 'class="pictofixedwidth"');
-		print '<a class="" href="'.$obj->url.'">';
+	if (!$linkintern) {
+		print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 	}
 	print $link;
-	print '</a>';
+	if (!$linkintern) {
+		print '</a>';
+	}
 	print "</td>\n";
 
 	// Target
@@ -273,14 +244,14 @@ while ($i < min($num, $limit)) {
 
 	// Author
 	print '<td class="center">';
-	if ($obj->fk_user > 0) {
-		if (empty($conf->cache['users'][$obj->fk_user])) {
+	if ($obj->fk_user) {
+		if (empty($cacheOfUsers[$obj->fk_user])) {
 			$tmpuser = new User($db);
 			$tmpuser->fetch($obj->fk_user);
-			$conf->cache['users'][$obj->fk_user] = $tmpuser;
+			$cacheOfUsers[$obj->fk_user] = $tmpuser;
 		}
-		$tmpuser = $conf->cache['users'][$obj->fk_user];
-		print $tmpuser->getNomUrl(-1);
+		$tmpuser = $cacheOfUsers[$obj->fk_user];
+		print $tmpuser->getNomUrl(1);
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
 		if (!$user->admin) {
@@ -291,18 +262,20 @@ while ($i < min($num, $limit)) {
 	print "</td>\n";
 
 	// Date creation
-	print '<td class="center" title="'.dol_escape_htmltag(dol_print_date($db->jdate($obj->dateb), 'dayhour')).'">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
+	print '<td class="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
 
 	// Position
 	print '<td class="right">'.$obj->position."</td>";
 
 	// Actions
-	print '<td class="nowraponall right">';
+	print '<td class="nowrap right">';
 	if ($canedit) {
-		print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($candelete) {
-		print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
+		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
+	} else {
+		print "&nbsp;";
 	}
 	print "</td>";
 	print "</tr>\n";

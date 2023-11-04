@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
@@ -26,7 +26,6 @@
  *		\brief      File that defines the balance of paid holiday of users.
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -36,8 +35,6 @@ $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
-$massaction = GETPOST('massaction', 'alpha');
-$optioncss = GETPOST('optioncss', 'alpha');
 
 $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
@@ -46,9 +43,6 @@ $search_supervisor = GETPOST('search_supervisor', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$confirm = GETPOST('confirm', 'alpha');
-
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -64,17 +58,6 @@ if (!$sortorder) {
 }
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('defineholidaylist'));
-$extrafields = new ExtraFields($db);
-
-$holiday = new Holiday($db);
-
-
-if (empty($conf->holiday->enabled)) {
-	accessforbidden('Module not enabled');
-}
-
 // Protection if external user
 if ($user->socid > 0) {
 	accessforbidden();
@@ -84,6 +67,23 @@ if ($user->socid > 0) {
 if (empty($user->rights->holiday->read)) {
 	accessforbidden();
 }
+
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('defineholidaylist'));
+$extrafields = new ExtraFields($db);
+
+$holiday = new Holiday($db);
+
+if (empty($conf->holiday->enabled)) {
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
+}
+
 
 
 /*
@@ -111,30 +111,28 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_name = '';
 		$search_supervisor = '';
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 
 	// Mass actions
-	$objectclass = 'Holiday';
-	$objectlabel = 'Holiday';
-	$permissiontoread = $user->hasRight('holiday', 'read');
-	$permissiontodelete = $user->hasRight('holiday', 'delete');
-	$permissiontoapprove = $user->hasRight('holiday', 'approve');
-	$uploaddir = $conf->holiday->dir_output;
+	/*
+	$objectclass='Skeleton';
+	$objectlabel='Skeleton';
+	$permissiontoread = $user->rights->skeleton->read;
+	$permissiontodelete = $user->rights->skeleton->delete;
+	$uploaddir = $conf->skeleton->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	*/
 
-	// If there is an update action
+	// Si il y a une action de mise à jour
 	if ($action == 'update' && GETPOSTISSET('update_cp')) {
 		$error = 0;
-		$nbok = 0;
 
 		$typeleaves = $holiday->getTypes(1, 1);
 
 		$userID = array_keys(GETPOST('update_cp'));
 		$userID = $userID[0];
-
-		$db->begin();
 
 		foreach ($typeleaves as $key => $val) {
 			$userValue = GETPOST('nb_holiday_'.$val['rowid']);
@@ -147,29 +145,22 @@ if (empty($reshook)) {
 			}
 
 			//If the user set a comment, we add it to the log comment
-			$note_holiday = GETPOST('note_holiday');
-			$comment = ((isset($note_holiday[$userID]) && !empty($note_holiday[$userID])) ? ' ('.$note_holiday[$userID].')' : '');
+			$comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
-			//print 'holiday: '.$val['rowid'].'-'.$userValue;exit;
+			//print 'holiday: '.$val['rowid'].'-'.$userValue;
 			if ($userValue != '') {
-				// We add the modification to the log (must be done before the update of balance because we read current value of balance inside this method)
+				// We add the modification to the log (must be before update of sold because we read current value of sold)
 				$result = $holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
 				if ($result < 0) {
 					setEventMessages($holiday->error, $holiday->errors, 'errors');
 					$error++;
-				} elseif ($result == 0) {
-					setEventMessages($langs->trans("HolidayQtyNotModified", $user->login), null, 'warnings');
 				}
 
 				// Update of the days of the employee
-				if ($result > 0) {
-					$nbok++;
-
-					$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
-					if ($result < 0) {
-						setEventMessages($holiday->error, $holiday->errors, 'errors');
-						$error++;
-					}
+				$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+				if ($result < 0) {
+					setEventMessages($holiday->error, $holiday->errors, 'errors');
+					$error++;
 				}
 
 				// If it first update of balance, we set date to avoid to have sold incremented by new month
@@ -185,13 +176,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$db->commit();
-
-			if ($nbok > 0) {
-				setEventMessages('UpdateConfCPOK', null, 'mesgs');
-			}
-		} else {
-			$db->rollback();
+			setEventMessages('UpdateConfCPOK', '', 'mesgs');
 		}
 	}
 }
@@ -209,22 +194,12 @@ $title = $langs->trans('CPTitreMenu');
 
 llxHeader('', $title);
 
+
 $typeleaves = $holiday->getTypes(1, 1);
 $result = $holiday->updateBalance(); // Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
 if ($result < 0) {
 	setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
-
-// List of mass actions available
-$arrayofmassactions = array(
-	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-);
-if ($user->hasRight("holiday", "approve")) {
-	$arrayofmassactions['preincreaseholiday'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("IncreaseHolidays");
-}
-$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -239,33 +214,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$title = $langs->trans("MenuConfCP");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, '', '', 'title_hrm', 0, '', '', $limit, 0, 0, 1);
-
-include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-
-if ($massaction == 'preincreaseholiday') {
-	$langs->load("holiday", "hrm");
-	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-	$staticholiday = new Holiday($db);
-	$arraytypeholidays = $staticholiday->getTypes(1, 1);
-	$formquestion[] = array();
-	$labeltypes = array();
-	foreach ($typeleaves as $key => $val) {
-		$labeltypes[$val['id']] = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-	}
-	$formquestion [] = array( 'type' => 'other',
-		'name' => 'typeofholiday',
-		'label' => $langs->trans("Type"),
-		'value' => $form->selectarray('typeholiday', $labeltypes, GETPOST('typeholiday', 'alpha'), 1)
-	);
-	$formquestion [] = array( 'type' => 'other',
-		'name' => 'nbdaysholydays',
-		'label' => $langs->trans("NumberDayAddMass"),
-		'value' => '<input name="nbdaysholidays" class="maxwidth75" id="nbdaysholidays" value="'.GETPOST('nbdaysholidays', 'int').'">'
-	);
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassIncreaseHoliday"), $langs->trans("ConfirmMassIncreaseHolidayQuestion", count($toselect)), "increaseholiday", $formquestion, 1, 0, 200, 500, 1);
-}
+print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
@@ -321,13 +270,11 @@ if (count($typeleaves) == 0) {
 	print '<tr class="liste_titre_filter">';
 
 	// User
-	print '<td class="liste_titre">';
-	print '<input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'" class="maxwidth100">';
-	print '</td>';
+	print '<td class="liste_titre"><input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'"></td>';
 
 	// Supervisor
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 	print '</td>';
 
 	// Type of leave request
@@ -338,7 +285,6 @@ if (count($typeleaves) == 0) {
 	} else {
 		print '<td class="liste_titre"></td>';
 	}
-	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 
 	// Action column
@@ -362,19 +308,11 @@ if (count($typeleaves) == 0) {
 	}
 	print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('');
-
-	if ($massactionbutton) {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
-	}
-
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print '</tr>';
 
 	$usersupervisor = new User($db);
 
 	foreach ($listUsers as $users) {
-		$arrayofselected = is_array($toselect) ? $toselect : array();
-
 		// If user has not permission to edit/read all, we must see only subordinates
 		if (empty($user->rights->holiday->readall)) {
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) {
@@ -439,21 +377,11 @@ if (count($typeleaves) == 0) {
 		print '</td>';
 
 		// Button modify
-		print '<td class="center">';
+		print '<td>';
 		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
-		print '<td class="nowrap center">';
-
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($userstatic->id, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
 		print '</tr>';
 
 		$i++;

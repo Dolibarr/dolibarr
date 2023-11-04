@@ -25,7 +25,6 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -34,7 +33,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $choice = GETPOST('choice', 'aZ09');
-$nbsecondsold = GETPOSTINT('nbsecondsold');
+
 
 // Define filelog to discard it from purge
 $filelog = '';
@@ -43,7 +42,6 @@ if (!empty($conf->syslog->enabled)) {
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
-// Security
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -66,8 +64,7 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
-
-	$result = $utils->purgeFiles($choice, $nbsecondsold);
+	$result = $utils->purgeFiles($choice);
 
 	$mesg = $utils->output;
 	setEventMessages($mesg, null, 'mesgs');
@@ -117,17 +114,14 @@ print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles
 
 print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';
-print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label>';
-print '<br>';
-if (getDolGlobalInt('MAIN_PURGE_ACCEPT_NBSECONDSOLD')) {
-	print 'NbSecondsOld = <input class="width50 right" type="text" name="nbsecondsold" value="'.$nbsecondsold.'">';
-}
+print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label><br>';
+
 print '</td></tr></table>';
 
 //if ($choice != 'confirm_allfiles')
 //{
 	print '<br>';
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("PurgeRunNow").'"></div>';
+	print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></div>';
 //}
 
 print '</form>';
@@ -135,7 +129,7 @@ print '</form>';
 if (preg_match('/^confirm/i', $choice)) {
 	print '<br>';
 	$formquestion = array();
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles&nbsecondsold='.$nbsecondsold, $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
 // End of page

@@ -32,20 +32,12 @@
     vertical-align: middle;
 }
 
-.right {
-	text-align: right;
-}
-
 .opacitymedium {
 	opacity: 0.5;
 }
 
 .inline-block {
 	display: inline-block;	
-}
-
-.no-bottom {
-	padding-bottom: 0;	
 }
 
 .small {
@@ -67,12 +59,10 @@ table.main-inside {
 	margin-top: 10px;
 	color: #000000;
 	border-top: 1px solid #ccc;
+	/* border-bottom: 1px solid #ccc; */
 	line-height: 22px;
 }
-table.main-inside-borderbottom {
-	border-bottom: 1px solid #ccc;
-}
-	
+
 table.main {
 	padding-left: 6px;
 	padding-right: 6px;
@@ -127,10 +117,6 @@ tr.trlineforchoice {
 }
 a.button.runupgrade {
     padding: 10px;
-}
-
-tr.title.tablesupport-title {
-    height: 100px;
 }
 
 /* Force values for small screen 570 */
@@ -468,7 +454,7 @@ table.login.tablesupport .title {
 }
 
 table.tablesupport {
-	min-height: 300px;
+	min-height: 250px;
 	border: 1px solid #E0E0E0;
     background: #FFF;
 }

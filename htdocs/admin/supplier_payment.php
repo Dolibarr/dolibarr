@@ -23,7 +23,6 @@
  *		\brief      Page to setup supplier invoices payments
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -38,8 +37,6 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
-$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
-
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'supplier_payment';
@@ -52,9 +49,9 @@ $type = 'supplier_payment';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'aZ09');
+	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'alpha');
 	$masksupplierpayment = GETPOST('masksupplierpayment', 'alpha');
-	if ($maskconstsupplierpayment && preg_match('/_MASK$/', $maskconstsupplierpayment)) {
+	if ($maskconstsupplierpayment) {
 		$res = dolibarr_set_const($db, $maskconstsupplierpayment, $masksupplierpayment, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -75,7 +72,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if (getDolGlobalString("FACTURE_ADDON_PDF") == "$value") {
+		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
 			dolibarr_del_const($db, 'SUPPLIER_PAYMENT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -92,8 +89,6 @@ if ($action == 'updateMask') {
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'unsetdoc') {
-	dolibarr_del_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
@@ -252,7 +247,7 @@ foreach ($dirmodels as $reldir) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
 							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+								print $langs->trans($tmp);
 							} else {
 								print $tmp;
 							}
@@ -263,7 +258,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || $conf->global->SUPPLIER_PAYMENT_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).(!empty($module->scandir) ? '&scandir='.$module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -289,7 +284,7 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if (getDolGlobalString("PAYMENT_ADDON").'.php' == $file) {  // If module is the one used, we show existing errors
+							if ($conf->global->PAYMENT_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
 									dol_htmloutput_mesg($module->error, '', 'error', 1);
 								}
@@ -351,7 +346,7 @@ foreach ($dirmodels as $reldir) {
 					print "</td>\n";
 					print "<td>\n";
 					require_once $dir.'/'.$file;
-					$module = new $classname($db, new Societe($db));
+					$module = new $classname($db, $specimenthirdparty);
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);
 					} else {
@@ -377,18 +372,18 @@ foreach ($dirmodels as $reldir) {
 						print "</td>";
 					} else {
 						print '<td class="center">'."\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scandir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=SUPPLIER_PAYMENT">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						print "</td>";
 					}
 
 					// Default
 					print '<td class="center">';
-					if (getDolGlobalString("SUPPLIER_PAYMENT_ADDON_PDF") == "$name") {
+					if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF == "$name") {
 						//print img_picto($langs->trans("Default"),'on');
 						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scandir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 					} else {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scandir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 					}
 					print '</td>';
 
@@ -442,7 +437,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("GroupPaymentsByModOnReports");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", getDolGlobalString("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD"), 1);
+print $form->selectyesno("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", $conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD, 1);
 print '</td><td class="right">';
 print "</td></tr>\n";
 
@@ -452,7 +447,7 @@ print dol_get_fiche_end();
 
 print '<br>';
 print '<div class="center">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print '</div>';
 print '<br>';
 

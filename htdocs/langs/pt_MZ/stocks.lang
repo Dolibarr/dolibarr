@@ -1,9 +1,0 @@
-# Dolibarr language file - Source file is en_US - stocks
-inventorySetup =Configuração de inventário
-inventoryCreatePermission=Novo inventário
-inventoryReadPermission=Ver inventários
-inventoryDeletePermission=Remover inventario
-inventoryValidate=Validada
-inventoryChangePMPPermission=Permitir alterar o valor PMP de um produto
-inventoryDeleteLine=Apagar linha
-InventoryStartedShort=Iniciado

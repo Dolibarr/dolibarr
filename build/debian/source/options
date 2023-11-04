@@ -1,3 +1,0 @@
-# Force use of gzip compression by dpkg-buildpackage
-compression = "gzip"
-#compression-level = 9

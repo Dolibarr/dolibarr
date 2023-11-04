@@ -18,12 +18,11 @@
  */
 
 /**
- *      \file       htdocs/salaries/paiement_salary.php
+ *      \file       htdocs/compta/paiement_salary.php
  *      \ingroup    salary
  *      \brief      Page to add payment of a salary
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
@@ -57,7 +56,7 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  * Actions
  */
 
-if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $user->hasRight('salaries', 'write')) {
+if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
 	if ($cancel) {
@@ -66,7 +65,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 		exit;
 	}
 
-	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'), 'tzuserrel');
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 
 	if (!(GETPOST("paiementtype", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
@@ -78,7 +77,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 		$error++;
 		$action = 'create';
 	}
-	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -88,7 +87,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 	foreach ($_POST as $key => $value) {
 		if (substr($key, 0, 7) == 'amount_') {
 			$other_chid = substr($key, 7);
-			$amounts[$other_chid] = price2num(GETPOST($key));
+			$amounts[$other_chid] = price2num($_POST[$key]);
 		}
 	}
 
@@ -111,8 +110,8 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note         = GETPOST("note", 'restricthtml');
-			$paiement->note_private = GETPOST("note", 'restricthtml');
+			$paiement->note         = GETPOST("note", 'none');
+			$paiement->note_private = GETPOST("note", 'none');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));
@@ -164,7 +163,7 @@ if ($action == 'create') {
 
 	$total = $salary->amount;
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript">';
+		print "\n".'<script type="text/javascript" language="javascript">';
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
@@ -210,9 +209,9 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
-	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1, 0, '', '', $salary->dateep, '', 1, $langs->trans("DateEnd"));
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -315,14 +314,14 @@ if ($action == 'create') {
 
 	print "</table>";
 
-	print '<br>';
-
 	// Bouton Save payment
+	print '<br>';
 	print '<div class="center">';
 	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary"><label for="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
-	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", '', true);
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
-
 
 	print "</form>\n";
 }

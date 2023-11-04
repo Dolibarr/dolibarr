@@ -11,21 +11,20 @@
 
 namespace Symfony\Component\VarDumper\Tests\Test;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 
-class VarDumperTestTraitTest extends TestCase
+class VarDumperTestTraitTest extends \PHPUnit_Framework_TestCase
 {
-	use VarDumperTestTrait;
+    use VarDumperTestTrait;
 
-	public function testItComparesLargeData()
-	{
-		$howMany = 700;
-		$data = array_fill_keys(range(0, $howMany), array('a', 'b', 'c', 'd'));
+    public function testItComparesLargeData()
+    {
+        $howMany = 700;
+        $data = array_fill_keys(range(0, $howMany), array('a', 'b', 'c', 'd'));
 
-		$expected = sprintf("array:%d [\n", $howMany + 1);
-		for ($i = 0; $i <= $howMany; ++$i) {
-			$expected .= <<<EODUMP
+        $expected = sprintf("array:%d [\n", $howMany + 1);
+        for ($i = 0; $i <= $howMany; ++$i) {
+            $expected .= <<<EODUMP
   $i => array:4 [
     0 => "a"
     1 => "b"
@@ -33,9 +32,9 @@ class VarDumperTestTraitTest extends TestCase
     3 => "d"
   ]\n
 EODUMP;
-		}
-		$expected .= "]\n";
+        }
+        $expected .= "]\n";
 
-		$this->assertDumpEquals($expected, $data);
-	}
+        $this->assertDumpEquals($expected, $data);
+    }
 }

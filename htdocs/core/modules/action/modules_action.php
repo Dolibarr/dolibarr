@@ -44,6 +44,8 @@ abstract class ModeleAction extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'action';
 		$list = array();
 

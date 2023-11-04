@@ -17,9 +17,9 @@ use Cwd;
 my $dir = getcwd;
 
 print "Current dir is: $dir\n";
-#print "Running dir for doxygen must be: $DIR\n";
+print "Running dir for doxygen must be: $DIR\n";
 
-if (! -s "build/doxygen/$CONFFILE")
+if (! -s $CONFFILE)
 {
     print "Error: current directory for building Dolibarr doxygen documentation is not correct.\n";
     print "\n";
@@ -30,7 +30,7 @@ if (! -s "build/doxygen/$CONFFILE")
     exit 1;   
 }
 
-$SOURCE=".";
+$SOURCE="../..";
 
 # Get version $MAJOR, $MINOR and $BUILD
 $result = open( IN, "< " . $SOURCE . "/htdocs/filefunc.inc.php" );
@@ -47,8 +47,8 @@ $version=$MAJOR.".".$MINOR.".".$BUILD;
 
 
 print "Running doxygen for version ".$version.", please wait...\n";
-print "cat build/doxygen/$CONFFILE | sed -e 's/x\.y\.z/".$version."/' | doxygen $OPTIONS - 2>&1\n";
-$result=`cat build/doxygen/$CONFFILE | sed -e 's/x\.y\.z/$version/' | doxygen $OPTIONS - 2>&1`;
+print "cat $CONFFILE | sed -e 's/x\.y\.z/".$version."/' | doxygen $OPTIONS - 2>&1\n";
+$result=`cat $CONFFILE | sed -e 's/x\.y\.z/$version/' | doxygen $OPTIONS - 2>&1`;
 
 print $result;
 

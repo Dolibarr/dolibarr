@@ -26,7 +26,7 @@ dol_include_once('/partnership/core/modules/partnership/modules_partnership.php'
 
 
 /**
- *	Class to manage the Standard numbering rule for Partnership
+ *	Class to manage customer order numbering rules standard
  */
 class mod_partnership_standard extends ModeleNumRefPartnership
 {
@@ -36,7 +36,7 @@ class mod_partnership_standard extends ModeleNumRefPartnership
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'PSHIP';
+	public $prefix = 'PARTNERSHIP';
 
 	/**
 	 * @var string Error code (or message)

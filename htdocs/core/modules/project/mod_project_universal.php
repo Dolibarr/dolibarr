@@ -31,11 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 class mod_project_universal extends ModeleNumRefProjects
 {
 	/**
-	 * @var DoliDB $db
-	 */
-	public $db;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -62,7 +57,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *  @return     string      Texte descripif
 	 */
 	public function info()
 	{
@@ -90,7 +85,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.$conf->global->PROJECT_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -141,11 +136,8 @@ class mod_project_universal extends ModeleNumRefProjects
 			return 0;
 		}
 
-		// Get entities
-		$entity = getEntity('projectnumber', 1, $project);
-
-		$date = (empty($project->date_c) ? dol_now() : $project->date_c);
-		$numFinal = get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc : ''), $date, 'next', false, null, $entity);
+		$date = empty($project->date_c) ?dol_now() : $project->date_c;
+		$numFinal = get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
 
 		return  $numFinal;
 	}

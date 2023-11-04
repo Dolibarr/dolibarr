@@ -33,7 +33,6 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -104,7 +103,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	}
 
 	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
-
 	$feature = $newelement;
 	$feature2 = $subelement;
 	$object_id = $fk_element;
@@ -127,8 +125,8 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
 	//var_dump($user->rights);
 	/*
-	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
-		|| (isset($subelement) && (!empty($user->rights->$newelement->$subelement->creer) || !empty($user->rights->$newelement->$subelement->write)))
+	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
+		|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
 		|| ($element == 'payment' && $user->rights->facture->paiement)
 		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	*/

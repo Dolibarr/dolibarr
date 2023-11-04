@@ -31,7 +31,6 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
-// Load Dolibarr environment
 require '../../main.inc.php';
 
 if (!$conf->global->TAKEPOS_AUTO_ORDER) {

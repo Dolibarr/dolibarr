@@ -3,7 +3,6 @@
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
- * Copyright (C) 2022       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +24,6 @@
  *      \brief      Autocreate actions for agenda module setup page
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -90,6 +88,7 @@ if ($action == "save" && empty($cancel)) {
 
 	foreach ($triggers as $trigger) {
 		$keyparam = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+		//print "param=".$param." - ".$_POST[$param];
 		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam)) {
 			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 			if (!($res > 0)) {
@@ -115,7 +114,7 @@ if ($action == "save" && empty($cancel)) {
 
 // $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 
 llxHeader('', $langs->trans("AgendaSetup"), $help_url);
 
@@ -175,9 +174,6 @@ if (!empty($triggers)) {
 		if ($module == 'contact') {
 			$module = 'societe';
 		}
-		if ($module == 'facturerec') {
-			$module = 'facture';
-		}
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);
@@ -186,7 +182,7 @@ if (!empty($triggers)) {
 		}
 
 		//print 'module='.$module.' code='.$trigger['code'].'<br>';
-		if (isModEnabled($module)) {
+		if (!empty($conf->$module->enabled)) {
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 				continue;
@@ -196,7 +192,6 @@ if (!empty($triggers)) {
 			}
 
 			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code'])) {
-				print '<!-- '.$trigger['position'].' -->';
 				print '<tr class="oddeven">';
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';
@@ -214,7 +209,9 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Save", '');
+print '<div class="center">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
+print "</div>";
 
 print "</form>\n";
 

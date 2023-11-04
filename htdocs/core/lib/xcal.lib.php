@@ -100,7 +100,6 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			$created       = $event["created"];
 			$modified      = $event["modified"];
 			$assignedUsers = $event["assignedUsers"];
-			//print $fulldayevent.' '.dol_print_date($startdate, 'dayhour', 'gmt');
 
 			// Format
 			$summary     = format_cal($format, $summary);
@@ -192,16 +191,16 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
 				// Date must be GMT dates
 				// Current date
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($now, "dayhourxcard", 'gmt')."\n");
+				fwrite($calfileh, "DTSTAMP:".dol_print_date($now, "dayhourxcard", true)."\n");
 
 				// Start date
 				$prefix     = "";
-				$startdatef = dol_print_date($startdate, "dayhourxcard", 'gmt');
+				$startdatef = dol_print_date($startdate, "dayhourxcard", true);
 
 				if ($fulldayevent) {
 					// Local time
 					$prefix     = ";VALUE=DATE";
-					$startdatef = dol_print_date($startdate, "dayxcard", 'gmt');
+					$startdatef = dol_print_date($startdate, "dayxcard", false);
 				}
 
 				fwrite($calfileh, "DTSTART".$prefix.":".$startdatef."\n");
@@ -209,9 +208,6 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				// End date
 				if ($fulldayevent) {
 					if (empty($enddate)) {
-						// We add 1 day needed for full day event (DTEND must be next day after event).
-						// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
-						// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
 						$enddate = dol_time_plus_duree($startdate, 1, "d");
 					}
 				} else {
@@ -221,14 +217,14 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				}
 
 				$prefix   = "";
-				$enddatef = dol_print_date($enddate, "dayhourxcard", 'gmt');
+				$enddatef = dol_print_date($enddate, "dayhourxcard", true);
 
 				if ($fulldayevent) {
 					$prefix   = ";VALUE=DATE";
-					// We add 1 second so we reach the +1 day needed for full day event (DTEND must be next day after event)
-					// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
-					// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
-					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'gmt');
+					$enddatef = dol_print_date($enddate + 1, "dayxcard", false);
+
+					// Local time
+					//$enddatef .= dol_print_date($enddate+1,"dayhourxcard",false);
 				}
 
 				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
@@ -260,11 +256,11 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				}
 
 				if ($created) {
-					fwrite($calfileh, "CREATED:".dol_print_date($created, "dayhourxcard", 'gmt')."\n");
+					fwrite($calfileh, "CREATED:".dol_print_date($created, "dayhourxcard", true)."\n");
 				}
 
 				if ($modified) {
-					fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", 'gmt')."\n");
+					fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", true)."\n");
 				}
 
 				fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
@@ -274,7 +270,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				fwrite($calfileh, "LOCATION:".$location."\n");
 				fwrite($calfileh, "TRANSP:OPAQUE\n");
 				fwrite($calfileh, "CLASS:CONFIDENTIAL\n");
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, "dayhourxcard", 'gmt')."\n");
+				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, "dayhourxcard", true)."\n");
 
 				fwrite($calfileh, "END:VJOURNAL\n");
 			}
@@ -284,7 +280,10 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		fwrite($calfileh, "END:VCALENDAR");
 
 		fclose($calfileh);
-		dolChmod($outputfile);
+
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
 	} else {
 		dol_syslog("xcal.lib.php::build_calfile Failed to open file ".$outputfile." for writing");
 		return -2;
@@ -298,7 +297,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$format             "rss"
  *  @param      string	$title              Title of export
  *  @param      string	$desc               Description of export
- *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
+ *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
@@ -374,7 +373,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
 					//$tmpevent['category'] = '';
 					$tmpevent['desc'] = $event->description;
-					$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
+
 					$event = $tmpevent;
 				}
 
@@ -384,9 +383,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$url		  = $event["url"];
 				$author = $event["author"];
 				$category = $event["category"];
-				if (!empty($event["image"])) {
-					$image = $event["image"];
-				}
+
 				/* No place inside a RSS
 				$priority     = $event["priority"];
 				$fulldayevent = $event["fulldayevent"];
@@ -402,10 +399,6 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
 				fwrite($fichier, "<description><![CDATA[");
-
-				if (!empty($image)) {
-					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
-				}
 
 				if ($description) {
 					fwrite($fichier, $description);
@@ -426,7 +419,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, "</rss>");
 
 		fclose($fichier);
-		dolChmod($outputfile);
+
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
 	}
 }
 

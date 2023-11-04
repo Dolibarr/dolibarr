@@ -20,12 +20,11 @@
  */
 
 /**
- *	\file       htdocs/categories/traduction.php
- *	\ingroup    categories
- *	\brief      Page of translation of categories
+ *	\file       htdocs/product/traduction.php
+ *	\ingroup    product
+ *	\brief      Page of translation of products
  */
 
-// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -36,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('categories', 'languages'));
 
-$id     = GETPOST('id', 'int');
-$label  = GETPOST('label', 'alpha');
+$id = GETPOST('id', 'int');
+$label = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
@@ -57,23 +56,21 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type];   // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
-
 
 /*
  * Actions
  */
-
 $error = 0;
 
-// return to translation view if cancelled
+// retour a l'affichage des traduction si annulation
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
 
-// validation of addition
+// Validation de l'ajout
 if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
 ($user->rights->categorie->creer)) {
@@ -97,7 +94,7 @@ $cancel != $langs->trans("Cancel") &&
 		}
 
 		if (!$error) {
-			// update the object
+			// update de l'objet
 			if ($forcelangprod == $current_lang) {
 				$object->label = $libelle;
 				$object->description = dol_htmlcleanlastbr($desc);
@@ -106,7 +103,7 @@ $cancel != $langs->trans("Cancel") &&
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
 			}
 
-			// save in base / sauvegarde en base
+			// sauvegarde en base
 			$res = $object->setMultiLangs($user);
 			if ($res < 0) {
 				$error++;
@@ -122,14 +119,14 @@ $cancel != $langs->trans("Cancel") &&
 	}
 }
 
-// validation of the edition
+// Validation de l'edition
 if ($action == 'vedit' &&
 $cancel != $langs->trans("Cancel") &&
 ($user->rights->categorie->creer)) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ($object->multilangs as $key => $value) {     // recording of new values in the object
+	foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
 		$libelle = GETPOST('libelle-'.$key, 'alpha');
 		$desc = GETPOST('desc-'.$key);
 
@@ -167,7 +164,7 @@ $cancel != $langs->trans("Cancel") &&
  * View
  */
 
-$form      = new Form($db);
+$form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
@@ -226,17 +223,17 @@ print dol_get_fiche_end();
 
 
 
+
 /*
  * Action bar
  */
-
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
 		}
 	}
 }
@@ -246,7 +243,7 @@ print "\n</div>\n";
 
 
 if ($action == 'edit') {
-	// WYSIWYG Editor
+	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -263,11 +260,10 @@ if ($action == 'edit') {
 			// Label
 			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : $object->multilangs[$key]['label']);
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$libelle.'"></td></tr>';
-
 			// Desc
 			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : $object->multilangs[$key]['description']);
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $desc, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $desc, '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
@@ -278,7 +274,11 @@ if ($action == 'edit') {
 
 	print '<br>';
 
-	print $form->buttonsSaveCancel();
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 } elseif ($action != 'add') {
@@ -327,14 +327,18 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
 	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
 	print '</tr>';
 	print '</table>';
 
-	print $form->buttonsSaveCancel();
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 

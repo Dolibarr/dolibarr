@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=تنظیم پیوند به وبگاه بیرونی
+ExternalSiteURL=External Site URL of HTML iframe content
+ExternalSiteModuleNotComplete=واحد ExternalSite  به درستی پیکربندی نشده است
+ExampleMyMenuEntry=عنوان فهرست من
