@@ -294,7 +294,10 @@ if ($action == 'create') {
 } else {
 	$backtopage = DOL_URL_ROOT.'/public/bookcal/index.php?id='.$id;
 }
-print '<div class="bookcalpublicarea centpercent center" style="min-width:30%;position:absolute;width:fit-content;height:70%;top:60%;left: 50%;transform: translate(-50%, -50%);">';
+
+//print '<div class="">';
+
+print '<div class="bookcalpublicarea centpercent center" style="min-width:30%;width:fit-content;height:70%;top:60%;left: 50%;">';
 print '<div class="bookcalform boxtable" style="border:thin solid gray;padding:5px;min-height:50%">';
 if ($action == 'afteradd') {
 	print '<h2>';
@@ -306,9 +309,6 @@ if ($action == 'afteradd') {
 
 	print '<table>';
 	print '<tr>';
-	print '<td>';
-	print '<a href="'.$backtopage.'">Cancel</a>';
-	print '</td>';
 	print '<td>';
 	if ($action == 'create') {
 		print '<span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
@@ -338,7 +338,7 @@ if ($action == 'afteradd') {
 	print '</tr>';
 
 	print '<tr>';
-	print '<td>';
+	/*print '<td>';
 
 	//print '<h2>'.(!empty($availability->label) ? $availability->label : $availability->ref).'</h2>';
 	$defaultduration = 30;
@@ -353,7 +353,7 @@ if ($action == 'afteradd') {
 		}
 		print '<span>'.img_picto("", "calendar")."&nbsp;".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
 	}
-	print '</td>';
+	print '</td>'; */
 
 	print '<td>';
 	if ($action == "create") {
@@ -385,20 +385,22 @@ if ($action == 'afteradd') {
 		print '</form>';
 	} else {
 		print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
-		print ' <tr class="liste_titre">';
+		print ' <tr class="">';
 		// Column title of weeks numbers
 		echo '  <td class="center">#</td>';
 		$i = 0;
 		while ($i < 7) {
-			print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 			$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
 			if (!empty($conf->dol_optimize_smallscreen)) {
+				print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 				$labelshort = array(0=>'SundayMin', 1=>'MondayMin', 2=>'TuesdayMin', 3=>'WednesdayMin', 4=>'ThursdayMin', 5=>'FridayMin', 6=>'SaturdayMin');
 				print $langs->trans($labelshort[$numdayinweek]);
+				print '  </td>'."\n";
 			} else {
+				print '  <td class="center minwidth75 bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 				print $langs->trans("Day".$numdayinweek);
+				print '  </td>'."\n";
 			}
-			print '  </td>'."\n";
 			$i++;
 		}
 		echo ' </tr>'."\n";
@@ -428,7 +430,7 @@ if ($action == 'afteradd') {
 			// Get week number for the targeted date '$currdate0'
 			$numweek0 = date("W", strtotime(date($currdate0)));
 			// Show the week number, and define column width
-			echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+			echo ' <td class="center weeknumber opacitymedium" style="min-width: 40px">'.$numweek0.'</td>';
 
 			for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 				if ($tmpday <= 0) {
@@ -537,10 +539,10 @@ if ($action == 'afteradd') {
 					token: "'.currentToken().'",
 				}
 			}).done(function (data) {
-				data = JSON.parse(data);
 				$(".btnformbooking").show();
 				console.log("We show all booking");
-				if(data["code"] == "SUCCESS"){
+				if (data["code"] == "SUCCESS") {
+					/* TODO Replace this with a creating of allavailable hours button */
 					timearray = data["content"];
 					timearray.forEach((time) => hideTimeBooking(time));
 					console.log("We hide all taken time for booking");

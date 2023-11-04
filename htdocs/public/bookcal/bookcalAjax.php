@@ -64,6 +64,7 @@ $result = "{}";
 
 top_httphead('application/json');
 
+
 if ($action == 'verifyavailability') {
 	$response = array();
 	if (empty($id)) {
@@ -82,15 +83,30 @@ if ($action == 'verifyavailability') {
 		echo json_encode($response);
 		exit;
 	}
+
+	// First get all ranges for the calendar
+	if (!$error) {
+		// TODO Select in database all availabilities
+
+		// TODO Select also all not available ranges
+
+		// Build the list of hours available (key = hour, value = duration)
+		$hour = '08'; $min = '00';
+		$response["availability"][$hour.":".$min] = 30;
+
+	}
+
+	// Now get ranges already reserved
+	// TODO Remove this
 	if (!$error) {
 		$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
 
 		$sql = "SELECT b.datep, b.id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as b";
-		$sql .= " WHERE fk_bookcal_availability IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bookcal_availabilities WHERE fk_bookcal_calendar = ".((int) $id).")";
-		$sql .= " AND b.datep >= '".$db->idate($datetocheckbooking)."'";
+		$sql .= " WHERE b.datep >= '".$db->idate($datetocheckbooking)."'";
 		$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
-
+		$sql .= " AND fk_bookcal_availability IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bookcal_availabilities WHERE fk_bookcal_calendar = ".((int) $id).")";
+		//$sql .= " AND b.transparency"
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
