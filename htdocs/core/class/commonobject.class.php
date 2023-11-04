@@ -9854,9 +9854,8 @@ abstract class CommonObject
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
 					$TMoreSQL = array();
-					$more_sql = $deleteFromObject[3];
-					if (!empty($more_sql)) {
-						$TMoreSQL['customsql'] = $more_sql;
+					if (!empty($deleteFromObject[3])) {
+						$TMoreSQL['customsql'] = $deleteFromObject[3];
 					}
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);

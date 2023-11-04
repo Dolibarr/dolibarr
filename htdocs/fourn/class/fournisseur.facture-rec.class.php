@@ -1771,7 +1771,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'facture_rec'
+			'facture_fourn_rec'
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);

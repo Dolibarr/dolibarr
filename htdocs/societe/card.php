@@ -876,12 +876,17 @@ llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
+$canvasdisplayaction = $action;
+if (in_array($canvasdisplayaction, array('merge', 'confirm_merge'))) {
+	$canvasdisplayaction = 'view';
+}
+
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayaction)) {
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
-	$objcanvas->display_canvas($action); // Show template
+	$objcanvas->assign_values($canvasdisplayaction, $object->id, $object->ref); // Set value for templates
+	$objcanvas->display_canvas($canvasdisplayaction); // Show template
 } else {
 	// -----------------------------------------
 	// When used in standard mode

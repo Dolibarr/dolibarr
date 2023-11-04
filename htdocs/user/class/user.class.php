@@ -620,28 +620,7 @@ class User extends CommonObject
 
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf) {
-			// Load user->conf for user
-			$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
-			$sql .= " WHERE fk_user = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-			//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($resql);
-					$p = (!empty($obj->param) ? $obj->param : '');
-					if (!empty($p)) {
-						$this->conf->$p = $obj->value;
-					}
-					$i++;
-				}
-				$this->db->free($resql);
-			} else {
-				$this->error = $this->db->lasterror();
-				return -2;
-			}
+			$result = $this->loadPersonalConf();
 
 			$result = $this->loadDefaultValues();
 
@@ -654,6 +633,40 @@ class User extends CommonObject
 		return 1;
 	}
 
+
+	/**
+	 *  Load const values from database table user_param and set it into user->conf->XXX
+	 *
+	 *  @return int						> 0 if OK, < 0 if KO
+	 */
+	public function loadPersonalConf()
+	{
+		global $conf;
+
+		// Load user->conf for user
+		$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
+		$sql .= " WHERE fk_user = ".((int) $this->id);
+		$sql .= " AND entity = ".((int) $conf->entity);
+		//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$p = (!empty($obj->param) ? $obj->param : '');
+				if (!empty($p)) {
+					$this->conf->$p = $obj->value;
+				}
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			$this->error = $this->db->lasterror();
+			return -2;
+		}
+	}
+
 	/**
 	 *  Load default values from database table into property ->default_values
 	 *
@@ -662,6 +675,7 @@ class User extends CommonObject
 	public function loadDefaultValues()
 	{
 		global $conf;
+
 		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
 			// Load user->default_values for user. TODO Save this in memcached ?
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
