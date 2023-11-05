@@ -318,7 +318,7 @@ if (empty($reshook)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->batch && $line->fk_warehouse > 0) {
 					$prod_batch = new Productbatch($db);
-					$prod_batch->fetch($line->batch);
+					$prod_batch->find(0, '', '', $line->batch, $line->fk_warehouse);
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
 					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
@@ -527,10 +527,10 @@ if (empty($reshook)) {
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
 		if (isModEnabled('productbatch') && isModEnabled('stock')) {
-			$batchid = GETPOST('batchid', 'int');
+			$batch = GETPOST('batch', 'alpha');
 
-			if ($batchid>0) {
-				$action="setbatchid";
+			if (!empty($batch)) {
+				$action="setbatch";
 			} else {
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
@@ -542,8 +542,8 @@ if (empty($reshook)) {
 				}
 
 				echo "<script>";
-				echo "function addbatch(batchid){";
-				echo '$("#poslines").load("invoice.php?action=addline&batchid="+batchid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {
+				echo "function addbatch(batch, warehouseid){";
+				echo '$("#poslines").load("invoice.php?action=addline&batch="+batch+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {
 			});';
 				echo "}";
 				echo "</script>";
@@ -567,7 +567,7 @@ if (empty($reshook)) {
 							//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 						}
 						$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
-						$detail .= " <button onclick='addbatch(".$dbatch->id.")'>".$langs->trans("Select")."</button>";
+						$detail .= " <button onclick='addbatch(".$dbatch->batch.", ".getDolGlobalInt($constantforkey).")'>".$langs->trans("Select")."</button>";
 						$detail .= '<br>';
 						print $detail;
 
@@ -861,9 +861,9 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action=="setbatchid") {
+	if ($action=="setbatch") {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".((int) $batchid).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".$db->escape($batch).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
