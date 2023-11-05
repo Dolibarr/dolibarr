@@ -1534,14 +1534,29 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
 		$prodser->get_sousproduits_arbo();
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
+			$outputlangs->load('mrp');
 			$tmparrayofsubproducts = reset($prodser->sousprods);
+
+			$qtyText = null;
+			if (isset($object->lines[$i]->qty) && !empty($object->lines[$i]->qty)) {
+				$qtyText = $object->lines[$i]->qty;
+			} elseif (isset($object->lines[$i]->qty_shipped) && !empty($object->lines[$i]->qty_shipped)) {
+				$qtyText = $object->lines[$i]->qty;
+			}
+
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
+						(!empty($qtyText) ?
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText:
+							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1]));
 				}
 			} else {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
+						(!empty($qtyText) ?
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText:
+							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1]));
 				}
 			}
 		}

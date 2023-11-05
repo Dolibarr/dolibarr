@@ -21,13 +21,13 @@
 ModuleBookCalName = Booking Calendar System
 # Module description 'ModuleBookCalDesc'
 ModuleBookCalDesc = Manage a Calendar to book appointments
-MenuBookcalIndex=Rendez-vous en ligne
+MenuBookcalIndex=Online appointment
 BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
 DurationOfRange=Duration of ranges
 
-BookCalSetup = BookCal setup
+BookCalSetup = Online appointment setup
 Settings = Settings
-BookCalSetupPage = BookCal setup page
+BookCalSetupPage = Online appointment setup page
 BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
 About = About
 BookCalAbout = About BookCal

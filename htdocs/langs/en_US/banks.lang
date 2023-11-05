@@ -16,6 +16,7 @@ CashAccounts=Cash accounts
 CurrentAccounts=Current accounts
 SavingAccounts=Savings accounts
 ErrorBankLabelAlreadyExists=Financial account label already exists
+ErrorBankReceiptAlreadyExists=Bank receipt reference already exists
 BankBalance=Balance
 BankBalanceBefore=Balance before
 BankBalanceAfter=Balance after
