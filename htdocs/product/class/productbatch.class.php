@@ -395,7 +395,7 @@ class Productbatch extends CommonObject
 			$sql .= " WHERE t.fk_product_stock = ".((int) $fk_product_stock);
 		} else {
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
-			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_warehouse = ".((int) $fk_warehouse);
+			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
 		}
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
