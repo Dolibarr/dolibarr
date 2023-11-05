@@ -503,21 +503,21 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	/*justify-content: space-between;*/
 }
 
-.box-flex-grow-zero{
+.box-flex-grow-zero {
 	flex-grow: 0 !important;
 }
 
-.box-flex-item{
+.box-flex-item {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-
 	width: 280px;
-	margin: 5px 10px 0px 10px;
 }
-.box-flex-item.filler{
-	margin: 0px 0px 0px 15px !important;
+.box-flex-item.filler {
 	height: 0;
+}
+.box-flex-item, .box-flex-item.filler {
+	margin: 5px 10px 0px 10px;
 }
 
 .info-box-title {
