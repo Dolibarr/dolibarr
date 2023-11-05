@@ -138,7 +138,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @param	Object		$object				Object
 	 * @return	void
 	 */
-	private function initEventData($key_text, $object): void
+	private function initEventData($key_text, $object)
 	{
 		$this->event_date = dol_now();
 		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
@@ -155,9 +155,9 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * Check if text contains an event action key. Used for dynamic localization on frontend events list.
 	 *
 	 * @param	string	$event_text		Input event text
-	 * @return	bool
+	 * @return	bool					True if event text is a coded structured string
 	 */
-	public static function isEventActionTextKey($event_text): bool
+	public static function isEventActionTextKey($event_text)
 	{
 		foreach (InterfaceLogevents::EVENT_ACTION_DICT as $value) {
 			if (str_contains($event_text, $value)) {

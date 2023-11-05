@@ -114,8 +114,8 @@ class Availabilities extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"BookcalLabelAvailabilityHelp", 'showoncombobox'=>'2', 'validate'=>'1',),
-		'fk_bookcal_calendar' => array('type'=>'integer:Calendar:bookcal/class/calendar.class.php:1', 'label'=>'Calendar', 'enabled'=>'1', 'position'=>25, 'notnull'=>1, 'visible'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax150', 'cssview'=>'wordbreak', 'help'=>"BookcalLabelAvailabilityHelp", 'showoncombobox'=>'2', 'validate'=>'1',),
+		'fk_bookcal_calendar' => array('type'=>'integer:Calendar:bookcal/class/calendar.class.php:1', 'label'=>'Calendar', 'enabled'=>'1', 'position'=>25, 'notnull'=>1, 'visible'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax100'),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'validate'=>'1',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0, 'cssview'=>'wordbreak', 'validate'=>'1',),
@@ -129,9 +129,9 @@ class Availabilities extends CommonObject
 		'start' => array('type'=>'date', 'label'=>'Start Date', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'searchall'=>1,),
 		'end' => array('type'=>'date', 'label'=>'End Date', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'searchall'=>1,),
 		'duration' => array('type'=>'integer', 'label'=>'DurationOfRange', 'enabled'=>'1', 'position'=>47, 'notnull'=>1, 'visible'=>1, 'default'=>'30', 'css'=>'width50 right'),
-		'startHour' => array('type'=>'integer', 'label'=>'Start Hour', 'enabled'=>'1', 'position'=>46, 'notnull'=>1, 'visible'=>-1,),
-		'endHour' => array('type'=>'integer', 'label'=>'End Hour', 'enabled'=>'1', 'position'=>46.5, 'notnull'=>1, 'visible'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Closed'), 'validate'=>'1'),
+		'startHour' => array('type'=>'integer', 'label'=>'Start Hour', 'enabled'=>'1', 'position'=>46, 'notnull'=>1, 'visible'=>1,),
+		'endHour' => array('type'=>'integer', 'label'=>'End Hour', 'enabled'=>'1', 'position'=>46.5, 'notnull'=>1, 'visible'=>1,),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Closed'), 'default'=>1, 'validate'=>'1'),
 	);
 	public $rowid;
 	public $label;
@@ -588,6 +588,12 @@ class Availabilities extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'availabilities/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'availabilities/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -893,15 +899,17 @@ class Availabilities extends CommonObject
 			global $langs;
 			//$langs->load("agenda");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status4';
+		}
 		if ($status == self::STATUS_CANCELED) {
 			$statusType = 'status6';
 		}

@@ -438,7 +438,7 @@ $num = $db->num_rows($resql);
 
 $i = 0;
 
-if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all or $snom or $sref)) {
+if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all || $snom || $sref)) {
 	$objp = $db->fetch_object($resql);
 	header("Location: card.php?id=$objp->rowid");
 	exit;
@@ -833,12 +833,14 @@ while ($i < $imaxinloop) {
 			if ($objp->reel < 0) { print '<span class="warning">'; }
 			print price2num($objp->reel, 'MS');
 			if ($objp->reel < 0) { print '</span>'; }
+			print ($objp->stock_physique < 0 ? ' '.img_warning() : '');
 		}
 	} else {
 		if (!empty($objp->stock_physique)) {
 			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
 			print price2num($objp->stock_physique, 'MS');
 			if ($objp->stock_physique < 0) { print '</span>'; }
+			print ($objp->stock_physique < 0 ? ' '.img_warning() : (($objp->stock_physique > 1 && $objp->tobatch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')): ''));
 		}
 	}
 	print '</td>';

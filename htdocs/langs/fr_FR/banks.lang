@@ -16,6 +16,7 @@ CashAccounts=Comptes caisse/liquide
 CurrentAccounts=Comptes courants
 SavingAccounts=Comptes épargne/placements
 ErrorBankLabelAlreadyExists=Libellé de compte financier déjà existant
+ErrorBankReceiptAlreadyExists=Référence de relevé bancaire déjà existante
 BankBalance=Solde
 BankBalanceBefore=Solde avant
 BankBalanceAfter=Solde après
