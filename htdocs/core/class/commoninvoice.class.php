@@ -66,6 +66,16 @@ abstract class CommonInvoice extends CommonObject
 	public $mode_reglement_id;
 	public $mode_reglement_code; // Code in llx_c_paiement
 
+	/**
+	 * @var string
+	 */
+	public $mode_reglement;
+
+	/**
+	 * @var double
+	 */
+	public $revenuestamp;
+
 	public $totalpaid;			// duplicate with sumpayed
 	public $totaldeposits;		// duplicate with sumdeposit
 	public $totalcreditnotes;	// duplicate with sumcreditnote

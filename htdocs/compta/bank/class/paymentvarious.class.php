@@ -125,6 +125,16 @@ class PaymentVarious extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var int ID
+	 */
+	public $user_modif;
+
+	/**
+	 * @var int timestamp
+	 */
+	public $date_modif;
+
 
 	/**
 	 * @var	int		Type of bank account if the payment is on a bank account

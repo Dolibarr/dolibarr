@@ -86,6 +86,20 @@ class FactureRec extends CommonInvoice
 	 */
 	public $titre;
 
+	/**
+	 * @var int
+	 */
+	public $fk_soc;
+
+	/**
+	 * @var double
+	 */
+	public $remise_percent;
+
+	/**
+	 * @var double
+	 */
+	public $multicurrency_subprice;
 	public $socid;
 	public $number;
 	public $date;

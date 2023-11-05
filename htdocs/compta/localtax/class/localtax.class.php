@@ -50,6 +50,24 @@ class Localtax extends CommonObject
 	public $amount;
 
 	/**
+	 * @var int
+	 */
+	public $accountid;
+
+	/**
+	 * @var string
+	 */
+	public $fk_type;
+
+	public $paymenttype;
+
+	/**
+	 * @var int
+	 */
+	public $rappro;
+
+
+	/**
 	 * @var string local tax
 	 */
 	public $label;
