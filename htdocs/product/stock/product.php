@@ -1166,7 +1166,11 @@ if (!$variants) {
 						print "\n".'<tr style="display:'.(empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="left">';
 						print '</td>';
 						print '<td class="right nowraponall">';
-						print $product_lot_static->getNomUrl(1);
+						if ($product_lot_static->id > 0) {
+							print $product_lot_static->getNomUrl(1);
+						} else {
+							print $product_lot_static->getNomUrl(1, 'nolink');
+						}
 						print '</td>';
 						$colspan = 3;
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
@@ -1177,7 +1181,7 @@ if (!$variants) {
 							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
-						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
+						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : (($pdluo->qty > 1 && $object->status_batch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')): '')).'</td>';
 						print '<td colspan="4"></td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {

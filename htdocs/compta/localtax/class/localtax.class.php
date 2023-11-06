@@ -234,7 +234,6 @@ class Localtax extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.localtaxtype,";
@@ -243,7 +242,7 @@ class Localtax extends CommonObject
 		$sql .= " t.datev,";
 		$sql .= " t.amount,";
 		$sql .= " t.label,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -268,7 +267,8 @@ class Localtax extends CommonObject
 				$this->datev = $this->db->jdate($obj->datev);
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
-				$this->note  = $obj->note;
+				$this->note  = $obj->note_private;
+				$this->note_private  = $obj->note_private;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -533,7 +533,7 @@ class Localtax extends CommonObject
 
 					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 
-					// Mise a jour fk_bank dans llx_localtax. On connait ainsi la ligne de localtax qui a g�n�r� l'�criture bancaire
+					// Update fk_bank into llx_localtax so we know the line of localtax used to generate the bank entry.
 					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {
