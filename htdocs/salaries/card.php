@@ -618,7 +618,8 @@ if ($action == 'create' && $permissiontoadd) {
 	// Type payment
 	print '<tr><td id="label_type_payment">';
 	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
+	print $form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
 
 	// Date payment
