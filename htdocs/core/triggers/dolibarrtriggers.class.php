@@ -146,17 +146,15 @@ abstract class DolibarrTriggers
 	{
 		global $langs;
 		$langs->load("admin");
-
-		if ($this->version == self::VERSIONS['dev']) {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == self::VERSIONS['exp']) {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == self::VERSIONS['prod']) {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
+		switch ($this->version) { // TODO use a match expression @ Dolibarr minimum PHP v8.0
+			case self::VERSIONS['dev']:
+				return $langs->trans("VersionDevelopment");
+			case self::VERSIONS['exp']:
+				return $langs->trans("VersionExperimental");
+			case self::VERSIONS['prod']:
+				return DOL_VERSION;
+			default:
+				return $this->version;
 		}
 	}
 
