@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 
 
-if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
+if (!getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 	$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipts_mint.php';
 }
 
@@ -263,7 +263,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnChequeReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'BANK_CHEQUERECEIPT_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

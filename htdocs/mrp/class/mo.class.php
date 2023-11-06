@@ -1077,6 +1077,12 @@ class Mo extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'mrp/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -1529,6 +1535,7 @@ class Mo extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1823,6 +1830,46 @@ class Mo extends CommonObject
 			return $TMoChilds;
 		}
 	}
+
+	/**
+	 * Function used to return all child MOs recursively
+	 *
+	 * @param int $depth   Depth for recursing loop count
+	 * @return Mo[]|int[]  array of MOs if OK, -1 if KO
+	 */
+	public function getAllMoChilds($depth = 0)
+	{
+		if ($depth > 1000) return -1;
+
+		$TMoChilds = array();
+		$error = 0;
+
+		$childMoList = $this->getMoChilds();
+
+		if ($childMoList == -1) return -1;
+
+		foreach ($childMoList as $childMo) $TMoChilds[$childMo->id] = $childMo;
+
+		foreach ($childMoList as $childMo) {
+			$childMoChildren = $childMo->getAllMoChilds($depth + 1);
+
+			if ($childMoChildren == -1) {
+				$error++;
+			} else {
+				foreach ($childMoChildren as $child) {
+					$TMoChilds[$child->id] = $child;
+				}
+			}
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return $TMoChilds;
+		}
+	}
+
+
 
 	/**
 	 * Function used to return childs of Mo

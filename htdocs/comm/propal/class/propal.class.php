@@ -2045,6 +2045,12 @@ class Propal extends CommonObject
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'propale/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -2474,6 +2480,7 @@ class Propal extends CommonObject
 	 *	@return     int         		<0 if ko, >0 if ok
 	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
+	/*
 	public function set_remise_percent($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
@@ -2526,7 +2533,7 @@ class Propal extends CommonObject
 
 		return -1;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -3350,13 +3357,8 @@ class Propal extends CommonObject
 				$this->date_signature    = $this->db->jdate($obj->date_signature);
 				$this->date_cloture      = $this->db->jdate($obj->date_cloture);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				if ($obj->fk_user_signature) {
 					$user_signature = new User($this->db);
@@ -3364,9 +3366,7 @@ class Propal extends CommonObject
 					$this->user_signature = $user_signature;
 				}
 
-				if ($obj->fk_user_cloture) {
-					$this->user_closing_id = $obj->fk_user_cloture;
-				}
+				$this->user_closing_id = $obj->fk_user_cloture;
 			}
 			$this->db->free($result);
 		} else {

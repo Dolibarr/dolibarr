@@ -68,12 +68,7 @@ if (!$user->admin || !isModEnabled('website')) {
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 16.0
-	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
-		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
-	} else {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 $formSetup = new FormSetup($db);
 
@@ -140,7 +135,7 @@ print '<td align="center" width="100">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('WEBSITE_USE_WEBSITE_ACCOUNTS');
 } else {
-	if (empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) {
+	if (!getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

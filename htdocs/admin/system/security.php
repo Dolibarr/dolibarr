@@ -326,7 +326,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
-if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
+if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
@@ -350,14 +350,14 @@ print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"),
 
 
 print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
-print empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? '' : img_picto('', 'tick').' ';
-print yn(empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? 0 : 1);
+print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? '' : img_picto('', 'tick').' ';
+print yn(!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? 0 : 1);
 print '<br>';
 print '<br>';
 
 
 $sessiontimeout = ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 }
 print '<strong>'.$langs->trans("SessionTimeOut").'</strong>';
@@ -382,9 +382,9 @@ print getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolowe
 print '<br><br>';
 
 print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';
-print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
-print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
-if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+print !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? '' : img_picto('', 'tick').' ';
+print yn(!getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1);
+if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
 }
 print '<br>';
@@ -423,9 +423,9 @@ print '<br>';
 */
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
-print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
-if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+print !getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? img_warning().' ' : img_picto('', 'tick').' ';
+print yn(!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? 0 : 1);
+if (!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
 	print ' &nbsp; - ' . getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
@@ -579,7 +579,7 @@ print '<br>';
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
-if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
+if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
@@ -611,7 +611,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
-if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+if (!getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
 } else {
 	print $conf->global->MAIN_EXEC_USE_POPEN;

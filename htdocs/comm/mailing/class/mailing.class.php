@@ -128,6 +128,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user create
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -139,6 +140,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user validate
+	 * @deprecated
 	 */
 	public $user_validation;
 
@@ -413,9 +415,8 @@ class Mailing extends CommonObject
 				$this->email_replyto = $obj->email_replyto;
 				$this->email_errorsto = $obj->email_errorsto;
 
-				$this->user_creat = $obj->fk_user_creat;
-				$this->user_creation = $obj->fk_user_creat;
-				$this->user_validation = $obj->fk_user_valid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
 				$this->date_creation = $this->db->jdate($obj->date_creat);

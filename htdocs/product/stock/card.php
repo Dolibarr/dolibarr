@@ -732,7 +732,7 @@ if ($action == 'create') {
 						$result = $db->query($sql);
 						if ($result) {
 							$objtp = $db->fetch_object($result);
-							if ($objtp->label != '') {
+							if (isset($objtp->label) && $objtp->label != '') {
 								$objp->produit = $objtp->label;
 							}
 						}

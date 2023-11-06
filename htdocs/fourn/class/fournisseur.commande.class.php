@@ -705,6 +705,12 @@ class CommandeFournisseur extends CommonOrder
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
 					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
@@ -3094,22 +3100,14 @@ class CommandeFournisseur extends CommonOrder
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$this->user_creation_id = $obj->fk_user_author;
-				}
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-				if ($obj->fk_user_modif) {
-					$this->user_modification_id = $obj->fk_user_modif;
-				}
-				if ($obj->fk_user_approve) {
-					$this->user_approve_id = $obj->fk_user_approve;
-				}
-				if ($obj->fk_user_approve2) {
-					$this->user_approve_id2 = $obj->fk_user_approve2;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_approve_id = $obj->fk_user_approve;
+				$this->user_approve_id2 = $obj->fk_user_approve2;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

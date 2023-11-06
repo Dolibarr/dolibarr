@@ -569,6 +569,12 @@ class Commande extends CommonOrder
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'commande/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -1911,7 +1917,6 @@ class Commande extends CommonOrder
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->user_modification    = $obj->fk_user_modif;	// deprecated
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->total_localtax1;
@@ -1920,8 +1925,8 @@ class Commande extends CommonOrder
 				$this->date = $this->db->jdate($obj->date_commande);
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
 				$this->date_creation		= $this->db->jdate($obj->date_creation);
-				$this->date_validation = $this->db->jdate($obj->date_valid);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_validation      = $this->db->jdate($obj->date_valid);
+				$this->date_modification    = $this->db->jdate($obj->tms);
 				$this->source				= $obj->source;
 				$this->billed				= $obj->billed;
 				$this->note = $obj->note_private; // deprecated

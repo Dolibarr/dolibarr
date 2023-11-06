@@ -77,15 +77,22 @@ $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hoo
 
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+$object->loadPersonalConf();
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'all', 'read');
 $permissiontoadd  = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*

@@ -638,14 +638,23 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Sync rates from API
 	 *
-	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
+	 * @param 	string  $key                Key to use. Come from getDolGlobalString("MULTICURRENCY_APP_ID")
 	 * @param   int     $addifnotfound      Add if not found
 	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
-	 * @return  int							<0 if KO, >0 if OK, if mode = "cron" OK is
+	 * @return  int							<0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
 	public function syncRates($key, $addifnotfound = 0, $mode = "")
 	{
 		global $conf, $db, $langs;
+
+		if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
+			if ($mode == "cron") {
+				$this->output = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
+			} else {
+				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
+			}
+			return -1;
+		}
 
 		if (empty($key)) {
 			$key = getDolGlobalString("MULTICURRENCY_APP_ID");
@@ -688,9 +697,9 @@ class MultiCurrency extends CommonObject
 				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 				if ($mode == "cron") {
 					$this->output = $langs->trans('multicurrency_syncronize_error', $response->error->info);
+				} else {
+					setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 				}
-				setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-
 				return -1;
 			}
 		} else {
@@ -742,6 +751,11 @@ class CurrencyRate extends CommonObjectLine
 	public $rate;
 
 	/**
+	 * @var double Rate Indirect
+	 */
+	public $rate_indirect;
+
+	/**
 	 * @var integer    Date synchronisation
 	 */
 	public $date_sync;
@@ -790,11 +804,13 @@ class CurrencyRate extends CommonObjectLine
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= ' rate,';
+		$sql .= ' rate_indirect,';
 		$sql .= ' date_sync,';
 		$sql .= ' fk_multicurrency,';
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((float) $this->rate).',';
+		$sql .= ' '.((float) $this->rate_indirect).',';
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".((int) $fk_multicurrency).",";
 		$sql .= " ".((int) $this->entity);
@@ -844,7 +860,7 @@ class CurrencyRate extends CommonObjectLine
 	{
 		dol_syslog('CurrencyRate::fetch', LOG_DEBUG);
 
-		$sql = "SELECT cr.rowid, cr.rate, cr.date_sync, cr.fk_multicurrency, cr.entity";
+		$sql = "SELECT cr.rowid, cr.rate, cr.rate_indirect, cr.date_sync, cr.fk_multicurrency, cr.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS cr";
 		$sql .= " WHERE cr.rowid = ".((int) $id);
 
@@ -857,6 +873,7 @@ class CurrencyRate extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->rate = $obj->rate;
+				$this->rate_indirect = $obj->rate_indirect;
 				$this->date_sync = $this->db->jdate($obj->date_sync);
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->entity = $obj->entity;

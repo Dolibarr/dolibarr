@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
- * Copyright (C) 2021-2022 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021-2023 	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
@@ -73,7 +78,16 @@ $search_dateorder_start = dol_mktime(0, 0, 0, GETPOST('search_dateorder_start_mo
 $search_dateorder_end = dol_mktime(23, 59, 59, GETPOST('search_dateorder_end_month', 'int'), GETPOST('search_dateorder_end_day', 'int'), GETPOST('search_dateorder_end_year', 'int'));
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_start_month', 'int'), GETPOST('search_datedelivery_start_day', 'int'), GETPOST('search_datedelivery_start_year', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_end_month', 'int'), GETPOST('search_datedelivery_end_day', 'int'), GETPOST('search_datedelivery_end_year', 'int'));
-$search_product_category = GETPOST('search_product_category', 'int');
+
+if (isModEnabled('categorie')) {
+	$search_product_category_array = GETPOST("search_category_".Categorie::TYPE_PRODUCT."_list", "array");
+	$searchCategoryProductOperator = 0;
+	if (GETPOSTISSET('formfilteraction')) {
+		$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
+	} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+		$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+	}
+}
 
 // Détail commande
 $search_id = GETPOST('search_id', 'alpha');
@@ -159,7 +173,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'c.ref'=>'Ref',
 	'c.ref_client'=>'RefCustomerOrder',
-	'pd.description'=>'Description',
+	'cdet.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
 	's.zip'=>"Zip",
@@ -257,7 +271,8 @@ if (empty($reshook)) {
 		$search_categ = '';
 		$search_user = '';
 		$search_sale = '';
-		$search_product_category = '';
+		$search_product_category_array = array();
+		$searchCategoryProductOperator = 0;
 		$search_id = '';
 		$search_refProduct = '';
 		$search_descProduct = '';
@@ -404,12 +419,6 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product'
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
-if ($sall || $search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
-}
-if ($search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
@@ -421,7 +430,6 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -439,9 +447,6 @@ if (!empty($productonly)) {
 }
 if (!empty($disablelinefree)) {
 	$sql .= " AND cdet.fk_product IS NOT NULL";
-}
-if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
@@ -592,8 +597,39 @@ if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 
+// Search for tag/category ($searchCategoryProductList is an array of ID)
+$searchCategoryProductList = $search_product_category_array;
+if (!empty($searchCategoryProductList)) {
+	$searchCategoryProjectSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryProductList as $searchCategoryProject) {
+		if (intval($searchCategoryProject) == -2) {
+			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT cp.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as cp WHERE cdet.fk_product = cp.fk_product)";
+		} elseif (intval($searchCategoryProject) > 0) {
+			if ($searchCategoryProductOperator == 0) {
+				$searchCategoryProjectSqlList[] = " EXISTS (SELECT cp.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as cp WHERE cdet.fk_product = cp.fk_product AND cp.fk_categorie = ".((int) $searchCategoryProject).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryProjectSqlList[] = " EXISTS (SELECT cp.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as cp WHERE cdet.fk_product = cp.fk_product AND cp.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryProductOperator == 1) {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProjectSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
+		}
+	}
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -782,8 +818,10 @@ if ($resql) {
 	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
-	if ($search_product_category != '') {
-		$param .= '&search_product_category='.urlencode($search_product_category);
+	if (!empty($search_product_category_array)) {
+		foreach ($search_product_category_array as $tmpval) {
+			$param .= '&search_categegory_product_list[]='.urlencode($tmpval);
+		}
 	}
 	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
@@ -894,14 +932,10 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	// If the user can view prospects other than his'
+	// Filter on categories
 	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
-		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$moreforfilter .= '<div class="divsearchfield">';
-		$tmptitle = $langs->trans('IncludingProductWithTag');
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
-		$moreforfilter .= '</div>';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $search_product_category_array, 'minwidth300imp minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
 	}
 	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

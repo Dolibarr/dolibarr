@@ -41,7 +41,7 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
 
-if (empty($conf->global->PAYMENT_ADDON)) {
+if (!getDolGlobalString('PAYMENT_ADDON')) {
 	$conf->global->PAYMENT_ADDON = 'mod_payment_cicada.php';
 }
 

@@ -634,7 +634,7 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array();
+$totalarray['val'] = array('totalttcfield'=>0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -800,7 +800,9 @@ while ($i < $imaxinloop) {
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Amount
@@ -808,8 +810,6 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			}
 			$totalarray['val']['totalttcfield'] += $obj->amount;

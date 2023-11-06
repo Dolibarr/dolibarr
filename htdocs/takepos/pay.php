@@ -261,7 +261,7 @@ if ($invoice->id > 0) {
 }
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
-if (getDolGlobalInt('TAKEPOS_NUMPAD') == 0) {
+if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	print "var received='';";
 } else {
 	print "var received=0;";
@@ -273,7 +273,7 @@ if (getDolGlobalInt('TAKEPOS_NUMPAD') == 0) {
 	function addreceived(price)
 	{
 		<?php
-		if (empty($conf->global->TAKEPOS_NUMPAD)) {
+		if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			print 'received+=String(price);'."\n";
 		} else {
 			print 'received+=parseFloat(price);'."\n";
@@ -348,7 +348,7 @@ if (getDolGlobalInt('TAKEPOS_NUMPAD') == 0) {
 				parent.$.colorbox.close();
 			}
 			else {
-				console.log("Amount is not comple, so we do NOT close popup and reload it.");
+				console.log("Amount is not complete, so we do NOT close popup and reload it.");
 				location.reload();
 			}
 		});
@@ -680,7 +680,7 @@ if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && !empty($conf->
 }
 
 $keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
-if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
+if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
 	if (getDolGlobalString($keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {

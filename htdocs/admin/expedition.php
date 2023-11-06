@@ -50,7 +50,7 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'shipping';
 
-if (empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
+if (!getDolGlobalString('EXPEDITION_ADDON_NUMBER')) {
 	$conf->global->EXPEDITION_ADDON_NUMBER = 'mod_expedition_safor';
 }
 
@@ -460,7 +460,7 @@ $htmltext .= '</i>';
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnShippings"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SHIPPING_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

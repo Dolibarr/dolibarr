@@ -692,9 +692,11 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 
 	// Public
-	$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-	$publiclabel = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
-	print '<tr><td>'.$publiclabel.'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+	if (!empty($conf->global->MEMBER_PUBLIC_ENABLED)) {
+		$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+		$publiclabel = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
+		print '<tr><td>'.$publiclabel.'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+	}
 
 	// Other attributes
 	$parameters['tpl_context']='public';	// define template context to public
@@ -870,17 +872,20 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			$objp = $db->fetch_object($result);	// Load the member type and information on it
 
 			print '<tr class="oddeven">';
+			// Label
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td class="nowrap">';
+			// Duration
+			print '<td class="center">';
 			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
 			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
+			// Amount
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
 			$caneditamount = $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
-					print $displayedamount.' '.strtoupper($conf->currency);
+					print price($displayedamount, 1, $langs, 1, 0, -1, $conf->currency);
 				}
 				if ($caneditamount && $displayedamount>0) {
 					print $form->textwithpicto('', $langs->transnoentities("CanEditAmountShortForValues"), 1, 'help', '', 0, 3);

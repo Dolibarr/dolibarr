@@ -9,7 +9,8 @@
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2017-2018	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1646,6 +1647,14 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$index++;
+
+		if (getDolGlobalString("BILL_TEXT_TOTAL_FOOTER")) {
+			$index++;
+			$index++;
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $conf->global->BILL_TEXT_TOTAL_FOOTER, 0, 'L', 0);
+		}
+
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 

@@ -40,6 +40,8 @@ class UserRightsToFunction extends AbstractRector
 	}
 
 	/**
+	 * Return a node type from https://github.com/rectorphp/php-parser-nodes-docs/
+	 *
 	 * @return string[]
 	 */
 	public function getNodeTypes(): array
