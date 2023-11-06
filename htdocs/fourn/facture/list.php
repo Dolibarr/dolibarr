@@ -1377,6 +1377,7 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 }
 if (!empty($arrayfields['f.nb_docs']['checked'])) {
 	print_liste_field_titre($arrayfields['f.nb_docs']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.login']['checked'])) {
 	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
