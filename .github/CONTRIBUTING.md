@@ -37,7 +37,7 @@ Unless you're fixing a bug, all pull requests should be made against the *develo
 
 If you're fixing a bug, it is preferred that you cook your fix and pull request it against an oldest version affected.
 
-We recommand to push it into N - 2 for N the latest version available, if not possible into version N - 1, and finally into develop.
+We recommend to push it into N - 2 for N the latest version available, if not possible into version N - 1, and finally into develop.
 This is just a recommendation, currently, if you push a bug fix on a very old version, it is still merged and propagated into
 higher versions. 
 
@@ -74,7 +74,7 @@ The keyword can be ommitted if your commit does not fit in any of the following 
 - Close/CLOSE: for closing a referenced feature request
 - New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Perf/PERF: for performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engeneering
+- Qual/QUAL: for quality code enhancement or re-engineering
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
@@ -107,7 +107,7 @@ NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into Chan
 or
 Short description (when the commit is not introducing feature nor closing a bug)
 
-Long description (Can span accross multiple lines).
+Long description (Can span across multiple lines).
 </pre>
 
 ### Pull Requests

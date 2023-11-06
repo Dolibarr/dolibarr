@@ -291,7 +291,7 @@ if ($object->id > 0) {
 		}
 	}
 
-
+	/*
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
@@ -305,12 +305,9 @@ if ($object->id > 0) {
 
 		// Try to know count of actioncomm from cache
 		$nbEvent = 0;
-		/*require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		 $cachekey = 'count_events_myobject_'.$object->id;
-		 $nbEvent = dol_getcache($cachekey);
-
-		 print_barre_liste($langs->trans("ActionsOnMyObject").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
-		 */
+		//require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		//$cachekey = 'count_events_myobject_'.$object->id;
+		//$nbEvent = dol_getcache($cachekey);
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': '');
 		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
@@ -322,6 +319,7 @@ if ($object->id > 0) {
 		// TODO Replace this with same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
 	}
+	*/
 }
 
 // End of page

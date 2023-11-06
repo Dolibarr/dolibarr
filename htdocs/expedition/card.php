@@ -752,7 +752,20 @@ if (empty($reshook)) {
 				} else {
 					if ($lines[$i]->fk_product > 0) {
 						// line without lot
-						if ($lines[$i]->entrepot_id > 0) {
+						if ($lines[$i]->entrepot_id == 0) {
+							// single warehouse shipment line
+							$stockLocation = 0;
+							$qty = "qtyl".$line_id;
+							$line->id = $line_id;
+							$line->entrepot_id = GETPOST($stockLocation, 'int');
+							$line->qty = GETPOST($qty, 'int');
+							if ($line->update($user) < 0) {
+								setEventMessages($line->error, $line->errors, 'errors');
+								$error++;
+							}
+							unset($_POST[$stockLocation]);
+							unset($_POST[$qty]);
+						} elseif ($lines[$i]->entrepot_id > 0) {
 							// single warehouse shipment line
 							$stockLocation = "entl".$line_id;
 							$qty = "qtyl".$line_id;
@@ -1268,7 +1281,7 @@ if ($action == 'create') {
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
-					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES) && empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 						$quantityToBeDelivered = 0;
 					} else {
 						if (is_numeric($quantityDelivered)) {
@@ -1283,14 +1296,18 @@ if ($action == 'create') {
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
-						$deliverableQty = min($quantityToBeDelivered, $stock);
+						if (!empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
+							$deliverableQty = $quantityToBeDelivered;
+						} else {
+							$deliverableQty = min($quantityToBeDelivered, $stock);
+						}
 						if ($deliverableQty < 0) {
 							$deliverableQty = 0;
 						}
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							// Quantity to send
 							print '<td class="center">';
-							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 								if (GETPOST('qtyl'.$indiceAsked, 'int')) {
 									$deliverableQty = GETPOST('qtyl'.$indiceAsked, 'int');
 								}
@@ -1331,7 +1348,7 @@ if ($action == 'create') {
 										}
 									}
 								} else {
-									print $langs->trans("Service");
+									print '<span class="opacitymedium">('.$langs->trans("Service").')</span><input name="entl'.$indiceAsked.'" id="entl'.$indiceAsked.'" type="hidden" value="0">';
 								}
 								print '</td>';
 							}
@@ -1466,7 +1483,7 @@ if ($action == 'create') {
 									// Quantity to send
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
-									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
 										} else {
@@ -1513,7 +1530,7 @@ if ($action == 'create') {
 											print '<!-- Show details of stock -->';
 											print '('.$stock.')';
 										} else {
-											print $langs->trans("Service");
+											print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 										}
 										print '</td>';
 									}
@@ -1655,7 +1672,7 @@ if ($action == 'create') {
 							print '<!-- line not shown yet, we show it -->';
 							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 
-							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
@@ -1683,7 +1700,7 @@ if ($action == 'create') {
 									}
 								}
 							} else {
-								print $langs->trans("Service");
+								print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 							}
 							print '</td>';
 							if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) print '<td></td>';//StockEntrydate
@@ -2407,12 +2424,20 @@ if ($action == 'create') {
 								print '<td> - '.$langs->trans("NA").'</td>';
 								print '</tr>';
 							}
-						} else {
+						} elseif ($lines[$i]->product_type == Product::TYPE_SERVICE && !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 							print '<!-- case edit 4 -->';
+							print '<tr>';
+							// Qty to ship or shipped
+							print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
+							print '<td><span class="opacitymedium">('.$langs->trans("Service").')</span></td>';
+							print '<td></td>';
+							print '</tr>';
+						} else {
+							print '<!-- case edit 5 -->';
 							print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
 						}
 					} else {
-						print '<!-- case edit 5 -->';
+						print '<!-- case edit 6 -->';
 						print '<tr>';
 						// Qty to ship or shipped
 						print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.$unit_order.'</td>';
@@ -2423,7 +2448,7 @@ if ($action == 'create') {
 						print '</tr>';
 					}
 				} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
-					print '<!-- case edit 6 -->';
+					print '<!-- case edit 7 -->';
 					print '<tr>';
 					// Qty to ship or shipped
 					print '<td><input class="qtyl" name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
@@ -2442,7 +2467,9 @@ if ($action == 'create') {
 				// Warehouse source
 				if (isModEnabled('stock')) {
 					print '<td class="linecolwarehousesource tdoverflowmax200">';
-					if ($lines[$i]->entrepot_id > 0) {
+					if ($lines[$i]->product_type == Product::TYPE_SERVICE && !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
+						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
+					} elseif ($lines[$i]->entrepot_id > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
 						print $entrepot->getNomUrl(1);

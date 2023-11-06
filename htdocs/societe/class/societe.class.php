@@ -5419,7 +5419,7 @@ class Societe extends CommonObject
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
-		global $langs, $hookmanager, $user;
+		global $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
@@ -5522,6 +5522,7 @@ class Societe extends CommonObject
 					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'FactureFournisseurRec' => '/fourn/class/fournisseur.facture-rec.class.php',
 					'Reception' => '/reception/class/reception.class.php',
 					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',

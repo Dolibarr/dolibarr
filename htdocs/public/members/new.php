@@ -872,17 +872,20 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			$objp = $db->fetch_object($result);	// Load the member type and information on it
 
 			print '<tr class="oddeven">';
+			// Label
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td class="nowrap">';
+			// Duration
+			print '<td class="center">';
 			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
 			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
+			// Amount
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
 			$caneditamount = $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
-					print $displayedamount.' '.strtoupper($conf->currency);
+					print price($displayedamount, 1, $langs, 1, 0, -1, $conf->currency);
 				}
 				if ($caneditamount && $displayedamount>0) {
 					print $form->textwithpicto('', $langs->transnoentities("CanEditAmountShortForValues"), 1, 'help', '', 0, 3);

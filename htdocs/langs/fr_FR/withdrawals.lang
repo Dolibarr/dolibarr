@@ -48,6 +48,7 @@ WithdrawRequestsDone=%s demandes de prélèvements enregistrées
 BankTransferRequestsDone=%s demandes de prélèvements enregistrées
 ThirdPartyBankCode=Code banque du tiers
 NoInvoiceCouldBeWithdrawed=Aucune facture traitée avec succès. Vérifiez que les factures sont sur les sociétés avec un BAN par défaut valide et que le BAN a un RUM avec le mode <strong> %s </strong>.
+NoInvoiceCouldBeWithdrawedSupplier=Aucune facture traitée avec succès. Vérifiez que les factures sont sur les sociétés avec un BAN par défaut valide.
 WithdrawalCantBeCreditedTwice=Le virement est déjà marqué comme étant crédité ; cela ne peut pas être fait deux fois, cela créerait potentiellement des paiements et des saisies bancaires en double.
 ClassCredited=Classer crédité
 ClassDebited=Classer Débité
@@ -162,3 +163,9 @@ WarningSomeDirectDebitOrdersAlreadyExists=Attention : Il y a déjà des ordres 
 WarningSomeCreditTransferAlreadyExists=Attention : Il y a déjà des virements en attente (%s) demandés pour un montant de %s
 UsedFor=Utilisé pour %s
 Societe_ribSigned=SEPA mandat signé
+NbOfInvoiceToPayByBankTransferForSalaries=Nombre de salaires qualifiées en attente de paiement par virement
+SalaryWaitingWithdraw=Salaire en attente de virement
+RefSalary=Salaire
+NoSalaryInvoiceToWithdraw=Aucune facture de salarié avec '%s' ouvert n'est en attente. Allez sur l'onglet '%s' sur la fiche de salaire pour faire une demande.
+SalaryInvoiceWaitingWithdraw=Facture salarié en attente de paiement par virement bancaire
+

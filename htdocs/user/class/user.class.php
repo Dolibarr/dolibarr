@@ -2822,6 +2822,7 @@ class User extends CommonObject
 			$datas['administrator'] = '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
 		}
 		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$langs->load("companies");
 			$datas['accountancycode'] = '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
 		}
 		$company = '';

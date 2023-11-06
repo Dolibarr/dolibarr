@@ -577,8 +577,8 @@ if ($action == 'create' && $permissiontoadd) {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">&nbsp;';
-	print '<button class="dpInvisibleButtons datenow" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'"> &nbsp;';
+	print ' <button class="dpInvisibleButtons datenowlink" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
 	print '</td>';
 	print '</tr>';
 
@@ -618,7 +618,8 @@ if ($action == 'create' && $permissiontoadd) {
 	// Type payment
 	print '<tr><td id="label_type_payment">';
 	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
+	print $form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
 
 	// Date payment
@@ -975,7 +976,6 @@ if ($id > 0) {
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
-
 	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1106,6 +1106,9 @@ if ($id > 0) {
 		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
 		}
+
+		//transfer request
+		print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id, '');
 
 		// Clone
 		if ($user->hasRight('salaries', 'write')) {
