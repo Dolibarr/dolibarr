@@ -253,7 +253,8 @@ class AdherentStats extends Stats
 	 * @param		int		$numberYears    Number of years to scan (0 = all)
 	 * @return		array 					Array with total of draft, pending, uptodate, expired, resiliated for each member tag
 	 */
-	public function countMembersByTagAndStatus($numberYears = 0) {
+	public function countMembersByTagAndStatus($numberYears = 0) 
+	{
 		global $user;
 
 		$now = dol_now();
@@ -314,9 +315,8 @@ class AdherentStats extends Stats
 				foreach ($MembersCountArray[$objp->fk_categorie] as $key=>$nb) {
 					if ($key!='label') {
 						$totalrow += $nb;
-						// total row sum only root tag cause all sublevel are already included in root level
-						if ($MembersCountArray[$objp->fk_categorie]['fk_parent'] == 0){
-						$totalstatus[$key] += $nb;
+						if ($MembersCountArray[$objp->fk_categorie]['fk_parent'] == 0){ // total row sum only root tag cause all sublevel are already included in root level
+							$totalstatus[$key] += $nb;
 						}
 					}
 				}
@@ -327,13 +327,13 @@ class AdherentStats extends Stats
 			$MembersCountArray = $this->buildTree($MembersCountArray, 0);
 			$MembersCountArray['total'] = $totalstatus;
 			$MembersCountArray['total']['all'] = array_sum($totalstatus);
-			$MembersCountArray['arraydepth'] = $this->array_depth($MembersCountArray);
+			$MembersCountArray['arraydepth'] = $this->arrayDepth($MembersCountArray);
 		}
 		return $MembersCountArray;
 	}
 
 	/**
-	 *	Recursive function returning a multidimensional array representing 
+	 *	Recursive function returning a multidimensional array representing
 	 *  a parent-child tree with the addition of a "depth" property at each level
 	 *
 	 * @param		array	$elements 		Array of elements in wich build a tree
@@ -341,10 +341,11 @@ class AdherentStats extends Stats
 	 * @param		int		$limit_depth    Maximum depth, beyond which elements are deleted from the returned tree
 	 * @return		array 					Multidimensional array representing a tree with a "depth" property
 	 */
-	function buildTree(array $elements, int $fk_parent = 0, int $limit_depth = -1) {
+	public function buildTree(array $elements, int $fk_parent = 0, int $limit_depth = -1)
+	{
 		$branch = array();
 		$depth = $limit_depth > 0 ? $limit_depth : -($limit_depth + 1);
-		
+
 		foreach ($elements as $key=>$element) {
 			if (is_array($element)) {
 				$element['depth'] = $depth;
@@ -357,7 +358,6 @@ class AdherentStats extends Stats
 				$branch[] = $element;
 			}
 		}
-	
 		return $branch;
 	}
 
@@ -367,11 +367,12 @@ class AdherentStats extends Stats
 	 * @param		array	$array 		Array of elements in wich build a tree
 	 * @return		int 	Maximum tree depth
 	 */
-	function array_depth(array $array) {
+	public function arrayDepth(array $array)
+	{
 		$max_depth = 0;
 		foreach ($array as $value) {
 			if (is_array($value)) {
-				$depth = array_key_exists('label', $value) ? $this->array_depth($value) + 1 : $this->array_depth($value);
+				$depth = array_key_exists('label', $value) ? $this->arrayDepth($value) + 1 : $this->arrayDepth($value);
 				$max_depth = $depth > $max_depth ? $depth : $max_depth;
 			}
 		}

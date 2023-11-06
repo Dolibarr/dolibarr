@@ -71,17 +71,16 @@ class box_members_by_tags extends ModeleBoxes
 		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
 	}
 
-	
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
-	 *  @param	array	$sumMembers		Maximum number of records to load
-	 *	@param	array	$head       	Array with properties of box title
-	 *	@param  array	$contents  		Array with properties of box lines
+	 *  @param	array	$sumMembers		Array of statistics of Member to use
+	 *	@param	array	$staticmember	Member object to use method of the class
+	 *	@param  array	$line	  		Array with properties of box lines
 	 *  @return	int		the next no of line of the box
 	 */
 
-	function addRows($sumMembers, $staticmember, $line) {
+	private function addRows($sumMembers, $staticmember, $line) {
 		$now = dol_now();
 		foreach ($sumMembers as $key => $data) {
 			$adhtag = new Categorie($this->db);
