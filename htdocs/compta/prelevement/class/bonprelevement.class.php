@@ -688,17 +688,17 @@ class BonPrelevement extends CommonObject
 		 */
 		$sql = "SELECT ";
 		if ($this->type == 'bank-transfer') {
-			$sql .= " pf.fk_facture_fourn";
+			$sql .= " p.fk_facture_fourn";
 		} else {
-			$sql .= " pf.fk_facture";
+			$sql .= " p.fk_facture";
 		}
 		if ($amounts) {
 			$sql .= ", SUM(pl.amount)";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
-		$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+		$sql .= " , ".MAIN_DB_PREFIX."prelevement as p";
+		$sql .= " WHERE p.fk_prelevement_lignes = pl.rowid";
 		$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 		$sql .= " AND p.rowid = ".((int) $this->id);
 		$sql .= " AND p.entity = ".((int) $conf->entity);
@@ -1672,18 +1672,18 @@ class BonPrelevement extends CommonObject
 
 				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-				$sql .= " f.ref as reffac, pf.fk_facture as idfac,";
+				$sql .= " f.ref as reffac, p.fk_facture as idfac,";
 				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf,";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as p,";
 				$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
 				$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
 				$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
 				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
-				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
-				$sql .= " AND pf.fk_facture = f.rowid";
+				$sql .= " AND pl.rowid = p.fk_prelevement_lignes";
+				$sql .= " AND p.fk_facture = f.rowid";
 				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
@@ -1787,11 +1787,11 @@ class BonPrelevement extends CommonObject
 				/*
 				 * Section Creditor (sepa Crediteurs bloc lines)
 				 */
-				// add condition for traiting sourcetype  TODO
 				if (!empty($user_dest)) {
 					$sql = "SELECT u.rowid as userId, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-					$sql .= " s.rowid as idSalary,rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum";
+					$sql .= " s.ref as reffac, p.fk_salary as idfac,";
+					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, '' as rum, '' as date_rum";
 					$sql .= " FROM";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."salary as s,";
@@ -1808,18 +1808,18 @@ class BonPrelevement extends CommonObject
 				} else {
 					$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 					$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-					$sql .= " f.ref as reffac, pf.fk_facture_fourn as idfac, f.ref_supplier as fac_ref_supplier,";
+					$sql .= " f.ref as reffac, f.ref_supplier as fac_ref_supplier, p.fk_facture_fourn as idfac,";
 					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 					$sql .= " FROM";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
-					$sql .= " ".MAIN_DB_PREFIX."prelevement as pf,";
+					$sql .= " ".MAIN_DB_PREFIX."prelevement as p,";
 					$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
 					$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
 					$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
 					$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
-					$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
-					$sql .= " AND pf.fk_facture_fourn = f.rowid";
+					$sql .= " AND pl.rowid = p.fk_prelevement_lignes";
+					$sql .= " AND p.fk_facture_fourn = f.rowid";
 					$sql .= " AND f.fk_soc = soc.rowid";
 					$sql .= " AND soc.fk_pays = c.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
@@ -1906,10 +1906,10 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as p";
 				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
-				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
-				$sql .= " AND pf.fk_facture = f.rowid";
+				$sql .= " AND pl.rowid = p.fk_prelevement_lignes";
+				$sql .= " AND p.fk_facture = f.rowid";
 
 				// Lines
 				$i = 0;
@@ -1932,10 +1932,10 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as p";
 				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
-				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
-				$sql .= " AND pf.fk_facture_fourn = f.rowid";
+				$sql .= " AND pl.rowid = p.fk_prelevement_lignes";
+				$sql .= " AND p.fk_facture_fourn = f.rowid";
 				// Lines
 				$i = 0;
 				$resql = $this->db->query($sql);
@@ -2074,8 +2074,8 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$row_cg				pl.code_guichet AS cg,		Not used for SEPA
 	 *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA
 	 *	@param	string		$row_somme			pl.amount AS somme,
-	 *	@param	string		$row_ref			Invoice ref (f.ref)
-	 *	@param	string		$row_idfac			pf.fk_facture AS idfac,
+	 *	@param	string		$row_ref			Invoice ref (f.ref) or Salary ref
+	 *	@param	string		$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
 	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
 	 *	@param	string		$row_bic			rib.bic AS bic,
 	 *	@param	string		$row_datec			rib.datec,
@@ -2150,7 +2150,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '			</DrctDbtTxInf>'.$CrLf;
 			return $XML_DEBITOR;
 		} else {
-			// SEPA Paiement Information of seller for Credit Transfer
+			// SEPA Payment Information of seller for Credit Transfer
 			$XML_CREDITOR = '';
 			$XML_CREDITOR .= '			<CdtTrfTxInf>'.$CrLf;
 			$XML_CREDITOR .= '				<PmtId>'.$CrLf;
