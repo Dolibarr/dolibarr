@@ -241,3 +241,5 @@ MemberFirstname=Member firstname
 MemberLastname=Member lastname
 MemberCodeDesc=Member Code, unique for all members
 NoRecordedMembers=No recorded members
+NoRecordedMembers=Aucun membre enregistré
+MaxLevelTagToShow=Categories up to level %s

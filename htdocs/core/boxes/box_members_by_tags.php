@@ -151,7 +151,7 @@ class box_members_by_tags extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs;
-		$langs->load("boxes");
+		$langs->load("boxes", "members");
 
 		$this->max = $max;
 
@@ -191,9 +191,8 @@ class box_members_by_tags extends ModeleBoxes
 				  }
 				}";
 				$selectdepth = '<select name="maxdepth" id="maxdepth" onchange="'.$onchange.'">';
-				//$selectdepth .= '<option value="">' . $langs->trans('ALL_LEVEL_TAG') . '</option>';
 				foreach (range($sumMembers['arraydepth']-1, 0) as $k => $v){
-					$selectdepth .= '<option value="'.$v.'">'.$langs->trans('MAX_LEVEL_TAG ', $v) .$v. '</option>';
+					$selectdepth .= '<option value="'.$v.'">'.$langs->trans('MaxLevelTagToShow', $v). '</option>';
 				}
 				$selectdepth .= '</select>';
 
@@ -250,7 +249,7 @@ class box_members_by_tags extends ModeleBoxes
 				if (count($sumMembers) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center" colspan="6"',
-						'text' => $langs->trans("NoRecordedMembersByTag")
+						'text' => $langs->trans("NoRecordedMembers")
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
