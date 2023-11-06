@@ -173,3 +173,7 @@ ALTER TABLE llx_facturedet ADD COLUMN fk_warehouse integer NULL;	-- To store the
 
 ALTER TABLE llx_multicurrency_rate ADD COLUMN rate_indirect double DEFAULT 0;
 
+ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
+-- VMYSQL4.1 UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline' AND mk.fk_unit IS NULL;
+-- VMYSQL4.1 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
+
