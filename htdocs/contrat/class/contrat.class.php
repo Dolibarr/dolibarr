@@ -2789,10 +2789,11 @@ class Contrat extends CommonObject
 					// Test if there is pending invoice
 					$object->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
 
-					if (is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
-						usort($object->linkedObjects['facture'], "cmp");
+					if (isset($object->linkedObjects['facture']) && is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
+						// Sort array of linked invoices by ascending date
+						usort($object->linkedObjects['facture'], array('Contrat', 'contractCmpDate'));
+						//dol_sort_array($object->linkedObjects['facture'], 'date');
 
-						//dol_sort_array($contract->linkedObjects['facture'], 'date');
 						$someinvoicenotpaid=0;
 						foreach ($object->linkedObjects['facture'] as $idinvoice => $invoice) {
 							if ($invoice->statut == Facture::STATUS_DRAFT) continue;	// Draft invoice are not invoice not paid
@@ -2883,6 +2884,21 @@ class Contrat extends CommonObject
 		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.join(',', $contractlineprocessed) : '');
 
 		return ($error ? 1: 0);
+	}
+
+	/**
+	 * Used to sort lines by date
+	 *
+	 * @param	Object	$a		1st element to test
+	 * @param	Object	$b		2nd element to test
+	 * @return int
+	 */
+	static public function contractCmpDate($a, $b)
+	{
+		if ($a->date == $b->date) {
+			return strcmp((string) $a->id, (string) $b->id);
+		}
+		return ($a->date < $b->date) ? -1 : 1;
 	}
 
 	/**
