@@ -493,7 +493,7 @@ if ($resql) {
 				if (!empty($bac->iban) || !empty($bac->bic)) {
 					print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 					if ($bac->verif() <= 0) {
-						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error_message));
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
 					}
 				} else {
 					print img_warning($langs->trans("IBANNotDefined"));

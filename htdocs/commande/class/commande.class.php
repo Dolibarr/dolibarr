@@ -2344,7 +2344,7 @@ class Commande extends CommonOrder
 	 *
 	 *	TODO		FONCTION NON FINIE A FINIR
 	 */
-	public function stock_array($filtre_statut = self::STATUS_CANCELED)
+	/*public function stock_array($filtre_statut = self::STATUS_CANCELED)
 	{
 		// phpcs:enable
 		$this->stocks = array();
@@ -2372,7 +2372,7 @@ class Commande extends CommonOrder
 			}
 		}
 		return 0;
-	}
+	}*/
 
 	/**
 	 *  Delete an order line

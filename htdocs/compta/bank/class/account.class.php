@@ -1568,11 +1568,11 @@ class Account extends CommonObject
 		// Call functions to check BAN
 		if (!checkIbanForAccount($this)) {
 			$error++;
-			$this->error_message = 'IBANNotValid';
+			$this->error = 'IBANNotValid';
 		}
 		if (!checkSwiftForAccount($this)) {
 			$error++;
-			$this->error_message = 'SwiftNotValid';
+			$this->error = 'SwiftNotValid';
 		}
 
 		if (! $error) {
@@ -2014,6 +2014,10 @@ class AccountLine extends CommonObjectLine
 
 	public $note;
 
+	/**
+	 * User author of the rapprochement.
+	 */
+	public $user_rappro;
 
 
 	/**
