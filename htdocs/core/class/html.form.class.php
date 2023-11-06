@@ -6633,11 +6633,7 @@ class Form
 			foreach ($this->cache_vatrates as $rate) {
 				// Keep only 0 if seller is not subject to VAT
 				if (!$assujtva && $fourn) {
-					$return .= '<option value="0"';
-					$return .= '>';
-					$return .= '0';
-					$return .= '%';
-					$return .= '</option>';
+					$return .= '<option value="0">0%</option>';
 					continue;
 				}
 
