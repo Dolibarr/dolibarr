@@ -2786,9 +2786,11 @@ class Contrat extends CommonObject
 					$duration_unit = preg_replace('/\d/', '', $obj->duration);
 					//var_dump($expirationdate.' '.$enddatetoscan);
 
-					// Test if there is pending invoice
+					// Load linked ->linkedObjects (objects linked)
+					// @TODO Comment this line and then make the search if there is n open invoice(s) by doing a dedicated SQL COUNT request to fill $contractcanceled.
 					$object->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
 
+					// Test if there is at least 1 open invoice
 					if (isset($object->linkedObjects['facture']) && is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
 						// Sort array of linked invoices by ascending date
 						usort($object->linkedObjects['facture'], array('Contrat', 'contractCmpDate'));
