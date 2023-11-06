@@ -3913,7 +3913,7 @@ abstract class CommonObject
 	 *	@param  string		$clause				'OR' or 'AND' clause used when both source id and target id are provided
 	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
-	 *  @param	int|string	$loadalsoobjects	Load also array this->linkedObjects. Use 0 to increase performances, Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
+	 *  @param	int|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
 	 *	@return int								<0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
@@ -9854,9 +9854,8 @@ abstract class CommonObject
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
 					$TMoreSQL = array();
-					$more_sql = $deleteFromObject[3];
-					if (!empty($more_sql)) {
-						$TMoreSQL['customsql'] = $more_sql;
+					if (!empty($deleteFromObject[3])) {
+						$TMoreSQL['customsql'] = $deleteFromObject[3];
 					}
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);

@@ -1442,6 +1442,12 @@ class SupplierProposal extends CommonObject
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
 					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'supplier_proposal/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
@@ -1616,7 +1622,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
-		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
+		$sql .= " date_cloture = NULL, fk_user_cloture = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
