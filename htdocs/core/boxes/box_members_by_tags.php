@@ -79,8 +79,8 @@ class box_members_by_tags extends ModeleBoxes
 	 *	@param  array	$line	  		Array with properties of box lines
 	 *  @return	int		the next no of line of the box
 	 */
-
-	private function addRows($sumMembers, $staticmember, $line) {
+	private function addRows($sumMembers, $staticmember, $line)
+	{
 		$now = dol_now();
 		foreach ($sumMembers as $key => $data) {
 			$adhtag = new Categorie($this->db);
@@ -134,7 +134,7 @@ class box_members_by_tags extends ModeleBoxes
 			);
 			$line++;
 
-			if (!empty($data['children'])){
+			if (!empty($data['children'])) {
 				$line=$this->addRows($data['children'], $staticmember, $line);
 			}
 		}
@@ -190,7 +190,7 @@ class box_members_by_tags extends ModeleBoxes
 				  }
 				}";
 				$selectdepth = '<select name="maxdepth" id="maxdepth" onchange="'.$onchange.'">';
-				foreach (range($sumMembers['arraydepth']-1, 0) as $k => $v){
+				foreach (range($sumMembers['arraydepth']-1, 0) as $k => $v) {
 					$selectdepth .= '<option value="'.$v.'">'.$langs->trans('MaxLevelTagToShow', $v). '</option>';
 				}
 				$selectdepth .= '</select>';
@@ -242,7 +242,7 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
-				// add rows with recursive function to browse the entire tree 
+				// add rows with recursive function to browse the entire tree
 				$line = $this->addRows($sumMembers, $staticmember, $line);
 
 				if (count($sumMembers) == 0) {

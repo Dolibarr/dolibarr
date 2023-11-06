@@ -253,7 +253,7 @@ class AdherentStats extends Stats
 	 * @param		int		$numberYears    Number of years to scan (0 = all)
 	 * @return		array 					Array with total of draft, pending, uptodate, expired, resiliated for each member tag
 	 */
-	public function countMembersByTagAndStatus($numberYears = 0) 
+	public function countMembersByTagAndStatus($numberYears = 0)
 	{
 		global $user;
 
@@ -315,7 +315,8 @@ class AdherentStats extends Stats
 				foreach ($MembersCountArray[$objp->fk_categorie] as $key=>$nb) {
 					if ($key!='label') {
 						$totalrow += $nb;
-						if ($MembersCountArray[$objp->fk_categorie]['fk_parent'] == 0){ // total row sum only root tag cause all sublevel are already included in root level
+						// total row sum only root tag cause all sublevel are already included in root level
+						if ($MembersCountArray[$objp->fk_categorie]['fk_parent'] == 0) {
 							$totalstatus[$key] += $nb;
 						}
 					}
