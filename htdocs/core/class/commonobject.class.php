@@ -6373,7 +6373,7 @@ abstract class CommonObject
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribut
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator
-					$sql .= ",".$attributeKey;
+					$sql .= ",`".$attributeKey."`";
 				}
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
