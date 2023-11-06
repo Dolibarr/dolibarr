@@ -975,7 +975,6 @@ if ($id > 0) {
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
-
 	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1106,6 +1105,9 @@ if ($id > 0) {
 		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->hasRight('salaries', 'write')) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
 		}
+
+		//transfer request
+		print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id, '');
 
 		// Clone
 		if ($user->hasRight('salaries', 'write')) {
