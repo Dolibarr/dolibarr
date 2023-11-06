@@ -306,6 +306,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="socid" value="'.$object->id.'">';
 		print '<table class="border centpercent">';
 		print '<tr>';
@@ -534,10 +536,26 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n</div>\n";
 
 
+		$arrayfields = array();
+		foreach ($prodcustprice->fields as $key => $val) {
+			// If $val['visible']==0, then we never show the field
+			if (!empty($val['visible'])) {
+				$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+				$arrayfields['t.'.$key] = array(
+					'label'=>$val['label'],
+					'checked'=>(($visible < 0) ? 0 : 1),
+					'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+					'position'=>$val['position'],
+					'help'=> isset($val['help']) ? $val['help'] : ''
+				);
+			}
+		}
+		$arrayfields = dol_sort_array($arrayfields, 'position');
+
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 		}
 
 		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
@@ -558,18 +576,13 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
+		$param = 'socid='.$object->id.'&';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td>'.$langs->trans("Product").'</td>';
-		print '<td>'.$langs->trans('RefCustomer').'</td>';
-		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
-		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
-		print '<td class="right">'.$langs->trans("VAT").'</td>';
-		print '<td class="right">'.$langs->trans("HT").'</td>';
-		print '<td class="right">'.$langs->trans("TTC").'</td>';
-		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
-		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
-		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
+		foreach ($prodcustprice->fields as $key => $val) {
+			if (!empty($arrayfields['t.'.$key]['checked'])) {
+				print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
+			}
+		}
 		print '<td></td>';
 		print '</tr>';
 
@@ -581,8 +594,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
-			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
+			print '<td class="liste_titre left"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
+			print '<td class="liste_titre left"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
@@ -604,18 +617,18 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticprod->getNomUrl(1)."</td>";
-				print "<td>".$staticprod->label."</td>";
-				print '<td>'.$line->ref_customer.'</td>';
-				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
-				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
-				print '<td class="right">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
-				print '<td class="right">'.price($line->price)."</td>";
-				print '<td class="right">'.price($line->price_ttc)."</td>";
-				print '<td class="right">'.price($line->price_min).'</td>';
-				print '<td class="right">'.price($line->price_min_ttc).'</td>';
+				print '<td class="left">'.$staticprod->getNomUrl(1)."</td>";
+				print '<td class="left">'.$staticprod->label."</td>";
+				print '<td class="left">'.$line->ref_customer.'</td>';
+				print '<td class="left">'.dol_print_date($line->datec, "dayhour")."</td>";
+				print '<td class="left">'.$langs->trans($line->price_base_type)."</td>";
+				print '<td class="left">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
+				print '<td class="left">'.price($line->price)."</td>";
+				print '<td class="left">'.price($line->price_ttc)."</td>";
+				print '<td class="left">'.price($line->price_min).'</td>';
+				print '<td class="left">'.price($line->price_min_ttc).'</td>';
 				// User
-				print '<td class="right">';
+				print '<td class="left">';
 				print $userstatic->getNomUrl(-1);
 				print '</td>';
 				// Action
