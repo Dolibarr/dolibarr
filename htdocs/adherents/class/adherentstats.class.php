@@ -368,12 +368,16 @@ class AdherentStats extends Stats
 	 * @param		array	$array 		Array of elements in wich build a tree
 	 * @return		int 	Maximum tree depth
 	 */
-	public function arrayDepth(array $array)
+	public function arrayDepth(array $array, $depth = 0)
 	{
+		// test against infinite loop
+		if ($depth > 1000){
+			return $depth;
+		}
 		$max_depth = 0;
 		foreach ($array as $value) {
 			if (is_array($value)) {
-				$depth = array_key_exists('label', $value) ? $this->arrayDepth($value) + 1 : $this->arrayDepth($value);
+				$depth = array_key_exists('label', $value) ? $this->arrayDepth($value,$depth) + 1 : $this->arrayDepth($value, $depth);
 				$max_depth = $depth > $max_depth ? $depth : $max_depth;
 			}
 		}
