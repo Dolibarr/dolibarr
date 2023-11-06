@@ -160,6 +160,36 @@ abstract class DolibarrTriggers
 	}
 
 	/**
+	 * Returns the name of picto of trigger file
+	 *
+	 * @return string
+	 */
+	public function getPicto(): string
+	{
+		return $this->picto;
+	}
+
+	/**
+	 * Returns the family of trigger file
+	 *
+	 * @return string
+	 */
+	public function getFamily(): string
+	{
+		return $this->family;
+	}
+
+	/**
+	 * Returns the errors of trigger file
+	 *
+	 * @return array
+	 */
+	public function getErrors(): array
+	{
+		return $this->errors;
+	}
+
+	/**
 	 *  Function called when a Dolibarr business event is done.
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
