@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Based of: https://gist.github.com/jaymzcd/342399
+# Based of: https://gist.github.com/jaymzcd/342399 and https://github.com/buren/flag-sprite-maker
 
 # uses imagemagick to stich together all images in a folder and
 # then writes a css file with the correct offsets along with a
