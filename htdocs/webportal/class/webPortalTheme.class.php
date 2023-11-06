@@ -81,67 +81,6 @@ class WebPortalTheme
 		}
 
 		$this->primaryColorHex = $outColor;
-		$this->primaryColorHsl = $this->colorHexToHsl($outColor, true, true);
-	}
-
-	/**
-	 * @param string 	$hex 			color in hex
-	 * @param float|false 	$alpha 			0 to 1 to add alpha channel
-	 * @param bool 		$returnArray	true=return an array instead, false=return string
-	 * @return string|array				String or array
-	 */
-	public function colorHexToHsl($hex, $alpha = false, $returnArray = false)
-	{
-		if (function_exists('colorHexToHsl')) {
-			return colorHexToHsl($hex, $alpha, $returnArray);
-		}
-
-		// For retro compatibility
-		// TODO : Remove this when webportal is included in DOLIBARR standard
-		$hex      = str_replace('#', '', $hex);
-		$red = hexdec(substr($hex, 0, 2)) / 255;
-		$green = hexdec(substr($hex, 2, 2)) / 255;
-		$blue = hexdec(substr($hex, 4, 2)) / 255;
-
-		$cmin = min($red, $green, $blue);
-		$cmax = max($red, $green, $blue);
-		$delta = $cmax - $cmin;
-
-		if ($delta == 0) {
-			$hue = 0;
-		} elseif ($cmax === $red) {
-			$hue = (($green - $blue) / $delta);
-		} elseif ($cmax === $green) {
-			$hue = ($blue - $red) / $delta + 2;
-		} else {
-			$hue = ($red - $green) / $delta + 4;
-		}
-
-		$hue = round($hue * 60);
-		if ($hue < 0) {
-			$hue += 360;
-		}
-
-		$lightness = (($cmax + $cmin) / 2);
-		$saturation = $delta === 0 ? 0 : ($delta / (1 - abs(2 * $lightness - 1)));
-		if ($saturation < 0) {
-			$saturation += 1;
-		}
-
-		$lightness = round($lightness*100);
-		$saturation = round($saturation*100);
-
-		if ($returnArray) {
-			return array(
-				'h' => $hue,
-				'l' => $lightness,
-				's' => $saturation,
-				'a' => $alpha === false ? 1 : $alpha
-			);
-		} elseif ($alpha) {
-			return 'hsla(' . $hue . ', ' . $saturation . ', ' . $lightness . ' / ' . $alpha . ')';
-		} else {
-			return 'hsl(' . $hue . ', ' . $saturation . ', ' . $lightness . ')';
-		}
+		$this->primaryColorHsl = colorHexToHsl($outColor, true, true);
 	}
 }
