@@ -30,31 +30,31 @@ abstract class DolibarrTriggers
 	 * Name of the trigger
 	 * @var mixed|string
 	 */
-	public $name = '';
+	public $name;
 
 	/**
 	 * Description of the trigger
 	 * @var string
 	 */
-	public $description = '';
+	public $description;
 
 	/**
 	 * Version of the trigger
 	 * @var string
 	 */
-	public $version = self::VERSION_DEVELOPMENT;
+	public $version;
 
 	/**
 	 * Image of the trigger
 	 * @var string
 	 */
-	public $picto = 'technic';
+	public $picto;
 
 	/**
 	 * Category of the trigger
 	 * @var string
 	 */
-	public $family = '';
+	public $family;
 
 	/**
 	 * Error reported by the trigger
@@ -62,13 +62,13 @@ abstract class DolibarrTriggers
 	 * @deprecated Use $this->errors
 	 * @see $errors
 	 */
-	public $error = '';
+	public $error;
 
 	/**
 	 * Errors reported by the trigger
 	 * @var array
 	 */
-	public $errors = array();
+	public $errors;
 
 	/**
 	 * @var string module is in development
@@ -92,12 +92,14 @@ abstract class DolibarrTriggers
 	 */
 	public function __construct(DoliDB $db)
 	{
-
 		$this->db = $db;
-
-		if (empty($this->name)) {
-			$this->name = preg_replace('/^Interface/i', '', get_class($this));
-		}
+		$this->name = empty($this->name) ? preg_replace('/^Interface/i', '', get_class($this)) : '';
+		$this->description = '';
+		$this->version = self::VERSION_DEVELOPMENT;
+		$this->picto = 'technic';
+		$this->family = '';
+		$this->error = '';
+		$this->errors = [];
 	}
 
 	/**
