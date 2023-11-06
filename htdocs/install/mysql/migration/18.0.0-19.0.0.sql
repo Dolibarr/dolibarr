@@ -168,13 +168,5 @@ UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=su
 
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_datec(datec);
 
-CREATE TABLE llx_mrp_production_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
 ALTER TABLE llx_facturedet ADD COLUMN batch varchar(128) NULL;		-- To store the batch to consume in stock when using a POS module
 ALTER TABLE llx_facturedet ADD COLUMN fk_warehouse integer NULL;	-- To store the warehouse where to consume stock when using a POS module
