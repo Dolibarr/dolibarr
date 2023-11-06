@@ -47,7 +47,7 @@ class InterfaceStripe extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = 'stripe';
 		$this->description = "Triggers of the module Stripe";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'stripe';
 	}
 

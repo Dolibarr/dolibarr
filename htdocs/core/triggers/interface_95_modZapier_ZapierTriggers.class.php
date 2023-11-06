@@ -41,8 +41,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "technic";
 		$this->description = "Zapier triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DEVELOPMENT;
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'zapier';
 	}
 

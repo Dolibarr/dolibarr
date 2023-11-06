@@ -43,8 +43,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ldap";
 		$this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
