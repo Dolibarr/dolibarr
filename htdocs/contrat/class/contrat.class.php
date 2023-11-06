@@ -2770,7 +2770,7 @@ class Contrat extends CommonObject
 					// Load contract
 					$object = new Contrat($this->db);
 					$object->fetch($obj->rowid);		// fetch also lines
-					$object->fetch_thirdparty();
+					//$object->fetch_thirdparty();
 
 					if ($object->id <= 0) {
 						$error++;
@@ -2803,7 +2803,7 @@ class Contrat extends CommonObject
 						}
 						if ($someinvoicenotpaid) {
 							$this->output .= 'Contract '.$object->ref.' is qualified for renewal but there is '.$someinvoicenotpaid.' invoice(s) unpayed so we cancel renewal'."\n";
-							$contractignored[$object->id]=$object->ref;
+							$contractignored[$object->id] = $object->ref;
 							continue;
 						}
 					}
@@ -2845,7 +2845,7 @@ class Contrat extends CommonObject
 								$actioncomm->datep        = $now;
 								$actioncomm->datef        = $now;
 								$actioncomm->percentage   = -1;   // Not applicable
-								$actioncomm->socid        = $object->thirdparty->id;
+								$actioncomm->socid        = $object->socid;
 								$actioncomm->authorid     = $user->id;   // User saving action
 								$actioncomm->userownerid  = $user->id;	// Owner of action
 								$actioncomm->fk_element   = $object->id;
