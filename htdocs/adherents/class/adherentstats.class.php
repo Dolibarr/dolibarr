@@ -366,6 +366,7 @@ class AdherentStats extends Stats
 	 *	Recursive function returning the deepest level of a multidimentionnal array
 	 *
 	 * @param		array	$array 		Array of elements in wich build a tree
+	 * @param		int		$depth 		Array of elements in wich build a tree
 	 * @return		int 	Maximum tree depth
 	 */
 	public function arrayDepth(array $array, $depth = 0)
