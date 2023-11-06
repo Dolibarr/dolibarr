@@ -1025,10 +1025,13 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-			$soc = new Societe($this->db);
+			$tmpsoc = new Societe($this->db);
+			$tmpuser = new User($this->db);
 
 			// Check BAN
 			$i = 0;
@@ -1074,12 +1077,22 @@ class BonPrelevement extends CommonObject
 						} else {
 							if ($type != 'bank-transfer') {
 								$invoice_url = "<a href='".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$fac[0]."'>".$fac[9]."</a>";
-							} else {
-								$invoice_url = "<a href='".DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$fac[0]."'>".$fac[9]."</a>";
+								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
+								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
 							}
-							dol_syslog(__METHOD__ . " Check BAN Error on default bank number IBAN/BIC for thirdparty reported by verif() " . $fac->fk_soc . " " . $soc->name, LOG_WARNING);
-							$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
-							$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
+							if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+								$invoice_url = "<a href='".DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$fac[0]."'>".$fac[9]."</a>";
+								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
+								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
+							}
+							if ($type == 'bank-transfer' && $sourcetype == 'salary') {
+								$tmpuser->id = $fac[2];
+								$tmpuser->firstname = $fac[8];
+								$salary_url = "<a href='".DOL_URL_ROOT.'/salary/card.php?id='.$fac[0]."'>".$fac[0]."</a>";
+								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
+								$this->thirdparty_in_error[$tmpuser->id] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
+							}
+							dol_syslog(__METHOD__ . " Check BAN Error on default bank number IBAN/BIC reported by verif(): " . join(', ', $fac) . " - " . $soc->name, LOG_WARNING);
 						}
 					} else {
 						dol_syslog(__METHOD__ . " Check BAN Failed to read company", LOG_WARNING);

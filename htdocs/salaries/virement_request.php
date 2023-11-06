@@ -175,7 +175,7 @@ if ($action == "new") {
 		$action = '';
 }
 
-if ($action == "delete" && $usercancreate) {
+if ($action == "delete" && $permissiontodelete) {
 	if ($object->id > 0) {
 		$result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
 		if ($result == 0) {
@@ -264,7 +264,6 @@ print '<div class="fichehalfleft">';
 
 print '<div class="underbanner clearboth"></div>';
 
-print '<br>';
 
 print '<table class="border centpercent tableforfield">';
 

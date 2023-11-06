@@ -302,7 +302,7 @@ while ($i < min($num, $limit)) {
 		$thirdpartystatic->name = $obj->name;
 		print $thirdpartystatic->getNomUrl(1, 'customer');
 	} else {
-		print $userstatic->getNomUrl(1, 'accountancy');
+		print $userstatic->getNomUrl(-1, 'accountancy');
 	}
 	print '</td>';
 

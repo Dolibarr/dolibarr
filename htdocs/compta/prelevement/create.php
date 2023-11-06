@@ -131,11 +131,12 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
+				$mesg = '';
 				if ($type != 'bank-transfer') {
 					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 				}
 				if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSuppliers", $format);
+					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSupplier", $format);
 				}
 				if ($type == 'bank-transfer' && $sourcetype == 'salary') {
 					$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
@@ -479,8 +480,12 @@ if ($resql) {
 	} else {
 		print '<td>'.$langs->trans("Employee").'</td>';
 	}
+	// BAN
 	print '<td>'.$langs->trans("RIB").'</td>';
-	print ($sourcetype != 'salary'? '<td>'.$langs->trans("RUM").'</td>' : '');
+	// RUM
+	if (empty($type) || $type == 'direc-debit') {
+		print '<td>'.$langs->trans("RUM").'</td>';
+	}
 	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	// Action column
@@ -553,10 +558,10 @@ if ($resql) {
 			} else {
 				print '<td class="tdoverflowmax100">';
 				$user->fetch($obj->fk_user);
-				print $user->getNomUrl(1);
+				print $user->getNomUrl(-1);
 				print '</td>';
 			}
-			// RIB
+			// BAN
 			print '<td>';
 			if ($bac->id > 0) {
 				if (!empty($bac->iban) || !empty($bac->bic)) {
@@ -573,7 +578,7 @@ if ($resql) {
 			print '</td>';
 
 			// RUM
-			if ($sourcetype != 'salary') {
+			if (empty($type) || $type == 'direc-debit') {
 				print '<td>';
 				$rumtoshow = $thirdpartystatic->display_rib('rum');
 				if ($rumtoshow) {

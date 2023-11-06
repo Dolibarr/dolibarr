@@ -1959,16 +1959,6 @@ if ($action == 'create') {
 		$form->selectInputReason((GETPOSTISSET('demand_reason_id') ? GETPOST('demand_reason_id', 'int') : ''), 'demand_reason_id', "SRC_PROP", 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
-		// Delivery delay
-		print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
-		if (isModEnabled('commande')) {
-			print ' ('.$langs->trans('AfterOrder').')';
-		}
-		print '</td><td class="valuefieldcreate">';
-		print img_picto('', 'clock', 'class="pictofixedwidth"');
-		$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOST('availability_id', 'int') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
-		print '</td></tr>';
-
 		// Shipping Method
 		if (isModEnabled("expedition")) {
 			if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
@@ -1988,6 +1978,16 @@ if ($action == 'create') {
 			print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
 			print '</td></tr>';
 		}
+
+		// Delivery delay
+		print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
+		if (isModEnabled('commande')) {
+			print ' ('.$langs->trans('AfterOrder').')';
+		}
+		print '</td><td class="valuefieldcreate">';
+		print img_picto('', 'clock', 'class="pictofixedwidth"');
+		$form->selectAvailabilityDelay((GETPOSTISSET('availability_id') ? GETPOST('availability_id', 'int') : ''), 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		print '</td></tr>';
 
 		// Delivery date (or manufacturing)
 		print '<tr class="field_date_livraison"><td class="titlefieldcreate">'.$langs->trans("DeliveryDate").'</td>';
