@@ -102,8 +102,6 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-restrictedArea($user, 'salaries', $object->id, 'salary', '');
-
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
@@ -127,28 +125,12 @@ if ($id > 0 || !empty($ref)) {
 
 $hookmanager->initHooks(array('directdebitcard', 'globalcard'));
 
-if ($type == 'bank-transfer') {
-	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', $fieldid, $isdraft);
-	if (empty($user->rights->fournisseur->facture->lire)) {
-		accessforbidden();
-	}
-} else {
-	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
-	if (!$user->hasRight('facture', 'lire')) {
-		accessforbidden();
-	}
-}
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
-if ($type == 'bank-transfer') {
-	$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
-} else {
-	$usercancreate = $user->hasRight('facture', 'creer');
-}
 
 /*
  * Actions
  */
-
 
 // Link to a project
 if ($action == 'classin' && $user->rights->banque->modifier) {
