@@ -251,7 +251,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 print '<table class="liste centpercent">';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre(($sourcetype ? "SalaryInvoice" : "Bill"), $_SERVER["PHP_SELF"]);
+print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre(($sourcetype ? "Employee" :"Company"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');

@@ -131,7 +131,15 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
-				$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+				if ($type != 'bank-transfer') {
+					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+				}
+				if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSuppliers", $format);
+				}
+				if ($type == 'bank-transfer' && $sourcetype == 'salary') {
+					$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
+				}
 				setEventMessages($mesg, null, 'errors');
 				$mesg .= '<br>'."\n";
 				foreach ($bprev->invoice_in_error as $key => $val) {
@@ -446,7 +454,7 @@ if ($resql) {
 		if ($sourcetype != 'salary') {
 			  $tradinvoice = "SupplierInvoice";
 		} else {
-			  $tradinvoice = "SalaryInvoice";
+			  $tradinvoice = "RefSalary";
 		}
 	}
 
@@ -459,16 +467,17 @@ if ($resql) {
 			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		}
 	}
+	// Ref invoice or salary
 	print '<td>'.$langs->trans($tradinvoice).'</td>';
-	if ($type == 'bank-transfer') {
-		if ($sourcetype != 'salary') {
-			print '<td>'.$langs->trans("RefSupplier").'</td>';
-		} else {
-			print '<td>'.$langs->trans("RefSalary").'</td>';
-		}
+	// Ref supplier
+	if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+		print '<td>'.$langs->trans("RefSupplier").'</td>';
 	}
+	// Thirdparty or user
 	if ($sourcetype != 'salary') {
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
+	} else {
+		print '<td>'.$langs->trans("Employee").'</td>';
 	}
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print ($sourcetype != 'salary'? '<td>'.$langs->trans("RUM").'</td>' : '');
