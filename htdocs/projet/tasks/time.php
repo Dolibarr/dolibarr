@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      	Udo Tamm                <dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,29 +24,35 @@
  */
 
 /**
- *    \file        htdocs/projet/tasks/time.php
+ *    \file       htdocs/projet/tasks/time.php
  *    \ingroup    project
- *    \brief        Page to add new time spent on a task
+ *    \brief      Page to add new time spent on a task
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formintervention.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+
+if (isModEnabled('facture')) {
+	require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+}
+
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'bills', 'orders', 'companies');
+
 if (isModEnabled('eventorganization')) {
 	$langsLoad[] = 'eventorganization';
 }
 
 $langs->loadLangs($langsLoad);
+
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -64,34 +71,36 @@ $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
 
-$search_day = GETPOST('search_day', 'int');
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
+// Search Paramters
+$search_day    = GETPOST('search_day', 'int');
+$search_month  = GETPOST('search_month', 'int');
+$search_year   = GETPOST('search_year', 'int');
+$search_date_startday   = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
-$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_note = GETPOST('search_note', 'alpha');
-$search_duration = GETPOST('search_duration', 'int');
-$search_value = GETPOST('search_value', 'int');
-$search_task_ref = GETPOST('search_task_ref', 'alpha');
-$search_task_label = GETPOST('search_task_label', 'alpha');
-$search_user = GETPOST('search_user', 'int');
-$search_valuebilled = GETPOST('search_valuebilled', 'int');
-$search_product_ref = GETPOST('search_product_ref', 'alpha');
-$search_company = GETPOST('$search_company', 'alpha');
-$search_company_alias = GETPOST('$search_company_alias', 'alpha');
-$search_project_ref = GETPOST('$search_project_ref', 'alpha');
-$search_project_label = GETPOST('$search_project_label', 'alpha');
+$search_date_startyear  = GETPOST('search_date_startyear', 'int');
+$search_date_endday     = GETPOST('search_date_endday', 'int');
+$search_date_endmonth   = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear    = GETPOST('search_date_endyear', 'int');
+$search_date_start  = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
+$search_date_end    = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_note            = GETPOST('search_note', 'alpha');
+$search_duration        = GETPOST('search_duration', 'int');
+$search_value           = GETPOST('search_value', 'int');
+$search_task_ref        = GETPOST('search_task_ref', 'alpha');
+$search_task_label      = GETPOST('search_task_label', 'alpha');
+$search_user            = GETPOST('search_user', 'int');
+$search_valuebilled     = GETPOST('search_valuebilled', 'int');
+$search_product_ref     = GETPOST('search_product_ref', 'alpha');
+$search_company           = GETPOST('$search_company', 'alpha');
+$search_company_alias     = GETPOST('$search_company_alias', 'alpha');
+$search_project_ref       = GETPOST('$search_project_ref', 'alpha');
+$search_project_label     = GETPOST('$search_project_label', 'alpha');
 $search_timespent_starthour = GETPOSTINT("search_timespent_duration_starthour");
-$search_timespent_startmin = GETPOSTINT("search_timespent_duration_startmin");
-$search_timespent_endhour = GETPOSTINT("search_timespent_duration_endhour");
-$search_timespent_endmin = GETPOSTINT("search_timespent_duration_endmin");
+$search_timespent_startmin  = GETPOSTINT("search_timespent_duration_startmin");
+$search_timespent_endhour   = GETPOSTINT("search_timespent_duration_endhour");
+$search_timespent_endmin    = GETPOSTINT("search_timespent_duration_endmin");
 
+// Pagination Parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -128,8 +137,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-
-// Security check
+// Security check / Permissions
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;	  // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->hasRight('projet', 'lire')) {
@@ -204,7 +212,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 	$error = 0;
 
 	$timespent_durationhour = GETPOST('timespent_durationhour', 'int');
-	$timespent_durationmin = GETPOST('timespent_durationmin', 'int');
+	$timespent_durationmin  = GETPOST('timespent_durationmin', 'int');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin)) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
@@ -401,7 +409,8 @@ if (GETPOST('projectid', 'int') > 0) {
 	$object->fetch($id);
 	$result = $projectstatic->fetch($object->fk_project);
 }
-// If not task selected and no project selected
+
+// If no task selected and no project selected
 if ($id <= 0 && $projectidforalltimes == 0) {
 	$allprojectforuser = $user->id;
 }
@@ -454,17 +463,17 @@ if ($action == 'confirm_generateinvoice') {
 			$prodDurationHoursBase = 1;
 
 			$pu_ht = 0;
-			$txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
+			$txtva     = get_default_tva($mysoc, $projectstatic->thirdparty);
 			$localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
 			$localtax2 = get_default_localtax($mysoc, $projectstatic->thirdparty, 2);
 		}
-
-		$tmpinvoice->socid = $projectstatic->thirdparty->id;
-		$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$tmpinvoice->fk_project = $projectstatic->id;
+		
+		$tmpinvoice->date  = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$tmpinvoice->socid             = $projectstatic->thirdparty->id;
+		$tmpinvoice->fk_project        = $projectstatic->id;
 		$tmpinvoice->cond_reglement_id = $projectstatic->thirdparty->cond_reglement_id;
 		$tmpinvoice->mode_reglement_id = $projectstatic->thirdparty->mode_reglement_id;
-		$tmpinvoice->fk_account = $projectstatic->thirdparty->fk_account;
+		$tmpinvoice->fk_account        = $projectstatic->thirdparty->fk_account;
 
 		if ($invoiceToUse) {
 			$tmpinvoice->fetch($invoiceToUse);
@@ -575,7 +584,7 @@ if ($action == 'confirm_generateinvoice') {
 
 				$withdetail = GETPOST('detail_time_duration', 'alpha');
 				foreach ($toselect as $key => $value) {
-					// Get userid, timepent
+					// Get userid, timespent
 					$object->fetchTimeSpent($value);
 					// $object->id is the task id
 					$ftask = new Task($db);
@@ -591,11 +600,11 @@ if ($action == 'confirm_generateinvoice') {
 
 					if (!empty($withdetail)) {
 						if (!empty($object->timespent_withhour)) {
-							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' . dol_print_date($object->timespent_datehour));
+							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' .dol_print_date($object->timespent_datehour));
 						} else {
-							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' . dol_print_date($object->timespent_date));
+							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' .dol_print_date($object->timespent_date));
 						}
-						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY));
+						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' .convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY));
 					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
@@ -673,7 +682,7 @@ if ($action == 'confirm_generateinvoice') {
 				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
-					$object->fetchTimeSpent($value);        // Call method to get list of timespent for a timespent line id (We use the utiliy method found into Task object)
+					$object->fetchTimeSpent($value);        // Call method to get list of timespent for a timespent line id (We use the utility method found into Task object)
 					// $object->id is now the task id
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
@@ -729,7 +738,7 @@ if ($action == 'confirm_generateinvoice') {
 
 
 						if ($idprodline > 0) {
-							// If a product is defined, we msut use the $prodDurationHours and $pu_ht of product (already set previously).
+							// If a product is defined, we must use the $prodDurationHours and $pu_ht of product (already set previously).
 							$pu_ht_for_task = $pu_htline;
 							// If we want to reuse the value of timespent (so use same price than cost price)
 							if (!empty($conf->global->PROJECT_TIME_SPENT_INTO_INVOICE_USE_VALUE)) {
@@ -800,15 +809,14 @@ if ($action == 'confirm_generateinter') {
 		include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
-
 		require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
+		
 		$tmpinter = new Fichinter($db);
 		$tmptimespent = new Task($db);
 		$fuser = new User($db);
 
 		$db->begin();
 		$interToUse = GETPOST('interid', 'int');
-
 
 		$tmpinter->socid = $projectstatic->thirdparty->id;
 		$tmpinter->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -887,7 +895,7 @@ llxHeader('', $title, $help_url);
 
 if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser > 0) {
 	/*
-	 * Fiche projet en mode visu
+	 * Project sheet in visual mode
 	 */
 	if ($projectidforalltimes > 0) {
 		$result = $projectstatic->fetch($projectidforalltimes);
@@ -938,12 +946,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 
 			// Project card
-
 			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
 			$morehtmlref = '<div class="refidno">';
+
 			// Title
 			$morehtmlref .= $projectstatic->title;
+
 			// Thirdparty
 			if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>' . $projectstatic->thirdparty->getNomUrl(1, 'project');
@@ -1050,7 +1058,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (isModEnabled('categorie')) {
 				print '<tr><td class="valignmiddle">' . $langs->trans("Categories") . '</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
-				print "</td></tr>";
+				print '</td></tr>';
 			}
 
 			print '</table>';
@@ -1161,84 +1169,83 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
+		
 		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
+		
+		  // half-left
+		  print '<div class="fichehalfleft">';
+  		    print '<div class="underbanner clearboth"></div>';
+		    print '<table class="border centpercent tableforfield">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">';
+		      // Task parent
+		      print '<tr><td>' . $langs->trans("ChildOfTask") . '</td><td>';
+		        if ($object->fk_task_parent > 0) {
+			      $tasktmp = new Task($db);
+			      $tasktmp->fetch($object->fk_task_parent);
+			      print $tasktmp->getNomUrl(1);
+		        }
+		      print '</td></tr>';
 
-		// Task parent
-		print '<tr><td>' . $langs->trans("ChildOfTask") . '</td><td>';
-		if ($object->fk_task_parent > 0) {
-			$tasktmp = new Task($db);
-			$tasktmp->fetch($object->fk_task_parent);
-			print $tasktmp->getNomUrl(1);
-		}
-		print '</td></tr>';
+		      // Date start - Date end task
+		      print '<tr><td class="titlefield">' . $langs->trans("DateStart") . ' - ' . $langs->trans("Deadline") . '</td><td>';
+		        $start = dol_print_date($object->date_start, 'dayhour');
+		        print ($start ? $start : '?');
+		        $end = dol_print_date($object->date_end, 'dayhour');
+		        print ' - ';
+		        print ($end ? $end : '?');
+		        if ($object->hasDelay()) {
+			      print img_warning("Late");
+		        }
+		      print '</td></tr>';
 
-		// Date start - Date end task
-		print '<tr><td class="titlefield">' . $langs->trans("DateStart") . ' - ' . $langs->trans("Deadline") . '</td><td>';
-		$start = dol_print_date($object->date_start, 'dayhour');
-		print ($start ? $start : '?');
-		$end = dol_print_date($object->date_end, 'dayhour');
-		print ' - ';
-		print ($end ? $end : '?');
-		if ($object->hasDelay()) {
-			print img_warning("Late");
-		}
-		print '</td></tr>';
+		      // Planned workload
+		      print '<tr><td>' . $langs->trans("PlannedWorkload") . '</td><td>';
+		        if ($object->planned_workload) {
+			      print convertSecondToTime($object->planned_workload, 'allhourmin');
+		        }
+		      print '</td></tr>';
+		    print '</table>';   // <table class="border centpercent tableforfield">
+		  print '</div>';   // <div class="fichehalfleft">
 
-		// Planned workload
-		print '<tr><td>' . $langs->trans("PlannedWorkload") . '</td><td>';
-		if ($object->planned_workload) {
-			print convertSecondToTime($object->planned_workload, 'allhourmin');
-		}
-		print '</td></tr>';
+		  // half-right
+		  print '<div class="fichehalfright">';
+		    print '<div class="underbanner clearboth"></div>';
+		    print '<table class="border tableforfield centpercent">';
 
-		print '</table>';
-		print '</div>';
+		      // Progress declared
+		      print '<tr><td class="titlefield">' . $langs->trans("ProgressDeclared") . '</td><td>';
+		        print $object->progress != '' ? $object->progress . ' %' : '';
+		      print '</td></tr>';
 
-		print '<div class="fichehalfright">';
-
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
-
-		// Progress declared
-		print '<tr><td class="titlefield">' . $langs->trans("ProgressDeclared") . '</td><td>';
-		print $object->progress != '' ? $object->progress . ' %' : '';
-		print '</td></tr>';
-
-		// Progress calculated
-		print '<tr><td>' . $langs->trans("ProgressCalculated") . '</td><td>';
-		if ($object->planned_workload) {
-			$tmparray = $object->getSummaryOfTimeSpent();
-			if ($tmparray['total_duration'] > 0) {
-				print round($tmparray['total_duration'] / $object->planned_workload * 100, 2) . ' %';
-			} else {
-				print '0 %';
-			}
-		} else {
-			print '<span class="opacitymedium">' . $langs->trans("WorkloadNotDefined") . '</span>';
-		}
-		print '</td>';
-
-		print '</tr>';
-
-		print '</table>';
-
-		print '</div>';
-
-		print '</div>';
+		      // Progress calculated
+		      print '<tr><td>' . $langs->trans("ProgressCalculated") . '</td><td>';
+		        if ($object->planned_workload) {
+			      $tmparray = $object->getSummaryOfTimeSpent();
+			        if ($tmparray['total_duration'] > 0) {
+			          print round($tmparray['total_duration'] / $object->planned_workload * 100, 2) . ' %';
+			        } else {
+			          print '0 %';
+			        }
+		        } else {
+			      print '<span class="opacitymedium">' . $langs->trans("WorkloadNotDefined") . '</span>';
+		        }
+		      print '</td>';
+		      print '</tr>';
+		    print '</table>';   // <table class="border tableforfield centpercent">
+		  print '</div>';   // <div class="fichehalfright">
+		
+		print '</div>';   // <div class="fichecenter">
+		
 		print '<div class="clearboth"></div>';
-
-		print dol_get_fiche_end();
+		
+ 		print dol_get_fiche_end();
+		
 	} else {
 		if ($action == 'deleteline') {
 			$urlafterconfirm = $_SERVER["PHP_SELF"] . "?" . ($object->id > 0 ? "id=" . $object->id : 'projectid=' . $projectstatic->id) . '&lineid=' . GETPOST("lineid", 'int') . ($withproject ? '&withproject=1' : '');
 			print $form->formconfirm($urlafterconfirm, $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 	}
-
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
 		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -1261,7 +1268,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$formconfirm = $hookmanager->resPrint;
 		}
 
-		// Print form confirm
+		// Print formConfirm
 		print $formconfirm;
 
 		// Definition of fields for list
@@ -1365,7 +1372,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		/*
-		 // Add $param from extra fields
+		 // Add $param from extrafields
 		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 		 */
 		if ($id) {
@@ -1456,7 +1463,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</td>';
 				print '</tr>';
 
-				if (isModEnabled("service")) {
+				if (isModEnabled('service')) {
 					print '<tr>';
 					print '<td>';
 					print $langs->trans('ServiceToUseOnLines');
@@ -1499,6 +1506,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				$massaction = '';
 			}
 		} elseif ($massaction == 'generateinter') {
+
 			// Form to convert time spent into invoice
 			print '<input type="hidden" name="massaction" value="confirm_createinter">';
 
@@ -1558,6 +1566,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
 		$sql .= " p.fk_soc,s.name_alias,";
 		$sql .= " t.invoice_line_id";
+
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1731,7 +1740,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<input type="hidden" name="taskid" value="' . $id . '">';
 			}
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">';  // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder nohover centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -1897,6 +1906,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</div>';
 			print '</td>';
 		}
+
 		// Thirdparty
 		if (!empty($arrayfields['p.fk_soc']['checked'])) {
 			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company" value="' . dol_escape_htmltag($search_company) . '"></td>';
@@ -1907,6 +1917,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company_alias" value="' . dol_escape_htmltag($search_company_alias) . '"></td>';
 		}
 
+		// Project Ref & Label
 		if (!empty($allprojectforuser)) {
 			if (!empty($arrayfields['p.project_ref']['checked'])) {
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
@@ -1915,7 +1926,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
 			}
 		}
-		// Task
+
+		// Task Ref & Label
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
@@ -1924,14 +1936,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 			}
 		}
-		// Author
+		
+		// Author User
 		if (!empty($arrayfields['author']['checked'])) {
 			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
 		}
+		
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) {
 			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
 		}
+		
 		// Duration
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
 			// Duration - Time spent
@@ -2073,7 +2088,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$total = 0;
 		$totalvalue = 0;
 
-		$savnbfield = $totalarray['nbfield'];
+		$savnbfield = $totalarray['nbfield'];  // save nb fields
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		//$imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -2129,6 +2144,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$totalarray['nbfield']++;
 				}
 			}
+
 			// Date
 			if (!empty($arrayfields['t.element_date']['checked'])) {
 				print '<td class="nowrap">';
@@ -2186,7 +2202,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			// Project ref & label
+			// Project Ref & Label
 			if (!empty($allprojectforuser)) {
 				if (!empty($arrayfields['p.project_ref']['checked'])) {
 					print '<td class="nowraponall">';
@@ -2220,7 +2236,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			// Task ref
+			// Task Ref
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {   // Not a dedicated task
 					print '<td class="nowrap">';
@@ -2471,7 +2487,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 
 			print "</tr>\n";
-
 
 			// Add line to split
 
@@ -2833,9 +2848,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
-		print "</table>";
+		print '</table>';
 		print '</div>';
-		print "</form>";
+		print '</form>';
 	}
 }
 
