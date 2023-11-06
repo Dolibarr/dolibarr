@@ -483,7 +483,7 @@ class FactureRec extends CommonInvoice
 	 *  @param		int		$notrigger				No trigger
 	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	/*public function update(User $user, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -530,7 +530,7 @@ class FactureRec extends CommonInvoice
 			$this->db->rollback();
 			return -1;
 		}
-	}*/
+	}
 
 	/**
 	 *	Load object and lines
