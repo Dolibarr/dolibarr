@@ -112,7 +112,7 @@ class Contact extends CommonObject
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
 		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
-		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
+		'fk_prospectcontactlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
@@ -136,6 +136,11 @@ class Contact extends CommonObject
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string gender
+	 */
+	public $gender;
 
 	/**
 	 * @var string Address
@@ -354,8 +359,8 @@ class Contact extends CommonObject
 		}
 
 		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
-			$this->field['fk_stcommcontact']['enabled'] = 0;
-			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+			$this->fields['fk_stcommcontact']['enabled'] = 0;
+			$this->fields['fk_prospectcontactlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled

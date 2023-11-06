@@ -106,7 +106,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 			//var_dump($file['relativename']);
 			//var_dump($_FILES['userfile']['name']);
 			// If a file was just uploaded, we check to preselect it
-			if (is_array($_FILES['userfile']['name'])) {
+			if (is_array($_FILES['userfile']) && is_array($_FILES['userfile']['name'])) {
 				foreach ($_FILES['userfile']['name'] as $tmpfile) {
 					if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile) {
 						$checked = ' checked';
