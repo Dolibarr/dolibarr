@@ -16,7 +16,7 @@
  */
 
 /**
- * Class that all the triggers must extend
+ * Class that all triggers must inherit
  */
 abstract class DolibarrTriggers
 {
@@ -72,16 +72,22 @@ abstract class DolibarrTriggers
 
 	/**
 	 * @var string module is in development
+	 * @deprecated Use self::VERSIONS
+	 * @see self::VERSIONS
 	 */
 	const VERSION_DEVELOPMENT = 'development';
 
 	/**
 	 * @var string module is experimental
+	 * @deprecated Use self::VERSIONS
+	 * @see self::VERSIONS
 	 */
 	const VERSION_EXPERIMENTAL = 'experimental';
 
 	/**
 	 * @var string module is dolibarr ready
+	 * @deprecated Use self::VERSIONS
+	 * @see self::VERSIONS
 	 */
 	const VERSION_DOLIBARR = 'dolibarr';
 
@@ -155,7 +161,7 @@ abstract class DolibarrTriggers
 	}
 
 	/**
-	 *  Function called when a Dolibarrr business event is done.
+	 *  Function called when a Dolibarr business event is done.
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 *  @param string       $action     Event action code
@@ -163,7 +169,7 @@ abstract class DolibarrTriggers
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
 	 *  @param conf         $conf       Object conf
-	 *  @return int                     <0 if KO, 0 if no triggered ran, >0 if OK
+	 *  @return int                     if KO: <0, if no trigger ran: 0, if OK: >0
 	 */
 	abstract public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf);
 }
