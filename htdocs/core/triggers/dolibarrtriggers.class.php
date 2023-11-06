@@ -86,6 +86,15 @@ abstract class DolibarrTriggers
 	const VERSION_DOLIBARR = 'dolibarr';
 
 	/**
+	 * @var array dictionary of possible module states
+	 */
+	const VERSIONS = [
+		'dev' => 'development',
+		'exp' => 'experimental',
+		'prod' => 'dolibarr'
+	];
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -95,7 +104,7 @@ abstract class DolibarrTriggers
 		$this->db = $db;
 		$this->name = empty($this->name) ? preg_replace('/^Interface/i', '', get_class($this)) : '';
 		$this->description = '';
-		$this->version = self::VERSION_DEVELOPMENT;
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'technic';
 		$this->family = '';
 		$this->error = '';
@@ -132,11 +141,11 @@ abstract class DolibarrTriggers
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == self::VERSION_DEVELOPMENT) {
+		if ($this->version == self::VERSIONS['dev']) {
 			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == self::VERSION_EXPERIMENTAL) {
+		} elseif ($this->version == self::VERSIONS['exp']) {
 			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == self::VERSION_DOLIBARR) {
+		} elseif ($this->version == self::VERSIONS['prod']) {
 			return DOL_VERSION;
 		} elseif ($this->version) {
 			return $this->version;
