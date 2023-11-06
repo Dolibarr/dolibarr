@@ -168,6 +168,6 @@ Societe_ribSigned=SEPA mandat Signed
 NbOfInvoiceToPayByBankTransferForSalaries=No. of qualified salaries waiting for a payment by credit transfer
 SalaryWaitingWithdraw=Salaries waiting for payment by credit transfer
 RefSalary=Salary
-NoSalaryInvoiceToWithdraw=No salary invoice with open '%s' is waiting. Go on tab '%s' on salary card to make a request.
-SalaryInvoiceWaitingWithdraw=Salary invoice waiting for payment by credit transfer
+NoSalaryInvoiceToWithdraw=No salary waiting for a '%s'. Go on tab '%s' on salary card to make a request.
+SalaryInvoiceWaitingWithdraw=Salaries waiting for payment by credit transfer
 
