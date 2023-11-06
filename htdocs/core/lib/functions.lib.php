@@ -4314,6 +4314,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
 	$path = 'theme/'.$theme;
+	if (empty($picto)) {
+		$picto = 'generic';
+	}
+
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath) {
 		// Clean parameters
@@ -4327,7 +4331,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
-		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
 
