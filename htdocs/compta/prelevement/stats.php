@@ -138,7 +138,7 @@ if ($resql) {
 		print '</td>';
 
 		print '<td class="right nowraponall">';
-		print round($row[0] / $total * 100, 2)." %";
+		print price2num($row[0] / $total * 100, 2)." %";
 		print '</td>';
 
 		print '</tr>';
