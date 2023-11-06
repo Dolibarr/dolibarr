@@ -1643,13 +1643,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<td>'.dol_print_date($rib->date_rum, 'day').'</td>';
 
 				// FRST or RCUR
-				print '<td>'.$rib->frstrecur.'</td>';
+				print '<td>'.dol_escape_htmltag($rib->frstrecur).'</td>';
 			}
 
 			// Default
 			print '<td class="center" width="70">';
 			if (!$rib->default_rib) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault&token='.newToken().'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.((int) $object->id).'&ribid='.((int) $rib->id).'&action=setasbankdefault&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'off');
 				print '</a>';
 			} else {
@@ -1963,44 +1963,47 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'"></td></tr>';
 
 	// Show fields of bank account
-	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
+	$bankaccount = $companybankaccount;
+	// Code here is similare than into bank.php for users
+	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
-			$content = $companybankaccount->code_banque;
+			$content = $bankaccount->code_banque;
 		} elseif ($val == 'DeskCode') {
 			$name = 'code_guichet';
 			$size = 8;
-			$content = $companybankaccount->code_guichet;
+			$content = $bankaccount->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$name = 'number';
 			$size = 18;
-			$content = $companybankaccount->number;
+			$content = $bankaccount->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$name = 'cle_rib';
 			$size = 3;
-			$content = $companybankaccount->cle_rib;
+			$content = $bankaccount->cle_rib;
 		} elseif ($val == 'IBAN') {
 			$name = 'iban';
 			$size = 30;
-			$content = $companybankaccount->iban;
-			if ($companybankaccount->needIBAN()) {
+			$content = $bankaccount->iban;
+			if ($bankaccount->needIBAN()) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").':<br>CH93 0076 2011 6238 5295 7<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
 		} elseif ($val == 'BIC') {
 			$name = 'bic';
 			$size = 12;
-			$content = $companybankaccount->bic;
-			if ($companybankaccount->needIBAN()) {
+			$content = $bankaccount->bic;
+			if ($bankaccount->needIBAN()) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
 		}
 
-		print '<tr><td'.($require ? ' class="fieldrequired" ' : '').'>';
+		print '<tr>';
+		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
 			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
@@ -2011,7 +2014,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
 	print $companybankaccount->domiciliation;
 	print "</textarea></td></tr>";
@@ -2020,7 +2023,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->proprio.'"></td></tr>';
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" cols="40" maxlength="255">';
 	print $companybankaccount->owner_address;
 	print "</textarea></td></tr>";
@@ -2182,7 +2185,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="domiciliation" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
 	print GETPOST('domiciliation');
 	print "</textarea></td></tr>";
@@ -2191,7 +2194,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<td><input class="minwidth200" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
 	print "</td></tr>\n";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 	print '<textarea name="owner_address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
 	print GETPOST('owner_address');
 	print "</textarea></td></tr>";
@@ -2204,8 +2207,8 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '<table class="border centpercent">';
 
 		// RUM
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"> <div class="opacitymedium">'.$langs->trans("RUMWillBeGenerated").'</div></td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("RUM"), $langs->trans("RUMLong").'<br>'.$langs->trans("RUMWillBeGenerated")).'</td>';
+		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"></td></tr>';
 
 		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
 

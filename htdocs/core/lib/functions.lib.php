@@ -2249,6 +2249,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).'">'."\n";
 	}
 	if (!empty($dragdropfile)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$out .= dragAndDropFileUpload("dragDropAreaTabBar");
 	}
 	$parameters = array('tabname' => $active, 'out' => $out);
@@ -5421,7 +5422,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
-		define("MAIN_CORE_ERROR", 1);
+		if (!defined("MAIN_CORE_ERROR")) {
+			define("MAIN_CORE_ERROR", 1);
+		}
 	}
 
 	dol_syslog("Error ".$syslog, LOG_ERR);
@@ -8533,6 +8536,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
+			'__NEXT_MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp5['month'])),
 			'__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
 		));
 	}
@@ -9892,6 +9898,21 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
+				$newtab = array();
+				$postab = $h;
+				// detect if position set in $values[1] ie : +(2)mytab@mymodule (first tab is 0, second is one, ...)
+				$str = $values[1];
+				$posstart = strpos($str, '(');
+				if ($posstart > 0) {
+					$posend = strpos($str, ')');
+					if ($posstart > 0) {
+						$res1 = substr($str, $posstart + 1, $posend - $posstart -1);
+						if (is_numeric($res1)) {
+							$postab = (int) $res1;
+							$values[1] = '+' . substr($str, $posend + 1);
+						}
+					}
+				}
 				if (count($values) == 6) {
 					// new declaration with permissions:
 					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
@@ -9941,9 +9962,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							}
 						}
 
-						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
-						$head[$h][1] = $label;
-						$head[$h][2] = str_replace('+', '', $values[1]);
+						$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
+						$newtab[1] = $label;
+						$newtab[2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
 				} elseif (count($values) == 5) {       // case deprecated
@@ -9974,11 +9995,13 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$label = $langs->trans($values[2]);
 					}
 
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
-					$head[$h][1] = $label;
-					$head[$h][2] = str_replace('+', '', $values[1]);
+					$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
+					$newtab[1] = $label;
+					$newtab[2] = str_replace('+', '', $values[1]);
 					$h++;
 				}
+				// set tab at its position
+				$head = array_merge(array_slice($head, 0, $postab), array($newtab), array_slice($head, $postab));
 			} elseif ($mode == 'remove' && preg_match('/^\-/', $values[1])) {
 				if ($values[0] != $type) {
 					continue;
