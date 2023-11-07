@@ -241,3 +241,5 @@ MemberFirstname=Prénom du membre
 MemberLastname=Nom de famille du membre
 MemberCodeDesc=Code membre, unique pour tous les membres
 NoRecordedMembers=Aucun membre enregistré
+MemberSubscriptionStartFirstDayOf=La date de début d'une adhésion correspond au premier jour d'un(e)
+MemberSubscriptionStartAfter=Délai minimum avant l'entrée en vigueur de la date de début d'une souscription hors renouvellement (exemple +3m = +3 mois, -5d = -3 jours, +1Y = +1 année)
