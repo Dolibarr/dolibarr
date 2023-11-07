@@ -8268,10 +8268,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 					$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 					$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-				} else {
-					$substitutionarray['__PROJECT_ID__'] = '';
-					$substitutionarray['__PROJECT_REF__'] = '';
-					$substitutionarray['__PROJECT_NAME__'] = '';
 				}
 			}
 			if (is_object($object) && $object->element == 'project') {
