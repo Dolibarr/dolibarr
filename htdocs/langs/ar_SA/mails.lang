@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=إدخال رسائل البريد الإلكت�
 MailingModuleDescDolibarrUsers=المستخدمون الذين لديهم رسائل بريد إلكتروني
 MailingModuleDescThirdPartiesByCategories=أطراف ثالثة
 SendingFromWebInterfaceIsNotAllowed=الإرسال من واجهة الويب غير مسموح به.
-EmailCollectorFilterDesc=يجب أن تتطابق جميع المرشحات حتى يتم جمع بريد إلكتروني
+EmailCollectorFilterDesc=All filters must match to have an email being collected.<br>You can use the character "!" before the search string value if you need a negative test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=خط المستندات في ملف ٪
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=القيمة الافتراضية للحقل "%s" 
 DefaultStatusEmptyMandatory=فارغ ولكنه إلزامي
 WarningLimitSendByDay=تحذير: إعداد أو عقد المثيل الخاص بك يحد من عدد رسائل البريد الإلكتروني يوميًا إلى <b> %s </b>. قد تؤدي محاولة إرسال المزيد إلى إبطاء المثيل أو تعليقه. يرجى الاتصال بالدعم الخاص بك إذا كنت بحاجة إلى حصة أعلى.
 NoMoreRecipientToSendTo=No more recipient to send the email to
+EmailOptedOut=Email owner has requested to not contact him with this email anymore
+EvenUnsubscribe=Include opt-out emails
+EvenUnsubscribeDesc=Include opt-out emails when you select emails as targets. Usefull for mandatory service emails for example.
+XEmailsDoneYActionsDone=%s emails pre-qualified, %s emails successfully processed (for %s record/actions done)

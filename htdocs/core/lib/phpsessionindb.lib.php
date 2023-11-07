@@ -22,9 +22,14 @@
  *  \brief		Set function handlers for PHP session management in DB.
  */
 
-// The session handler file must be included just after the call of the master.inc.php into main.inc.php
+// This session handler file must be included just after the call of the master.inc.php into main.inc.php
 // The $conf is already defined from conf.php file.
-// To use it set in your PHP.ini:  session.save_handler = user
+// To use it set
+// - create table ll_session from the llx_session-disabled.sql file
+// - uncomment the include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php into main.inc.php
+// - in your PHP.ini, set:  session.save_handler = user
+// The session_set_save_handler() at end of this fille will replace default session management.
+
 
 /**
  * The session open handler called by PHP whenever a session is initialized.
@@ -51,7 +56,7 @@ function dolSessionOpen($save_path, $session_name)
 	if (empty($dolibarr_session_db_port)) {	$dolibarr_session_db_port = $dolibarr_main_db_port; }
 	//var_dump('open '.$database_name.' '.$table_name);
 
-	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port);
+	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
 
 	return true;
 }

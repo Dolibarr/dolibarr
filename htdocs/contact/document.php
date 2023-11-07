@@ -94,7 +94,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
-$permissiontoadd = $user->rights->societe->contact->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -142,11 +142,10 @@ if ($object->id) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
 		if ($objsoc->id > 0) {
 			$morehtmlref .= $objsoc->getNomUrl(1);
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';
@@ -192,8 +191,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'contact';
-	$permissiontoadd = $user->rights->societe->contact->creer;
-	$permtoedit = $user->rights->societe->contact->creer;
+	$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
+	$permtoedit = $user->hasRight('societe', 'contact', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

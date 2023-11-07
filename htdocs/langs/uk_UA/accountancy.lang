@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Вже переведено в бухгалтерські
 NotYetInGeneralLedger=Ще не переведено в бухгалтерські журнали та бухгалтерську книгу
 GroupIsEmptyCheckSetup=Група порожня, перевірте налаштування персоніфікованої облікової групи
 DetailByAccount=Показати відомості по рахунку
+DetailBy=Detail by
 AccountWithNonZeroValues=Рахунки з ненульовими значеннями
 ListOfAccounts=Список рахунків
 CountriesInEEC=Країни ЄЕС
@@ -51,14 +52,19 @@ AccountantFiles=Експортувати вихідні документи
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Щоб експортувати свої журнали, використовуйте пункт меню %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Переглянути за обліковим записом
 VueBySubAccountAccounting=Перегляд за бухгалтерським субрахунком
 
-MainAccountForCustomersNotDefined=Основний обліковий запис для клієнтів, не визначений у налаштуваннях
-MainAccountForSuppliersNotDefined=Основний обліковий запис для постачальників, не визначених у налаштуваннях
-MainAccountForUsersNotDefined=Основний обліковий запис для користувачів, не визначених під час налаштування
-MainAccountForVatPaymentNotDefined=Основний рахунок для сплати ПДВ не визначено в налаштуваннях
-MainAccountForSubscriptionPaymentNotDefined=Основний обліковий запис для оплати передплати не визначено в налаштуваннях
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Зона обліку
@@ -112,6 +118,7 @@ MenuLoanAccounts=Позикові рахунки
 MenuProductsAccounts=Рахунки продуктів
 MenuClosureAccounts=Закриття рахунків
 MenuAccountancyClosure=Закриття
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Підтвердити рухи
 ProductsBinding=Рахунки продуктів
 TransferInAccounting=Переведення в бухгалтерію
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Увімкнути комбінований списо
 ACCOUNTING_DATE_START_BINDING=Визначте дату початку зв’язування та перенесення в бухгалтерію. Нижче цієї дати операції не будуть передані до бухгалтерського обліку.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Має новий журнал
@@ -238,6 +245,7 @@ ConfirmDeleteMvt=Це призведе до видалення всіх рядк
 ConfirmDeleteMvtPartial=Це призведе до видалення транзакції з бухгалтерського обліку (будуть видалені всі рядки, пов’язані з тією ж операцією)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Журнал звітів про витрати
+InventoryJournal=Inventory journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 DescJournalOnlyBindedVisible=Це подання записів, які прив’язані до бухгалтерського рахунку і можуть бути записані в Журнали та Головну книгу.
 VATAccountNotDefined=Рахунок ПДВ не визначено
@@ -294,7 +302,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Огляд переміщень не підтверджених і заблокованих
 AllMovementsWereRecordedAsValidated=Усі рухи були зафіксовані як підтверджені та заблоковані
 NotAllMovementsCouldBeRecordedAsValidated=Не всі переміщення можна записати як підтверджені та заблоковані
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Будь-яка зміна чи видалення записів, написів та видалення буде заборонено. Усі записи для вправи мають бути підтверджені, інакше закриття буде неможливим
 
 ValidateHistory=Прив’язувати автоматично
@@ -343,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Вимкнути прив'язку та пе
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Вимкнути прив'язку та переказ в обліку закупівель (рахунки постачальника не будуть враховуватися в обліку)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Вимкнути прив'язку та перенесення в бухгалтерії у звітах про витрати (звіти про витрати не враховуватимуться в бухгалтерії)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Позначте експортовані рядки як експортовані <span class="warning"> (щоб змінити рядок, вам потрібно буде видалити всю транзакцію та повторно перенести її в облік) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Перевірка дати та блокування
 ConfirmExportFile=Підтвердження створення файлу експорту бухгалтерського обліку?
@@ -380,7 +394,7 @@ ChartofaccountsId=План рахунків Ід
 ## Tools - Init accounting account on product / service
 InitAccountancy=Початковий облік
 InitAccountancyDesc=Цю сторінку можна використовувати для ініціалізації облікового запису для продуктів і послуг, для яких не визначено обліковий запис для продажів і покупок.
-DefaultBindingDesc=Цю сторінку можна використовувати, щоб налаштувати обліковий запис за замовчуванням для зв’язування записів транзакцій про виплати заробітної плати, пожертвування, податки та ПДВ, якщо ще не було налаштовано конкретний обліковий запис.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Цю сторінку можна використовувати для встановлення параметрів, що використовуються для закриття обліку.
 Options=Параметри
 OptionModeProductSell=Режим розпродажів
@@ -432,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Підтвердження масового видалення
-ConfirmMassDeleteBookkeepingWritingQuestion=Це призведе до видалення транзакції з обліку (усі рядки, пов’язані з тією ж транзакцією, будуть видалені). Ви впевнені, що хочете видалити вибраний запис(и) %s?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Деякі обов’язкові кроки налаштування не були виконані, будь ласка, виконайте їх
@@ -445,7 +459,7 @@ NoJournalDefined=Журнал не визначено
 Binded=Лінії зв'язані
 ToBind=Лінії для зв’язування
 UseMenuToSetBindindManualy=Рядки ще не зв’язані, скористайтеся меню <a href="%s"> %s </a>, щоб зробити прив’язку вручну
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=На жаль, цей модуль несумісний з експериментальною функцією рахунків-фактур
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Невідповідність коду узгодження
 AccountancyErrorMismatchBalanceAmount=Залишок (%s) не дорівнює 0
 AccountancyErrorLetteringBookkeeping=Сталися помилки щодо транзакцій: %s
@@ -475,9 +489,9 @@ FECFormatMulticurrencyAmount=Мультивалютна сума (Montantdevise)
 FECFormatMulticurrencyCode=Мультивалютний код (Idevise)
 
 DateExport=Експорт дати
-WarningReportNotReliable=Попередження, цей звіт не базується на Книзі, тому не містить транзакції, змінені вручну в Книзі. Якщо ваша журнальність оновлена, бухгалтерський облік буде точнішим.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Журнал звітів про витрати
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s облікові записи

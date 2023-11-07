@@ -64,6 +64,8 @@ if ($type == 'bank-transfer') {
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("WithdrawsRefused");
 if ($type == 'bank-transfer') {
 	$title = $langs->trans("CreditTransfersRefused");
@@ -84,10 +86,8 @@ $line = new LignePrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
 
 
-/*
- * Liste des factures
- *
- */
+// List of invoices
+
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
 $sql .= " , s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";

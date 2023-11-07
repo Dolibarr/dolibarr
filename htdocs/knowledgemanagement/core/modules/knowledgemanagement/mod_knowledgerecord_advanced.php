@@ -54,7 +54,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

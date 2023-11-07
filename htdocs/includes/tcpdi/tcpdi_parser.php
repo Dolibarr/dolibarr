@@ -104,7 +104,7 @@ class tcpdi_parser {
 	 * XREF data.
 	 * @protected
 	 */
-	protected $xref = array();
+	public $xref = array();
 
 	/**
 	 * Object streams.
@@ -147,7 +147,7 @@ class tcpdi_parser {
      *
      * @private array
      */
-    private $pages;
+	public $pages;
 
     /**
      * Page count
@@ -715,8 +715,7 @@ class tcpdi_parser {
 				$next = strcspn($data, "\r\n", $offset);
 				if ($next > 0) {
 					$offset += $next;
-					list($obj, $unused) = $this->getRawObject($offset, $data);
-					return $obj;
+					return $this->getRawObject($offset, $data);
 				}
 				break;
 			}

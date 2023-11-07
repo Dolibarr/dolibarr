@@ -88,7 +88,7 @@ class modFacture extends DolibarrModules
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "crabe";
+		$this->const[$r][2] = "sponge";
 		$this->const[$r][3] = 'Name of PDF model of invoice';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -134,8 +134,8 @@ class modFacture extends DolibarrModules
 				'class'=>'compta/facture/class/facture.class.php',
 				'objectname'=>'Facture',
 				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
-				'parameters'=>"10,all,EmailTemplateCode",
-				'comment'=>'Send an emails when we reach the due date - n days of an invoice. First param is n, the number of days before due date to send the remind, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent invoice).',
+				'parameters'=>"10,all,EmailTemplateCode,duedate",
+				'comment'=>'Send an email when we reach the invoice due date (or invoice date) - n days. First param is n, the number of days before due date (or invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the invoice to use.',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
 				'priority'=>50,
@@ -246,9 +246,6 @@ class modFacture extends DolibarrModules
 			'f.datef' => 'DateInvoice',
 			'f.date_valid' => 'Validation Date',
 			'f.paye' => 'InvoicePaid',
-			'f.remise_percent' => 'RemisePercent',
-			'f.remise_absolue' => 'RemiseAbsolue',
-			'f.remise' => 'Remise',
 			'f.total_tva' => 'TotalVAT',
 			'f.total_ht' => 'TotalHT',
 			'f.total_ttc' => 'TotalTTC',
@@ -299,9 +296,6 @@ class modFacture extends DolibarrModules
 			'f.datef' => '2021-11-24',
 			'f.date_valid' => '2021-11-24',
 			'f.paye' => '1',
-			'f.remise_percent' => '0',
-			'f.remise_absolue' => '0',
-			'f.remise' => '0',
 			'f.total_tva' => '21',
 			'f.total_ht' => '100',
 			'f.total_ttc' => '121',
@@ -318,7 +312,7 @@ class modFacture extends DolibarrModules
 			'f.date_lim_reglement' => '2021-12-24',
 			'f.note_public' => '',
 			'f.note_private' => '',
-			'f.model_pdf' => 'crabe',
+			'f.model_pdf' => 'sponge',
 			'f.multicurrency_code' => 'EUR',
 			'f.multicurrency_tx' => '1',
 			'f.multicurrency_total_ht' => '100',
@@ -602,7 +596,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
@@ -622,7 +616,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa on fd.fk_code_ventilation = aa.rowid';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 		$r++;
@@ -688,7 +682,7 @@ class modFacture extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
@@ -705,7 +699,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 		$r++;

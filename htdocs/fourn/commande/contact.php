@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('ordersuppliercardcontact'));
 
 $object = new CommandeFournisseur($db);
 
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -58,7 +58,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
  * Actions
  */
 
-if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
+if ($action == 'addcontact' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -78,14 +78,14 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
+} elseif ($action == 'swapstatut' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
 	// Toggle the status of a contact
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'deletecontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
+} elseif ($action == 'deletecontact' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
 	// Deleting a contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));

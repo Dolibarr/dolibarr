@@ -49,10 +49,9 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 
 // Security check
-if (empty($conf->adherent->enabled)) {
+if (!isModEnabled('adherent')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
-
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
@@ -119,7 +118,7 @@ $form = new Form($db);
 
 $morehead = '';
 if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
-	$morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }

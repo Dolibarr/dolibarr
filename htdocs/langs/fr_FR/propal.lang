@@ -55,6 +55,7 @@ CopyPropalFrom=Créer proposition/devis par recopie d'un proposition existante
 CreateEmptyPropal=Créer proposition/devis vierge ou avec la liste des produits/services
 DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
 DefaultPuttingPricesUpToDate=Par défaut, mettre à jour les prix avec les prix connus actuels lors du clonage d'une proposition
+DefaultPuttingDescUpToDate=Par défaut, mettre à jour les descriptions avec les descriptions connues actuelles lors du clonage d'une proposition
 UseCustomerContactAsPropalRecipientIfExist=Utiliser l'adresse de 'contact suivi client' si définie plutôt que l'adresse du tiers comme destinataire des propositions
 ConfirmClonePropal=Êtes-vous sûr de vouloir cloner la proposition commerciale <b>%s</b> ?
 ConfirmReOpenProp=Êtes-vous sûr de vouloir réouvrir la proposition commerciale <b>%s</b> ?

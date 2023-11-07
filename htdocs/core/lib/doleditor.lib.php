@@ -49,12 +49,7 @@ function show_skin($fuser, $edit = 0)
 	$dirskins = array_unique($dirskins);
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
-	$selected_theme = '';
-	if (empty($conf->global->FCKEDITOR_SKIN)) {
-		$selected_theme = 'moono-lisa';
-	} else {
-		$selected_theme = $conf->global->FCKEDITOR_SKIN;
-	}
+	$selected_theme = getDolGlobalString('FCKEDITOR_SKIN', 'moono-lisa');
 
 	$colspan = 2;
 
@@ -95,10 +90,10 @@ function show_skin($fuser, $edit = 0)
 					if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) <> '.'
 							&& substr($subdir, 0, 3) <> 'CVS' && !preg_match('/common|phones/i', $subdir)) {
 						// Disable not stable themes (dir ends with _exp or _dev)
-						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
 							continue;
 						}
-						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) {
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
 							continue;
 						}
 

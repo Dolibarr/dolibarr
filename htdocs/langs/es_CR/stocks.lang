@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - stocks
+Location=Ubicaciòn
+AverageUnitPricePMPShort=Precio promedio ponderado
+inventoryEdit=Editar
+inventoryValidate=Validada
+inventoryDraft=En ejecución
+SelectCategory=Filtro por Categoría
+ListInventory=Lista
+AlwaysShowFullArbo=Display the full path of a warehouse (parent warehouses) on the popup of warehouse links (Warning: This may decrease dramatically performances)
+InventoryStartedShort=Iniciado

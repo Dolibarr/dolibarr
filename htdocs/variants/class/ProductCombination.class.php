@@ -84,6 +84,16 @@ class ProductCombination
 	public $variation_ref_ext = '';
 
 	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors
+	 */
+	public $errors = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param   DoliDB $db     Database handler
@@ -506,7 +516,7 @@ class ProductCombination
 		if ($child->label == $parent->label) {
 			// This will trigger only at variant creation time
 			$varlabel               = $this->getCombinationLabel($this->fk_product_child);
-			$child->label           = $parent->label.$varlabel; ;
+			$child->label           = $parent->label.$varlabel;
 		}
 
 
@@ -805,7 +815,7 @@ class ProductCombination
 
 			if ($forced_refvar === false) {
 				if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR.$prodattrval->ref;
+					$newproduct->ref .= getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR') . $prodattrval->ref;
 				} else {
 					$newproduct->ref .= '_'.$prodattrval->ref;
 				}
@@ -1044,6 +1054,16 @@ class ProductCombinationLevel
 	public $variation_price_percentage = false;
 
 	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var string[] array of errors
+	 */
+	public $errors = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1114,7 +1134,7 @@ class ProductCombinationLevel
 	/**
 	 * Assign vars form an stdclass like sql obj
 	 *
-	 * @param 	int 	$obj		Object resultset
+	 * @param 	Object 	$obj		Object resultset
 	 * @return 	int 				<0 KO, >0 OK
 	 */
 	public function fetchFormObj($obj)

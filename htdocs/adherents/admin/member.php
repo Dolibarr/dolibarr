@@ -51,6 +51,7 @@ $scandir = GETPOST('scandir', 'alpha');
 $type = 'member';
 
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
 
 
 /*
@@ -108,6 +109,7 @@ if ($action == 'set_default') {
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res7 = dolibarr_set_const($db, 'MEMBER_PUBLIC_ENABLED', GETPOST('MEMBER_PUBLIC_ENABLED', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
 	if (isModEnabled('facture')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -116,8 +118,8 @@ if ($action == 'set_default') {
 			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
-		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0) {
+		setEventMessages('ErrorFailedToSaveData', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
@@ -152,10 +154,13 @@ if ($action == 'set_default') {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
 		$db->commit();
 	}
-}
-
-// Action to update or add a constant
-if ($action == 'update' || $action == 'add') {
+} elseif ($action == 'setcodemember') {
+	$result = dolibarr_set_const($db, "MEMBER_CODEMEMBER_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
+		dol_print_error($db);
+	}
+} elseif ($action == 'update' || $action == 'add') {
+	// Action to update or add a constant
 	$constname = GETPOST('constname', 'alpha');
 	$constvalue = (GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
@@ -223,6 +228,97 @@ $head = member_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
 
+$dirModMember = array_merge(array('/core/modules/member/'), $conf->modules_parts['member']);
+foreach ($conf->modules_parts['models'] as $mo) {
+	//Add more models
+	$dirModMember[] = $mo.'core/modules/member/';
+}
+
+// Module to manage customer/supplier code
+
+print load_fiche_titre($langs->trans("MemberCodeChecker"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '  <td>'.$langs->trans("Name").'</td>';
+print '  <td>'.$langs->trans("Description").'</td>';
+print '  <td>'.$langs->trans("Example").'</td>';
+print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
+print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print "</tr>\n";
+
+$arrayofmodules = array();
+
+foreach ($dirModMember as $dirroot) {
+	$dir = dol_buildpath($dirroot, 0);
+
+	$handle = @opendir($dir);
+	if (is_resource($handle)) {
+		// Loop on each module find in opened directory
+		while (($file = readdir($handle)) !== false) {
+			// module filename has to start with mod_member_
+			if (substr($file, 0, 11) == 'mod_member_' && substr($file, -3) == 'php') {
+				$file = substr($file, 0, dol_strlen($file) - 4);
+				try {
+					dol_include_once($dirroot.$file.'.php');
+				} catch (Exception $e) {
+					dol_syslog($e->getMessage(), LOG_ERR);
+					continue;
+				}
+				$modCodeMember = new $file;
+				// Show modules according to features level
+				if ($modCodeMember->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					continue;
+				}
+				if ($modCodeMember->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					continue;
+				}
+
+				$arrayofmodules[$file] = $modCodeMember;
+			}
+		}
+		closedir($handle);
+	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+foreach ($arrayofmodules as $file => $modCodeMember) {
+	print '<tr class="oddeven">'."\n";
+	print '<td width="140">'.$modCodeMember->name.'</td>'."\n";
+	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeMember->getExample($langs).'</td>'."\n";
+
+	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
+		print '<td class="center">'."\n";
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print "</td>\n";
+	} else {
+		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		print '<td class="center">';
+		if (!$disabled) {
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';
+		}
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		if (!$disabled) {
+			print '</a>';
+		}
+		print '</td>';
+	}
+
+	print '<td class="center">';
+	$s = $modCodeMember->getToolTip($langs, null, -1);
+	print $form->textwithpicto('', $s, 1);
+	print '</td>';
+
+	print '</tr>';
+}
+print '</table>';
+print '</div>';
+
+print "<br>";
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatemainoptions">';
@@ -241,22 +337,30 @@ print "</tr>\n";
 
 // Mail required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
+print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
 print "</td></tr>\n";
 
 // Login/Pass required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("AdherentLoginRequired"), $langs->trans("AdherentLoginRequiredDesc"));
+print '</td><td>';
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') ? 0 : 1), 1);
 print "</td></tr>\n";
 
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
-print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
+print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
 print "</td></tr>\n";
 
 // Create an external user login for each new member subscription validated
 print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
-print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN') ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
+print "</td></tr>\n";
+
+// Create an external user login for each new member subscription validated
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
+print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
+print $form->selectyesno('MEMBER_PUBLIC_ENABLED', (getDolGlobalString('MEMBER_PUBLIC_ENABLED') ? $conf->global->MEMBER_PUBLIC_ENABLED : 0), 1);
 print "</td></tr>\n";
 
 // Allow members to change type on renewal forms
@@ -291,7 +395,7 @@ if (isModEnabled('facture')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (isModEnabled("banque")) {
 		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td>';
 	} else {
 		print '<td class="right">';
@@ -303,7 +407,7 @@ if (isModEnabled('facture')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
-		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		$selected = (!getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
 		print img_picto('', 'product', 'class="pictofixedwidth"');
 		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';
@@ -417,7 +521,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if (getDolGlobalString('MEMBER_ADDON_PDF') == $name) {
+								if (getDolGlobalString('MEMBER_ADDON_PDF_ODT') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

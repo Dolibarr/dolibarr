@@ -36,6 +36,7 @@ if (!function_exists('json_encode')) {
 	}
 }
 
+
 /**
  * Implement json_encode for PHP that does not support it.
  * Use json_encode and json_decode in your code !

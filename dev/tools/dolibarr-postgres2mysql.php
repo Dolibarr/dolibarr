@@ -22,8 +22,8 @@
  */
 
 /**
- * \file 	dev/tools/dolibarr-postgres2mysql.php
- * \brief 	Script to migrate a postgresql dump into a mysql dump
+ * \file    dev/tools/dolibarr-postgres2mysql.php
+ * \brief   Script to migrate a postgresql dump into a mysql dump
  */
 
 $sapi_type = php_sapi_name();
@@ -67,8 +67,8 @@ XHTML;
 /**
  * getfieldname
  *
- * @param	string		$l		String
- * @return	string|null			Field name
+ * @param  string $l String
+ * @return string|null         Field name
  */
 function getfieldname($l)
 {
@@ -94,8 +94,8 @@ function getfieldname($l)
 /**
  * formatsize
  *
- * @param 	string $s	Size to format
- * @return 	string		Formated size
+ * @param  string $s Size to format
+ * @return string      Formated size
  */
 function formatsize($s)
 {
@@ -113,9 +113,9 @@ function formatsize($s)
 /**
  * pg2mysql_large
  *
- * @param string	$infilename			Input filename
- * @param string	$outfilename		Output filename
- * @return int							<0 if KO, >=0 if OK
+ * @param  string $infilename  Input filename
+ * @param  string $outfilename Output filename
+ * @return int                          <0 if KO, >=0 if OK
  */
 function pg2mysql_large($infilename, $outfilename)
 {
@@ -234,10 +234,10 @@ function pg2mysql_large($infilename, $outfilename)
 /**
  * pg2mysql
  *
- * @param array		$input								Array of input
- * @param array		$arrayofprimaryalreadyintabledef	Array of table already output with a primary key set into definition
- * @param boolean 	$header								Boolean
- * @return string[]										Array of output
+ * @param  array   $input                           Array of input
+ * @param  array   $arrayofprimaryalreadyintabledef Array of table already output with a primary key set into definition
+ * @param  boolean $header                          Boolean
+ * @return string[]                                     Array of output
  */
 function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 {

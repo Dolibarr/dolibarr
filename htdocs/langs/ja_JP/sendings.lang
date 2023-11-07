@@ -48,7 +48,7 @@ DateDeliveryPlanned=配達予定日
 RefDeliveryReceipt=参照納品書
 StatusReceipt=状態納品書
 DateReceived=配達受領日付
-ClassifyReception=領収を分類する
+ClassifyReception=受信したものを分類する
 SendShippingByEMail=メールで出荷する
 SendShippingRef=出荷の提出%s
 ActionsOnShipping=出荷のイベント
@@ -74,3 +74,8 @@ SumOfProductWeights=製品の重量の合計
 # warehouse details
 DetailWarehouseNumber= 倉庫の詳細
 DetailWarehouseFormat= W：%s(数量：%d)
+
+ShipmentDistribution=出荷配信
+
+ErrorTooManyCombinationBatchcode=ライン %s への繰出し無し、理由：倉庫、製品、バッチ コードの組み合わせが多すぎ (%s).
+ErrorNoCombinationBatchcode=ライン %s への繰出し無し、理由：倉庫、製品、バッチ コードの組合せが見つからず。

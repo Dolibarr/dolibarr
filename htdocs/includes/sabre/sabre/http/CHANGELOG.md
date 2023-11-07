@@ -1,6 +1,75 @@
 ChangeLog
 =========
 
+5.0.5 (2019-11-28)
+-------------------------
+
+* #138: Fixed possible infinite loop (@dpakach, @vfreex, @phil-davis)
+* #136: Improvement regex content-range (@ho4ho)
+
+5.0.4 (2019-10-08)
+-------------------------
+
+* #133: Fix short Content-Range download - Regression from 5.0.3 (@phil-davis)
+
+5.0.3 (2019-10-08)
+-------------------------
+
+* #119: Significantly improve file download speed by enabling mmap based stream_copy_to_stream (@vfreex) 
+
+5.0.2 (2019-09-12)
+-------------------------
+
+* #125: Fix Strict Error if Response Body Empty (@WorksDev, @phil-davis) 
+
+5.0.1 (2019-09-11)
+-------------------------
+
+* #121: fix "Trying to access array offset on value of type bool" in 7.4 (@remicollet) 
+* #115: Reduce memory footprint when parsing HTTP result (@Gasol)
+* #114: Misc code improvements (@mrcnpdlk)
+* #111, #118: Added phpstan analysis (@DeepDiver1975, @staabm)
+* #107: Tested with php 7.3 (@DeepDiver1975)
+ 
+
+5.0.0 (2018-06-04)
+-------------------------
+
+* #99: Previous CURL opts are not persisted anymore (@christiaan)
+* Final release
+
+5.0.0-alpha1 (2018-02-16)
+-------------------------
+
+* Now requires PHP 7.0+.
+* Supports sabre/event 4.x and 5.x
+* Depends on sabre/uri 2.
+* hhvm is no longer supported starting this release.
+* #65: It's now possible to supply request/response bodies using a callback
+  functions. This allows very high-speed/low-memory responses to be created.
+  (@petrkotek).
+* Strict typing is used every where this is applicable.
+* Removed `URLUtil` class. It was deprecated a long time ago, and most of
+  its functions moved to the `sabre/uri` package.
+* Removed `Util` class. Most of its functions moved to the `functions.php`
+  file.
+* #68: The `$method` and `$uri` arguments when constructing a Request object
+  are now required.
+* When `Sapi::getRequest()` is called, we default to setting the HTTP Method
+  to `CLI`.
+* The HTTP response is now initialized with HTTP code `500` instead of `null`,
+  so if it's not changed, it will be emitted as 500.
+* #69: Sending `charset="UTF-8"` on Basic authentication challenges per
+  [rfc7617][rfc7617].
+* #84: Added support for `SERVER_PROTOCOL HTTP/2.0` (@jens1o)
+
+
+4.2.3 (2017-06-12)
+------------------
+
+* #74, #77: Work around 4GB file size limit at 32 Bit systems
+
+
 4.2.2 (2017-01-02)
 ------------------
 
@@ -253,4 +322,5 @@ Before 2.0.0, this package was built-into SabreDAV, where it first appeared in
 January 2009.
 
 [psr-http]: https://github.com/php-fig/fig-standards/blob/master/proposed/http-message.md
-[rfc-7240]: http://tools.ietf.org/html/rfc7240
+[rfc7240]: http://tools.ietf.org/html/rfc7240
+[rfc7617]: https://tools.ietf.org/html/rfc7617

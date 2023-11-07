@@ -297,8 +297,8 @@ div.pagination li:first-child a.btnTitle {
 
 .btnTitle, a.btnTitle {
 	display: inline-block;
-	padding: 6px 12px;
-	font-size: 14px
+	padding: 4px 12px;
+	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.4;
 	text-align: center;
@@ -377,6 +377,12 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 .paginationafterarrows a.btnTitlePlus:hover, .titre_right a.btnTitlePlus:hover {
 	border-color: #ddd;
+}
+
+/* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
+.btnTitlePlus:hover {
+	max-width: 24px;
+    max-height: 40px;
 }
 
 

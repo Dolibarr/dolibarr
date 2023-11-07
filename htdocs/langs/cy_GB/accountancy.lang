@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Eisoes wedi'i drosglwyddo i gyfnodolion cyfrifyddu a chyf
 NotYetInGeneralLedger=Heb ei drosglwyddo eto i gyfnodolion accouting a chyfriflyfr
 GroupIsEmptyCheckSetup=Mae'r grŵp yn wag, gwiriwch setup y grŵp cyfrifo personol
 DetailByAccount=Dangos manylion fesul cyfrif
+DetailBy=Detail by
 AccountWithNonZeroValues=Cyfrifon gyda gwerthoedd heb fod yn sero
 ListOfAccounts=Rhestr o gyfrifon
 CountriesInEEC=Gwledydd yn EEC
@@ -51,14 +52,19 @@ AccountantFiles=Allforio dogfennau ffynhonnell
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=I allforio eich dyddlyfrau, defnyddiwch y cofnod dewislen %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Gweld yn ôl cyfrif cyfrifeg
 VueBySubAccountAccounting=Gweld trwy isgyfrif cyfrifo
 
-MainAccountForCustomersNotDefined=Prif gyfrif cyfrifo ar gyfer cwsmeriaid heb ei ddiffinio yn y gosodiad
-MainAccountForSuppliersNotDefined=Prif gyfrif cyfrifo ar gyfer gwerthwyr heb ei ddiffinio yn y gosodiad
-MainAccountForUsersNotDefined=Prif gyfrif cyfrifo ar gyfer defnyddwyr heb ei ddiffinio yn y gosodiad
-MainAccountForVatPaymentNotDefined=Prif gyfrif cyfrifo ar gyfer taliad TAW heb ei ddiffinio yn y gosodiad
-MainAccountForSubscriptionPaymentNotDefined=Prif gyfrif cyfrifo ar gyfer taliad tanysgrifiad heb ei ddiffinio yn y gosodiad
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Maes cyfrifo
@@ -112,6 +118,7 @@ MenuLoanAccounts=Cyfrifon benthyciad
 MenuProductsAccounts=Cyfrifon cynnyrch
 MenuClosureAccounts=Cyfrifon cau
 MenuAccountancyClosure=Cau
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Dilysu symudiadau
 ProductsBinding=Cyfrifon cynhyrchion
 TransferInAccounting=Trosglwyddo mewn cyfrifeg
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Galluogi rhestr combo ar gyfer cyfrif atodol (gall fod
 ACCOUNTING_DATE_START_BINDING=Diffinio dyddiad i ddechrau rhwymo a throsglwyddo mewn cyfrifyddiaeth. O dan y dyddiad hwn, ni fydd y trafodion yn cael eu trosglwyddo i gyfrifeg.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Cyfnodolyn adroddiad treuliau
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Mae ganddo Newyddiadur newydd
@@ -238,6 +245,7 @@ ConfirmDeleteMvt=Bydd hyn yn dileu pob llinell mewn cyfrifyddiaeth am y flwyddyn
 ConfirmDeleteMvtPartial=Bydd hyn yn dileu'r trafodiad o'r cyfrifeg (bydd pob llinell sy'n ymwneud â'r un trafodiad yn cael ei dileu)
 FinanceJournal=Cylchgrawn cyllid
 ExpenseReportsJournal=Cyfnodolyn adroddiadau treuliau
+InventoryJournal=Inventory journal
 DescFinanceJournal=Cyfnodolyn cyllid gan gynnwys pob math o daliadau trwy gyfrif banc
 DescJournalOnlyBindedVisible=Golwg ar gofnod yw hwn sydd wedi'i rwymo i gyfrif cyfrifyddu a gellir ei gofnodi yn y Cyfnodolion a'r Cyfriflyfr.
 VATAccountNotDefined=Cyfrif ar gyfer TAW heb ei ddiffinio
@@ -294,7 +302,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Gwaherddir unrhyw newid neu ddileu ysgrifen, llythrennau a dileadau. Rhaid dilysu pob cynnig ar gyfer ymarfer neu ni fydd cau yn bosibl
 
 ValidateHistory=Rhwymo'n Awtomatig
@@ -343,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Analluogi rhwymo a throsglwyddo cyfrifyddiae
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Analluogi rhwymo a throsglwyddo cyfrifyddiaeth ar bryniannau (ni fydd anfonebau gwerthwr yn cael eu hystyried wrth gyfrifo)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Analluogi rhwymo a throsglwyddo cyfrifon ar adroddiadau treuliau (ni fydd adroddiadau gwariant yn cael eu hystyried wrth gyfrifo)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Baner llinellau wedi'u hallforio fel Allforiwyd <span class="warning"> (i addasu llinell, bydd angen i chi ddileu'r trafodiad cyfan a'i ail-drosglwyddo i gyfrifeg) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Dyddiad dilysu a chlo
 ConfirmExportFile=Cadarnhad o gynhyrchu'r ffeil allforio cyfrifo ?
@@ -380,7 +394,7 @@ ChartofaccountsId=Id siart o gyfrifon
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init cyfrifeg
 InitAccountancyDesc=Gellir defnyddio'r dudalen hon i gychwyn cyfrif cyfrifyddu ar gynhyrchion a gwasanaethau nad oes ganddynt gyfrif cyfrifyddu wedi'i ddiffinio ar gyfer gwerthiannau a phryniannau.
-DefaultBindingDesc=Gellir defnyddio'r dudalen hon i osod cyfrif rhagosodedig i'w ddefnyddio i gysylltu cofnod trafodion am gyflogau talu, rhoddion, trethi a thaw pan nad oedd cyfrif cyfrifyddu penodol eisoes wedi'i osod.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Gellir defnyddio'r dudalen hon i osod paramedrau a ddefnyddir ar gyfer cau cyfrifon.
 Options=Opsiynau
 OptionModeProductSell=Modd gwerthu
@@ -432,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Ni wnaethpwyd rhai camau gosod gorfodol, cwblhewch nhw
@@ -445,7 +459,7 @@ NoJournalDefined=Dim cyfnodolyn wedi'i ddiffinio
 Binded=Llinellau wedi eu rhwymo
 ToBind=Llinellau i rwymo
 UseMenuToSetBindindManualy=Llinellau heb eu rhwymo eto, defnyddiwch ddewislen <a href="%s"> %s </a> i wneud y rhwymiad â llaw
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Mae'n ddrwg gennym nid yw'r modiwl hwn yn gydnaws â nodwedd arbrofol anfonebau sefyllfa
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
@@ -475,9 +489,9 @@ FECFormatMulticurrencyAmount=Swm aml-arian (Montantdevise)
 FECFormatMulticurrencyCode=Cod aml-arian (Dyfeisio)
 
 DateExport=Dyddiad allforio
-WarningReportNotReliable=Rhybudd, nid yw'r adroddiad hwn yn seiliedig ar y Cyfriflyfr, felly nid yw'n cynnwys trafodiad a addaswyd â llaw yn y Cyfriflyfr. Os yw eich cyfnodolyn yn gyfredol, mae'r olwg cadw cyfrifon yn fwy cywir.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Cyfnodolyn Adroddiad Treuliau
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s cyfrifon

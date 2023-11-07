@@ -277,9 +277,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 			if (!$error && $pagecount) {
 				$pdf->Output($file, 'F');
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 			}
 
 			if ($usestdout) {

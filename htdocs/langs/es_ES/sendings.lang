@@ -48,7 +48,7 @@ DateDeliveryPlanned=Fecha prevista de entrega
 RefDeliveryReceipt=Ref. nota de entrega
 StatusReceipt=Estado nota de entrega
 DateReceived=Fecha real de recepción
-ClassifyReception=Clasificar recepción
+ClassifyReception=Clasificar recibido
 SendShippingByEMail=Envío de expedición por e-mail
 SendShippingRef=Envío de la expedición %s
 ActionsOnShipping=Eventos sobre la expedición
@@ -74,3 +74,8 @@ SumOfProductWeights=Suma del peso de los productos
 # warehouse details
 DetailWarehouseNumber= Detalles del almacén
 DetailWarehouseFormat= Alm.:%s (Cant. : %d)
+
+ShipmentDistribution=Distribución de envíos
+
+ErrorTooManyCombinationBatchcode=No hay envío para la línea %s porque se encontraron demasiadas combinaciones de código de almacén, producto y lote (%s).
+ErrorNoCombinationBatchcode=No hay despacho para la línea %s porque no se encontró ninguna combinación de almacén, producto, código de lote.

@@ -2,7 +2,7 @@
 ContractsArea=Sopimukset alue
 ListOfContracts=Luettelo sopimuksista
 AllContracts=Kaikki sopimukset
-ContractCard=Sopimus-kortti
+ContractCard=Sopimus
 ContractStatusNotRunning=Ole käynnissä
 ContractStatusDraft=Vedos
 ContractStatusValidated=Validoidut

@@ -74,8 +74,10 @@ abstract class ActionsContactCardCommon
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -84,7 +86,7 @@ abstract class ActionsContactCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{
@@ -251,7 +253,7 @@ abstract class ActionsContactCardCommon
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {
@@ -276,7 +278,7 @@ abstract class ActionsContactCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{

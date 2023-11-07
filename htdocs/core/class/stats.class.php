@@ -34,6 +34,47 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 * @var string	To store the FROM part of the main table of the SQL request
+	 */
+	public $from;
+
+	/**
+	 * @var string	To store the WHERE part of the main table of the SQL request
+	 */
+	public $where;
+	/**
+	 * @var string	To store the FROM part of the line table of the SQL request
+	 */
+	public $from_line;
+	/**
+	 * @var string	To store the field of the date
+	 */
+	public $field_date;
+	/**
+	 * @var string	To store the field for total HT
+	 */
+	public $field;
+	/**
+	 * @var string	To store the FROM part of the line table of the SQL request
+	 */
+	public $field_line;
+
+	/**
+	 * @var string	error message
+	 */
+	public $error;
+
+	/**
+	 * @var int year
+	 */
+	public $year;
+
+	/**
+	 * @var int month
+	 */
+	public $month;
+
+	/**
 	 *  @param	int		$year 			number
 	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * 	@return int						value
@@ -55,7 +96,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -119,10 +160,7 @@ abstract class Stats
 			$fp = fopen($newpathofdestfile, 'w');
 			fwrite($fp, json_encode($data));
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				$newmask = $conf->global->MAIN_UMASK;
-			}
-			@chmod($newpathofdestfile, octdec($newmask));
+			dolChmod($newpathofdestfile);
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -156,7 +194,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -222,10 +260,7 @@ abstract class Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			} else {
 				dol_syslog("Failed to write cache file", LOG_ERR);
 			}
@@ -237,7 +272,7 @@ abstract class Stats
 
 	/**
 	 * @param	int     $year           year number
-	 * @return 	int						value
+	 * @return 	array					array of values
 	 */
 	protected abstract function getAverageByMonth($year);
 
@@ -251,7 +286,7 @@ abstract class Stats
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -332,10 +367,7 @@ abstract class Stats
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					$newmask = $conf->global->MAIN_UMASK;
-				}
-				@chmod($newpathofdestfile, octdec($newmask));
+				dolChmod($newpathofdestfile);
 			}
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
@@ -359,7 +391,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -388,7 +420,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -400,16 +432,22 @@ abstract class Stats
 				if ($i > 0 && $row->nb > 0) {
 					$result[$i - 1]['nb_diff'] = ($result[$i - 1]['nb'] - $row->nb) / $row->nb * 100;
 				}
-				$result[$i]['total'] = $row->total;
-				if ($i > 0 && $row->total > 0) {
-					$result[$i - 1]['total_diff'] = ($result[$i - 1]['total'] - $row->total) / $row->total * 100;
-				}
-				$result[$i]['avg'] = $row->avg;
-				if ($i > 0 && $row->avg > 0) {
-					$result[$i - 1]['avg_diff'] = ($result[$i - 1]['avg'] - $row->avg) / $row->avg * 100;
+				// For some $sql only
+				if (property_exists($row, 'total')) {
+					$result[$i]['total'] = $row->total;
+					if ($i > 0 && $row->total > 0) {
+						$result[$i - 1]['total_diff'] = ($result[$i - 1]['total'] - $row->total) / $row->total * 100;
+					}
 				}
 				// For some $sql only
-				if (isset($row->weighted)) {
+				if (property_exists($row, 'total')) {
+					$result[$i]['avg'] = $row->avg;
+					if ($i > 0 && $row->avg > 0) {
+						$result[$i - 1]['avg_diff'] = ($result[$i - 1]['avg'] - $row->avg) / $row->avg * 100;
+					}
+				}
+				// For some $sql only
+				if (property_exists($row, 'weighted')) {
 					$result[$i]['weighted'] = $row->weighted;
 					if ($i > 0 && $row->weighted > 0) {
 						$result[$i - 1]['avg_weighted'] = ($result[$i - 1]['weighted'] - $row->weighted) / $row->weighted * 100;
@@ -442,7 +480,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -499,7 +537,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -557,7 +595,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -613,7 +651,7 @@ abstract class Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last customer orders
  */
 class box_commandes extends ModeleBoxes
 {
-	public $boxcode = "lastcustomerorders";
-	public $boximg = "object_order";
+	public $boxcode  = "lastcustomerorders";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxLastCustomerOrders";
-	public $depends = array("commande");
+	public $depends  = array("commande");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -85,7 +85,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerOrders", $max));
 
-		if ($user->rights->commande->lire) {
+		if ($user->hasRight('commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
@@ -100,7 +100,7 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
@@ -108,7 +108,7 @@ class box_commandes extends ModeleBoxes
 			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) {
 				$sql .= " AND c.fk_statut = 1";
 			}
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

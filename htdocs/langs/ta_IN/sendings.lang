@@ -48,7 +48,7 @@ DateDeliveryPlanned=திட்டமிடப்பட்ட விநிய�
 RefDeliveryReceipt=ரெஃப் டெலிவரி ரசீது
 StatusReceipt=நிலை விநியோக ரசீது
 DateReceived=டெலிவரி பெறப்பட்ட தேதி
-ClassifyReception=வரவேற்பை வகைப்படுத்தவும்
+ClassifyReception=Classify Received
 SendShippingByEMail=மின்னஞ்சல் மூலம் ஏற்றுமதி அனுப்பவும்
 SendShippingRef=கப்பலின் சமர்ப்பிப்பு %s
 ActionsOnShipping=ஏற்றுமதி நிகழ்வுகள்
@@ -74,3 +74,8 @@ SumOfProductWeights=தயாரிப்பு எடைகளின் கூ�
 # warehouse details
 DetailWarehouseNumber= கிடங்கு விவரங்கள்
 DetailWarehouseFormat= W:%s (Qty: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

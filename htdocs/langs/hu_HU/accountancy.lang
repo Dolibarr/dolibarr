@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Már átkerült a számviteli naplókba és a főkönyvbe
 NotYetInGeneralLedger=Még nem került át a számviteli naplókba és a főkönyvbe
 GroupIsEmptyCheckSetup=A csoport üres, ellenőrizze a személyre szabott számviteli csoport beállítását
 DetailByAccount=Részletek megjelenítése számlánként
+DetailBy=Detail by
 AccountWithNonZeroValues=Nem nulla értékű számlák
 ListOfAccounts=Számlák listája
 CountriesInEEC=Az EGK-beli országok
@@ -51,14 +52,19 @@ AccountantFiles=Forrásdokumentumok exportálása
 ExportAccountingSourceDocHelp=Ezzel az eszközzel megkeresheti és exportálhatja a könyvelés generálásához használt forráseseményeket. <br> Az exportált ZIP-fájl tartalmazza a kért elemek listáját CSV-ben, valamint a hozzájuk csatolt fájlokat eredeti formátumukban (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=A naplók exportálásához használja az %s - %s menüpontot.
 ExportAccountingProjectHelp=Adjon meg egy projektet, ha csak egy adott projekthez van szüksége számviteli jelentésre. A projektbeszámolók nem tartalmazzák a költségjelentéseket és a hitelkifizetéseket.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Megtekintés számviteli számla szerint
 VueBySubAccountAccounting=Megtekintés számviteli alszámla szerint
 
-MainAccountForCustomersNotDefined=A beállításban nem definiált ügyfelek fő számviteli számlája
-MainAccountForSuppliersNotDefined=A beállításban nem definiált szállítók fő számviteli számlája
-MainAccountForUsersNotDefined=Fő számviteli számla a beállításban nem definiált felhasználók számára
-MainAccountForVatPaymentNotDefined=Az ÁFA befizetés fő számviteli számlája nincs meghatározva a beállításban
-MainAccountForSubscriptionPaymentNotDefined=Az előfizetési fizetéshez szükséges fő számla nincs megadva a beállításban
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=A beállításban nincs megadva számviteli számla
 
 AccountancyArea=Számviteli terület
@@ -112,6 +118,7 @@ MenuLoanAccounts=Hitelszámlák
 MenuProductsAccounts=Termék számlák
 MenuClosureAccounts=Számlák lezárása
 MenuAccountancyClosure=Lezárás
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Érvényesítse a mozgásokat
 ProductsBinding=Termékek számlái
 TransferInAccounting=Átvezetés a számvitelbe
@@ -295,7 +302,7 @@ DescClosure=Itt tekintheti meg a még nem érvényesített és zárolt mozgások
 OverviewOfMovementsNotValidated=Nem érvényesített és zárolt mozgások áttekintése
 AllMovementsWereRecordedAsValidated=Minden mozgást érvényesítettként és zárolva rögzítettünk
 NotAllMovementsCouldBeRecordedAsValidated=Nem minden mozgást lehetett érvényesítettként és zároltként rögzíteni
-ValidateMovements=Mozgások érvényesítése és zárolása...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Az írások, betűk és törlések bármilyen módosítása vagy törlése tilos. Egy gyakorlatra minden bejegyzést érvényesíteni kell, különben a zárás nem lehetséges
 
 ValidateHistory=Automatikus kötés
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=A kötés és az átvitel letiltása az ért
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=A kötés és az átvitel letiltása a vásárlások könyvelésében (a szállítói számlák nem lesznek figyelembe véve a könyvelésben)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=A kötés és az átvitel letiltása a könyvelésben a költségjelentéseken (a költségjelentéseket nem veszik figyelembe a könyvelésben)
 ACCOUNTING_ENABLE_LETTERING=Engedélyezze a feliratozás funkciót a számvitelben
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Ne exportálja a betűket a fájl létrehozásakor
-NotifiedExportDate=Az exportált sorok megjelölése Exportáltként <span class="warning"> (egy sor módosításához törölnie kell a teljes tranzakciót, és újra át kell vinnie a könyvelésbe) </span>
-NotifiedValidationDate=Érvényesítse és zárolja az exportált bejegyzéseket <span class="warning"> (ugyanaz a hatás, mint az "%s" funkciónál, a sorok módosítása és törlése BIZTOSAN nem lehetséges) </span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Dátumellenőrzés és zárolás
 ConfirmExportFile=A számviteli exportfájl létrehozásának megerősítése?
@@ -381,7 +394,7 @@ ChartofaccountsId=Számladiagram azonosítója
 ## Tools - Init accounting account on product / service
 InitAccountancy=Könyvelés inicializálása
 InitAccountancyDesc=Ez az oldal olyan termékek és szolgáltatások számviteli számlájának inicializálására használható, amelyek nem rendelkeznek az értékesítéshez és a vásárláshoz meghatározott számviteli számlával.
-DefaultBindingDesc=Ezen az oldalon beállíthat egy alapértelmezett számlát, amellyel összekapcsolhatja a fizetésekkel, adományokkal, adókkal és áfával kapcsolatos tranzakciós rekordokat, ha még nincs beállítva konkrét számviteli számla.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Ez az oldal használható a könyvelés lezárásához használt paraméterek beállítására.
 Options=Opciók
 OptionModeProductSell=Mód értékesítés
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Tömeges automatikus egyeztetés megerősítése
 ConfirmMassUnletteringManual=Tömeges kézi egyeztetés visszaigazolása
 ConfirmMassUnletteringQuestion=Biztosan meg akarja szüntetni az %s kiválasztott rekord(ok) egyeztetését?
 ConfirmMassDeleteBookkeepingWriting=Tömeges törlés megerősítése
-ConfirmMassDeleteBookkeepingWritingQuestion=Ezzel törli a tranzakciót a könyvelésből (az ugyanahhoz a tranzakcióhoz kapcsolódó összes sor törlődik) Biztosan törölni szeretné az %s kiválasztott rekordo(ka)t?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=A beállítás néhány kötelező lépése nem történt meg, kérjük, végezze el őket
@@ -446,7 +459,7 @@ NoJournalDefined=Nincs napló meghatározva
 Binded=Sorok kötve
 ToBind=Kikötendő sorok
 UseMenuToSetBindindManualy=A sorok még nincsenek bekötve, az <a href="%s"> %s </a> menü segítségével hajtsa végre a manuális kötést
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sajnos ez a modul nem kompatibilis a szituációs számlák kísérleti funkciójával
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Nem egyezik az egyeztető kód
 AccountancyErrorMismatchBalanceAmount=Az egyenleg (%s) nem egyenlő 0-val
 AccountancyErrorLetteringBookkeeping=Hibák történtek a következő tranzakciókkal kapcsolatban: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Többvaluta összeg (Montdevise)
 FECFormatMulticurrencyCode=Több pénznem kódja (ötlet)
 
 DateExport=Dátum exportálás
-WarningReportNotReliable=Figyelem, ez a jelentés nem a Főkönyvön alapul, így nem tartalmaz a Főkönyvben kézzel módosított tranzakciót. Ha a naplózás naprakész, a könyvelési nézet pontosabb.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Költségjelentési napló
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s számlák

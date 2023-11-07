@@ -50,7 +50,7 @@ $id = GETPOST('id', 'int');
 $search_start = GETPOST('search_start', 'int');
 $search_limit = GETPOST('search_limit', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -68,6 +68,10 @@ $pricelevel = 1;	// default price level if PRODUIT_MULTIPRICES. TODO Get price l
 $thirdparty = new Societe($db);
 
 if ($action == 'getProducts') {
+	$tosell = GETPOSTISSET('tosell') ? GETPOST('tosell', 'int') : '';
+	$limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : 0;
+	$offset = GETPOSTISSET('offset') ? GETPOST('offset', 'int') : 0;
+
 	top_httphead('application/json');
 
 	// Search
@@ -81,10 +85,19 @@ if ($action == 'getProducts') {
 	$object = new Categorie($db);
 	if ($category == "supplements") {
 		$category = getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY');
+		if (empty($category)) {
+			echo 'Error, the category to use for supplements is not defined. Go into setup of module TakePOS.';
+			exit;
+		}
 	}
+
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
+		$filter = array();
+		if ($tosell != '') {
+			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+		}
+		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need
 		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
@@ -249,7 +262,11 @@ if ($action == 'getProducts') {
 
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc' ;
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ', ps.reel';
+		if (getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+			$sql .= ', ps.reel';
+		} else {
+			$sql .= ', SUM(ps.reel) as reel';
+		}
 	}
 	/* this will be possible when field archive will be supported into llx_product_price
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -271,7 +288,9 @@ if ($action == 'getProducts') {
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
-		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		}
 		$sql .= ')';
 	}
 
@@ -287,7 +306,7 @@ if ($action == 'getProducts') {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND p.tosell = 1';
-	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 		$sql .= ' AND ps.reel > 0';
 	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
@@ -296,6 +315,17 @@ if ($action == 'getProducts') {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
 	if ($reshook >= 0) {
 		$sql .= $hookmanager->resPrint;
+	}
+
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && !getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc';
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
+		if ($reshook >= 0) {
+			$sql .= $hookmanager->resPrint;
+		}
+		$sql .= ' HAVING SUM(ps.reel) > 0';
 	}
 
 	// load only one page of products
@@ -374,7 +404,7 @@ if ($action == 'getProducts') {
 		$printer->pulse();
 		$printer->close();
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && !empty($user->rights->facture->lire)) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
@@ -399,6 +429,9 @@ if ($action == 'getProducts') {
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+
+	$object = new Facture($db);
+
 	$printer = new dolReceiptPrinter($db);
 	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 }

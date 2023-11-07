@@ -274,7 +274,7 @@ if ($id > 0 && $action != 'edit') {
 	print "</table>\n";
 
 	print "</div></div></div>\n";
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 }

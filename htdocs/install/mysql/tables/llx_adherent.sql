@@ -53,15 +53,6 @@ create table llx_adherent
   url              varchar(255) NULL,
 
   socialnetworks   text DEFAULT NULL,           -- json with socialnetworks
-  -- skype            varchar(255),                -- deprecated
-  -- twitter          varchar(255),                -- deprecated
-  -- facebook         varchar(255),                -- deprecated
-  -- linkedin         varchar(255),                -- deprecated
-  -- instagram        varchar(255),                -- deprecated
-  -- snapchat         varchar(255),                -- deprecated
-  -- googleplus       varchar(255),                -- deprecated
-  -- youtube          varchar(255),                -- deprecated
-  -- whatsapp         varchar(255),                -- deprecated
 
   phone            varchar(30),
   phone_perso      varchar(30),

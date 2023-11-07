@@ -134,6 +134,9 @@ class box_external_rss extends ModeleBoxes
 				if (!$date && isset($item['pubdate'])) {
 					$date = $item['pubdate'];
 				}
+				if (!$date && isset($item['pubDate'])) {
+					$date = $item['pubDate'];
+				}
 				if (!$date && isset($item['dc']['date'])) {
 					$date = $item['dc']['date'];
 				}
@@ -183,22 +186,22 @@ class box_external_rss extends ModeleBoxes
 				'td' => 'class="left" width="16"',
 				'text' => img_picto('', 'rss'),
 				'url' => $href,
-				'tooltip' => $tooltip,
+				'tooltip' => dol_escape_htmltag($tooltip),
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][1] = array(
 				'td' => 'class="tdoverflowmax300"',
-				'text' => $title,
+				'text' => dol_escape_htmltag($title),
 				'url' => $href,
-				'tooltip' => $tooltip,
+				'tooltip' => dol_escape_htmltag($tooltip),
 				'maxlength' => 0,
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][2] = array(
 				'td' => 'class="right nowrap"',
-				'text' => $date,
+				'text' => dol_escape_htmltag($date),
 			);
 		}
 	}

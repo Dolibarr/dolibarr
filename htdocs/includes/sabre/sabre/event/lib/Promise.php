@@ -1,8 +1,9 @@
-<?php
+<?php declare (strict_types=1);
 
 namespace Sabre\Event;
 
 use Exception;
+use Throwable;
 
 /**
  * An implementation of the Promise pattern.
@@ -16,7 +17,7 @@ use Exception;
  *
  * To get a callback when the operation has finished, use the `then` method.
  *
- * @copyright Copyright (C) 2013-2015 fruux GmbH (https://fruux.com/).
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
@@ -52,8 +53,6 @@ class Promise {
      *
      * Each are callbacks that map to $this->fulfill and $this->reject.
      * Using the executor is optional.
-     *
-     * @param callable $executor
      */
     function __construct(callable $executor = null) {
 
@@ -84,12 +83,8 @@ class Promise {
      *
      * If either of the callbacks throw an exception, the returned promise will
      * be rejected and the exception will be passed back.
-     *
-     * @param callable $onFulfilled
-     * @param callable $onRejected
-     * @return Promise
      */
-    function then(callable $onFulfilled = null, callable $onRejected = null) {
+    function then(callable $onFulfilled = null, callable $onRejected = null) : Promise {
 
         // This new subPromise will be returned from this function, and will
         // be fulfilled with the result of the onFulfilled or onRejected event
@@ -122,11 +117,8 @@ class Promise {
      *
      * Its usage is identical to then(). However, the otherwise() function is
      * preferred.
-     *
-     * @param callable $onRejected
-     * @return Promise
      */
-    function otherwise(callable $onRejected) {
+    function otherwise(callable $onRejected) : Promise {
 
         return $this->then(null, $onRejected);
 
@@ -152,13 +144,9 @@ class Promise {
     /**
      * Marks this promise as rejected, and set it's rejection reason.
      *
-     * While it's possible to use any PHP value as the reason, it's highly
-     * recommended to use an Exception for this.
-     *
-     * @param mixed $reason
      * @return void
      */
-    function reject($reason = null) {
+    function reject(Throwable $reason) {
         if ($this->state !== self::PENDING) {
             throw new PromiseAlreadyResolvedException('This promise is already resolved, and you\'re not allowed to resolve a promise more than once');
         }
@@ -181,7 +169,6 @@ class Promise {
      * one. In PHP it might be useful to call this on the last promise in a
      * chain.
      *
-     * @throws Exception
      * @return mixed
      */
     function wait() {
@@ -205,15 +192,7 @@ class Promise {
         } else {
             // If we got here, it means that the asynchronous operation
             // errored. Therefore we need to throw an exception.
-            $reason = $this->value;
-            if ($reason instanceof Exception) {
-                throw $reason;
-            } elseif (is_scalar($reason)) {
-                throw new Exception($reason);
-            } else {
-                $type = is_object($reason) ? get_class($reason) : gettype($reason);
-                throw new Exception('Promise was rejected with reason of type: ' . $type);
-            }
+            throw $this->value;
         }
 
 
@@ -272,7 +251,7 @@ class Promise {
                         // immediately fulfill the chained promise.
                         $subPromise->fulfill($result);
                     }
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     // If the event handler threw an exception, we need to make sure that
                     // the chained promise is rejected as well.
                     $subPromise->reject($e);
@@ -285,36 +264,6 @@ class Promise {
                 }
             }
         });
-    }
-
-    /**
-     * Alias for 'otherwise'.
-     *
-     * This function is now deprecated and will be removed in a future version.
-     *
-     * @param callable $onRejected
-     * @deprecated
-     * @return Promise
-     */
-    function error(callable $onRejected) {
-
-        return $this->otherwise($onRejected);
-
-    }
-
-    /**
-     * Deprecated.
-     *
-     * Please use Sabre\Event\Promise::all
-     *
-     * @param Promise[] $promises
-     * @deprecated
-     * @return Promise
-     */
-    static function all(array $promises) {
-
-        return Promise\all($promises);
-
     }
 
 }

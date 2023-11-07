@@ -269,6 +269,7 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
+	$separator = GETPOST('delimiter', 'alpha');
 	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -277,7 +278,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -1182,14 +1183,15 @@ if ($step == 5 && $datatoexport) {
 	print '<br>';
 
 	// List of available export formats
-	$htmltabloflibs = '<table class="noborder centpercent">';
+	$htmltabloflibs = '<!-- Table with available export formats --><br>';
+	$htmltabloflibs .= '<table class="noborder centpercent nomarginbottom">';
 	$htmltabloflibs .= '<tr class="liste_titre">';
 	$htmltabloflibs .= '<td>'.$langs->trans("AvailableFormats").'</td>';
 	$htmltabloflibs .= '<td>'.$langs->trans("LibraryUsed").'</td>';
 	$htmltabloflibs .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$htmltabloflibs .= '</tr>'."\n";
 
-	$liste = $objmodelexport->liste_modeles($db);
+	$liste = $objmodelexport->listOfAvailableExportFormat($db);
 	$listeall = $liste;
 	foreach ($listeall as $key => $val) {
 		if (preg_match('/__\(Disabled\)__/', $listeall[$key])) {
@@ -1206,7 +1208,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 		$htmltabloflibs .= '</tr>'."\n";
 	}
-	$htmltabloflibs .= '</table>';
+	$htmltabloflibs .= '</table><br>';
 
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;

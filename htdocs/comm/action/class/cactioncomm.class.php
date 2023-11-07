@@ -87,6 +87,12 @@ class CActionComm
 
 
 	/**
+	 * @var array	Used to return value by some methods
+	 */
+	public $liste_array;
+
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db		Database handler
@@ -148,7 +154,7 @@ class CActionComm
 	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
 	 *  @param  int         $shortlabel     1=Get short label instead of long label
-	 *  @return mixed                       Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
+	 *  @return array|int                   Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
 	 */
 	public function liste_array($active = '', $idorcode = 'id', $excludetype = '', $onlyautoornot = 0, $morefilter = '', $shortlabel = 0)
 	{
@@ -172,7 +178,13 @@ class CActionComm
 		if ($morefilter) {
 			$sql .= " AND ".$morefilter;
 		}
-		$sql .= " ORDER BY type, position, module";
+		// If AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST is defined, we use position as main sort criterion
+		// otherwise we use type as main sort criterion
+		if (!empty($conf->global->AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST)) {
+			$sql .= " ORDER BY position, type, module";
+		} else {
+			$sql .= " ORDER BY type, position, module";
+		}
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -195,29 +207,29 @@ class CActionComm
 					}
 
 					if ($qualified && !empty($obj->module)) {
-						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->rights->facture->lire);
+						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->hasRight('facture', 'lire'));
 						$qualified = 0;
 						// Special cases
-						if ($obj->module == 'invoice' && isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+						if ($obj->module == 'invoice' && isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order' && isModEnabled('commande') && empty($user->rights->commande->lire)) {
+						if ($obj->module == 'order' && isModEnabled('commande') && !$user->hasRight('commande', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'propal' && isModEnabled("propal") && !empty($user->rights->propal->lire)) {
+						if ($obj->module == 'propal' && isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'invoice_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (isModEnabled('supplier_invoice') && !empty($user->rights->supplier_invoice->lire)))) {
+						if ($obj->module == 'invoice_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->commande->lire)) || (!isModEnabled('supplier_order') && !empty($user->rights->supplier_order->lire)))) {
+						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (!isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && isModEnabled("expedition") && !empty($user->rights->expedition->lire)) {
+						if ($obj->module == 'shipping' && isModEnabled("expedition") && $user->hasRight('expedition', 'lire')) {
 							$qualified = 1;
 						}
 						// For case module = 'myobject@eventorganization'
-						$tmparray = preg_split("/@/", $obj->module, -1);
+						$tmparray = explode("@", $obj->module);
 						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && isModEnabled('eventorganization')) {
 							$qualified = 1;
 						}
@@ -228,7 +240,7 @@ class CActionComm
 								$tmpobject = $regs[1];
 								$tmpmodule = $regs[2];
 								//var_dump($user->$tmpmodule);
-								if ($tmpmodule && isset($conf->$tmpmodule) && isModEnabled($tmpmodule) && (!empty($user->rights->$tmpmodule->read) || !empty($user->rights->$tmpmodule->lire) || !empty($user->rights->$tmpmodule->$tmpobject->read) || !empty($user->rights->$tmpmodule->$tmpobject->lire))) {
+								if ($tmpmodule && isset($conf->$tmpmodule) && isModEnabled($tmpmodule) && ($user->hasRight($tmpmodule, 'read') || $user->hasRight($tmpmodule, 'lire') || $user->hasRight($tmpmodule, $tmpobject, 'read') || $user->hasRight($tmpmodule, $tmpobject, 'lire'))) {
 									$qualified = 1;
 								}
 							}
@@ -335,5 +347,6 @@ class CActionComm
 		if ($transcode != "Action".$this->code) {
 			return $transcode;
 		}
+		return -1;
 	}
 }

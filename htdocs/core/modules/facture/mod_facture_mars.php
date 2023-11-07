@@ -72,9 +72,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		$langs->load("bills");
@@ -95,9 +96,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $langs, $conf, $db;
 
@@ -158,7 +160,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 * @param	Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string       			Value if OK, 0 if KO
+	 * @return  string|int       		Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -233,6 +235,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			return $prefix.$yymm."-".$num;
 		} else {
 			dol_print_error('', 'Bad parameter for getNextValue');
+			return -1;
 		}
 	}
 

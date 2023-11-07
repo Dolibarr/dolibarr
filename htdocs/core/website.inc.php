@@ -51,7 +51,7 @@ if (!is_object($website)) {
 	$website->fetch(0, $websitekey);
 }
 // Define $websitepage if we have $websitepagefile defined
-if (!$pageid && !empty($websitepagefile)) {
+if (empty($pageid) && !empty($websitepagefile)) {
 	$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
 	if ($pageid == 'index.php') {
 		$pageid = $website->fk_default_home;
@@ -122,6 +122,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO');
 
 		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));
@@ -154,6 +155,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));

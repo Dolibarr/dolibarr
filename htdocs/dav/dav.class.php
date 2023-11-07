@@ -143,12 +143,14 @@ class CdavLib
 			$location = trim($location.', '.$obj->soc_country_label);
 		}
 
+		/*
 		$address = explode("\n", $obj->address, 2);
 		foreach ($address as $kAddr => $vAddr) {
 			$address[$kAddr] = trim(str_replace(array("\r", "\t"), ' ', str_replace("\n", ' | ', trim($vAddr))));
 		}
 		$address[] = '';
 		$address[] = '';
+		*/
 
 		if ($obj->percent == -1 && trim($obj->datep) != '') {
 			$type = 'VEVENT';
@@ -249,7 +251,7 @@ class CdavLib
 	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{
-		$calid = ($calendarId * 1);
+		$calid = (int) $calendarId;
 		$calevents = array();
 
 		if (!$this->user->rights->agenda->myactions->read) {

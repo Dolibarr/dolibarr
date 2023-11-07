@@ -205,7 +205,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 $param = '&mode='.$mode;
 
 $enabledisablehtml = $langs->trans("EnableDefaultValues").' ';
-if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
+if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -226,7 +226,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -348,7 +348,7 @@ if (isModEnabled('multicompany') && !$user->entity) {
 }
 print '<td class="center">';
 $disabled = '';
-if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
+if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 	$disabled = ' disabled="disabled"';
 }
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
@@ -383,7 +383,12 @@ if (!is_array($result) && $result < 0) {
 			print '</td>';
 		}
 
-		print '<td></td>';
+		// Multicompany
+		print '<td>';
+		if (isModEnabled('multicompany')) {
+			print dol_escape_htmltag($defaultvalue->entity);
+		}
+		print '</td>';
 
 		// Actions
 		print '<td class="center">';

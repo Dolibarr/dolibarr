@@ -106,9 +106,11 @@ if ($resql) {
 	$oldlang = '';
 	$total = 0;
 	$foundtoprocess = 0;
+
 	print "We found ".$num." couples (unpayed validated invoice - sale representative) qualified\n";
 	dol_syslog("We found ".$num." couples (unpayed validated invoice - sale representative) qualified");
 	$message = '';
+	$oldsalerepresentative = 0;
 
 	if ($num) {
 		while ($i < $num) {
@@ -188,14 +190,14 @@ if ($resql) {
  * Send email
  *
  * @param string $mode						Mode (test | confirm)
- * @param string $oldemail					Old email
+ * @param string $oldemail					Target email
  * @param string $message					Message to send
  * @param string $total						Total amount of unpayed invoices
  * @param string $userlang					Code lang to use for email output.
- * @param string $oldsalerepresentative		Old sale representative
- * @return int 								<0 if KO, >0 if OK
+ * @param string $oldtarget					Target name of sale representative
+ * @return int 								Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
 	global $conf, $langs;
 
@@ -214,7 +216,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = - 1;
 
-	print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
+	print "- Send email for ".$oldtarget." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;

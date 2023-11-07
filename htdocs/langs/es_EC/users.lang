@@ -64,7 +64,6 @@ LoginToCreate=Ingresar para crear
 NameToCreate=Nombre del tercero para crear
 YourRole=Sus funciones
 YourQuotaOfUsersIsReached=¡Se alcanza su cuota de usuarios activos!
-DontDowngradeSuperAdmin=Sólo una superadmin puede degradar una superadmin
 UseTypeFieldToChange=Utilice el campo Tipo para cambiar
 OpenIDURL=URL de OpenID
 LoginUsingOpenID=Utilice OpenID para iniciar sesión

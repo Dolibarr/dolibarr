@@ -17,18 +17,18 @@
  */
 
 /**
- *  \file       availabilities_note.php
- *  \ingroup    bookcal
- *  \brief      Tab for notes on Availabilities
+ *   \file       htdocs/bookcal/availabilities_note.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for notes on Availabilities
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-dol_include_once('/bookcal/class/availabilities.class.php');
-dol_include_once('/bookcal/lib/bookcal_availabilities.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "companies"));
+$langs->loadLangs(array("agenda", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -56,9 +56,9 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->bookcal->availabilities->read;
-	$permissiontoadd = $user->rights->bookcal->availabilities->write;
-	$permissionnote = $user->rights->bookcal->availabilities->write; // Used by the include of actions_setnotes.inc.php
+	$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
+	$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
+	$permissionnote = $user->hasRight('bookcal', 'availabilities', 'write'); // Used by the include of actions_setnotes.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -70,7 +70,7 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->bookcal->enabled)) accessforbidden();
+if (!isModEnabled('bookcal')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 
@@ -118,7 +118,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';

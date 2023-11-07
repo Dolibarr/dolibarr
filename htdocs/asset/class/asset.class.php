@@ -155,22 +155,12 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
-	public $user_cloture_id;
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_asset';
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('asset_assetdet');
+	/**
+	 * @var Asset object oldcopy
+	 */
+	public $oldcopy;
+
 
 	/**
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
@@ -192,7 +182,7 @@ class Asset extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -1006,8 +996,8 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
-				$nb_days_in_month = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
+				$nb_days_in_year = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_YEAR') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
+				$nb_days_in_month = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_MONTH') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
 				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
@@ -1199,7 +1189,7 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
@@ -1262,7 +1252,7 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
@@ -1322,7 +1312,7 @@ class Asset extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1332,7 +1322,7 @@ class Asset extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAsset");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1372,7 +1362,7 @@ class Asset extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1442,7 +1432,7 @@ class Asset extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("asset@asset");
+			//$langs->load("assets");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
 			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
@@ -1476,12 +1466,10 @@ class Asset extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->user_creation_id = $obj->fk_user_author;
-				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_cloture_id = $obj->fk_user_cloture;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);
@@ -1525,16 +1513,16 @@ class Asset extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("asset@asset");
+		$langs->load("assets");
 
-		if (empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (!getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
 		}
 
-		if (!empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->ASSET_ASSET_ADDON.".php";
+			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";
 			$classname = $conf->global->ASSET_ASSET_ADDON;
 
 			// Include file with class
@@ -1590,7 +1578,7 @@ class Asset extends CommonObject
 	//      $result = 0;
 	//      $includedocgeneration = 1;
 	//
-	//      $langs->load("asset@asset");
+	//      $langs->load("assets");
 	//
 	//      if (!dol_strlen($modele)) {
 	//          $modele = 'standard_asset';

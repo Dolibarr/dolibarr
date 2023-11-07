@@ -142,7 +142,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_POSITION_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_POSITION_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
@@ -167,7 +167,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_POSITION_SENTBYMAIL';
+	$triggersendname = 'HRM_POSITION_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_POSITION_TO';
 	$trackid = 'position' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
@@ -347,7 +347,7 @@ function displayPositionCard(&$object)
 //		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
-//		$delallowed = $user->rights->societe->creer;
+//		$delallowed = $user->hasRight('societe', 'creer');
 //
 //		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 //	}
