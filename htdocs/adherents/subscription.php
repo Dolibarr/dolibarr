@@ -976,7 +976,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$datefrom) {
 		$datefrom = $object->datevalid;
-		if (!empty(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) ) {
+		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 			$datefrom = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 		} elseif ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > $now) {
 			$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
