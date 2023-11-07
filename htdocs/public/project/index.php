@@ -126,17 +126,19 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<div class="center">';
 	// Output html code for logo
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
 	if ($urllogo) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-		print '>';
-		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 	}
+	if (empty($urllogo)) {
+		print $mysoc->name;
+	}
+	print '</div>';
+	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+	}
+	print '</div>';
 
 	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
 		print '<div class="backimagepubliceventorganizationsubscription">';
@@ -201,9 +203,9 @@ $conf->dol_hide_leftmenu = 1;
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
-llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+//llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-//llxHeaderVierge($langs->trans("SuggestForm"));
+llxHeaderVierge($langs->trans("SuggestForm"));
 
 
 
