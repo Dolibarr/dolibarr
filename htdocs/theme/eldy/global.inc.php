@@ -4111,10 +4111,6 @@ div.pagination li.litext a:hover {
 	background-color: transparent;
 	background-image: none;
 }
-div.pagination li.litext a:hover {
-	background-color: transparent;
-	background-image: none;
-}
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
