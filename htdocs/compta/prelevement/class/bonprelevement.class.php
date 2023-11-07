@@ -1035,6 +1035,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
+			// Make some checks
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
@@ -1086,14 +1087,20 @@ class BonPrelevement extends CommonObject
 							//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 						} else {
 							if ($type != 'bank-transfer') {
+								$tmpsoc->id = $fac[2];
+								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$fac[0]."'>".$fac[9]."</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
-								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+								$tmpsoc->id = $fac[2];
+								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='".DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$fac[0]."'>".$fac[9]."</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
-								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $soc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$error++;
 							}
 							if ($type == 'bank-transfer' && $sourcetype == 'salary') {
 								$tmpuser->id = $fac[2];
@@ -1101,8 +1108,9 @@ class BonPrelevement extends CommonObject
 								$salary_url = "<a href='".DOL_URL_ROOT.'/salaries/card.php?id='.$fac[0]."'>".$fac[0]."</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpuser->id] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
+								$error++;
 							}
-							dol_syslog(__METHOD__ . " Check BAN Error on default bank number IBAN/BIC reported by verif(): " . join(', ', $fac) . " - " . $soc->name, LOG_WARNING);
+							dol_syslog(__METHOD__ . " Check BAN Error on default bank number IBAN/BIC reported by verif(): " . join(', ', $fac), LOG_WARNING);
 						}
 					} else {
 						dol_syslog(__METHOD__ . " Check BAN Failed to read company", LOG_WARNING);
@@ -1220,18 +1228,11 @@ class BonPrelevement extends CommonObject
 					dol_syslog(__METHOD__." Get last withdraw receipt ".$this->db->lasterror(), LOG_ERR);
 				}
 			}
-			if (!$error) {
-				/*
-				if ($type != 'bank-transfer') {
-					$fact = new Facture($this->db);
-				} else {
-					$fact = new FactureFournisseur($this->db);
-				}
-				*/
 
+			if (!$error) {
 				// Add lines for the bon
 				if (count($factures_prev) > 0) {
-					foreach ($factures_prev as $fac) {	// Add a link in database for each invoice
+					foreach ($factures_prev as $fac) {	// Add a link in database for each invoice ro salary
 						// Fetch invoice
 						/*
 						$result = $fact->fetch($fac[0]);
@@ -1357,7 +1358,7 @@ class BonPrelevement extends CommonObject
 
 			if (!$error) {
 				$this->db->commit();
-				return count($factures_prev);
+				return count($factures_prev);	// The error of failed lines are into $this->invoice_in_error and $this->thirdparty_in_error
 			} else {
 				$this->db->rollback();
 				return -1;

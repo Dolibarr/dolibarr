@@ -70,9 +70,16 @@ if ($user->socid) {
 }
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+
+	$permissiontoread = $user->hasRight('paymentbybanktransfer', 'read');
+	$permissiontocreate = $user->hasRight('paymentbybanktransfer', 'create');
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+
+	$permissiontoread = $user->hasRight('prelevement', 'bons', 'lire');
+	$permissiontocreate = $user->hasRight('prelevement', 'bons', 'creer');
 }
+
 
 $error = 0;
 $option = "";
@@ -95,12 +102,14 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Change customer bank information to withdraw
+	/*
 	if ($action == 'modify') {
 		for ($i = 1; $i < 9; $i++) {
 			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	if ($action == 'create') {
+	*/
+	if ($action == 'create' && $permissiontocreate) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
@@ -129,22 +138,41 @@ if (empty($reshook)) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0, $sourcetype);
 			if ($result < 0) {
-				setEventMessages($bprev->error, $bprev->errors, 'errors');
-			} elseif ($result == 0) {
 				$mesg = '';
-				if ($type != 'bank-transfer') {
-					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+
+				if ($bprev->error || !empty($bprev->errors)) {
+					setEventMessages($bprev->error, $bprev->errors, 'errors');
+				} else {
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorsOnXLines", count($bprev->invoice_in_error)), null, 'warnings');
 				}
-				if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSupplier", $format);
+
+				if (!empty($bprev->invoice_in_error)) {
+					foreach ($bprev->invoice_in_error as $key => $val) {
+						$mesg .= '<span class="warning">'.$val."</span><br>\n";
+					}
 				}
-				if ($type == 'bank-transfer' && $sourcetype == 'salary') {
-					$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
+			} elseif ($result == 0 || !empty($bprev->invoice_in_error)) {
+				$mesg = '';
+
+				if ($result == 0) {
+					if ($type != 'bank-transfer') {
+						$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+					}
+					if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+						$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSupplier", $format);
+					}
+					if ($type == 'bank-transfer' && $sourcetype == 'salary') {
+						$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
+					}
+					setEventMessages($mesg, null, 'errors');
 				}
-				setEventMessages($mesg, null, 'errors');
-				$mesg .= '<br>'."\n";
-				foreach ($bprev->invoice_in_error as $key => $val) {
-					$mesg .= '<span class="warning">'.$val."</span><br>\n";
+
+				if (!empty($bprev->invoice_in_error)) {
+					$mesg .= '<br>'."\n";
+					foreach ($bprev->invoice_in_error as $key => $val) {
+						$mesg .= '<span class="warning">'.$val."</span><br>\n";
+					}
 				}
 			} else {
 				if ($type != 'bank-transfer') {
@@ -162,6 +190,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
+
 	$objectclass = "BonPrelevement";
 	if ($type == 'bank-transfer') {
 		$uploaddir = $conf->paymentbybanktransfer->dir_output;
@@ -254,10 +283,6 @@ print '</tr>';
 
 print '</table>';
 print '</div>';
-
-if ($mesg) {
-	print $mesg;
-}
 
 print '<div class="tabsAction">'."\n";
 
@@ -353,7 +378,13 @@ if ($nb) {
 print "</form>\n";
 
 print "</div>\n";
-print '</form>';
+
+// Show errors or warnings
+if ($mesg) {
+	print $mesg;
+	print '<br>';
+}
+
 print '<br>';
 
 
@@ -530,7 +561,7 @@ if ($resql) {
 				$invoicestatic->ref_supplier = $obj->ref_supplier;
 			} else {
 				$bac = new UserBankAccount($db);
-				$bac->fetch(0, '', $obj->fk_user);
+				$bac->fetch(0, '', $obj->uid);
 
 				$salary = new Salary($db);
 				$salary->fetch($obj->rowid);
@@ -577,6 +608,7 @@ if ($resql) {
 				print $user->getNomUrl(-1);
 				print '</td>';
 			}
+
 			// BAN
 			print '<td>';
 			if ($bac->id > 0) {
@@ -594,7 +626,7 @@ if ($resql) {
 			print '</td>';
 
 			// RUM
-			if (empty($type) || $type == 'direc-debit') {
+			if (empty($type) || $type == 'direct-debit') {
 				print '<td>';
 				$rumtoshow = $thirdpartystatic->display_rib('rum');
 				if ($rumtoshow) {
@@ -610,6 +642,7 @@ if ($resql) {
 				}
 				print '</td>';
 			}
+
 			// Amount
 			print '<td class="right amount">';
 			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
