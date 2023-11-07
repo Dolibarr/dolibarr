@@ -156,6 +156,16 @@ class dolReceiptPrinter extends Printer
 	public $listprinterstemplates;
 
 	/**
+	 * @var string
+	 */
+	public $profileresprint;
+
+	/**
+	 * @var string
+	 */
+	public $resprint;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
