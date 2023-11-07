@@ -572,11 +572,32 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+		if (!empty($sortfield)) {
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+		}
+		if (!empty($sortorder)) {
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+		}
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent liste">';
 
 		$param = 'socid='.$object->id.'&';
+		if ($search_prod) {
+			$param .= '&search_prod='.urlencode($search_prod);
+		}
+		if ($search_label) {
+			$param .= '&search_label='.urlencode($search_label);
+		}
+		if ($search_price) {
+			$param .= '&search_price='.urlencode($search_price);
+		}
+		if ($search_price) {
+			$param .= '&search_price='.urlencode($search_price);
+		}
+		if ($search_price_ttc) {
+			$param .= '&search_price_ttc='.urlencode($search_price_ttc);
+		}
+
 		print '<tr class="liste_titre">';
 		foreach ($prodcustprice->fields as $key => $val) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -594,8 +615,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre left"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
-			print '<td class="liste_titre left"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
+			print '<td class="liste_titre left"><input type="text" class="flat width75" name="search_price" value="'.$search_price.'"></td>';
+			print '<td class="liste_titre left"><input type="text" class="flat width75" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
