@@ -28,13 +28,14 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
 
@@ -761,9 +762,9 @@ class BonPrelevement extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
 		}
 		$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
-		$sql .= ($type !== 'salary' ? " WHERE f.entity IN (".getEntity('invoice').")" : " WHERE s.entity IN (".getEntity('invoice').")");
+		$sql .= ($type !== 'salary' ? " WHERE f.entity IN (".getEntity('invoice').")" : " WHERE s.entity IN (".getEntity('salary').")");
 		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
-			$sql .= ($type !== 'salary' ? " AND f.fk_statut = ".Facture::STATUS_VALIDATED : " AND s.paye = 0");
+			$sql .= ($type !== 'salary' ? " AND f.fk_statut = ".Facture::STATUS_VALIDATED : " AND s.paye = ".Salary::STATUS_UNPAID);
 		}
 		if ($type !== 'salary') {
 			if ($mode != 'bank-transfer') {
