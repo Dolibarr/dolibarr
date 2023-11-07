@@ -129,14 +129,14 @@ class PaymentVAT extends CommonObject
 	}
 
 	/**
-	 *  Create payment of social contribution into database.
+	 *  Create payment of vat into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *	@param		int		$closepaidvat			1=Also close paid contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
-	public function create($user, $closepaidcontrib = 0)
+	public function create($user, $closepaidvat = 0)
 	{
 		global $conf, $langs;
 
@@ -191,7 +191,7 @@ class PaymentVAT extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
-			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+			return -1; // We accept negative amounts for chargebacks, but not null amounts.
 		}
 
 
@@ -210,14 +210,14 @@ class PaymentVAT extends CommonObject
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_vat");
 
-				// Insere tableau des montants / factures
+				// Insert table of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 
-						// If we want to closed payed invoices
-						if ($closepaidcontrib) {
+						// If we want to closed paid invoices
+						if ($closepaidvat) {
 							$contrib = new Tva($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -473,7 +473,7 @@ class PaymentVAT extends CommonObject
 	{
 		$error = 0;
 
-		$object = new PaymentSocialContribution($this->db);
+		$object = new PaymentVAT($this->db);
 
 		$this->db->begin();
 
@@ -483,7 +483,6 @@ class PaymentVAT extends CommonObject
 		$object->statut = 0;
 
 		// Clear fields
-		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -579,8 +578,8 @@ class PaymentVAT extends CommonObject
 				$emetteur_banque
 			);
 
-			// Mise a jour fk_bank dans llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement.
+			// We thus know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -629,7 +628,7 @@ class PaymentVAT extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  tva et la ligne dans llx_bank generee
+	 *  Update link between vat payment and line in llx_bank generated
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -651,9 +650,9 @@ class PaymentVAT extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 * Return the label of the status
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @param	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @return  string				Libelle
 	 */
 	public function getLibStatut($mode = 0)
@@ -714,7 +713,7 @@ class PaymentVAT extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle

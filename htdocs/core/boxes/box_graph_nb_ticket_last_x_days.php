@@ -107,7 +107,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$minimumdatec = dol_time_plus_duree($today, -1 * ($days - 1), 'd');
 		$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";

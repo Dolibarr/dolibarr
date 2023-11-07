@@ -325,7 +325,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $user->rights->expensereport->creer) {
+	if (($action == 'update' || $action == 'updateFromRefuse') && $user->rights->expensereport->creer) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -2593,33 +2593,31 @@ if ($action == 'create') {
 			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 				print '
 
-                /* unit price coéf calculation */
+                /* unit price coef calculation */
                 jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
+					console.log("We change a parameter");
 
                     let type_fee = jQuery("#fk_c_type_fees").find(":selected").val();
                     let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
                     let tva = jQuery("#vatrate").find(":selected").val();
                     let qty = jQuery(".input_qty").val();
 
-
-
-					let path = "'.dol_buildpath("/expensereport/ajax/ajaxik.php", 1) .'";
+					let path = "'.DOL_DOCUMENT_ROOT.'/expensereport/ajax/ajaxik.php";
 					path += "?fk_c_exp_tax_cat="+tax_cat;
-					path +="&fk_expense="+'.$object->id.';
+					path += "&fk_expense="+'.((int) $object->id).';
                     path += "&vatrate="+tva;
                     path += "&qty="+qty;
 
                     if (type_fee == 4) { // frais_kilométriques
-
                         if (tax_cat == "" || parseInt(tax_cat) <= 0){
                             return ;
                         }
 
 						jQuery.ajax({
-							url: path
-							,async:false
-							,dataType:"json"
-							,success:function(response) {
+							url: path,
+							async: true,
+							dataType: "json",
+							success: function(response) {
 								if (response.response_status == "success"){';
 
 				if (!empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY)) {
@@ -2636,11 +2634,11 @@ if ($action == 'create') {
 				}
 
 				print '
-                                } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ){
+                                } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ) {
+									console.log("We get an error result");
                                     $.jnotify(response.errorMessage, "error", {timeout: 0, type: "error"},{ remove: function (){} } );
                                 }
-							},
-
+							}
 						});
                     }
 

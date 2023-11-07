@@ -48,7 +48,7 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
-dolibarr_install_syslog("- step4: entering step4.php page");
+dolibarr_install_syslog("--- step4: entering step4.php page");
 
 $error = 0;
 $ok = 0;
@@ -114,7 +114,7 @@ if ($error && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("- step4: end");
+dolibarr_install_syslog("--- step4: end");
 
 pFooter($error, $setuplang);
 

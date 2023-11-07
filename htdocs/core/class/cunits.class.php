@@ -35,6 +35,13 @@ class CUnits extends CommonDict
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
+	/**
+	 * @var string label
+	 * @deprecated
+	 * @see $label
+	 */
+	public $libelle;
+
 	public $sortorder;
 	public $short_label;
 	public $unit_type;

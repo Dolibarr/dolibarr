@@ -23,11 +23,12 @@
  *      \brief      Class file for html component project
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *      Class to manage building of HTML components
  */
-class FormProjets
+class FormProjets extends Form
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -167,7 +168,7 @@ class FormProjets
 		}
 
 		$projectsListId = false;
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$projectstatic = new Project($this->db);
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		}
@@ -186,7 +187,7 @@ class FormProjets
 			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
 				$sql .= " AND (p.fk_soc=" . ((int) $socid) . " OR p.fk_soc IS NULL)";
 			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) . ") OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) . ") OR p.fk_soc IS NULL)";
 			}
 		}
 		if (!empty($filterkey)) {
@@ -351,7 +352,7 @@ class FormProjets
 		}
 
 		if (empty($projectsListId)) {
-			if (empty($usertofilter->rights->projet->all->lire)) {
+			if (!$usertofilter->hasRight('projet', 'all', 'lire')) {
 				$projectstatic = new Project($this->db);
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
 			}
@@ -384,7 +385,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
 				$out .= $comboenhancement;
-				$morecss .= ' minwidth150';
+				$morecss .= ' minwidth150imp';
 			}
 
 			if (empty($option_only)) {
@@ -408,7 +409,7 @@ class FormProjets
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire)) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$usertofilter->hasRight('societe', 'lire')) {
 						// Do nothing
 					} else {
 						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {
@@ -754,6 +755,43 @@ class FormProjets
 			dol_syslog(get_class($this) . "::selectOpportunityStatus " . $this->error, LOG_ERR);
 			return -1;
 		}
+	}
+
+	/**
+	 *  Return combo list of differents status of a orders
+	 *
+	 *  @param	string	$selected   Preselected value
+	 *  @param	int		$short		Use short labels
+	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @return	void
+	 */
+	public function selectProjectsStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	{
+		$options = array();
+
+		// 7 is same label than 6. 8 does not exists (billed is another field)
+		$statustohow = array(
+			'0' => '0',
+			'1' => '1',
+			'2' => '2',
+		);
+
+		$tmpproject = new Project($this->db);
+
+		foreach ($statustohow as $key => $value) {
+			$tmpproject->statut = $key;
+			$options[$value] = $tmpproject->getLibStatut($short);
+		}
+
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} elseif ($selected == 99) {
+			$selectedarray = array(0,1);
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
+
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, 'minwidth100');
 	}
 
 	/**

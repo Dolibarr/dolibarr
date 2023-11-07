@@ -349,27 +349,6 @@ class ProductCustomerPrice extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Load all customer prices in memory from database
-	 *
-	 * @param 	string 	$sortorder 	order
-	 * @param 	string 	$sortfield 	field
-	 * @param 	int 	$limit 		page
-	 * @param 	int 	$offset 	offset
-	 * @param 	array 	$filter 	Filter for select
-	 * @deprecated since dolibarr v17 use fetchAll
-	 * @return 	int 				<0 if KO, >0 if OK
-	 */
-	public function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
-	{
-		// phpcs:enable
-
-		dol_syslog(get_class($this)."::fetch_all is deprecated, use fetchAll instead", LOG_NOTICE);
-
-		return $this->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
-	}
-
 	/**
 	 * Load all customer prices in memory from database
 	 *
@@ -383,8 +362,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
-		global $langs;
-
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";
 		}
@@ -490,7 +467,6 @@ class ProductCustomerPrice extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load all objects in memory from database
 	 *
@@ -501,11 +477,8 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	array 	$filter 	Filter for sql request
 	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	public function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
+	public function fetchAllLog($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
-		// phpcs:enable
-		global $langs;
-
 		if (!empty($sortfield)) {
 			$sortfield = "t.rowid";
 		}
@@ -558,7 +531,7 @@ class ProductCustomerPrice extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all_log", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAllLog", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->lines = array();

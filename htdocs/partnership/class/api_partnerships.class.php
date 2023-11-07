@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@ dol_include_once('/partnership/class/partnership.class.php');
 
 
 /**
- * \file    partnership/class/api_partnership.class.php
+ * \file    partnership/class/api_partnerships.class.php
  * \ingroup partnership
  * \brief   File for API management of partnership.
  */
@@ -34,7 +33,7 @@ dol_include_once('/partnership/class/partnership.class.php');
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class PartnershipApi extends DolibarrApi
+class Partnerships extends DolibarrApi
 {
 	/**
 	 * @var Partnership $partnership {@type Partnership}
@@ -59,8 +58,8 @@ class PartnershipApi extends DolibarrApi
 	 *
 	 * Return an array with partnership informations
 	 *
-	 * @param 	int 	$id 			ID of partnership
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of partnership
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET partnerships/{id}
 	 *
@@ -91,18 +90,19 @@ class PartnershipApi extends DolibarrApi
 	 *
 	 * Get a list of partnerships
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /partnerships/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -180,7 +180,7 @@ class PartnershipApi extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Partnership($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}

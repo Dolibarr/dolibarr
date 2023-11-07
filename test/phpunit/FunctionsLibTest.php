@@ -684,13 +684,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringNoSpecial()
 	{
-		$text="A string with space and special char like ' or ° and more...\n";
-		$after=dol_string_nospecial($text, '_', '', '', 0);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 0);
 		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
 
-		$text="A string with space and special char like ' or ° and more...\n";
-		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 1);
 		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		$text = 'Bahnhofstraße';
+		$after = dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($text), ' '), 70, 'right', 'UTF-8', 1));
+		$this->assertEquals("Bahnhofstraße", $after, "testDolStringNoSpecial with german char");
 
 		return true;
 	}
@@ -1075,7 +1081,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testDolFormatAddress
+	 * testDolPrintPhone
 	 *
 	 * @return	void
 	 */

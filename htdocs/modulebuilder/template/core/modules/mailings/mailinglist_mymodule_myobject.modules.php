@@ -47,7 +47,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->enabled = isModEnabled('mymodule');
+		//$this->enabled = ...
 	}
 
 

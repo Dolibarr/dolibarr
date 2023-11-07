@@ -85,7 +85,7 @@ class box_comptes extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
-		if ($user->rights->banque->lire) {
+		if ($user->hasRight('banque', 'lire')) {
 			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
 			$sql .= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
 			$sql .= ", b.domiciliation, b.proprio, b.owner_address";
@@ -165,7 +165,7 @@ class box_comptes extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total nowraponall right amount"',
-						'text' => price($solde, 0, $langs, 0, -1, -1, $key)
+						'text' => '<span class="amount">'.price($solde, 0, $langs, 0, -1, -1, $key).'</span>'
 					);
 					$line++;
 				}

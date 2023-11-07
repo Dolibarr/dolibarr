@@ -31,18 +31,18 @@ function calendarPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("bookcal@bookcal");
+	$langs->load("bookcal");
 
-	$showtabofpagecontact = 1;
+	$showtabofpagecontact = 0;
 	$showtabofpagenote = 1;
-	$showtabofpagedocument = 1;
+	$showtabofpagedocument = 0;
 	$showtabofpageagenda = 1;
 
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/bookcal/calendar_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Calendar");
 	$head[$h][2] = 'card';
 	$h++;
 

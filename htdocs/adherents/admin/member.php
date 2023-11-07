@@ -51,6 +51,7 @@ $scandir = GETPOST('scandir', 'alpha');
 $type = 'member';
 
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
 
 
 /*
@@ -336,30 +337,30 @@ print "</tr>\n";
 
 // Mail required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
+print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
 print "</td></tr>\n";
 
 // Login/Pass required for members
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("AdherentLoginRequired"), $langs->trans("AdherentLoginRequiredDesc"));
 print '</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') ? 0 : 1), 1);
 print "</td></tr>\n";
 
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
-print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
+print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
 print "</td></tr>\n";
 
 // Create an external user login for each new member subscription validated
 print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
-print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN') ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
 print "</td></tr>\n";
 
 // Create an external user login for each new member subscription validated
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
 print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
-print $form->selectyesno('MEMBER_PUBLIC_ENABLED', (!empty($conf->global->MEMBER_PUBLIC_ENABLED) ? $conf->global->MEMBER_PUBLIC_ENABLED : 0), 1);
+print $form->selectyesno('MEMBER_PUBLIC_ENABLED', (getDolGlobalString('MEMBER_PUBLIC_ENABLED') ? $conf->global->MEMBER_PUBLIC_ENABLED : 0), 1);
 print "</td></tr>\n";
 
 // Allow members to change type on renewal forms
@@ -394,7 +395,7 @@ if (isModEnabled('facture')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (isModEnabled("banque")) {
 		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td>';
 	} else {
 		print '<td class="right">';
@@ -406,7 +407,7 @@ if (isModEnabled('facture')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
-		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		$selected = (!getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
 		print img_picto('', 'product', 'class="pictofixedwidth"');
 		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';

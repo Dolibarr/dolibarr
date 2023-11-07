@@ -53,7 +53,7 @@ $stripeacc = GETPOST('stripeacc', 'alphanohtml');
 $servicestatus = GETPOST('servicestatus', 'int');
 $amount = GETPOST('amount', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden('Not allowed to use TakePOS');
 }
 
