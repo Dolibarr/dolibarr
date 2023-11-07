@@ -2770,7 +2770,7 @@ class Contrat extends CommonObject
 					// Load contract
 					$object = new Contrat($this->db);
 					$object->fetch($obj->rowid);		// fetch also lines
-					$object->fetch_thirdparty();
+					//$object->fetch_thirdparty();
 
 					if ($object->id <= 0) {
 						$error++;
@@ -2786,13 +2786,16 @@ class Contrat extends CommonObject
 					$duration_unit = preg_replace('/\d/', '', $obj->duration);
 					//var_dump($expirationdate.' '.$enddatetoscan);
 
-					// Test if there is pending invoice
+					// Load linked ->linkedObjects (objects linked)
+					// @TODO Comment this line and then make the search if there is n open invoice(s) by doing a dedicated SQL COUNT request to fill $contractcanceled.
 					$object->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
 
-					if (is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
-						usort($object->linkedObjects['facture'], "cmp");
+					// Test if there is at least 1 open invoice
+					if (isset($object->linkedObjects['facture']) && is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
+						// Sort array of linked invoices by ascending date
+						usort($object->linkedObjects['facture'], array('Contrat', 'contractCmpDate'));
+						//dol_sort_array($object->linkedObjects['facture'], 'date');
 
-						//dol_sort_array($contract->linkedObjects['facture'], 'date');
 						$someinvoicenotpaid=0;
 						foreach ($object->linkedObjects['facture'] as $idinvoice => $invoice) {
 							if ($invoice->statut == Facture::STATUS_DRAFT) continue;	// Draft invoice are not invoice not paid
@@ -2803,7 +2806,7 @@ class Contrat extends CommonObject
 						}
 						if ($someinvoicenotpaid) {
 							$this->output .= 'Contract '.$object->ref.' is qualified for renewal but there is '.$someinvoicenotpaid.' invoice(s) unpayed so we cancel renewal'."\n";
-							$contractignored[$object->id]=$object->ref;
+							$contractignored[$object->id] = $object->ref;
 							continue;
 						}
 					}
@@ -2845,7 +2848,7 @@ class Contrat extends CommonObject
 								$actioncomm->datep        = $now;
 								$actioncomm->datef        = $now;
 								$actioncomm->percentage   = -1;   // Not applicable
-								$actioncomm->socid        = $object->thirdparty->id;
+								$actioncomm->socid        = $object->socid;
 								$actioncomm->authorid     = $user->id;   // User saving action
 								$actioncomm->userownerid  = $user->id;	// Owner of action
 								$actioncomm->fk_element   = $object->id;
@@ -2883,6 +2886,21 @@ class Contrat extends CommonObject
 		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.join(',', $contractlineprocessed) : '');
 
 		return ($error ? 1: 0);
+	}
+
+	/**
+	 * Used to sort lines by date
+	 *
+	 * @param	Object	$a		1st element to test
+	 * @param	Object	$b		2nd element to test
+	 * @return int
+	 */
+	static public function contractCmpDate($a, $b)
+	{
+		if ($a->date == $b->date) {
+			return strcmp((string) $a->id, (string) $b->id);
+		}
+		return ($a->date < $b->date) ? -1 : 1;
 	}
 
 	/**

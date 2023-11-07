@@ -103,6 +103,7 @@ ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est 
 ErrorNumRefModel=Une référence existe en base (%s) et est incompatible avec cette numérotation. Supprimez la ligne ou renommez la référence pour activer ce module.
 ErrorQtyTooLowForThisSupplier=Quantité insuffisante pour ce fournisseur ou aucun tarif défini sur ce produit pour ce fournisseur
 ErrorOrdersNotCreatedQtyTooLow=Certaines commandes n'ont pas été créées en raison de quantités trop faibles
+ErrorOrderStatusCantBeSetToDelivered=La commande ne peut pas être classé livrée.
 ErrorModuleSetupNotComplete=La configuration du module %s semble incomplète. Aller sur la page Accueil - Configuration - Modules pour corriger.
 ErrorBadMask=Erreur sur le masque
 ErrorBadMaskFailedToLocatePosOfSequence=Erreur, masque sans numéro de séquence

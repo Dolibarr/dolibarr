@@ -93,7 +93,6 @@ if ($action == 'verifyavailability') {
 		// Build the list of hours available (key = hour, value = duration)
 		$hour = '08'; $min = '00';
 		$response["availability"][$hour.":".$min] = 30;
-
 	}
 
 	// Now get ranges already reserved

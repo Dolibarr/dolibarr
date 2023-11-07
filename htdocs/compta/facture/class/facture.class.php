@@ -248,6 +248,18 @@ class Facture extends CommonInvoice
 	 */
 	public $retained_warranty_fk_cond_reglement;
 
+	/**
+	 * @var int availabilty ID
+	 */
+	public $availability_id;
+
+	public $date_closing;
+
+	/**
+	 * @var int
+	 */
+	public $source;
+
 
 
 	/**
@@ -5956,7 +5968,7 @@ class Facture extends CommonInvoice
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$alreadypaid = (empty($arraydata['alreadypaid']) ? 0 : $arraydata['alreadypaid']);
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -6005,6 +6017,11 @@ class FactureLigne extends CommonInvoiceLine
 	public $pa_ht;
 	public $marge_tx;
 	public $marque_tx;
+
+	/**
+	 * @var int
+	 */
+	public $tva_npr;
 
 	public $remise_percent;
 

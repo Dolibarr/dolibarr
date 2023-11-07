@@ -342,7 +342,7 @@ class StockTransfer extends CommonObject
 		$this->lines = array();
 
 		$result = $this->fetchLinesCommon();
-		usort($this->lines, array('stocktransfer', 'cmp'));
+		usort($this->lines, array('StockTransfer', 'stocktransferCmpRank'));
 		return $result;
 	}
 
@@ -353,7 +353,7 @@ class StockTransfer extends CommonObject
 	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
-	static public function cmp($a, $b)
+	static public function stocktransferCmpRank($a, $b)
 	{
 		if ($a->rang == $b->rang) {
 			return 0;

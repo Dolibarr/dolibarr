@@ -5050,8 +5050,8 @@ div.backgreypublicpayment {
 	border-bottom: 1px solid #ddd;
 	text-align: center;
 	position: sticky;
-    top: 0;
-    z-index: 1005;
+	top: 0;
+	z-index: 1005;
 }
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
