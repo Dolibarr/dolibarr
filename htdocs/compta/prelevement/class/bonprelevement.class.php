@@ -1088,7 +1088,7 @@ class BonPrelevement extends CommonObject
 							if ($type == 'bank-transfer' && $sourcetype == 'salary') {
 								$tmpuser->id = $fac[2];
 								$tmpuser->firstname = $fac[8];
-								$salary_url = "<a href='".DOL_URL_ROOT.'/salary/card.php?id='.$fac[0]."'>".$fac[0]."</a>";
+								$salary_url = "<a href='".DOL_URL_ROOT.'/salaries/card.php?id='.$fac[0]."'>".$fac[0]."</a>";
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpuser->id] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 							}
