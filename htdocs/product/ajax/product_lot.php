@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023   Lionel Vessiller     	<lvessiller@open-dsi.fr>
+/* Copyright (C) 2023   Lionel Vessiller     	<lvessiller@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       htdocs/takepos/ajax/ajax.php
- *	\brief      Ajax search component for TakePos. It search products of a category.
+ *	\file       htdocs/product/ajax/product_lot.php
+ *	\brief      Ajax search component for ProductLot.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
