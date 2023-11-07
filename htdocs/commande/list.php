@@ -469,7 +469,7 @@ if (empty($reshook)) {
 								$array_options = $lines[$i]->array_options;
 							}
 
-							$objecttmp->context['createfromclone'];
+							$objecttmp->context['createfromclone'] = 'createfromclone';
 
 							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders
