@@ -7115,10 +7115,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__PROJECT_ID__'] = $project->id;
 				$substitutionarray['__PROJECT_REF__'] = $project->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $project->title;
-			} else {
-				$substitutionarray['__PROJECT_ID__'] = '';
-				$substitutionarray['__PROJECT_REF__'] = '';
-				$substitutionarray['__PROJECT_NAME__'] = '';
 			}
 			if (is_object($object) && $object->element == 'project') {
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
