@@ -132,14 +132,14 @@ if ($type == 'bank-transfer') {
 if ($sourcetype != 'salary') {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc,";
 	$sql .= " s.nom as name, s.rowid as socid,";
-	$sql .= " pfd.date_demande as date_demande, pfd.amount, pfd.fk_user_demande";
+	$sql .= " pd.date_demande as date_demande, pd.amount, pd.fk_user_demande";
 	if ($type != 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 	} else {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 	}
 	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
@@ -152,20 +152,20 @@ if ($sourcetype != 'salary') {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$status) {
-		$sql .= " AND pfd.traite = 0";
+		$sql .= " AND pd.traite = 0";
 	}
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pd.ext_payment_id IS NULL";
 	if ($status) {
-		$sql .= " AND pfd.traite = ".((int) $status);
+		$sql .= " AND pd.traite = ".((int) $status);
 	}
 	$sql .= " AND f.total_ttc > 0";
 	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	}
 	if ($type != 'bank-transfer') {
-		$sql .= " AND pfd.fk_facture = f.rowid";
+		$sql .= " AND pd.fk_facture = f.rowid";
 	} else {
-		$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+		$sql .= " AND pd.fk_facture_fourn = f.rowid";
 	}
 	if ($search_facture) {
 		$sql .= natural_search("f.ref", $search_facture);
@@ -177,17 +177,30 @@ if ($sourcetype != 'salary') {
 } else {
 	$sql = "SELECT s.rowid,s.amount as total_ttc, pd.amount,";
 	$sql .= " s.fk_user, pd.date_demande, pd.fk_salary, CONCAT(u.firstname,' ',u.lastname) as nom";
-	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."user as u, ";
-	$sql .= MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."user as u,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 	$sql .= " WHERE s.rowid = pd.fk_salary";
 	$sql .= " AND u.rowid = s.fk_user";
-	$sql .=" AND s.paye = 0 AND pd.traite = 0";
+	$sql .= " AND s.entity IN (".getEntity("salary").")";
+	/*if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+		$sql .= " AND s.statut = ".Salary::STATUS_UNPAID;
+	}*/
+	if (!$status) {
+		$sql .= " AND pd.traite = 0";
+	}
+	$sql .= " AND pd.ext_payment_id IS NULL";
+	if ($status) {
+		$sql .= " AND pd.traite = ".((int) $status);
+	}
+	$sql .= " AND s.amount > 0";
+	$sql .= " AND s.paye = ".Salary::STATUS_UNPAID;
 	if ($search_facture) {
 		$sql .= natural_search("s.rowid", $search_facture);
 	}
 	if ($search_societe) {
 		$sql .= natural_search("CONCAT(u.firstname,' ',u.lastname)", $search_societe);
 	}
+	//print $sql;
 }
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -248,26 +261,41 @@ $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circl
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="liste centpercent">';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
-print_liste_field_titre(($sourcetype ? "Employee" :"Company"), $_SERVER["PHP_SELF"]);
-print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
-print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
-print_liste_field_titre('');
-print '</tr>';
-
-print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name="search_facture" value="'.dol_escape_htmltag($search_facture).'"></td>';
 print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
+print '</tr>';
+
+print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre('');
+}
+print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
+print_liste_field_titre(($sourcetype ? "Employee" :"Company"), $_SERVER["PHP_SELF"]);
+print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
+print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre('');
+}
 print '</tr>';
 
 $userstatic = new User($db);
@@ -286,6 +314,11 @@ while ($i < min($num, $limit)) {
 		$userstatic->fetch($obj->fk_user);
 	}
 	print '<tr class="oddeven">';
+
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="right"></td>';
+	}
 
 	// Ref facture
 	print '<td>';
@@ -314,13 +347,18 @@ while ($i < min($num, $limit)) {
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
-	print '<td class="right"></td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="right"></td>';
+	}
 
 	print '</tr>';
 	$i++;
 }
 
-print "</table><br>";
+print "</table>";
+print "</div>";
+print "<br>";
 
 print '</form>';
 

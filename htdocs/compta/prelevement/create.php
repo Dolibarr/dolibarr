@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
@@ -31,6 +31,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -41,18 +42,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
-$type = GETPOST('type', 'aZ09');
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
+
+$type = GETPOST('type', 'aZ09');
+$sourcetype = GETPOST('sourcetype', 'aZ09');
 $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
 $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-$sourcetype = GETPOST('sourcetype', 'alpha');
+
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
@@ -101,7 +102,6 @@ if (empty($reshook)) {
 	}
 	if ($action == 'create') {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
-		$sourcetype = GETPOST('sourcetype', 'alpha');
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
 		if ($id_bankaccount != getDolGlobalInt($default_account)) {
@@ -221,7 +221,7 @@ if ($type) {
 }
 
 
-if (!GETPOSTISSET('sourcetype')) {
+if ($sourcetype != 'salary') {
 	$nb = $bprev->nbOfInvoiceToPay($type);
 	$pricetowithdraw = $bprev->SommeAPrelever($type);
 } else {
@@ -260,16 +260,13 @@ if ($mesg) {
 }
 
 print '<div class="tabsAction">'."\n";
-if (!GETPOSTISSET('sourcetype')) {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
-} else {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?action=create&type='.$type.'&sourcetype='.$sourcetype.'" method="POST">';
-}
+
+print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+print '<input type="hidden" name="action" value="create">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
-if (GETPOSTISSET('sourcetype')) {
-	print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
-}
+print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
+
 if ($nb) {
 	if ($pricetowithdraw) {
 		$title = $langs->trans('BankToReceiveWithdraw').': ';
@@ -363,40 +360,52 @@ print '<br>';
 /*
  * Invoices waiting for withdraw
  */
-if (!GETPOSTISSET('sourcetype')) {
+if ($sourcetype != 'salary') {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
 	if ($type == 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 	} else {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 	}
 	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	}
-	//$sql .= " AND pfd.amount > 0";
+	//$sql .= " AND pd.amount > 0";
 	$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pd.traite = 0";
+	$sql .= " AND pd.ext_payment_id IS NULL";
 	if ($type == 'bank-transfer') {
-		$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+		$sql .= " AND pd.fk_facture_fourn = f.rowid";
 	} else {
-		$sql .= " AND pfd.fk_facture = f.rowid";
+		$sql .= " AND pd.fk_facture = f.rowid";
 	}
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } else {
-	$sql = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ";
-	$sql .= MAIN_DB_PREFIX."prelevement_demande as pd";
-	$sql .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
+	$sql .= " ".MAIN_DB_PREFIX."user as u,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " WHERE s.fk_user = u.rowid";
+	$sql .= " AND s.entity IN (".getEntity('salary').")";
+	/*if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+		$sql .= " AND s.fk_statut = ".Facture::STATUS_VALIDATED;
+	}*/
+	$sql .= " AND s.amount > 0";
+	$sql .= " AND pd.traite = 0";
+	$sql .= " AND pd.ext_payment_id IS NULL";
+	$sql .= " AND s.rowid = pd.fk_salary AND s.paye = ".Salary::STATUS_UNPAID;
+	$sql .= " AND pd.traite = 0";
 }
 
 $nbtotalofrecords = '';
@@ -522,8 +531,9 @@ if ($resql) {
 			} else {
 				$bac = new UserBankAccount($db);
 				$bac->fetch(0, '', $obj->fk_user);
+
 				$salary = new Salary($db);
-				$salary->fetch($obj->fk_salary);
+				$salary->fetch($obj->rowid);
 			}
 			print '<tr class="oddeven">';
 
@@ -563,7 +573,7 @@ if ($resql) {
 				print '</td>';
 			} else {
 				print '<td class="tdoverflowmax100">';
-				$user->fetch($obj->fk_user);
+				$user->fetch($obj->uid);
 				print $user->getNomUrl(-1);
 				print '</td>';
 			}

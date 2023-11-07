@@ -961,7 +961,7 @@ class BonPrelevement extends CommonObject
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			} else {
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
-				$sql .= ", f.ref, sr.bic, sr.iban_prefix";
+				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
@@ -977,21 +977,30 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM ".MAIN_DB_PREFIX."salary as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_demande as pd ON f.rowid = pd.fk_salary";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as s ON s.rowid = f.fk_user";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user_rib as sr ON s.rowid = sr.fk_user";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user_rib as sr ON s.rowid = sr.fk_user";	// TODO Add AND sr.default_rib = 1 here
 			}
-			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
+			if ($sourcetype != 'salary') {
+				if ($type != 'bank-transfer') {
+					$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
+				} else {
+					$sql .= " WHERE f.entity IN (".getEntity('supplier_invoice').')';
+				}
+			} else {
+				$sql .= " WHERE f.entity IN (".getEntity('salary').')';
+			}
 			if ($sourcetype != 'salary') {
 				$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";
 				$sql .= " AND f.total_ttc > 0";
 			} else {
+				//$sql .= " AND f.fk_statut = 1"; // Invoice validated
 				$sql .= " AND f.paye = 0";
 				$sql .= " AND f.amount > 0";
 			}
 			$sql .= " AND pd.traite = 0";
 			$sql .= " AND pd.ext_payment_id IS NULL";
 			if ($sourcetype != 'salary') {
-				$sql .= " AND sr.type = 'ban' ";
+				$sql .= " AND sr.type = 'ban'";		// TODO Add AND sr.type = 'ban' for users too
 			}
 			if ($did > 0) {
 				$sql .= " AND pd.rowid = ".((int) $did);
@@ -1003,7 +1012,7 @@ class BonPrelevement extends CommonObject
 				$i = 0;
 
 				while ($i < $num) {
-					$row = $this->db->fetch_row($resql);
+					$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
 					$factures[$i] = $row; // All fields
 
 					if ($row[7] == 0) {
