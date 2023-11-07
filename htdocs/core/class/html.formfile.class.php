@@ -265,7 +265,7 @@ class FormFile
 			if (empty($res)) {
 				$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">'.$out.'</div>';
 			}
-			$out .= $hookmanager->resPrint;
+			else $out = $hookmanager->resPrint;
 
 			if ($nooutput) {
 				return $out;
