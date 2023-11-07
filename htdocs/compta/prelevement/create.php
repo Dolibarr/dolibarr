@@ -486,7 +486,13 @@ if ($resql) {
 	if (empty($type) || $type == 'direc-debit') {
 		print '<td>'.$langs->trans("RUM").'</td>';
 	}
-	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="right">';
+	if ($sourcetype == 'salary') {
+		print $langs->trans("Amount");
+	} else {
+		print $langs->trans("AmountTTC");
+	}
+	print '</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
