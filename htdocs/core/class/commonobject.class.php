@@ -7033,6 +7033,7 @@ abstract class CommonObject
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
+		//var_dump($type); var_dump($param['options']);
 
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
@@ -7194,7 +7195,27 @@ abstract class CommonObject
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
+				$InfoFieldList = explode(":", $param_list[0], 5);
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0; $parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos+1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+					//var_dump($InfoFieldList);
+				}
 				$parentName = '';
 				$parentField = '';
 
@@ -7250,12 +7271,14 @@ abstract class CommonObject
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
 
-						//We have to join on extrafield table
+						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2];
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
