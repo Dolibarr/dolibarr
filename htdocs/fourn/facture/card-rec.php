@@ -191,7 +191,7 @@ if (empty($reshook)) {
 		if (! $error) {
 			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
-			$object->libelle = GETPOST('libelle', 'alpha');
+			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
 			$object->label = GETPOST('libelle', 'alpha');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
@@ -287,7 +287,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('titre', $title, '', null, 'text', '', $user);
 
 		if ($result > 0) {
-			$object->titre = $title;
+			$object->titre = $title;	// deprecated
 			$object->title = $title;
 			$object->ref = $object->title;
 		} else {
@@ -1133,9 +1133,9 @@ if ($action == 'create') {
 
 		$morehtmlref = '';
 		if ($action != 'edittitle') {
-			$morehtmlref .= $form->editfieldkey($object->titre, 'title', $object->titre, $object, $usercancreate, '', '', 0, 2);
+			$morehtmlref .= $form->editfieldkey($object->title, 'title', $object->titre, $object, $usercancreate, '', '', 0, 2);
 		} else {
-			$morehtmlref .= $form->editfieldval('', 'title', $object->titre, $object, $usercancreate, 'string');
+			$morehtmlref .= $form->editfieldval('', 'title', $object->title, $object, $usercancreate, 'string');
 		}
 		$morehtmlref .= '<div class="refidno">';
 		//Ref supplier

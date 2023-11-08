@@ -239,8 +239,6 @@ class Opensurveysondage extends CommonObject
 		}
 
 		if (!$error && !$notrigger) {
-			global $langs, $conf;
-
 			// Call trigger
 			$result = $this->call_trigger('OPENSURVEY_CREATE', $user);
 			if ($result < 0) {
