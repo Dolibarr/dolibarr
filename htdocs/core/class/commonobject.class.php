@@ -6077,7 +6077,7 @@ abstract class CommonObject
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] != 'separate') {
-					$sql .= ", `".$this->db->escape($name)."`";
+					$sql .= ", ".MAIN_DB_PREFIX.$table_element."_extrafields.".$this->db->escape($name);
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
