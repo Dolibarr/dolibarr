@@ -244,5 +244,3 @@ NoRecordedMembers=No recorded members
 MaxLevelTagToShow=Show %s category sublevels
 MemberSubscriptionStartFirstDayOf=The start date of a membership corresponds to the first day of a
 MemberSubscriptionStartAfter=Minimum period before the entry into force of the start date of a subscription except renewals (example +3m = +3 months, -5d = -3 days, +1Y = +1 year) (example: +3m = +3 months, -5d = -3 days, +1Y = +1 year)
-
-
