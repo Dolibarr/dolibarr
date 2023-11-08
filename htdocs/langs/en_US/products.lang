@@ -82,6 +82,7 @@ NewPrice=New price
 MinPrice=Min. selling price
 EditSellingPriceLabel=Edit selling price label
 CantBeLessThanMinPrice=The selling price can't be lower than minimum allowed for this product (%s without tax). This message can also appears if you type a too important discount.
+CantBeLessThanMinPriceInclTax=The selling price can't be lower than minimum allowed for this product (%s including taxes). This message can also appears if you type a too important discount.
 ContractStatusClosed=Closed
 ErrorProductAlreadyExists=A product with reference %s already exists.
 ErrorProductBadRefOrLabel=Wrong value for reference or label.
