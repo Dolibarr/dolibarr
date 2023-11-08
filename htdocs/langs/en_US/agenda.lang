@@ -199,5 +199,5 @@ NewAvailabilities=New availabilities
 NewCalendar=New calendar
 ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
 AppointmentDuration = Appointment Duration : %s
-BookingSuccessfullyBooked=Your booking as been saved
+BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of your meeting at the date %s
