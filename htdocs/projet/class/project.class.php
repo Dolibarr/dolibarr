@@ -593,6 +593,9 @@ class Project extends CommonObject
 			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
+			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : '');
+			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : '');
+
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
 			$sql .= ", fk_user_modif = ".$user->id;
