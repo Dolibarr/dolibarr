@@ -347,6 +347,10 @@ class AdherentStats extends Stats
 		$branch = array();
 		$depth = $limit_depth > 0 ? $limit_depth : -($limit_depth + 1);
 
+		// test against infinite loop
+		if ($depth > 1000){
+			return $depth;
+		}
 		foreach ($elements as $key=>$element) {
 			if (is_array($element)) {
 				$element['depth'] = $depth;
