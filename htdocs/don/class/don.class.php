@@ -113,6 +113,18 @@ class Don extends CommonObject
 	public $phone;
 	public $phone_mobile;
 
+	public $country_olddata;
+
+	/**
+	 * @var string
+	 */
+	public $mode_reglement;
+
+	/**
+	 * @var string
+	 */
+	public $mode_reglement_code;
+
 	/**
 	 * @var int 0 or 1
 	 */

@@ -58,6 +58,13 @@ class FichinterRec extends Fichinter
 	public $picto = 'intervention';
 
 	/**
+	 * @var string
+	 * @deprecated
+	 * @see $title
+	 */
+	public $titre;
+
+	/**
 	 * @var string title
 	 */
 	public $title;
@@ -66,6 +73,25 @@ class FichinterRec extends Fichinter
 	public $amount;
 	public $tva;
 	public $total;
+
+	/**
+	 * @var int
+	 */
+	public $auto_validate;
+
+	/**
+	 * @var int Frequency
+	 */
+	public $frequency;
+
+	public $id_origin;
+
+	public $statuts_logo;
+
+	/**
+	 * @var string Unit frequency
+	 */
+	public $unit_frequency;
 
 	/**
 	 * @var int Proposal Id
