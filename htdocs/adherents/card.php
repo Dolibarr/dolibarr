@@ -289,7 +289,7 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
 		}
-		
+
 		// Check if the login already exists
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			if (empty($login)) {
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 		}
-		
+
 		// Create new object
 		if ($result > 0 && !$error) {
 			$object->oldcopy = dol_clone($object, 2);
@@ -1105,11 +1105,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		// Phone Pro/Business 
+		// Phone Pro/Business
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
 		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
 
-		// Phone Personal/Private 
+		// Phone Personal/Private
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
 		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" size="20" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
@@ -2024,7 +2024,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=add_spip&token='.newToken().'">'.$langs->trans("AddIntoSpip").'</a>'."\n";
 					}
 				}
-				
 			}
 		}
 		print '</div>';
