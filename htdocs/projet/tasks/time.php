@@ -467,7 +467,7 @@ if ($action == 'confirm_generateinvoice') {
 			$localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
 			$localtax2 = get_default_localtax($mysoc, $projectstatic->thirdparty, 2);
 		}
-		
+
 		$tmpinvoice->date  = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$tmpinvoice->socid             = $projectstatic->thirdparty->id;
 		$tmpinvoice->fk_project        = $projectstatic->id;
@@ -810,7 +810,7 @@ if ($action == 'confirm_generateinter') {
 		include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 		require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
-		
+
 		$tmpinter = new Fichinter($db);
 		$tmptimespent = new Task($db);
 		$fuser = new User($db);
@@ -1169,9 +1169,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
-		
+
 		print '<div class="fichecenter">';
-		
+
 		  // half-left
 		  print '<div class="fichehalfleft">';
   		    print '<div class="underbanner clearboth"></div>';
@@ -1233,13 +1233,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		      print '</tr>';
 		    print '</table>';   // <table class="border tableforfield centpercent">
 		  print '</div>';   // <div class="fichehalfright">
-		
+
 		print '</div>';   // <div class="fichecenter">
-		
+
 		print '<div class="clearboth"></div>';
-		
+
  		print dol_get_fiche_end();
-		
+
 	} else {
 		if ($action == 'deleteline') {
 			$urlafterconfirm = $_SERVER["PHP_SELF"] . "?" . ($object->id > 0 ? "id=" . $object->id : 'projectid=' . $projectstatic->id) . '&lineid=' . GETPOST("lineid", 'int') . ($withproject ? '&withproject=1' : '');
@@ -1936,17 +1936,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 			}
 		}
-		
+
 		// Author User
 		if (!empty($arrayfields['author']['checked'])) {
 			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
 		}
-		
+
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) {
 			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
 		}
-		
+
 		// Duration
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
 			// Duration - Time spent
