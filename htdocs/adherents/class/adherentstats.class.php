@@ -382,7 +382,7 @@ class AdherentStats extends Stats
 		$max_depth = 0;
 		foreach ($array as $value) {
 			if (is_array($value)) {
-				$depth = array_key_exists('label', $value) ? $this->arrayDepth($value,$depth) + 1 : $this->arrayDepth($value, $depth);
+				$depth = array_key_exists('label', $value) ? $this->arrayDepth($value, $depth) + 1 : $this->arrayDepth($value, $depth);
 				$max_depth = $depth > $max_depth ? $depth : $max_depth;
 			}
 		}
