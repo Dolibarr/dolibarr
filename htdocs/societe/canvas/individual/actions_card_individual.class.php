@@ -74,24 +74,6 @@ class ActionsCardIndividual extends ActionsCardCommon
 		return $out;
 	}
 
-
-	/**
-	 * Execute actions
-	 * @deprecated Use the doActions of hooks instead of this.
-	 *
-	 * @param	string	$action	Action
-	 * @param	int		$id			Id of object (may be empty for creation)
-	 * @return	int					<0 if KO, >0 if OK
-	 */
-	public function doActions(&$action, $id)
-	{
-		$ret = $this->getObject($id);
-
-		$return = parent::doActions($action);
-
-		return $return;
-	}
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)

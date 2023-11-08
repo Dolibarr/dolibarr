@@ -26,6 +26,7 @@
  *					and parent class for supplier invoices numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
@@ -34,12 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // requir
  */
 abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation models
@@ -64,90 +59,7 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 /**
  *	Parent Class of numbering models of suppliers invoices references
  */
-abstract class ModeleNumRefSuppliersInvoices
+abstract class ModeleNumRefSuppliersInvoices extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	public $version;
-
-
-	/**  Return if a model can be used or not
-	 *
-	 *   @return	boolean     true if model can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**  Returns the default description of the model numbering
-	 *
-	 *   @return    string      Description Text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("invoices");
-		return $langs->trans("NoDescription");
-	}
-
-	/**   Returns a numbering example
-	 *
-	 *    @return   string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("invoices");
-		return $langs->trans("NoExample");
-	}
-
-	/**  Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
-	 *
-	 *   @return	boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**  Returns next value assigned
-	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object	    $object		Object
-	 * @param	string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, 0 if KO
-	 */
-	public function getNextValue($objsoc, $object, $mode = 'next')
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**   Returns version of the model numbering
-	 *
-	 *    @return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }

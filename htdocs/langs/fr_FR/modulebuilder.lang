@@ -40,7 +40,7 @@ EditorName=Nom de l'éditeur
 EditorUrl=URL de l'éditeur
 DescriptorFile=Fichier descriptif du module
 ClassFile=Fichier pour la classe PHP DAO CRUD
-ApiClassFile=Fichier de la classe PHP de l'API
+ApiClassFile=Fichier API du module
 PageForList=Page PHP pour la liste des enregistrements
 PageForCreateEditView=Page PHP pour créer/modifier/afficher un enregistrement
 PageForAgendaTab=Page PHP pour l'onglet événement
@@ -92,7 +92,7 @@ ListOfMenusEntries=Liste des entrées du menu
 ListOfDictionariesEntries=Liste des entrées de dictionnaires
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
-EnabledDesc=Condition pour que ce champs soit actif.<br><br>Exemples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+EnabledDesc=Condition pour que ce champ soit actif.<br><br>Exemples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')= =2
 VisibleDesc=Le champ est-il visible ? (Exemples : 0=Jamais visible, 1=Visible sur la liste et les formulaires de création/mise à jour/affichage, 2=Visible sur la liste uniquement, 3=Visible sur le formulaire de création/mise à jour/affichage uniquement (pas la liste), 4=Visible sur la liste et formulaire de mise à jour/affichage uniquement (pas de création), 5=Visible sur le formulaire d'affichage de fin de liste uniquement (pas de création, pas de mise à jour).
 ItCanBeAnExpression=Cela peut être une expression. Exemple : <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('holiday', 'define_holiday')?1:5
 DisplayOnPdfDesc=Affichez ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position". <br>  <strong> Pour le document : </strong>  <br> 0 = non affiché  <br> 1 = affiché <br> 2 = affiché uniquement si non vide <br>  <br>  <strong> Pour les lignes de document : </strong>  <br> 0 = non affiché  <br> 1 = affiché dans une colonne <br> 3 = affiché dans la colonne description après la description <br> 4 = affiché dans la colonne description après la description uniquement si non vide
@@ -107,7 +107,7 @@ PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre 
 MenusDefDescTooltip=Les menus fournis par votre module/application sont définis dans le tableau <strong> $this->menus </strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br> <br> Remarque : Une fois définis (et le module réactivé), les menus sont également visibles dans l'éditeur de menus accessible aux utilisateurs administrateurs sur %s.
 DictionariesDefDescTooltip=Les dictionnaires fournis par votre module/application sont définis dans le tableau <strong>$this->dictionaries</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et module réactivé), les dictionnaires sont également visibles dans la zone de configuration par les utilisateurs administrateurs sur %s.
 PermissionsDefDescTooltip=Les autorisations fournies par votre module / application sont définies dans le tableau <strong>$this->rights</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définies (et le module réactivé), les autorisations sont visibles dans la configuration par défaut des autorisations %s.
-HooksDefDesc=Définissez dans la propriété <b> module_parts ['hooks'] </b>, dans le descripteur de module, le contexte des hooks à gérer (la liste des contextes peut être trouvée par une recherche sur '<b> initHooks (</b>' dans le code du noyau). <br> Editez le fichier hook pour ajouter le code de vos fonctions hookées (les fonctions hookables peuvent être trouvées par une recherche sur '<b> executeHooks </b>' dans le code core).
+HooksDefDesc=Définir dans la propriété <b>module_parts['hooks']</b>, dans le descripteur de module fichier , la liste des contextes dans lesquels votre hook doit être exécuté (la liste des contextes possibles peut être trouvée par une recherche sur '<b>initHooks(</b>' dans le code principal).<br>Modifiez ensuite le fichier avec le code hooks avec le code de votre fonctions hookées (la liste des fonctions hookables peut être trouvée en effectuant une recherche sur '<b>executeHooks</b>' dans le code principal).
 TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez exécuter lors de l'exécution d'un événement métier externe à votre module (événements déclenchés par d'autres modules).
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
@@ -149,7 +149,7 @@ CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
 ForeignKeyDesc=Si la valeur de ce champ doit être garantie existe dans une autre table. Saisissez ici une valeur correspondant à la syntaxe : nomtable.champparentàvérifier
-TypeOfFieldsHelp=Exemple : <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> ' 1' signifie que nous ajoutons un bouton + après le combo pour créer l'enregistrement <br> 'filter' est une condition sql, exemple : 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>email<br>téléphone<br>ip<br>url<br> mot de passe<br>double(24,8)<br>réel<br>text<br>html<br>date<br>dateheure<br>timestamp<br>entier<br>entier:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' signifie que nous ajoutons un bouton + après la combinaison pour créer l'enregistrement<br>'filter' est une condition de syntaxe de filtre universel, exemple : '((état:=:1) et (fk_user:=:__USER_ID__) et (entité:IN :(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Il s'agit du type de champ/attribut.
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
@@ -163,11 +163,11 @@ ListOfTabsEntries=Liste des entrées d'onglet
 TabsDefDesc=Définissez ici les onglets proposés par votre module
 TabsDefDescTooltip=Les onglets fournis par votre module/application sont définis dans le tableau <strong> $this->tabs </strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré.
 BadValueForType=Mauvaise valeur pour le type %s
-DefinePropertiesFromExistingTable=Define the fields/properties from an existing table
+DefinePropertiesFromExistingTable=Définir les champs/propriétés à partir d'une table existante
 DefinePropertiesFromExistingTableDesc=Si une table dans la base de données (pour l'objet à créer) existe déjà, vous pouvez l'utiliser pour définir les propriétés de l'objet.
 DefinePropertiesFromExistingTableDesc2=Laisser vide si la table n'existe pas encore. Le générateur de code utilisera différents types de champs pour créer un exemple de table que vous pourrez modifier ultérieurement.
-GeneratePermissions=I want to manage permissions on this object
-GeneratePermissionsHelp=If you check this, some code will be added to manage permissions to read, write and delete record of the objects
+GeneratePermissions=Je souhaite gérer les permissions sur cet objet
+GeneratePermissionsHelp=Si vous cochez ceci, du code sera ajouté pour gérer les permissions de lecture, d'écriture et de suppression des enregistrements des objets.
 PermissionDeletedSuccesfuly=Les permissions ont été retirées avec succès
 PermissionUpdatedSuccesfuly=Les permissions ont été mises à jour avec succès
 PermissionAddedSuccesfuly=Les permissions ont été ajoutées avec succès
@@ -180,4 +180,6 @@ CRUDCreateWrite=Créer ou mettre à jour
 FailedToAddCodeIntoDescriptor=Échec de l'ajout de code dans le descripteur. Vérifiez que le commentaire de chaîne "%s" est toujours présent dans le fichier.
 DictionariesCreated=Dictionnaire <b> %s </b> créé avec succès
 DictionaryDeleted=Dictionnaire <b> %s </b> supprimé avec succès
-PropertyModuleUpdated=Property <b>%s</b> has been update successfully
+PropertyModuleUpdated=La propriété <b> %s </b> a été mise à jour avec succès
+InfoForApiFile=* Lorsque vous générez fichier pour la première fois, toutes les méthodes seront créées <strong> pour chaque objet.<strong> '></strong></span><br>* Lorsque vous cliquez sur <strong>supprimez</strong> vous supprimez simplement toutes les méthodes pour l'<strong>objet sélectionné</strong>.
+SetupFile=Page de configuration du module

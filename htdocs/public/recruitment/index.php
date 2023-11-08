@@ -98,13 +98,13 @@ if (empty($conf->recruitment->enabled)) {
 
 $head = '';
 if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_RECRUITMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
+if (!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
@@ -165,7 +165,7 @@ if ($urllogo) {
 
 if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="' . getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 
@@ -195,7 +195,7 @@ if (is_array($results)) {
 				if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
 					$text .= $langs->trans($reg[1])."<br>\n";
 				} else {
-					$text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+					$text .= getDolGlobalString('RECRUITMENT_NEWFORM_TEXT') . "<br>\n";
 				}
 				$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 			}
@@ -211,7 +211,7 @@ if (is_array($results)) {
 			// Output payment summary form
 			print '<tr><td class="left">';
 
-			print '<div with="100%" id="tablepublicpayment">';
+			print '<div class="centpercent" id="tablepublicpayment">';
 			print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 			$error = 0;

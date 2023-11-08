@@ -52,7 +52,7 @@ function member_prepare_head(Adherent $object)
 		$h++;
 	}
 
-	if (!empty($user->rights->adherent->cotisation->lire)) {
+	if ($user->hasRight('adherent', 'cotisation', 'lire')) {
 		$nbSubscription = is_array($object->subscriptions) ?count($object->subscriptions) : 0;
 		$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id;
 		$head[$h][1] = $langs->trans("Subscriptions");
@@ -64,7 +64,7 @@ function member_prepare_head(Adherent $object)
 	}
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
-		if (!empty($user->rights->partnership->read)) {
+		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?rowid='.$object->id;
 			$head[$h][1] = $langs->trans("Partnerships");

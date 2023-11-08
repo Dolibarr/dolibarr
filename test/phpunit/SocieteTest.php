@@ -337,7 +337,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->set_as_client();
+		$result=$localobject->setAsCustomer();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
@@ -462,7 +462,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nFrance", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nFrance", $result);
 
 		// Belgium
 		unset($localobjectadd->country_code);
@@ -473,7 +473,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nBelgium", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nBelgium", $result);
 
 		// Switzerland
 		unset($localobjectadd->country_code);
@@ -484,7 +484,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->town='New town';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
+		$this->assertStringContainsString("New address\nNew zip New town\nSwitzerland", $result);
 
 		// USA
 		unset($localobjectadd->country_code);
@@ -496,8 +496,44 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobjectadd->state='New state';
 		$result=$localobjectadd->getFullAddress(1);
 		print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-		$this->assertContains("New address\nNew town, New state, New zip\nUnited States", $result);
+		$this->assertStringContainsString("New address\nNew town, New state, New zip\nUnited States", $result);
 
 		return $localobjectadd->id;
+	}
+
+	/**
+	 * testSocieteMerge
+	 *
+	 * Check that we can merge two companies together. In this test,
+	 * no other object is referencing the companies.
+	 *
+	 * @return int the result of the merge and fetch operation
+	 */
+	public function testSocieteMerge()
+	{
+		global $user, $db;
+
+		$soc1 = new Societe($db);
+		$soc1->initAsSpecimen();
+		$soc1_id = $soc1->create($user);
+		$this->assertLessThanOrEqual($soc1_id, 0);
+
+		$soc2 = new Societe($db);
+		$soc2->entity = 1;
+		$soc2->name = "Copy of ".$soc1->name;
+		$soc2->code_client = 'CC-0002';
+		$soc2->code_fournisseur = 'SC-0002';
+		$soc2_id = $soc2->create($user);
+		$this->assertLessThanOrEqual($soc2_id, 0, implode('\n', $soc2->errors));
+
+		$result = $soc1->mergeCompany($soc2_id);
+		$this->assertLessThanOrEqual($result, 0, implode('\n', $soc1->errors));
+
+		$result = $soc1->fetch($soc1_id);
+		$this->assertLessThanOrEqual($result, 0);
+
+		print __METHOD__." result=".$result."\n";
+
+		return $result;
 	}
 }

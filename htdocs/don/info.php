@@ -55,7 +55,7 @@ $result = restrictedArea($user, 'don', $object->id);
  * Actions
  */
 
-if ($action == 'classin' && $user->rights->don->creer) {
+if ($action == 'classin' && $user->hasRight('don', 'creer')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -89,7 +89,7 @@ $morehtmlref = '<div class="refidno">';
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= $langs->trans('Project').' ';
-	if ($user->rights->don->creer) {
+	if ($user->hasRight('don', 'creer')) {
 		if ($action != 'classify') {
 			// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		}

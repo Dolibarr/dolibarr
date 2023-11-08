@@ -21,21 +21,21 @@
 /**
  *	\file       htdocs/core/boxes/box_members_last_subscriptions.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of last members subscriptions
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show last members subscriptions
  */
 class box_members_last_subscriptions extends ModeleBoxes
 {
-	public $boxcode = "box_members_last_subscriptions";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_last_subscriptions";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxLastMembersSubscriptions";
-	public $depends = array("adherent");
+	public $depends  = array("adherent");
 
 	/**
 	 * @var DoliDB Database handler.

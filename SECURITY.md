@@ -48,7 +48,7 @@ Reports are processed around once a month.
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
-* The version to analyze must be the last version available into "develop" branch or into last stable "vX.Y" released version.  
+* The version to analyze must be the last version available into "develop" branch or into last stable "vX.Y" released version. Reports on vulnerabilities already fixed (so already reported) into the develop branch will not be validated.   
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.

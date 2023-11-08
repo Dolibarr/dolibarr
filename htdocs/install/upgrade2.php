@@ -499,6 +499,15 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_contractdet_rank();
 			}
+
+			// Scripts for 19.0
+			/*
+			$afterversionarray = explode('.', '18.0.9');
+			$beforeversionarray = explode('.', '19.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
+			*/
 		}
 
 
@@ -871,7 +880,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 			$res = 0;
 			$num = count($row);
 			for ($i = 0; $i < $num; $i++) {
-				if ($conf->global->MAIN_FEATURES_LEVEL == 2) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) {
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
@@ -982,7 +991,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 			$res = 0;
 			for ($i = 0; $i < $num; $i++) {
-				if ($conf->global->MAIN_FEATURES_LEVEL == 2) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) {
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
@@ -1951,7 +1960,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
-				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpsoc);
+				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $mysoc);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -4136,6 +4145,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/boxes/box_members.php',
+		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
 		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
@@ -4148,7 +4158,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/compta/facture/class/api_invoice.class.php',
 		'/commande/class/api_commande.class.php',
 		'/user/class/api_user.class.php',
+		'/partnership/class/api_partnership.class.php',
 		'/product/class/api_product.class.php',
+		'/recruitment/class/api_recruitment.class.php',
 		'/societe/class/api_contact.class.php',
 		'/societe/class/api_thirdparty.class.php',
 		'/support/online.php',
@@ -4372,8 +4384,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if ($conf->global->MAIN_MENU_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENU_SMARTPHONE == 'auguria_menu'
-		|| $conf->global->MAIN_MENUFRONT_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENUFRONT_SMARTPHONE == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
+		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 

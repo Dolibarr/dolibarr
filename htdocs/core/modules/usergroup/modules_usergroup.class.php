@@ -19,31 +19,20 @@
  * or see https://www.gnu.org/
  */
 
-
-/**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
- */
-
 /**
  *  \file       htdocs/core/modules/contract/modules_contract.php
  *  \ingroup    contract
  *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
  */
 
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
 
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFUserGroup extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules

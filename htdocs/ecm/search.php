@@ -239,7 +239,7 @@ $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)
 $formfile = new FormFile($db);
 $param = '&section='.urlencode($section);
 $textifempty = ($section ? $langs->trans("NoFileFound") : $langs->trans("ECMSelectASection"));
-$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
+$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight('ecm', 'upload'), 1, $textifempty);
 
 
 print '</td></tr>';

@@ -678,7 +678,7 @@ if ($action != "create" && $action != "edit") {
 			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, (!empty($cssforfield) ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, (!empty($cssforfield) ? $cssforfield . ' ' : '')) . "\n";
 		}
 	}
-	print '<td></td>';
+	//print '<td></td>';
 	print '<td></td>';
 	print '</tr>' . "\n";
 
@@ -724,7 +724,7 @@ if ($action != "create" && $action != "edit") {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
-				print '<td' . ($cssforfield ? ' class="' . $cssforfield . '"' : '') . '>';
+				print '<td' . (empty($cssforfield) ? '' : ' class="' . $cssforfield . '"') . '>';
 				if ($key == 'status') {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
