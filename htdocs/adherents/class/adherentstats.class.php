@@ -348,7 +348,7 @@ class AdherentStats extends Stats
 		$depth = $limit_depth > 0 ? $limit_depth : -($limit_depth + 1);
 
 		// test against infinite loop
-		if ($depth > 1000){
+		if ($depth > 1000) {
 			return $depth;
 		}
 		foreach ($elements as $key=>$element) {
@@ -376,7 +376,7 @@ class AdherentStats extends Stats
 	public function arrayDepth(array $array, $depth = 0)
 	{
 		// test against infinite loop
-		if ($depth > 1000){
+		if ($depth > 1000) {
 			return $depth;
 		}
 		$max_depth = 0;
