@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'other'));
@@ -398,65 +399,67 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="saveSkill">';
 	}
-	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelines" class="noborder centpercent" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans('SkillType').'</th>';
-	print '<th>'.$langs->trans('Label').'</th>';
-	print '<th>'.$langs->trans('Description').'</th>';
-	print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
-	if ($objecttype === 'job') {
-		print '<th class="linecoledit"></th>';
-		print '<th class="linecoldelete"></th>';
-	}
-	print '</tr>';
-	if (!is_array($TSkillsJob) || empty($TSkillsJob)) {
-		print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
-	} else {
-		$sk = new Skill($db);
-		foreach ($TSkillsJob as $skillElement) {
-			$sk->fetch((int) $skillElement->fk_skill);
-			print '<tr>';
-			print '<td>';
-			print Skill::typeCodeToLabel($sk->skill_type);
-			print '</td><td class="linecolfk_skill">';
-			print $sk->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			print $sk->description;
-			print '</td><td class="linecolrank">';
-			print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
-			print '</td>';
-			if ($objecttype != 'user' && $permissiontoadd) {
-				print '<td class="linecoledit"></td>';
-				print '<td class="linecoldelete">';
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->id . '">';
-				print img_delete();
-				print '</a>';
-			}
-			print '</td>';
-			print '</tr>';
+	if ($objecttype != 'user') {
+		print '<div class="div-table-responsive-no-min">';
+		print '<table id="tablelines" class="noborder centpercent" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<th>'.$langs->trans('SkillType').'</th>';
+		print '<th>'.$langs->trans('Label').'</th>';
+		print '<th>'.$langs->trans('Description').'</th>';
+		print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
+		if ($objecttype === 'job') {
+			print '<th class="linecoledit"></th>';
+			print '<th class="linecoldelete"></th>';
 		}
-	}
+		print '</tr>';
+		if (!is_array($TSkillsJob) || empty($TSkillsJob)) {
+			print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
+		} else {
+			$sk = new Skill($db);
+			foreach ($TSkillsJob as $skillElement) {
+				$sk->fetch((int) $skillElement->fk_skill);
+				print '<tr>';
+				print '<td>';
+				print Skill::typeCodeToLabel($sk->skill_type);
+				print '</td><td class="linecolfk_skill">';
+				print $sk->getNomUrl(1);
+				print '</td>';
+				print '<td>';
+				print $sk->description;
+				print '</td><td class="linecolrank">';
+				print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
+				print '</td>';
+				if ($objecttype != 'user' && $permissiontoadd) {
+					print '<td class="linecoledit"></td>';
+					print '<td class="linecoldelete">';
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $skillElement->fk_object . '&amp;objecttype=' . $objecttype . '&amp;action=ask_deleteskill&amp;lineid=' . $skillElement->id . '">';
+					print img_delete();
+					print '</a>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+		}
 
-	print '</table>';
-	if ($objecttype != 'user' && $permissiontoadd) print '<td><input class="button pull-right" type="submit" value="' . $langs->trans('SaveRank') . '"></td>';
-	print '</div>';
-	if ($objecttype != 'user' && $permissiontoadd) print '</form>';
+		print '</table>';
+		if ($objecttype != 'user' && $permissiontoadd) print '<td><input class="button pull-right" type="submit" value="' . $langs->trans('SaveRank') . '"></td>';
+		print '</div>';
+		if ($objecttype != 'user' && $permissiontoadd) print '</form>';
+	}
 
 
 	// liste des evaluation liées
 	if ($objecttype == 'user' && $permissiontoadd) {
 		$evaltmp = new Evaluation($db);
 		$job = new Job($db);
-		// $sql  = "SELECT e.rowid,e.ref,e.label,e.status,e.date_eval, e.date_creation,j.label,j.description, e.fk_job";
-		// $sql .= " FROM ".MAIN_DB_PREFIX."hrm_evaluation AS e";
-		// $sql .= " ,".MAIN_DB_PREFIX."hrm_job AS j";
-		// $sql .= " WHERE e.fk_job = j.rowid";
-		// $sql .= " AND e.fk_user = ".((int)$id);
-		// $sql .= " AND e.status > 0";
-
-		$sql = "select ed.*,e.fk_user,e.fk_job,e.status,e.ref,e.date_eval from llx_hrm_evaluationdet as ed, llx_hrm_evaluation as e where ed.fk_evaluation = e.rowid and e.fk_user=2 and e.status > 0";
+		$sql = "select e.rowid,e.ref,e.fk_user,e.fk_job,e.date_eval,ed.rankorder,ed.required_rank,ed.fk_skill,s.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+		$sql .= ", ".MAIN_DB_PREFIX."hrm_evaluationdet as ed";
+		$sql .= ", ".MAIN_DB_PREFIX."hrm_skill as s";
+		$sql .= " WHERE e.rowid = ed.fk_evaluation";
+		$sql .= " AND s.rowid = ed.fk_skill";
+		$sql .= " AND e.fk_user = ".((int) $id);
+		$sql .= " AND e.status > 0";
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
 
@@ -469,19 +472,35 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<th>'.$langs->trans('Description').'</th>';
 		print '<th>'.$langs->trans('DateEval').'</th>';
 		print '<th>'.$langs->trans('Status').'</th>';
-		print '<th>'.$langs->trans($objecttype === 'job' ? 'RequiredRank' : 'EmployeeRank').'</th>';
+		print '<th>'.$langs->trans("Result").' ' .$form->textwithpicto('', GetLegendSkills(), 1) .'</th>';
 		print '</tr>';
 		if (!$resql) {
 			print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 		} else {
 			$i = 0;
+			$sameRef = array();
+			$objects = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$evaltmp->fetch($obj->rowid);
-				$evaltmp->id = $obj->rowid;
-				$evaltmp->ref = $obj->ref;
-				$job->fetch($obj->fk_job);
-				var_dump($obj);
+				$obj->result = getRankOrderResults($obj);
+				$objects[$i] = $obj;
+				$i++;
+			}
+			//grouped skills by evaluation
+			$resultArray = getGroupedEval($objects);
+			foreach ($resultArray as $object) {
+				if (is_array($object)) {
+					$evaltmp->fetch($object[0]->rowid);
+					$evaltmp->id = $object[0]->rowid;
+					$evaltmp->ref = $object[0]->ref;
+					$job->fetch($object[0]->fk_job);
+				} else {
+					$evaltmp->ref = $object->ref;
+					$evaltmp->fetch($object->rowid);
+					$evaltmp->id = $object->rowid;
+					$job->fetch($object->fk_job);
+				}
+
 				print '<tr>';
 				print '<td>';
 				print $evaltmp->getNomUrl(1);
@@ -489,15 +508,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $job->getNomUrl(1);
 				print '</td>';
 				print '<td>';
-				print dol_print_date($obj->date_creation, 'day', 'tzserver');
+				print dol_print_date((!is_array($object) ? $object->date_eval : $object[0]->date_eval), 'day', 'tzserver');
 				print '</td><td>';
 				print $evaltmp->getLibStatut(2);
 				print '</td>';
 				print '<td class="linecolrank tdoverflowmax300">';
-				print displayRankInfos($obj->rankorder, $obj->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
+				if (!is_array($object)) {
+					print $object->result;
+				} else {
+					foreach ($object as $skill) {
+						print $skill->result;
+					}
+				}
 				print '</td>';
 				print '</tr>';
-				$i++;
 			}
 		}
 		print '</table>';
