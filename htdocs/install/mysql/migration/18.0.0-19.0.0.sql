@@ -34,7 +34,7 @@
 
 -- v18
 
-
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
 
 
 -- v19
@@ -86,6 +86,8 @@ ALTER TABLE llx_adherent DROP COLUMN youtube;
 ALTER TABLE llx_adherent DROP COLUMN whatsapp;
 
 ALTER TABLE llx_societe DROP COLUMN skype;
+
+ALTER TABLE llx_user ADD COLUMN email_oauth2 varchar(255);
 
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
@@ -165,3 +167,13 @@ ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
 UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
 
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_datec(datec);
+
+ALTER TABLE llx_facturedet ADD COLUMN batch varchar(128) NULL;		-- To store the batch to consume in stock when using a POS module
+ALTER TABLE llx_facturedet ADD COLUMN fk_warehouse integer NULL;	-- To store the warehouse where to consume stock when using a POS module
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN rate_indirect double DEFAULT 0;
+
+ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
+-- VMYSQL4.1 UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline' AND mk.fk_unit IS NULL;
+-- VMYSQL4.1 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
+

@@ -256,10 +256,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_accoun
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON ps.fk_salary = s.rowid, ";
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
-$sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
+$sql .= " AND s.entity IN (".getEntity('salaries').")";
 if (!$user->hasRight('salaries', 'readall')) {
 	$sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
+//print $sql;
 
 // Search criteria
 if ($search_ref) {

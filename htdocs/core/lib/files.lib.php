@@ -941,10 +941,11 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
+ * @param	int		$moreinfo			Array with more information
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1)
+function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
 {
 	global $user, $db, $conf;
 	$result = false;
@@ -1037,9 +1038,30 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
 					$ecmfile->fullpath_orig = $srcfile;
-					$ecmfile->gen_or_uploaded = 'unknown';
-					$ecmfile->description = ''; // indexed content
-					$ecmfile->keywords = ''; // keyword content
+					$ecmfile->gen_or_uploaded = 'uploaded';
+					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
+						$ecmfile->description = $moreinfo['description']; // indexed content
+					} else {
+						$ecmfile->description = ''; // indexed content
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['keywords'])) {
+						$ecmfile->keywords = $moreinfo['keywords']; // indexed content
+					} else {
+						$ecmfile->keywords = ''; // keyword content
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['note_private'])) {
+						$ecmfile->note_private = $moreinfo['note_private'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['note_public'])) {
+						$ecmfile->note_public = $moreinfo['note_public'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['src_object_type'])) {
+						$ecmfile->src_object_type = $moreinfo['src_object_type'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
+						$ecmfile->src_object_id = $moreinfo['src_object_id'];
+					}
+
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');

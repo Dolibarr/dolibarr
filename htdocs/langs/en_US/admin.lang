@@ -583,7 +583,7 @@ Module54Desc=Management of contracts (services or recurring subscriptions)
 Module55Name=Barcodes
 Module55Desc=Barcode or QR code management
 Module56Name=Payment by credit transfer
-Module56Desc=Management of payment of suppliers by Credit Transfer orders. It includes generation of SEPA file for European countries.
+Module56Desc=Management of payment of suppliers or salaries by Credit Transfer orders. It includes generation of SEPA file for European countries.
 Module57Name=Payments by Direct Debit
 Module57Desc=Management of Direct Debit orders. It includes generation of SEPA file for European countries.
 Module58Name=ClickToDial
@@ -717,6 +717,8 @@ Module63000Desc=Manage resources (printers, cars, rooms, ...) for allocating to 
 Module66000Name=OAuth2 token management
 Module66000Desc=Provide a tool to generate and manage OAuth2 tokens. The token can then be used by some other modules.
 Module94160Name=Receptions
+ModuleBookCalName=Booking Calendar System
+ModuleBookCalDesc=Manage a Calendar to book appointments
 ##### Permissions #####
 Permission11=Read customer invoices (and payments)
 Permission12=Create/modify customer invoices

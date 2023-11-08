@@ -286,6 +286,7 @@ class Commande extends CommonOrder
 	public $online_payment_url;
 
 
+
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
@@ -565,6 +566,12 @@ class Commande extends CommonOrder
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'commande/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'commande/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -2344,7 +2351,7 @@ class Commande extends CommonOrder
 	 *
 	 *	TODO		FONCTION NON FINIE A FINIR
 	 */
-	public function stock_array($filtre_statut = self::STATUS_CANCELED)
+	/*public function stock_array($filtre_statut = self::STATUS_CANCELED)
 	{
 		// phpcs:enable
 		$this->stocks = array();
@@ -2372,7 +2379,7 @@ class Commande extends CommonOrder
 			}
 		}
 		return 0;
-	}
+	}*/
 
 	/**
 	 *  Delete an order line

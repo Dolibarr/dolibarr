@@ -66,6 +66,16 @@ abstract class CommonInvoice extends CommonObject
 	public $mode_reglement_id;
 	public $mode_reglement_code; // Code in llx_c_paiement
 
+	/**
+	 * @var string
+	 */
+	public $mode_reglement;
+
+	/**
+	 * @var double
+	 */
+	public $revenuestamp;
+
 	public $totalpaid;			// duplicate with sumpayed
 	public $totaldeposits;		// duplicate with sumdeposit
 	public $totalcreditnotes;	// duplicate with sumcreditnote
@@ -89,6 +99,34 @@ abstract class CommonInvoice extends CommonObject
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+
+	/**
+	 * @var int
+	 */
+	public $stripechargedone;
+
+	/**
+	 * @var int
+	 */
+	public $stripechargeerror;
+
+	/**
+	 * Payment description
+	 * @var string
+	 */
+	public $description;
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see $ref_customer
+	 */
+	public $ref_client;
+
+	/**
+	 * @var int Situation cycle reference number
+	 */
+	public $situation_cycle_ref;
 
 	/**
 	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
