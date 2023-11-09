@@ -223,10 +223,10 @@ if (empty($reshook)) {
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
 
-            $ret = $extrafields->setOptionalsFromPost(null, $object);
-            if ($ret < 0) {
-                $error++;
-            }
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
+			}
 
 			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
 			if (GETPOST('facid', 'int') > 0) {
@@ -1052,17 +1052,17 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 
-        //extrafields
-        $draft = new Facture($db);
-        $draft->fetch(GETPOST('facid', 'int'));
+		//extrafields
+		$draft = new Facture($db);
+		$draft->fetch(GETPOST('facid', 'int'));
 
-        $extralabels = new ExtraFields($db);
-        $extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
-        if ($draft->fetch_optionals() > 0) {
-            $object->array_options = array_merge($object->array_options, $draft->array_options);
-        }
+		$extralabels = new ExtraFields($db);
+		$extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
+		if ($draft->fetch_optionals() > 0) {
+			$object->array_options = array_merge($object->array_options, $draft->array_options);
+		}
 
-        print $object->showOptionals($extrafields, 'create', $parameters);	
+		print $object->showOptionals($extrafields, 'create', $parameters);
 
 		// Project
 		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
@@ -1442,7 +1442,7 @@ if ($action == 'create') {
 		print "</td>";
 		print '</tr>';
 
-        // Extrafields
+		// Extrafields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 
