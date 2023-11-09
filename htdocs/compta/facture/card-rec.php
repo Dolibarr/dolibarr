@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,6 +222,11 @@ if (empty($reshook)) {
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
+
+            $ret = $extrafields->setOptionalsFromPost(null, $object);
+            if ($ret < 0) {
+                $error++;
+            }
 
 			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
 			if (GETPOST('facid', 'int') > 0) {
@@ -1023,28 +1029,6 @@ if ($action == 'create') {
 		}
 		$htmltext .= '</i>';
 
-		// Public note
-		print '<tr>';
-		print '<td class="tdtop">';
-		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
-		print '</td>';
-		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
-		print $doleditor->Create(1);
-
-		// Private note
-		if (empty($user->socid)) {
-			print '<tr>';
-			print '<td class="tdtop">';
-			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
-			print '</td>';
-			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
-			print $doleditor->Create(1);
-			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
-			print '</td></tr>';
-		}
-
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
@@ -1068,6 +1052,18 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 
+        //extrafields
+        $draft = new Facture($db);
+        $draft->fetch(GETPOST('facid', 'int'));
+
+        $extralabels = new ExtraFields($db);
+        $extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
+        if ($draft->fetch_optionals() > 0) {
+            $object->array_options = array_merge($object->array_options, $draft->array_options);
+        }
+
+        print $object->showOptionals($extrafields, 'create', $parameters);	
+
 		// Project
 		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
 			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
@@ -1087,10 +1083,31 @@ if ($action == 'create') {
 		print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
 		print "</td></tr>";
 
+		// Public note
+		print '<tr>';
+		print '<td class="tdtop">';
+		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
+		print '</td>';
+		print '<td>';
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		print $doleditor->Create(1);
+
+		// Private note
+		if (empty($user->socid)) {
+			print '<tr>';
+			print '<td class="tdtop">';
+			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
+			print '</td>';
+			print '<td>';
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			print $doleditor->Create(1);
+			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
+			print '</td></tr>';
+		}
+
 		print "</table>";
 
 		print dol_get_fiche_end();
-
 
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
@@ -1407,22 +1424,6 @@ if ($action == 'create') {
 		}
 		$htmltext .= '</i>';
 
-		// Note public
-		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'));
-		print '</td><td class="wordbreak">';
-		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
-		print '</td>';
-		print '</tr>';
-
-		// Note private
-		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'));
-		print '</td><td class="wordbreak">';
-		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
-		print '</td>';
-		print '</tr>';
-
 		// Bank Account
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -1439,6 +1440,26 @@ if ($action == 'create') {
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 		}
 		print "</td>";
+		print '</tr>';
+
+        // Extrafields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+
+		// Note public
+		print '<tr><td>';
+		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'));
+		print '</td><td class="wordbreak">';
+		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
+		print '</td>';
+		print '</tr>';
+
+		// Note private
+		print '<tr><td>';
+		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'));
+		print '</td><td class="wordbreak">';
+		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
+		print '</td>';
 		print '</tr>';
 
 		// Model pdf
@@ -1468,7 +1489,7 @@ if ($action == 'create') {
 
 		// Other attributes
 		$cols = 2;
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 
 		print '</table>';
 
