@@ -53,6 +53,18 @@ abstract class ModeleBarCode
  */
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
+
+	/**
+	 * @var int Code facultatif
+	 */
+	public $code_null;
+
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
+
+
 	/**
 	 *  Return next value available
 	 *
