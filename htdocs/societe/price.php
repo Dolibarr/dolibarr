@@ -555,7 +555,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$arrayfields = dol_sort_array($arrayfields, 'position');
 
 		// Count total nb of records
-
+		$nbtotalofrecords = '';
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
