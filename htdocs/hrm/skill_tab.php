@@ -371,7 +371,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	if ($objecttype != 'user' && $permissiontoadd) {
-		// form pour ajouter des compétences
+		// form to add new skills
+		print '<br>';
 		print '<form name="addSkill" method="post" action="' . $_SERVER['PHP_SELF'] . '">';
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
