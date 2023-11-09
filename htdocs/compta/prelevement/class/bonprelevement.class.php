@@ -2725,12 +2725,12 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 * check if is bon prelevement for salary invoice
-	 * @return  int  1 if OK, O if K0
+	 * Check if is bon prelevement for salary invoice
+	 *
+	 * @return  int  	1 if OK, O if K0
 	 */
 	public function checkIfSalaryBonPrelevement()
 	{
-
 		if (!empty($this->id)) {
 			$id = $this->id;
 		} else {
@@ -2751,7 +2751,8 @@ class BonPrelevement extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
-			return 0;
 		}
+
+		return 0;
 	}
 }
