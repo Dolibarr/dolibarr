@@ -33,6 +33,7 @@ create table llx_prelevement_bons
   amount         double(24,8) DEFAULT 0, -- montant total du prelevement
   statut         smallint DEFAULT 0, -- statut
   credite        smallint DEFAULT 0, -- indique si le prelevement a ete credite
+	fk_account		integer,							-- bank account
   note           text,
   date_trans     datetime,           -- date de transmission a la banque
   method_trans   smallint,           -- methode de transmission

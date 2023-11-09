@@ -205,7 +205,24 @@ if ($id > 0 || $ref) {
 		print dol_print_date($object->date_credit, 'day');
 		print '</td></tr>';
 	}
-
+	$sql = "SELECT pb.fk_account";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE pb.rowid = ".((int) $id);
+	$sql .= " AND pb.entity = ".$conf->entity;
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj	= $db->fetch_object($resql);
+		if ($obj) {
+			$id_bankaccount	= (int) $obj->fk_account;
+		}
+	}
+	if (empty($id_bankaccount)) {
+		$id_bankaccount = $object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+	}
 	print '</table>';
 
 	print '<br>';
@@ -214,7 +231,7 @@ if ($id > 0 || $ref) {
 	print '<table class="border centpercent tableforfield">';
 
 	$acc = new Account($db);
-	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+	$result = $acc->fetch($id_bankaccount);
 
 	print '<tr><td class="titlefield">';
 	$labelofbankfield = "BankToReceiveWithdraw";
