@@ -1509,8 +1509,10 @@ class pdf_sponge extends ModelePDFFactures
 		$percent = 0;
 		$i = 0;
 		foreach ($object->lines as $line) {
-			$percent += $line->situation_percent;
-			$i++;
+			if ($line->product_type != 9) {
+				$percent += $line->situation_percent;
+				$i++;
+			}
 		}
 
 		if (!empty($i)) {
