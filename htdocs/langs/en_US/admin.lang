@@ -2424,3 +2424,4 @@ ReEncryptDesc=Reencrypt data if not yet encrypted
 PasswordFieldEncrypted=%s new record have this field been encrypted
 ExtrafieldsDeleted=Extrafields %s has been deleted
 LargeModern=Large - Modern
+SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters

@@ -182,9 +182,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	}
 
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {
-		// TODO Add message...
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
-
 
 		if (!$error) {
 			$action = 'view_ticket';
@@ -334,7 +332,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
 			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $fuser->getFullName($langs, 1);
+			print $fuser->getFullName($langs, 0);
 		}
 		print '</td></tr>';
 
