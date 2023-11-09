@@ -161,3 +161,6 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit 
 WarningSomeDirectDebitOrdersAlreadyExists=Warning: There is already some pending Direct Debit orders (%s) requested for an amount of %s
 WarningSomeCreditTransferAlreadyExists=Warning: There is already some pending Credit Transfer (%s) requested for an amount of %s  
 UsedFor=Used for %s
+unprocessedRequest=unprocessed request,
+paymentsCoveringEntireInvoice=Payments covering the entire invoice have already been entered!
+requestedAmountExceedsOutstanding=the requested amount (%s) exceeds the outstanding amount (%s)

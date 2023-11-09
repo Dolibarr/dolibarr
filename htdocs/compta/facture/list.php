@@ -510,7 +510,6 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
 				$rsql .= " WHERE fk_facture = ".((int) $objecttmp->id);
 				$rsql .= " AND pfd.fk_user_demande = u.rowid";
-				$rsql .= " AND pfd.traite = 0";
 				$rsql .= " ORDER BY pfd.date_demande DESC";
 
 				$result_sql = $db->query($rsql);
