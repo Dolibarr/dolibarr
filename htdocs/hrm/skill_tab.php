@@ -79,7 +79,9 @@ $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hoo
 
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-$object->loadPersonalConf();
+if (method_exists($object, 'loadPersonalConf')) {
+	$object->loadPersonalConf();
+}
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'all', 'read');

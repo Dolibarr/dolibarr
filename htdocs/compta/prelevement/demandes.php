@@ -299,7 +299,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '</tr>';
 
 $userstatic = new User($db);
-$salarystatic = new salary($db);
+$salarystatic = new Salary($db);
 
 $i = 0;
 while ($i < min($num, $limit)) {
