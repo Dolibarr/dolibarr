@@ -1,3 +1,4 @@
+-- ===================================================================
 -- Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2013 Lionel Vessiller     <lvessiller@easya.solutions>
 --
