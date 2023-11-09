@@ -152,3 +152,6 @@ ModeWarning=Option for real mode was not set, we stop after this simulation
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
 TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines
+unprocessedRequest=unprocessed request,
+paymentsCoveringEntireInvoice=Payments covering the entire invoice have already been entered!
+requestedAmountExceedsOutstanding=the requested amount (%s) exceeds the outstanding amount (%s)
