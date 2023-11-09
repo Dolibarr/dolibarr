@@ -238,10 +238,12 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
+		print '<!-- public view ticket -->';
+		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
 		// Confirmation close
 		if ($action == 'close') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
@@ -378,6 +380,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<div style="clear: both; margin-top: 1.5em;"></div>';
 
 		if ($action == 'presend') {
+			print '<br>';
 			print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'conversation');
 
 			$formticket = new FormTicket($db);
@@ -422,13 +425,26 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			print '</div>';
 		}
 
+		print '</div>';
+
 		// Message list
+		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
+		print '</div>';
+
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
+		print '<!-- public view ticket -->';
+		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
+
+		print '</div>';
 	}
 } else {
+	print '<!-- public view ticket -->';
+	print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
@@ -453,9 +469,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 	print "</form>\n";
 	print "</div>\n";
-}
 
-print "</div>";
+	print '</div>';
+}
 
 if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page
