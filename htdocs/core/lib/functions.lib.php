@@ -5278,7 +5278,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
-		define("MAIN_CORE_ERROR", 1);
+		if (!defined("MAIN_CORE_ERROR")) {
+			define("MAIN_CORE_ERROR", 1);
+		}
 	}
 
 	dol_syslog("Error ".$syslog, LOG_ERR);
