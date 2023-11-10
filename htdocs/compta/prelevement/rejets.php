@@ -129,7 +129,6 @@ if ($type == 'bank-transfer') {
 }
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
-print_r($sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
