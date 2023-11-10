@@ -2737,14 +2737,15 @@ class BonPrelevement extends CommonObject
 			return 0;
 		}
 		if ($id) {
-			$sql = "SELECT * FROM ".MAIN_DB_PREFIX."prelevement_lignes";
+			$sql = "SELECT COUNT(*) AS numRows FROM ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons=".((int) $id);
 			$sql .= " AND fk_soc = 0";
 			$sql .= " AND fk_user IS NOT NULL";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$num = $this->db->num_rows($resql);
+				$row = $this->db->fetch_array($resql);
+				$num = $row['numRows'];
 			}
 			if ($num > 0) {
 				return 1;
