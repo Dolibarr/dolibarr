@@ -63,6 +63,11 @@ class pdf_timespent extends ModelePDFProjects
 	public $type;
 
 	/**
+	 * @var int
+	 */
+	public $posxuser;
+
+	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */

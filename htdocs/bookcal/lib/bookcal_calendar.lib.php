@@ -31,7 +31,7 @@ function calendarPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("bookcal");
+	$langs->load("agenda");
 
 	$showtabofpagecontact = 0;
 	$showtabofpagenote = 1;

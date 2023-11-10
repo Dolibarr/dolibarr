@@ -258,7 +258,7 @@ a.btnTitle.btnTitleSelected {
 /* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
 .btnTitlePlus:hover {
 	max-width: 24px;
-    max-height: 40px;
+	max-height: 40px;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {

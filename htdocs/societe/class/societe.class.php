@@ -5410,12 +5410,10 @@ class Societe extends CommonObject
 
 	/**
 	 *    Merge a company with another one, deleting the given company.
+	 *    The company given in parameter will be removed.
 	 *
 	 *    @param	int     $soc_origin_id		Company to merge the data from
-	 *    @return	int		-1 if error
-	 *
-	 *    @note The company given in parameter will be removed.
-	 *
+	 *    @return	int							-1 if error
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
@@ -5597,5 +5595,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		}
+
+		return -1;
 	}
 }

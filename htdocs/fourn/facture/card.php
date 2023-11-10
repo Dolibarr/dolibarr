@@ -3263,7 +3263,7 @@ if ($action == 'create') {
 				$result = $tmptemplate->fetch($object->fk_fac_rec_source);
 				if ($result > 0) {
 					print ' <span class="opacitymediumbycolor paddingleft">';
-					$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->titre).'</a>';
+					$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->title).'</a>';
 					$s = $langs->transnoentities("GeneratedFromSupplierTemplate", $link);
 
 					print $s;

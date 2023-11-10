@@ -637,7 +637,7 @@ class User extends CommonObject
 	/**
 	 *  Load const values from database table user_param and set it into user->conf->XXX
 	 *
-	 *  @return int						> 0 if OK, < 0 if KO
+	 *  @return int						>= 0 if OK, < 0 if KO
 	 */
 	public function loadPersonalConf()
 	{
@@ -661,8 +661,11 @@ class User extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			return $num;
 		} else {
 			$this->error = $this->db->lasterror();
+
 			return -2;
 		}
 	}

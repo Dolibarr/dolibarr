@@ -36,6 +36,8 @@
 
 -- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
 
+ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
+
 
 -- v19
 

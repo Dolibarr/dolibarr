@@ -101,6 +101,34 @@ abstract class CommonInvoice extends CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
+	 * @var int
+	 */
+	public $stripechargedone;
+
+	/**
+	 * @var int
+	 */
+	public $stripechargeerror;
+
+	/**
+	 * Payment description
+	 * @var string
+	 */
+	public $description;
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see $ref_customer
+	 */
+	public $ref_client;
+
+	/**
+	 * @var int Situation cycle reference number
+	 */
+	public $situation_cycle_ref;
+
+	/**
 	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
 	 * ! Closing when no payment: replaced, abandoned
 	 * @var string Close code

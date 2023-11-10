@@ -366,7 +366,7 @@ class Cchargesociales
 	 * @param   int     $fromid     Id of object to clone
 	 * @return  int                 New id of clone
 	 */
-	public function createFromClone(User $user, $fromid)
+	/*public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -406,7 +406,7 @@ class Cchargesociales
 
 			return -1;
 		}
-	}
+	}*/
 
 	/**
 	 *  Return a link to the user card (with optionaly the picto)
@@ -419,7 +419,7 @@ class Cchargesociales
 	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+	/*public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -446,7 +446,7 @@ class Cchargesociales
 		}
 		$result .= $link.$this->ref.$linkend;
 		return $result;
-	}
+	}*/
 
 	/**
 	 *  Return the label of the status
@@ -454,10 +454,10 @@ class Cchargesociales
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	/*public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
-	}
+	}*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

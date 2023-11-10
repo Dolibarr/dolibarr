@@ -113,6 +113,26 @@ class PaymentVAT extends CommonObject
 	 */
 	public $datepaye;
 
+		/**
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
 	/**
 	 * @var integer|string paiementtype
 	 */

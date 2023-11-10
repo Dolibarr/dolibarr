@@ -56,7 +56,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
+$langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdrawals"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
