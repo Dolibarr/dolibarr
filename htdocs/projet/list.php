@@ -936,6 +936,9 @@ if (!empty($socid)) {
 }
 if ($search_usage_event_organization == 1) {
 	$url .= '&usage_organize_event=1';
+	if (((int) $search_usage_opportunity) < 1) {
+		$url .= '&usage_opportunity=0';
+	}
 }
 
 $newcardbutton = '';
