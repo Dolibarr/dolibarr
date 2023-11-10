@@ -332,7 +332,7 @@ if ($id) {
 
 			print '<td class="right">';
 			$invoicestatic->fetch($obj->facid);
-			print $invoicestatic->getLibStatut(5);
+			print $invoicestatic->getLibStatut(5, $invoicestatic->getSommePaiement());
 			print "</td>\n";
 
 			print "</tr>\n";
