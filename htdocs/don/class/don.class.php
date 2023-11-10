@@ -113,7 +113,6 @@ class Don extends CommonObject
 	public $phone;
 	public $phone_mobile;
 
-	public $country_olddata;
 
 	/**
 	 * @var string
@@ -641,7 +640,7 @@ class Don extends CommonObject
 	{
 		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-		$sql .= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
+		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
 		$sql .= " p.ref as project_ref,";
 		$sql .= " cp.libelle as payment_label, cp.code as payment_code,";
@@ -683,7 +682,6 @@ class Don extends CommonObject
 				$this->country_id         = $obj->fk_country;
 				$this->country_code       = $obj->country_code;
 				$this->country            = $obj->country;
-				$this->country_olddata    = $obj->country_olddata; // deprecated
 				$this->email              = $obj->email;
 				$this->phone              = $obj->phone;
 				$this->phone_mobile       = $obj->phone_mobile;
