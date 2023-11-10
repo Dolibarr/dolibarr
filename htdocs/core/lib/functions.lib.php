@@ -9568,7 +9568,6 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
-		print $s."<br>\n";
 		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
