@@ -594,7 +594,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 						}
 					}
 
-					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '');
+					// print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '');
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) {
 						print '</a>';
