@@ -71,6 +71,9 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+$error = 0;
+$errorforinvoice = array();
+
 
 /*
  * Actions
@@ -213,8 +216,27 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Load all unbound lines
+$sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
+$sql .= " WHERE erd.fk_code_ventilation <= 0";
+$sql .= " AND erd.total_ttc <> 0";
+$sql .= " AND fk_expensereport IN (".$db->sanitize(join(",", array_keys($taber))).")";
+$sql .= " GROUP BY fk_expensereport";
+$resql = $db->query($sql);
+
+$num = $db->num_rows($resql);
+$i = 0;
+while ($i < $num) {
+	$obj = $db->fetch_object($resql);
+	if ($obj->nb > 0) {
+		$errorforinvoice[$obj->fk_expensereport] = 'somelinesarenotbound';
+	}
+	$i++;
+}
+
 // Bookkeeping Write
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && !$error) {
 	$now = dol_now();
 	$error = 0;
 
@@ -228,6 +250,13 @@ if ($action == 'writebookkeeping') {
 		$totaldebit = 0;
 
 		$db->begin();
+
+		// Error if some lines are not binded/ready to be journalized
+		if (!empty($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
+			$error++;
+			$errorforline++;
+			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+		}
 
 		// Thirdparty
 		if (!$errorforline) {
@@ -265,10 +294,12 @@ if ($action == 'writebookkeeping') {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						} else {
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key] = 'other';
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
@@ -314,10 +345,12 @@ if ($action == 'writebookkeeping') {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							} else {
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -376,10 +409,12 @@ if ($action == 'writebookkeeping') {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							} else {
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -389,9 +424,10 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Protection against a bug on line before
-		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
+		if (!$errorforline && price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
+			$errorforinvoice[$key] = 'amountsnotbalanced';
 			setEventMessages('We tried to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
 		}
 
@@ -445,7 +481,7 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 // Export
-if ($action == 'exportcsv') {		// ISO and not UTF8 !
+if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
