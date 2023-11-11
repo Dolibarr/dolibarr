@@ -2,6 +2,7 @@
 ModulePartnershipName=Configuracoes de Parcerias
 PartnershipDescription=Módulo gerenciamento de parcerias
 PartnershipDescriptionLong=Módulo gerenciamento de parcerias
+Partnership=Parceria
 NewPartnership=Nova parceria
 PartnershipSetup=Configuracao de parcerias
 PartnershipAbout=Sobre parcerias

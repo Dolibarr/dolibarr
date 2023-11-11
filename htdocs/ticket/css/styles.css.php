@@ -82,15 +82,15 @@ div.ticketform {
 	box-shadow: 2px 2px 2px rgb(245, 245, 245);
 	border-radius: 10px 10px 10px 10px;
 	margin: 1.5em;
-*/
 	background : #ffffff;
+*/
 	text-align: center;
 }
 
 div.ticketform .index_create, div.ticketform .index_display {
 	display: inline-block;
 	width: 200px;
-	height: 45px;
+	height: 60px;
 	text-align: center;
 	vertical-align: middle;
 	margin: 20px;
@@ -124,4 +124,10 @@ div.ticketform .index_create, div.ticketform .index_display {
 @media only screen and (max-width: 767px)
 {
 	#form_create_ticket input.text,	#form_create_ticket textarea { width: unset;}
+
+	#form_create_ticket, #form_view_ticket
+	{
+		margin-left: 0;
+		margin-right: 0;
+	}
 }

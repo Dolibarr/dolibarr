@@ -97,6 +97,48 @@ class PaymentVAT extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int ID
+	 */
+	public $chid;
+
+	/**
+	 * @var string lib
+	 * @deprecated
+	 * @see $label
+	 */
+	public $lib;
+
+	/**
+	 * @var integer|string datepaye
+	 */
+	public $datepaye;
+
+		/**
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -107,14 +149,14 @@ class PaymentVAT extends CommonObject
 	}
 
 	/**
-	 *  Create payment of social contribution into database.
+	 *  Create payment of vat into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *	@param		int		$closepaidvat			1=Also close paid contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
-	public function create($user, $closepaidcontrib = 0)
+	public function create($user, $closepaidvat = 0)
 	{
 		global $conf, $langs;
 
@@ -169,7 +211,7 @@ class PaymentVAT extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
-			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+			return -1; // We accept negative amounts for chargebacks, but not null amounts.
 		}
 
 
@@ -188,14 +230,14 @@ class PaymentVAT extends CommonObject
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_vat");
 
-				// Insere tableau des montants / factures
+				// Insert table of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 
-						// If we want to closed payed invoices
-						if ($closepaidcontrib) {
+						// If we want to closed paid invoices
+						if ($closepaidvat) {
 							$contrib = new Tva($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -243,7 +285,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_tva,";
@@ -253,7 +294,7 @@ class PaymentVAT extends CommonObject
 		$sql .= " t.amount,";
 		$sql .= " t.fk_typepaiement,";
 		$sql .= " t.num_paiement as num_payment,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -281,7 +322,8 @@ class PaymentVAT extends CommonObject
 				$this->fk_typepaiement = $obj->fk_typepaiement;
 				$this->num_paiement = $obj->num_payment;
 				$this->num_payment = $obj->num_payment;
-				$this->note = $obj->note;
+				$this->note = $obj->note_private;
+				$this->note_private = $obj->note_private;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -344,27 +386,22 @@ class PaymentVAT extends CommonObject
 			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET";
-
-		$sql .= " fk_tva=".(isset($this->fk_tva) ? $this->fk_tva : "null").",";
+		$sql .= " fk_tva=".(isset($this->fk_tva) ? ((int) $this->fk_tva) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
-		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? $this->fk_typepaiement : "null").",";
-		$sql .= " num_paiement=".(isset($this->num_paiement) ? "'".$this->db->escape($this->num_paiement)."'" : "null").",";
+		$sql .= " amount=".(isset($this->amount) ? (float) price2num($this->amount) : "null").",";
+		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";
+		$sql .= " num_paiement=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
-
-
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -456,7 +493,7 @@ class PaymentVAT extends CommonObject
 	{
 		$error = 0;
 
-		$object = new PaymentSocialContribution($this->db);
+		$object = new PaymentVAT($this->db);
 
 		$this->db->begin();
 
@@ -466,7 +503,6 @@ class PaymentVAT extends CommonObject
 		$object->statut = 0;
 
 		// Clear fields
-		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -538,7 +574,7 @@ class PaymentVAT extends CommonObject
 
 		$error = 0;
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -562,8 +598,8 @@ class PaymentVAT extends CommonObject
 				$emetteur_banque
 			);
 
-			// Mise a jour fk_bank dans llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement.
+			// We thus know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -612,7 +648,7 @@ class PaymentVAT extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  tva et la ligne dans llx_bank generee
+	 *  Update link between vat payment and line in llx_bank generated
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -620,7 +656,7 @@ class PaymentVAT extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -634,9 +670,9 @@ class PaymentVAT extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 * Return the label of the status
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @param	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @return  string				Libelle
 	 */
 	public function getLibStatut($mode = 0)
@@ -646,16 +682,16 @@ class PaymentVAT extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
-		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs;
 
 		$langs->load('compta');
 		/*if ($mode == 0)
@@ -697,7 +733,7 @@ class PaymentVAT extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle

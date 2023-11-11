@@ -37,7 +37,7 @@ This document was generated using Dolibarr ERP CRM process
 :toc: manual
 :toc-placement: preamble
 
-<<<
+
 
 == INTRODUCTION
 
@@ -47,6 +47,16 @@ __README__
 == DATA SPECIFICATIONS
 
 __DATA_SPECIFICATION__
+
+
+== MATRIX OF PERMISSIONS
+
+__DATA_PERMISSIONS__
+
+
+== OTHER
+
+__API_DOC__
 
 
 == CHANGELOG

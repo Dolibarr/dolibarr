@@ -1,26 +1,36 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow modul beállítása
-WorkflowDesc=Ez a modul néhány automatikus műveletet biztosít. Alapértelmezés szerint a munkafolyamat nyitva van (a kívánt sorrendben végezhet feladatokat), de itt aktiválhat néhány automatikus műveletet is.
-ThereIsNoWorkflowToModify=Az aktivált modulokhoz nem állnak rendelkezésre munkafolyamat-módosítások.
+WorkflowSetup=Munkafolyamat-modul beállítása
+WorkflowDesc=Ez a modul bizonyos automatikus műveleteket biztosít. Alapértelmezés szerint a munkafolyamat nyitott (a kívánt sorrendben végezheti el a dolgokat), de itt aktiválhat néhány automatikus műveletet.
+ThereIsNoWorkflowToModify=Nem érhető el munkafolyamat-módosítás az aktivált modulokkal.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Értékesítési megrendelés automatikus létrehozása a kereskedelmi ajánlat aláírása után (az új megrendelés összege megegyezik az ajánlat összegével)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Az ügyfélszámla automatikus létrehozása a kereskedelmi ajánlat aláírása után (az új számla összege megegyezik az ajánlat összegével)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Az ügyfélszámla automatikus létrehozása a szerződés érvényesítése után
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Az ügyfélszámla automatikus létrehozása az értékesítési megrendelés lezárása után (az új számla összege megegyezik a megrendelés összegével)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Értékesítési rendelés automatikus létrehozása az árajánlat aláírása alapján (az új rendelés összege megegyezik az ajánlat összegével)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=A vevői számla automatikus létrehozása az árajánlat aláírása alapján (az új számla összege megegyezik az ajánlat összegével)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=A vevői számla automatikus létrehozása a szerződés érvényesítése után
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Vevői számla automatikus létrehozása a vevői rendelés lezárása után (az új számla összege megegyezik a rendelés összegével)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=A jegy létrehozásakor automatikusan hozzon létre beavatkozást.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásból származó javaslatot számlázottként minősíti, ha az értékesítési rendelés számlázottra van állítva (és ha a megrendelés összege megegyezik az aláírt csatolt javaslat teljes összegével)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásból származó javaslatot számlázottra minősíti, ha az ügyfélszámla érvényesítésre kerül (és ha a számla összege megegyezik az aláírt csatolt javaslat teljes összegével)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=A kapcsolt forrásból származó értékesítési megrendelést számlázottra minősíti, ha az ügyfélszámla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=A kapcsolt forrásból származó értékesítési megrendelést számlázottra minősíti, ha az ügyfélszámla kifizetettre van állítva (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=A kapcsolt forrásból származó értékesítési megrendelést kiszállítottként minősíti, ha a kiszállítás érvényesítve van (és ha az összes szállítmány által szállított mennyiség megegyezik a frissített megrendelésével)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásajánlat besorolása számlázottként, ha az értékesítési rendelés számlázottra van állítva (és ha a rendelés összege megegyezik az aláírt összekapcsolt ajánlat teljes összegével)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásajánlat besorolása számlázottként az ügyfélszámla érvényesítésekor (és ha a számla összege megegyezik az aláírt összekapcsolt ajánlat teljes összegével)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=A kapcsolt forrás értékesítési rendelés besorolása számlázottként a vevői számla érvényesítésekor (és ha a számla összege megegyezik a kapcsolt rendelés teljes összegével)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=A kapcsolt forrás értékesítési rendelés besorolása számlázottként, ha a vevői számla kifizetésre van állítva (és ha a számla összege megegyezik a kapcsolt rendelés teljes összegével)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=A kapcsolt forrás értékesítési rendelés besorolása a szállítmány érvényesítésekor (és ha az összes szállítmány által szállított mennyiség megegyezik a frissítendő rendelésben szereplővel)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=A kapcsolt forrás értékesítési rendelés besorolása a szállítmány lezárásakor (és ha az összes szállítmány által kiszállított mennyiség megegyezik a frissítendő rendelésben szereplővel)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=A kapcsolt forrás szállítói ajánlat besorolása számlázottként a szállítói számla érvényesítésekor (és ha a számla összege megegyezik a kapcsolt ajánlat teljes összegével)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=A kapcsolt forrásból származó szállítói javaslatot számlázottként minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó ajánlat teljes összegével)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=A kapcsolt forrásból származó megrendelést számlázottra minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=A kapcsolt forrás beszerzési rendelés besorolása számlázottként a szállítói számla érvényesítésekor (és ha a számla összege megegyezik a kapcsolt rendelés teljes összegével)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=A kapcsolt forrásból származó beszerzési rendelés besorolása beérkezettként, amikor egy fogadás érvényesül (és ha az összes fogadás által beérkezett mennyiség megegyezik a frissítendő beszerzési rendelésben szereplő mennyiséggel)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=A kapcsolt forrásból származó beszerzési rendelés besorolása a fogadás lezárásakor (és ha az összes fogadás által kapott mennyiség megegyezik a frissítendő beszerzési rendelésben szereplő mennyiséggel)
+# Autoclassify purchase invoice
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Jegy létrehozásakor kapcsolja össze a megfelelő harmadik fél elérhető szerződéseit
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=A szerződések összekapcsolásakor keressen az anyavállalatok szerződései között
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=A jegyhez kapcsolódó összes beavatkozás bezárása, amikor a jegy bezár
 AutomaticCreation=Automatikus létrehozás
-AutomaticClassification=Automatikus minősítés
+AutomaticClassification=Automatikus osztályozás
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+AutomaticClosing=Automatikus zárás
+AutomaticLinking=Automatikus összekapcsolás

@@ -57,10 +57,10 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement informations
 	 *
-	 * @param 	int 	$id ID of movement
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id				ID of movement
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	/*
 	public function get($id)
@@ -89,11 +89,12 @@ class StockMovements extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -104,16 +105,17 @@ class StockMovements extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+
 		//$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
 		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -135,7 +137,7 @@ class StockMovements extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$stockmovement_static = new MouvementStock($this->db);
 				if ($stockmovement_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($stockmovement_static), $properties);
 				}
 				$i++;
 			}
@@ -155,21 +157,25 @@ class StockMovements extends DolibarrApi
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
 	 * $dlc Eat-by date. Will be used if lot does not exists yet and will be created.
 	 * $dluo Sell-by date. Will be used if lot does not exists yet and will be created.
-	 *
+		 *
 	 * @param int $product_id Id product id {@min 1} {@from body} {@required true}
 	 * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
+	 * @param int $type Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
 	 * @param string $lot Lot {@from body}
-	 * @param string $movementcode Movement code {@example INV123} {@from body}
-	 * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
+	 * @param string $movementcode Movement code {@from body}
+	 * @param string $movementlabel Movement label {@from body}
 	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
+	 * @param string $datem Date of movement {@from body} {@type date}
 	 * @param string $dlc Eat-by date. {@from body} {@type date}
 	 * @param string $dluo Sell-by date. {@from body} {@type date}
+	 * @param string $origin_type   Origin type (Element of source object, like 'project', 'inventory', ...)
+	 * @param string $origin_id     Origin id (Id of source object)
 	 *
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $dlc = '', $dluo = '')
+	public function post($product_id, $warehouse_id, $qty, $type = 2, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -180,16 +186,20 @@ class StockMovements extends DolibarrApi
 		}
 
 		// Type increase or decrease
-		$type = 2;
-		if ($qty >= 0) {
+		if ($type == 1 && $qty >= 0) {
+			$type = 0;
+		}
+		if ($type == 2 && $qty >= 0) {
 			$type = 3;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
 		$sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
+		$dateMvt = empty($datem) ? '' : dol_stringtotime($datem);
 
-		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
+		$this->stockmovement->setOrigin($origin_type, $origin_id);
+		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, $dateMvt, $eatBy, $sellBy, $lot) <= 0) {
 			$errormessage = $this->stockmovement->error;
 			if (empty($errormessage)) {
 				$errormessage = join(',', $this->stockmovement->errors);

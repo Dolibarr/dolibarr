@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Qator turi (0 = mahsulot, 1 = xizmat)
 FileWithDataToImport=Import qilish uchun ma'lumotlar bilan fayl
 FileToImport=Import qilish uchun manba fayl
 FileMustHaveOneOfFollowingFormat=Import qilish uchun fayl quyidagi formatlardan biriga ega bo'lishi kerak
-DownloadEmptyExample=Shablon faylini maydon tarkibidagi ma'lumotlar bilan yuklab oling
-StarAreMandatory=* majburiy maydonlar
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Faylni import qilish formati sifatida tanlang, uni tanlash uchun %s belgisini bosing ...
 ChooseFileToImport=Faylni yuklang, so'ngra faylni manba import fayli sifatida tanlash uchun %s belgisini bosing ...
 SourceFileFormat=Manba fayl formati
@@ -135,3 +135,6 @@ NbInsert=Kiritilgan qatorlar soni: %s
 NbUpdate=Yangilangan qatorlar soni: %s
 MultipleRecordFoundWithTheseFilters=Ushbu filtrlar yordamida bir nechta yozuvlar topildi: %s
 StocksWithBatch=Partiya / seriya raqami bo'lgan mahsulot zaxiralari va joylashuvi (ombor)
+WarningFirstImportedLine=Birinchi qator(lar) joriy tanlov bilan import qilinmaydi
+NotUsedFields=Ma'lumotlar bazasi maydonlaridan foydalanilmaydi
+SelectImportFieldsSource = Import qilmoqchi bo'lgan manba fayl maydonlarini va ularning ma'lumotlar bazasidagi maqsadli maydonini har bir tanlash qutisidagi maydonlarni tanlash orqali tanlang yoki oldindan belgilangan import profilini tanlang:

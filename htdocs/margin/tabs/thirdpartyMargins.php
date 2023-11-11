@@ -21,6 +21,7 @@
  *	\brief      Page for invoice margins of a thirdparty
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -35,8 +36,8 @@ if (!empty($user->socid)) {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -61,7 +62,7 @@ $hookmanager->initHooks(array('thirdpartymargins', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $object->id, '');
 
-if (empty($user->rights->margins->liretous)) {
+if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
 
@@ -124,18 +125,18 @@ if ($socid > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
 
-	if (((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) && $object->fournisseur) {
+	if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -162,7 +163,7 @@ if ($socid > 0) {
 	print "</table>";
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -185,7 +186,7 @@ if ($socid > 0) {
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-	if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+	if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
 	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";

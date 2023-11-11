@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +60,12 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return DateLibTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -85,7 +87,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -98,7 +100,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -111,7 +113,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -126,7 +128,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -344,7 +346,7 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 
 		$result=convertSecondToTime(86400, 'all', 86400);
 		print __METHOD__." result=".$result."\n";
-		$this->assertSame('1 '.strtolower(dol_substr($langs->trans("Day"), 0, 1).'.'), $result);
+		$this->assertSame('1 '.$langs->trans("d"), $result);
 
 		return $result;
 	}
@@ -363,9 +365,20 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// Check %Y-%m-%d %H:%M:%S format
+		$result=dol_print_date('1970-01-01', '%Y-%m-%d %H:%M:%S', true);	// A case for compatibility check
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01 00:00:00', $result);
+
+
+		// Check %Y-%m-%d %H:%M:%S format
 		$result=dol_print_date(0, '%Y-%m-%d %H:%M:%S', true);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1970-01-01 00:00:00', $result);
+
+		// Same with T and Z
+		$result=dol_print_date(0, '%Y-%m-%dT%H:%M:%SZ', true);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01T00:00:00Z', $result);
 
 		// Check %Y-%m-%d %H:%M:%S format
 		$result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/

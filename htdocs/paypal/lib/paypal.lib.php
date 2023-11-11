@@ -89,17 +89,17 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 	$solutionType = 'Sole';
 	$landingPage = 'Billing';
 	// For payment with Paypal only
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
 		$solutionType = 'Mark';
 		$landingPage = 'Login';
 	}
 	// For payment with Credit card or Paypal
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
 	// For payment with Credit card
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'cconly') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
@@ -145,7 +145,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
 		if ($ErrorCode == 10729) {
-			$mesg .= "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
+			$mesg = "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
 		} else {
 			$mesg = $langs->trans('SetExpressCheckoutAPICallFailed')."<br>\n";
 			$mesg .= $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
@@ -282,7 +282,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
 	$_SESSION["currencyCodeType"] = $currencyCodeType;
 	$_SESSION["PaymentType"] = $paymentType; // 'Mark', 'Sole'
-	$_SESSION['ipaddress'] = getUserRemoteIP();	// Payer ip
+	$_SESSION['ipaddress'] = getUserRemoteIP(); // Payer ip
 
 	//'---------------------------------------------------------------------------------------------------------------
 	//' Make the API call to PayPal
@@ -498,9 +498,20 @@ function hash_call($methodName, $nvpStr)
 	// TLSv1 by default or change to TLSv1.2 in module configuration
 	curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->PAYPAL_SSLVERSION) ? 1 : $conf->global->PAYPAL_SSLVERSION));
 
+	$ssl_verifypeer = -1;
+
+	// Turning on or off the ssl target certificate
+	if ($ssl_verifypeer < 0) {
+		global $dolibarr_main_prod;
+		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
+	}
+	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+		$ssl_verifypeer = 0;
+	}
+
 	//turning off the server and peer verification(TrustManager Concept).
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
 	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);

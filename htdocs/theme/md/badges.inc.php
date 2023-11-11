@@ -69,6 +69,7 @@ span.badgeneutral {
 	background-color: #e4e4e4;
 	color: #666;
 	border-radius: 10px;
+	white-space: nowrap;
 }
 
 
@@ -258,18 +259,24 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 			$thisBadgeTextColor = '#777777';
 		}
 
+		// badge-statusX
 		print $cssPrefix.".badge-status".$statusName." {\n";
 		print "        color: ".$thisBadgeTextColor." !important;\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
 			print "        border-color: ".$thisBadgeBorderColor." !important;\n";
 		}
-		print "        background-color: ".$thisBadgeBackgroundColor." !important;\n";
+		if ($thisBadgeBackgroundColor != '') {
+			print "        background-color: ".$thisBadgeBackgroundColor." !important;\n";
+		}
 		print "}\n";
 
 		print $cssPrefix.".font-status".$statusName." {\n";
-		print "        color: ".$thisBadgeBackgroundColor." !important;\n";
+		if ($thisBadgeBackgroundColor != '') {
+			print "        color: ".$thisBadgeBackgroundColor." !important;\n";
+		}
 		print "}\n";
 
+		// badge-statusX:focus
 		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
 		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5)." !important;\n";

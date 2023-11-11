@@ -309,11 +309,11 @@ class autoTranslator
 	{
 		// We want to be sure that src_lang and dest_lang are using 2 chars only
 		$tmp=explode('_', $src_lang);
-		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) {
+		if (!empty($tmp[1]) && $tmp[0] == $tmp[1]) {
 			$src_lang=$tmp[0];
 		}
 		$tmp=explode('_', $dest_lang);
-		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) {
+		if (!empty($tmp[1]) && $tmp[0] == $tmp[1]) {
 			$dest_lang=$tmp[0];
 		}
 
@@ -349,7 +349,7 @@ class autoTranslator
 		// now, process the JSON string
 		$json = json_decode($body, true);
 
-		if ((! empty($json['responseStatus']) && $json['responseStatus'] != 200)
+		if ((!empty($json['responseStatus']) && $json['responseStatus'] != 200)
 		|| count($json['data']['translations']) == 0) {
 			print "Error: ".$json['responseStatus']." ".$url."\n";
 			return false;

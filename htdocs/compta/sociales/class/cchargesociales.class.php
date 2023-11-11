@@ -34,6 +34,10 @@
  */
 class Cchargesociales
 {
+	public $db;
+
+	public $id;
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -70,6 +74,10 @@ class Cchargesociales
 	public $module;
 	public $accountancy_code;
 
+	/**
+	 * @var array array of errors
+	 */
+	public $errors = array();
 
 	/**
 	 * Constructor
@@ -329,7 +337,7 @@ class Cchargesociales
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE id='.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -358,7 +366,7 @@ class Cchargesociales
 	 * @param   int     $fromid     Id of object to clone
 	 * @return  int                 New id of clone
 	 */
-	public function createFromClone(User $user, $fromid)
+	/*public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -398,7 +406,7 @@ class Cchargesociales
 
 			return -1;
 		}
-	}
+	}*/
 
 	/**
 	 *  Return a link to the user card (with optionaly the picto)
@@ -411,7 +419,7 @@ class Cchargesociales
 	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+	/*public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -438,26 +446,26 @@ class Cchargesociales
 		}
 		$result .= $link.$this->ref.$linkend;
 		return $result;
-	}
+	}*/
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	/*public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
-	}
+	}*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un status donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -501,6 +509,7 @@ class Cchargesociales
 				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+		return "";
 	}
 
 

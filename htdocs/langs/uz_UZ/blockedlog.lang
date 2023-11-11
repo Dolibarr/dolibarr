@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=Ushbu moduldan foydalanish majburiy bo'lga
 OnlyNonValid=Yaroqsiz
 TooManyRecordToScanRestrictFilters=Skanerlash / tahlil qilish uchun juda ko'p yozuvlar. Iltimos, cheklovli filtrlar bilan ro'yxatni cheklang.
 RestrictYearToExport=Eksport qilish uchun oyni / yilni cheklang
+BlockedLogEnabled=Voqealarni o'zgartirib bo'lmaydigan jurnallarda kuzatish tizimi yoqilgan
+BlockedLogDisabled=Voqealarni o'zgartirib bo'lmaydigan jurnallarda kuzatish tizimi bir oz yozib olingandan so'ng o'chirib qo'yildi. Biz zanjirning buzilganligini kuzatish uchun maxsus Barmoq izini saqladik
+BlockedLogDisabledBis=Voqealarni oʻzgarmas jurnallarda kuzatish tizimi oʻchirib qoʻyilgan. Bu mumkin, chunki hali hech qanday rekord o'tkazilmagan.

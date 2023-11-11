@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - intracommreport
+Module68000Name =Relatório de comunicação interna
+Module68000Desc =Gerenciamento de relatórios intracomm (suporte para o formato francês DEB/DES)
+IntracommReportSetup =Configuração do módulo do relatório intracomm
+MenuIntracommReport=Relatório de comunicação interna

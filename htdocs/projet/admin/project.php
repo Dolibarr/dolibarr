@@ -27,6 +27,7 @@
  *  \brief      Page to setup project module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -40,8 +41,10 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$value = GETPOST('value', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
+
+$value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'project';
@@ -54,10 +57,10 @@ $type = 'project';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstproject = GETPOST('maskconstproject', 'alpha');
+	$maskconstproject = GETPOST('maskconstproject', 'aZ09');
 	$maskproject = GETPOST('maskproject', 'alpha');
 
-	if ($maskconstproject) {
+	if ($maskconstproject && preg_match('/_MASK$/', $maskconstproject)) {
 		$res = dolibarr_set_const($db, $maskconstproject, $maskproject, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -73,10 +76,10 @@ if ($action == 'updateMask') {
 }
 
 if ($action == 'updateMaskTask') {
-	$maskconstmasktask = GETPOST('maskconsttask', 'alpha');
+	$maskconstmasktask = GETPOST('maskconsttask', 'aZ09');
 	$masktaskt = GETPOST('masktask', 'alpha');
 
-	if ($maskconstmasktask) {
+	if ($maskconstmasktask && preg_match('/_MASK$/', $maskconstmasktask)) {
 		$res = dolibarr_set_const($db, $maskconstmasktask, $masktaskt, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -219,6 +222,10 @@ if ($action == 'updateMaskTask') {
 		$projectToSelect = GETPOST('projectToSelect', 'alpha');
 		dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity); //Allow to disable this configuration if empty value
 	}
+	if (GETPOST('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		$timesheetFreezeDuration = GETPOST('timesheetFreezeDuration', 'alpha');
+		dolibarr_set_const($db, 'PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS', intval($timesheetFreezeDuration), 'chaine', 0, '', $conf->entity); //Allow to disable this configuration if empty value
+	}
 } elseif (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
 	// Set boolean (on/off) constants
 	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
@@ -261,7 +268,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
 print '<td width="60" class="right">';
-print ajax_constantonoff("PROJECT_USE_OPPORTUNITIES");
+print ajax_constantonoff("PROJECT_USE_OPPORTUNITIES", null, null, 0, 0, 1);
 print '</td><td class="right">';
 print "</td>";
 print '</tr>';
@@ -323,7 +330,7 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -343,7 +350,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->PROJECT_ADDON == 'mod_'.$classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -419,7 +426,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering module
@@ -439,7 +446,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 							if ($conf->global->PROJECT_TASK_ADDON == 'mod_'.$classname) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodtask&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodtask&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -560,13 +567,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print "<td class=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print "</td>";
 								} else {
 									print "<td class=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -575,7 +582,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->PROJECT_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -699,23 +706,23 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 									// Active
 									if (in_array($name, $def)) {
-										print "<td class=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deltask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=deltask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"), 'switch_on');
 										print '</a>';
 										print "</td>";
 									} else {
-										print "<td class=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=settask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 										print "</td>";
 									}
 
 									// Defaut
-									print "<td class=\"center\">";
+									print '<td class="center">';
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name") {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 									}
 									print '</td>';
 
@@ -762,6 +769,7 @@ $form = new Form($db);
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
+print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -784,7 +792,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
 	print '</td><td class="right">';
-	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -793,10 +801,11 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
 print '<td class="right" width="60" colspan="2">';
-print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
+print '<input type="text" id="projectToSelect" name="projectToSelect" value="' . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY').'"/>&nbsp;';
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
-print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button small reposition" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
+print '</tr>';
 
 $key = 'PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE';
 echo '<tr class="oddeven">',
@@ -808,6 +817,14 @@ echo '<tr class="oddeven">',
 		'</td>',
 	'</tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';
+
+print '<td class="right" width="60" colspan="2">';
+print '<input type="number" class="width50" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="' . getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS').'"/>&nbsp;';
+print '<input type="submit" class="button small reposition" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
 print '</table>';
 
 

@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - companies
+ConfirmDeleteCompany=Weet u zeker dat u dit bedrijf en alle gerelateerde gegevens wilt verwijderen?
+ConfirmDeleteContact=Weet u zeker dat u dit contact en alle gerelateerde gegevens wilt verwijderen?
 MenuNewThirdParty=Nieuwe derde partij
 MenuNewProspect=Nieuwe Prospect
 MenuNewSupplier=Nieuwe verkoper
@@ -12,6 +14,10 @@ ThirdParty=Derde partij
 ThirdParties=Derden
 ThirdPartySuppliers=Verkopers
 ThirdPartyType=Soort derde partij
+ReportByMonth=Rapportage per maand
+ReportByCustomers=Overzicht per klant
+ReportByThirdparties=Rapport per derde
+ReportByQuarter=Rapport per kwartaal
 RegisteredOffice=Maarschappelijke zetel
 NatureOfThirdParty=Aard van derden
 StateShort=Staat
@@ -42,7 +48,9 @@ VATReturn=BTW teruggave
 SupplierRelativeDiscount=Relatieve leverancierskorting
 HasRelativeDiscountFromSupplier=U heeft een standaardkorting van <b>%s%%</b> van deze verkoper
 HasNoRelativeDiscountFromSupplier=U heeft standaard geen relatieve korting van deze leverancier
+CompanyHasAbsoluteDiscount=Deze klant heeft kortingen (creditnota's of aanbetalingen) voor <b> %s </b> %s
 CompanyHasCreditNote=Deze afnemer heeft nog creditnota's of eerdere stortingen voor <b> %s %s</b>
+HasAbsoluteDiscountFromSupplier=U hebt kortingen beschikbaar ( creditnota's  of aanbetalingen) voor <b>%s</b> %s van deze leverancier
 HasDownPaymentOrCommercialDiscountFromSupplier=U hebt kortingen beschikbaar (commercieel, aanbetalingen) voor <b>%s</b> %s van deze verkoper
 HasCreditNoteFromSupplier=U hebt creditnota's voor <b>%s</b> %s van deze verkoper
 CustomerAbsoluteDiscountAllUsers=Absolute klantkortingen (toegekend door alle gebruikers)
@@ -66,7 +74,6 @@ ContactForContracts=Contactpersoon contracten
 ContactForInvoices=Contactpersoon facturen
 NoContactForAnyOrderOrShipments=Dit contact is geen contact voor een bestelling of verzending
 NewContactAddress=Nieuw contact / adres
-VATIntraManualCheck=U kunt ook handmatig controleren op de website van de Europese Commissie <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Controle niet mogelijk. Controledienst wordt niet verleend door lidstaat (%s).
 ContactOthers=Ander
 OthersNotLinkedToThirdParty=Anderen, niet gebonden aan een Klant

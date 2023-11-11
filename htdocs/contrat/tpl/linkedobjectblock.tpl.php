@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE contrat/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -46,14 +46,14 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	?>
 <tr class="<?php echo $trclass; ?>">
 	<td><?php echo $langs->trans("Contract"); ?></td>
-	<td><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
-	<td class="right"><?php
+	<td class="nowraponall right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with
 	// start and end date that change with time andd that may be different that the period of reference for price.
 	// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
-	if ($user->rights->contrat->lire && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE)) {
+	if ($user->hasRight('contrat', 'lire') && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE)) {
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
 			$totalcontrat = $totalcontrat + $linecontrat->total_ht;
@@ -62,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		echo price($totalcontrat);
 	} ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
-	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

@@ -37,9 +37,10 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -60,9 +61,10 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@return     boolean     false if conflit, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -96,10 +98,10 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
+	 *	@param	Object		$reception	Reception object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $reception)
 	{
 		global $db, $conf;
 

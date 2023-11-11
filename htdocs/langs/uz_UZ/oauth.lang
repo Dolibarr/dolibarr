@@ -9,12 +9,13 @@ HasAccessToken=Token yaratildi va mahalliy ma'lumotlar bazasiga saqlandi
 NewTokenStored=Token qabul qilindi va saqlandi
 ToCheckDeleteTokenOnProvider=%s OAuth provayderi tomonidan saqlangan avtorizatsiyani tekshirish / o'chirish uchun shu erni bosing
 TokenDeleted=Jeton o'chirildi
-RequestAccess=Kirish huquqini so'rash / yangilash va saqlash uchun yangi belgini olish uchun shu erni bosing
-DeleteAccess=Tokenni o'chirish uchun shu erni bosing
+RequestAccess=Click here to request/renew access and receive a new token
+DeleteAccess=Click here to delete token
 UseTheFollowingUrlAsRedirectURI=OAuth provayderingiz bilan hisobga olish ma'lumotlarini yaratishda quyidagi URL manzilini qayta yo'naltirish URI sifatida foydalaning:
-ListOfSupportedOauthProviders=OAuth2 provayderingiz tomonidan taqdim etilgan hisobga olish ma'lumotlarini kiriting. Bu erda faqat qo'llab-quvvatlanadigan OAuth2 provayderlari ro'yxatga olingan. Ushbu xizmatlardan OAuth2 autentifikatsiyasini talab qiladigan boshqa modullar foydalanishi mumkin.
-OAuthSetupForLogin=OAuth belgisini yaratish uchun sahifa
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=Oldingi yorliqni ko'ring
+OAuthProvider=OAuth provider
 OAuthIDSecret=OAuth identifikatori va maxfiy
 TOKEN_REFRESH=Tokenni yangilash sovg'asi
 TOKEN_EXPIRED=Jeton muddati tugagan
@@ -23,10 +24,13 @@ TOKEN_DELETE=Saqlangan belgini o'chirish
 OAUTH_GOOGLE_NAME=OAuth Google xizmati
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=OAuth hisob ma'lumotlarini yaratish uchun <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> sahifasiga o'ting </a>, keyin "Ishonch yorliqlari".
 OAUTH_GITHUB_NAME=OAuth GitHub xizmati
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Ushbu sahifaga <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">-ga o'ting </a>, keyin OAuth hisob ma'lumotlarini yaratish uchun "yangi dasturni ro'yxatdan o'tkazing".
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe testi
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

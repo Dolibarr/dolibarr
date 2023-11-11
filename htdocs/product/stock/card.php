@@ -6,6 +6,7 @@
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
  *	\brief      Page fiche entrepot
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -37,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -51,10 +53,13 @@ $confirm = GETPOST('confirm');
 $projectid = GETPOST('projectid', 'int');
 
 $id = GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
 	$sortfield = "p.ref";
 }
@@ -86,6 +91,10 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
+
 
 /*
  * Actions
@@ -93,18 +102,37 @@ if ($id > 0 || !empty($ref)) {
 
 $error = 0;
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
-
 $parameters = array('id'=>$id, 'ref'=>$ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/product/stock/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/product/stock/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 	// Ajout entrepot
-	if ($action == 'add' && $user->rights->stock->creer) {
+	if ($action == 'add' && $user->hasRight('stock', 'creer')) {
 		$object->ref = (string) GETPOST("ref", "alpha");
 		$object->fk_parent = (int) GETPOST("fk_parent", "int");
 		$object->fk_project = GETPOST('projectid', 'int');
@@ -135,6 +163,7 @@ if (empty($reshook)) {
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
+						$backtopage = str_replace("__ID__", $id, $backtopage);
 						header("Location: ".$backtopage);
 						exit;
 					} else {
@@ -153,7 +182,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete warehouse
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
 		$object->fetch(GETPOST('id', 'int'));
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -172,7 +201,7 @@ if (empty($reshook)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->fk_project = GETPOST('projectid');
-			$object->description = GETPOST("desc");
+			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut      = GETPOST("statut");
 			$object->lieu        = GETPOST("lieu");
 			$object->address     = GETPOST("address");
@@ -208,7 +237,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -251,12 +280,17 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $langs->trans("WarehouseCard");
+if ($action == 'create') {
+	$title = $langs->trans("NewWarehouse");
+}
+
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("WarehouseCard"), $help_url);
+llxHeader("", $title, $help_url);
 
 
 if ($action == 'create') {
@@ -284,11 +318,11 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$socid.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$socid).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -296,7 +330,7 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('desc', (!empty($object->description) ? $object->description : ''), '', 180, 'dolibarr_notes', 'In', false, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+	$doleditor = new DolEditor('desc', (!empty($object->description) ? $object->description : ''), '', 180, 'dolibarr_notes', 'In', false, true, isModEnabled('fckeditor'), ROWS_5, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -332,7 +366,7 @@ if ($action == 'create') {
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print '<select id="warehousestatus" name="statut" class="flat">';
+	print '<select id="warehousestatus" name="statut" class="flat minwidth100">';
 	foreach ($object->statuts as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -347,22 +381,18 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 	print '</table>';
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 } else {
@@ -375,9 +405,7 @@ if ($action == 'create') {
 			exit;
 		}
 
-		/*
-		 * Affichage fiche
-		 */
+		// View mode
 		if ($action <> 'edit' && $action <> 're-edit') {
 			$head = stock_prepare_head($object);
 
@@ -387,7 +415,10 @@ if ($action == 'create') {
 
 			// Confirm delete warehouse
 			if ($action == 'delete') {
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", '', 0, 2);
+				$formquestion = array(
+					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss'=>'warning')
+				);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", $formquestion, 0, 2);
 			}
 
 			// Call Hook formConfirm
@@ -409,12 +440,12 @@ if ($action == 'create') {
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
 						$projectid = $object->fk_project;
@@ -425,15 +456,16 @@ if ($action == 'create') {
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, ($socid > 0 ? $socid : -1), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}
@@ -485,7 +517,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
@@ -496,7 +527,7 @@ if ($action == 'create') {
 			print "</td></tr>";
 
 			// Last movement
-			if (!empty($user->rights->stock->mouvement->lire)) {
+			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
@@ -523,7 +554,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
@@ -531,7 +562,6 @@ if ($action == 'create') {
 
 			print "</table>";
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -549,13 +579,13 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (empty($action) || $action == 'classin') {
-					if ($user->rights->stock->creer) {
+					if ($user->hasRight('stock', 'creer')) {
 						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
 					}
 
-					if ($user->rights->stock->supprimer) {
+					if ($user->hasRight('stock', 'supprimer')) {
 						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
@@ -566,40 +596,67 @@ if ($action == 'create') {
 			print "</div>";
 
 
-			/* ************************************************************************** */
-			/*                                                                            */
-			/* Affichage de la liste des produits de l'entrepot                           */
-			/*                                                                            */
-			/* ************************************************************************** */
+			// Show list of products into warehouse
 			print '<br>';
+
+
+			$totalarray = array();
+			$totalarray['val'] = array ();
+			$totalarray['pos'] = array ();
+			$totalarray['type'] = array ();
+			$totalarray['nbfield'] = 0;
+
+			// TODO Create $arrayfields with all fields to show
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
-			$parameters = array();
+			$parameters = array('totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
+
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield'] += 3;
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
+			$totalarray['type'][$totalarray['nbfield']] = 'stock';
+
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'units';
+				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
+
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+			$totalarray['type'][$totalarray['nbfield']] = '';
+
+
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
 			}
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
+				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
-			if ($user->rights->stock->mouvement->creer) {
+			if ($user->hasRight('stock', 'mouvement', 'creer')) {
 				print_liste_field_titre('');
+				$totalarray['nbfield']++;
 			}
-			if ($user->rights->stock->creer) {
+			if ($user->hasRight('stock', 'creer')) {
 				print_liste_field_titre('');
+				$totalarray['nbfield']++;
 			}
 			// Hook fields
-			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print "</tr>\n";
@@ -659,21 +716,23 @@ if ($action == 'create') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				$sameunits = true;
+
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sql .= " WHERE fk_product=".$objp->rowid;
-						$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+						$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 						$sql .= " LIMIT 1";
 
 						$result = $db->query($sql);
 						if ($result) {
 							$objtp = $db->fetch_object($result);
-							if ($objtp->label != '') {
+							if (isset($objtp->label) && $objtp->label != '') {
 								$objp->produit = $objtp->label;
 							}
 						}
@@ -682,7 +741,7 @@ if ($action == 'create') {
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 
-					$parameters = array('obj'=>$objp);
+					$parameters = array('obj'=>$objp, 'totalarray' => &$totalarray);
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
@@ -692,7 +751,9 @@ if ($action == 'create') {
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
-					$productstatic->fk_unit = $objp->fk_unit;
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+						$productstatic->fk_unit = $objp->fk_unit;
+					}
 					$productstatic->status = $objp->tosell;
 					$productstatic->status_buy = $objp->tobuy;
 					$productstatic->barcode = $objp->barcode;
@@ -703,6 +764,7 @@ if ($action == 'create') {
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
+					// Ref
 					print "<td>";
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
@@ -710,6 +772,7 @@ if ($action == 'create') {
 					// Label
 					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->produit).'">'.dol_escape_htmltag($objp->produit).'</td>';
 
+					// Value
 					print '<td class="right">';
 					$valtoshow = price(price2num($objp->value, 'MS'), 0, '', 0, 0); // TODO replace with a qty() function
 					print empty($valtoshow) ? '0' : $valtoshow;
@@ -725,6 +788,7 @@ if ($action == 'create') {
 						print $langs->trans($productstatic->getLabelOfUnit());
 						print '</td>';
 					}
+
 					// Price buy PMP
 					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
@@ -745,19 +809,27 @@ if ($action == 'create') {
 					}
 					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
-					if ($user->rights->stock->mouvement->creer) {
+					// Link to transfer
+					if ($user->hasRight('stock', 'mouvement', 'creer')) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
 						print "</a></td>";
 					}
 
-					if ($user->rights->stock->creer) {
+					// Link to stock
+					if ($user->hasRight('stock', 'creer')) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
+					print "</tr>";
+
+					$i++;
+
+					// Define $unit and $sameunits
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						if ($i == 0) {
 							$units = $productstatic->fk_unit;
@@ -765,32 +837,23 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
-					print "</tr>";
-					$i++;
 				}
 				$db->free($resql);
 
-				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total right">';
-				$valtoshow = price2num($totalunit, 'MS');
-				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) {
-					print empty($valtoshow) ? '0' : $valtoshow;
+				$totalarray['val']['totalunit'] = $totalunit;
+				$totalarray['val']['totalvalue'] = price2num($totalvalue, 'MT');
+				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
+				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
+
+				$parameters = array('totalarray' => &$totalarray);
+				// Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors);
 				}
-				print '</td>';
-				print '<td class="liste_total">';
-				if (empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) {
-					print $langs->trans($productstatic->getLabelOfUnit());
-				}
-				print '</td>';
-				print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					print '<td class="liste_total">&nbsp;</td>';
-					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
-				}
-				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
-				print '</tr>';
+
+				// Show total line
+				include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 			} else {
 				dol_print_error($db);
 			}
@@ -798,9 +861,7 @@ if ($action == 'create') {
 		}
 
 
-		/*
-		 * Edition fiche
-		 */
+		// Edit mode
 		if ($action == 'edit' || $action == 're-edit') {
 			$langs->trans("WarehouseEdit");
 
@@ -826,12 +887,12 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				$projectid = $object->fk_project;
 				$langs->load('projects');
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.($socid > 0 ? $socid : "").'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.($socid > 0 ? '&socid='.$socid : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td></tr>';
 			}
 
@@ -839,7 +900,7 @@ if ($action == 'create') {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('desc', $object->description, '', 180, 'dolibarr_notes', 'In', false, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+			$doleditor = new DolEditor('desc', $object->description, '', 180, 'dolibarr_notes', 'In', false, true, isModEnabled('fckeditor'), ROWS_5, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
@@ -896,7 +957,7 @@ if ($action == 'create') {
 			}
 
 			// Tags-Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
@@ -905,7 +966,7 @@ if ($action == 'create') {
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
@@ -913,11 +974,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		}
@@ -944,23 +1001,22 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$delallowed = $usercancreate;
 	$modulepart = 'stock';
 
-	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', '', '', $object);
 	$somethingshown = $formfile->numoffiles;
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
-	$morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-	$morehtmlright .= $langs->trans("SeeAll");
-	$morehtmlright .= '</a>';
+	$morehtmlcenter = '';
+	//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/stock/agenda.php?id='.$object->id);
 
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
+	$somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

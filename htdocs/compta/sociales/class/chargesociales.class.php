@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
@@ -103,6 +103,10 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	public $mode_reglement_id;
+	public $mode_reglement_code;
+	public $mode_reglement;
+
 	/**
 	 * @var int ID
 	 */
@@ -112,6 +116,13 @@ class ChargeSociales extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_user;
+
+	/**
+	 * @var double total
+	 */
+	public $total;
+
+	public $totalpaid;
 
 
 	const STATUS_UNPAID = 0;
@@ -123,7 +134,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -139,7 +150,7 @@ class ChargeSociales extends CommonObject
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
-		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user";
+		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
 		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -172,6 +183,8 @@ class ChargeSociales extends CommonObject
 				$this->amount = $obj->amount;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_user = $obj->fk_user;
+				$this->note_public = $obj->note_public;
+				$this->note_private = $obj->note_private;
 				$this->paye = $obj->paye;
 				$this->periode = $this->db->jdate($obj->periode);
 				$this->import_key = $this->import_key;
@@ -198,10 +211,9 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if (!$newamount > 0 || empty($this->date_ech) || empty($this->periode)) {
+		if ($newamount == 0 || empty($this->date_ech) || empty($this->periode)) {
 			return false;
 		}
-
 
 		return true;
 	}
@@ -230,17 +242,17 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
-		$sql .= " VALUES (".$this->type;
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
-		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "NULL");
+		$sql .= " VALUES (".((int) $this->type);
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
+		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
 		$sql .= ", '".$this->db->idate($this->date_ech)."'";
 		$sql .= ", '".$this->db->idate($this->periode)."'";
 		$sql .= ", '".price2num($newamount)."'";
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 'NULL');
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$user->id;
-		$sql .= ", ".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : 'NULL');
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 'NULL');
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".($this->fk_user > 0 ? ((int) $this->fk_user) : 'NULL');
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
@@ -363,7 +375,7 @@ class ChargeSociales extends CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SOCIALCHARGES_MODIFY', $user);
+				$result = $this->call_trigger('SOCIALCONTRIBUTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -421,7 +433,7 @@ class ChargeSociales extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Tag social contribution as paid completely
+	 *  Tag social contribution as paid completely
 	 *
 	 *	@deprecated
 	 *  @see setPaid()
@@ -445,9 +457,13 @@ class ChargeSociales extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 1;
+
 			return 1;
 		} else {
 			return -1;
@@ -480,9 +496,13 @@ class ChargeSociales extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
+
 		if ($return) {
+			$this->paye = 0;
+
 			return 1;
 		} else {
 			return -1;
@@ -525,15 +545,15 @@ class ChargeSociales extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
 			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Paid');
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
 			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 
@@ -561,7 +581,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $user, $form;
+		global $langs, $conf, $user, $form, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -578,7 +598,7 @@ class ChargeSociales extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -590,7 +610,7 @@ class ChargeSociales extends CommonObject
 			$this->ref = $this->label;
 		}
 
-		$label = img_picto('', 'tax').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
+		$label = img_picto('', $this->picto, 'class="pictofixedwidth"').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
@@ -605,7 +625,7 @@ class ChargeSociales extends CommonObject
 		}
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->facture->lire) {
+		if (empty($notooltip) && $user->hasRight("facture", "read")) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("SocialContribution");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
@@ -626,7 +646,15 @@ class ChargeSociales extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -642,7 +670,7 @@ class ChargeSociales extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -682,24 +710,9 @@ class ChargeSociales extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_validation_id = $obj->fk_user_valid;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
@@ -707,8 +720,10 @@ class ChargeSociales extends CommonObject
 			}
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -726,12 +741,57 @@ class ChargeSociales extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->paye = 0;
-		$this->date = dol_now();
-		$this->date_ech = $this->date + 3600 * 24 * 30;
-		$this->periode = $this->date + 3600 * 24 * 30;
+		$this->date_creation = dol_now();
+		$this->date_ech = $this->date_creation + 3600 * 24 * 30;
+		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$this->amount = 100;
 		$this->label = 'Social contribution label';
 		$this->type = 1;
 		$this->type_label = 'Type of social contribution';
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'label')) {
+			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		}
+		if (!empty($arraydata['project']) && $arraydata['project']->id > 0) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
+		}
+		if (property_exists($this, 'date_ech')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br>';
+			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

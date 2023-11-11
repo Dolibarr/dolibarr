@@ -22,6 +22,7 @@
  * \brief		Setup page to configure resource module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Class
@@ -78,7 +79,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '<td></td>';
 
 
@@ -107,6 +108,15 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
+print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
+print '<td class="right">';
+echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+/*
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkUser').'</td>';
 print '<td class="right">';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_USER');
@@ -122,15 +132,7 @@ echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');
 print '</td>';
 print '<td></td>';
 print '</tr>';
-
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
-print '<td class="right">';
-echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
-print '</td>';
-print '<td></td>';
-print '</tr>';
+*/
 
 print '</table>';
 print '</div>';

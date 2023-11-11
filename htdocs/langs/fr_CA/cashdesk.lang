@@ -2,4 +2,3 @@
 NoVAT=Pas de TVA (TAXE) pour cette vente
 BankToPay=Compte pour le paiement
 DolibarrReceiptPrinter=Imprimante de reçu Dolibarr
-NotAvailableWithBrowserPrinter=Not available when printer for receipt is set to browser

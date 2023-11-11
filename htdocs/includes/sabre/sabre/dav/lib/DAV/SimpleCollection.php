@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
+use InvalidArgumentException;
+
 /**
- * SimpleCollection
+ * SimpleCollection.
  *
  * The SimpleCollection is used to quickly setup static directory structures.
  * Just create the object with a proper name, and add children to use it.
@@ -12,64 +16,62 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SimpleCollection extends Collection {
-
+class SimpleCollection extends Collection
+{
     /**
-     * List of childnodes
+     * List of childnodes.
      *
      * @var INode[]
      */
     protected $children = [];
 
     /**
-     * Name of this resource
+     * Name of this resource.
      *
      * @var string
      */
     protected $name;
 
     /**
-     * Creates this node
+     * Creates this node.
      *
      * The name of the node must be passed, child nodes can also be passed.
      * This nodes must be instances of INode
      *
-     * @param string $name
+     * @param string  $name
      * @param INode[] $children
      */
-    function __construct($name, array $children = []) {
-
+    public function __construct($name, array $children = [])
+    {
         $this->name = $name;
-        foreach ($children as $child) {
-
-            if (!($child instanceof INode)) throw new Exception('Only instances of Sabre\DAV\INode are allowed to be passed in the children argument');
+        foreach ($children as $key => $child) {
+            if (is_string($child)) {
+                $child = new SimpleFile($key, $child);
+            } elseif (is_array($child)) {
+                $child = new self($key, $child);
+            } elseif (!$child instanceof INode) {
+                throw new InvalidArgumentException('Children must be specified as strings, arrays or instances of Sabre\DAV\INode');
+            }
             $this->addChild($child);
-
         }
-
     }
 
     /**
-     * Adds a new childnode to this collection
-     *
-     * @param INode $child
-     * @return void
+     * Adds a new childnode to this collection.
      */
-    function addChild(INode $child) {
-
+    public function addChild(INode $child)
+    {
         $this->children[$child->getName()] = $child;
-
     }
 
     /**
-     * Returns the name of the collection
+     * Returns the name of the collection.
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->name;
-
     }
 
     /**
@@ -82,26 +84,26 @@ class SimpleCollection extends Collection {
      * exist.
      *
      * @param string $name
+     *
      * @throws Exception\NotFound
+     *
      * @return INode
      */
-    function getChild($name) {
-
-        if (isset($this->children[$name])) return $this->children[$name];
-        throw new Exception\NotFound('File not found: ' . $name . ' in \'' . $this->getName() . '\'');
-
+    public function getChild($name)
+    {
+        if (isset($this->children[$name])) {
+            return $this->children[$name];
+        }
+        throw new Exception\NotFound('File not found: '.$name.' in \''.$this->getName().'\'');
     }
 
     /**
-     * Returns a list of children for this collection
+     * Returns a list of children for this collection.
      *
      * @return INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         return array_values($this->children);
-
     }
-
-
 }

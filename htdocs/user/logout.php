@@ -33,6 +33,11 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+/* We do now force CSRF check so we can logout using logout.php page (required for DoliDroid for example)
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}
+*/
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');	// We need company to get correct logo onto home page
 if (!defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 	define('EVEN_IF_ONLY_LOGIN_ALLOWED', '1');
@@ -40,13 +45,15 @@ if (!defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 
 require_once '../main.inc.php';
 
-// This can happen only with a bookmark or forged url call.
+// This can happen only with a bookmark or a forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http')) {
 	unset($_SESSION["dol_login"]);
-	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
+	unset($_SESSION['dol_entity']);
+	unset($_SESSION['urlfrom']);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);	// TODO Really ? It at least delete the session file ?!
 }
 
-global $conf, $langs, $user;
+//global $conf, $langs, $user;
 
 // Call trigger
 $result = $user->call_trigger('USER_LOGOUT', $user);

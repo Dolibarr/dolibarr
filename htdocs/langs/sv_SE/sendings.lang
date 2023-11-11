@@ -48,12 +48,12 @@ DateDeliveryPlanned=Planerat leveransdatum
 RefDeliveryReceipt=Ref leverans kvitto
 StatusReceipt=Status leverans kvitto
 DateReceived=Datum leverans fick
-ClassifyReception=Klassificera mottagning
+ClassifyReception=Classify Received
 SendShippingByEMail=Skicka leverans via e-post
 SendShippingRef=Inlämning av leveransen %s
 ActionsOnShipping=Evenemang på leverans
 LinkToTrackYourPackage=Länk till spåra ditt paket
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=För tillfället skapas en ny försändelse från försäljningsorderposten.
 ShipmentLine=Transport linje
 ProductQtyInCustomersOrdersRunning=Produktkvantitet från öppna försäljningsorder
 ProductQtyInSuppliersOrdersRunning=Produktkvantitet från öppna beställningar
@@ -74,3 +74,8 @@ SumOfProductWeights=Summan av produktvikter
 # warehouse details
 DetailWarehouseNumber= Lagerinformation
 DetailWarehouseFormat= W: %s (Antal: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

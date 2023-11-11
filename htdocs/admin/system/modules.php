@@ -22,6 +22,7 @@
  *  \brief      File to list all Dolibarr modules
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -40,8 +41,8 @@ $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
 
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST('sortorder', 'aZ09comma');
 
 if (!$sortfield) {
 	$sortfield = "id";
@@ -91,6 +92,7 @@ $modules_files = array();
 $modules_fullpath = array();
 $modulesdir = dolGetModulesDirs();
 $rights_ids = array();
+$arrayofpermissions = array();
 
 foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
@@ -155,7 +157,7 @@ foreach ($modules as $key => $module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-
+			$arrayofpermissions[$rights[0]] = array('label'=> 'user->rights->'.$module->rights_class.'->'.$rights[4].(empty($rights[5]) ? '' : '->'.$rights[5]));
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);
@@ -218,15 +220,27 @@ print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>'
 print '<br>';
 print '<br>';
 
+$mode = '';
+$arrayofmassactions = array();
+
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+$moreforfilter = '';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Lines with input filters
 print '<tr class="liste_titre_filter">';
-
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 if ($arrayfields['name']['checked']) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_name" size="8" value="'.dol_escape_htmltag($search_name).'">';
@@ -239,7 +253,7 @@ if ($arrayfields['version']['checked']) {
 }
 if ($arrayfields['id']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="6 value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="flat" type="text" name="search_id" size="6" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {
@@ -251,16 +265,20 @@ if ($arrayfields['module_position']['checked']) {
 	print '<td class="liste_titre left">';
 	print '</td>';
 }
-
-print '<td class="liste_titre center maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
-
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>';
 
 print '<tr class="liste_titre">';
-
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn');
+}
 if ($arrayfields['name']['checked']) {
 	print_liste_field_titre($arrayfields['name']['label'], $_SERVER["PHP_SELF"], "name", "", "", "", $sortfield, $sortorder);
 }
@@ -281,8 +299,10 @@ if ($arrayfields['module_position']['checked']) {
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print '</tr>';
 
 // sort list
@@ -316,6 +336,10 @@ if ($sortfield == "name" && $sortorder == "asc") {
 
 foreach ($moduleList as $module) {
 	print '<tr class="oddeven">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td></td>';
+	}
 
 	if ($arrayfields['name']['checked']) {
 		print '<td width="300" class="nowrap">';
@@ -336,10 +360,12 @@ foreach ($moduleList as $module) {
 		$idperms = '';
 
 		foreach ($module->permission as $permission) {
-			$idperms .= ($idperms ? ", " : "").$permission;
 			$translationKey = "Permission".$permission;
+			$labelpermission = $langs->trans($translationKey);
+			$labelpermission .= ' : '.$arrayofpermissions[$permission]['label'];
+			$idperms .= ($idperms ? ", " : "").'<span title="'.$labelpermission.'">'.$permission.'</a>';
 
-			if (!empty($conf->global->MAIN_SHOW_PERMISSION)) {
+			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
 					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
@@ -354,7 +380,10 @@ foreach ($moduleList as $module) {
 		print '<td class="center">'.$module->module_position.'</td>';
 	}
 
-	print '<td></td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td></td>';
+	}
 	print '</tr>';
 }
 

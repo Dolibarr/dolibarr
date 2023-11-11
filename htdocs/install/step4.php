@@ -48,7 +48,7 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
-dolibarr_install_syslog("- step4: entering step4.php page");
+dolibarr_install_syslog("--- step4: entering step4.php page");
 
 $error = 0;
 $ok = 0;
@@ -76,15 +76,15 @@ print $langs->trans("LastStepDesc").'<br><br>';
 
 print '<table cellspacing="0" cellpadding="2">';
 
-$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 if ($db->ok) {
 	print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
-	print '<input id="login" name="login" type="text" value="'.(!empty($_GET["login"]) ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').'></td></tr>';
+	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' autofocus></td></tr>';
 	print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
-	print '<input type="password" id="pass" name="pass" autocomplete="new-password"></td></tr>';
-	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordAgain").' :</label></td><td>';
-	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password"></td></tr>';
+	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8"></td></tr>';
+	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordRetype").' :</label></td><td>';
+	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8"></td></tr>';
 	print '</table>';
 
 	if (isset($_GET["error"]) && $_GET["error"] == 1) {
@@ -114,7 +114,7 @@ if ($error && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("- step4: end");
+dolibarr_install_syslog("--- step4: end");
 
 pFooter($error, $setuplang);
 

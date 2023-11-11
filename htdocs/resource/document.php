@@ -28,6 +28,7 @@
  *       \brief      Page des documents joints sur les resources
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -69,11 +70,17 @@ if (!$sortfield) {
 }
 
 
-$object = new DolResource($db);
-$object->fetch($id, $ref);
+$object = new Dolresource($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 $upload_dir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'resource';
+
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
+
+$permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*

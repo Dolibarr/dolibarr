@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +25,14 @@
  * \brief   This file is to manage CRUD function of type of payments
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  * Class Cpaiement
  */
-class Cpaiement
+class Cpaiement extends CommonDict
 {
 	/**
 	 * @var string Id to identify managed objects
@@ -40,14 +44,12 @@ class Cpaiement
 	 */
 	public $table_element = 'c_paiement';
 
-	public $code;
-
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $label
 	 */
 	public $libelle;
-	public $label;
 
 	public $type;
 	public $active;
@@ -273,7 +275,7 @@ class Cpaiement
 		$sql .= ' active = '.(isset($this->active) ? $this->active : "null").',';
 		$sql .= ' accountancy_code = '.(isset($this->accountancy_code) ? "'".$this->db->escape($this->accountancy_code)."'" : "null").',';
 		$sql .= ' module = '.(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
-		$sql .= ' WHERE id='.$this->id;
+		$sql .= ' WHERE id = '.((int) $this->id);
 
 		$this->db->begin();
 
@@ -334,7 +336,7 @@ class Cpaiement
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE id='.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

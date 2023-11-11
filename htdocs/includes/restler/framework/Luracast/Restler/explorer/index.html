@@ -68,7 +68,7 @@
           if(window.SwaggerTranslator) {
             window.SwaggerTranslator.translate();
           }
-          
+
           addApiKeyAuthorization();
         },
         onFailure: function(data) {
@@ -83,7 +83,9 @@
         showRequestHeaders: false,
         showOperationIds: false,
         displayOperationIds: false,
-        displayRequestDuration: true
+        displayRequestDuration: true,
+        /* @CHANGE LDR Add validatorUrl */
+        validatorUrl: null
       });
 
       function addApiKeyAuthorization(){

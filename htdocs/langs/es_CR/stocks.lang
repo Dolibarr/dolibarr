@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - stocks
+Location=Ubicaciòn
+AverageUnitPricePMPShort=Precio promedio ponderado
+inventoryEdit=Editar
+inventoryValidate=Validada
+inventoryDraft=En ejecución
+SelectCategory=Filtro por Categoría
+ListInventory=Lista
+InventoryStartedShort=Iniciado

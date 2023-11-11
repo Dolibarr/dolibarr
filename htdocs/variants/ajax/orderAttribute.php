@@ -1,6 +1,6 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,19 +35,18 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
-
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+require DOL_DOCUMENT_ROOT . '/variants/class/ProductAttribute.class.php';
 
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'variant');
-if (!$permissiontoread) accessforbidden();
+$result = restrictedArea($user, 'variants');
 
 
 /*
@@ -56,14 +55,15 @@ if (!$permissiontoread) accessforbidden();
 
 top_httphead();
 
-// Registering the location of boxes
-if (GETPOSTISSET('roworder')) {
-	$roworder = GETPOST('roworder', 'intcomma', 2);
+print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-	dol_syslog("AjaxOrderAttribute roworder=".$roworder, LOG_DEBUG);
+// Registering the location of boxes
+if (GETPOST('roworder', 'alpha', 3)) {
+	$roworder = GETPOST('roworder', 'alpha', 3);
+
+	dol_syslog("AjaxOrderAttribute roworder=" . $roworder, LOG_DEBUG);
 
 	$rowordertab = explode(',', $roworder);
-
 	$newrowordertab = array();
 	foreach ($rowordertab as $value) {
 		if (!empty($value)) {
@@ -71,7 +71,9 @@ if (GETPOSTISSET('roworder')) {
 		}
 	}
 
-	require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+	$row = new ProductAttribute($db);
 
-	ProductAttribute::bulkUpdateOrder($db, $newrowordertab);
+	$row->attributesAjaxOrder($newrowordertab); // This update field rank or position in table row->table_element_line
+} else {
+	print 'Bad parameters for orderAttribute.php';
 }

@@ -24,6 +24,7 @@
  *  \brief      Page to check Dolibarr files integrity
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -57,7 +58,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall")
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
-if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
+if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occured)
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
@@ -78,7 +79,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(!getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT') ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
 
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
@@ -87,25 +88,29 @@ if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
 
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote', 'alphanohtml');
-if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
+if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
 	$xmlremote = $conf->global->MAIN_FILECHECK_URL;
 }
 $param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
-if (empty($xmlremote) && !empty($conf->global->$param)) {
-	$xmlremote = $conf->global->$param;
+if (empty($xmlremote) && getDolGlobalString($param)) {
+	$xmlremote = getDolGlobalString($param);
 }
 if (empty($xmlremote)) {
 	$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 }
 if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
+	$error++;
+} elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
+	$langs->load("errors");
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), null, 'errors');
 	$error++;
 }
 
 // Test if remote test is ok
 $enableremotecheck = true;
-if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || !empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) {
+if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE')) {
 	$enableremotecheck = false;
 }
 $enableremotecheck = true;
@@ -205,8 +210,8 @@ if (empty($error) && !empty($xml)) {
 			$constvalue = (empty($constvalue) ? '0' : $constvalue);
 			// Value found
 			$value = '';
-			if ($constname && $conf->global->$constname != '') {
-				$value = $conf->global->$constname;
+			if ($constname && getDolGlobalString($constname) != '') {
+				$value = getDolGlobalString($constname);
 			}
 			$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -388,7 +393,9 @@ if (empty($error) && !empty($xml)) {
 		$out .= '</table>';
 		$out .= '</div>';
 	} else {
-		print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
+		print '<div class="error">';
+		print 'Error: Failed to found <b>dolibarr_htdocs_dir</b> into content of XML file:<br>'.dol_escape_htmltag(dol_trunc($xmlfile, 500));
+		print '</div><br>';
 		$error++;
 	}
 
@@ -407,16 +414,16 @@ if (empty($error) && !empty($xml)) {
 	$checksumget = md5(join(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
-	/*var_dump(count($file_list['added']));
-	var_dump($checksumget);
-	var_dump($checksumtoget);
-	var_dump($checksumget == $checksumtoget);*/
+	//var_dump(count($file_list['added']));
+	//var_dump($checksumget);
+	//var_dump($checksumtoget);
+	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
 	if ($checksumget == $checksumtoget) {
-		if (count($file_list['added'])) {
+		if (is_array($file_list['added']) && count($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
 			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';

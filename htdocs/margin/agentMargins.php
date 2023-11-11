@@ -23,6 +23,7 @@
  *	\brief      Page des marges par agent commercial
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -47,6 +48,11 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) {
 	$sortorder = "ASC";
+}
+if ($user->hasRight('margins', 'read', 'all')) {
+	$agentid = GETPOST('agentid', 'int');
+} else {
+	$agentid = $user->id;
 }
 if (!$sortfield) {
 	if ($agentid > 0) {
@@ -73,11 +79,6 @@ if (!empty($enddatemonth)) {
 }
 
 // Security check
-if ($user->rights->margins->read->all) {
-	$agentid = GETPOST('agentid', 'int');
-} else {
-	$agentid = $user->id;
-}
 $result = restrictedArea($user, 'margins');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -108,7 +109,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 
@@ -121,7 +123,7 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->hasRight('margins', 'read', 'all') ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
@@ -149,8 +151,10 @@ $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql .= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql .= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE) ?-1 : $conf->global->AGENT_CONTACT_TYPE);
@@ -185,7 +189,7 @@ if (!empty($enddate)) {
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 // We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 // We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 //if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
@@ -231,7 +235,7 @@ if ($result) {
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
-	if ($conf->global->MARGIN_TYPE == "1") {
+	if (getDolGlobalString('MARGIN_TYPE') == "1") {
 		$labelcostprice = 'BuyingPrice';
 	} else { // value is 'costprice' or 'pmp'
 		$labelcostprice = 'CostPrice';
@@ -315,7 +319,8 @@ if ($result) {
 			$sortfield = 'name';
 		}
 		$group_list = dol_sort_array($group_list, $sortfield, $sortorder);
-
+		$cumul_achat = 0;
+		$cumul_vente = 0;
 		foreach ($group_list as $group_id => $group_array) {
 			$pa = $group_array['buying_price'];
 			$pv = $group_array['selling_price'];
@@ -344,6 +349,12 @@ if ($result) {
 	}
 
 	// Show total margin
+	if (!isset($cumul_achat)) {
+		$cumul_achat = 0;
+	}
+	if (!isset($cumul_vente)) {
+		$cumul_vente = 0;
+	}
 	$totalMargin = $cumul_vente - $cumul_achat;
 
 	$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';

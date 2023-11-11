@@ -65,7 +65,7 @@ var c_cppHighlightRules = function() {
     
     var storageType = (
         "asm|__asm__|auto|bool|_Bool|char|_Complex|double|enum|float|" +
-        "_Imaginary|int|long|short|signed|struct|typedef|union|unsigned|void|" +
+        "_Imaginary|int|int8_t|int16_t|int32_t|int64_t|long|short|signed|size_t|struct|typedef|uint8_t|uint16_t|uint32_t|uint64_t|union|unsigned|void|" +
         "class|wchar_t|template|char16_t|char32_t"
     );
 
@@ -489,6 +489,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/c_cpp";
+    this.snippetFileId = "ace/snippets/c_cpp";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -700,6 +701,7 @@ oop.inherits(Mode, CMode);
     this.lineCommentStart = "//";
     this.blockComment = {start: "/*", end: "*/"};
     this.$id = "ace/mode/dart";
+    this.snippetFileId = "ace/snippets/dart";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

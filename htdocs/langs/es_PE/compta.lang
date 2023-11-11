@@ -2,11 +2,4 @@
 VATCollected=IGV recuperado
 PaymentVat=Pago IGV
 ShowVatPayment=Ver pagos IGV
-VATReportByThirdParties=Sales tax report by third party
 VATReportByCustomersInInputOutputMode=Informe por cliente del IGV repercutido y pagado (IGV pagado)
-InvoiceLate30Days =Invoices late (> 30 days)
-InvoiceLate15Days =Invoices late (15 to 30 days)
-InvoiceLateMinus15Days =Invoices late (< 15 days)
-InvoiceNotLate =To be collected (< 15 days)
-InvoiceNotLate15Days =To be collected (15 to 30 days)
-InvoiceNotLate30Days =To be collected (> 30 days)

@@ -33,6 +33,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
  */
 class pdf_standard extends CommonStickerGenerator
 {
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
+
+
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		global $conf, $langs, $mysoc;
+
+		// Translations
+		$langs->loadLangs(array("main", "admin"));
+
+		$this->db = $db;
+		$this->name = "standard";
+		$this->description = $langs->trans('TemplateforBusinessCards');
+		//$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+
+		$this->type = 'pdf-various-sizes';
+	}
 
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
@@ -107,8 +133,8 @@ class pdf_standard extends CommonStickerGenerator
 
 		// Define background image
 		$backgroundimage = '';
-		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND)) {
-			$backgroundimage = $conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND;
+		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND'))) {
+			$backgroundimage = $conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND');
 		}
 
 		// Print lines
@@ -147,14 +173,14 @@ class pdf_standard extends CommonStickerGenerator
 		$widthtouse = $maxwidthtouse;
 		$heighttouse = 0; // old value for image
 		$tmp = dol_getImageSize($photo, false);
-		if ($tmp['height']) {
+		if (isset($tmp['height'])) {
 			$imgratio = $tmp['width'] / $tmp['height'];
 			if ($imgratio >= $defaultratio) {
 				$widthtouse = $maxwidthtouse;
 				$heighttouse = round($widthtouse / $imgratio);
 			} else {
-				$heightouse = $maxheighttouse;
-				$widthtouse = round($heightouse * $imgratio);
+				$heighttouse = $maxheighttouse;
+				$widthtouse = round($heighttouse * $imgratio);
 			}
 		}
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
@@ -243,9 +269,10 @@ class pdf_standard extends CommonStickerGenerator
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
 	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param	string		$filename			Name of output file (without extension)
 	 *	@return	int								1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
@@ -264,33 +291,34 @@ class pdf_standard extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->id,
-				'__LOGIN__'=>$object->login,
-				'__FIRSTNAME__'=>$object->firstname,
-				'__LASTNAME__'=>$object->lastname,
-				'__FULLNAME__'=>$object->getFullName($langs),
-				'__COMPANY__'=>$object->company,
-				'__ADDRESS__'=>$object->address,
-				'__ZIP__'=>$object->zip,
-				'__TOWN__'=>$object->town,
-				'__COUNTRY__'=>$object->country,
-				'__COUNTRY_CODE__'=>$object->country_code,
-				'__EMAIL__'=>$object->email,
-				'__BIRTH__'=>dol_print_date($object->birth, 'day'),
-				'__TYPE__'=>$object->type,
-				'__YEAR__'=>$year,
-				'__MONTH__'=>$month,
-				'__DAY__'=>$day,
-				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
+				'__ID__' => $object->rowid,
+				'__REF__' => $object->ref,
+				'__LOGIN__' => empty($object->login) ? '' : $object->login,
+				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
+				'__LASTNAME__' => empty($object->lastname) ? '' : $object->lastname,
+				'__FULLNAME__' => $object->getFullName($langs),
+				'__COMPANY__' => empty($object->company) ? '' : $object->company,
+				'__ADDRESS__' => empty($object->address) ? '' : $object->address,
+				'__ZIP__' => empty($object->zip) ? '' : $object->zip,
+				'__TOWN__' => empty($object->town) ? '' : $object->town,
+				'__COUNTRY__' => empty($object->country) ? '' : $object->country,
+				'__COUNTRY_CODE__' => empty($object->country_code) ? '' : $object->country_code,
+				'__EMAIL__' => empty($object->email) ? '' : $object->email,
+				'__BIRTH__' => dol_print_date($object->birth, 'day'),
+				'__TYPE__' => empty($object->type) ? '' : $object->type,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 
 			// For business cards
-			$textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
-			$textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
-			$textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
-			$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+			$textleft = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT"), $substitutionarray);
+			$textheader = make_substitutions(getDolGlobalString("ADHERENT_CARD_HEADER_TEXT"), $substitutionarray);
+			$textfooter = make_substitutions(getDolGlobalString("ADHERENT_CARD_FOOTER_TEXT"), $substitutionarray);
+			$textright = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT_RIGHT"), $substitutionarray);
 
 			$nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
 			if ($nb <= 0) {
@@ -303,24 +331,26 @@ class pdf_standard extends CommonStickerGenerator
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
-					'id'=>$object->rowid,
-					'photo'=>$object->photo
+					'id'=>(isset($object->rowid) ? $object->rowid : ""),
+					'photo'=>(isset($object->photo) ? $object->photo : "")
 				);
 			}
 
 			$arrayofrecords = $arrayofmembers;
 		} else {
+			// Old usage
 			$arrayofrecords = $object;
 		}
-
-		//var_dump($arrayofrecords);exit;
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
 			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
+
 		$this->type = 'pdf';
+		$filename .= '.pdf';
+
 		// standard format or custom
 		if ($this->Tformat['paper-size'] != 'custom') {
 			$this->format = $this->Tformat['paper-size'];
@@ -349,7 +379,7 @@ class pdf_standard extends CommonStickerGenerator
 			return -1;
 		}
 
-		$filename = 'tmp_cards.pdf';
+
 		if (is_object($object)) {
 			$outputdir = $conf->adherent->dir_output;
 			$dir = $outputdir."/".get_exdir(0, 0, 0, 0, $object, 'member');
@@ -382,7 +412,7 @@ class pdf_standard extends CommonStickerGenerator
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -425,10 +455,7 @@ class pdf_standard extends CommonStickerGenerator
 		// Output to file
 		$pdf->Output($file, 'F');
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
-
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 

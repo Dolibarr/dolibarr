@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE fourn/facture/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -51,7 +51,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
-		if ($user->rights->fournisseur->facture->lire) {
+		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 			$sign = 1;
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 				$sign = -1;
@@ -71,7 +71,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			echo $objectlink->getLibStatut(3);
 		}
 		?></td>
-		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.urlencode($object->id).'&action=dellink&dellinkid='.urlencode($key); ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.urlencode($object->id).'&action=dellink&token='.newToken().'&dellinkid='.urlencode($key); ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 	</tr>
 	<?php
 }

@@ -54,24 +54,27 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-abstract class CommonStickerGenerator
+abstract class CommonStickerGenerator extends CommonDocGenerator
 {
-	public $code; // Code of format
-
 	/**
-	 * @var array format Array with informations
+	 * @var DoliDB Database handler.
 	 */
-	public $format;
+	public $db;
+
+	public $code; // Code of format
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
-	// Nom du format de l'etiquette
+	// Name of stick
 	protected $_Avery_Name = '';
+	// Code of stick
+	protected $_Avery_Code = '';
 	// Marge de gauche de l'etiquette
 	protected $_Margin_Left = 0;
 	// marge en haut de la page avant la premiere etiquette
@@ -100,6 +103,8 @@ abstract class CommonStickerGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	public $Tformat;
+
+
 	// phpcs:enable
 	/**
 	 *	Constructor
@@ -289,7 +294,7 @@ abstract class CommonStickerGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = $format['code'];
+		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

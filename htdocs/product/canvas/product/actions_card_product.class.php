@@ -28,16 +28,39 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardProduct
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $dirmodule;
 	public $targetmodule;
 	public $canvas;
 	public $card;
+
+	public $name;
+	public $definition;
+	public $fieldListName;
+	public $next_prev_filter;
+
+	//! Object container
+	public $object;
 
 	//! Template container
 	public $tpl = array();
 
 	// List of fiels for action=list
 	public $field_list = array();
-	public $list_datas = array();
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -58,7 +81,7 @@ class ActionsCardProduct
 		$this->card             = $card;
 
 		$this->name = "product";
-		$this->definition = "Product canvas (défaut)";
+		$this->definition = "Product canvas (default)";
 		$this->fieldListName    = "product_default";
 		$this->next_prev_filter = "canvas='product'";
 	}
@@ -76,7 +99,6 @@ class ActionsCardProduct
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -85,8 +107,6 @@ class ActionsCardProduct
 			$tmpobject->fetch($id, $ref);
 		}
 		$this->object = $tmpobject;
-
-		//parent::assign_values($action);
 
 		foreach ($this->object as $key => $value) {
 			$this->tpl[$key] = $value;
@@ -98,13 +118,13 @@ class ActionsCardProduct
 		$this->tpl['canvas'] = $this->canvas;
 
 		// id
-		$this->tpl['id'] = $this->id;
+		$this->tpl['id'] = $this->object->id;
 
 		// Ref
-		$this->tpl['ref'] = $this->ref;
+		$this->tpl['ref'] = $this->object->ref;
 
 		// Label
-		$this->tpl['label'] = $this->label;
+		$this->tpl['label'] = $this->object->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
@@ -113,12 +133,12 @@ class ActionsCardProduct
 		$this->tpl['status'] = $this->object->getLibStatut(2);
 
 		// Note
-		$this->tpl['note'] = nl2br($this->note);
+		$this->tpl['note'] = $this->object->note_private;
 
 		if ($action == 'create') {
 			// Price
-			$this->tpl['price'] = $this->price;
-			$this->tpl['price_min'] = $this->price_min;
+			$this->tpl['price'] = $this->object->price;
+			$this->tpl['price_min'] = $this->object->price_min;
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
@@ -149,7 +169,7 @@ class ActionsCardProduct
 		$this->tpl['label'] = $this->object->label;
 		$this->tpl['id'] = $this->object->id;
 		$this->tpl['type'] = $this->object->type;
-		$this->tpl['note'] = $this->object->note;
+		$this->tpl['note'] = $this->object->note_private;
 		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		if ($action == 'create') {
@@ -169,8 +189,8 @@ class ActionsCardProduct
 			$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
 			$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
-			$this->tpl['description'] = $this->description;
-			$this->tpl['note'] = $this->note;
+			$this->tpl['description'] = $this->object->description;
+			$this->tpl['note'] = $this->object->note_private;
 
 			// Finished
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
@@ -225,10 +245,6 @@ class ActionsCardProduct
 
 			$this->tpl['fiche_end'] = dol_get_fiche_end();
 		}
-
-		if ($action == 'list') {
-			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
-		}
 	}
 
 
@@ -277,138 +293,6 @@ class ActionsCardProduct
 			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db, $sql);
-		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Fetch datas list and save into ->list_datas
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
-	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		// phpcs:enable
-		global $conf, $langs;
-
-		$this->getFieldListCanvas();
-
-		$this->list_datas = array();
-
-		// Clean parameters
-		$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-
-		foreach ($this->field_list as $field) {
-			if ($field['enabled']) {
-				$fieldname = "s".$field['alias'];
-				$$fieldname = GETPOST($fieldname);
-			}
-		}
-
-		$sql = 'SELECT DISTINCT ';
-
-		// Fields requiered
-		$sql .= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
-
-		// Fields not requiered
-		foreach ($this->field_list as $field) {
-			if ($field['enabled']) {
-				$sql .= ", ".$field['name']." as ".$field['alias'];
-			}
-		}
-
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-
-		if ($sall) {
-			$clause = '';
-			$sql .= " AND (";
-			foreach ($this->field_list as $field) {
-				if ($field['enabled']) {
-					$sql .= $clause." ".$field['name']." LIKE '%".$this->db->escape($sall)."%'";
-					if ($clause == '') {
-						$clause = ' OR';
-					}
-				}
-			}
-			$sql .= ")";
-		}
-
-		// Search fields
-		foreach ($this->field_list as $field) {
-			if ($field['enabled']) {
-				$fieldname = "s".$field['alias'];
-				if (${$fieldname}) {
-					$sql .= " AND ".$field['name']." LIKE '%".$this->db->escape(${$fieldname})."%'";
-				}
-			}
-		}
-
-		if (GETPOSTISSET("tosell")) {
-			$sql .= " AND p.tosell = ".((int) GETPOST("tosell", "int"));
-		}
-		if (GETPOSTISSET("canvas")) {
-			$sql .= " AND p.canvas = '".$this->db->escape(GETPOST("canvas"))."'";
-		}
-		$sql .= $this->db->order($sortfield, $sortorder);
-		$sql .= $this->db->plimit($limit + 1, $offset);
-		//print $sql;
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			$i = 0;
-			while ($i < min($num, $limit)) {
-				$datas = array();
-
-				$obj = $this->db->fetch_object($resql);
-
-				$datas["id"] = $obj->rowid;
-
-				foreach ($this->field_list as $field) {
-					if ($field['enabled']) {
-						$alias = $field['alias'];
-
-						if ($alias == 'ref') {
-							$this->id = $obj->rowid;
-							$this->ref 		= $obj->$alias;
-							$this->type 	= $obj->fk_product_type;
-							$this->entity = $obj->entity;
-							$datas[$alias] = $this->getNomUrl(1, '', 24);
-						} elseif ($alias == 'stock') {
-							$this->load_stock();
-							if ($this->stock_reel < $obj->seuil_stock_alerte) {
-								$datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
-							} else {
-								$datas[$alias] = $this->stock_reel;
-							}
-						} elseif ($alias == 'label') {
-							$datas[$alias] = dol_trunc($obj->$alias, 40);
-						} elseif (preg_match('/price/i', $alias)) {
-							$datas[$alias] = price($obj->$alias);
-						} elseif ($alias == 'datem') {
-							$datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
-						} elseif ($alias == 'status') {
-							$datas[$alias] = $this->LibStatut($obj->$alias, 5);
-						} else {
-							$datas[$alias] = $obj->$alias;
-						}
-					}
-				}
-
-				array_push($this->list_datas, $datas);
-
-				$i++;
-			}
-			$this->db->free($resql);
-		} else {
-			dol_print_error($this->db);
 		}
 	}
 }

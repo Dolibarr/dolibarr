@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Código
+WebsiteName=Nome do sitio web
 WebsiteSetupDesc=​​ Cree aquí os sitios web que desexa usar. Despois vaia ao menú de sitios web para editalos.
 DeleteWebsite=Eliminar sitio web
 ConfirmDeleteWebsite=¿Está certo de querer eliminar este sitio web? Tamén se eliminarán todas as súas páxinas e o contido. Os ficheiros cargados (como no directorio multimedia, no módulo ECM, ...) permanecerán.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Adición na parte inferior da cabeceira HTML (común a todas
 WEBSITE_ROBOT=Ficheiro robots (robots.txt)
 WEBSITE_HTACCESS=Ficheiro .htaccess do sitio web
 WEBSITE_MANIFEST_JSON=Ficheiro manifest.json do sitio web
-WEBSITE_README=Ficheiro README.md
 WEBSITE_KEYWORDSDesc=Use unha coma para separar os valores
-EnterHereLicenseInformation=Introduza aquí metadatos ou información de licenza para facer un ficheiro README.md. se distribúe o seu sitio web como modelo, o ficheiro incluirase no paquete temtate.
+EnterHereReadmeInformation=Introduza aquí unha descrición do sitio web. Se distribúe o seu sitio web como modelo, o ficheiro incluirase no paquete de probas.
+EnterHereLicenseInformation=Introduza aquí a LICENZA do código da páxina web. Se distribúe o seu sitio web como modelo, o ficheiro incluirase no paquete de probas.
 HtmlHeaderPage=Cabeceira HTML (específica só para esta páxina)
 PageNameAliasHelp=Nome ou alias da páxina. <br> Este alias tamén se usa para forxar un URL de SEO cando o sitio web se executa desde un servidor virtual dun servidor web (como Apacke, Nginx, ...). Use o botón "<strong>%s </strong>" para editar este alias.
 EditTheWebSiteForACommonHeader=Nota: Se desexa definir unha cabeceira personalizada para todas as páxinas, edite a cabeceira a nivel de sitio en lugar de a páxina/contedor.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Ver a páxina nunha nova lapela
 SetAsHomePage=Establecer como páxina de inicio
 RealURL=URL real
 ViewWebsiteInProduction=Ver o sitio web usando URL de inicio
+Virtualhost=Host virtual ou nome de dominio
+VirtualhostDesc=O nome do servidor ou dominio virtual (Por exemplo: www.meuwebsite.com, minacompania.net, ...)
 SetHereVirtualHost=<u> Usar con Apache/NGinx/... </u> <br> Cree no seu servidor web (Apache, Nginx, ...) un host virtual adicado con PHP habilitado e un directorio raíz en <br > <strong>%s </strong>
 ExampleToUseInApacheVirtualHostConfig=Exemplo para usar na configuración do host virtual Apache:
 YouCanAlsoTestWithPHPS=<u> Usar con servidor incorporado PHP </u> <br> No entorno de desenvolvemento, pode que prefira probar o sitio co servidor web incorporado PHP (é preciso PHP 5.5) executando <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
-YouCanAlsoDeployToAnotherWHP=<u> Execute o seu sitio web con outro provedor de hospedaxe Dolibarr </u> <br> Se non ten un servidor web como Apache ou NGinx dispoñible en internet, pode exportar e importar o seu sitio web a outro Dolibarr por outro provedor de hospedaxe Dolibarr que proporciona unha integración completa co módulo do sitio web. Pode atopar unha lista dalgúns provedores de hospedaxe Dolibarr en <a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>
+YouCanAlsoDeployToAnotherWHP= <u>Execute o seu sitio web con outro provedor de hospedaxe Dolibarr</u><br> Se non ten un servidor web como Apache ou NGinx dispoñible en internet, pode exportar e importar o seu sitio web a outro Dolibarr proporcionado por outro provedor de hospedaxe Dolibarr que permite unha integración completa co módulo do sitio web. Pode atopar unha listaxe dalgúns provedores de hospedaxe Dolibarr en <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Comprobe tamén que o usuario do host virtual (por exemplo, www-data) ten permisos de <strong>%s</strong> nos ficheiros en <br><strong>%s</strong> 
 ReadPerm=Ler
 WritePerm=Escribir
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Pode editar o código fonte HTML empregando o botó
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Pode incluír código PHP nesta fonte empregando etiquetas <strong>&lt;?php ?&gt;</strong>. Están dispoñibles as seguintes variables: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Tamén podes incluír contido doutra páxina/contedor coa seguinte sintaxe: <br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span>  Pode facer unha redirección a outra páxina / contedor coa seguinte sintaxe (Nota: non publique ningún contido antes dunha redirección): <br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span>  Para engadir unha ligazón a outra páxina, use a sintaxe: :<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Para incluír unha <strong> ligazón para descargar </strong> un ficheiro almacenado no directorio <strong> documentos </strong>, use o envoltorio <strong> document.php</strong> wrapper:<br>Exemplo, para un ficheiro en documentos / ecm (hai que rexistralo), a sintaxe é :<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un ficheiro en documentos/medios (abrir o directorio para acceso público), a sintaxe é: <br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un ficheiro compartido con unha ligazón para compartir (acceso aberto empregando a chave hash para compartir ficheiro), a sintaxe é: <br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Para incluír unha <strong> imaxe </strong> almacenada no directorio <strong> documentos </strong>, use o envoltorio <strong>viewimage.php</strong> <br>Exemplo, para unha imaxe en documentos/medios (directorio aberto para acceso público), a sintaxe é:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Para unha imaxe compartida cunha ligazón de uso compartido (acceso aberto mediante a chave hash para compartir ficheiro), a sintaxe é: <br><strong>&lt;img src =" viewimage.php? Hashp=12345679012 ..."&gt;<br></strong>
-YouCanEditHtmlSourceMore=<br>Máis exemplos de código HTML ou dinámico dispoñibles na <a href="%s" target="_blank">documentación wiki</a><br>
+YouCanEditHtmlSourceMore=<br>Máis exemplos de código HTML ou dinámico dispoñibles na <a href="%s" target="_blank" rel="noopener noreferrer external">documentación wiki</a><br>
 ClonePage=Clonar páxina/contedor
 CloneSite=Clonar sitio
 SiteAdded=Sitio web engadido
@@ -80,7 +83,7 @@ BlogPost=Entrada no blog
 WebsiteAccount=Conta do sitio web
 WebsiteAccounts=Contas do sitio web
 AddWebsiteAccount=Crear unha conta de sitio web
-BackToListForThirdParty=Votar á listaxe do terceiros
+BackToListForThirdParty=Voltar á lista para terceiros
 DisableSiteFirst=Desactivar primeiro o sitio web
 MyContainerTitle=Título do sitio web
 AnotherContainer=Isto é como incluír contido doutra páxina/contedor (pode ter un erro aquí se activa o código dinámico porque o subcontedor incrustado pode que non exista)
@@ -137,7 +140,7 @@ PagesRegenerated=%s páxina(s)/contedor(es) rexenerados
 RegenerateWebsiteContent=Rexenerar ficheiros de caché do sitio web
 AllowedInFrames=Permitido en marcos
 DefineListOfAltLanguagesInWebsiteProperties=Define a listaxe de todos os idiomas dispoñibles nas propiedades do sitio web.
-GenerateSitemaps=Xera un ficheiro de mapa do sitio web 
+GenerateSitemaps=Xera o ficheiro sitemap.xml do sitio web
 ConfirmGenerateSitemaps=Se confirmas, borrará o ficheiro de mapa do sitio existente ... 
 ConfirmSitemapsCreation=Confirma a xeración do mapa do sitio 
 SitemapGenerated=Ficheiro co Mapa do Sitio <b>%s</b> xerado
@@ -145,3 +148,15 @@ ImportFavicon=Favicon
 ErrorFaviconType=A favicon debe estar no formato png
 ErrorFaviconSize=O favicon ten que ser dun tamaño de 16x16, 32x32 ou 64x64
 FaviconTooltip=Carga unha imaxe que precisa ser png (16x16, 32x32 ou 64x64)
+NextContainer=Seguinte páxina/contedor
+PreviousContainer=Páxina/contedor previo
+WebsiteMustBeDisabled=O sitio web debe ter o estado "%s"
+WebpageMustBeDisabled=A páxina web debe ter o estado "%s"
+SetWebsiteOnlineBefore=Cando o sitio web está fóra de liña, todas as páxinas están sen conexión. Cambia o estado do sitio web primeiro.
+Booking=Contratación
+Reservation=Reserva
+PagesViewedPreviousMonth=Páxinas vistas (mes anterior)
+PagesViewedTotal=Páxinas vistas (total)
+Visibility=Visibilidade
+Everyone=Todos
+AssignedContacts=Contactos asignados

@@ -26,37 +26,31 @@
  *  \brief      File with parent class for generating products to PDF and File of class to manage product numbering
  */
 
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
 
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'product';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($dbs, $type, $maxfilenamelength);
 		return $list;
 	}
 }
@@ -64,55 +58,26 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 /**
  * Class template for classes of numbering product
  */
-abstract class ModeleProductCode
+abstract class ModeleProductCode extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**     Renvoi la description par defaut du modele de numerotation
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Texte descripif
-	 */
-	public function info($langs)
-	{
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**     Renvoi nom module
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Nom du module
-	 */
-	public function getNom($langs)
-	{
-		return empty($this->name) ? $this->nom : $this->name;
-	}
-
-
-	/**     Return an example of numbering
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Example
-	 */
-	public function getExample($langs)
-	{
-		return $langs->trans("NoExample");
-	}
 
 	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *      @return     boolean     false if conflict, true if ok
+	 * @var int Automatic numbering
 	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
+	public $code_auto;
+
+	/**
+	 * @var string Editable code
+	 */
+	public $code_modifiable;
+
+	public $code_modifiable_invalide; // Modified code if it is invalid
+
+	/**
+	 * @var int Code facultatif
+	 */
+	public $code_null;
+
 
 	/**
 	 *  Return next value available
@@ -127,51 +92,26 @@ abstract class ModeleProductCode
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
 	}
 
-
-	/**     Return version of module
-	 *
-	 *      @return     string      Version
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi la liste des modeles de numérotation
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of numbers
+	 *  @return	array|int					List of numbers
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
 		$list = array();
 		$sql = "";
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $dbs->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$row = $db->fetch_row($resql);
+				$row = $dbs->fetch_row($resql);
 				$list[$row[0]] = $row[1];
 				$i++;
 			}

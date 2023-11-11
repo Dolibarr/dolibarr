@@ -52,9 +52,10 @@ class mod_lot_standard extends ModeleNumRefBatch
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -76,9 +77,10 @@ class mod_lot_standard extends ModeleNumRefBatch
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -111,11 +113,11 @@ class mod_lot_standard extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product		$objprod    Object product
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param	Societe		$objsoc	    Object thirdparty
+	 *  @param  Productlot	$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	public function getNextValue($objprod, $object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $db, $conf;
 

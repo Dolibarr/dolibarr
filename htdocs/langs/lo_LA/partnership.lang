@@ -19,7 +19,7 @@
 ModulePartnershipName=ການຄຸ້ມຄອງຄູ່ຮ່ວມງານ
 PartnershipDescription=ການຄຸ້ມຄອງຫຸ້ນສ່ວນໂມດູນ
 PartnershipDescriptionLong= ການຄຸ້ມຄອງຫຸ້ນສ່ວນໂມດູນ
-
+Partnership=Partnership
 AddPartnership=ເພີ່ມການຮ່ວມມື
 CancelPartnershipForExpiredMembers=ການເປັນຫຸ້ນສ່ວນ: ຍົກເລີກການເປັນຫຸ້ນສ່ວນຂອງສະມາຊິກດ້ວຍການສະັກທີ່iredົດອາຍຸ
 PartnershipCheckBacklink=ການຮ່ວມມື: ກວດເບິ່ງລິງຍ້ອນກັບ

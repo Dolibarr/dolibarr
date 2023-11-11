@@ -25,3 +25,7 @@ ContactSynchronized=Contatto sincronizzato
 ForceSynchronize=Forza la sincronizzazione Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Impossibile leggere dal database LDAP. Controlla la configurazione del modulo LDAP e l'accesso al database.
 PasswordOfUserInLDAP=Password of user in LDAP
+LDAPPasswordHashType=Tipo di hash della password
+LDAPPasswordHashTypeExample=Tipo di hash della password utilizzato sul server
+SupportedForLDAPExportScriptOnly=Supportato solo da uno script di esportazione ldap
+SupportedForLDAPImportScriptOnly=Supportato solo da uno script di importazione ldap

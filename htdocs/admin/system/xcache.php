@@ -20,6 +20,7 @@
  *     \brief      Page administration XCache
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $langs->load("admin");
@@ -58,23 +59,6 @@ print $langs->trans("xcache.optimizer").': '.yn(ini_get('xcache.optimizer')).' (
 print $langs->trans("xcache.stat").': '.yn(ini_get('xcache.stat')).'<br>'."\n";
 print $langs->trans("xcache.coverager").': '.yn(ini_get('xcache.coverager')).'<br>'."\n";
 
-//print xcache_get();
-/*
-$cacheinfos = array();
-for ($i = 0; $i < 10; $i ++)
-{
-	$data = xcache_info(XC_TYPE_PHP, $i);
-	$data['cacheid'] = $i;
-	$cacheinfos[] = $data;
-}
-
-var_dump($cacheinfos);
-
-if ($action == 'clear')
-{
-	xcache_clear_cache();
-}
-*/
 
 // End of page
 llxFooter();

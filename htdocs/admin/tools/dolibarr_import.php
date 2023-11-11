@@ -26,6 +26,7 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page
@@ -189,7 +190,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	$param .= " -U ".$dolibarr_main_db_user;
 	$paramcrypted = $param;
 	$paramclear = $param;
-	/*if (! empty($dolibarr_main_db_pass))
+	/*if (!empty($dolibarr_main_db_pass))
 	{
 		$paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
 		$paramclear.=" -p".$dolibarr_main_db_pass;

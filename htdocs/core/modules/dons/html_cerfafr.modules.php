@@ -120,18 +120,18 @@ class html_cerfafr extends ModeleDon
 
 				// This is not the proper way to do it but $formclass->form_modes_reglement
 				// prints the translation instead of returning it
-				if ($don->modepaiementid) {
-					$formclass->load_cache_types_paiements();
-					$paymentmode = $formclass->cache_types_paiements[$don->modepaiementid]['label'];
+				$formclass->load_cache_types_paiements();
+				if ($don->modepaymentid) {
+					$paymentmode = $formclass->cache_types_paiements[$don->modepaymentid]['label'];
 				} else {
 					$paymentmode = '';
 				}
-
-				if ($don->modepaymentcode == 'CHQ') {
+				$modepaymentcode = !empty($formclass->cache_types_paiements[$don->modepaymentid]['code']) ? $formclass->cache_types_paiements[$don->modepaymentid]['code'] : "";
+				if ($modepaymentcode == 'CHQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
-				} elseif ($don->modepaymentcode == 'LIQ') {
+				} elseif ($modepaymentcode == 'LIQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
-				} elseif ($don->modepaymentcode == 'VIR' || $don->modepaymentcode == 'PRE' || $don->modepaymentcode == 'CB') {
+				} elseif ($modepaymentcode == 'VIR' || $modepaymentcode == 'PRE' || $modepaymentcode == 'CB') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
 				} else {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
@@ -162,7 +162,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', $mysoc->address, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', $mysoc->zip, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', $mysoc->town, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->object, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->socialobject, $form);
 				$form = str_replace('__DONATOR_FIRSTNAME__', $don->firstname, $form);
 				$form = str_replace('__DONATOR_LASTNAME__', $don->lastname, $form);
 				$form = str_replace('__DONATOR_SOCIETE__', $don->societe, $form);
@@ -240,9 +240,7 @@ class html_cerfafr extends ModeleDon
 				$handle = fopen($file, "w");
 				fwrite($handle, $form);
 				fclose($handle);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

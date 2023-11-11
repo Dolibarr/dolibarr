@@ -27,6 +27,7 @@
  *      \brief      Home page of category area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
@@ -48,7 +49,7 @@ if (is_numeric($type)) {
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categoryindex'));
 
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 
@@ -80,7 +81,7 @@ $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 $newcardbutton = '';
-if (!empty($user->rights->categorie->creer)) {
+if ($user->hasRight('categorie', 'creer')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).$moreparam);
 }
 
@@ -102,7 +103,8 @@ if (empty($nosearch)) {
 	print '<td colspan="3">'.$langs->trans("Search").'</td>';
 	print '</tr>';
 	print '<tr class="oddeven nohover"><td>';
-	print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+	print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.dol_escape_htmltag($catname).'"></td>';
+	print '<td><input type="submit" class="button small" value="'.$langs->trans("Search").'"></td></tr>';
 	print '</table></form>';
 
 
@@ -133,7 +135,9 @@ if (empty($nosearch)) {
 			print '</span>';
 			print "</td>\n";
 			print "\t\t<td>";
-			print dolGetFirstLineOfText($cat->description);
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($cat->description, 1));
+			$trunclength = 48;
+			print $form->textwithtooltip(dol_trunc($text, $trunclength), $cat->description);
 			print "</td>\n";
 			print "\t</tr>\n";
 		}
@@ -206,12 +210,12 @@ foreach ($fulltree as $key => $val) {
 	$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'">'.img_view().'</a>';
 	$entry .= '</td>';
 	$entry .= '<td class="right" width="20px;">';
-	if ($user->rights->categorie->creer) {
+	if ($user->hasRight('categorie', 'creer')) {
 		$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . '&type=' . $type . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type) . '">' . img_edit() . '</a>';
 	}
 	$entry .= '</td>';
 	$entry .= '<td class="right" width="20px;">';
-	if ($user->rights->categorie->supprimer) {
+	if ($user->hasRight('categorie', 'supprimer')) {
 		$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . '&type=' . $type . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type . $moreparam) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type . $moreparam) . '">' . img_delete() . '</a>';
 	}
 	$entry .= '</td>';
@@ -245,13 +249,13 @@ if ($morethan1level && !empty($conf->use_javascript_ajax)) {
 print '</td></tr>';
 
 if ($nbofentries > 0) {
-	print '<tr class="pair"><td colspan="3">';
+	print '<tr class="oddeven"><td colspan="3">';
 	tree_recur($data, $data[0], 0);
 	print '</td></tr>';
 } else {
-	print '<tr class="pair">';
+	print '<tr class="oddeven">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-	print '<td valign="middle">';
+	print '<td class="valignmiddle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';
 	print '<td>&nbsp;</td>';

@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=Список стран, в которых
 OnlyNonValid=Недействительный
 TooManyRecordToScanRestrictFilters=Слишком много записей для сканирования / анализа. Пожалуйста, ограничьте список более строгими фильтрами.
 RestrictYearToExport=Ограничить экспорт по месяцам/годам
+BlockedLogEnabled=System to track events into unalterable logs has been enabled
+BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
+BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.

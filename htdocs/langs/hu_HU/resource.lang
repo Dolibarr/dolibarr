@@ -5,7 +5,7 @@ DeleteResource=Erőforrás törlése
 ConfirmDeleteResourceElement=Hagyja jóvá az elemhez tartozó erőforrás törlését
 NoResourceInDatabase=Nincs erőforrás az adatbázisban
 NoResourceLinked=Nincs kapcsolt erőforrás
-ActionsOnResource=Az erőforrás eseményei
+ActionsOnResource=Események ezzel az erőforrással kapcsolatban
 ResourcePageIndex=Erőforrás-lista
 ResourceSingular=Erőforrás
 ResourceCard=Erőforrás kártya
@@ -32,8 +32,8 @@ SelectResource=Válasszon erőforrást
 
 IdResource=Erőforrás ID
 AssetNumber=Sorozatszám
-ResourceTypeCode=Erőforrás típusa
+ResourceTypeCode=Erőforrástípus kódja
 ImportDataset_resource_1=Erőforrások
 
 ErrorResourcesAlreadyInUse=Néhány erőforrás használatban van
-ErrorResourceUseInEvent=%s használva az %s eseményben
+ErrorResourceUseInEvent=%s használt %s eseményben

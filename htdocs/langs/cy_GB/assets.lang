@@ -1,0 +1,186 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+NewAsset=Ased newydd
+AccountancyCodeAsset=Cod cyfrifo (ased)
+AccountancyCodeDepreciationAsset=Cod cyfrifyddu (cyfrif ased dibrisiant)
+AccountancyCodeDepreciationExpense=Cod cyfrifyddu (cyfrif cost dibrisiant)
+AssetsLines=Asedau
+DeleteType=Dileu
+DeleteAnAssetType=Dileu model ased
+ConfirmDeleteAssetType=Ydych chi'n siŵr eich bod am ddileu'r model ased hwn?
+ShowTypeCard=Dangos model '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Asedau
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Disgrifiad o'r asedau
+
+#
+# Admin page
+#
+AssetSetup=Gosodiad asedau
+AssetSetupPage=Tudalen gosod asedau
+ExtraFieldsAssetModel=Priodoleddau cyflenwol (model Asset)
+
+AssetsType=Model asedau
+AssetsTypeId=ID model asedau
+AssetsTypeLabel=Label model asedau
+AssetsTypes=Modelau asedau
+ASSET_ACCOUNTANCY_CATEGORY=Grŵp cyfrifo asedau sefydlog
+
+#
+# Menu
+#
+MenuAssets=Asedau
+MenuNewAsset=Ased newydd
+MenuAssetModels=Asedau model
+MenuListAssets=Rhestr
+MenuNewAssetModel=Model ased newydd
+MenuListAssetModels=Rhestr
+
+#
+# Module
+#
+ConfirmDeleteAsset=Ydych chi wir eisiau dileu'r ased hwn?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Opsiynau dibrisiant
+AssetAccountancyCodes=Cyfrifon cyfrifo
+AssetDepreciation=Dibrisiant
+
+#
+# Asset
+#
+Asset=Ased
+Assets=Asedau
+AssetReversalAmountHT=Swm gwrthdroi (heb drethi)
+AssetAcquisitionValueHT=Swm caffael (heb drethi)
+AssetRecoveredVAT=TAW wedi'i adennill
+AssetReversalDate=Dyddiad gwrthdroi
+AssetDateAcquisition=Dyddiad caffael
+AssetDateStart=Dyddiad cychwyn
+AssetAcquisitionType=Math o gaffaeliad
+AssetAcquisitionTypeNew=Newydd
+AssetAcquisitionTypeOccasion=Defnyddiwyd
+AssetType=Math o ased
+AssetTypeIntangible=Anniriaethol
+AssetTypeTangible=diriaethol
+AssetTypeInProgress=Ar y gweill
+AssetTypeFinancial=Ariannol
+AssetNotDepreciated=Heb ei ddibrisio
+AssetDisposal=Gwaredu
+AssetConfirmDisposalAsk=A ydych yn siŵr eich bod am gael gwared ar yr ased <b> %s </b> ?
+AssetConfirmReOpenAsk=A ydych yn siŵr eich bod am ailagor yr ased <b> %s </b> ?
+
+#
+# Asset status
+#
+AssetInProgress=Ar y gweill
+AssetDisposed=Gwaredwyd
+AssetRecorded=Cyfrifwyd
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Dyddiad gwaredu
+AssetDisposalAmount=Gwerth gwaredu
+AssetDisposalType=Math o waredu
+AssetDisposalDepreciated=Dibrisio'r flwyddyn drosglwyddo
+AssetDisposalSubjectToVat=Gwaredu yn amodol ar TAW
+
+#
+# Asset model
+#
+AssetModel=Model Asset
+AssetModels=Modelau Asset
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Dibrisiant economaidd
+AssetDepreciationOptionAcceleratedDepreciation=Dibrisiant cyflymedig (treth)
+AssetDepreciationOptionDepreciationType=Math o ddibrisiant
+AssetDepreciationOptionDepreciationTypeLinear=Llinol
+AssetDepreciationOptionDepreciationTypeDegressive=Graddol
+AssetDepreciationOptionDepreciationTypeExceptional=Eithriadol
+AssetDepreciationOptionDegressiveRate=Cyfradd ddisgynnol
+AssetDepreciationOptionAcceleratedDepreciation=Dibrisiant cyflymedig (treth)
+AssetDepreciationOptionDuration=Hyd
+AssetDepreciationOptionDurationType=Math hyd
+AssetDepreciationOptionDurationTypeAnnual=Blynyddol
+AssetDepreciationOptionDurationTypeMonthly=Yn fisol
+AssetDepreciationOptionDurationTypeDaily=Dyddiol
+AssetDepreciationOptionRate=Cyfradd (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Sylfaen dibrisiant (ac eithrio TAW)
+AssetDepreciationOptionAmountBaseDeductibleHT=Sylfaen dynadwy (ac eithrio TAW)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Cyfanswm y dibrisiant diwethaf (ac eithrio TAW)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Dibrisiant economaidd
+AssetAccountancyCodeAsset=Ased
+AssetAccountancyCodeDepreciationAsset=Dibrisiant
+AssetAccountancyCodeDepreciationExpense=Traul dibrisiant
+AssetAccountancyCodeValueAssetSold=Gwerth yr ased a waredwyd
+AssetAccountancyCodeReceivableOnAssignment=Derbyniadwy wrth waredu
+AssetAccountancyCodeProceedsFromSales=Elw o waredu
+AssetAccountancyCodeVatCollected=TAW a gasglwyd
+AssetAccountancyCodeVatDeductible=Adenillwyd TAW ar asedau
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Dibrisiant cyflymedig (treth)
+AssetAccountancyCodeAcceleratedDepreciation=Cyfrif
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Traul dibrisiant
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Adfeddiannu/Darpariaeth
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Sail dibrisiant (ac eithrio TAW)
+AssetDepreciationBeginDate=Dechrau dibrisiant ymlaen
+AssetDepreciationDuration=Hyd
+AssetDepreciationRate=Cyfradd (%%)
+AssetDepreciationDate=Dyddiad dibrisiant
+AssetDepreciationHT=Dibrisiant (ac eithrio TAW)
+AssetCumulativeDepreciationHT=Dibrisiant cronnus (ac eithrio TAW)
+AssetResidualHT=Gwerth gweddilliol (ac eithrio TAW)
+AssetDispatchedInBookkeeping=Dibrisiant wedi'i gofnodi
+AssetFutureDepreciationLine=Dibrisiant yn y dyfodol
+AssetDepreciationReversal=Gwrthdroad
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Nid yw id yr ased neu sain y model wedi'i ddarparu
+AssetErrorFetchAccountancyCodesForMode=Gwall wrth adalw'r cyfrifon cyfrifo ar gyfer y modd dibrisiant '%s'
+AssetErrorDeleteAccountancyCodesForMode=Gwall wrth ddileu cyfrifon cyfrifo o'r modd dibrisiant '%s'
+AssetErrorInsertAccountancyCodesForMode=Gwall wrth fewnosod cyfrifon cyfrifo'r modd dibrisiant '%s'
+AssetErrorFetchDepreciationOptionsForMode=Gwall wrth adalw opsiynau ar gyfer y modd dibrisiant '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Gwall wrth ddileu'r opsiynau modd dibrisiant '%s'
+AssetErrorInsertDepreciationOptionsForMode=Gwall wrth fewnosod yr opsiynau modd dibrisiant '%s'
+AssetErrorFetchDepreciationLines=Gwall wrth adalw llinellau dibrisiant a gofnodwyd
+AssetErrorClearDepreciationLines=Gwall wrth gael gwared ar linellau dibrisiant a gofnodwyd (gwrthdroi a dyfodol)
+AssetErrorAddDepreciationLine=Gwall wrth ychwanegu llinell dibrisiant
+AssetErrorCalculationDepreciationLines=Gwall wrth gyfrifo'r llinellau dibrisiant (adferiad a dyfodol)
+AssetErrorReversalDateNotProvidedForMode=Ni ddarperir y dyddiad gwrthdroi ar gyfer y dull dibrisiant '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Rhaid i'r dyddiad gwrthdroi fod yn fwy neu'n hafal i ddechrau'r flwyddyn ariannol gyfredol ar gyfer y dull dibrisiant '%s'
+AssetErrorReversalAmountNotProvidedForMode=Ni ddarperir y swm gwrthdroi ar gyfer y modd dibrisiant '%s'.
+AssetErrorFetchCumulativeDepreciation=Gwall wrth adalw swm y dibrisiant cronedig o'r llinell dibrisiant
+AssetErrorSetLastCumulativeDepreciation=Gwall wrth gofnodi'r swm dibrisiant cronedig diwethaf

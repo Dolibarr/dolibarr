@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungskonto für Gehaltszahlungen
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Vorgabewert für die Nebenbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Buchhaltungs-Konto für Löhne
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (aus dem Kontenplan), das standardmäßig für Geschäftspartner, die „Benutzer“ sind, verwendet wird
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Standardwert für die Nebenbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard-Buchungskonto für Gehaltszahlungen
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lassen Sie beim Erstellen eines Gehalts standardmäßig die Option "Gesamtzahlung automatisch erstellen" leer
 Salary=Gehalt
 Salaries=Gehälter
@@ -16,11 +16,12 @@ ShowSalaryPayment=Gehaltszahlung anzeigen
 THM=Durchschnittlicher Stundensatz
 TJM=Durchschnittlicher Tagessatz
 CurrentSalary=Aktuelles Gehalt
-THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verwendete Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
-TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet
+THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die aufgewendete Zeit eines Benutzers zu berechnen, wenn das Modul Projektverwaltung verwendet wird
+TJMDescription=Dieser Wert dient derzeit nur zur Information und wird für keine Berechnung verwendet
 LastSalaries=Letzte %s Gehälter
 AllSalaries=Alle Gehälter
 SalariesStatistics=Statistik Gehälter
 SalariesAndPayments=Gehälter und Gehaltszahlungen
 ConfirmDeleteSalaryPayment=Möchten Sie diese Gehaltszahlung löschen? 
 FillFieldFirst=Zuerst das Mitarbeiterfeld ausfüllen
+UpdateAmountWithLastSalary=Als Betrag letztes Gehalt vorbelegen

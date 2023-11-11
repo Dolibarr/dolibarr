@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 
 /**
- * \file    mrp/class/api_mo.class.php
+ * \file    htdocs/mrp/class/api_mos.class.php
  * \ingroup mrp
  * \brief   File for API management of MO.
  */
@@ -55,11 +55,11 @@ class Mos extends DolibarrApi
 	 *
 	 * Return an array with MO informations
 	 *
-	 * @param 	int 	$id ID of MO
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id				ID of MO
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET {id}
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -85,16 +85,17 @@ class Mos extends DolibarrApi
 	 *
 	 * Get a list of MOs
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -119,7 +120,7 @@ class Mos extends DolibarrApi
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -147,11 +148,11 @@ class Mos extends DolibarrApi
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -172,7 +173,7 @@ class Mos extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Mo($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
@@ -202,6 +203,9 @@ class Mos extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->mo->$field = $value;
 		}
+
+		$this->checkRefNumbering();
+
 		if (!$this->mo->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating MO", array_merge(array($this->mo->error), $this->mo->errors));
 		}
@@ -237,6 +241,8 @@ class Mos extends DolibarrApi
 			}
 			$this->mo->$field = $value;
 		}
+
+		$this->checkRefNumbering();
 
 		if ($this->mo->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
@@ -290,8 +296,8 @@ class Mos extends DolibarrApi
 	 *   "arraytoproduce": []
 	 * }
 	 *
-	 * @param int       $id        		ID of state
-	 * @param array 	$request_data   Request datas
+	 * @param int       $id				ID of state
+	 * @param array		$request_data   Request datas
 	 *
 	 * @url     POST {id}/produceandconsume
 	 *
@@ -340,10 +346,10 @@ class Mos extends DolibarrApi
 		}
 
 		if (empty($labelmovement)) {
-			throw new RestException(500, "Field inventorylabel not prodivded");
+			throw new RestException(500, "Field inventorylabel not provided");
 		}
 		if (empty($codemovement)) {
-			throw new RestException(500, "Field inventorycode not prodivded");
+			throw new RestException(500, "Field inventorycode not provided");
 		}
 
 		// Code for consume and produce...
@@ -353,11 +359,14 @@ class Mos extends DolibarrApi
 
 		$stockmove = new MouvementStock($this->db);
 
+		$consumptioncomplete = true;
+		$productioncomplete = true;
+
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
-				foreach ($$arrayname as $value) {
+				foreach ($arrayname as $value) {
 					$tmpproduct = new Product($this->db);
 					if (empty($value["objectid"])) {
 						throw new RestException(500, "Field objectid required in ".$arrayname);
@@ -370,19 +379,21 @@ class Mos extends DolibarrApi
 						$qtytoprocess = $value["qty"];
 						if (isset($value["fk_warehouse"])) {	// If there is a warehouse to set
 							if (!($value["fk_warehouse"] > 0)) {	// If there is no warehouse set.
-								throw new RestException(500, "Field fk_warehouse must be > 0 in ".$arrayname);
 								$error++;
+								throw new RestException(500, "Field fk_warehouse must be > 0 in ".$arrayname);
 							}
 							if ($tmpproduct->status_batch) {
-								throw new RestException(500, "Product ".$tmpproduct->ref."must be in batch");
 								$error++;
+								throw new RestException(500, "Product ".$tmpproduct->ref."must be in batch");
 							}
 						}
 						$idstockmove = 0;
 						if (!$error && $value["fk_warehouse"] > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+
+							$stockmove->setOrigin($this->mo->element, $this->mo->id);
+
 							if ($qtytoprocess >= 0) {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
@@ -457,9 +468,6 @@ class Mos extends DolibarrApi
 				}
 			}
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose <= 0) {
 					$consumptioncomplete = false;
 					$productioncomplete = false;
@@ -476,20 +484,21 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
 						if (!$error && $line->fk_warehouse > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+							$stockmove->origin_type = 'mo';
+							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
@@ -535,20 +544,21 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
 						if (!$error && $line->fk_warehouse > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+							$stockmove->origin_type = 'mo';
+							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
@@ -586,9 +596,6 @@ class Mos extends DolibarrApi
 			}
 
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose > 0) {
 					foreach ($this->mo->lines as $line) {
 						if ($line->role == 'toconsume') {
@@ -620,13 +627,14 @@ class Mos extends DolibarrApi
 				}
 			}
 		}
+
 		// Update status of MO
 		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		if ($consumptioncomplete && $productioncomplete) {
-			$result = $this->mo->setStatut(self::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+			$result = $this->mo->setStatut(Mo::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		} else {
-			$result = $this->mo->setStatut(self::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
+			$result = $this->mo->setStatut(Mo::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
 		}
 		if ($result <= 0) {
 			throw new RestException(500, $this->mo->error);
@@ -640,8 +648,8 @@ class Mos extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param   Object  $object			Object to clean
+	 * @return  Object					Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -716,8 +724,31 @@ class Mos extends DolibarrApi
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
+	}
+
+	/**
+	 * Validate the ref field and get the next Number if it's necessary.
+	 *
+	 * @return void
+	 */
+	private function checkRefNumbering(): void
+	{
+		$ref = substr($this->mo->ref, 1, 4);
+		if ($this->mo->status > 0 && $ref == 'PROV') {
+			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
+		}
+
+		if (strtolower($this->mo->ref) == 'auto') {
+			if (empty($this->mo->id) && $this->mo->status == 0) {
+				$this->mo->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
+			} else {
+				$this->mo->fetch_product();
+				$numref = $this->mo->getNextNumRef($this->mo->product);
+				$this->mo->ref = $numref;
+			}
+		}
 	}
 }

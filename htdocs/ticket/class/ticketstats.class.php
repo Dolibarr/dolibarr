@@ -62,14 +62,14 @@ class TicketStats extends Stats
 		$this->field = 'timing';
 
 		$this->where = " fk_statut > 0";
-		$this->where .= " AND entity = ".$conf->entity;
+		$this->where .= " AND entity = ".((int) $conf->entity);
 		if ($this->socid > 0) {
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
 			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
-			$this->where .= ' AND fk_user_create = '.$this->userid;
+			$this->where .= " AND fk_user_create = ".((int) $this->userid);
 		}
 	}
 
@@ -89,12 +89,13 @@ class TicketStats extends Stats
 	}
 
 	/**
-	 *     Renvoie le nombre de facture par mois pour une annee donnee
+	 *  Return the number of tickets per month for a given year
 	 *
-	 *    @param  string $year Year to scan
-	 *    @return array            Array of values
+	 *  @param  string 	$year 		Year to scan
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *  @return array            	Array of values
 	 */
-	public function getNbByMonth($year)
+	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT MONTH(datec) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
@@ -103,18 +104,19 @@ class TicketStats extends Stats
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res = $this->_getNbByMonth($year, $sql);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}
 
 	/**
-	 *     Renvoie le montant de facture par mois pour une annee donnee
+	 *  Return th eamount of tickets for a month and a given year
 	 *
-	 *    @param  int $year Year to scan
-	 *    @return array                Array of values
+	 *  @param  int 	$year 		Year to scan
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *  @return array               Array of values
 	 */
-	public function getAmountByMonth($year)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
@@ -123,7 +125,7 @@ class TicketStats extends Stats
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res = $this->_getAmountByMonth($year, $sql);
+		$res = $this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}

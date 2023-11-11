@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\FS;
 
 use Sabre\DAV\FSExt\File as BaseFile;
@@ -13,8 +15,8 @@ use Sabre\DAVACL\IACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class File extends BaseFile implements IACL {
-
+class File extends BaseFile implements IACL
+{
     use ACLTrait;
 
     /**
@@ -32,31 +34,29 @@ class File extends BaseFile implements IACL {
     protected $owner;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string $path on-disk path.
-     * @param array $acl ACL rules.
-     * @param string|null $owner principal owner string.
+     * @param string      $path  on-disk path
+     * @param array       $acl   ACL rules
+     * @param string|null $owner principal owner string
      */
-    function __construct($path, array $acl, $owner = null) {
-
+    public function __construct($path, array $acl, $owner = null)
+    {
         parent::__construct($path);
         $this->acl = $acl;
         $this->owner = $owner;
-
     }
 
     /**
-     * Returns the owner principal
+     * Returns the owner principal.
      *
      * This must be a url to a principal, or null if there's no owner
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->owner;
-
     }
 
     /**
@@ -71,10 +71,8 @@ class File extends BaseFile implements IACL {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return $this->acl;
-
     }
-
 }

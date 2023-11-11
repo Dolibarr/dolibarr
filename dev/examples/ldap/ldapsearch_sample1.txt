@@ -1,28 +1,29 @@
 # ldapsearch_sample1.txt
 # ldapsearch is into package ldap-utils on debian.
 #
-# Use this sample to search into a ldap
+# Use this samples to test a ldap_bind or to make a search into a ldap
 #
 
 # Anonymous access
-# ldapsearch -h hostname -p 389
+#  ldapsearch -h hostname -p 389
 #
 # Login access (using a Bind DN)
-# ldapsearch -h hostname -p 389 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
-# ldapsearch -H ldap://hostname:389 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
-# ldapsearch -d1 -H ldap://hostname:389 -x -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
-# ldapsearch -H ldap://hostname:389 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
+# Such access must succeed to use LDAP as login module.
+#  ldapsearch -h hostname -p 389 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
+#  ldapsearch -H ldap://hostname:389 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
+#  ldapsearch -d1 -H ldap://hostname:389 -x -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
+#  ldapsearch -H ldap://hostname:389 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password
 #
 # Login access in SSL (using a Bind DN)
-# ldapsearch -H ldaps://hostnamme:636 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password -b "cn=users,dc=ldap,dc=test,dc=local
+#  ldapsearch -H ldaps://hostnamme:636 -z 0 -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password -b "cn=users,dc=ldap,dc=test,dc=local"
 # If it fails, you may try to use "hostname" that is real name of certificate.
 # You must also check that /etc/ldap/ldap.conf contains the line TLS_CACERT /etc/ssl/certs/ca-certificates.crt
 
 # What to search
-# ldapsearch -h hostname -p 389 -x -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password -b "cn=users,dc=ldap,dc=test,dc=local"
-# ldapsearch -h hostname -p 389 -x -D "cn=manager,o=somecompany.com" -w password -b "ou=people,dc=teclib,dc=infra"
-# ldapsearch -h hostname -p 389 -x -D "cn=manager,o=somecompany.com" -w password -b "o=somecompany.com" "(objectclass=*)"
+#  ldapsearch -h hostname -p 389 -x -D "uid=root,cn=users,dc=ldap,dc=test,dc=local" -w password -b "cn=users,dc=ldap,dc=test,dc=local"
+#  ldapsearch -h hostname -p 389 -x -D "cn=manager,o=somecompany.com" -w password -b "ou=people,dc=teclib,dc=infra"
+#  ldapsearch -h hostname -p 389 -x -D "cn=manager,o=somecompany.com" -w password -b "o=somecompany.com" "(objectclass=*)"
 #
 # Example to test a ldap search: 
-# ldapsearch -h hostname -p 389 -x -z 5 -b 'OU=Collaborateurs,OU=Utilisateurs,OU=MyCompany,DC=bocal,DC=lan' -D 'CN=UserAdmin,OU=Informatique,OU=Utilisateurs,OU=MyCompany,DC=bocal,DC=lan' -w password
+#  ldapsearch -h hostname -p 389 -x -z 5 -b 'OU=Collaborateurs,OU=Utilisateurs,OU=MyCompany,DC=bocal,DC=lan' -D 'CN=UserAdmin,OU=Informatique,OU=Utilisateurs,OU=MyCompany,DC=bocal,DC=lan' -w password
 

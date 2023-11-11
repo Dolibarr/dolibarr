@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Cefnogaeth Fforwm/Wici
+EMailSupport=Cefnogaeth e-byst
+RemoteControlSupport=Cefnogaeth amser real / o bell ar-lein
+OtherSupport=Cefnogaeth arall
+ToSeeListOfAvailableRessources=I gysylltu/weld yr adnoddau sydd ar gael:
+HelpCenter=Canolfan Gymorth
+DolibarrHelpCenter=Canolfan Gymorth a Chymorth Dolibarr
+ToGoBackToDolibarr=Fel arall, <a href="%s"> cliciwch yma i barhau i ddefnyddio Dolibarra </a> .
+TypeOfSupport=Math o gefnogaeth
+TypeSupportCommunauty=Cymuned (am ddim)
+TypeSupportCommercial=Masnachol
+TypeOfHelp=Math
+NeedHelpCenter=Need support?
+Efficiency=Effeithlonrwydd
+TypeHelpOnly=Help yn unig
+TypeHelpDev=Cymorth+Datblygiad
+TypeHelpDevForm=Cymorth+Datblygiad+Hyfforddiant
+BackToHelpCenter=Fel arall, <a href="%s"> ewch yn ôl i dudalen gartref y ganolfan Gymorth </a> .
+LinkToGoldMember=Gallwch ffonio un o'r hyfforddwyr a ddewiswyd gan Dolibarr ar gyfer eich iaith (%s) trwy glicio ar eu Widget (mae statws ac uchafswm pris yn cael eu diweddaru'n awtomatig):
+PossibleLanguages=Ieithoedd a gefnogir
+SubscribeToFoundation=Helpwch brosiect Dolibarr, tanysgrifiwch i'r sylfaen
+SeeOfficalSupport=Am gefnogaeth swyddogol Dolibarr yn eich iaith: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

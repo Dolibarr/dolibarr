@@ -77,6 +77,11 @@ class modFicheinter extends DolibarrModules
 		$this->const = array();
 		$r = 0;
 
+		if (!isset($conf->ficheinter) || !isset($conf->ficheinter->enabled)) {
+			$conf->ficheinter = new stdClass();
+			$conf->ficheinter->enabled = 0;
+		}
+
 		$this->const[$r][0] = "FICHEINTER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "soleil";
@@ -174,18 +179,11 @@ class modFicheinter extends DolibarrModules
 			'fd.rowid'=>'InterLineId',
 			'fd.date'=>"InterLineDate", 'fd.duree'=>"InterLineDuration", 'fd.description'=>"InterLineDesc"
 		);
-		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
-		//	's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text',
-		//	's.code_compta_fournisseur'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.duree'=>"Duree",'f.fk_statut'=>'Statut','f.description'=>"Text",
-		//	'f.datee'=>"Date",'f.dateo'=>"Date",'f.fulldayevent'=>"Boolean",'fd.date'=>"Date",'fd.duree'=>"Duree",'fd.description'=>"Text",
-		//	'fd.total_ht'=>"Numeric"
-		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
 			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.datec'=>"Date",
-			'f.duree'=>"Duree", 'f.fk_statut'=>'Numeric', 'f.description'=>"Text", 'f.datee'=>"Date", 'f.dateo'=>"Date", 'f.fulldayevent'=>"Boolean",
+			'f.duree'=>"Duree", 'f.fk_statut'=>'Numeric', 'f.description'=>"Text", 'f.datee'=>"Date", 'f.dateo'=>"Date", 'f.fulldayevent'=>"Text",
 			'pj.ref'=>'Text', 'pj.title'=>'Text',
 			'fd.rowid'=>"Numeric", 'fd.date'=>"Date", 'fd.duree'=>"Duree", 'fd.description'=>"Text", 'fd.total_ht'=>"Numeric"
 		);
@@ -231,8 +229,8 @@ class modFicheinter extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'ficheinter' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".$conf->entity.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'ficheinter' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".((int) $conf->entity).")",
 		);
 
 		return $this->_init($sql, $options);

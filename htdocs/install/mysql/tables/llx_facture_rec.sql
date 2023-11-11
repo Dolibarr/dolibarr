@@ -24,6 +24,7 @@ create table llx_facture_rec
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   titre              varchar(200) NOT NULL,
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
+  subtype				     smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc             integer NOT NULL,
   datec              datetime,            -- date de creation
   tms				 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,           -- last modification date
@@ -35,7 +36,7 @@ create table llx_facture_rec
   remise_percent     real     DEFAULT 0,
   remise_absolue     real     DEFAULT 0,
   
-  vat_src_code		 varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
+  vat_src_code		 varchar(10)  DEFAULT '',			-- TODO Remove this. Field is inside the table of lines
   total_tva          double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2
@@ -57,7 +58,7 @@ create table llx_facture_rec
   modelpdf           varchar(255),
 
   fk_multicurrency          integer,
-  multicurrency_code        varchar(255),
+  multicurrency_code        varchar(3),
   multicurrency_tx          double(24,8) DEFAULT 1,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,

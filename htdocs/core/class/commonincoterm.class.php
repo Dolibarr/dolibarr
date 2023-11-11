@@ -60,11 +60,13 @@ trait CommonIncoterm
 
 		$this->label_incoterms = '';
 		if (!empty($this->fk_incoterms)) {
-			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+			$sql = "SELECT code FROM ".$this->db->prefix()."c_incoterms WHERE rowid = ".(int) $this->fk_incoterms;
 			$result = $this->db->query($sql);
 			if ($result) {
 				$res = $this->db->fetch_object($result);
-				$out .= $res->code;
+				if ($res) {
+					$out .= $res->code;
+				}
 			}
 		}
 
@@ -76,17 +78,21 @@ trait CommonIncoterm
 	/**
 	 *    Return incoterms informations for pdf display
 	 *
-	 *    @return	string		incoterms info
+	 *    @return	string|boolean			Incoterms info or false
 	 */
 	public function getIncotermsForPDF()
 	{
-		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+		$sql = "SELECT code FROM ".$this->db->prefix()."c_incoterms WHERE rowid = ".(int) $this->fk_incoterms;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				$res = $this->db->fetch_object($resql);
-				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+				if ($res) {
+					return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+				} else {
+					return $res;
+				}
 			} else {
 				return '';
 			}
@@ -106,17 +112,17 @@ trait CommonIncoterm
 	public function setIncoterms($id_incoterm, $location)
 	{
 		if ($this->id && $this->table_element) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET fk_incoterms = ".($id_incoterm > 0 ? ((int) $id_incoterm) : "null");
 			$sql .= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->fk_incoterms = $id_incoterm;
 				$this->location_incoterms = $location;
 
-				$sql = 'SELECT libelle as label_incoterms FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+				$sql = "SELECT libelle as label_incoterms FROM ".$this->db->prefix()."c_incoterms WHERE rowid = ".(int) $this->fk_incoterms;
 				$res = $this->db->query($sql);
 				if ($res) {
 					$obj = $this->db->fetch_object($res);

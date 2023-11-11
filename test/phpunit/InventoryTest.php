@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2023 Alexandre Janniaux    <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return InventoryTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -79,7 +81,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -93,7 +95,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -106,7 +108,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -122,7 +124,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -165,7 +167,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Inventory($this->savdb);
+		$localobject=new Inventory($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -337,7 +339,7 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Inventory($this->savdb);
+		$localobject=new Inventory($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";

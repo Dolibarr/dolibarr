@@ -80,6 +80,11 @@ if ($mode != 'confirm') {
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 }
 
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
+
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') {
@@ -234,7 +239,7 @@ if ($resql) {
  * @param string $total				Total amount of unpayed invoices
  * @param string $userlang			Code lang to use for email output.
  * @param string $oldtarget			Target name
- * @return int 						<0 if KO, >0 if OK
+ * @return int 						Int <0 if KO, >0 if OK
  */
 function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {

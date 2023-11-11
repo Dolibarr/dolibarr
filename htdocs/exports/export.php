@@ -76,7 +76,8 @@ $entitytoicon = array(
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
 	'bomm'         => 'bom',
-	'bomline'      => 'bom'
+	'bomline'      => 'bom',
+	'conferenceorboothattendee' => 'contact'
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -125,7 +126,8 @@ $entitytolang = array(
 	'contract_line'=> 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
-	'bomline'      => 'BOMLine'
+	'bomline'      => 'BOMLine',
+	'conferenceorboothattendee' => 'Attendee'
 );
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
@@ -151,7 +153,6 @@ $sqlusedforexport = '';
 $head = array();
 $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 
-//$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
 $usefilters = 1;
 
 // Security check
@@ -268,6 +269,7 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
+	$separator = GETPOST('delimiter', 'alpha');
 	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -276,7 +278,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -389,7 +391,7 @@ if ($step == 4 && $action == 'submitFormField') {
 		$_SESSION["export_filtered_fields"] = array();
 		foreach ($objexport->array_export_TypeFields[0] as $code => $type) {	// $code: s.fieldname $value: Text|Boolean|List:ccc
 			$newcode = (string) preg_replace('/\./', '_', $code);
-			//print 'xxx '.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
+			//print 'xxx '.$code."=".$newcode."=".$type."=".GETPOST($newcode)."\n<br>";
 			$check = 'alphanohtml';
 			$filterqualified = 1;
 			if (!GETPOSTISSET($newcode) || GETPOST($newcode, $check) == '') {
@@ -452,7 +454,7 @@ if ($step == 1 || !$datatoexport) {
 			print $label;
 			print '</td><td class="right">';
 			if ($objexport->array_export_perms[$key]) {
-				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15x"').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15"').'</a>';
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NotEnoughPermissions").'</span>';
 			}
@@ -520,7 +522,7 @@ if ($step == 2 && $datatoexport) {
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
 	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	print ' ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
@@ -528,7 +530,7 @@ if ($step == 2 && $datatoexport) {
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Entities").'</td>';
+	print '<td>'.$langs->trans("Object").'</td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="100" class="center">';
 	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
@@ -869,18 +871,24 @@ if ($step == 4 && $datatoexport) {
 	print '<td>'.$list.'</td>';
 	print '</tr>';
 
-	// List of filtered fiels
+	// List of filtered fields
 	if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code]).'</span>'.(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
 					} else {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code])."</span>='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
 					}
 				}
 			}
@@ -1016,7 +1024,7 @@ if ($step == 4 && $datatoexport) {
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button reposition button-save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button reposition button-save small" value="'.$langs->trans("Save").'">';
 		print '</td></tr>';
 
 		$tmpuser = new User($db);
@@ -1149,12 +1157,18 @@ if ($step == 5 && $datatoexport) {
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code]).'</span>'.(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
 					} else {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code])."</span>='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
 					}
 				}
 			}
@@ -1169,14 +1183,15 @@ if ($step == 5 && $datatoexport) {
 	print '<br>';
 
 	// List of available export formats
-	$htmltabloflibs = '<table class="noborder centpercent">';
+	$htmltabloflibs = '<!-- Table with available export formats --><br>';
+	$htmltabloflibs .= '<table class="noborder centpercent nomarginbottom">';
 	$htmltabloflibs .= '<tr class="liste_titre">';
 	$htmltabloflibs .= '<td>'.$langs->trans("AvailableFormats").'</td>';
 	$htmltabloflibs .= '<td>'.$langs->trans("LibraryUsed").'</td>';
 	$htmltabloflibs .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$htmltabloflibs .= '</tr>'."\n";
 
-	$liste = $objmodelexport->liste_modeles($db);
+	$liste = $objmodelexport->listOfAvailableExportFormat($db);
 	$listeall = $liste;
 	foreach ($listeall as $key => $val) {
 		if (preg_match('/__\(Disabled\)__/', $listeall[$key])) {
@@ -1193,7 +1208,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 		$htmltabloflibs .= '</tr>'."\n";
 	}
-	$htmltabloflibs .= '</table>';
+	$htmltabloflibs .= '</table><br>';
 
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;
@@ -1213,7 +1228,7 @@ if ($step == 5 && $datatoexport) {
 
 	// Show existing generated documents
 	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
+	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 
 llxFooter();

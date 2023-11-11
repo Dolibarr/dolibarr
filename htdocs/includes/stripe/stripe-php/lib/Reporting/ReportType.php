@@ -12,8 +12,8 @@ namespace Stripe\Reporting;
  * documentation</a> for those Report Type IDs, along with required and optional
  * parameters.
  *
- * Note that reports can only be run based on your live-mode data (not test-mode
- * data), and thus related requests must be made with a <a
+ * Note that certain report types can only be run based on your live-mode data (not
+ * test-mode data), and will error when queried without a <a
  * href="https://stripe.com/docs/keys#test-live-modes">live-mode API key</a>.
  *
  * @property string $id The <a href="https://stripe.com/docs/reporting/statements/api#available-report-types">ID of the Report Type</a>, such as <code>balance.summary.1</code>.
@@ -21,6 +21,7 @@ namespace Stripe\Reporting;
  * @property int $data_available_end Most recent time for which this Report Type is available. Measured in seconds since the Unix epoch.
  * @property int $data_available_start Earliest time for which this Report Type is available. Measured in seconds since the Unix epoch.
  * @property null|string[] $default_columns List of column names that are included by default when this Report Type gets run. (If the Report Type doesn't support the <code>columns</code> parameter, this will be null.)
+ * @property bool $livemode Has the value <code>true</code> if the object exists in live mode or the value <code>false</code> if the object exists in test mode.
  * @property string $name Human-readable name of the Report Type
  * @property int $updated When this Report Type was latest updated. Measured in seconds since the Unix epoch.
  * @property int $version Version of the Report Type. Different versions report with the same ID will have the same purpose, but may take different run parameters or have different result schemas.

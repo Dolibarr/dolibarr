@@ -26,8 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 
 
 /**
- *	    \class      modGeneratePassStandard
- *		\brief      Class to generate a password according to a dolibarr standard rule (8 random chars)
+ *	Class to generate a password according to a dolibarr standard rule (12 random chars)
  */
 class modGeneratePassStandard extends ModeleGenPassword
 {
@@ -36,17 +35,21 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 */
 	public $id;
 
+	public $picto = 'fa-shield-alt';
+
+	/**
+	 * Minimum length (text visible by end user)
+	 *
+	 * @var string
+	 */
 	public $length;
 
 	/**
-	 * @var DoliDB Database handler.
+	 * Minimum length in number of characters
+	 *
+	 * @var integer
 	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
+	public $length2;
 
 	/**
 	 *	Constructor
@@ -60,6 +63,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	{
 		$this->id = "standard";
 		$this->length = 12;
+		$this->length2 = 12;
 
 		$this->db = $db;
 		$this->conf = $conf;
@@ -125,15 +129,21 @@ class modGeneratePassStandard extends ModeleGenPassword
 
 	/**
 	 *  Validate a password
+	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
 	 *
 	 *  @param      string  $password   Password to check
 	 *  @return     int                 0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{
-		if (dol_strlen($password) < $this->length) {
+		global $langs;
+
+		if (dol_strlen($password) < $this->length2) {
+			$langs->load("other");
+			$this->error = $langs->trans("YourPasswordMustHaveAtLeastXChars", $this->length2);
 			return 0;
 		}
+
 		return 1;
 	}
 }

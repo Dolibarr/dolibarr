@@ -102,10 +102,10 @@ class MenuManager
 			// Show/Hide vertical menu
 			if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$showmode = 1;
-				$classname = 'class="tmenu menuhider"';
+				$classname = 'class="tmenu menuhider nohover"';
 				$idsel = 'menu';
 
-				$this->menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+				$this->menu->add('#', '', 0, $showmode, $this->atarget, "xxx", '', 0, $id, $idsel, $classname);
 			}
 
 			// Home
@@ -125,7 +125,7 @@ class MenuManager
 					print_start_menu_entry_empty($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
 				}
 				if (empty($noout)) {
-					print_text_menu_entry_empty($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
+					print_text_menu_entry_empty($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $this->atarget));
 				}
 				if (empty($noout)) {
 					print_end_menu_entry_empty($menuval['enabled']);
@@ -178,7 +178,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
+						print '<span class="fas fa-home fa-fw paddingright" aria-hidden="true"></span>';
 					}
 
 					print $val['titre'];
@@ -208,8 +208,12 @@ class MenuManager
 					$submenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"), 1);
 					$submenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"), 1);
 
-					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
-					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
+					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') {
+					//var_dump($submenu); exit;
+					//}
+					//if ($tmpmainmenu=='accountancy') {
+					//var_dump($submenu->liste); exit;
+					//}
 					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
@@ -320,7 +324,7 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";
@@ -407,7 +411,7 @@ class MenuManager
 						if ($menu_array[$i]['enabled']) {
 							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($menu_array[$i]['url'], 1).'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
 						} else {
-							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
+							print '<div class="menu_titre">'.$tabstring.'<span class="vmenudisabled">'.$menu_array[$i]['titre'].'</span></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
 					}
@@ -433,7 +437,7 @@ class MenuManager
 								print '</span>';
 							}
 						} else {
-							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font>';
+							print $tabstring.'<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span>';
 						}
 
 						// If title is not pure text and contains a table, no carriage return added
@@ -500,32 +504,50 @@ function print_start_menu_entry_empty($idsel, $classname, $showmode)
 /**
  * Output menu entry
  *
- * @param	string	$text		Text
- * @param	int		$showmode	1 or 2
- * @param	string	$url		Url
- * @param	string	$id			Id
- * @param	string	$idsel		Id sel
- * @param	string	$classname	Class name
- * @param	string	$atarget	Target
+ * @param	string	$text			Text
+ * @param	int		$showmode		1 or 2
+ * @param	string	$url			Url
+ * @param	string	$id				Id
+ * @param	string	$idsel			Id sel
+ * @param	string	$classname		Class name
+ * @param	string	$atarget		Target
+ * @param	array	$menuval		All the $menuval array
  * @return	void
  */
-function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget)
+function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
 {
 	global $conf, $langs;
 
+	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
+	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
+
 	if ($showmode == 1) {
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
+		print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
+		print '</div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
-		print '<span class="mainmenuaspan">';
-		print $text;
-		print '</span>';
-		print '</a>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</a>';
+		}
 	}
 	if ($showmode == 2) {
-		print '<div class="'.$id.' '.$idsel.' tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled">';
+		print '<span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span>';
+		print '</div>';
+		print '</div>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</span>';
+		}
 	}
 }
 

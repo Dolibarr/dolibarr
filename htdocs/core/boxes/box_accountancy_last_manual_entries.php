@@ -60,7 +60,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->accounting->mouvements->lire);
+		$this->hidden = !$user->hasRight('accounting', 'mouvements', 'lire');
 	}
 
 	/**
@@ -79,7 +79,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
-		if ($user->rights->accounting->mouvements->lire) {
+		if ($user->hasRight('accounting', 'mouvements', 'lire')) {
 			$sql = "SELECT DISTINCT b.piece_num";
 			$sql .= ", b.doc_date as date_movement";
 			$sql .= ", b.label_operation";
@@ -134,7 +134,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($amount, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 

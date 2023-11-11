@@ -1,10 +1,10 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = 内部报表
+Module68000Desc = 内部报表管理（支持法国DEB/DES格式）
+IntracommReportSetup = 内部报表模块设置
+IntracommReportAbout = 关于内部报表
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_NUM_AGREMENT=批准号（由CISD签发）
 INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
@@ -14,7 +14,7 @@ INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
 
 # Menu
-MenuIntracommReport=Intracomm report
+MenuIntracommReport=内部报表
 MenuIntracommReportNew=New declaration
 MenuIntracommReportList=名单
 
@@ -32,7 +32,7 @@ IntracommReportTitle=Preparation of an XML file in ProDouane format
 # List
 IntracommReportList=List of generated declarations
 IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
+IntracommReportPeriod=Period of analysis
 IntracommReportTypeDeclaration=Type of declaration
 IntracommReportDownload=download XML file
 

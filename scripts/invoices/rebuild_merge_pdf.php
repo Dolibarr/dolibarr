@@ -52,6 +52,7 @@ $langs->load("main");
 $version = DOL_VERSION;
 $error = 0;
 
+
 /*
  * Main
  */
@@ -62,7 +63,12 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // Check parameters
 if (!isset($argv[1])) {
-	usage();
+	rebuild_merge_pdf_usage();
+	exit(-1);
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
 	exit(-1);
 }
 
@@ -72,6 +78,12 @@ $filter = array();
 $regenerate = ''; // Ask regenerate (contains name of model to use)
 $option = '';
 $fileprefix = 'mergedpdf';
+$dateafterdate = '';
+$datebeforedate = '';
+$paymentdateafter = '';
+$paymentdatebefore = '';
+$paymentonbankid = 0;
+$thirdpartiesid = 0;
 
 foreach ($argv as $key => $value) {
 	$found = false;
@@ -196,23 +208,23 @@ foreach ($argv as $key => $value) {
 	}
 
 	if (!$found && preg_match('/filter=/i', $value)) {
-		usage();
+		rebuild_merge_pdf_usage();
 		exit(-1);
 	}
 }
 
 // Check if an option and a filter has been provided
 if (empty($option) && count($filter) <= 0) {
-	usage();
+	rebuild_merge_pdf_usage();
 	exit(-1);
 }
 // Check if there is no uncompatible choice
 if (in_array('payments', $filter) && in_array('nopayment', $filter)) {
-	usage();
+	rebuild_merge_pdf_usage();
 	exit(-1);
 }
 if (in_array('bank', $filter) && in_array('nopayment', $filter)) {
-	usage();
+	rebuild_merge_pdf_usage();
 	exit(-1);
 }
 
@@ -239,7 +251,7 @@ exit($error);
  *
  * @return void
  */
-function usage()
+function rebuild_merge_pdf_usage()
 {
 	global $script_file;
 

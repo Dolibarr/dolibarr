@@ -67,7 +67,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !($user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs, $conf;
-		$langs->load("boxes");
+		$langs->loadLangs(array("boxes", "members"));
 
 		$this->max = $max;
 
@@ -90,7 +90,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersSubscriptionsByYear", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$num = 0;
 			$line = 0;
 			// List of subscription by year
@@ -179,23 +179,24 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $Number[$key],
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => '<span class="amount">'.price($value).'</span>',
+						'td' => 'class="nowraponall right amount"',
+						'text' => price($value),
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => '<span class="amount">'.price(price2num($value / $Number[$key], 'MT')).'</span>',
+						'td' => 'class="nowraponall right amount"',
+						'text' => price(price2num($value / $Number[$key], 'MT')),
 					);
 					$line++;
 				}
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedMembers"),
+						'td' => 'colspan="4" class="center"',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total"),
 					);
@@ -204,12 +205,12 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $numb,
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right"',
-						'text' => '<span class="amount">'.price($tot).'</span>',
+						'td' => 'class="liste_total nowraponall right amount"',
+						'text' => price($tot),
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right"',
-						'text' => '<span class="amount">'.price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')).'</span>',
+						'td' => 'class="liste_total nowraponall right amount"',
+						'text' => price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')),
 					);
 				}
 			} else {

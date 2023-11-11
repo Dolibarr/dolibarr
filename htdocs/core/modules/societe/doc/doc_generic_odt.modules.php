@@ -37,16 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_odt extends ModeleThirdPartyDoc
 {
 	/**
-	 * Issuer
-	 * @var Societe
+	 * @var string Dolibarr version of the loaded document
 	 */
-	public $emetteur;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
+	public $version = 'dolibarr';
 
 
 	/**
@@ -56,7 +49,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -102,11 +95,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
+		$texte .= '<!-- form for option of ODT templates -->';
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -130,18 +125,19 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<table><tr><td>';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->COMPANY_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</td>';
 		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -160,20 +156,25 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+				$texte .= '- '.$file['name'].' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMPANY_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -198,6 +199,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $action;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -210,7 +212,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
-		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -244,19 +245,19 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME)) {
-					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)) . '-' . $newfiletmp;
 					$newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				$object->builddoc_filename = $filename; // For triggers
 				//print "newfileformat=".$newfileformat;
 				//print "newdir=".$dir;
@@ -267,15 +268,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
 				if (!is_writable($conf->societe->multidir_temp[$object->entity])) {
-					$this->error = "Failed to write in temp directory ".$conf->societe->multidir_temp[$object->entity];
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->societe->multidir_temp[$object->entity]);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
@@ -320,17 +321,22 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
-							$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
+							if ((int) $res_contact > 0) {
+								$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
+								foreach ($tmparray as $key => $val) {
+									try {
+										$listlines->setVars($key, $val, true, 'UTF-8');
+									} catch (OdfException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									} catch (SegmentException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									}
 								}
+								$listlines->merge();
+							} else {
+								$this->error = $contactstatic->error;
+								dol_syslog($this->error, LOG_WARNING);
 							}
-							$listlines->merge();
 						}
 						$odfHandler->mergeSegment($listlines);
 					} catch (OdfException $e) {
@@ -347,6 +353,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 
 				$tmparray = array_merge($array_user, $array_soc, $array_thirdparty, $array_other);
+
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
@@ -416,9 +423,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$odfHandler = null; // Destroy object
 

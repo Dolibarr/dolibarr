@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2007 Regis Houssin <regis.houssin@inodbox.com>
+-- Copyright (C) 2022 Juanjo Menent <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@ create table llx_c_paper_format
 (
   rowid    integer                          AUTO_INCREMENT PRIMARY KEY,
   code     varchar(16)                      NOT NULL,
-  label    varchar(50)                      NOT NULL,
+  label    varchar(128)                      NOT NULL,
   width    float(6,2)                       DEFAULT 0,  -- Largeur du papier
   height   float(6,2)                       DEFAULT 0,  -- Hauteur du papier
   unit     varchar(5)                       NOT NULL,   -- Mesure unit

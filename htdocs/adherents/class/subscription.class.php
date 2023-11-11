@@ -96,10 +96,13 @@ class Subscription extends CommonObject
 	public $amount;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of bank in llx_bank
 	 */
 	public $fk_bank;
 
+	/**
+	 * @var array  Array with all fields into database and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
@@ -109,7 +112,7 @@ class Subscription extends CommonObject
 		'datef' =>array('type'=>'datetime', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
 		'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
 		'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'note' =>array('type'=>'text', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'note' =>array('type'=>'html', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -128,7 +131,7 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *	Function who permitted cretaion of the subscription
+	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
 	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
@@ -150,7 +153,6 @@ class Subscription extends CommonObject
 		if (empty($this->datec)) {
 			$this->datec = $now;
 		}
-
 
 		$this->db->begin();
 
@@ -215,9 +217,9 @@ class Subscription extends CommonObject
 		$sql .= " tms,";
 		$sql .= " dateadh as dateh,";
 		$sql .= " datef,";
-		$sql .= " subscription, note, fk_bank";
+		$sql .= " subscription, note as note_public, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= "	WHERE rowid=".((int) $rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -235,7 +237,8 @@ class Subscription extends CommonObject
 				$this->dateh          = $this->db->jdate($obj->dateh);
 				$this->datef          = $this->db->jdate($obj->datef);
 				$this->amount         = $obj->subscription;
-				$this->note           = $obj->note;
+				$this->note           = $obj->note_public;	// deprecated
+				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
 				return 1;
 			} else {
@@ -266,16 +269,20 @@ class Subscription extends CommonObject
 			return -1;
 		}
 
+		if (empty($this->note_public) && !empty($this->note)) {	// For backward compatibility
+			$this->note_public = $this->note;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
-		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
+		$sql .= " note = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
 		$sql .= " subscription = ".price2num($this->amount).",";
-		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
-		$sql .= " datef='".$this->db->idate($this->datef)."',";
-		$sql .= " datec='".$this->db->idate($this->datec)."',";
+		$sql .= " dateadh = '".$this->db->idate($this->dateh)."',";
+		$sql .= " datef = '".$this->db->idate($this->datef)."',";
+		$sql .= " datec = '".$this->db->idate($this->datec)."',";
 		$sql .= " fk_bank = ".($this->fk_bank ? ((int) $this->fk_bank) : 'null');
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -353,7 +360,7 @@ class Subscription extends CommonObject
 					$result = $member->update_end_date($user);
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
-						$result = $accountline->delete($user); // Return false if refused because line is conciliated
+						$result = $accountline->delete($user); // Return false if refused because line is reconciled
 						if ($result > 0) {
 							$this->db->commit();
 							return 1;
@@ -422,7 +429,7 @@ class Subscription extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -447,10 +454,10 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une adhesion
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string				Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -459,16 +466,19 @@ class Subscription extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int			$status      			Id status
-	 *  @return string      						Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
-	public function LibStatut($status)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs;
-		$langs->load("members");
+
+		//$langs->load("members");
+
 		return '';
 	}
 
@@ -485,19 +495,63 @@ class Subscription extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
-		$result = $this->db->query($sql);
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 
-			$this->db->free($result);
+			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
+		$return .= $this->getNomUrl(-1);
+		$return .= '</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
+			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
+		}
+
+		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
+			$return .= '<br><span class="inline-block">'.$arraydata['member']->getNomUrl(-4).'</span>';
+		}
+
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="margintoponly amount inline-block">'.price($this->amount).'</span>';
+			if (!empty($arraydata['bank'])) {
+				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
+			}
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

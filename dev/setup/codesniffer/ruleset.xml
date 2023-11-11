@@ -15,9 +15,10 @@
 	<exclude-pattern type="relative">htdocs/install/doctemplates/websites</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
-	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">source</exclude-pattern>
 	<exclude-pattern type="relative">.git</exclude-pattern>
+	<exclude-pattern>htdocs/includes</exclude-pattern>
+	<exclude-pattern>htdocs/install/doctemplates/websites</exclude-pattern>
 
 	<!-- List of all tests -->
 
@@ -135,7 +136,7 @@
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="250" />
-            <property name="absoluteComplexity" value="300" />
+            <property name="absoluteComplexity" value="400" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">

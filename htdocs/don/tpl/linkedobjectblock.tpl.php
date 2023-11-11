@@ -19,7 +19,7 @@
  *
  */
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE don/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;

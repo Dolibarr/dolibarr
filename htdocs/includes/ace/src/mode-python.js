@@ -343,10 +343,10 @@ var PythonHighlightRules = function() {
             regex: "\\s+"
         }, {
             token: "string",
-            regex: "'(.)*'"
+            regex: "'[^']*'"
         }, {
             token: "string",
-            regex: '"(.)*"'
+            regex: '"[^"]*"'
         }, {
             token: "function.support",
             regex: "(!s|!r|!a)"
@@ -494,6 +494,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/python";
+    this.snippetFileId = "ace/snippets/python";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

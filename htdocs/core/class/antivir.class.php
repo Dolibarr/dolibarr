@@ -81,63 +81,38 @@ class AntiVir
 		}
 
 		$fullcommand = $this->getCliCommand($file);
+		//$fullcommand="/usr/bin/clamdscan --fdpass '/tmp/phpuxoAEo'"
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
-		$fullcommand .= ' 2>&1'; // This is to get error output
+		//var_dump($fullcommand);
 
-		$output = array();
-		$return_var = 0;
 		$safemode = ini_get("safe_mode");
 		// Create a clean fullcommand
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode ? "on" : "off"));
-		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
-		$lastline = exec($fullcommand, $output, $return_var);
+		// Run CLI command.
+		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+		$utils = new Utils($this->db);
+		$outputfile = $conf->user->dir_temp.'/antivir.tmp';
+
+		$result = $utils->executeCLI($fullcommand, $outputfile);
+
+		$return_var = $result['result'];
+		$output = $result['output'];
+		$errorstring = $result['error'];
 
 		if (is_null($output)) {
 			$output = array();
 		}
 
-		//print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
-
-		/*
-		$outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
-		$handle = fopen($outputfile, 'w');
-		if ($handle)
-		{
-			$handlein = popen($fullcommand, 'r');
-			while (!feof($handlein))
-			{
-				$read = fgets($handlein);
-				fwrite($handle,$read);
-			}
-			pclose($handlein);
-
-			$errormsg = fgets($handle,2048);
-			$this->output=$errormsg;
-
-			fclose($handle);
-
-			if (! empty($conf->global->MAIN_UMASK))
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-		}
-		else
-		{
-			$langs->load("errors");
-			dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
-			$this->error="ErrorFailedToWriteInDir";
-			$return=-1;
-		}
-		*/
-
-		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',', $output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".$output);
 
 		$returncodevirus = 1;
 		if ($return_var == $returncodevirus) {	// Virus found
-			$this->errors = $output;
+			$this->errors = array($errorstring, $output);
 			return -99;
 		}
 
 		if ($return_var > 0) {					// If other error
-			$this->errors = $output;
+			$this->errors = array($errorstring, $output);
 			return -98;
 		}
 
@@ -178,10 +153,12 @@ class AntiVir
 		}
 
 		if (preg_match("/\s/", $command)) {
-			$command = escapeshellarg($command); // Use quotes on command. Using escapeshellcmd fails.
+			$command = escapeshellarg($command); // Force use of quotes on command. Using escapeshellcmd fails.
 		}
 
-		$ret = $command.' '.$param;
+		$forbidden_chars_to_replace = array("*", "?", "\"", "<", ">", "|", "[", "]", ";", '°', '$');
+		$ret = dol_sanitizePathName($command).' '.dol_string_nospecial($param, '_', $forbidden_chars_to_replace);
+
 		//$ret=$command.' '.$param.' 2>&1';
 		//print "xx".$ret."xx";exit;
 

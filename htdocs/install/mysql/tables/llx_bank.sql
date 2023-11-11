@@ -24,7 +24,8 @@ create table llx_bank
   tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datev           date,                      -- date de valeur
   dateo           date,                      -- date operation
-  amount          double(24,8) NOT NULL default 0,
+  amount          double(24,8) NOT NULL default 0,		-- amount in the currency of the bank account
+  amount_main_currency double(24,8) NULL,				-- amount in the main currency of the company when payment done in a bank account with a different currency
   label           varchar(255),
   fk_account      integer,
   fk_user_author  integer,
@@ -36,6 +37,7 @@ create table llx_bank
   rappro          tinyint default 0,
   note            text,
   fk_bordereau    integer DEFAULT 0,
+  position        integer DEFAULT 0,
   banque          varchar(255),              -- banque pour les cheques
   emetteur        varchar(255),              -- emetteur du cheque
   author          varchar(40),               -- a supprimer apres migration

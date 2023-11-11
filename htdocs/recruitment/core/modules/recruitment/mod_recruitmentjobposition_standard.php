@@ -26,7 +26,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobpo
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the Standard numbering rule for Job positions
  */
 class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosition
 {
@@ -52,11 +52,11 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 *  Return description of numbering module
 	 *
+	 *	@param		Translate	$langs		Language
 	 *  @return     string      Text with description
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 

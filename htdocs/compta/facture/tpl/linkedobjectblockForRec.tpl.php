@@ -24,7 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedobjectblockForRec.tpl.php -->\n";
 
 
 global $user;
@@ -46,18 +46,18 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	?>
 <tr class="<?php echo $trclass; ?>" >
-	<td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
-	<td class="linkedcol-name"><!-- nowraponall because ref is a label --><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
+	<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td class="linkedcol-ref" align="center"></td>
 	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
 	<td class="linkedcol-amount right"><?php
-	if ($user->rights->facture->lire) {
+	if ($user->hasRight('facture', 'lire')) {
 		$total = $total + $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}
 	?></td>
 	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td class="linkedcol-action right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="linkedcol-action right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Жол түрі (0 = өнім, 1 = қызмет)
 FileWithDataToImport=Импортталатын деректер бар файл
 FileToImport=Импортталатын бастапқы файл
 FileMustHaveOneOfFollowingFormat=Импортталатын файл келесі форматтардың біріне ие болуы керек
-DownloadEmptyExample=Өріс мазмұны туралы ақпарат бар үлгі файлын жүктеңіз
-StarAreMandatory=* міндетті өрістер
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=%s белгішесін басу арқылы импорттау файл пішімі ретінде қолданылатын файл пішімін таңдаңыз ...
 ChooseFileToImport=Файлды жүктеңіз, содан кейін %s белгішесін нұқыңыз, файлды бастапқы импорттық файл ретінде таңдаңыз ...
 SourceFileFormat=Бастапқы файл пішімі
@@ -135,3 +135,6 @@ NbInsert=Енгізілген жолдар саны: %s
 NbUpdate=Жаңартылған жолдар саны: %s
 MultipleRecordFoundWithTheseFilters=Бұл сүзгілермен бірнеше жазбалар табылды: %s
 StocksWithBatch=Топтамалық/сериялық нөмірі бар өнімдердің қорлары мен орналасуы (қоймасы)
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

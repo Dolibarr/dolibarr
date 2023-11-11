@@ -52,6 +52,8 @@ function inventoryAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory', 'remove');
+
 	return $head;
 }
 
@@ -66,10 +68,17 @@ function inventoryAdminPrepareHead()
  */
 function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 {
-	global $langs;
+	global $langs, $conf;
 
-	return array(
+	$head = array(
 		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans('Card'), 'card'),
 		array(dol_buildpath('/product/inventory/inventory.php?id='.$inventory->id.$get, 1), $langs->trans('Inventory'), 'inventory')
 	);
+
+	$h=2;
+
+	complete_head_from_modules($conf, $langs, $inventory, $head, $h, 'inventory');
+	complete_head_from_modules($conf, $langs, $inventory, $head, $h, 'inventory', 'remove');
+
+	return $head;
 }

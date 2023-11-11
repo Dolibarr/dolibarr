@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=ປະເພດຂອງແຖວ (0 = ຜະລິ�
 FileWithDataToImport=ໄຟລ with ທີ່ມີຂໍ້ມູນເພື່ອນໍາເຂົ້າ
 FileToImport=ໄຟລ Source ແຫຼ່ງທີ່ຈະນໍາເຂົ້າ
 FileMustHaveOneOfFollowingFormat=ໄຟລ to ທີ່ຈະ ນຳ ເຂົ້າຕ້ອງມີ ໜຶ່ງ ໃນຮູບແບບຕໍ່ໄປນີ້
-DownloadEmptyExample=ດາວໂຫຼດໄຟລ template ແມ່ແບບທີ່ມີຂໍ້ມູນເນື້ອໃນພາກສະຫນາມ
-StarAreMandatory=* ແມ່ນຂົງເຂດບັງຄັບ
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=ເລືອກຮູບແບບໄຟລ to ເພື່ອໃຊ້ເປັນຮູບແບບໄຟລ import ນໍາເຂົ້າໂດຍການຄລິກທີ່ໄອຄອນ %s ເພື່ອເລືອກມັນ ...
 ChooseFileToImport=ອັບໂຫຼດໄຟລ then ຈາກນັ້ນຄລິກທີ່ໄອຄອນ %s ເພື່ອເລືອກໄຟລ as ເປັນໄຟລ import ນໍາເຂົ້າແຫຼ່ງທີ່ມາ ...
 SourceFileFormat=ຮູບແບບໄຟລ Source ແຫຼ່ງຂໍ້ມູນ
@@ -135,3 +135,6 @@ NbInsert=ຈໍານວນຂອງແຖວທີ່ໃສ່ເຂົ້າ: 
 NbUpdate=ຈໍານວນແຖວທີ່ອັບເດດ: %s
 MultipleRecordFoundWithTheseFilters=ພົບບັນທຶກຫຼາຍອັນດ້ວຍຕົວກັ່ນຕອງເຫຼົ່ານີ້: %s
 StocksWithBatch=ຫຼັກຊັບແລະສະຖານທີ່ (ສາງ) ຜະລິດຕະພັນທີ່ມີຊຸດ/ialາຍເລກຊີລຽວ
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,36 +40,40 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
+if (isset($permissiontoadd) && ! isset($permission)) {
+	$permission = $permissiontoadd;
+}
+// TODO Remove this section. We already got $permissiontoadd.
 if ($module == 'propal') {
-	$permission = $user->rights->propale->creer;
+	$permission = $user->hasRight('propal', 'creer');
 } elseif ($module == 'fichinter') {
-	$permission = $user->rights->ficheinter->creer;
+	$permission = $user->hasRight('ficheinter', 'creer');
 } elseif ($module == 'order_supplier') {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->rights->fournisseur->commande->creer;
+		$permission = $user->hasRight('fournisseur', 'commande', 'creer');
 	} else {
-		$permission = $user->rights->supplier_order->creer;
+		$permission = $user->hasRight('supplier_order', 'creer');
 	}
 } elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->rights->fournisseur->facture->creer;
+		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {
-		$permission = $user->rights->supplier_invoice->creer;
+		$permission = $user->hasRight('supplier_invoice', 'creer');
 	}
 } elseif ($module == 'project') {
-	$permission = $user->rights->projet->creer;
+	$permission = $user->hasRight('projet', 'creer');
 } elseif ($module == 'action') {
-	$permission = $user->rights->agenda->myactions->create;
+	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
-	$permission = $user->rights->expedition->creer;
+	$permission = $user->hasRight('expedition', 'creer');
 } elseif ($module == 'reception') {
-	$permission = $user->rights->reception->creer;
+	$permission = $user->hasRight('reception', 'creer');
 } elseif ($module == 'project_task') {
-	$permission = $user->rights->projet->creer;
-} elseif (!isset($permission) && isset($user->rights->$module->creer)) {
-	$permission = $user->rights->$module->creer;
-} elseif (!isset($permission) && isset($user->rights->$module->write)) {
-	$permission = $user->rights->$module->write;
+	$permission = $user->hasRight('projet', 'creer');
+} elseif (!isset($permission) && $user->hasRight($module, 'creer')) {
+	$permission = $user->hasRight($module, 'creer');
+} elseif (!isset($permission) && $user->hasRight($module, 'write')) {
+	$permission = $user->hasRight($module, 'write');
 }
 
 $formcompany = new FormCompany($db);
@@ -111,17 +115,17 @@ if ($permission) {
 
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
-		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
+		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400'); ?></div>
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject = $object;
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
-		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
+		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
 		<?php
@@ -143,7 +147,8 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component
+			?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
@@ -151,7 +156,7 @@ if ($permission) {
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
-			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer) {
+			if (!empty($object->socid) && $object->socid > 1 && $user->hasRight('societe', 'creer')) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print $newcardbutton;
@@ -163,14 +168,14 @@ if ($permission) {
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 				$tmpobject = $objectsrc;
 			}
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400');
 			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
-			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
+			<input type="submit" id="add-customer-contact" class="button small" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
 				echo ' disabled';
-																				 } ?>>
+																					   } ?>>
 		</div>
 	</form>
 
@@ -259,7 +264,7 @@ $arrayfields = array(
 	'rowid' 		=> array('label'=>$langs->trans("Id"), 'checked'=>1),
 	'nature' 		=> array('label'=>$langs->trans("NatureOfContact"), 'checked'=>1),
 	'thirdparty' 	=> array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'contact' 		=> array('label'=>$langs->trans("Users").'/'.$langs->trans("Contacts"), 'checked'=>1),
+	'contact' 		=> array('label'=>$langs->trans("Users").' | '.$langs->trans("Contacts"), 'checked'=>1),
 	'type' 			=> array('label'=>$langs->trans("ContactType"), 'checked'=>1),
 	'status' 		=> array('label'=>$langs->trans("Status"), 'checked'=>1),
 	'link' 			=> array('label'=>$langs->trans("Link"), 'checked'=>1),
@@ -280,16 +285,15 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<div class="div-table-responsive-no-min">'."\n";
 print '<table class="tagtable nobottomiftotal liste">';
 
-//print '<tr class="liste_titre_filter">';
-//print '</tr>';
-
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
-print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
+if ($permission) {
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>";
 
 foreach ($list as $entry) {
@@ -303,12 +307,12 @@ foreach ($list as $entry) {
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
-		$href .= '?id='.$object->id;
+		$href .= '?id='.((int) $object->id);
 		$href .= '&action=deletecontact&token='.newToken();
-		$href .= '&lineid='.$entry->id;
+		$href .= '&lineid='.((int) $entry->id);
 
-		print "<td class='center'>";
-		print "<a href='$href'>";
+		print '<td class="center">';
+		print '<a href="'.$href.'">';
 		print img_picto($langs->trans("Unlink"), "unlink");
 		print "</a>";
 		print "</td>";
@@ -316,7 +320,17 @@ foreach ($list as $entry) {
 
 	print "</tr>";
 }
-
+if (empty($list)) {
+	$colspan = 5 + ($permission ? 1 : 0);
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">';
+	if (is_object($object) && !empty($object->thirdparty)) {
+		print $form->textwithpicto($langs->trans("NoSpecificContactAddress"), $langs->trans("NoSpecificContactAddressBis"));
+	} else {
+		print $langs->trans("NoSpecificContactAddress");
+	}
+	print '</span>';
+	print '</td></tr>';
+}
 print "</table>";
 print '</div>';
 

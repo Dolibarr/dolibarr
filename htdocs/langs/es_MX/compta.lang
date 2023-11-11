@@ -5,12 +5,9 @@ TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa 
 OptionMode=Opción de contabilidad
 OptionModeVirtual=Opción Reclamaciones-Deudas
 Param=Configuración
+AccountancyTreasuryArea=Área contable
 PaymentSocialContribution=Pago de impuesto social/fiscal
+Refund=Reembolso
 ByThirdParties=Por terceros
-VATReportByThirdParties=Sales tax report by third party
-InvoiceLate30Days =Invoices late (> 30 days)
-InvoiceLate15Days =Invoices late (15 to 30 days)
-InvoiceLateMinus15Days =Invoices late (< 15 days)
-InvoiceNotLate =To be collected (< 15 days)
-InvoiceNotLate15Days =To be collected (15 to 30 days)
-InvoiceNotLate30Days =To be collected (> 30 days)
+CheckReceipt=Ficha de depósito
+CheckReceiptShort=Ficha de depósito
