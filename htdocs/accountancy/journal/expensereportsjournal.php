@@ -493,7 +493,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
-			//if ($mt) {
+			if ($mt) {
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -501,11 +501,11 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";
-			//}
+			}
 		}
 		// VAT
 		foreach ($tabtva[$key] as $k => $mt) {
-			//if ($mt) {
+			if ($mt) {
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["ref"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -513,7 +513,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 				print '"'.($mt < 0 ? price(-$mt) : '').'"';
 				print "\n";
-			//}
+			}
 		}
 
 		// Third party
