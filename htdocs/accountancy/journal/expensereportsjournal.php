@@ -3,11 +3,11 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Eric Seigne	    <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018		Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,8 +423,8 @@ if ($action == 'writebookkeeping' && !$error) {
 			}
 		}
 
-		// Protection against a bug on line before
-		if (!$errorforline && price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
+		// Protection against a bug on lines before
+		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))) {
 			$error++;
 			$errorforline++;
 			$errorforinvoice[$key] = 'amountsnotbalanced';
@@ -622,7 +622,7 @@ if (empty($action) || $action == 'view') {
 	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
-	$r = '';
+	$i = 0;
 
 	$expensereportstatic = new ExpenseReport($db);
 	$expensereportlinestatic = new ExpenseReportLine($db);
@@ -633,6 +633,27 @@ if (empty($action) || $action == 'view') {
 		$expensereportlinestatic->comments = html_entity_decode(dol_trunc($val["comments"], 32));
 
 		$date = dol_print_date($val["date"], 'day');
+
+		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+			print '<tr class="oddeven">';
+			print "<!-- Some lines are not bound -->";
+			print "<td>".$date."</td>";
+			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
+			// Account
+			print "<td>";
+			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $val['ref']).'</span>';
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			print '</td>';
+			print "<td>";
+			print "</td>";
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
+			print "</tr>";
+
+			$i++;
+		}
 
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {
