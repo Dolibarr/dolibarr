@@ -3551,7 +3551,8 @@ if ($action == 'create') {
 					
 					$paiementfourn = new PaiementFourn($db);
 			        $paiementfourn->fetch($objp->rowid);
-					if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0 && !$paiementfourn->isReconciled()) {
+					if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0 && !$paiementfourn->isReconciled())
+					{
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
