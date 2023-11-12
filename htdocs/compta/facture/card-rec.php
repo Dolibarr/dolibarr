@@ -204,21 +204,22 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->title = GETPOST('title', 'alphanohtml');
-			$object->note_private = GETPOST('note_private', 'restricthtml');
-			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->model_pdf = GETPOST('modelpdf', 'alphanohtml');
-			$object->usenewprice = GETPOST('usenewprice', 'alphanohtml');
+			$object->subtype               = GETPOST('subtype');
+			$object->title                 = GETPOST('title', 'alphanohtml');
+			$object->note_private          = GETPOST('note_private', 'restricthtml');
+			$object->note_public           = GETPOST('note_public', 'restricthtml');
+			$object->model_pdf             = GETPOST('modelpdf', 'alphanohtml');
+			$object->usenewprice           = GETPOST('usenewprice', 'alphanohtml');
 
-			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
-			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+			$object->mode_reglement_id     = GETPOST('mode_reglement_id', 'int');
+			$object->cond_reglement_id     = GETPOST('cond_reglement_id', 'int');
 
-			$object->frequency = $frequency;
-			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
-			$object->nb_gen_max = $nb_gen_max;
-			$object->auto_validate = GETPOST('auto_validate', 'int');
-			$object->generate_pdf = GETPOST('generate_pdf', 'int');
-			$object->fk_project = $projectid;
+			$object->frequency             = $frequency;
+			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
+			$object->nb_gen_max            = $nb_gen_max;
+			$object->auto_validate         = GETPOST('auto_validate', 'int');
+			$object->generate_pdf          = GETPOST('generate_pdf', 'int');
+			$object->fk_project            = $projectid;
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
@@ -1002,6 +1003,13 @@ if ($action == 'create') {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1, 'customer').'</td>';
 		print '</tr>';
 
+		// Invoice subtype
+		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
+			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $object->subtype, 'subtype', -1, 0, 0, '');
+			print "</td></tr>";
+		}
+
 		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
 		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
@@ -1285,14 +1293,24 @@ if ($action == 'create') {
 
 		print '<table class="border centpercent tableforfield">';
 
+		// Invoice subtype
+		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
+			print $object->getSubtypeLabel('facture_rec');
+			print "</td></tr>";
+		}
+
+		// Author
 		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>';
 		print $author->getNomUrl(-1);
 		print "</td></tr>";
 
+		// Amount (excl. tax)
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 
+		// Amount tax
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td>'.price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 
