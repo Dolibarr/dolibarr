@@ -241,3 +241,4 @@ MemberFirstname=Prénom du membre
 MemberLastname=Nom de famille du membre
 MemberCodeDesc=Code membre, unique pour tous les membres
 NoRecordedMembers=Aucun membre enregistré
+MaxLevelTagToShow=Montrer %s sous-niveaux de catégories
