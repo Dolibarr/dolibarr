@@ -247,12 +247,12 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 	}
 	if ($mysoc->country_code == 'GR' && !getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 		// Invoice subtype is a requirement for Greece.
-		conf->global->INVOICE_SUBTYPE_ENABLED = 1;
+		$conf->global->INVOICE_SUBTYPE_ENABLED = 1;
 	}
 	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
-		conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
+		$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 	}
 }
 
