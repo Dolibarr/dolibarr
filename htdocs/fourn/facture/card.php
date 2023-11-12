@@ -701,9 +701,9 @@ if (empty($reshook)) {
 		if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0) {
 			$paiementfourn = new PaiementFourn($db);
 			$result = $paiementfourn->fetch(GETPOST('paiement_id'));
-			if ($result > 0) { 
-				$result = $paiementfourn->delete(); 
-				if ($result > 0) { 
+			if ($result > 0) {
+				$result = $paiementfourn->delete();
+				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 				}
 			}
