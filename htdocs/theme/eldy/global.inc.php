@@ -4966,7 +4966,7 @@ table.table-fiche-title {
 }
 
 
-div.backgreypublicpayment { background-color: var(--colorbackbody); padding: 20px; border-bottom: 1px solid #ddd; }
+div.backgreypublicpayment { background-color: var(--colorbacktitle1); padding: 20px; border-bottom: 1px solid #ddd; }
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
