@@ -926,7 +926,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function isReconciled()
 	{
-	    $accountline = new AccountLine($this->db);
+		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro;
 	}
