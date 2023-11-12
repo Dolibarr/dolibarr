@@ -650,7 +650,17 @@ class ImportCsv extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
-									$newval = $res; 	// We get new value computed.
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$newval = $res; 	// We get new value computed.
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+												"\n",
+												array_merge([$classinstance->error], $classinstance->errors)
+										);
+										$errorforthistable++;
+										$error++;
+									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
@@ -810,12 +820,22 @@ class ImportCsv extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
-									$fieldArr = explode('.', $fieldname);
-									if (count($fieldArr) > 0) {
-										$fieldname = $fieldArr[1];
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$fieldArr = explode('.', $fieldname);
+										if (count($fieldArr) > 0) {
+											$fieldname = $fieldArr[1];
+										}
+										$listfields[] = $fieldname;
+										$listvalues[] = $res;
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+												"\n",
+												array_merge([$classinstance->error], $classinstance->errors)
+										);
+										$errorforthistable++;
+										$error++;
 									}
-									$listfields[] = $fieldname;
-									$listvalues[] = $res;
 								}
 							}
 						} else {
