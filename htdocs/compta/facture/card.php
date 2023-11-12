@@ -122,6 +122,9 @@ if ($id > 0 || !empty($ref)) {
 			$fetch_situation = true;
 		}
 		$ret = $object->fetch($id, $ref, '', '', $fetch_situation);
+		if ($ret > 0 && isset($object->fk_project)) {
+			$ret = $object->fetch_project();
+		}
 	}
 }
 
