@@ -705,6 +705,7 @@ if (empty($reshook)) {
 				$result = $paiementfourn->delete();
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					exit;
 				}
 			}
 			if ($result < 0) {
