@@ -1708,16 +1708,16 @@ class Ticket extends CommonObject
 	/**
 	 * Add message into database
 	 *
-	 * @param User 	 $user      		  User that creates
-	 * @param int  	 $notrigger 		  0=launch triggers after, 1=disable triggers
-	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
-	 * @param array	 $mimetype_list       List of MIME type of attached files
-	 * @param array	 $mimefilename_list   List of attached file name in message
-	 * @param boolean	 $send_email      Whether the message is sent by email
-	 * @param boolean	$public_area	  1=Is the public area
-	 * @return int						  <0 if KO, >0 if OK
+	 * @param 	User 	$user      		  	User that creates
+	 * @param 	int  	$notrigger 		  	0=launch triggers after, 1=disable triggers
+	 * @param 	array	$filename_list      List of files to attach (full path of filename on file system)
+	 * @param 	array	$mimetype_list      List of MIME type of attached files
+	 * @param 	array	$mimefilename_list  List of attached file name in message
+	 * @param 	boolean	$send_email      	Whether the message is sent by email
+	 * @param   int     $public_area    	0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
+	 * @return 	int						  	<0 if KO, >0 if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = false)
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -2528,8 +2528,10 @@ class Ticket extends CommonObject
 	 *
 	 * @param   User    $user       	User for action
 	 * @param   string  $action     	Action string
-	 * @param   int     $private    	1=Message is private. TODO Implement this. What does this means ?
-	 * @param   int     $public_area    1=Is the public area
+	 * @param   int     $private    	1=Message is private (must not be visible by external users)
+	 * @param   int     $public_area    0=Default,
+	 * 									1=If we are creating the message from a public area, so confirmation email will be sent to the author
+	 * 									and we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set
 	 * @return  int						<0 if KO, >= 0 if OK
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
@@ -2856,12 +2858,13 @@ class Ticket extends CommonObject
 					}
 				}
 
-				// Set status to "answered" if not set yet, but only if internal user and not private message
-				// Or set status to "answered" if the client has answered and if the ticket has started
+				// Set status back to "In progress" if not set yet, but only if internal user and not a private message
+				// Or set status to "In porgress" if the client has answered and if the ticket has started
+				// So we are sure to leave the STATUS_DRAFT, STATUS_NEED_INFO.
 				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
 					($object->status > self::STATUS_IN_PROGRESS && $public_area)
 				) {
-					$object->setStatut(3);
+					$object->setStatut($object::STATUS_IN_PROGRESS);
 				}
 				return 1;
 			} else {

@@ -277,10 +277,15 @@ class ActionsTicket extends CommonHookActions
 
 		$action = GETPOST('action', 'aZ09');
 
+		print '<div class="ticketpublicarea ticketlargemargin centpercent" style="padding-top: 0">';
 		$this->viewTicketOriginalMessage($user, $action, $object);
+		print '</div>';
 
 		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-			print '<table class="border" style="width:100%;">';
+			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border centpercent">';
 
 			print '<tr class="liste_titre">';
 
@@ -391,8 +396,12 @@ class ActionsTicket extends CommonHookActions
 			}
 
 			print '</table>';
+			print '</div>';
+			print '</div>';
 		} else {
+			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 			print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
+			print '</div>';
 		}
 	}
 

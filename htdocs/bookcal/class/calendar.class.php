@@ -886,7 +886,7 @@ class Calendar extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("bookcal@bookcal");
+
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
@@ -983,7 +983,7 @@ class Calendar extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 
 		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
 			$conf->global->BOOKCAL_MYOBJECT_ADDON = 'mod_calendar_standard';
@@ -1048,7 +1048,7 @@ class Calendar extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_calendar';

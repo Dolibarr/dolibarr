@@ -1068,6 +1068,7 @@ span.fa.fa-plus-circle.paddingleft {
 /* Themes for badges */
 
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/flags-sprite.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -4106,10 +4107,6 @@ div.pagination li.litext a {
   padding-right: 10px;
   padding-left: 4px;
   font-weight: bold;
-}
-div.pagination li.litext a:hover {
-	background-color: transparent;
-	background-image: none;
 }
 div.pagination li.litext a:hover {
 	background-color: transparent;

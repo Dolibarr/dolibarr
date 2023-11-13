@@ -197,7 +197,7 @@ if (is_array($results)) {
 
 			// Label
 			print $langs->trans("Label").' : ';
-			print '<b>'.dol_escape_htmltag($object->titre).'</b><br>';
+			print '<b>'.dol_escape_htmltag($object->title).'</b><br>';
 
 			// Date
 			print  $langs->trans("DateExpected").' : ';

@@ -2902,6 +2902,12 @@ class SupplierProposalLine extends CommonObjectLine
 	public $product_label;
 
 	/**
+	 * Custom label
+	 * @var string
+	 */
+	public $label;
+
+	/**
 	 * Product description
 	 * @var string
 	 */
