@@ -149,7 +149,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Add line
-	if ($action == 'addline' && $user->rights->bom->write) {
+	if ($action == 'addline' && $user->hasRight('bom', 'write')) {
 		$langs->load('errors');
 		$error = 0;
 		$predef = '';
@@ -177,6 +177,7 @@ if (empty($reshook)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+			if (empty($fk_unit)) $fk_unit = $product->fk_unit;
 		}
 
 		if ($qty == '') {
@@ -235,7 +236,7 @@ if (empty($reshook)) {
 	}
 
 	// Update line
-	if ($action == 'updateline' && $user->rights->bom->write) {
+	if ($action == 'updateline' && $user->hasRight('bom', 'write')) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -732,7 +733,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				// Create MO
 			if (isModEnabled('mrp')) {
-				if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write)) {
+				if ($object->status == $object::STATUS_VALIDATED && $user->hasRight('mrp', 'write')) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&token='.newToken().'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>'."\n";
 				}
 			}

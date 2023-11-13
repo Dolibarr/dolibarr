@@ -325,7 +325,7 @@ class ExportCsv extends ModeleExports
 		$newvalue = str_replace("\n", '\n', $newvalue);
 		if (!empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue) {
 			// If we must use enclusure on text with CR/LF)
-			if ($conf->global->USE_STRICT_CSV_RULES == 1) {
+			if (getDolGlobalInt('USE_STRICT_CSV_RULES') == 1) {
 				// If we use strict CSV rules (original value must remain but we add quote)
 				$newvalue = $oldvalue;
 			}

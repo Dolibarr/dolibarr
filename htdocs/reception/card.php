@@ -262,7 +262,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -1074,7 +1074,7 @@ if ($action == 'create') {
 				if (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
-				if (isModEnabled('productbatch')) {
+				if (!isModEnabled('productbatch')) {
 					print ' <br><center><a href="#" id="autofill"><span class="fas fa-fill pictofixedwidth" style=""></span> '.$langs->trans("Fill").'</a>';
 					print ' &nbsp; &nbsp; <a href="#" id="autoreset"><span class="fas fa-eraser pictofixedwidth" style=""></span>'.$langs->trans("Reset").'</a></center><br>';
 				}

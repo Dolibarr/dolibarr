@@ -207,7 +207,7 @@ if ($nextquarter < 4) {
 $description = $fsearch;
 $builddate = dol_now();
 
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('comptabilite')) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {

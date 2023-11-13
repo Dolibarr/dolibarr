@@ -288,9 +288,8 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->titre				= $obj->title;
 				$this->title				= $obj->title;
-				$this->ref = $obj->title;
+				$this->ref                  = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
 				$this->duration = $obj->duree;
@@ -584,7 +583,7 @@ class FichinterRec extends Fichinter
 	public function set_auto($user, $freq, $courant)
 	{
 		// phpcs:enable
-		if ($user->rights->fichinter->creer) {
+		if ($user->hasRight('fichinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";

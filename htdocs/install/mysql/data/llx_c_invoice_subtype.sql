@@ -41,3 +41,6 @@ insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102,
 insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102, '11.2', 'ΑΠΥ', 1);
 insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102, '11.3', 'Απλοποιημένο Τιμολόγιο', 0);
 insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102, '11.5', 'Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων', 0);
+insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102, '5.1', 'Πιστωτικό Τιμολόγιο / Συσχετιζόμενο', 0);
+insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
+insert into llx_c_invoice_subtype (fk_country, code, label, active) VALUES (102, '11.4', 'Πιστωτικό Στοιχείο Λιανικής', 1);

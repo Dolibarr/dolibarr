@@ -128,12 +128,12 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
-	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer) {
+	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$tmpobject = new Account($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'account';
-	} elseif ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) {
+	} elseif ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$tmpobject = new Project($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -143,7 +143,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'user';
-	} elseif ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) {
+	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -156,7 +156,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 	}
 }
 
-if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
+if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
 	if ($object->delete($user) >= 0) {
 		if ($backtopage) {
 			header("Location: ".$backtopage);
@@ -174,12 +174,12 @@ if ($elemid && $action == 'addintocategory' &&
 	(($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) ||
 	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
-	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
-	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
+	 ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) ||
+	 ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) ||
 	 ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) ||
 	 ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) ||
-	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
+	 ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer'))
    )) {
 	if ($type == Categorie::TYPE_PRODUCT) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -318,12 +318,12 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	if ($user->rights->categorie->creer) {
+	if ($user->hasRight('categorie', 'creer')) {
 		$socid = ($object->socid ? "&socid=".$object->socid : "");
 		print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.$type.'">'.$langs->trans("Modify").'</a>';
 	}
 
-	if ($user->rights->categorie->supprimer) {
+	if ($user->hasRight('categorie', 'supprimer')) {
 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
 	}
 }
@@ -331,7 +331,7 @@ if (empty($reshook)) {
 print "</div>";
 
 $newcardbutton = '';
-if (!empty($user->rights->categorie->creer)) {
+if ($user->hasRight('categorie', 'creer')) {
 	$link = DOL_URL_ROOT.'/categories/card.php';
 	$link .= '?action=create';
 	$link .= '&type='.$type;

@@ -168,7 +168,7 @@ class FormProjets extends Form
 		}
 
 		$projectsListId = false;
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$projectstatic = new Project($this->db);
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		}
@@ -187,7 +187,7 @@ class FormProjets extends Form
 			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
 				$sql .= " AND (p.fk_soc=" . ((int) $socid) . " OR p.fk_soc IS NULL)";
 			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) . ") OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) . ") OR p.fk_soc IS NULL)";
 			}
 		}
 		if (!empty($filterkey)) {
@@ -352,7 +352,7 @@ class FormProjets extends Form
 		}
 
 		if (empty($projectsListId)) {
-			if (empty($usertofilter->rights->projet->all->lire)) {
+			if (!$usertofilter->hasRight('projet', 'all', 'lire')) {
 				$projectstatic = new Project($this->db);
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
 			}
@@ -409,7 +409,7 @@ class FormProjets extends Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire)) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$usertofilter->hasRight('societe', 'lire')) {
 						// Do nothing
 					} else {
 						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {
