@@ -9099,7 +9099,7 @@ class Form
 				}
 
 				global $linkedObjectBlock;
-				usort($objects, function ($a, $b) {
+                usort($objects, function($a, $b) {
                     return $b->id - $a->id;
                 });
 				$linkedObjectBlock = $objects;
