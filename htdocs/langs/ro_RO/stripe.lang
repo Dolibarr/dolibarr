@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Cheie live Webhook
 ONLINE_PAYMENT_WAREHOUSE=Stoc de utilizat pentru scădere atunci când se efectuează plata online <br> (TODO Când opțiunea de a reduce stocul se face printr-o acțiune pe factură, iar plata online generează factura?)
 StripeLiveEnabled=Stripe live activat (altfel test/modul sandbox)
 StripeImportPayment=Import plată Stripe
-ExampleOfTestCreditCard=Exemplu de card de credit pentru testul SEPA: %s => valid, %s => eroare CVC, %s => expirat, %s => taxare eșuată
+ExampleOfTestCreditCard=Exemplu plată de probă cu card de credit: %s => validă, %s => eroare CVC, %s => card expirat, %s => taxare eșuată
 ExampleOfTestBankAcountForSEPA=Exemplu de cont bancar BAN pentru testul de debit direct: %s
 StripeGateways=Gateway-uri Stripe
 OAUTH_STRIPE_TEST_ID=ID-ul de conectare Stripe a clientului (ca _...)
@@ -51,6 +51,7 @@ StripeAccount=Contul Stripe
 StripeChargeList=Listă de comisioane Stripe
 StripeTransactionList=Listă de tranzacții Stripe
 StripeCustomerId=ID client Stripe
+StripePaymentId=Id plată Stripe
 StripePaymentModes=Moduri de plată Stripe
 LocalID=ID local
 StripeID=ID Stripe

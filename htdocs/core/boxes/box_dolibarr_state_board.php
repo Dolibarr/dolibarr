@@ -20,12 +20,11 @@
 
 /**
  *	\file       htdocs/core/boxes/box_dolibarr_state_board.php
- *	\ingroup
+ *	\ingroup	core
  *	\brief      Module Dolibarr state base
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 
 /**
@@ -79,9 +78,10 @@ class box_dolibarr_state_board extends ModeleBoxes
 		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS)) {
 			$hookmanager = new HookManager($this->db);
 			$hookmanager->initHooks(array('index'));
-			$object = new stdClass;
+			$object = new stdClass();
 			$action = '';
-			$hookmanager->executeHooks('addStatisticLine', array(), $object, $action);
+			$parameters =array();
+			$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
 			$boxstatFromHook = $hookmanager->resPrint;
@@ -301,7 +301,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 				$this->info_box_contents[0][0] = array(
 					'tr' => 'class="nohover"',
-					'td' => '',
+					'td' => 'class="tdwidgetstate"',
 					'textnoformat' => $boxstat
 				);
 			}

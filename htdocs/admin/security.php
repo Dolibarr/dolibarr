@@ -130,7 +130,8 @@ if ($action == 'activate_encryptdbpassconf') {
 		header("Location: security.php");
 		exit;
 	} else {
-		setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		//setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		setEventMessages($langs->trans('InstrucToClearPass', $langs->transnoentitiesnoconv("DatabasePassword")), null, 'warnings');
 	}
 }
 
@@ -273,7 +274,7 @@ print '</form>';
 
 
 // Pattern for Password Perso
-if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
+if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';

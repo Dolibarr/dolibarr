@@ -78,14 +78,14 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
-if (empty($user->rights->fournisseur->commande->lire)) {
+if (!$user->hasRight("fournisseur", "commande", "lire")) {
 	accessforbidden();
 }
 
 // Init Hooks
 $hookmanager->initHooks(array('ordersuppliercardinfo'));
 
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -188,7 +188,7 @@ print dol_get_fiche_end();
 // Actions buttons
 
 $out = '';
-$permok = $user->rights->agenda->myactions->create;
+$permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
 	$out .= '&originid='.$object->id.'&origin=order_supplier';
 }
@@ -197,7 +197,7 @@ if ($permok) {
 print '<div class="tabsAction">';
 
 if (isModEnabled('agenda')) {
-	if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
+	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';

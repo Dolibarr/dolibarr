@@ -104,10 +104,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= '<input type="hidden" name="param4" value="COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param5" value="COMPANY_DIGITARIA_CLEAN_WORDS">';
 		$texte .= '<table class="nobordernopadding centpercent">';
-		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER.'">', $tooltip, 1, 1);
-		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER.'">', $tooltip, 1, 1);
-		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER.'">', $tooltip, 1, 1);
-		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER.'">', $tooltip, 1, 1);
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER').'">', $tooltip, 1, 1);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER').'">', $tooltip, 1, 1);
+		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER').'">', $tooltip, 1, 1);
+		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER').'">', $tooltip, 1, 1);
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}', '{s4}')."<br>\n";
@@ -120,14 +120,14 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX)) {
-			$texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = '.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX."<br>\n";
+			$texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = ' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')."<br>\n";
 		}
 		// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
 		if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
 			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 
 		$texte .= '<tr><td>';
@@ -220,7 +220,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			}
 			// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 			if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX)) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
-				$codetouse = preg_replace('/'.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
+				$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
 			}
 
 			$this->code = $prefix.strtoupper(substr($codetouse, 0, $width));

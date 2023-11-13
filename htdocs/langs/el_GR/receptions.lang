@@ -52,3 +52,6 @@ ReceptionExist=Υπάρχει ήδη μια παραλαβή
 ReceptionBackToDraftInDolibarr=Επιστροφή σε προσχέδιο της παραλαβής %s 
 ReceptionClassifyClosedInDolibarr=Η παραλαβή %s ταξινομήθηκε ως Κλειστή
 ReceptionUnClassifyCloseddInDolibarr=Άνοιγμα ξανά της παραλαβής %s
+RestoreWithCurrentQtySaved=Συμπληρώστε τις ποσότητες με τις πιο πρόσφατες αποθηκευμένες τιμές
+ReceptionUpdated=Reception sucessfully updated
+ReceptionDistribution=Reception distribution

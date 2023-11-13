@@ -29,3 +29,5 @@ LDAPPasswordHashType=Tipo de hash de contraseña
 LDAPPasswordHashTypeExample=Tipo de hash de contraseña utilizado en el servidor
 SupportedForLDAPExportScriptOnly=Solo es compatible con un script de exportación ldap
 SupportedForLDAPImportScriptOnly=Solo es compatible con un script de importación ldap
+LDAPUserAccountControl = userAccountControl en la creación (directorio activo)
+LDAPUserAccountControlExample = 512 Cuenta normal / 546 Cuenta normal + Sin contraseña + Deshabilitado (consulte: https://fr.wikipedia.org/wiki/Active_Directory)

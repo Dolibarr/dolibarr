@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,8 @@
 /**
  *      \file       htdocs/modulebuilder/template/scripts/mymodule.php
  *		\ingroup    mymodule
- *      \brief      This file is an example for a command line script for module MyModule
+ *      \brief      This file is a command line script for module MyModule. You can execute it with:
+ *      			php mymodule/scripts/mymodule.php
  */
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db

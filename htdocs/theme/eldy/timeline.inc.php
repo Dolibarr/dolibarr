@@ -145,6 +145,7 @@ a.timeline-btn:hover
 	padding: 10px;
 }
 .timeline > li > .fa,
+.timeline > li > .fas,
 .timeline > li > .glyphicon,
 .timeline > li > .ion {
 	width: 30px;
@@ -211,6 +212,11 @@ a.timeline-btn:hover
 .timeline-documents{
 	margin-right: 5px;
 }
+
+.messaging-author {
+	width: 100px;
+}
+
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)

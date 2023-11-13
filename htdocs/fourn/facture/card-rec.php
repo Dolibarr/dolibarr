@@ -107,26 +107,27 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$permissionnote = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;; // Used by the include of actions_lineupdonw.inc.php
+$permissionnote = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"); // Used by the include of actions_lineupdonw.inc.php
 
-$usercanread = $user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire;
-$usercancreate = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;
-$usercandelete = $user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer;
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send);
+$usercanread = $user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire");
+$usercancreate = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer");
+$usercandelete = $user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer");
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
 
-$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
-$usercancreatemargin = $user->rights->margins->creer;
-$usercanreadallmargin = $user->rights->margins->liretous;
-$usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
+$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight("produit", "ignore_price_min_advance")) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usercancreatemargin = $user->hasRight("margins", "creer");
+$usercanreadallmargin = $user->hasRight("margins", "liretous");
+$usercancreatewithdrarequest = $user->hasRight("prelevement", "bons", "creer");
 
 $now = dol_now();
 
 $error = 0;
 
 $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
+
 
 
 /*
@@ -190,7 +191,8 @@ if (empty($reshook)) {
 		if (! $error) {
 			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
-			$object->libelle = GETPOST('libelle', 'alpha');
+			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
+			$object->label = GETPOST('libelle', 'alpha');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 
@@ -221,6 +223,7 @@ if (empty($reshook)) {
 			$object->mode_reglement_code = $oldinvoice->mode_reglement_code;
 
 			$result = $object->create($user, $oldinvoice->id);
+
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
 				if ($result < 0) {
@@ -251,7 +254,7 @@ if (empty($reshook)) {
 
 	// Delete
 	//TODO : Droits
-	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer)) {
+	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"))) {
 		$object->delete($user);
 
 		header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');
@@ -284,7 +287,7 @@ if (empty($reshook)) {
 		$result = $object->setValueFrom('titre', $title, '', null, 'text', '', $user);
 
 		if ($result > 0) {
-			$object->titre = $title;
+			$object->titre = $title;	// deprecated
 			$object->title = $title;
 			$object->ref = $object->title;
 		} else {
@@ -364,6 +367,7 @@ if (empty($reshook)) {
 		// Set label
 		$object->fetch($id);
 		$object->libelle = GETPOST('libelle');
+		$object->label = GETPOST('libelle');
 		$result = $object->update($user);
 
 		if ($result < 0) {
@@ -398,7 +402,7 @@ if (empty($reshook)) {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -796,7 +800,7 @@ if (empty($reshook)) {
 			$label = $product->label;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight("produit", "ignore_price_min_advance")) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -911,12 +915,12 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Title") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="title" value="' . dol_escape_htmltag(GETPOST("title", 'alphanohtml')) . '">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="' . dol_escape_htmltag(GETPOST("title", 'alphanohtml')) . '" autofocus>';
 		print '</td></tr>';
 
 		// Ref supplier
-		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("SupplierRef") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="ref_supplier" value="' . $object->ref_supplier . '">';
+		print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("RefSupplier") . '</td><td>';
+		print '<input class="flat maxwidth500" type="text" name="ref_supplier" value="' . $object->ref_supplier . '">';
 		print '</td></tr>';
 
 		// Third party
@@ -950,7 +954,7 @@ if ($action == 'create') {
 		}
 		$htmltext .= '</i>';
 
-		// Libelle
+		// Label
 		print '<tr><td class="titlefieldcreate">' . $langs->trans("Label") . '</td><td>';
 		print '<input class="flat quatrevingtpercent" type="text" name="libelle" value="' . $object->label . '">';
 		print '</td></tr>';
@@ -1021,6 +1025,8 @@ if ($action == 'create') {
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre(img_picto('', 'recurring', 'class="pictofixedwidth"') . $title, '', '');
 
+		print '<span class="opacitymedium">'.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name')).'</span><br><br>';
+
 		print dol_get_fiche_head(null, '', '', 0);
 
 		print '<table class="border centpercent">';
@@ -1049,7 +1055,7 @@ if ($action == 'create') {
 
 		// Auto generate document
 		if (!empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION)) {
-			print "<tr><td>" . $langs->trans("StatusOfGeneratedDocuments") . "</td><td>";
+			print "<tr><td>" . $langs->trans("StatusOfAutoGeneratedDocuments") . "</td><td>";
 			$select = array('0' => $langs->trans('DoNotGenerateDoc'), '1' => $langs->trans('AutoGenerateDoc'));
 			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
 			print "</td></tr>";
@@ -1062,9 +1068,9 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled("service")) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled("product")) {
 			$title = $langs->trans("Services");
 		}
 
@@ -1127,9 +1133,9 @@ if ($action == 'create') {
 
 		$morehtmlref = '';
 		if ($action != 'edittitle') {
-			$morehtmlref .= $form->editfieldkey($object->titre, 'title', $object->titre, $object, $usercancreate, '', '', 0, 2);
+			$morehtmlref .= $form->editfieldkey($object->title, 'title', $object->title, $object, $usercancreate, '', '', 0, 2);
 		} else {
-			$morehtmlref .= $form->editfieldval('', 'title', $object->titre, $object, $usercancreate, 'string');
+			$morehtmlref .= $form->editfieldval('', 'title', $object->title, $object, $usercancreate, 'string');
 		}
 		$morehtmlref .= '<div class="refidno">';
 		//Ref supplier
@@ -1254,7 +1260,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($usercancreate && $action != 'editmulticurrencycode' && !empty($object->brouillon)) {
+			if ($usercancreate && $action != 'editmulticurrencycode' && $object->suspended == $object::STATUS_SUSPENDED) {
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
@@ -1270,7 +1276,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
-				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+				if ($usercancreate && $action != 'editmulticurrencyrate' && $object->suspended == $object::STATUS_SUSPENDED && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 				}
 				print '</tr></table>';
@@ -1625,7 +1631,7 @@ if ($action == 'create') {
 		}
 
 		// Delete
-		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteinvoice&token='.newToken(), 'delete', ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer));
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteinvoice&token='.newToken(), 'delete', ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer")));
 
 		print '</div>';
 

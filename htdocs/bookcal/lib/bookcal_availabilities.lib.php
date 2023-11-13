@@ -31,12 +31,12 @@ function availabilitiesPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("bookcal@bookcal");
+	$langs->load("agenda");
 
-	$showtabofpagecontact = 1;
+	$showtabofpagecontact = 0;
 	$showtabofpagenote = 1;
-	$showtabofpagedocument = 1;
-	$showtabofpageagenda = 1;
+	$showtabofpagedocument = 0;
+	$showtabofpageagenda = 0;
 
 	$h = 0;
 	$head = array();

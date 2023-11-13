@@ -51,8 +51,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->asset->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('asset', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();
@@ -65,7 +65,8 @@ if (!isModEnabled('asset')) accessforbidden();
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

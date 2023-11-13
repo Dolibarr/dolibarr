@@ -119,7 +119,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$amounts = 0;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
-					$amounts += price2num($amount);
+					$amounts += (double) $amount;
 				}
 			} elseif (!empty($object->amount)) {
 				$amounts = $object->amount;

@@ -360,10 +360,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// Output to file
 		$pdf->Output($file, 'F');
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
-
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 

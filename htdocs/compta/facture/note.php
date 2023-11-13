@@ -48,7 +48,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Security check
 $socid = 0;

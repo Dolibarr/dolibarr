@@ -173,7 +173,7 @@ $help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
 $help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
 $help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
 foreach ($price_globals->listGlobalVariables() as $entry) {
-	$help_text .= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
+	$help_text .= '<br><b>#global_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
 }
 
 //Price expression editor

@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/comm/propal/info.php
+ *      \file       htdocs/supplier_proposal/info.php
  *      \ingroup    propal
  *      \brief      Page d'affichage des infos d'une proposition commerciale
  */
@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -74,7 +74,7 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 $morehtmlref .= $object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
 	if (0) {

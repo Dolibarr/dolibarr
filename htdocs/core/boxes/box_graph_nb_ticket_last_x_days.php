@@ -26,13 +26,13 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show new daily tickets
  */
 class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 {
 
 	public $boxcode = "box_graph_nb_ticket_last_x_days";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -107,7 +107,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$minimumdatec = dol_time_plus_duree($today, -1 * ($days - 1), 'd');
 		$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.datec AS DATE) > '".$this->db->idate($minimumdatec)."'";
@@ -120,7 +120,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					while ($minimumdatecformated < $objp->datec) {
-						$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+						$dataseries[] = array('label' => dol_print_date($minimumdatec, 'day'), 'data' => 0);
 						$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 						$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					}
@@ -130,7 +130,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 					$i++;
 				}
 				while (count($dataseries) < $days) {
-					$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+					$dataseries[] = array('label' => dol_print_date($minimumdatec, 'day'), 'data' => 0);
 					$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 					$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					$i++;
@@ -139,7 +139,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
-			$stringtoshow .= '<script type="text/javascript">
+			$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
 						jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();

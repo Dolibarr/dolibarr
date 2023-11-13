@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2023	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-	$prodcustprice = new Productcustomerprice($db);
+	$prodcustprice = new ProductCustomerPrice($db);
 }
 
 
@@ -84,7 +85,7 @@ if (empty($reshook)) {
 		$search_prod = $search_label = $search_price = $search_price_ttc = '';
 	}
 
-	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		if (!(GETPOST('prodid', 'int') > 0)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
@@ -118,7 +119,8 @@ if (empty($reshook)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-				$sql .= " AND t.code ='".$db->escape($vatratecode)."'";
+				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+				$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -150,7 +152,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Delete price by customer
 		$prodcustprice->id = GETPOST('lineid', 'int');
 		$result = $prodcustprice->delete($user);
@@ -163,7 +165,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -255,7 +257,7 @@ print dol_get_fiche_end();
 
 
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-	$prodcustprice = new Productcustomerprice($db);
+	$prodcustprice = new ProductCustomerPrice($db);
 
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -306,6 +308,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="socid" value="'.$object->id.'">';
 		print '<table class="border centpercent">';
 		print '<tr>';
@@ -321,7 +325,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// VAT
 		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, '', false, 1);
+		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, '', $object->id, 0, '', false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -329,7 +333,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
+		print $form->selectPriceBaseType(GETPOST("price_base_type", "aZ09"), "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -452,11 +456,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAllLog($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		} else {
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$nbtotalofrecords = $result;
 			}
 		}
@@ -528,15 +532,31 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		 */
 		print "\n".'<div class="tabsAction">'."\n";
 
-		if ($user->rights->produit->creer || $user->rights->service->creer) {
+		if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&token='.newToken().'&socid='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
 		}
 		print "\n</div>\n";
 
 
+		$arrayfields = array();
+		foreach ($prodcustprice->fields as $key => $val) {
+			// If $val['visible']==0, then we never show the field
+			if (!empty($val['visible'])) {
+				$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+				$arrayfields['t.'.$key] = array(
+					'label'=>$val['label'],
+					'checked'=>(($visible < 0) ? 0 : 1),
+					'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+					'position'=>$val['position'],
+					'help'=> isset($val['help']) ? $val['help'] : ''
+				);
+			}
+		}
+		$arrayfields = dol_sort_array($arrayfields, 'position');
+
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
@@ -554,22 +574,38 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+		if (!empty($sortfield)) {
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+		}
+		if (!empty($sortorder)) {
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+		}
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent liste">';
+
+		$param = 'socid='.$object->id.'&';
+		if ($search_prod) {
+			$param .= '&search_prod='.urlencode($search_prod);
+		}
+		if ($search_label) {
+			$param .= '&search_label='.urlencode($search_label);
+		}
+		if ($search_price) {
+			$param .= '&search_price='.urlencode($search_price);
+		}
+		if ($search_price) {
+			$param .= '&search_price='.urlencode($search_price);
+		}
+		if ($search_price_ttc) {
+			$param .= '&search_price_ttc='.urlencode($search_price_ttc);
+		}
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td>'.$langs->trans("Product").'</td>';
-		print '<td>'.$langs->trans('RefCustomer').'</td>';
-		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
-		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
-		print '<td class="right">'.$langs->trans("VAT").'</td>';
-		print '<td class="right">'.$langs->trans("HT").'</td>';
-		print '<td class="right">'.$langs->trans("TTC").'</td>';
-		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
-		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
-		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
+		foreach ($prodcustprice->fields as $key => $val) {
+			if (!empty($arrayfields['t.'.$key]['checked'])) {
+				print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
+			}
+		}
 		print '<td></td>';
 		print '</tr>';
 
@@ -581,8 +617,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
-			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
+			print '<td class="liste_titre left"><input type="text" class="flat width75" name="search_price" value="'.$search_price.'"></td>';
+			print '<td class="liste_titre left"><input type="text" class="flat width75" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
@@ -604,22 +640,22 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticprod->getNomUrl(1)."</td>";
-				print "<td>".$staticprod->label."</td>";
-				print '<td>'.$line->ref_customer.'</td>';
-				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
-				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
-				print '<td class="right">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
-				print '<td class="right">'.price($line->price)."</td>";
-				print '<td class="right">'.price($line->price_ttc)."</td>";
-				print '<td class="right">'.price($line->price_min).'</td>';
-				print '<td class="right">'.price($line->price_min_ttc).'</td>';
+				print '<td class="left">'.$staticprod->getNomUrl(1)."</td>";
+				print '<td class="left">'.$staticprod->label."</td>";
+				print '<td class="left">'.$line->ref_customer.'</td>';
+				print '<td class="left">'.dol_print_date($line->datec, "dayhour")."</td>";
+				print '<td class="left">'.$langs->trans($line->price_base_type)."</td>";
+				print '<td class="left">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
+				print '<td class="left">'.price($line->price)."</td>";
+				print '<td class="left">'.price($line->price_ttc)."</td>";
+				print '<td class="left">'.price($line->price_min).'</td>';
+				print '<td class="left">'.price($line->price_min_ttc).'</td>';
 				// User
-				print '<td class="right">';
+				print '<td class="left">';
 				print $userstatic->getNomUrl(-1);
 				print '</td>';
 				// Action
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<td class="right nowraponall">';
 					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
 					print img_info();
@@ -639,7 +675,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			}
 		} else {
 			$colspan = 10;
-			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
+			if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 				$colspan += 1;
 			}
 			print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';

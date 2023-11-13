@@ -88,7 +88,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	{
 		// phpcs:enable
 		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
+		global $form, $formcompany;
 
 		$ret = $this->getObject($id, $ref);
 
@@ -133,7 +133,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				$s .= ' ';
 
 				if ($conf->use_javascript_ajax) {
-					$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$s .= '<a href="#" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
 					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
@@ -161,7 +161,7 @@ class ActionsCardCompany extends ActionsCardCommon
 					$s .= ' &nbsp; ';
 
 					if ($conf->use_javascript_ajax) {
-						$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+						$s .= '<a href="#" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					} else {
 						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';

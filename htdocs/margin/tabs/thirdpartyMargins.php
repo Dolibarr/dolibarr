@@ -62,7 +62,7 @@ $hookmanager->initHooks(array('thirdpartymargins', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $object->id, '');
 
-if (empty($user->rights->margins->liretous)) {
+if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
 
@@ -130,7 +130,7 @@ if ($socid > 0) {
 		print '</td></tr>';
 	}
 
-	if (((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) && $object->fournisseur) {
+	if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -163,7 +163,7 @@ if ($socid > 0) {
 	print "</table>";
 
 	print '</div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -186,7 +186,7 @@ if ($socid > 0) {
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-	if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+	if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
 	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";

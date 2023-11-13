@@ -38,8 +38,8 @@ $nbsecondsold = GETPOSTINT('nbsecondsold');
 
 // Define filelog to discard it from purge
 $filelog = '';
-if (!empty($conf->syslog->enabled)) {
-	$filelog = $conf->global->SYSLOG_FILE;
+if (isModEnabled('syslog')) {
+	$filelog = getDolGlobalString('SYSLOG_FILE');
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
@@ -96,7 +96,7 @@ print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
-if (!empty($conf->syslog->enabled)) {
+if (isModEnabled('syslog')) {
 	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;

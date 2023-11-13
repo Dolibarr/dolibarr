@@ -2,7 +2,7 @@
 ContractsArea=Àrea contractes
 ListOfContracts=Llistat de contractes
 AllContracts=Tots els contractes
-ContractCard=Fitxa contracte
+ContractCard=Contracte
 ContractStatusNotRunning=Fora de servei
 ContractStatusDraft=Esborrany
 ContractStatusValidated=Validat

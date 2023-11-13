@@ -27,19 +27,15 @@
  *  \brief      File with parent class for generating members to PDF
  */
 
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
 
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFMember extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
@@ -51,7 +47,6 @@ abstract class ModelePDFMember extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-
 		$type = 'member';
 		$list = array();
 
@@ -66,91 +61,60 @@ abstract class ModelePDFMember extends CommonDocGenerator
 /**
  *  Classe mere des modeles de numerotation des references de members
  */
-abstract class ModeleNumRefMembers
+abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
+	public $code_modifiable; // Editable code
+
+	public $code_modifiable_invalide; // Modified code if it is invalid
+
+	public $code_modifiable_null; // Modified code if it is null
+
+	public $code_null; //
+
 
 	/**
-	 *  Return if a module can be used or not
+	 *  Return description of module parameters
 	 *
-	 *  @return		boolean     true if module can be used
+	 *  @param	Translate	$langs      Output language
+	 *  @param	Societe		$soc		Third party object
+	 *  @return	string					HTML translated description
 	 */
-	public function isEnabled()
+	public function getToolTip($langs, $soc)
 	{
-		return true;
-	}
+		global $conf;
 
-	/**
-	 *  Renvoi la description par defaut du modele de numerotation
-	 *
-	 *  @return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("members");
-		return $langs->trans("NoDescription");
-	}
+		$langs->loadLangs(array("admin", "companies"));
 
-	/**
-	 *  Return an example of numbering
-	 *
-	 *  @return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("members");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *  @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *  Renvoi prochaine valeur attribuee
-	 *
-	 *	@param	Societe		$objsoc		Object third party
-	 *  @param  Object		$object		Object we need next value for
-	 *	@return	string					Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *  Renvoi version du module numerotation
-	 *
-	 *  @return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
+		$strikestart = '';
+		$strikeend = '';
+		if (!empty($conf->global->MAIN_MEMBER_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			$strikestart = '<strike>';
+			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
+
+		$s = '';
+		$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
+		$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		$s .= $langs->trans("MemberCodeDesc").'<br>';
+		$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
+		$s .= '<br>';
+		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
+
+		$s .= $langs->trans("Required").': '.$strikestart;
+		$s .= yn(!$this->code_null, 1, 2).$strikeend;
+		$s .= '<br>';
+		$s .= $langs->trans("CanBeModifiedIfOk").': ';
+		$s .= yn($this->code_modifiable, 1, 2);
+		$s .= '<br>';
+		$s .= $langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
+		$s .= $langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
+		$s .= '<br>';
+		$nextval = $this->getNextValue($soc, 0);
+		if (empty($nextval)) {
+			$nextval = $langs->trans("Undefined");
+		}
+		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").'): <b>'.$nextval.'</b><br>';
+
+		return $s;
 	}
 }

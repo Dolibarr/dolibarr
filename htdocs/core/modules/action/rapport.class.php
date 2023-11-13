@@ -209,14 +209,13 @@ class CommActionRapport
 				$this->errors = $hookmanager->errors;
 			}
 
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($file);
 
 			$this->result = array('fullpath'=>$file);
 
 			return 1;
 		}
+		return 0;
 	}
 
 	/**
@@ -240,7 +239,7 @@ class CommActionRapport
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql .= " a.id, a.datep as dp, a.datep2 as dp2,";
 		$sql .= " a.fk_contact, a.note, a.percent as percent, a.fulldayevent, a.label, a.fk_project,";
-		$sql .= " c.code, c.libelle,";
+		$sql .= " c.code, c.libelle as label_type,";
 		$sql .= " u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";

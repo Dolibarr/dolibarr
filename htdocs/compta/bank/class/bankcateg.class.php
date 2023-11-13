@@ -45,6 +45,26 @@ class BankCateg // extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var DoliDB
+	 */
+	protected $db;
+
+	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var array errors
+	 */
+	public $errors;
+
+	/**
+	 * @var array context
+	 */
+	public $context;
+
 
 	/**
 	 * Constructor
@@ -80,7 +100,7 @@ class BankCateg // extends CommonObject
 		$sql .= "label";
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'")."";
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
@@ -150,9 +170,9 @@ class BankCateg // extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param  User $user User that modify
-	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param  User|null	$user 		User that modify
+	 * @param  int 			$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int          	        <0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -169,7 +189,7 @@ class BankCateg // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null")."";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
@@ -278,7 +298,7 @@ class BankCateg // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
+		// $object->statut = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Già trasferito in contabilità e nel libro mastro
 NotYetInGeneralLedger=Non ancora trasferito ai giornali di contabilità e al libro mastro
 GroupIsEmptyCheckSetup=Il gruppo è vuoto, controlla le impostazioni del gruppo personalizzato di contabilità
 DetailByAccount=Mostra dettagli dall'account
+DetailBy=Detail by
 AccountWithNonZeroValues=Account con valori non-zero
 ListOfAccounts=Elenco dei conti
 CountriesInEEC=Paesi nella CEE
@@ -51,14 +52,19 @@ AccountantFiles=Esporta documenti di origine
 ExportAccountingSourceDocHelp=Con questo strumento puoi cercare ed esportare gli eventi di origine utilizzati per generare la tua contabilità. <br> Il file ZIP esportato conterrà gli elenchi degli elementi richiesti in CSV, nonché i relativi file allegati nel loro formato originale (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Per esportare i tuoi diari, usa la voce di menu %s - %s.
 ExportAccountingProjectHelp=Specificare il progetto se è necessario un report contabile solo per un progetto specifico. Le note spese e i pagamenti dei prestiti non sono inclusi nei rapporti di progetto.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Elenco movimenti per conto contabile
 VueBySubAccountAccounting=Visualizza per conto secondario contabile
 
-MainAccountForCustomersNotDefined=Account principale di contabilità per i clienti non definito nel setup
-MainAccountForSuppliersNotDefined=Account principale di contabilità per fornitori non definito nel setup
-MainAccountForUsersNotDefined=Account principale di contabilità per gli utenti non definito nel setup
-MainAccountForVatPaymentNotDefined=Account principale di contabilità per il pagamento dell'IVA non definito nel setup
-MainAccountForSubscriptionPaymentNotDefined=Account principale di contabilità per il pagamento degli abbonamenti non definito nel setup
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Conto Contabile per l'utente non definito nella configurazione
 
 AccountancyArea=Area di contabilità
@@ -112,6 +118,7 @@ MenuLoanAccounts=Conti di prestito
 MenuProductsAccounts=Conto prodotto
 MenuClosureAccounts=Conti di chiusura
 MenuAccountancyClosure=Chiusura
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Convalida i movimenti
 ProductsBinding=Conti prodotti
 TransferInAccounting=Trasferimento in contabilità
@@ -295,7 +302,7 @@ DescClosure=Consulta qui il numero di movimenti per mese non ancora convalidati 
 OverviewOfMovementsNotValidated=Panoramica dei movimenti non convalidati e bloccati
 AllMovementsWereRecordedAsValidated=Tutti i movimenti sono stati registrati come convalidati e bloccati
 NotAllMovementsCouldBeRecordedAsValidated=Non tutti i movimenti possono essere registrati come convalidati e bloccati
-ValidateMovements=Convalida e blocca i movimenti...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Qualsiasi modifica o cancellazione di scrittura, lettura e cancellazione sarà vietata. Tutte le voci per un esercizio devono essere convalidate altrimenti la chiusura non sarà possibile
 
 ValidateHistory=Collega automaticamente
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Disabilita vincolante e trasferimento in con
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disabilita vincolante e trasferimento in contabilità sugli acquisti (le fatture fornitore non verranno prese in considerazione in contabilità)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disabilita binding e trasferimento in contabilità sulle note spese (le note spese non verranno prese in considerazione in contabilità)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Contrassegna le righe esportate come Esportate <span class="warning"> (per modificare una riga è necessario eliminare l'intera transazione e ritrasferirla in contabilità) </span>
-NotifiedValidationDate=Convalida e Blocca le voci esportate <span class="warning"> (stesso effetto della funzione "%s", la modifica e la cancellazione delle righe NON sarà SICURAMENTE possibile) </span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Convalida e blocco della data
 ConfirmExportFile=Conferma della generazione del file di esportazione contabile?
@@ -381,7 +394,7 @@ ChartofaccountsId=Id Piano dei Conti
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inizializza contabilità
 InitAccountancyDesc=Questa pagina può essere utilizzata per inizializzare un conto di contabilità collegato ai prodotti e ai servizi che non hanno un conto di contabilità definito per le vendite e gli acquisti.
-DefaultBindingDesc=Questa pagina può essere utilizzata per impostare una voce del piano dei conti predefinita da utilizzare per collegare i record delle transazioni di pagamento stipendi, donazioni, tasse e IVA quando non è stato già impostato un conto contabile specifico.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=In questa pagina è possibile impostare i parametri utilizzati per le chiusure contabili.
 Options=Opzioni
 OptionModeProductSell=Modalità vendita
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Conferma di annullamento riconciliazione automatica m
 ConfirmMassUnletteringManual=Conferma di annullamento riconciliazione manuale massiva
 ConfirmMassUnletteringQuestion=Sei sicuro di voler annullare la riconciliazione dei record selezionati %s?
 ConfirmMassDeleteBookkeepingWriting=Conferma eliminazione massiva
-ConfirmMassDeleteBookkeepingWritingQuestion=Questo cancellerà la transazione dalla contabilità (tutte le righe relative alla stessa transazione verranno eliminate) Sei sicuro di voler eliminare i record %s selezionati?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Alcuni step obbligatori della configurazione non sono stati completati. Si prega di completarli 
@@ -446,7 +459,7 @@ NoJournalDefined=Nessun giornale definito
 Binded=Linee collegate
 ToBind=Linee da vincolare
 UseMenuToSetBindindManualy=Righe non ancora vincolate, utilizza il menù <a href="%s">%s</a> per effettuare l'associazione manualmente
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Spiacenti, questo modulo non è compatibile con la funzione sperimentale delle fatture di situazione
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mancata corrispondenza nel codice di riconciliazione
 AccountancyErrorMismatchBalanceAmount=Il saldo (%s) non è uguale a 0
 AccountancyErrorLetteringBookkeeping=Si sono verificati errori relativi alle transazioni: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Importo multivaluta (Montantdevise)
 FECFormatMulticurrencyCode=Codice multivaluta (Idevise)
 
 DateExport=Data esportazione
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Giornale note spese
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s account

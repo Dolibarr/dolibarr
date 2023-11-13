@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 SuperAdmin
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +59,12 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return KnowledgeRecordTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf, $user, $langs, $db;
@@ -86,7 +88,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (empty($conf->knowledgemanagement->enabled)) {
+		if (!isModEnabled('knowledgemanagement')) {
 			print __METHOD__." module knowledgemanagement must be enabled.\n"; die(1);
 		}
 	}
@@ -132,27 +134,6 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * A sample test
-	 *
-	 * @return bool
-	 */
-	public function testSomething()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$result = true;
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result);
-
-		return $result;
-	}
-
-	/**
 	 * testKnowledgeRecordCreate
 	 *
 	 * @return int
@@ -165,7 +146,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new KnowledgeRecord($this->savdb);
+		$localobject = new KnowledgeRecord($db);
 		$localobject->initAsSpecimen();
 		$result = $localobject->create($user);
 
@@ -192,7 +173,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new KnowledgeRecord($this->savdb);
+		$localobject=new KnowledgeRecord($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -242,7 +223,7 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$localobject = new KnowledgeRecord($this->savdb);
+		$localobject = new KnowledgeRecord($db);
 		print __METHOD__." id=".$id."\n";
 		$result = $localobject->fetch($id);
 		print __METHOD__." result=".$result."\n";

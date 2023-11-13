@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/box.php
- *       \brief      File to return Ajax response on Box move or close
+ *       \brief      File to return Ajax response on a Box move or close
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -46,16 +46,16 @@ $boxorder = GETPOST('boxorder');
 $zone = GETPOST('zone', 'int');
 $userid = GETPOST('userid', 'int');
 
+// Security check
+if ($userid != $user->id) {
+	httponly_accessforbidden('Bad userid parameter. Must match logged user.');
+}
+
 
 /*
  * View
  */
 
-// Ajout directives pour resoudre bug IE
-//header('Cache-Control: Public, must-revalidate');
-//header('Pragma: public');
-
-//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";

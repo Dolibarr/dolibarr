@@ -56,15 +56,18 @@ $date_endyear = GETPOST('date_endyear', 'int');
 
 $nbofyear = 1;
 
+// Change this to test different cases of setup
+//$conf->global->SOCIETE_FISCAL_MONTH_START = 7;
+
 // Date range
-$year = GETPOST('year', 'int');
+$year = GETPOST('year', 'int');		// year with current month, is the month of the period we must show
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), "%m");
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -72,14 +75,14 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ?GETPOST("q") : 0;
+	$q = GETPOST("q") ?GETPOST("q", 'int') : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
 		$month_start = GETPOST("month", 'int') ?GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		$date_startmonth = $month_start;
 		if (!GETPOST('month')) {
-			if (!GETPOST("year") && $month_start > $month_current) {
+			if (!$year && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
@@ -141,7 +144,7 @@ $modecompta = $conf->global->ACCOUNTING_MODE;
 if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
-if (GETPOST("modecompta")) {
+if (GETPOST("modecompta", 'alpha')) {
 	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
@@ -158,7 +161,7 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-
+$hookmanager->initHooks(['resultreportlist']);
 
 /*
  * View
@@ -228,8 +231,8 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	$arraylist = array('no'=>$langs->trans("No"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
-	$period .= ' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
+	$arraylist = array('no'=>$langs->trans("None"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
+	$period .= ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("DetailBy").'</span> '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = $textprevyear.$textnextyear;
 	$exportlink = '';
 	$description = $langs->trans("RulesResultBookkeepingPersonalized");
@@ -322,7 +325,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Code and Label
 				print '<td class="liste_total tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
-				print '</td><td class="tdoverflowmax250" title="'.dol_escape_htmltag($cat['label']).'">';
+				print '</td><td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag($cat['label']).'">';
 				print dol_escape_htmltag($cat['label']);
 				print '</td>';
 
@@ -380,7 +383,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 					$r = 0;
 				}
 
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+				print '<td class="liste_total right borderright"><span class="amount">'.price($r).'</span></td>';
 				if (empty($sommes[$code]['N'])) {
 					$sommes[$code]['N'] = $r;
 				} else {
@@ -579,12 +582,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 				} else {
 					$labeltoshow .= ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
 				}
-				print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
+				print '<td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
 				print $labeltoshow;
 				print '</td>';
 
 				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
-				print '<td class="right"><span class="amount">'.price($totCat['N']).'</span></td>';
+				print '<td class="right borderright"><span class="amount">'.price($totCat['N']).'</span></td>';
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
@@ -621,11 +624,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 								$labeldetail = '-';
 							}
 
-							print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($labeldetail).'">';
+							print '<td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag($labeldetail).'">';
 							print dol_escape_htmltag($labeldetail);
 							print '</td>';
 							print '<td class="right"><span class="amount">'.price($resultNP).'</span></td>';
-							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
+							print '<td class="right borderright"><span class="amount">'.price($resultN).'</span></td>';
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {

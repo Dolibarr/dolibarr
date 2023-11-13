@@ -51,8 +51,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->recruitment->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -96,6 +96,7 @@ if ($id > 0 || !empty($ref)) {
 	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentjobposition_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
+	$morehtmlref.= $object->getFullName('', 1);
 	/*
 	 // Ref customer
 	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -104,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	/*if (!empty($conf->project->enabled))
+	/*if (isModEnabled('project'))
 	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project') . ' ';

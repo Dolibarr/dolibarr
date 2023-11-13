@@ -48,7 +48,7 @@ DateDeliveryPlanned=Rejalashtirilgan etkazib berish sanasi
 RefDeliveryReceipt=Yetkazib berish kvitansiyasi
 StatusReceipt=Vaziyatni etkazib berish kvitansiyasi
 DateReceived=Qabul qilingan sana qabul qilindi
-ClassifyReception=Qabul qilishni tasniflang
+ClassifyReception=Classify Received
 SendShippingByEMail=Yukni elektron pochta orqali yuboring
 SendShippingRef=%s jo'natmasini yuborish
 ActionsOnShipping=Yuk tashish bo'yicha tadbirlar
@@ -74,3 +74,8 @@ SumOfProductWeights=Mahsulot og'irliklari yig'indisi
 # warehouse details
 DetailWarehouseNumber= Ombor tafsilotlari
 DetailWarehouseFormat= V: %s (Miqdor: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

@@ -55,6 +55,7 @@ CopyPropalFrom=既存の提案をコピーして、商取引提案を作成す�
 CreateEmptyPropal=空の商取引提案を作成するか、製品/サービスのリストから作成する
 DefaultProposalDurationValidity=デフォルトの商取引提案の有効期間(日数)
 DefaultPuttingPricesUpToDate=デフォルトでは、提案を複製して現在の既知価格で価格更新する
+DefaultPuttingDescUpToDate=デフォルトでは、プロポーザルのクローン作成時に説明を現在既知の説明で更新する
 UseCustomerContactAsPropalRecipientIfExist=プロポーザルの受信者アドレスとして取引先のアドレスの代わりに定義されている場合は、タイプ「連絡先フォローアッププロポーザル」の連絡先/アドレスを使用する
 ConfirmClonePropal=商取引提案 <b>%s </b>のクローンを作成してもよいか？
 ConfirmReOpenProp=商取引提案 <b>%s </b>を開いてよいか？

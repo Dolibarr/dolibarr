@@ -92,7 +92,7 @@ class ExportExcel2007 extends ModeleExports
 		if (empty($this->disabled)) {
 			require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 			$this->label_lib = 'PhpSpreadSheet';
-			$this->version_lib = '1.6.0'; // No way to get info from library
+			$this->version_lib = '1.12.0'; // No way to get info from library
 		}
 
 		$this->row = 0;
@@ -361,7 +361,10 @@ class ExportExcel2007 extends ModeleExports
 				$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
 			} else {
 				if ($typefield == 'Text' || $typefield == 'TextAuto') {
-					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, (string) $newvalue);
+					// If $newvalue start with an equal sign we don't want it to be interpreted as a formula, so we add a '. Such transformation should be
+					// done by SetCellValueByColumnAndRow but it is not, so we do it ourself.
+					$newvalue = (dol_substr($newvalue, 0, 1) === '=' ? '\'' : '') . $newvalue;
+					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $newvalue);
 					$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
 					$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
 					$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);

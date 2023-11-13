@@ -40,6 +40,7 @@ if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
 	exit;
 }
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
@@ -48,6 +49,7 @@ if (!isset($dateSelector)) {
 	global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 }
 global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+global $mysoc;
 
 if (!isset($dateSelector)) {
 	$dateSelector = 1; // For backward compatibility
@@ -127,7 +129,7 @@ if ($nolinesbefore) {
 		<?php } ?>
 		<td class="linecolqty right"><?php echo $langs->trans('Qty'); ?></td>
 		<?php
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
@@ -142,11 +144,11 @@ if ($nolinesbefore) {
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				$colspan++;
 			} else {
 				print '<td class="margininfos linecolmargin1 right">';
-				if ($conf->global->MARGIN_TYPE == "1") {
+				if (getDolGlobalString('MARGIN_TYPE') == "1") {
 					echo $langs->trans('BuyingPrice');
 				} else {
 					echo $langs->trans('CostPrice');
@@ -317,6 +319,60 @@ if ($nolinesbefore) {
 					<?php
 				}
 			}
+
+			$parentId = GETPOST('parentId', 'int');
+
+			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
+			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
+			if ($addproducton || $addserviceon) {
+				if ($addproducton && $addserviceon) {
+					echo '<div id="dropdownAddProductAndService" class="dropdown inline-block">';
+					echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="dropdownAddProductAndServiceLink" aria-haspopup="true" aria-expanded="false">';
+					echo '<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+					echo '</a>';
+					echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
+					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewProduct").'</a>';
+					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewService").'</a>';
+					echo '</div>';
+					echo '</div>';
+				} else {
+					if ($addproducton) {
+						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+							// @FIXME Not working yet
+							$tmpbacktopagejsfields = 'addproduct:id,search_id';
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+						} else {
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+						}
+					}
+					if ($addserviceon) {
+						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
+						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+							// @FIXME Not working yet
+							$tmpbacktopagejsfields = 'addproduct:id,search_id';
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+						} else {
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+						}
+					}
+				}
+			}
+
+			?>
+			<script>
+				$(document).ready(function(){
+					$("#dropdownAddProductAndService .dropdown-toggle").on("click", function(event) {
+						console.log("toggle addproduct dropdown");
+						event.preventDefault();
+						$("#dropdownAddProductAndService").toggleClass("open");
+					});
+				});
+			</script>
+			<?php
+
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 		}
@@ -425,7 +481,7 @@ if ($nolinesbefore) {
 	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : $default_qty); ?>">
 	</td>
 	<?php
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
@@ -447,7 +503,7 @@ if ($nolinesbefore) {
 		print '<td></td>';
 	}
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
+		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++;
 			?>
 			<td class="nobottom margininfos linecolmargin right">
@@ -512,7 +568,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		print ' '.$langs->trans('to').' ';
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
-	};
+	}
 
 	if ($prefillDates) {
 		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
@@ -540,18 +596,18 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 
 	if (!$date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
-			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
-			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 	}
 	if (!$date_end) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
-			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
-			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 	}
 	print '</script>';
@@ -561,7 +617,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 
 
 print "<script>\n";
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
@@ -737,11 +793,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
 				<?php } ?>
 				// Get the price for the product and display it
-				console.log("Load unit price without tax and set it into #price_ht for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
+				console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
 				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>' },
+					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
 					function(data) {
-						console.log("objectline_create.tpl Load unit price end, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
+						console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
 						$('#date_start').removeAttr('type');
 						$('#date_end').removeAttr('type');
@@ -777,6 +833,35 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						var stringforvatrateselection = tva_tx;
 						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+							<?php
+							// Special case for India
+							if (getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
+								?>
+								console.log("MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA is on so we check if we need to autoswith the vat code");
+								console.log("mysoc->country_code=<?php echo $mysoc->country_code; ?> thirdparty->country_code=<?php echo $object->thirdparty->country_code; ?>");
+								new_default_vat_code = default_vat_code;
+								<?php
+								if ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code == $object->thirdparty->state_code) {
+									// We are in India and states are same, we revert the vat code "I-x" into "CS-x"
+									?>
+									console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
+									new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
+									<?php
+								} elseif ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code != $object->thirdparty->state_code) {
+									// We are in India and states differs, we revert the vat code "CS-x" into "I-x"
+									?>
+									console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
+									new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
+									<?php
+								}
+								?>
+								if (new_default_vat_code != default_vat_code && jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val()) {
+									console.log("We found en entry into VAT with new default_vat_code, we will use it");
+									stringforvatrateselection = jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val();
+								}
+								<?php
+							}
+							?>
 						}
 						// Set vat rate if field is an input box
 						$('#tva_tx').val(tva_tx);
@@ -787,7 +872,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 						<?php
-						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+						if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 							if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
 								<?php
@@ -826,7 +911,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			<?php
 		}
 
-		if (!empty($usemargins) && $user->rights->margins->creer) {
+		if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			$langs->load('stocks');
 			?>
 
@@ -849,13 +934,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					/* setup of margin calculation */
 					var defaultbuyprice = '<?php
 					if (isset($conf->global->MARGIN_TYPE)) {
-						if ($conf->global->MARGIN_TYPE == '1') {
+						if (getDolGlobalString('MARGIN_TYPE') == '1') {
 							print 'bestsupplierprice';
 						}
-						if ($conf->global->MARGIN_TYPE == 'pmp') {
+						if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
 							print 'pmp';
 						}
-						if ($conf->global->MARGIN_TYPE == 'costprice') {
+						if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
 							print 'costprice';
 						}
 					} ?>';
@@ -1113,7 +1198,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		<?php } ?>
 	});
 
-	/* Function to set fields from choice */
+	/* Function to set fields visibility after selecting a free product */
 	function setforfree() {
 		console.log("objectline_create.tpl::setforfree. We show most fields");
 		jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
@@ -1148,7 +1233,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
-		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();

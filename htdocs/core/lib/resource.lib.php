@@ -1,7 +1,8 @@
 <?php
 /* Module to manage locations, buildings, floors and rooms into Dolibarr ERP/CRM
- * Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016	Gilles Poirier		<glgpoirier@gmail.com>
+ * Copyright (C) 2013       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Gilles Poirier          <gilles.poirier@netlogic.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 /**
  * Prepare head for tabs
  *
- * @param	Object	$object		Object
+ * @param	Dolresource	$object		Object
  * @return	array				Array of head entries
  */
 function resource_prepare_head($object)
@@ -87,7 +88,7 @@ function resource_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -114,7 +115,10 @@ function resource_prepare_head($object)
 function resource_admin_prepare_head()
 {
 
-	global $langs, $conf, $user;
+	global $conf, $db, $langs, $user;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('resource');
 
 	$h = 0;
 	$head = array();
@@ -132,6 +136,10 @@ function resource_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/resource_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['resource']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 

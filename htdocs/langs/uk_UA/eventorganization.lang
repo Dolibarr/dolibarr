@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = У формі для створення
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Конференція або стенд
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Керуйте організацією заходу
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Посилання на третю сторо�
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Заявка на стенд
-NewSuggestionOfConference=Заявка на конференцію
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Знайдено кілька компа
 ErrorSeveralCompaniesWithNameContactUs=Було знайдено кілька компаній з такою назвою, тому ми не можемо автоматично підтвердити вашу реєстрацію. Будь ласка, зв’яжіться з нами за адресою %s для перевірки вручну
 NoPublicActionsAllowedForThisEvent=Жодні публічні заходи щодо цієї події не є відкритими
 MaxNbOfAttendees=Максимальна кількість учасників
+DateStartEvent=Event start date
+DateEndEvent=Event end date

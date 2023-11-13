@@ -33,5 +33,5 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 +$conffile = "/etc/dolibarr/conf.php";
 +$conffiletoshow = "/etc/dolibarr/conf.php";
  
- 
- // Load conf file if it is already defined
+ $short_options = "c:h";
+ $long_options = array(

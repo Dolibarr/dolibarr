@@ -16,8 +16,8 @@
  */
 
 /**
- * \file 	dev/tools/spider.php
- * \brief 	Script to spider Dolibarr app.
+ * \file    dev/tools/spider.php
+ * \brief   Script to spider Dolibarr app.
  *
  * To use it:
  * - Disable module "bookmark"
@@ -29,9 +29,9 @@ const MAX_DEPTH=2;
 
 
 /**
- * @param string $url	URL
- * @param string $depth	Depth
- * @return string		String
+ * @param  string $url   URL
+ * @param  string $depth Depth
+ * @return string       String
  */
 function followLink($url, $depth = 0)
 {
@@ -68,23 +68,24 @@ function followLink($url, $depth = 0)
 }
 
 /**
- * @param string $site	Site
- * @param string $path	Path
- * @return string		String
+ * @param  string $site Site
+ * @param  string $path Path
+ * @return string       String
  */
 function convertLink($site, $path)
 {
 	if (substr_compare($path, "//", 0, 2)==0)
 		return parse_url($site)['scheme'].$path;
-	elseif (substr_compare($path, "http://", 0, 7)==0 or
-		substr_compare($path, "https://", 0, 8)==0 or
-		substr_compare($path, "www.", 0, 4)==0)
+	elseif (substr_compare($path, "http://", 0, 7)==0
+		or substr_compare($path, "https://", 0, 8)==0
+		or substr_compare($path, "www.", 0, 4)==0
+	)
 		return $path;
 	else return $site.'/'.$path;
 }
 
 /**
- * @param string $url	URL
+ * @param  string $url URL
  * @return boolean
  */
 function ignoreLink($url)
@@ -93,10 +94,10 @@ function ignoreLink($url)
 }
 
 /**
- * @param string 	$link		URL
- * @param string	$title		Title
- * @param string 	$metaData	Array
- * @param int 		$depth		Depth
+ * @param  string $link     URL
+ * @param  string $title    Title
+ * @param  string $metaData Array
+ * @param  int    $depth    Depth
  * @return void
  */
 function insertIntoDatabase($link, $title, &$metaData, $depth)
@@ -109,9 +110,9 @@ function insertIntoDatabase($link, $title, &$metaData, $depth)
 }
 
 /**
- * @param string 	$doc		Doc
- * @param string	$url		URL
- * @return string				URL/Title
+ * @param  string $doc Doc
+ * @param  string $url URL
+ * @return string               URL/Title
  */
 function getDocTitle(&$doc, $url)
 {
@@ -123,8 +124,8 @@ function getDocTitle(&$doc, $url)
 }
 
 /**
- * @param string 	$doc		Doc
- * @return array				Array
+ * @param  string $doc Doc
+ * @return array                Array
  */
 function getDocMetaData(&$doc)
 {

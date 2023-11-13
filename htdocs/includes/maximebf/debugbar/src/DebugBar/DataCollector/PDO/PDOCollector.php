@@ -21,10 +21,10 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     protected $sqlQuotationChar = '<>';
 
     /**
-     * @param TraceablePDO $pdo
+     * @param \PDO $pdo
      * @param TimeDataCollector $timeCollector
      */
-    public function __construct(TraceablePDO $pdo = null, TimeDataCollector $timeCollector = null)
+    public function __construct(\PDO $pdo = null, TimeDataCollector $timeCollector = null)
     {
         $this->timeCollector = $timeCollector;
         if ($pdo !== null) {
@@ -65,10 +65,13 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
      * @param TraceablePDO $pdo
      * @param string $name Optional connection name
      */
-    public function addConnection(TraceablePDO $pdo, $name = null)
+    public function addConnection(\PDO $pdo, $name = null)
     {
         if ($name === null) {
             $name = spl_object_hash($pdo);
+        }
+        if (!($pdo instanceof TraceablePDO)) {
+            $pdo = new TraceablePDO($pdo);
         }
         $this->connections[$name] = $pdo;
     }

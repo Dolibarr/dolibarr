@@ -367,7 +367,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '$(document).ready(function () {
 	            $("#apidoc").hide();
 	            $("#apidoca").click(function() {
-					console.log("We click on apidoca show/hide");
+					console.log("We click on apidoca so we show/hide");
 	                $("#apidoc").show();
 	            	$("#apidoca").hide();
 					return false;

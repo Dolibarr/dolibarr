@@ -48,6 +48,8 @@ $action = GETPOST('action', 'aZ09');
 $provider = GETPOST('provider', 'aZ09');
 $label = GETPOST('label', 'aZ09');
 
+$servicetoeditname = GETPOST('servicetoeditname', 'aZ09');
+
 $error = 0;
 
 
@@ -72,15 +74,24 @@ if ($action == 'update') {
 	foreach ($conf->global as $key => $val) {
 		if (!empty($val) && preg_match('/^OAUTH_.+_ID$/', $key)) {
 			$constvalue = str_replace('_ID', '', $key);
-			if (!dolibarr_set_const($db, $constvalue.'_ID', GETPOST($constvalue.'_ID'), 'chaine', 0, '', $conf->entity)) {
-				$error++;
+			$newconstvalue = $constvalue;
+			if (GETPOSTISSET($constvalue.'_NAME')) {
+				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.GETPOST($constvalue.'_NAME');
+			}
+
+			if (GETPOSTISSET($constvalue.'_ID')) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_ID', GETPOST($constvalue.'_ID'), 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
 			}
 			// If we reset this provider, we also remove the secret
-			if (!dolibarr_set_const($db, $constvalue.'_SECRET', GETPOST($constvalue.'_ID') ? GETPOST($constvalue.'_SECRET') : '', 'chaine', 0, '', $conf->entity)) {
-				$error++;
+			if (GETPOSTISSET($constvalue.'_SECRET')) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_SECRET', GETPOST($constvalue.'_ID') ? GETPOST($constvalue.'_SECRET') : '', 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
 			}
 			if (GETPOSTISSET($constvalue.'_URLAUTHORIZE')) {
-				if (!dolibarr_set_const($db, $constvalue.'_URLAUTHORIZE', GETPOST($constvalue.'_URLAUTHORIZE'), 'chaine', 0, '', $conf->entity)) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_URLAUTHORIZE', GETPOST($constvalue.'_URLAUTHORIZE'), 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}
@@ -95,12 +106,44 @@ if ($action == 'update') {
 				} else {
 					$scopestring = GETPOST($constvalue.'_SCOPE');
 				}
-				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', $scopestring, 'chaine', 0, '', $conf->entity)) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_SCOPE', $scopestring, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
-			} else {
-				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', '', 'chaine', 0, '', $conf->entity)) {
+			} elseif ($newconstvalue !== $constvalue) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_SCOPE', '', 'chaine', 0, '', $conf->entity)) {
 					$error++;
+				}
+			}
+
+			// If name changed, we have to delete old const and proceed few other changes
+			if ($constvalue !== $newconstvalue) {
+				dolibarr_del_const($db, $constvalue.'_ID', $conf->entity);
+				dolibarr_del_const($db, $constvalue.'_SECRET', $conf->entity);
+				dolibarr_del_const($db, $constvalue.'_URLAUTHORIZE', $conf->entity);
+				dolibarr_del_const($db, $constvalue.'_SCOPE', $conf->entity);
+
+				// Update name of token
+				$oldname = preg_replace('/^OAUTH_/', '', $constvalue);
+				$oldprovider = ucfirst(strtolower(preg_replace('/-.*$/', '', $oldname)));
+				$oldlabel = preg_replace('/^.*-/', '', $oldname);
+				$newlabel = preg_replace('/^.*-/', '', $newconstvalue);
+
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+				$sql.= " SET service = '".$db->escape($oldprovider."-".$newlabel)."'";
+				$sql.= " WHERE  service = '".$db->escape($oldprovider."-".$oldlabel)."'";
+
+
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				}
+
+				// Update const where the token was used, might not be exhaustive
+				if (getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE') == $oldname) {
+					if (!dolibarr_set_const($db, 'MAIN_MAIL_SMTPS_OAUTH_SERVICE', strtoupper($oldprovider).'-'.$newlabel, 'chaine', 0, '', $conf->entity)) {
+						$error++;
+					}
 				}
 			}
 		}
@@ -279,10 +322,15 @@ if (count($listinsetup) > 0) {
 		} else {
 			print $label;
 		}
-		if ($keyforprovider) {
+		if ($servicetoeditname == $key[0]) {
+			print ' (<input style="width: 20%" type="text" name="'.$key[0].'" value="'.$keyforprovider.'" >)';
+		} elseif ($keyforprovider) {
 			print ' (<b>'.$keyforprovider.'</b>)';
 		} else {
 			print ' (<b>'.$langs->trans("NoName").'</b>)';
+		}
+		if (!($servicetoeditname == $key[0])) {
+			print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?token='.newToken().'&servicetoeditname='.urlencode($key[0]).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 		}
 		print '</td>';
 		print '<td>';

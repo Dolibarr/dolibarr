@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Že preneseno v knjigovodske dnevnike in glavno knjigo
 NotYetInGeneralLedger=Še ni preneseno v knjigovodske dnevnike in glavno knjigo
 GroupIsEmptyCheckSetup=Skupina je prazna, preverite nastavitev personalizirane računovodske skupine
 DetailByAccount=Prikaži podrobnosti po računu
+DetailBy=Detail by
 AccountWithNonZeroValues=Računi z vrednostmi, ki niso nič
 ListOfAccounts=Seznam računov
 CountriesInEEC=Države v EGS
@@ -51,14 +52,19 @@ AccountantFiles=Izvoz izvornih dokumentov
 ExportAccountingSourceDocHelp=S tem orodjem lahko iščete in izvozite izvorne dogodke, ki se uporabljajo za ustvarjanje vašega računovodstva. <br> Izvožena datoteka ZIP bo vsebovala sezname zahtevanih elementov v CSV in njihove priložene datoteke v izvirni obliki (PDF, ODT, DOCX ...).
 ExportAccountingSourceDocHelp2=Če želite izvoziti svoje dnevnike, uporabite menijski vnos %s - %s.
 ExportAccountingProjectHelp=Določite projekt, če potrebujete računovodsko poročilo samo za določen projekt. Poročila o stroških in plačila posojil niso vključena v projektna poročila.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Ogled po računovodskem računu
 VueBySubAccountAccounting=Pogled po računovodskih podkontih
 
-MainAccountForCustomersNotDefined=Glavni računovodski račun za stranke, ki niso definirane v nastavitvah
-MainAccountForSuppliersNotDefined=Glavni računovodski račun za prodajalce, ki niso definirani v nastavitvah
-MainAccountForUsersNotDefined=Glavni računovodski račun za uporabnike, ki niso definirani v nastavitvah
-MainAccountForVatPaymentNotDefined=Glavni računovodski račun za plačilo DDV ni definiran v nastavitvah
-MainAccountForSubscriptionPaymentNotDefined=V nastavitvah ni definiran glavni računovodski račun za plačilo naročnine
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Računovodski račun za uporabnika ni definiran v nastavitvah
 
 AccountancyArea=Računovodsko področje
@@ -112,6 +118,7 @@ MenuLoanAccounts=Posojilni računi
 MenuProductsAccounts=Računi izdelkov
 MenuClosureAccounts=Zapiranje računov
 MenuAccountancyClosure=Zaključek
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Potrdite gibe
 ProductsBinding=Računi izdelkov
 TransferInAccounting=Prenos v računovodstvo
@@ -295,7 +302,7 @@ DescClosure=Tukaj si oglejte število premikov po mesecih, ki še niso potrjeni 
 OverviewOfMovementsNotValidated=Pregled premikov ni preverjen in zaklenjen
 AllMovementsWereRecordedAsValidated=Vsi premiki so bili zabeleženi kot potrjeni in zaklenjeni
 NotAllMovementsCouldBeRecordedAsValidated=Vseh premikov ni bilo mogoče zabeležiti kot potrjenih in zaklenjenih
-ValidateMovements=Preveri in zakleni premike ...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Prepovedano je kakršno koli spreminjanje ali brisanje zapisov, črk in izbrisov. Vsi vnosi za vajo morajo biti potrjeni, sicer zapiranje ne bo mogoče
 
 ValidateHistory=Samodejno vezanje
@@ -344,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Onemogočanje vezave in prenosa v računovod
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Onemogočanje vezave in prenosa v računovodstvu pri nakupih (računi dobaviteljev se ne bodo upoštevali v računovodstvu)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Onemogoči vezavo in prenos v računovodstvu na poročilih o stroških (poročila o stroških ne bodo upoštevana v računovodstvu)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Označi izvožene vrstice kot izvožene <span class="warning"> (če želite spremeniti vrstico, boste morali izbrisati celotno transakcijo in jo znova prenesti v računovodstvo) </span>
-NotifiedValidationDate=Potrdi in zakleni izvožene vnose <span class="warning"> (isti učinek kot funkcija "%s", spreminjanje in brisanje vrstic DEFINITIVNO ne bo mogoče) </span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Preverjanje datuma in zaklepanje
 ConfirmExportFile=Potrditev generiranja računovodske izvozne datoteke?
@@ -381,7 +394,7 @@ ChartofaccountsId=Kontni načrt Id
 ## Tools - Init accounting account on product / service
 InitAccountancy=Začetno računovodstvo
 InitAccountancyDesc=To stran lahko uporabite za inicializacijo računovodskega računa za izdelke in storitve, ki nimajo definiranega računovodskega računa za prodajo in nakupe.
-DefaultBindingDesc=To stran lahko uporabite za nastavitev privzetega računa, ki se uporablja za povezovanje evidenc transakcij o izplačilih plač, donacijah, davkih in DDV, kadar še ni nastavljen poseben računovodski račun.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=To stran lahko uporabite za nastavitev parametrov, ki se uporabljajo za računovodske zaključke.
 Options=Opcije
 OptionModeProductSell=Način prodaje
@@ -433,7 +446,7 @@ ConfirmMassUnletteringAuto=Potrditev množične samodejne neusklajenosti
 ConfirmMassUnletteringManual=Množična ročna potrditev neusklajenosti
 ConfirmMassUnletteringQuestion=Ali ste prepričani, da želite preklicati uskladitev %s izbranih zapisov?
 ConfirmMassDeleteBookkeepingWriting=Potrditev množičnega brisanja
-ConfirmMassDeleteBookkeepingWritingQuestion=S tem boste transakcijo izbrisali iz računovodstva (izbrisane bodo vse vrstice, povezane z isto transakcijo). Ali ste prepričani, da želite izbrisati %s izbrane zapise?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Nekateri obvezni koraki nastavitve niso bili izvedeni, prosimo, da jih dokončate
@@ -446,7 +459,7 @@ NoJournalDefined=Noben dnevnik ni opredeljen
 Binded=Vezane vrstice
 ToBind=Vrstice za vezavo
 UseMenuToSetBindindManualy=Vrstice še niso vezane, uporabite meni <a href="%s"> %s </a> za ročno vezavo
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Žal ta modul ni združljiv s poskusno funkcijo situacijskih računov
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Neujemanje v kodi za usklajevanje
 AccountancyErrorMismatchBalanceAmount=Stanje (%s) ni enako 0
 AccountancyErrorLetteringBookkeeping=Prišlo je do napak v zvezi s transakcijami: %s
@@ -476,9 +489,9 @@ FECFormatMulticurrencyAmount=Znesek v več valutah (Montantdevise)
 FECFormatMulticurrencyCode=Koda za več valut (Idevise)
 
 DateExport=Izvoz datuma
-WarningReportNotReliable=Opozorilo, to poročilo ne temelji na knjigi, zato ne vsebuje transakcij, ki so bile ročno spremenjene v knjigi. Če je vaša dnevnika ažurna, je knjigovodski pogled natančnejši.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Dnevnik poročil o stroških
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=računi %s

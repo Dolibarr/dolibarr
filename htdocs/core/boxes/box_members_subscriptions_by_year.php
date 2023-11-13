@@ -67,7 +67,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -90,7 +90,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersSubscriptionsByYear", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$num = 0;
 			$line = 0;
 			// List of subscription by year
@@ -192,7 +192,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'colspan="4" class="center"',
-						'text' => $langs->trans("NoRecordedMembers"),
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedMembers").'</span>',
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(

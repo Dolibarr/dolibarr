@@ -204,6 +204,9 @@ if ($resql) {
 	}
 
 	$i = 0;
+	$total = 0;
+	$totald = 0;
+	$totalc = 0;
 	while ($i < $numrows) {
 		$thirdparty = '';
 		$accountelem = '';

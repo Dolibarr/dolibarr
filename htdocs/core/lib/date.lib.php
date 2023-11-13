@@ -117,6 +117,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
+ *  @see convertSecondToTime(), convertTimeToSeconds()
  */
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
@@ -218,7 +219,8 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *      Can be used to show a duration.
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
+ *    	@param      string	$format		    Output format
+ *    										- 'all': total delay days hour:min like "2 days 12:30",
  *                                          - 'allwithouthour': total delay days without hour part like "2 days",
  *                                          - 'allhourmin': total delay with format hours:min like "60:30",
  *                                          - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",

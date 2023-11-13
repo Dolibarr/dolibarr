@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015	  Ion Agorria		  <ion@agorria.com>
+/* Copyright (C) 2015	    Ion Agorria             <ion@agorria.com>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +152,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("DynamicPrice"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
@@ -183,7 +184,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 			print '</tr>';
 		}
 	} else {
-		print '<tr colspan="7"><td><span class="opacitymedium">';
+		print '<tr><td colspan="4"><span class="opacitymedium">';
 		print $langs->trans("None");
 		print '</span></td></tr>';
 	}
@@ -271,9 +272,9 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 			print '</tr>';
 		}
 	} else {
-		print '<tr><td colspan="7" class="opacitymedium">';
+		print '<tr><td colspan="7"><span class="opacitymedium">';
 		print $langs->trans("None");
-		print '</td></tr>';
+		print '</span></td></tr>';
 	}
 	print '</table>';
 
