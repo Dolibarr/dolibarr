@@ -2866,7 +2866,8 @@ class Facture extends CommonInvoice
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-					$this->deleteEcmFiles();
+					$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+					$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 					// On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
