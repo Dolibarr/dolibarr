@@ -8252,33 +8252,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ATTENDEE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
-			$project = null;
-			if (is_object($object->project)) {
-				$project = $object->project;
-			} elseif (is_object($object->projet)) { // Deprecated, for backward compatibility
-				$project = $object->projet;
-			}
-			if ($project) {
-				$substitutionarray['__PROJECT_ID__'] = $project->id;
-				$substitutionarray['__PROJECT_REF__'] = $project->ref;
-				$substitutionarray['__PROJECT_NAME__'] = $project->title;
-			} else {
-				// can substitute variables for project : uses lazy load in "make_substitutions" method
-				$project_id = 0;
-				if ($object->fk_project > 0) {
-					$project_id = $object->fk_project;
-				} elseif ($object->fk_projet > 0) {
-					$project_id = $object->fk_project;
-				}
-				if ($project_id > 0) {
-					// path:class:method:id
-					$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-					$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-					$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-				}
-			}
 			if (is_object($object) && $object->element == 'project') {
+				$substitutionarray['__PROJECT_ID__'] = $object->id;
+				$substitutionarray['__PROJECT_REF__'] = $object->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
+			} elseif (is_object($object)) {
+				$project = null;
+				if (!empty($object->project)) {
+					$project = $object->project;
+				} elseif (!empty($object->projet)) { // Deprecated, for backward compatibility
+					$project = $object->projet;
+				}
+				if (!is_null($project) && is_object($project)) {
+					$substitutionarray['__PROJECT_ID__'] = $project->id;
+					$substitutionarray['__PROJECT_REF__'] = $project->ref;
+					$substitutionarray['__PROJECT_NAME__'] = $project->title;
+				} else {
+					// can substitute variables for project : uses lazy load in "make_substitutions" method
+					$project_id = 0;
+					if (!empty($object->fk_project) && $object->fk_project > 0) {
+						$project_id = $object->fk_project;
+					} elseif (!empty($object->fk_projet) && $object->fk_projet > 0) {
+						$project_id = $object->fk_project;
+					}
+					if ($project_id > 0) {
+						// path:class:method:id
+						$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					}
+				}
 			}
 
 			if (is_object($object) && $object->element == 'shipping') {
