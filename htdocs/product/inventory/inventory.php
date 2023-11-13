@@ -40,6 +40,15 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$listoffset = GETPOST('listoffset', 'alpha');
+$limit = GETPOST('limit', 'int') > 0 ?GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
 $fk_product = GETPOST('fk_product', 'int');
@@ -84,6 +93,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
+//Parameters Page
+$param = '&id='.$object->id;
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.((int) $limit);
+}
+$paramwithsearch = $param;
+
+
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
@@ -95,6 +112,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 $now = dol_now();
 
 
+
 /*
  * Actions
  */
@@ -103,159 +121,6 @@ if ($cancel) {
 	$action = '';
 }
 
-$error = 0;
-
-if ($action == 'cancel_record' && $permissiontoadd) {
-	$object->setCanceled($user);
-}
-
-if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
-	$stockmovment = new MouvementStock($db);
-	$stockmovment->origin = $object;
-
-	$cacheOfProducts = array();
-
-	$db->begin();
-
-	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
-	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		$totalarray = array();
-		while ($i < $num) {
-			$line = $db->fetch_object($resql);
-			$qty_stock = $line->qty_stock;
-			$qty_view = $line->qty_view;		// The quantity viewed by inventorier, the qty we target
-
-			// Load real stock we have now.
-			$option = '';
-			if (isset($cacheOfProducts[$line->fk_product])) {
-				$product_static = $cacheOfProducts[$line->fk_product];
-			} else {
-				$product_static = new Product($db);
-				$result = $product_static->fetch($line->fk_product, '', '', '', 1, 1, 1);
-
-				//$option = 'nobatch';
-				$option .= ',novirtual';
-				$product_static->load_stock($option); // Load stock_reel + stock_warehouse.
-
-				$cacheOfProducts[$product_static->id] = $product_static;
-			}
-
-			// Get the real quantity in stock now, but before the stock move for inventory.
-			$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
-			if ($conf->productbatch->enabled && $product_static->hasbatch()) {
-				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
-			}
-
-			if (!is_null($qty_view)) {
-				$stock_movement_qty = price2num($qty_view - $realqtynow, 'MS');
-				if ($stock_movement_qty != 0) {
-					if ($stock_movement_qty < 0) {
-						$movement_type = 1;
-					} else {
-						$movement_type = 0;
-					}
-
-					$datemovement = '';
-
-					$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->id), 'INV'.$object->id, $datemovement, '', '', $line->batch);
-					if ($idstockmove < 0) {
-						$error++;
-						setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
-						break;
-					}
-
-					// Update line with id of stock movement (and the start quantity if it has changed this last recording)
-					if ($qty_stock != $realqtynow) {
-						$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet";
-						$sqlupdate .= " SET qty_stock = ".((float) $realqtynow);
-						$sqlupdate .= " WHERE rowid = ".((int) $line->rowid);
-						$resqlupdate = $db->query($sqlupdate);
-						if (! $resqlupdate) {
-							$error++;
-							setEventMessages($db->lasterror(), null, 'errors');
-							break;
-						}
-					}
-				}
-			}
-			$i++;
-		}
-
-		if (!$error) {
-			$object->setRecorded($user);
-		}
-	} else {
-		setEventMessages($db->lasterror, null, 'errors');
-		$error++;
-	}
-
-	if (! $error) {
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
-}
-
-if ($action =='updateinventorylines' && $permissiontoadd) {
-	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
-	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
-
-	$db->begin();
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		$totalarray = array();
-		$inventoryline = new InventoryLine($db);
-
-		while ($i < $num) {
-			$line = $db->fetch_object($resql);
-			$lineid = $line->rowid;
-
-			if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
-				$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
-				$result = $inventoryline->fetch($lineid);
-				if ($qtytoupdate < 0) {
-					$result = -1;
-					setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
-				}
-				if ($result > 0) {
-					$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
-					$inventoryline->qty_view = $qtytoupdate;
-					$resultupdate = $inventoryline->update($user);
-				}
-			} else {
-				// Delete record
-				$result = $inventoryline->fetch($lineid);
-				if ($result > 0) {
-					$inventoryline->qty_view = null;
-					$resultupdate = $inventoryline->update($user);
-				}
-			}
-
-			if ($result < 0 || $resultupdate < 0) {
-				$error++;
-			}
-
-			$i++;
-		}
-	}
-
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
-}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -266,8 +131,175 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
+	if ($action == 'cancel_record' && $permissiontoadd) {
+		$object->setCanceled($user);
+	}
+
+	if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
+		$stockmovment = new MouvementStock($db);
+		$stockmovment->origin = $object;
+
+		$cacheOfProducts = array();
+
+		$db->begin();
+
+		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
+		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$totalarray = array();
+			while ($i < $num) {
+				$line = $db->fetch_object($resql);
+				$qty_stock = $line->qty_stock;
+				$qty_view = $line->qty_view;		// The quantity viewed by inventorier, the qty we target
+
+				// Load real stock we have now.
+				$option = '';
+				if (isset($cacheOfProducts[$line->fk_product])) {
+					$product_static = $cacheOfProducts[$line->fk_product];
+				} else {
+					$product_static = new Product($db);
+					$result = $product_static->fetch($line->fk_product, '', '', '', 1, 1, 1);
+
+					//$option = 'nobatch';
+					$option .= ',novirtual';
+					$product_static->load_stock($option); // Load stock_reel + stock_warehouse.
+
+					$cacheOfProducts[$product_static->id] = $product_static;
+				}
+
+				// Get the real quantity in stock now, but before the stock move for inventory.
+				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
+				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
+				}
+
+				if (!is_null($qty_view)) {
+					$stock_movement_qty = price2num($qty_view - $realqtynow, 'MS');
+					if ($stock_movement_qty != 0) {
+						if ($stock_movement_qty < 0) {
+							$movement_type = 1;
+						} else {
+							$movement_type = 0;
+						}
+
+						$datemovement = '';
+
+						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->id), 'INV'.$object->id, $datemovement, '', '', $line->batch);
+						if ($idstockmove < 0) {
+							$error++;
+							setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
+							break;
+						}
+
+						// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+						if ($qty_stock != $realqtynow) {
+							$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet";
+							$sqlupdate .= " SET qty_stock = ".((float) $realqtynow);
+							$sqlupdate .= " WHERE rowid = ".((int) $line->rowid);
+							$resqlupdate = $db->query($sqlupdate);
+							if (! $resqlupdate) {
+								$error++;
+								setEventMessages($db->lasterror(), null, 'errors');
+								break;
+							}
+						}
+					}
+				}
+				$i++;
+			}
+
+			if (!$error) {
+				$object->setRecorded($user);
+			}
+		} else {
+			setEventMessages($db->lasterror, null, 'errors');
+			$error++;
+		}
+
+		if (! $error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	// Save quantity found during inventory (when we click on Save button on inventory page)
+	if ($action == 'updateinventorylines' && $permissiontoadd) {
+		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
+		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= $db->order('id.rowid', 'ASC');
+		$sql .= $db->plimit($limit, $offset);
+
+		$db->begin();
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$totalarray = array();
+			$inventoryline = new InventoryLine($db);
+
+			while ($i < $num) {
+				$line = $db->fetch_object($resql);
+				$lineid = $line->rowid;
+
+				if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
+					$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
+					$result = $inventoryline->fetch($lineid);
+					if ($qtytoupdate < 0) {
+						$result = -1;
+						setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
+					}
+					if ($result > 0) {
+						$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
+						$inventoryline->qty_view = $qtytoupdate;
+						$resultupdate = $inventoryline->update($user);
+					}
+				} elseif (GETPOSTISSET('id_' . $lineid)) {
+					// Delete record
+					$result = $inventoryline->fetch($lineid);
+					if ($result > 0) {
+						$inventoryline->qty_view = null;
+						$resultupdate = $inventoryline->update($user);
+					}
+				}
+
+				if ($result < 0 || $resultupdate < 0) {
+					$error++;
+				}
+
+				$i++;
+			}
+		}
+
+		// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+		if (! $error) {
+			$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventory";
+			$sqlupdate .= " SET fk_user_modif = ".((int) $user->id);
+			$sqlupdate .= " WHERE rowid = ".((int) $object->id);
+			$resqlupdate = $db->query($sqlupdate);
+			if (! $resqlupdate) {
+				$error++;
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
-	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id;
+	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&page='.$page.$paramwithsearch;
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -285,6 +317,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
+		$qty= (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -301,12 +334,17 @@ if (empty($reshook)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
-			if (!$error && $tmpproduct->status_batch && !$batch) {
+			if (empty($error) && $tmpproduct->status_batch>0 && empty($batch)) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorProductNeedBatchNumber", $tmpproduct->ref), null, 'errors');
 			}
-			if (!$error && !$tmpproduct->status_batch && $batch) {
+			if (empty($error) && $tmpproduct->status_batch==2 && !empty($batch) && $qty>1) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("TooManyQtyForSerialNumber", $tmpproduct->ref, $batch), null, 'errors');
+			}
+			if (empty($error) && empty($tmpproduct->status_batch) && !empty($batch)) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorProductDoesNotNeedBatchNumber", $tmpproduct->ref), null, 'errors');
@@ -319,7 +357,7 @@ if (empty($reshook)) {
 			$tmp->fk_product = $fk_product;
 			$tmp->batch = $batch;
 			$tmp->datec = $now;
-			$tmp->qty_view = (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
+			$tmp->qty_view = $qty;
 
 			$result = $tmp->create($user);
 			if ($result < 0) {
@@ -347,27 +385,6 @@ $help_url = '';
 
 llxHeader('', $langs->trans('Inventory'), $help_url);
 
-
-// Disable button Generate movement if data were not saved
-print '<script type="text/javascript" language="javascript">
-function disablebuttonmakemovementandclose() {
-	console.log("Disable button idbuttonmakemovementandclose until we save");
-	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
-};
-
-jQuery(document).ready(function() {
-
-	jQuery(".realqty").keyup(function() {
-		disablebuttonmakemovementandclose();
-	});
-	jQuery(".realqty").change(function() {
-		disablebuttonmakemovementandclose();
-	});
-});
-</script>';
-
-
 // Part to show record
 if ($object->id > 0) {
 	$res = $object->fetch_optionals();
@@ -383,7 +400,7 @@ if ($object->id > 0) {
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid.'&page='.$page.$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Clone confirmation
@@ -487,8 +504,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'?page='.$page.'&id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateinventorylines">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -640,7 +656,8 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-	$sql .= ' ORDER BY id.rowid';
+	$sql .= $db->order('id.rowid', 'ASC');
+	$sql .= $db->plimit($limit, $offset);
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -649,6 +666,10 @@ if ($object->id > 0) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
+
+		if (!empty($limit != 0) || $num > $limit || $page) {
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
+		}
 
 		$i = 0;
 		$hasinput = false;
@@ -719,7 +740,7 @@ if ($object->id > 0) {
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
-				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
 				print '</td>';
 			} else {
 				print $obj->qty_view;
@@ -752,6 +773,48 @@ if ($object->id > 0) {
 				</script>';
 	}
 	print '</form>';
+
+	print '<script type="text/javascript">
+					$(document).ready(function() {
+
+                        $(".paginationnext:last").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page + 1).$paramwithsearch.'";
+    						}});
+    					});
+
+
+                         $(".paginationprevious:last").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'";
+       					 	}});
+						 });
+
+                          $("#idbuttonmakemovementandclose").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'&action=record";
+       					 	}});
+						 });
+					});
+				</script>';
 }
 
 // End of page
