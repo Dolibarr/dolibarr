@@ -45,7 +45,7 @@ if ($user->socid > 0) {
 } elseif (GETPOSTISSET('socid')) {
 	$socid = GETPOST('socid', 'int');
 }
-if (!$user->hasRight('loan', 'write')) {
+if (empty($user->rights->loan->write)) {
 	accessforbidden();
 }
 

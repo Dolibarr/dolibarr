@@ -21,21 +21,41 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_departements dictionary
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
-
 /**
  *  Class to manage dictionary States (used by imports)
  */
-class Cstate extends CommonDict
+class Cstate // extends CommonObject
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	//var $element='cstate';			//!< Id that identify managed objects
+	//var $table_element='cstate';	    //!< Name of table without prefix where object is stored
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
 	/**
 	 * @var int ID
 	 */
 	public $rowid;
 
 	public $code_departement;
+	public $code;
 
 	/**
 	 * @var string name
@@ -48,6 +68,12 @@ class Cstate extends CommonDict
 	 * @see $name
 	 */
 	public $nom = '';
+
+	public $label;
+
+	public $active;
+
+
 
 
 	/**
@@ -180,6 +206,7 @@ class Cstate extends CommonDict
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -237,6 +264,7 @@ class Cstate extends CommonDict
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_departements";

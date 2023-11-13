@@ -40,4 +40,3 @@ CurrencyCodeId=Currency ID
 CurrencyCode=Currency code
 CurrencyUnitPrice=Unit price in foreign currency
 CurrencyPrice=Price in foreign currency
-MutltiCurrencyAutoUpdateCurrencies=Update all currency rates

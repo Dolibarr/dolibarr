@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/comment.php
+ *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    project
- *	\brief      Page of a project task comment
+ *	\brief      Page of a project task
  */
 
 require "../../main.inc.php";
@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->hasRight('projet', 'all', 'lire')) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 			}

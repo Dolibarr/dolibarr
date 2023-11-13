@@ -22,17 +22,33 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_regions dictionary
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
-
 /**
  * 	Class to manage dictionary Regions
  */
-class Cregion extends CommonDict
+class Cregion
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	//public $element = 'cregion'; //!< Id that identify managed objects
 	//public $table_element = 'c_regions'; //!< Name of table without prefix where object is stored
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	public $code_region;
 	public $fk_pays;
@@ -47,6 +63,7 @@ class Cregion extends CommonDict
 	 */
 	public $cheflieu;
 
+	public $active;
 
 	/**
 	 *  Constructor

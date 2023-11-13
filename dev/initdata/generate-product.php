@@ -50,7 +50,7 @@ include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
  * Parameters
  */
 
-define('GEN_NUMBER_PRODUIT', $argv[1] ?? 100);
+define(GEN_NUMBER_PRODUIT, 100000);
 
 
 $ret=$user->fetch('', 'admin');

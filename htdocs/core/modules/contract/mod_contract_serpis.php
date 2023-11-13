@@ -62,10 +62,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *	@return     string      text description
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -86,10 +85,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *	@return     boolean     false if conflit, true if ok
 	 */
-	public function canBeActivated($object)
+	public function canBeActivated()
 	{
 		global $conf, $langs, $db;
 

@@ -8,7 +8,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
- * Copyright (C) 2023	   William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023      William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,14 @@ if ($socid > 0) {
 	}
 }
 
+if ($socid > 0) {
+		$tmpthirdparty = new Societe($db);
+		$res = $tmpthirdparty->fetch($socid);
+	if ($res > 0) {
+		$search_societe = $tmpthirdparty->name;
+	}
+}
+
 $objecttype = 'facture_rec';
 
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
@@ -247,8 +255,8 @@ if (empty($reshook)) {
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permissiontoread = $user->hasRight("mymodule", "read");
-	$permissiontodelete = $user->hasRight("mymodule", "delete");
+	$permissiontoread = $user->rights->mymodule->read;
+	$permissiontodelete = $user->rights->mymodule->delete;
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -300,7 +308,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_rec_extrafields as ef ON ef.fk_object = f.rowid";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 // Add table from hooks
@@ -310,7 +318,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (!$user->hasRight("societe", "client", "voir") && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -533,7 +541,7 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -730,7 +738,6 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-// Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
@@ -849,7 +856,7 @@ while ($i < $imaxinloop) {
 	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="center tdoverflowmax125">';
+		print '<td class="nowrap center">';
 		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
 				print $langs->trans("MaxNumberOfGenerationReached");
@@ -936,22 +943,13 @@ while ($i < $imaxinloop) {
 		}
 	}
 	if (!empty($arrayfields['f.frequency']['checked'])) {
-		print '<td class="center">';
-		print ($objp->frequency > 0 ? $objp->frequency : '');
-		print '</td>';
+		print '<td class="center">'.($objp->frequency > 0 ? $objp->frequency : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['f.unit_frequency']['checked'])) {
-		print '<td class="center">';
-		if ($objp->frequency > 1) {
-			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-		} else {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
-		}
-		print ($objp->frequency > 0 ? $dur[$objp->unit_frequency] : '');
-		print '</td>';
+		print '<td class="center">'.($objp->frequency > 0 ? $objp->unit_frequency : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

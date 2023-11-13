@@ -119,15 +119,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $hookmanager->initHooks(array('sclist'));
 $object = new ChargeSociales($db);
 
-$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
-$permissiontodelete = $user->hasRight('tax', 'charges', 'supprimer');
-
 // Security check
 $socid = GETPOST("socid", 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
+$permissiontodelete = $user->rights->tax->charges->supprimer;
 
 
 /*
@@ -381,13 +379,13 @@ if ($search_date_limit_endyear) {
 	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
 }
 
-$url = DOL_URL_ROOT.'/compta/sociales/card.php?action=create';
-
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+if ($user->rights->tax->charges->creer) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
+}
+
 
 // List of mass actions available
 $arrayofmassactions = array();
@@ -634,7 +632,7 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array('totalttcfield'=>0);
+$totalarray['val'] = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -800,9 +798,7 @@ while ($i < $imaxinloop) {
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Amount
@@ -810,6 +806,8 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
+			}
+			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			}
 			$totalarray['val']['totalttcfield'] += $obj->amount;

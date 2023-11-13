@@ -20,17 +20,21 @@
 
 /**
  * \file    htdocs/core/class/cgenericdic.class.php
- * \ingroup core
+ * \ingroup resource
  */
-
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 
 /**
  * Class CGenericDic
+ *
+ * @see CommonObject
  */
-class CGenericDic extends CommonDict
+class CGenericDic
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -49,7 +53,7 @@ class CGenericDic extends CommonDict
 	public $code;
 
 	/**
-	 * @var string Label
+	 * @var string Type resource label
 	 */
 	public $label;
 

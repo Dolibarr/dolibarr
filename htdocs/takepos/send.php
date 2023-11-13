@@ -48,7 +48,7 @@ $facid = GETPOST('facid', 'int');
 $action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
-if (!$user->hasRight('takepos', 'run')) {
+if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 

@@ -35,41 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
 	/**
-	 * @var int tab_top
+	 * Issuer
+	 * @var Societe
 	 */
-	public $tab_top;
-
-	/**
-	 * @var int tab_height
-	 */
-	public $tab_height;
-
-	/**
-	 * @var int line_height
-	 */
-	public $line_height;
-
-	/**
-	 * @var int line per page
-	 */
-	public $line_per_page;
-
-	/**
-	 * @var Account bank account
-	 */
-	public $account;
-
-	public $amount;
-	public $date;
-	public $nbcheque;
-	public $ref;
-	public $ref_ext;
-
-
-	/**
-	 * @var array lines
-	 */
-	public $lines;
+	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -78,7 +47,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public function __construct($db)
 	{
-		global $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));

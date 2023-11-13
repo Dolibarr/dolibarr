@@ -31,25 +31,47 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 abstract class ModelePDFMovement extends CommonDocGenerator
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var string Error code (or message)
 	 */
-	public $db;
+	public $error = '';
 
 	/**
-	 * @var string model description (short text)
+	 * @var int page_largeur
 	 */
-	public $description;
+	public $page_largeur;
 
 	/**
-	 * @var string document type
+	 * @var int page_hauteur
 	 */
-	public $type;
+	public $page_hauteur;
 
 	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var array format
 	 */
-	public $version = 'dolibarr';
+	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
+
+
+	public $option_codestockservice;
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

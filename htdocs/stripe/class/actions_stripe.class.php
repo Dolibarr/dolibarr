@@ -18,22 +18,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// TODO File of hooks not used yet. To remove ?
+// TODO File not used. To remove.
 
 /**
  *	\file       htdocs/stripe/class/actions_stripe.class.php
  *	\ingroup    stripe
  *	\brief      File Class actionsstripeconnect
  */
-
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
+
+$langs->load("stripe@stripe");
 
 
 /**
  *	Class Actions Stripe Connect
  */
-class ActionsStripeconnect extends CommonHookActions
+class ActionsStripeconnect
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -41,6 +42,10 @@ class ActionsStripeconnect extends CommonHookActions
 	public $db;
 
 	private $config = array();
+
+	// For Hookmanager return
+	public $resprints;
+	public $results = array();
 
 
 	/**
@@ -64,7 +69,7 @@ class ActionsStripeconnect extends CommonHookActions
 	 */
 	public function formObjectOptions($parameters, &$object, &$action)
 	{
-		global $conf, $langs;
+		global $db, $conf, $user, $langs, $form;
 
 		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
@@ -78,6 +83,7 @@ class ActionsStripeconnect extends CommonHookActions
 				$key = $value;
 			}
 		}
+
 
 		if (is_object($object) && $object->element == 'societe') {
 			$this->resprints .= '<tr><td>';
@@ -162,8 +168,7 @@ class ActionsStripeconnect extends CommonHookActions
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action)
 	{
-		global $conf, $langs;
-
+		global $db, $conf, $user, $langs, $form;
 		if (is_object($object) && $object->element == 'facture') {
 			// On verifie si la facture a des paiements
 			$sql = 'SELECT pf.amount';

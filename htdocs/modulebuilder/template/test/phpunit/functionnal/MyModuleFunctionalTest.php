@@ -24,7 +24,7 @@
  * Put detailed description here.
  */
 
-namespace Dolibarr\test\functional;
+namespace test\functional;
 
 use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
 

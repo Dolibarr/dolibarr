@@ -4,7 +4,6 @@
  * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -648,16 +647,6 @@ class FormTicket
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-				print '</td></tr>';
-			}
-		}
-
-		if ($subelement != 'contract') {
-			if (isModEnabled('contract') && !$this->ispublic) {
-				$formcontract = new FormContract($this->db);
-				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
-				print img_picto('', 'contract');
-				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
 				print '</td></tr>';
 			}
 		}
@@ -1488,20 +1477,10 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
-			// Subject/topic
-			$topic = "";
-			foreach ($formmail->lines_model as $line) {
-				if ($this->param['models_id'] == $line->id) {
-					$topic = $line->topic;
-					break;
-				}
-			}
+
+			// Subject
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			if (empty($topic)) {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
-			} else {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
-			}
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Recipients / adressed-to
@@ -1576,7 +1555,7 @@ class FormTicket
 		// Attached files
 		if (!empty($this->withfile)) {
 			$out = '<tr>';
-			$out .= '<td>'.$langs->trans("MailFile").'</td>';
+			$out .= '<td width="180">'.$langs->trans("MailFile").'</td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -1662,7 +1641,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_5, '90%');
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, 70);
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1682,7 +1661,7 @@ class FormTicket
 
 		print '</table>';
 
-		print '<br><center>';
+		print '<center><br>';
 		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
 		// Add a javascript test to avoid to forget to submit file before sending email
 		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
@@ -1697,7 +1676,7 @@ class FormTicket
 
 		print '<input type="hidden" name="page_y">'."\n";
 
-		print "</form><br>\n";
+		print "</form>\n";
 
 		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
 		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {

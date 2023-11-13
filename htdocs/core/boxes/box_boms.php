@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modified BOMs
+ * Class to manage the box to show last orders
  */
 class box_boms extends ModeleBoxes
 {
-	public $boxcode  = "lastboms";
-	public $boximg   = "object_bom";
+	public $boxcode = "lastboms";
+	public $boximg = "object_bom";
 	public $boxlabel = "BoxTitleLatestModifiedBoms";
-	public $depends  = array("bom");
+	public $depends = array("bom");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -84,7 +84,7 @@ class box_boms extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-		if ($user->hasRight('bom', 'read')) {
+		if ($user->rights->bom->read) {
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", p.rowid as productid";
 			$sql .= ", p.tosell";

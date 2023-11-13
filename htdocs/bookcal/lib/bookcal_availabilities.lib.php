@@ -33,10 +33,10 @@ function availabilitiesPrepareHead($object)
 
 	$langs->load("agenda");
 
-	$showtabofpagecontact = 0;
+	$showtabofpagecontact = 1;
 	$showtabofpagenote = 1;
-	$showtabofpagedocument = 0;
-	$showtabofpageagenda = 0;
+	$showtabofpagedocument = 1;
+	$showtabofpageagenda = 1;
 
 	$h = 0;
 	$head = array();

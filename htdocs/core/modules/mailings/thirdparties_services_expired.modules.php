@@ -36,6 +36,11 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	public $arrayofproducts = array();
 
 

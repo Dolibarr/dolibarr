@@ -53,10 +53,9 @@ class mod_asset_standard extends ModeleNumRefAsset
 	/**
 	 *  Return description of numbering module
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *  @return     string      Text with description
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);

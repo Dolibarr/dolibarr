@@ -200,7 +200,7 @@ class box_external_rss extends ModeleBoxes
 			);
 
 			$this->info_box_contents[$line][2] = array(
-				'td' => 'class="right nowraponall"',
+				'td' => 'class="right nowrap"',
 				'text' => dol_escape_htmltag($date),
 			);
 		}

@@ -145,12 +145,6 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-line {
 	line-height: 1.35em;
 }
-.info-box-line-text {
-	overflow: hidden;
-	width: calc(100% - 88px);
-	max-width: calc(100% - 76px);
-	text-overflow: ellipsis;
-}
 
 .info-box-icon-text {
 	box-sizing: border-box;
@@ -393,40 +387,40 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .infobox-adherent, .infobox-member {
-	color: #79633f;
+	color: #79633f !important;
 }
 .infobox-project{
-	color: #6c6aa8;
+	color: #6c6aa8 !important;
 }
 .infobox-action{
-	color: #b06080;
+	color: #b06080 !important;
 }
 /* Color for customer object */
 .infobox-propal:not(.error),
 .infobox-facture:not(.error),
 .infobox-commande:not(.error) {
-	color: #65953d;
+	color: #65953d !important;
 }
 /* Color for vendor object */
 .infobox-supplier_proposal:not(.error),
 .infobox-invoice_supplier:not(.error),
 .infobox-order_supplier:not(.error) {
-	color: #599caf;
+	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
-	color: #3bbfa8;
+	color: #3bbfa8 !important;
 }
 .infobox-bank_account{
-	color: #b0bb39;
+	color: #b0bb39 !important;
 }
 .infobox-adherent, .infobox-member {
-	color: #79633f;
+	color: #79633f !important;
 }
 .infobox-expensereport{
-	color: #79633f;
+	color: #79633f !important;
 }
 .infobox-holiday{
-	color: #755114;
+	color: #755114 !important;
 }
 
 
@@ -503,21 +497,21 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	/*justify-content: space-between;*/
 }
 
-.box-flex-grow-zero {
+.box-flex-grow-zero{
 	flex-grow: 0 !important;
 }
 
-.box-flex-item {
+.box-flex-item{
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
+
 	width: 280px;
+	margin: 5px 8px 0px 8px;
 }
-.box-flex-item.filler {
+.box-flex-item.filler{
+	margin: 0px 0px 0px 15px !important;
 	height: 0;
-}
-.box-flex-item, .box-flex-item.filler {
-	margin: 5px 10px 0px 10px;
 }
 
 .info-box-title {

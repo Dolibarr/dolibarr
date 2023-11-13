@@ -46,7 +46,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
-if (!$user->hasRight('takepos', 'run')) {
+if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 

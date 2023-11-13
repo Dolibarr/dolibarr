@@ -115,8 +115,6 @@ print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') 
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
-//$arrayoffunctionstodisable[] = 'stream_wrapper_restore';
-//$arrayoffunctionstodisable[] = 'stream_wrapper_register';
 if ($execmethod == 1) {
 	$arrayoffunctionstodisable2 = explode(',', 'passthru,shell_exec,system,proc_open,popen');
 	$functiontokeep = 'exec';
@@ -323,10 +321,10 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, clamdscan').')</span>';
 print '<br>';
 
-if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
+if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
@@ -350,18 +348,18 @@ print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"),
 
 
 print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
-print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? '' : img_picto('', 'tick').' ';
-print yn(!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? 0 : 1);
+print empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? 0 : 1);
 print '<br>';
 print '<br>';
 
 
 $sessiontimeout = ini_get("session.gc_maxlifetime");
-if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
 	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 }
 print '<strong>'.$langs->trans("SessionTimeOut").'</strong>';
-if (!ini_get("session.gc_probability")) {
+if (ini_get("session.gc_probability") == 0) {
 	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
 } else {
 	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
@@ -382,9 +380,9 @@ print getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolowe
 print '<br><br>';
 
 print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';
-print !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? '' : img_picto('', 'tick').' ';
-print yn(!getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1);
-if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
+print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
+if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
 }
 print '<br>';
@@ -423,12 +421,12 @@ print '<br>';
 */
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print !getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? img_warning().' ' : img_picto('', 'tick').' ';
-print yn(!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? 0 : 1);
-if (!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
+if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
-	print ' &nbsp; - ' . getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
+	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 	}
@@ -461,7 +459,7 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 	foreach ($eventstolog as $key => $arr) {
 		if ($arr['id']) {
 			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-			$value = getDolGlobalString($key);
+			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
 			if ($value) {
 				if ($i > 0) {
 					$out .= ', ';
@@ -579,7 +577,7 @@ print '<br>';
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
-if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
+if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
@@ -611,7 +609,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
-if (!getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
+if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
 } else {
 	print $conf->global->MAIN_EXEC_USE_POPEN;

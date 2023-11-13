@@ -128,7 +128,8 @@ class Interfaces
 						$qualified = true;
 						if (strtolower($reg[2]) != 'all') {
 							$module = preg_replace('/^mod/i', '', $reg[2]);
-							if (!isModEnabled(strtolower($module))) {
+							$constparam = 'MAIN_MODULE_'.strtoupper($module);
+							if (empty($conf->global->$constparam)) {
 								$qualified = false;
 							}
 						}
@@ -340,9 +341,10 @@ class Interfaces
 					// Check if trigger file is for a particular module
 					if (preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/i', $files[$key], $reg)) {
 						$module = preg_replace('/^mod/i', '', $reg[2]);
+						$constparam = 'MAIN_MODULE_'.strtoupper($module);
 						if (strtolower($module) == 'all') {
 							$disabledbymodule = 0;
-						} elseif (!isModEnabled(strtoupper($module))) {
+						} elseif (empty($conf->global->$constparam)) {
 							$disabledbymodule = 2;
 						}
 						$triggers[$j]['module'] = strtolower($module);

@@ -2,7 +2,6 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2023      Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,34 +46,12 @@ class AccountancySystem
 	/**
 	 * @var int ID
 	 */
-	public $id;
-
-	/**
-	 * @var int ID
-	 * @deprecated
-	 * @see $id
-	 */
 	public $rowid;
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_pcg_version;
-
-	/**
-	 * @var int pcg version
-	 */
-	public $pcg_version;
-
-	/**
-	 * @var string ref
-	 */
-	public $ref;
-
-	/**
-	 * @var int active
-	 */
-	public $active;
 
 	/**
 	 * @var string pcg type
@@ -179,7 +156,6 @@ class AccountancySystem
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
 
 			if ($id > 0) {
-				$this->id = $id;
 				$this->rowid = $id;
 				$result = $this->rowid;
 			} else {

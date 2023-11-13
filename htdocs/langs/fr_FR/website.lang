@@ -160,6 +160,3 @@ PagesViewedTotal=Pages vues (total)
 Visibility=Visibilité
 Everyone=Tout le monde
 AssignedContacts=Contacts assignés
-WebsiteTypeLabel=Type de site Internet
-WebsiteTypeDolibarrWebsite=Site Internet (CMS Dolibarr)
-WebsiteTypeDolibarrPortal=Portail Dolibarr natif

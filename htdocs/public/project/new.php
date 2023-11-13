@@ -133,7 +133,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD)) {
 		print '<div class="backimagepublicnewlead">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD').'">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD.'">';
 		print '</div>';
 	}
 
@@ -205,8 +205,6 @@ if (empty($reshook) && $action == 'add') {
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
 	}
-
-	$visibility = getDolGlobalString('PROJET_VISIBILITY');
 
 	$proj = new Project($db);
 	$thirdparty = new Societe($db);
@@ -287,17 +285,10 @@ if (empty($reshook) && $action == 'add') {
 			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 		}
 
-		if ($visibility === "1") {
-			$proj->public = 1;
-		} elseif ($visibility === "0") {
-			$proj->public = 0;
-		} elseif (empty($visibility)) {
-			$proj->public = 1;
-		}
-
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
+		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
@@ -370,9 +361,7 @@ if (empty($reshook) && $action == 'add') {
 						$msg     = $arraydefaultmessage->content;
 					}
 					if (empty($labeltosue)) {
-						$appli = $mysoc->name;
-
-						$labeltouse = '['.$appli.'] '.$langs->trans("YourMessage");
+						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
 						$msg = $langs->trans("YourMessageHasBeenReceived");
 					}
 

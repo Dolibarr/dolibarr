@@ -153,7 +153,7 @@ if ($action == 'addfolder') {
 }
 
 // Action ajout d'un rep
-if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
+if ($action == 'add' && $user->rights->ftp->setup) {
 	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
@@ -658,7 +658,7 @@ if (!function_exists('ftp_connect')) {
 		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (getDolGlobalString($paramkey)) {
+			if (!empty($conf->global->$paramkey)) {
 				$foundsetup = true;
 				break;
 			}

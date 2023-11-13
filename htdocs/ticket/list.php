@@ -55,13 +55,10 @@ $mode = GETPOST('mode', 'alpha');
 $id = GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
-$contractid  = GETPOST('contractid', 'int');
 $projectid  = GETPOST('projectid', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOST('search_fk_project', 'int') ?GETPOST('search_fk_project', 'int') : GETPOST('projectid', 'int');
-$search_fk_contract = GETPOST('search_fk_contract', 'int') ?GETPOST('search_fk_contract', 'int') : GETPOST('contractid', 'int');
-
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_dateread_start = dol_mktime(0, 0, 0, GETPOST('search_dateread_startmonth', 'int'), GETPOST('search_dateread_startday', 'int'), GETPOST('search_dateread_startyear', 'int'));
@@ -159,7 +156,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 // Security check
-if (!$user->hasRight('ticket', 'read')) {
+if (!$user->rights->ticket->read) {
 	accessforbidden();
 }
 // restrict view to current user's company
@@ -430,9 +427,6 @@ if ($search_societe) {
 if ($search_fk_project > 0) {
 	$sql .= natural_search('fk_project', $search_fk_project, 2);
 }
-if ($search_fk_contract > 0) {
-	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
-}
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
 }
@@ -602,7 +596,7 @@ if ($projectid > 0 || $project_ref) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->hasRight('projet', 'all', 'lire')) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -680,9 +674,6 @@ if ($search_societe) {
 }
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
-}
-if ($contractid > 0) {
-	$param .= '&contractid='.urlencode($contractid);
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
@@ -763,8 +754,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->rights->ticket->write);
 
 $picto = 'ticket';
 if ($socid > 0) {
@@ -928,7 +918,7 @@ foreach ($object->fields as $key => $val) {
 			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			} elseif (strpos($val['type'], 'integer:') === 0) {
-				print $object->showInputField($val, $key, !empty($search[$key])?$search[$key]:"", '', '', 'search_', 'maxwidth150', 1);
+				print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
 			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]).'">';
 			}

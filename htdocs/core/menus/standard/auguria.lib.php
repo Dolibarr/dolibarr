@@ -129,7 +129,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 			$classname = '';
 		}
 
-		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname, $newTabMenu[$i]['prefix']);
+		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
 
 	// Sort on position
@@ -170,7 +170,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	if (empty($noout)) {
 		foreach ($menu->liste as $menuval) {
 			print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-			print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
+			print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
 			print_end_menu_entry_auguria($menuval['enabled']);
 		}
 	}
@@ -219,17 +219,16 @@ function print_start_menu_entry_auguria($idsel, $classname, $showmode)
 /**
  * Output menu entry
  *
- * @param	string	$text			Text
- * @param	int		$showmode		0 = hide, 1 = allowed or 2 = not allowed
- * @param	string	$url			Url
- * @param	string	$id				Id
- * @param	string	$idsel			Id sel
- * @param	string	$classname		Class name
- * @param	string	$atarget		Target
- * @param	array	$menuval		All the $menuval array
+ * @param	string	$text		Text
+ * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
+ * @param	string	$url		Url
+ * @param	string	$id			Id
+ * @param	string	$idsel		Id sel
+ * @param	string	$classname	Class name
+ * @param	string	$atarget	Target
  * @return	void
  */
-function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
+function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
 	global $langs, $conf;
 
@@ -238,14 +237,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
-
-		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
-			print $menuval['prefix'];
-		} else {
-			print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
-		}
-		print '</div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage aaa"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
 			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
@@ -256,13 +248,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 		}
 	} elseif ($showmode == 2) {
 		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled">';
-		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
-			print $menuval['prefix'];
-		} else {
-			print '<span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span>';
-		}
-		print '</div>';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</div>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
 			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
@@ -356,7 +342,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, ($user->socid ? 1 : 0), 'auguria', $tabMenu);
 
 	// We update newmenu for special dynamic menus
-	if (isModEnabled('banque') && $user->hasRight('banque', 'lire') && $mainmenu == 'bank') {	// Entry for each bank account
+	if (isModEnabled('banque') && $user->rights->banque->lire && $mainmenu == 'bank') {	// Entry for each bank account
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
@@ -371,14 +357,14 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 			$i = 0;
 
 			if ($numr > 0) {
-				$newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->hasRight('banque', 'lire'));
+				$newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->rights->banque->lire);
 			}
 
 			while ($i < $numr) {
 				$objp = $db->fetch_object($resql);
-				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid, $objp->label, 1, $user->hasRight('banque', 'lire'));
+				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid, $objp->label, 1, $user->rights->banque->lire);
 				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos)) {  // If not cash account and not closed and can be reconciliate
-					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid, $langs->trans("Conciliate"), 2, $user->hasRight('banque', 'consolidate'));
+					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid, $langs->trans("Conciliate"), 2, $user->rights->banque->consolidate);
 				}
 				$i++;
 			}
@@ -575,7 +561,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 			}
 
 
-			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' prefix='.$menu_array[$i]['prefix'].' -->'."\n";
+			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu level 0
 			if ($menu_array[$i]['level'] == 0) {
@@ -586,16 +572,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					} else {
 						print '<span class="vmenu">';
 					}
-					if (!empty($menu_array[$i]['prefix'])) {
-						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $menu_array[$i]['prefix'])) {
-							print '<span class="fas '.$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
-						} else {
-							print $menu_array[$i]['prefix'];
-						}
-					}
-
-					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '');
-					print $menu_array[$i]['titre'];
+					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -606,10 +583,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled">';
-					if (!empty($menu_array[$i]['prefix'])) {
-						print $menu_array[$i]['prefix'];
-					}
-					print $menu_array[$i]['titre'];
+					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';

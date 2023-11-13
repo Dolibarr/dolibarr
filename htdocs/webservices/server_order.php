@@ -214,6 +214,9 @@ $order_fields = array(
 	'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
 	'date_validation' => array('name'=>'date_validation', 'type'=>'xsd:dateTime'),
 	'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
+	'remise' => array('name'=>'remise', 'type'=>'xsd:string'),
+	'remise_percent' => array('name'=>'remise_percent', 'type'=>'xsd:string'),
+	'remise_absolue' => array('name'=>'remise_absolue', 'type'=>'xsd:string'),
 	'source' => array('name'=>'source', 'type'=>'xsd:string'),
 	'note_private' => array('name'=>'note_private', 'type'=>'xsd:string'),
 	'note_public' => array('name'=>'note_public', 'type'=>'xsd:string'),
@@ -405,7 +408,7 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->hasRight('commande', 'lire')) {
+		if ($fuser->rights->commande->lire) {
 			$order = new Commande($db);
 			$result = $order->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
@@ -467,6 +470,10 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'date_creation' => $order->date_creation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
 					'date_validation' => $order->date_validation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
 					'date_modification' => $order->date_modification ?dol_print_date($order->date_modification, 'dayhourrfc') : '',
+
+					'remise' => $order->remise,
+					'remise_percent' => $order->remise_percent,
+					'remise_absolue' => $order->remise_absolue,
 
 					'source' => $order->source,
 					'billed' => $order->billed,
@@ -614,6 +621,10 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'project_id' => $order->fk_project,
 
 					'date' => $order->date_commande ?dol_print_date($order->date_commande, 'dayrfc') : '',
+
+					'remise' => $order->remise,
+					'remise_percent' => $order->remise_percent,
+					'remise_absolue' => $order->remise_absolue,
 
 					'source' => $order->source,
 					'billed' => $order->billed,
@@ -825,7 +836,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->hasRight('commande', 'lire')) {
+		if ($fuser->rights->commande->lire) {
 			$order = new Commande($db);
 			$result = $order->fetch($id);
 
@@ -854,7 +865,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
-			$errorlabel = 'Bad permission';
+			$errorlabel = $order->error;
 		}
 	}
 

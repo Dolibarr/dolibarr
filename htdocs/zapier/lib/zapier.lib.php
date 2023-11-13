@@ -24,11 +24,13 @@
 /**
  * Prepare admin pages header
  *
- * @return array		Array with list of tab entries
+ * @return array
  */
 function zapierAdminPrepareHead()
 {
 	global $langs, $conf;
+
+	$langs->load("zapier");
 
 	$h = 0;
 	$head = array();

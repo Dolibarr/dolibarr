@@ -57,7 +57,6 @@ $modules = array(
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
-	'SPECIALCHAR' => 'SpecialCharActivation',
 );
 // Conditions for the option to be offered
 $conditions = array(
@@ -70,7 +69,6 @@ $conditions = array(
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
 	'TICKET' => isModEnabled('ticket'),
-	'SPECIALCHAR' => 1,
 );
 // Picto
 $picto = array(
@@ -83,7 +81,6 @@ $picto = array(
 	'MAILING' => 'email',
 	'MAIL' => 'email',
 	'TICKET' => 'ticket',
-	'SPECIALCHAR' => 'generic'
 );
 
 
@@ -95,14 +92,17 @@ $picto = array(
 foreach ($modules as $const => $desc) {
 	if ($action == 'enable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
-
 		// If fckeditor is active in the product/service description, it is activated in the forms
 		if ($const == 'PRODUCTDESC' && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
 		}
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	}
 	if ($action == 'disable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "0", 'chaine', 0, '', $conf->entity);
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	}
 }
 
@@ -175,9 +175,9 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<td class="center centpercent width100">';
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 		}
 
 		print "</td>";
@@ -221,7 +221,6 @@ if (empty($conf->use_javascript_ajax)) {
 		$editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
 		$editor->Create();
 	} else {
-		// CKEditor inline enabled with the contenteditable="true"
 		print '<div style="border: 1px solid #888;" contenteditable="true">';
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';

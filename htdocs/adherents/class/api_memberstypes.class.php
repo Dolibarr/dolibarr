@@ -48,8 +48,8 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * Return an array with member type informations
 	 *
-	 * @param   int     $id				ID of member type
-	 * @return  Object					Object with cleaned properties
+	 * @param   int     $id 			ID of member type
+	 * @return  Object              	Object with cleaned properties
 	 *
 	 * @throws  RestException
 	 */
@@ -82,12 +82,11 @@ class MembersTypes extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member type objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
 		global $db, $conf;
 
@@ -129,7 +128,7 @@ class MembersTypes extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$membertype = new AdherentType($this->db);
 				if ($membertype->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($membertype), $properties);
+					$obj_ret[] = $this->_cleanObjectDatas($membertype);
 				}
 				$i++;
 			}

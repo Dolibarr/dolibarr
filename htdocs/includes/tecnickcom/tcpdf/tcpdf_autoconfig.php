@@ -40,11 +40,11 @@
  * @version 1.1.1
  */
 
-// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+// DOCUMENT_ROOT fix for IIS Webserver
 if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
-	if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+	if(isset($_SERVER['SCRIPT_FILENAME'])) {
 		$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
-	} elseif (isset($_SERVER['PATH_TRANSLATED']) && isset($_SERVER['PHP_SELF'])) {
+	} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
 		$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
 	} else {
 		// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')

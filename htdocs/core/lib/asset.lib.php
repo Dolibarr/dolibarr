@@ -88,7 +88,7 @@ function assetPrepareHead(Asset $object)
 {
 	global $db, $langs, $conf;
 
-	$langs->loadLangs(array("assets", "admin"));
+	$langs->load("assets", "admin");
 
 	$h = 0;
 	$head = array();
@@ -184,7 +184,7 @@ function assetModelPrepareHead($object)
 {
 	global $langs, $conf;
 
-	$langs->loadLangs(array("assets", "admin"));
+	$langs->load("assets", "admin");
 
 	$h = 0;
 	$head = array();

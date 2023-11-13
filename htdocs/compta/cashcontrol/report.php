@@ -80,7 +80,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (!$user->hasRight('cashdesk', 'run') && !$user->hasRight('takepos', 'run')) {
+if (empty($user->rights->cashdesk->run) && empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 

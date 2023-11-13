@@ -379,12 +379,6 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	border-color: #ddd;
 }
 
-/* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
-.btnTitlePlus:hover {
-	max-width: 24px;
-	max-height: 40px;
-}
-
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */

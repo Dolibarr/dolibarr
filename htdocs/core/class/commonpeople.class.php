@@ -49,16 +49,6 @@ trait CommonPeople
 	public $state_code;
 	public $state;
 
-	/**
-	 * @var string email
-	 */
-	public $email;
-
-	/**
-	 * @var string url
-	 */
-	public $url;
-
 
 	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
@@ -182,7 +172,7 @@ trait CommonPeople
 		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
 		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
-			if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 && $this->region) {
+			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
 			} else {
 				$out .= ($outdone ? ' - ' : '').$this->state;
@@ -272,7 +262,7 @@ trait CommonPeople
 	/**
 	 * Set to upper or ucwords/lower if needed
 	 *
-	 * @return void
+	 * @return void;
 	 */
 	public function setUpperOrLowerCase()
 	{
@@ -282,16 +272,12 @@ trait CommonPeople
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
-			if (property_exists($this, 'name_alias')) {
-				$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
-			}
+			$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
 		}
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
-			if (property_exists($this, 'name_alias')) {
-				$this->name_alias = dol_strtoupper($this->name_alias);
-			}
+			$this->name_alias = dol_strtoupper($this->name_alias);
 		}
 		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
 			$this->address = dol_strtoupper($this->address);

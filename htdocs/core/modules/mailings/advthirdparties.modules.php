@@ -37,6 +37,11 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	public $enabled = 'isModEnabled("societe")';
 
 

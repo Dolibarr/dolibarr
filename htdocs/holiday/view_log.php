@@ -28,7 +28,7 @@
 require '../main.inc.php';
 
 // Security check (access forbidden for external user too)
-if (!$user->hasRight('holiday', 'define_holiday') || $user->socid > 0) {
+if (empty($user->rights->holiday->define_holiday) || $user->socid > 0) {
 	accessforbidden();
 }
 
@@ -93,7 +93,7 @@ if (empty($conf->holiday->enabled)) {
 }
 
 // Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->hasRight('holiday', 'readall')) {
+if (!$user->rights->holiday->readall) {
 	accessforbidden();
 }
 

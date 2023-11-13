@@ -71,7 +71,7 @@ class Menu
 	}
 
 	/**
-	 * Insert a menu entry into this->liste (after $idafter)
+	 * Insert a menu entry into this->liste
 	 *
 	 * @param   int     $idafter    Array key after which inserting new entry
 	 * @param	string	$url        Url to follow on click

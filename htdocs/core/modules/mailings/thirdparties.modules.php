@@ -38,6 +38,11 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 
 	/**
 	 *	Constructor

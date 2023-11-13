@@ -78,7 +78,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public function __construct($db, $param = '')
 	{
 		global $langs;
-		$langs->loadLangs(array("boxes", "knowledgemanagement", "languages"));
+		$langs->load("boxes", "knowledgemanagement", "languages");
 		$this->db = $db;
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxLastModifiedKnowledgerecord");

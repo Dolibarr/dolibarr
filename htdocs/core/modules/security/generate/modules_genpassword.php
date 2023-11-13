@@ -44,26 +44,6 @@ abstract class ModeleGenPassword
 	public $error = '';
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var Conf dolibarr conf
-	 */
-	public $conf;
-
-	/**
-	 * @var Translate Translate Object
-	 */
-	public $langs;
-
-	/**
-	 * @var User user
-	 */
-	public $user;
-
-	/**
 	 * 		Return if a module can be used or not
 	 *
 	 *      @return		boolean     true if module can be used

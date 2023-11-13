@@ -44,7 +44,7 @@ if ($result <= 0) {
 }
 
 // Security check
-if (!$user->hasRight('opensurvey', 'read')) {
+if (empty($user->rights->opensurvey->read)) {
 	accessforbidden();
 }
 

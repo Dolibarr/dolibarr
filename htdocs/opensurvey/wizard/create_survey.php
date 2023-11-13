@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
-if (!$user->hasRight('opensurvey', 'write')) {
+if (!$user->rights->opensurvey->write) {
 	accessforbidden();
 }
 

@@ -752,16 +752,11 @@ while ($i < $imaxinloop) {
 		$recruitment->fetch($obj->fk_recruitmentjobposition);
 
 		$object->phone = $obj->phone;
-
-		// Output Kanban
-		$selected = -1;
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		if ($massactionbutton || $massaction) {
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
-				$selected = 1;
-			}
 		}
-		print $object->getKanbanView('', array('jobpositionlink'=>$recruitment->getNomUrl(1), 'selected' => $selected));
+		// Output Kanban
+		print $object->getKanbanView('', array('jobpositionlink'=>$recruitment->getNomUrl(1), 'selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

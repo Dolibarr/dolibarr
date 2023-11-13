@@ -328,7 +328,7 @@ class Paiement extends CommonObject
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::create insert paiement (closepaidinvoices = ".$closepaidinvoices.")", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create insert paiement", LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -494,8 +494,6 @@ class Paiement extends CommonObject
 
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
-
 							if ($result < 0) {
 								$this->error = $invoice->error;
 								$this->errors = $invoice->errors;
@@ -510,8 +508,6 @@ class Paiement extends CommonObject
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
-
-			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
 				// Appel des triggers
@@ -639,18 +635,17 @@ class Paiement extends CommonObject
 	 *
 	 *      @param	User	$user               Object of user making payment
 	 *      @param  string	$mode               'payment', 'payment_supplier'
-	 *      @param  string	$label              Label to use in bank record
+	 *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
 	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
-	 *      @param	string	$addbankurl			'direct-debit' or 'credit-transfer': Add another entry into bank_url.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '', $addbankurl = '')
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$error = 0;
 		$bank_line_id = 0;
@@ -742,6 +737,7 @@ class Paiement extends CommonObject
 				}
 
 				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+				//if (! $error && $label != '(WithdrawalPayment)')
 				if (!$error) {
 					$linkaddedforthirdparty = array();
 					foreach ($this->amounts as $key => $value) {  // We should have invoices always for same third party but we loop in case of.
@@ -784,18 +780,18 @@ class Paiement extends CommonObject
 					}
 				}
 
-				// Add a link to the Direct Debit ('direct-debit') or Credit transfer ('credit-transfer') file in bank_url
-				if (!$error && $addbankurl && in_array($addbankurl, array('direct-debit', 'credit-transfer'))) {
+				// Add link 'WithdrawalPayment' in bank_url
+				if (!$error && $label == '(WithdrawalPayment)') {
 					$result = $acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
-						$addbankurl
+						'withdraw'
 						);
 				}
 
-				// Add link to the Direct Debit if invoice redused ('InvoiceRefused') in bank_url
+				// Add link 'InvoiceRefused' in bank_url
 				if (!$error && $label == '(InvoiceRefused)') {
 					$result=$acc->add_url_line(
 						$bank_line_id,
@@ -1016,11 +1012,17 @@ class Paiement extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-
 				$this->id = $obj->rowid;
-
-				$this->user_creation_id = $obj->fk_user_creat;
-				$this->user_modification_id = $obj->fk_user_modif;
+				if ($obj->fk_user_creat) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_creat);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -1112,16 +1114,16 @@ class Paiement extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->PAYMENT_ADDON)) {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
-		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'ant') {
+		} elseif ($conf->global->PAYMENT_ADDON == 'ant') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_ant';
-		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'cicada') {
+		} elseif ($conf->global->PAYMENT_ADDON == 'cicada') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		}
 
 		if (!empty($conf->global->PAYMENT_ADDON)) {
 			$mybool = false;
 
-			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
+			$file = $conf->global->PAYMENT_ADDON.".php";
 			$classname = $conf->global->PAYMENT_ADDON;
 
 			// Include file with class
@@ -1138,8 +1140,8 @@ class Paiement extends CommonObject
 
 			// For compatibility
 			if (!$mybool) {
-				$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
-				$classname = "mod_payment_" . getDolGlobalString('PAYMENT_ADDON');
+				$file = $conf->global->PAYMENT_ADDON.".php";
+				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {

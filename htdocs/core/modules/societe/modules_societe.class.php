@@ -25,7 +25,6 @@
  *		\brief      File with parent class of submodules to manage numbering and document generation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
@@ -33,6 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
  */
 abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 {
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -57,8 +61,63 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 /**
  *		Parent class for third parties code generators
  */
-abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
+abstract class ModeleThirdPartyCode
 {
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var array Error code (or message) array
+	 */
+	public $errors;
+
+
+	/**     Returns the default description of the numbering pattern
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Descriptive text
+	 */
+	public function info($langs)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoDescription");
+	}
+
+	/**     Return name of module
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Nom du module
+	 */
+	public function getNom($langs)
+	{
+		return $this->name;
+	}
+
+
+	/**     Return an example of numbering
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Example
+	 */
+	public function getExample($langs)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoExample");
+	}
+
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *  @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		return true;
+	}
+
 	/**
 	 *  Return next value available
 	 *
@@ -70,6 +129,30 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
+	}
+
+
+	/**
+	 *  Return version of module
+	 *
+	 *  @return     string      Version
+	 */
+	public function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -190,8 +273,74 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 /**
  *		Parent class for third parties accountancy code generators
  */
-abstract class ModeleAccountancyCode extends CommonNumRefGenerator
+abstract class ModeleAccountancyCode
 {
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+
+	/**
+	 *  Return description of module
+	 *
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Description of module
+	 */
+	public function info($langs)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoDescription");
+	}
+
+	/**
+	 *  Return an example of result returned by getNextValue
+	 *
+	 *  @param	Translate	$langs		Object langs
+	 *  @param	societe		$objsoc		Object thirdparty
+	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *  @return	string					Example
+	 */
+	public function getExample($langs, $objsoc = 0, $type = -1)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoExample");
+	}
+
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *  @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		return true;
+	}
+
+	/**
+	 *  Return version of module
+	 *
+	 *  @return     string      Version
+	 */
+	public function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
+	}
+
 	/**
 	 *  Return description of module parameters
 	 *
@@ -202,7 +351,7 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc, $type)
 	{
-		global $db;
+		global $conf, $db;
 
 		$langs->load("admin");
 

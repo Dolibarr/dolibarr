@@ -61,4 +61,3 @@ SurveyExpiredInfo=Le sondage a été fermé ou le délai de vote est expiré
 EmailSomeoneVoted=%s a rempli une ligne.\nVous pouvez trouver le sondage via le lien:\n%s
 ShowSurvey=Afficher le sondage
 UserMustBeSameThanUserUsedToVote=Vous devez avoir voté et utiliser le même nom d'utilisateur que celui utilisé pour voter, pour poster un commentaire
-ListOfOpenSurveys=Liste des enquêtes ouvertes

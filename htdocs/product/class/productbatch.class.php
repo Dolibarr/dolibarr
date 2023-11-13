@@ -57,16 +57,7 @@ class Productbatch extends CommonObject
 
 	// Properties of the lot
 	public $lotid;			// ID in table of the details of properties of each lots
-
-	/**
-	 * @var int|string
-	 * @deprecated
-	 */
 	public $sellby = '';	// dlc
-	/**
-	 * @var int|string
-	 * @deprecated
-	 */
 	public $eatby = '';		// dmd/dluo
 
 
@@ -90,6 +81,7 @@ class Productbatch extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -145,6 +137,7 @@ class Productbatch extends CommonObject
 	 */
 	public function fetch($id)
 	{
+		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
@@ -198,6 +191,7 @@ class Productbatch extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -248,6 +242,7 @@ class Productbatch extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -375,11 +370,12 @@ class Productbatch extends CommonObject
 	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
 	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
-	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
 	 *  @return int          					<0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
 	{
+		global $langs;
+
 		$where = array();
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -391,12 +387,8 @@ class Productbatch extends CommonObject
 		$sql .= " t.qty,";
 		$sql .= " t.import_key";
 		$sql .= " FROM ".$this->db->prefix().self::$_table_element." as t";
-		if ($fk_product_stock > 0 || empty($fk_warehouse)) {
-			$sql .= " WHERE t.fk_product_stock = ".((int) $fk_product_stock);
-		} else {
-			$sql .= ", ".$this->db->prefix()."product_stock as ps";
-			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
-		}
+		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
+
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
 		}
@@ -422,8 +414,8 @@ class Productbatch extends CommonObject
 
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
-				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do no tuse this data.
-				$this->eatby = $this->db->jdate($obj->eatby);	// deprecated. do not use this data.
+				$this->sellby = $this->db->jdate($obj->sellby);
+				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
 				$this->import_key = $obj->import_key;
@@ -439,11 +431,11 @@ class Productbatch extends CommonObject
 	/**
 	 * Return all batch detail records for a given product and warehouse
 	 *
-	 * @param	DoliDB		$dbs    			database object
-	 * @param	int			$fk_product_stock	id product_stock for objet
-	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
-	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 * @return 	array|int         				<0 if KO, array of batch
+	 *  @param	DoliDB		$dbs    			database object
+	 *  @param	int			$fk_product_stock	id product_stock for objet
+	 *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
+	 *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
+	 *  @return array|int         					<0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
@@ -459,7 +451,6 @@ class Productbatch extends CommonObject
 		$sql .= " t.eatby as oldeatby,"; // deprecated but may not be migrated into new table
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
-		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) $sql .= " MAX(sm.datem) as date_entree,";
 		$sql .= " t.import_key";
 		if ($fk_product > 0) {
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
@@ -470,26 +461,13 @@ class Productbatch extends CommonObject
 			$sql .= " LEFT JOIN ".$dbs->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
-		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock AS ps ON (ps.rowid = fk_product_stock)';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'stock_mouvement AS sm ON (sm.batch = t.batch AND ps.fk_entrepot=sm.fk_entrepot)';
-		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
-		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
-			$sql .= ' AND sm.type_mouvement IN (0,3)';
-			$sql .= ' GROUP BY t.rowid, t.tms, t.fk_product_stock,t.sellby,t.eatby , t.batch,t.qty,t.import_key';
-			if ($fk_product > 0) {
-				$sql .= ', pl.rowid, pl.eatby, pl.sellby';
-			}
-		}
+
 		$sql .= " ORDER BY ";
 		// TODO : use product lifo and fifo when product will implement it
-		if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
-			$sql .= 'date_entree ASC,t.batch ASC,';
-		}
 		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
 		$sql .= "t.eatby ASC, t.sellby ASC ";
 		$sql .= ", t.qty ".(empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
@@ -510,11 +488,6 @@ class Productbatch extends CommonObject
 				$tmp->batch = $obj->batch;
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
-
-				if (!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
-					$tmp->context['stock_date_entry'] = $obj->date_entree;
-				}
-
 				// Some properties of the lot
 				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
 				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
@@ -527,13 +500,13 @@ class Productbatch extends CommonObject
 
 			return $ret;
 		} else {
-			//$error = "Error ".$dbs->lasterror();
+			$error = "Error ".$dbs->lasterror();
 			return -1;
 		}
 	}
 
 	/**
-	 * Return all batch known for a product and a warehouse (batch that was one day used)
+	 * Return all batch for a product and a warehouse
 	 *
 	 * @param	int			$fk_product         Id of product
 	 * @param	int			$fk_warehouse       Id of warehouse

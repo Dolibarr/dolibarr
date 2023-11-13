@@ -220,6 +220,7 @@ ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de
 ErrorNotApproverForHoliday=No eres el aprobador de la licencia %s
 ErrorInvoiceLoadThirdPartyKey=Clave de terceros "%s" no configurada para factura "%s"
 ErrorValueCantBeNull=El valor de <b> %s </b> no puede ser nulo
+ErrorSessionInvalidatedAfterPasswordChange=The session was been invalidated following a change of password, email, status or dates of validity. Please relogin.
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Su parámetro de PHP upload_max_filesize (%s) es más alto que el parámetro de PHP post_max_size (%s). Esta no es una configuración consistente.
 WarningPasswordSetWithNoAccount=Se estableció una contraseña para este miembro. Sin embargo, no se creó ninguna cuenta de usuario. Por lo tanto, esta contraseña se almacena pero no se puede usar para iniciar sesión en Dolibarr. Puede ser utilizado por un módulo/interfaz externo, pero si no necesita definir ningún inicio de sesión ni contraseña para un miembro, puede deshabilitar la opción "Administrar un inicio de sesión para cada miembro" desde la configuración del módulo Miembro. Si necesita administrar un inicio de sesión pero no necesita ninguna contraseña, puede mantener este campo vacío para evitar esta advertencia. Nota: El correo electrónico también se puede usar como inicio de sesión si el miembro está vinculado a un usuario.
 WarningEnableYourModulesApplications=Haga clic aquí para habilitar sus módulos y aplicaciones

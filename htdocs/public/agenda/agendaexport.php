@@ -83,7 +83,10 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$object = new ActionComm($db);
+// Security check
+if (!isModEnabled('agenda')) {
+	httponly_accessforbidden('Module Agenda not enabled');
+}
 
 // Not older than
 if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
@@ -139,17 +142,6 @@ if (GETPOST("module", 'alpha')) {
 if (GETPOST("status", 'int')) {
 	$filters['status'] = GETPOST("status", 'int');
 }
-
-// Security check
-if (!isModEnabled('agenda')) {
-	httponly_accessforbidden('Module Agenda not enabled');
-}
-
-
-/*
- * View
- */
-
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
 	$user->getrights();

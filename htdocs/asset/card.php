@@ -110,7 +110,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object);
 	$triggermodname = 'ASSET_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Action dispose object

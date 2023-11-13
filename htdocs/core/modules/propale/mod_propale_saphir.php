@@ -60,10 +60,9 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	/**
 	 *  Return description of module
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *  @return     string      Descriptive text
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $conf, $langs, $db;
 
@@ -89,7 +88,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

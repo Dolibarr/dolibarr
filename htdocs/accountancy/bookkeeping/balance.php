@@ -132,7 +132,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 
 $param = '';
 
-$parameters = array();
+$parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -300,7 +300,7 @@ if ($action != 'export_csv') {
 	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		$newcardbutton = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')" />';
+		$newcardbutton = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -321,7 +321,6 @@ if ($action != 'export_csv') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
-		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -359,7 +358,7 @@ if ($action != 'export_csv') {
 	$moreforfilter .= $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
 	$moreforfilter .= '</div>';
 
-	//$moreforfilter .= '<br>';
+	$moreforfilter .= '</br>';
 	$moreforfilter .= '<div class="divsearchfield">';
 	// Accountancy account
 	$moreforfilter .= $langs->trans('AccountAccounting').': ';
@@ -376,7 +375,7 @@ if ($action != 'export_csv') {
 	}
 	$moreforfilter .= '</div>';
 
-	if (getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
+	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
 		$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
@@ -393,7 +392,7 @@ if ($action != 'export_csv') {
 	}
 
 
-	$colspan = (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE') ? 5 : 4);
+	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -410,7 +409,7 @@ if ($action != 'export_csv') {
 	print '</td>';
 
 	// Fields from hook
-	$parameters = array();
+	$parameters = array('arrayfields'=>$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -432,7 +431,7 @@ if ($action != 'export_csv') {
 	//if ($type == 'sub') {
 	//	print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
 	//}
-	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre("AccountingDebit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -440,7 +439,7 @@ if ($action != 'export_csv') {
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
 
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -461,7 +460,7 @@ if ($action != 'export_csv') {
 
 	// TODO Debug - This feature is dangerous, it takes all the entries and adds all the accounts
 	// without time and class limits (Class 6 and 7 accounts ???) and does not take into account the "a-nouveau" journal.
-	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.entity = " . $conf->entity;        // Never do sharing into accounting features
@@ -523,12 +522,12 @@ if ($action != 'export_csv') {
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
 					print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
 					print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
-					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
 					} else {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
@@ -571,7 +570,7 @@ if ($action != 'export_csv') {
 		//	print '<td></td>';
 		//}
 
-		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance, 'MT')).'</td>';
 		}
 
@@ -602,7 +601,7 @@ if ($action != 'export_csv') {
 		// Credit
 		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price(price2num($line->credit, 'MT')).'</a></td>';
 
-		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
 		} else {
 			print '<td class="right nowraponall amount">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
@@ -630,12 +629,12 @@ if ($action != 'export_csv') {
 			print "<td></td>\n";
 		}
 		print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
 		print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 		print '<td class="right nowraponall amount">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		} else {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
@@ -653,12 +652,12 @@ if ($action != 'export_csv') {
 		print "<td></td>\n";
 	}
 	print '<td class="right">'.$langs->trans("AccountBalance").':</td>';
-	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}
 	print '<td class="right nowraponall amount">'.price(price2num($total_debit, 'MT')).'</td>';
 	print '<td class="right nowraponall amount">'.price(price2num($total_credit, 'MT')).'</td>';
-	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="right nowraponall amount">' . price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')) . '</td>';
 	} else {
 		print '<td class="right nowraponall amount">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';
@@ -669,7 +668,7 @@ if ($action != 'export_csv') {
 	}
 	print '</tr>';
 
-	$parameters = array();
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

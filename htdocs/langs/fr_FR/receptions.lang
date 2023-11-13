@@ -53,6 +53,5 @@ ReceptionBackToDraftInDolibarr=Réception %s retourné en brouillon
 ReceptionClassifyClosedInDolibarr=Reception %s classée Fermée
 ReceptionUnClassifyCloseddInDolibarr=Réception %s ré-ouverte
 RestoreWithCurrentQtySaved=Remplir les quantités avec les dernières valeurs enregistrées
-ReceptionsRecorded=Réceptions enregistrées
 ReceptionUpdated=Réception mise à jour avec succès
 ReceptionDistribution=Distribution de réception

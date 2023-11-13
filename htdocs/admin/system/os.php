@@ -9,16 +9,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *    \file      htdocs/admin/system/os.php
- *    \brief     Page about System OS (Operating System)
+ *      \file       htdocs/admin/system/os.php
+ *		\brief      Page des infos systeme de l'OS
  */
 
 // Load Dolibarr environment
@@ -43,10 +43,10 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
-// Recovers the OS in the PHP sense
+// Recupere l'OS au sens PHP
 print '<tr class="oddeven"><td>'.$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
-// Recovers the OS version
+// Recupere la version de l'OS
 $osversion = version_os();
 print '<tr class="oddeven"><td>'.$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';

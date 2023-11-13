@@ -26,11 +26,6 @@
 class BlockedLog
 {
 	/**
-	 * @var DoliDB	Database handler
-	 */
-	public $db;
-
-	/**
 	 * Id of the log
 	 * @var int
 	 */
@@ -756,14 +751,15 @@ class BlockedLog
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$this->id 				= $obj->rowid;
-				$this->entity 			= $obj->entity;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
+				$this->ref				= $obj->rowid;
 
-				$this->date_creation 	= $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
+				$this->tms				= $this->db->jdate($obj->tms);
 
 				$this->amounts			= (double) $obj->amounts;
-				$this->action 			= $obj->action;
+				$this->action = $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
@@ -777,7 +773,7 @@ class BlockedLog
 				$this->object_version = $obj->object_version;
 
 				$this->signature		= $obj->signature;
-				$this->signature_line 	= $obj->signature_line;
+				$this->signature_line = $obj->signature_line;
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;

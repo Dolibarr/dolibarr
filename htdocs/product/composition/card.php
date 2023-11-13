@@ -89,64 +89,58 @@ if ($cancel) {
 	$action = '';
 }
 
-$reshook = $hookmanager->executeHooks('doActions', [], $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
+// Add subproduct to product
+if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	$error = 0;
+	$maxprod = GETPOST("max_prod", 'int');
 
-if (empty($reshook)) {
-	// Add subproduct to product
-	if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		$error = 0;
-		$maxprod = GETPOST("max_prod", 'int');
-
-		for ($i = 0; $i < $maxprod; $i++) {
-			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
-			if ($qty > 0) {
-				if ($object->add_sousproduit($id, GETPOST("prod_id_" . $i, 'int'), $qty, GETPOST("prod_incdec_" . $i, 'int')) > 0) {
-					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
-					$action = 'edit';
-				} else {
-					$error++;
-					$action = 're-edit';
-					if ($object->error == "isFatherOfThis") {
-						setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
-				}
+	for ($i = 0; $i < $maxprod; $i++) {
+		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
+		if ($qty > 0) {
+			if ($object->add_sousproduit($id, GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int')) > 0) {
+				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
+				$action = 'edit';
 			} else {
-				if ($object->del_sousproduit($id, GETPOST("prod_id_" . $i, 'int')) > 0) {
-					$action = 'edit';
+				$error++;
+				$action = 're-edit';
+				if ($object->error == "isFatherOfThis") {
+					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
 				} else {
-					$error++;
-					$action = 're-edit';
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		}
-
-		if (!$error) {
-			header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-			exit;
-		}
-	} elseif ($action === 'save_composed_product') {
-		$TProduct = GETPOST('TProduct', 'array');
-		if (!empty($TProduct)) {
-			foreach ($TProduct as $id_product => $row) {
-				if ($row['qty'] > 0) {
-					$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
-				} else {
-					$object->del_sousproduit($id, $id_product);
-				}
+		} else {
+			if ($object->del_sousproduit($id, GETPOST("prod_id_".$i, 'int')) > 0) {
+				$action = 'edit';
+			} else {
+				$error++;
+				$action = 're-edit';
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			setEventMessages('RecordSaved', null);
 		}
-		$action = '';
-		header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	}
+
+	if (!$error) {
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
+} elseif ($action === 'save_composed_product') {
+	$TProduct = GETPOST('TProduct', 'array');
+	if (!empty($TProduct)) {
+		foreach ($TProduct as $id_product => $row) {
+			if ($row['qty'] > 0) {
+				$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+			} else {
+				$object->del_sousproduit($id, $id_product);
+			}
+		}
+		setEventMessages('RecordSaved', null);
+	}
+	$action = '';
+	header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+	exit;
 }
+
 
 /*
  * View
@@ -231,7 +225,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Product card
 	 */
-	if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
+	if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
@@ -668,23 +662,21 @@ if ($id > 0 || !empty($ref)) {
 						$prod_arbo = new Product($db);
 						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
-						if (getDolGlobalString('PRODUCT_USE_DEPRECATED_ASSEMBLY_AND_STOCK_KIT_TYPE')) {
-							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
-								$is_pere = 0;
-								$prod_arbo->get_sousproduits_arbo();
-								// associations sousproduits
-								$prods_arbo = $prod_arbo->get_arbo_each_prod();
-								if (count($prods_arbo) > 0) {
-									foreach ($prods_arbo as $key => $value) {
-										if ($value[1] == $id) {
-											$is_pere = 1;
-										}
+						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT) {
+							$is_pere = 0;
+							$prod_arbo->get_sousproduits_arbo();
+							// associations sousproduits
+							$prods_arbo = $prod_arbo->get_arbo_each_prod();
+							if (count($prods_arbo) > 0) {
+								foreach ($prods_arbo as $key => $value) {
+									if ($value[1] == $id) {
+										$is_pere = 1;
 									}
 								}
-								if ($is_pere == 1) {
-									$i++;
-									continue;
-								}
+							}
+							if ($is_pere == 1) {
+								$i++;
+								continue;
 							}
 						}
 

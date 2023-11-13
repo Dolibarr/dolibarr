@@ -145,17 +145,8 @@ $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') 
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
 
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('imports'));
-
-
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
-
-if (empty($updatekeys) && !empty($objimport->array_import_preselected_updatekeys[0])) {
-	$updatekeys = array_keys($objimport->array_import_preselected_updatekeys[0]);
-}
 
 $objmodelimport = new ModeleImports();
 
@@ -1887,41 +1878,17 @@ if ($step == 5 && $datatoimport) {
 					break;
 				}
 
-				$parameters = array(
-					'step'                         => $step,
-					'datatoimport'                 => $datatoimport,
-					'obj'                          => &$obj,
-					'arrayrecord'                  => $arrayrecord,
-					'array_match_file_to_database' => $array_match_file_to_database,
-					'objimport'                    => $objimport,
-					'fieldssource'                 => $fieldssource,
-					'importid'                     => $importid,
-					'updatekeys'                   => $updatekeys,
-					'arrayoferrors'                => &$arrayoferrors,
-					'arrayofwarnings'              => &$arrayofwarnings,
-					'nbok'                         => &$nbok,
-				);
+				// Run import
+				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
 
-				$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
-				if ($reshook < 0) {
-					$arrayoferrors[$sourcelinenb][] = [
-						'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
-					];
+				if (count($obj->errors)) {
+					$arrayoferrors[$sourcelinenb] = $obj->errors;
 				}
-
-				if (empty($reshook)) {
-					// Run import
-					$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
-
-					if (count($obj->errors)) {
-						$arrayoferrors[$sourcelinenb] = $obj->errors;
-					}
-					if (count($obj->warnings)) {
-						$arrayofwarnings[$sourcelinenb] = $obj->warnings;
-					}
-					if (!count($obj->errors) && !count($obj->warnings)) {
-						$nbok++;
-					}
+				if (count($obj->warnings)) {
+					$arrayofwarnings[$sourcelinenb] = $obj->warnings;
+				}
+				if (!count($obj->errors) && !count($obj->warnings)) {
+					$nbok++;
 				}
 			}
 			// Close file
@@ -2296,49 +2263,17 @@ if ($step == 6 && $datatoimport) {
 				break;
 			}
 
-			$parameters = array(
-				'step'                         => $step,
-				'datatoimport'                 => $datatoimport,
-				'obj'                          => &$obj,
-				'arrayrecord'                  => $arrayrecord,
-				'array_match_file_to_database' => $array_match_file_to_database,
-				'objimport'                    => $objimport,
-				'fieldssource'                 => $fieldssource,
-				'importid'                     => $importid,
-				'updatekeys'                   => $updatekeys,
-				'arrayoferrors'                => &$arrayoferrors,
-				'arrayofwarnings'              => &$arrayofwarnings,
-				'nbok'                         => &$nbok,
-			);
+			// Run import
+			$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
 
-			$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
-			if ($reshook < 0) {
-				$arrayoferrors[$sourcelinenb][] = [
-					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
-				];
+			if (count($obj->errors)) {
+				$arrayoferrors[$sourcelinenb] = $obj->errors;
 			}
-
-			if (empty($reshook)) {
-				// Run import
-				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
-
-				if (count($obj->errors)) {
-					$arrayoferrors[$sourcelinenb] = $obj->errors;
-				}
-				if (count($obj->warnings)) {
-					$arrayofwarnings[$sourcelinenb] = $obj->warnings;
-				}
-
-				if (!count($obj->errors) && !count($obj->warnings)) {
-					$nbok++;
-				}
+			if (count($obj->warnings)) {
+				$arrayofwarnings[$sourcelinenb] = $obj->warnings;
 			}
-
-			$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
-			if ($reshook < 0) {
-				$arrayoferrors[$sourcelinenb][] = [
-					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
-				];
+			if (!count($obj->errors) && !count($obj->warnings)) {
+				$nbok++;
 			}
 		}
 		// Close file

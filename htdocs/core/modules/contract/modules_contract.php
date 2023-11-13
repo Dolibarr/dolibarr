@@ -29,8 +29,7 @@
  *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -38,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
  */
 abstract class ModelePDFContract extends CommonDocGenerator
 {
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
@@ -63,7 +68,92 @@ abstract class ModelePDFContract extends CommonDocGenerator
 /**
  * Parent class for all contract numbering modules
  */
-class ModelNumRefContracts extends CommonNumRefGenerator
+class ModelNumRefContracts
 {
-	// No overload code
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 *	Return if a module can be used or not
+	 *
+	 * 	@return		boolean     true if module can be used
+	 */
+	public function isEnabled()
+	{
+		return true;
+	}
+
+	/**
+	 *	Return default description of numbering model
+	 *
+	 *	@return     string      text description
+	 */
+	public function info()
+	{
+		global $langs;
+		$langs->load("contracts");
+		return $langs->trans("NoDescription");
+	}
+
+	/**
+	 *	Return numbering example
+	 *
+	 *	@return     string      Example
+	 */
+	public function getExample()
+	{
+		global $langs;
+		$langs->load("contracts");
+		return $langs->trans("NoExample");
+	}
+
+	/**
+	 *	Test if existing numbers make problems with numbering
+	 *
+	 *	@return		boolean		false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		return true;
+	}
+
+	/**
+	 *	Return next value
+	 *
+	 *	@param	Societe		$objsoc     third party object
+	 *	@param	Object		$contract	contract object
+	 *	@return	string					Value
+	 */
+	public function getNextValue($objsoc, $contract)
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
+
+	/**
+	 *	Return numbering version module
+	 *
+	 *	@return     string      Value
+	 */
+	public function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
+		return $langs->trans("NotAvailable");
+	}
 }

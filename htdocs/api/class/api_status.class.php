@@ -15,7 +15,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
@@ -25,17 +24,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Status extends DolibarrApi
+class Status
 {
-	/**
-	 * Constructor of the class
-	 */
-	public function __construct()
-	{
-		global $db;
-		$this->db = $db;
-	}
-
 	/**
 	 * Get status (Dolibarr version)
 	 *
@@ -49,7 +39,7 @@ class Status extends DolibarrApi
 			'success' => array(
 				'code' => 200,
 				'dolibarr_version' => DOL_VERSION,
-				'access_locked' => (!getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED') ? '0' : $conf->global->MAIN_ONLY_LOGIN_ALLOWED),
+				'access_locked' => (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED) ? '0' : $conf->global->MAIN_ONLY_LOGIN_ALLOWED),
 			),
 		);
 	}

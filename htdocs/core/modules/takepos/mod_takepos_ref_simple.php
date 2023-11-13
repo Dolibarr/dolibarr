@@ -58,10 +58,9 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	/**
 	 *  Return description of numbering module
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 * @return     string      Text with description
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $langs;
 
@@ -85,10 +84,9 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
 	 *  of conflicts that will prevent this numbering from working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *  @return boolean     			false if KO (there is a conflict), true if OK
+	 * @return     boolean     false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated($object)
+	public function canBeActivated()
 	{
 		global $conf, $langs, $db;
 

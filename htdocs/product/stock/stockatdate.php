@@ -276,10 +276,10 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if (!empty($search_fk_warehouse)) {
-	$sql .= " SUM(p.pmp * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
+	$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
 } else {
-	$sql .= " SUM(p.pmp * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
+	$sql .= " SUM(p.pmp * p.stock) as estimatedvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -513,7 +513,6 @@ print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield
 print "</tr>\n";
 
 $totalbuyingprice = 0;
-$totalsellingprice = 0;
 $totalcurrentstock = 0;
 $totalvirtualstock = 0;
 
@@ -611,29 +610,23 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			$estimatedvalue = $stock * $objp->pmp;
-			if (price2num($estimatedvalue, 'MT')) {
-				print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
+			if (price2num($stock * $objp->pmp, 'MT')) {
+				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
-			$totalbuyingprice += $estimatedvalue;
+			$totalbuyingprice += $stock * $objp->pmp;
 			print '</td>';
 
 			// Selling value
 			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print '<span class="amount">';
-				if ($stock || (float) ($stock * $objp->price)) {
-					print price(price2num($stock * $objp->price, 'MT'), 1);
-				}
-				print '</span>';
-				$totalsellingprice += $stock * $objp->price;
+				print price(price2num($objp->sellvalue, 'MT'), 1);
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
 				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 			}
-			print '</td>';
+			print'</td>';
 
 			print '<td class="right">';
 			if ($nbofmovement > 0) {
@@ -688,11 +681,7 @@ if (empty($date) || !$dateIsValid) {
 	} else {
 		print '<td></td>';
 		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-			print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
-		} else {
-			print '<td></td>';
-		}
+		print '<td></td>';
 		print '<td></td>';
 		print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
 	}

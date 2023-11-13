@@ -132,7 +132,7 @@ if ($id > 0 || $ref) {
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;	  // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->hasRight('projet', 'lire')) {
+if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
@@ -200,7 +200,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$action = '';
 }
 
-if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
+if ($action == 'addtimespent' && $user->rights->projet->time) {
 	$error = 0;
 
 	$timespent_durationhour = GETPOST('timespent_durationhour', 'int');
@@ -270,7 +270,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 	}
 }
 
-if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->hasRight('projet', 'lire')) {
+if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->rights->projet->lire) {
 	$error = 0;
 
 	if (!GETPOST("new_durationhour") && !GETPOST("new_durationmin")) {
@@ -286,7 +286,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 
 			$result = 0;
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
 				$result = $object->delTimeSpent($user);
 			}
 
@@ -308,7 +308,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_invoicelineid = GETPOST("invoicelineid", 'int');
 
 			$result = 0;
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
 				$result = $object->addTimeSpent($user);
 				if ($result >= 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -337,7 +337,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_invoicelineid = GETPOST("invoicelineid", 'int');
 			$result = 0;
 
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
 				$result = $object->updateTimeSpent($user);
 
 				if ($result >= 0) {
@@ -939,7 +939,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Project card
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+				$tmpurl = $_SESSION['pageforbacktolist']['project'];
+				$tmpurl = preg_replace('/__SOCID__/', $projectstatic->socid, $tmpurl);
+				$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			} else {
+				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			}
 
 			$morehtmlref = '<div class="refidno">';
 			// Title
@@ -951,7 +957,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->hasRight('projet', 'all', 'lire')) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = "rowid IN (" . $db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0') . ")";
 			}
@@ -1071,7 +1077,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$linktocreatetimeBtnStatus = 0;
 		$linktocreatetimeUrl = '';
 		$linktocreatetimeHelpText = '';
-		if ($user->hasRight('projet', 'time')) {
+		if (!empty($user->rights->projet->time)) {
 			if ($projectstatic->public || $userRead > 0) {
 				$linktocreatetimeBtnStatus = 1;
 
@@ -1392,7 +1398,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="action" value="updateline">';
 		} elseif ($action == 'splitline') {
 			print '<input type="hidden" name="action" value="updatesplitline">';
-		} elseif ($action == 'createtime' && $user->hasRight('projet', 'time')) {
+		} elseif ($action == 'createtime' && $user->rights->projet->time) {
 			print '<input type="hidden" name="action" value="addtimespent">';
 		} elseif ($massaction == 'generateinvoice' && $user->hasRight('facture', 'creer')) {
 			print '<input type="hidden" name="action" value="confirm_generateinvoice">';

@@ -25,7 +25,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 
-if ($user->hasRight('produit', 'lire')) {
+if ($user->rights->produit->lire) {
 	$page = 'productMargins';
 } elseif ($user->hasRight('societe', 'lire')) {
 	$page = 'customerMargins';

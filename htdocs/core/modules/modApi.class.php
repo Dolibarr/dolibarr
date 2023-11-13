@@ -20,8 +20,7 @@
 
 /**
  * 	\defgroup   api     Module Api
- *  \brief      Module for API (REST) management
- *
+ *  \brief      Descriptor file for Api modulee
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for the module Api
@@ -163,6 +162,7 @@ class modApi extends DolibarrModules
 			'langs'=>'modulebuilder',
 			'position'=>100,
 			'perms'=>'1',
+			//'enabled'=>'isModEnabled("api") && preg_match(\'/^(devtools)/\',$leftmenu)',
 			'enabled'=>'isModEnabled("api")',
 			'target'=>'_apiexplorer',
 			'user'=>0);

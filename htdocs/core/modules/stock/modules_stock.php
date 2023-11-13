@@ -24,29 +24,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 abstract class ModelePDFStock extends CommonDocGenerator
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var string Error code (or message)
 	 */
-	public $db;
+	public $error = '';
 
 	/**
-	 * @var string model name
+	 * @var int page_largeur
 	 */
-	public $name;
+	public $page_largeur;
 
 	/**
-	 * @var string model description (short text)
+	 * @var int page_hauteur
 	 */
-	public $description;
+	public $page_hauteur;
 
 	/**
-	 * @var string document type
+	 * @var array format
 	 */
-	public $type;
+	public $format;
 
 	/**
-	 * @var string		Dolibarr version of the loaded document
+	 * @var int marge_gauche
 	 */
-	public $version = 'dolibarr';
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

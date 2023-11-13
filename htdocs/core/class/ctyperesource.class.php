@@ -23,14 +23,12 @@
  * \ingroup resource
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
-
 /**
  * Class Ctyperesource
+ *
+ * @see CommonObject
  */
-class Ctyperesource extends CommonDict
+class Ctyperesource
 {
 	/**
 	 * @var string Id to identify managed objects
@@ -46,6 +44,15 @@ class Ctyperesource extends CommonDict
 	 * @var CtyperesourceLine[] Lines
 	 */
 	public $lines = array();
+
+	public $code;
+
+	/**
+	 * @var string Type resource label
+	 */
+	public $label;
+
+	public $active;
 
 
 	/**

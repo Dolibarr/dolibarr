@@ -18,9 +18,9 @@
  */
 
 /**
- * \file 	scripts/product/regenerate_thumbs.php
+ * \file scripts/product/migrate_picture_path.php
  * \ingroup scripts
- * \brief 	Regenerated thumbs of image files for products
+ * \brief Migrate pictures from old system prior to 3.7 to new path for 3.7+
  */
 
 if (!defined('NOSESSION')) {

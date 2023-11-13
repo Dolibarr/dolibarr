@@ -41,6 +41,7 @@ MenuNewFinancialAccount=nueva cuenta financiera
 EditFinancialAccount=Editar cuenta
 LabelBankCashAccount=Etiqueta de banco o efectivo
 BankType0=Cuenta de ahorros
+BankType1=Current, cheque or credit card account
 BankType2=Cuenta de efectivo
 AccountsArea=área de cuentas
 AccountCard=tarjeta de cuenta

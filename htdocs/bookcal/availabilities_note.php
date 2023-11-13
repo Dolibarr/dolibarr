@@ -17,9 +17,9 @@
  */
 
 /**
- *   \file       htdocs/bookcal/availabilities_note.php
- *   \ingroup    bookcal
- *   \brief      Tab for notes on Availabilities
+ *  \file       availabilities_note.php
+ *  \ingroup    bookcal
+ *  \brief      Tab for notes on Availabilities
  */
 
 // Load Dolibarr environment

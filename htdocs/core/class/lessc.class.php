@@ -56,9 +56,6 @@ class Lessc
 
 	public $scope;
 	public $formatter;
-	public $formatterName;
-	public $parser;
-	public $_parseFile;
 	public $env;
 	public $count;
 
@@ -2643,16 +2640,7 @@ class lessc_parser
 	protected static $literalCache = array();
 
 	public $env;
-	public $buffer;
 	public $count;
-	public $line;
-	public $eatWhiteDefault;
-	public $lessc;
-	public $sourceName;
-	public $writeComments;
-	public $seenComments;
-	public $currentProperty;
-	public $inExp;
 
 
 	public function __construct($lessc, $sourceName = null)
@@ -3004,9 +2992,9 @@ class lessc_parser
 		return false;
 	}
 
-	/**
-	 * recursively parse infix equation with $lhs at precedence $minP
-	 */
+		/**
+		 * recursively parse infix equation with $lhs at precedence $minP
+		 */
 	protected function expHelper($lhs, $minP)
 	{
 		$next = null;
@@ -4257,7 +4245,6 @@ class lessc_formatter_classic
 	public $breakSelectors = false;
 
 	public $compressColors = false;
-	public $indentLevel;
 
 	public function __construct()
 	{

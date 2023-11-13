@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'suppliers'));
@@ -41,7 +40,6 @@ $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawal
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$userid = GETPOST('userid', 'int');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
@@ -75,7 +73,6 @@ if ($user->socid > 0) {
 }
 
 $type = $object->type;
-$salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -202,60 +199,43 @@ if ($id > 0 || $ref) {
 }
 
 
-// List of invoices or salaries
-if ($salaryBonPl) {
-	$sql = "SELECT pf.rowid, p.type,";
-	$sql .= " f.rowid as salaryid, f.ref as ref, f.amount,";
-	$sql .= " u.rowid as userid, u.firstname, u.lastname, pl.statut as status, pl.amount as amount_requested";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON pl.fk_prelevement_bons = p.rowid";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."prelevement as pf ON pf.fk_prelevement_lignes = pl.rowid";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as f ON f.rowid = pf.fk_salary AND f.entity IN (".getEntity('salary').")";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON f.fk_user = u.rowid";
-	$sql .= " WHERE 1 = 1";
-	if ($object->id > 0) {
-		$sql .= " AND p.rowid = ".((int) $object->id);
-	}
-	if ($userid > 0) {
-		$sql .= " AND u.rowid = ".((int) $userid);
-	}
-} else {
-	$sql = "SELECT pf.rowid, p.type,";
-	$sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
-	if ($object->type == 'bank-transfer') {
-		$sql .= " f.ref_supplier,";
-	}
-	$sql .= " s.rowid as socid, s.nom as name, pl.statut as status, pl.amount as amount_requested";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p,";
-	$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
-	$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
-	if ($object->type != 'bank-transfer') {
-		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
-	} else {
-		$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-	}
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
-	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-	$sql .= " AND f.fk_soc = s.rowid";
-	if ($object->type != 'bank-transfer') {
-		$sql .= " AND pf.fk_facture = f.rowid";
-	} else {
-		$sql .= " AND pf.fk_facture_fourn = f.rowid";
-	}
-	if ($object->type != 'bank-transfer') {
-		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	} else {
-		$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
-	}
-	if ($object->id > 0) {
-		$sql .= " AND p.rowid = ".((int) $object->id);
-	}
-	if ($socid > 0) {
-		$sql .= " AND s.rowid = ".((int) $socid);
-	}
-	$sql .= $db->order($sortfield, $sortorder);
+// List of invoices
+$sql = "SELECT pf.rowid, p.type,";
+$sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
+if ($object->type == 'bank-transfer') {
+	$sql .= " f.ref_supplier,";
 }
+$sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement as pf";
+if ($object->type != 'bank-transfer') {
+	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
+} else {
+	$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
+}
+$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND f.fk_soc = s.rowid";
+if ($object->type != 'bank-transfer') {
+	$sql .= " AND pf.fk_facture = f.rowid";
+} else {
+	$sql .= " AND pf.fk_facture_fourn = f.rowid";
+}
+if ($object->type != 'bank-transfer') {
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+} else {
+	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
+}
+if ($object->id > 0) {
+	$sql .= " AND p.rowid = ".((int) $object->id);
+}
+if ($socid > 0) {
+	$sql .= " AND s.rowid = ".((int) $socid);
+}
+$sql .= $db->order($sortfield, $sortorder);
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -268,6 +248,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
+
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -294,18 +275,18 @@ if ($resql) {
 
 	$massactionbutton = '';
 
-	print_barre_liste(($salaryBonPl ? $langs->trans("Salaries") : $langs->trans("Invoices")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans("Invoices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre(($salaryBonPl ? "Salary" : "Bill"), $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
-	if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+	if ($object->type == 'bank-transfer') {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
-	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary": "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
@@ -314,66 +295,58 @@ if ($resql) {
 	$totalinvoices = 0;
 	$totalamount_requested = 0;
 
-	if ($salaryBonPl) {
-		$salarytmp = new Salary($db);
-		$usertmp = new User($db);
-	} else {
-		$invoicetmpcustomer = new Facture($db);
-		$invoicetmpsupplier = new FactureFournisseur($db);
-	}
+	$invoicetmpcustomer = new Facture($db);
+	$invoicetmpsupplier = new FactureFournisseur($db);
 
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
-		if ($salaryBonPl) {
-			$salarytmp->fetch($obj->salaryid);
-			$usertmp->fetch($obj->userid);
-		} else {
-			if ($obj->type == 'bank-transfer') {
-				$invoicetmp = $invoicetmpsupplier;
-			} else {
-				$invoicetmp = $invoicetmpcustomer;
-			}
-			$invoicetmp->fetch($obj->facid);
 
-			$thirdpartytmp->fetch($obj->socid);
+		if ($obj->type == 'bank-transfer') {
+			$invoicetmp = $invoicetmpsupplier;
+		} else {
+			$invoicetmp = $invoicetmpcustomer;
 		}
+		$invoicetmp->fetch($obj->facid);
+
+		$thirdpartytmp->fetch($obj->socid);
 
 		print '<tr class="oddeven">';
 
-
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print $invoicetmp->getNomUrl(1);
 		print "</td>\n";
 
-		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+		if ($object->type == 'bank-transfer') {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($invoicetmp->ref_supplier).'">';
 			print dol_escape_htmltag($invoicetmp->ref_supplier);
 			print "</td>\n";
 		}
 
 		print '<td class="tdoverflowmax125">';
-		print ($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
+		print $thirdpartytmp->getNomUrl(1);
 		print "</td>\n";
 
 		// Amount of invoice
-		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount :$obj->total_ttc))."</span></td>\n";
+		print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 		// Amount requested
 		print '<td class="right"><span class="amount">'.price($obj->amount_requested)."</span></td>\n";
 
 		// Status of requests
 		print '<td class="center">';
-		if ($obj->status == 0) {
-			print $langs->trans("StatusWaiting");
-		} elseif ($obj->status == 2) {
+
+		if ($obj->statut == 0) {
+			print '-';
+		} elseif ($obj->statut == 2) {
 			if ($obj->type == 'bank-transfer') {
 				print $langs->trans("StatusDebited");
 			} else {
 				print $langs->trans("StatusCredited");
 			}
-		} elseif ($obj->status == 3) {
+		} elseif ($obj->statut == 3) {
 			print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 		}
+
 		print "</td>";
 
 		print "<td></td>";
@@ -389,7 +362,7 @@ if ($resql) {
 	if ($num > 0) {
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
-		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+		if ($object->type == 'bank-transfer') {
 			print '<td>&nbsp;</td>';
 		}
 		print '<td>&nbsp;</td>';
@@ -410,7 +383,7 @@ if ($resql) {
 	print "</table>";
 	print '</div>';
 
-	$db->free($resql);
+	$db->free($result);
 } else {
 	dol_print_error($db);
 }

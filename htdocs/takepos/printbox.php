@@ -51,7 +51,7 @@ $facid = GETPOST('facid', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->hasRight('takepos', 'run')) {
+if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 

@@ -60,25 +60,22 @@ $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
-// Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
-	// If $page is not defined, or '' or -1 or if we click on clear filters
+if (empty($page) || $page == -1) {
 	$page = 0;
-}
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+}     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
 	$sortfield = 'p.ref';
 }
+
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$offset = $limit * $page;
 
 if (GETPOST('init')) {
 	unset($_SESSION['massstockmove']);
@@ -88,14 +85,12 @@ if (!empty($_SESSION['massstockmove'])) {
 	$listofdata = json_decode($_SESSION['massstockmove'], true);
 }
 
-$error = 0;
-
 
 /*
  * Actions
  */
 
-if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
+if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 	if (!($id_sw > 0)) {
 		//$error++;
 		//setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
@@ -161,7 +156,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	}
 }
 
-if ($action == 'delline' && $idline != '' && $user->hasRight('stock', 'mouvement', 'creer')) {
+if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvement->creer)) {
 	if (!empty($listofdata[$idline])) {
 		unset($listofdata[$idline]);
 	}
@@ -172,7 +167,7 @@ if ($action == 'delline' && $idline != '' && $user->hasRight('stock', 'mouvement
 	}
 }
 
-if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer')) {
+if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->creer)) {
 	$error = 0;
 
 	if (!GETPOST("label")) {
@@ -316,22 +311,17 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 	}
 }
 
-if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
+if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 	dol_mkdir($conf->stock->dir_temp);
 	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 	$fullpath = $conf->stock->dir_temp."/".$user->id.'-csvfiletotimport.csv';
-	$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
-	if (is_numeric($resultupload) && $resultupload > 0) {
+	if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
 		dol_syslog("File ".$fullpath." was added for import");
 	} else {
 		$error++;
 		$langs->load("errors");
-		if ($resultupload === 'ErrorDirNotWritable') {
-			setEventMessages($langs->trans("ErrorFailedToSaveFile").' - '.$langs->trans($resultupload, $fullpath), null, 'errors');
-		} else {
-			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-		}
+		setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 	}
 
 	if (!$error) {

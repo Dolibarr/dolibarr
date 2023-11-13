@@ -52,11 +52,11 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @param      Translate   $langs Translate Object
-	 *  @return     string             Text with description
+	 *  @return     string      Text with description
 	 */
-	public function info($langs)
+	public function info()
 	{
+		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 

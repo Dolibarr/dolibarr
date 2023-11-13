@@ -20,9 +20,9 @@
  */
 
 /**
- *     	\file       htdocs/public/eventorganization/subscriptionok.php
+ *     	\file       htdocs/public/payment/paymentok.php
  *		\ingroup    core
- *		\brief      File to show page after a successful subscription.
+ *		\brief      File to show page after a successful payment
  *                  This page is called by payment system with url provided to it completed with parameter TOKEN=xxx
  *                  This token can be used to get more informations.
  */
@@ -69,14 +69,14 @@ $error = 0;
 // Security check
 $id = GETPOST("id", 'int');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
 if ($securekeyreceived != $securekeytocompare) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
 
-// Module check
+// Security check
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
@@ -159,7 +159,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -210,7 +210,7 @@ if ($urllogo) {
 
 if (!empty($conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepubliceventorganizationsubscription">';
-	print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE').'">';
+	print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 

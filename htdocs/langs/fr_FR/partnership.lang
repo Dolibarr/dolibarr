@@ -38,7 +38,7 @@ ListOfPartnerships=Listes des partenariats
 PartnershipSetup=Page de configuration du module Partenariat
 PartnershipAbout=À propos de Partenariat
 PartnershipAboutPage=Page d'informations du module Partenariat
-partnershipforthirdpartyormember=Le partenaire état doit être défini sur un « tiers » ou un « adhérent ».
+partnershipforthirdpartyormember=Le statut Partenaire doit être défini sur un 'tiers' ou un 'adhérent'
 PARTNERSHIP_IS_MANAGED_FOR=Partenariat géré pour
 PARTNERSHIP_BACKLINKS_TO_CHECK=Liens de retour à vérifier
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de jours avant l'annulation de l'état d'un partenariat lorsque la cotisation a expiré
@@ -82,10 +82,10 @@ YourPartnershipRefusedTopic=Partenariat refusé
 YourPartnershipAcceptedTopic=Partenariat accepté
 YourPartnershipCanceledTopic=Partenariat annulé
 
-YourPartnershipWillSoonBeCanceledContent=Nous souhaitons vous informer que votre partenariat sera bientôt annulé (nous n'avons pas obtenu de renouvellement ou il manque un prérequis à notre partenariat). Contactez-nous par email s'il s'agit d'une erreur.
-YourPartnershipRefusedContent=Nous vous informons que votre demande de partenariat a été refusée. Il manque peut-être un prérequis. Contactez-nous si vous avez besoin de plus d'informations.
+YourPartnershipWillSoonBeCanceledContent=Nous vous informons que votre demande de partenariat va bientôt être annulée (lien de retour non trouvé)
+YourPartnershipRefusedContent=Nous vous informons que votre demande de partenariat a été refusée.
 YourPartnershipAcceptedContent=Nous vous informons que votre demande de partenariat a été acceptée.
-YourPartnershipCanceledContent=Nous vous informons que votre partenariat a été annulé. Il manque peut-être un prérequis. Contactez-nous si vous avez besoin de plus d'informations.
+YourPartnershipCanceledContent=Nous vous informons que votre demande de partenariat a été annulée.
 
 CountLastUrlCheckError=Nombre d'erreurs lors de la dernière vérification d'URL
 LastCheckBacklink=Date de la dernière vérification d'URL
@@ -94,6 +94,4 @@ ReasonDeclineOrCancel=Raison du refus
 NewPartnershipRequest=Nouvelle demande de partenariat
 NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez contacter par email <b>%s</b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
-
-IPOfApplicant=IP du demandeur
 

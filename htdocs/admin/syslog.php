@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
 $syslogModules = array();
 $activeModules = array();
 
-if (getDolGlobalString('SYSLOG_HANDLERS')) {
+if (!empty($conf->global->SYSLOG_HANDLERS)) {
 	$activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
 }
 
@@ -179,7 +179,7 @@ if (!$defaultsyslogfile) {
 	$defaultsyslogfile = 'dolibarr.log';
 }
 $optionmc = '';
-if (isModEnabled('multicompany') && $user->entity) {
+if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
 	$optionmc = 'disabled';
 }

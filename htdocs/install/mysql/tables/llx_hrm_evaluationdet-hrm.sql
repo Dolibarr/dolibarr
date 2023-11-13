@@ -27,6 +27,5 @@ CREATE TABLE llx_hrm_evaluationdet
 	fk_evaluation integer NOT NULL,
 	rankorder integer NOT NULL,
 	required_rank integer NOT NULL,
-	comment text,
 	import_key varchar(14)
 ) ENGINE=innodb;

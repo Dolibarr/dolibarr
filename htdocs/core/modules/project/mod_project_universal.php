@@ -17,16 +17,16 @@
  */
 
 /**
- *   \file       htdocs/core/modules/project/mod_project_universal.php
- *   \ingroup    project
- *   \brief      File containing the Universal project reference numbering model class
+ *	\file       htdocs/core/modules/project/mod_project_universal.php
+ *	\ingroup    project
+ *	\brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 
 
 /**
- * 	Class to manage the numbering module Universal for project references
+ * 	Classe du modele de numerotation de reference de projet Universal
  */
 class mod_project_universal extends ModeleNumRefProjects
 {
@@ -62,12 +62,11 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *  @return     string      Descriptive text
 	 */
-	public function info($langs)
+	public function info()
 	{
-		global $langs;
+		global $conf, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("projects", "admin"));
@@ -87,11 +86,11 @@ class mod_project_universal extends ModeleNumRefProjects
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Project"), $langs->transnoentities("Project"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		// Prefix settings
+		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.getDolGlobalString('PROJECT_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -124,9 +123,9 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe		$objsoc		Object third party
+	 *  @param	Societe		$objsoc		Object third party
 	 *  @param   Project		$project	Object project
-	 *  @return  string						Value if OK, 0 if KO
+	 *  @return  string					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{
@@ -134,7 +133,7 @@ class mod_project_universal extends ModeleNumRefProjects
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// We define criterion search counter
+		// On defini critere recherche compteur
 		$mask = getDolGlobalString('PROJECT_UNIVERSAL_MASK');
 
 		if (!$mask) {

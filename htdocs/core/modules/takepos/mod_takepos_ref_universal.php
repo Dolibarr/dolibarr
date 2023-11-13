@@ -54,10 +54,9 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 *  return description of the numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 * @return     string      Descriptive text
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $db, $langs;
 
@@ -83,7 +82,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

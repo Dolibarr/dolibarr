@@ -443,6 +443,7 @@ class Don extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->errno = $this->db->lasterrno();
 			$error++;
 		}
 
@@ -628,7 +629,7 @@ class Don extends CommonObject
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
-		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
+		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
 		$sql .= " p.ref as project_ref,";
@@ -664,8 +665,7 @@ class Don extends CommonObject
 				$this->firstname          = $obj->firstname;
 				$this->lastname           = $obj->lastname;
 				$this->societe            = $obj->societe;
-				$this->status             = $obj->status;
-				$this->statut             = $obj->status;
+				$this->statut             = $obj->fk_statut;
 				$this->address            = $obj->address;
 				$this->zip                = $obj->zip;
 				$this->town               = $obj->town;
@@ -688,6 +688,7 @@ class Don extends CommonObject
 				$this->note_private	      = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf          = $obj->model_pdf;
+				$this->modelpdf           = $obj->model_pdf; // deprecated
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -930,7 +931,7 @@ class Don extends CommonObject
 		$url = DOL_URL_ROOT.'/don/card.php?id='.$this->id;
 
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -1157,9 +1158,7 @@ class Don extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		if ($selected >= 0) {
-			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'date')) {
 			$return .= ' | <span class="opacitymedium" >'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date).'</span>';
 		}

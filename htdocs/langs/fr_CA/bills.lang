@@ -10,6 +10,7 @@ ConfirmDeletePayment=Êtes-vous sûr de vouloir supprimer ce paiement?
 CreateCreditNote=Créer avoir
 DoPayment=Entrez le paiement
 DoPaymentBack=Saisissez le remboursement
+StatusOfGeneratedInvoices=État des factures générées
 BillShortStatusClosedPaidPartially=Payée
 NoQualifiedRecurringInvoiceTemplateFound=Aucune facture de modèle récurrent qualifié pour la génération.
 FoundXQualifiedRecurringInvoiceTemplate=Modèles de factures récurrentes qualifiées trouvées %s pour la génération

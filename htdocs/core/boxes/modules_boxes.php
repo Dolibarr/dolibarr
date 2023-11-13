@@ -21,8 +21,8 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    core
- *		\brief      File containing the parent class of boxes
+ *		\ingroup    facture
+ *		\brief      Fichier contenant la classe mere des boites
  */
 
 
@@ -261,7 +261,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					$label = $head['text'];
 					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
-						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
+						$label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
 					}
 					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
 					//$out.= '</td></tr></table>';

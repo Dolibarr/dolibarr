@@ -86,7 +86,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
-		if (($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) && $user->hasRight('stock', 'lire')) {
+		if (($user->rights->produit->lire || $user->hasRight('service', 'lire')) && $user->rights->stock->lire) {
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
 			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -95,10 +95,10 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			$sql .= " AND p.seuil_stock_alerte > 0";
-			if (!$user->hasRight('produit', 'lire')) {
+			if (empty($user->rights->produit->lire)) {
 				$sql .= ' AND p.fk_product_type <> 0';
 			}
-			if (!$user->hasRight('service', 'lire')) {
+			if (empty($user->rights->service->lire)) {
 				$sql .= ' AND p.fk_product_type <> 1';
 			}
 			// Add where from hooks

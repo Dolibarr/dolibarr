@@ -1,8 +1,8 @@
-# ONLINE APPOINTMENT FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
+# BOOKCAL FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
 ## Features
 
-Provides an online appointment booking system. This allow anyone to book rendez-vous, according to predefined ranges or availabilities.
+Provide features to be able to record online booking.
 
 <!--
 ![Screenshot bookcal](img/screenshot_bookcal.png?raw=true "BookCal"){imgmd}

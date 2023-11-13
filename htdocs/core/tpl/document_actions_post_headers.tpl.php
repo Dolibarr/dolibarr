@@ -41,7 +41,6 @@ if (empty($relativepathwithnofile)) {
 	$relativepathwithnofile = '';
 }
 
-// Set $permission from the $permissiontoadd var defined on calling page
 if (!isset($permission)) {
 	$permission = $permissiontoadd;
 }

@@ -36,7 +36,7 @@
  */
 function bank_prepare_head(Account $object)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
@@ -131,9 +131,7 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $db;
-
-	$langs->loadLangs(array("compta"));
+	global $langs, $conf, $user, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
@@ -193,7 +191,7 @@ function bank_admin_prepare_head($object)
  */
 function account_statement_prepare_head($object, $num)
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $user, $db;
 	$h = 0;
 	$head = array();
 
@@ -275,17 +273,12 @@ function various_payment_prepare_head($object)
 /**
  *      Check SWIFT informations for a bank account
  *
- *      @param  Account     $account    A bank account (used to get BIC/SWIFT)
- *      @param	string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
+ *      @param  Account     $account    A bank account
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkSwiftForAccount(Account $account = null, $swift = null)
+function checkSwiftForAccount($account)
 {
-	if ($account == null && $swift == null) {
-		return false;
-	} elseif ($swift == null) {
-		$swift = $account->bic;
-	}
+	$swift = $account->bic;
 	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
 		return true;
 	} else {
@@ -296,18 +289,14 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
 /**
  *      Check IBAN number informations for a bank account.
  *
- *      @param  Account     $account    	A bank account
- *      @param	string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
- *      @return boolean                 	True if informations are valid, false otherwise
+ *      @param  Account     $account    A bank account
+ *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkIbanForAccount(Account $account = null, $ibantocheck = null)
+function checkIbanForAccount(Account $account)
 {
-	if ($account == null && $ibantocheck == null) {
-		return false;
-	} elseif ($ibantocheck == null) {
-		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
-	}
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
+
+	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 
 	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();

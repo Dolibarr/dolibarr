@@ -63,10 +63,9 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 *   Returns the description of the numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *   @return     string      Descriptive text
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -86,10 +85,9 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
-	public function canBeActivated($object)
+	public function canBeActivated()
 	{
 		global $langs, $conf, $db;
 

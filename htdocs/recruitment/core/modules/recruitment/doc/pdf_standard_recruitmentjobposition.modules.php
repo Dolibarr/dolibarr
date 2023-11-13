@@ -91,20 +91,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 */
 	public $situationinvoice;
 
-	/**
-	 * @var int tabTitleHeight
-	 */
-	public $tabTitleHeight;
-
-	/**
-	 * @var array defaultContentsFieldsStyle
-	 */
-	public $defaultContentsFieldsStyle = array();
-
-	/**
-	 * @var array defaultTitlesFieldsStyle
-	 */
-	public $defaultTitlesFieldsStyle = array();
 
 	/**
 	 * @var array of document table columns
@@ -164,11 +150,11 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 		//  Use new system for position of columns, view  $this->defineColumnField()
 
-		// $this->tva = array();
-		// $this->localtax1 = array();
-		// $this->localtax2 = array();
-		// $this->atleastoneratenotnull = 0;
-		// $this->atleastonediscount = 0;
+		$this->tva = array();
+		$this->localtax1 = array();
+		$this->localtax2 = array();
+		$this->atleastoneratenotnull = 0;
+		$this->atleastonediscount = 0;
 		$this->situationinvoice = false;
 	}
 
@@ -220,7 +206,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
-		// $this->atleastonephoto = false;
+		$this->atleastonephoto = false;
 		/*
 		if (!empty($conf->global->MAIN_GENERATE_MYOBJECT_WITH_PICTURE))
 		{

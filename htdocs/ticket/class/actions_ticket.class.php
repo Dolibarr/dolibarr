@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2013-2015 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,18 +26,15 @@
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
-
-// TODO Only the last method emailElementlist is a hook method. Other must be moved into standard ticket.class.php
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 
 /**
  *  Class Actions of the module ticket
  */
-class ActionsTicket extends CommonHookActions
+class ActionsTicket
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -87,7 +83,6 @@ class ActionsTicket extends CommonHookActions
 	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;
-
 
 	/**
 	 *    Constructor
@@ -147,7 +142,7 @@ class ActionsTicket extends CommonHookActions
 	public function getInfo($id)
 	{
 		$this->getInstanceDao();
-		$this->dao->fetch($id);
+		$this->dao->fetch($id, '', $track_id);
 
 		$this->label = $this->dao->label;
 		$this->description = $this->dao->description;
@@ -189,7 +184,7 @@ class ActionsTicket extends CommonHookActions
 		global $conf, $langs;
 
 		print '<!-- initial message of ticket -->'."\n";
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			// MESSAGE
 
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
@@ -240,7 +235,7 @@ class ActionsTicket extends CommonHookActions
 
 			//print '<div>' . $object->message . '</div>';
 		}
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			print '<div class="center">';
 			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -251,7 +246,7 @@ class ActionsTicket extends CommonHookActions
 		print '</table>';
 		print '</div>';
 
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
+		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			// MESSAGE
 			print '</form>';
 		}
@@ -277,15 +272,10 @@ class ActionsTicket extends CommonHookActions
 
 		$action = GETPOST('action', 'aZ09');
 
-		print '<div class="ticketpublicarea ticketlargemargin centpercent" style="padding-top: 0">';
 		$this->viewTicketOriginalMessage($user, $action, $object);
-		print '</div>';
 
 		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
-
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="border centpercent">';
+			print '<table class="border" style="width:100%;">';
 
 			print '<tr class="liste_titre">';
 
@@ -334,74 +324,14 @@ class ActionsTicket extends CommonHookActions
 					print '<tr class="oddeven">';
 					print '<td colspan="2">';
 					print $arraymsgs['message'];
-
-					//attachment
-
-					$documents = array();
-
-					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
-					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
-					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
-					$sql .= " WHERE ecm.filepath = 'agenda/".$arraymsgs['id']."'";
-					$sql .= ' ORDER BY ecm.position ASC';
-
-					$resql = $this->db->query($sql);
-					if ($resql) {
-						if ($this->db->num_rows($resql)) {
-							while ($obj = $this->db->fetch_object($resql)) {
-								$documents[$obj->id] = $obj;
-							}
-						}
-					}
-					if (!empty($documents)) {
-						$isshared = 0;
-						$footer = '<div class="timeline-documents-container">';
-						foreach ($documents as $doc) {
-							if (!empty($doc->share)) {
-								$isshared = 1;
-								$footer .= '<span id="document_'.$doc->id.'" class="timeline-documents" ';
-								$footer .= ' data-id="'.$doc->id.'" ';
-								$footer .= ' data-path="'.$doc->filepath.'"';
-								$footer .= ' data-filename="'.dol_escape_htmltag($doc->filename).'" ';
-								$footer .= '>';
-
-								$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
-								$mime = dol_mimetype($filePath);
-								$thumb = $arraymsgs['id'].'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-								$doclink = DOL_URL_ROOT.'/document.php?hashp='.urlencode($doc->share);
-
-								$mimeAttr = ' mime="'.$mime.'" ';
-								$class = '';
-								if (in_array($mime, array('image/png', 'image/jpeg', 'application/pdf'))) {
-									$class .= ' documentpreview';
-								}
-
-								$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
-								$footer .= img_mime($filePath).' '.$doc->filename;
-								$footer .= '</a>';
-
-								$footer .= '</span>';
-							}
-						}
-						$footer .= '</div>';
-						if ($isshared == 1) {
-							print '<br>';
-							print '<br>';
-							print $footer;
-						}
-					}
 					print '</td>';
 					print '</tr>';
 				}
 			}
 
 			print '</table>';
-			print '</div>';
-			print '</div>';
 		} else {
-			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 			print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
-			print '</div>';
 		}
 	}
 

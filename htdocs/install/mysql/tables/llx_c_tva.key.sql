@@ -1,6 +1,5 @@
 -- ========================================================================
 -- Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2023      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,6 +16,6 @@
 --
 -- ========================================================================
 
-ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, taux, recuperableonly);
 
 -- ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, code, recuperableonly); -- Not yet possible for compatibility reason, where old code is ''

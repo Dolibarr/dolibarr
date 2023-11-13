@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2023  Juanjo Menent           <jmenent@2byte.es>
@@ -70,7 +70,6 @@ $projectid = GETPOST('projectid', 'int');
 
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
-$selectedLines = GETPOST('toselect', 'array');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -203,6 +202,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -243,9 +243,7 @@ if (empty($reshook)) {
 			$oldinvoice = new Facture($db);
 			$oldinvoice->fetch(GETPOST('facid', 'int'));
 
-			$onlylines = GETPOST('toselect', 'array');
-
-			$result = $object->create($user, $oldinvoice->id, 0, $onlylines);
+			$result = $object->create($user, $oldinvoice->id);
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
 				if ($result < 0) {
@@ -273,7 +271,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'supprimer')) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer) {
 		$object->delete($user);
 
 		header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
@@ -282,23 +280,21 @@ if (empty($reshook)) {
 
 
 	// Update field
+	// Set condition
 	if ($action == 'setconditions' && $user->hasRight('facture', 'creer')) {
-		// Set condition
-		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentTerm"));
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setmode' && $user->hasRight('facture', 'creer')) {
 		// Set mode
-		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentMode"));
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	} elseif ($action == 'classin' && $user->hasRight('facture', 'creer')) {
 		// Set project
-		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Project"));
 		$object->setProject(GETPOST('projectid', 'int'));
 	} elseif ($action == 'setref' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
-		$object->context['actionmsg'] = $langs->trans("FieldXModifiedFromYToZ", $langs->transnoentitiesnoconv("Title"), $object->title, $ref);
+		//var_dump(GETPOST('ref', 'alpha'));exit;
 		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0) {
+			$object->titre = $ref; // deprecated
 			$object->title = $ref;
 			$object->ref = $object->title;
 		} else {
@@ -312,11 +308,9 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setbankaccount' && $user->hasRight('facture', 'creer')) {
 		// Set bank account
-		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Bank"));
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	} elseif ($action == 'setfrequency' && $user->hasRight('facture', 'creer')) {
 		// Set frequency and unit frequency
-		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Frequency"));
 		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
 	} elseif ($action == 'setdate_when' && $user->hasRight('facture', 'creer')) {
 		// Set next date of execution
@@ -340,9 +334,9 @@ if (empty($reshook)) {
 		// Set status disabled
 		$db->begin();
 
-		$object->context['actionmsg'] = $langs->trans("RecordDisabled");
+		$object->fetch($id);
 
-		$res = $object->setValueFrom('suspended', 1, '', null, 'text', '', $user, 'BILLREC_MODIFY');
+		$res = $object->setValueFrom('suspended', 1);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -357,9 +351,9 @@ if (empty($reshook)) {
 		// Set status enabled
 		$db->begin();
 
-		$object->context['actionmsg'] = $langs->trans("RecordEnabled");
+		$object->fetch($id);
 
-		$res = $object->setValueFrom('suspended', 0, '', null, 'text', '', $user, 'BILLREC_MODIFY');
+		$res = $object->setValueFrom('suspended', 0);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -405,7 +399,7 @@ if (empty($reshook)) {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -820,7 +814,7 @@ if (empty($reshook)) {
 			$typeinvoice = Facture::TYPE_STANDARD;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('produit', 'ignore_price_min_advance')) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($typeinvoice == Facture::TYPE_STANDARD || $typeinvoice == Facture::TYPE_REPLACEMENT) && $price_min && ((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100) < (float) price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($typeinvoice == Facture::TYPE_STANDARD || $typeinvoice == Facture::TYPE_REPLACEMENT) && $price_min && ((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100) < (float) price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -939,10 +933,8 @@ if (empty($reshook)) {
  *	View
  */
 
-$title = $object->ref." - ".$langs->trans('Card');
 $help_url = '';
-
-llxHeader('', $title, $help_url);
+llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1096,8 +1088,6 @@ if ($action == 'create') {
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre(img_picto('', 'recurring', 'class="pictofixedwidth"').$title, '', '');
 
-		print '<span class="opacitymedium">'.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name')).'</span><br><br>';
-
 		print dol_get_fiche_head(null, '', '', 0);
 
 		print '<table class="border centpercent">';
@@ -1120,7 +1110,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Auto validate the invoice
-		print "<tr><td>".$langs->trans("StatusOfAutoGeneratedInvoices")."</td><td>";
+		print "<tr><td>".$langs->trans("StatusOfGeneratedInvoices")."</td><td>";
 		$select = array('0'=>$langs->trans('BillStatusDraft'), '1'=>$langs->trans('BillStatusValidated'));
 		print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
 		print "</td></tr>";
@@ -1153,11 +1143,13 @@ if ($action == 'create') {
 		 * Invoice lines
 		 */
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow centpercent">';
-
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		// Show object lines
 		if (!empty($object->lines)) {
-			$object->printOriginLinesList('', $selectedLines);
+			$disableedit = 1;
+			$disablemove = 1;
+			$disableremove = 1;
+			$object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1165,7 +1157,7 @@ if ($action == 'create') {
 
 		print '</td></tr>';
 
-		if (!empty($flag_price_may_change)) {
+		if ($flag_price_may_change) {
 			print '<tr><td colspan="3" class="left">';
 			print '<select name="usenewprice" class="flat">';
 			print '<option value="0">'.$langs->trans("AlwaysUseFixedPrice").'</option>';
@@ -1232,17 +1224,26 @@ if ($action == 'create') {
 		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', 0, 1);
 		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
+		$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>';
+			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->hasRight('facture', 'creer')) {
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '</form>';
+				} else {
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				}
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1339,7 +1340,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($usercancreate && $action != 'editmulticurrencycode' && $object->suspended == $object::STATUS_SUSPENDED) {
+			if ($usercancreate && $action != 'editmulticurrencycode' && !empty($object->brouillon)) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -1355,7 +1356,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 				print '</td>';
-				if ($usercancreate && $action != 'editmulticurrencyrate' && $object->suspended == $object::STATUS_SUSPENDED && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 				}
 				print '</tr></table>';
@@ -1481,6 +1482,7 @@ if ($action == 'create') {
 		 * Recurrence
 		 */
 		$title = $langs->trans("Recurrence");
+		//print load_fiche_titre($title, '', 'calendar');
 
 		print '<table class="border centpercent tableforfield">';
 

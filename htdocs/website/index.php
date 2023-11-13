@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
 // Security check
-if (!$user->hasRight('website', 'read')) {
+if (!$user->rights->website->read) {
 	accessforbidden();
 }
 
@@ -157,11 +157,11 @@ if (empty($action)) {
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
 
-$listofwebsites = $object->fetchAll('ASC', 'position'); // Init list of websites
+$object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
 
 // If website not defined, we take first found
 if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite') {
-	foreach ($listofwebsites as $key => $valwebsite) {
+	foreach ($object->records as $key => $valwebsite) {
 		$websitekey = $valwebsite->ref;
 		break;
 	}
@@ -588,7 +588,7 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $userca
 			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
 		}
 		setEventMessages($message, null, 'errors');
-	} elseif (!$user->hasRight('website', 'writephp')) {
+	} elseif (empty($user->rights->website->writephp)) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
 	} elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
@@ -1464,7 +1464,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$object->virtualhost = $tmpvirtualhost;
 				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 				$object->otherlang = join(',', $arrayotherlang);
-				$object->use_manifest = GETPOSTINT('use_manifest');
+				$object->use_manifest = GETPOST('use_manifest', 'alpha');
 
 				$result = $object->update($user);
 				if ($result < 0) {
@@ -2357,7 +2357,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 }
 
 // Export site
-if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
+if ($action == 'exportsite' && !empty($user->rights->website->export)) {
 	$fileofzip = $object->exportWebSite();
 
 	if ($fileofzip) {
@@ -2817,11 +2817,11 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 
 if (!GETPOST('hide_websitemenu')) {
 	$disabled = '';
-	if (!$user->hasRight('website', 'write')) {
+	if (empty($user->rights->website->write)) {
 		$disabled = ' disabled="disabled"';
 	}
 	$disabledexport = '';
-	if (!$user->hasRight('website', 'export')) {
+	if (empty($user->rights->website->export)) {
 		$disabledexport = ' disabled="disabled"';
 	}
 
@@ -2873,13 +2873,13 @@ if (!GETPOST('hide_websitemenu')) {
 
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
-		if (empty($listofwebsites)) {
+		if (empty($object->records)) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
 
 		// Loop on each sites
 		$i = 0;
-		foreach ($listofwebsites as $key => $valwebsite) {
+		foreach ($object->records as $key => $valwebsite) {
 			if (empty($websitekey)) {
 				if ($action != 'createsite') {
 					$websitekey = $valwebsite->ref;
@@ -3201,7 +3201,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite') {
 			$disabled = '';
-			if (!$user->hasRight('website', 'write')) {
+			if (empty($user->rights->website->write)) {
 				$disabled = ' disabled="disabled"';
 			}
 
@@ -3306,7 +3306,6 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
 				print '<span id="switchckeditorinline">'."\n";
-				// Enable CKEditor inline with js on section and div with conteneditable=true
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
@@ -3325,52 +3324,25 @@ if (!GETPOST('hide_websitemenu')) {
 								if (! isEditingEnabled || forceenable)
 								{
 									console.log("Enable inline edit");
-
 									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
-										if (idtouse !== undefined) {
-											var inlineditor = CKEDITOR.inline(idtouse, {
-												// Allow some non-standard markup that we used in the introduction.
-												// + a[target];div{float,display} ?
-												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-												//extraPlugins: \'sourcedialog\',
-												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
-												// Show toolbar on startup (optional).
-												// startupFocus: true
-											});
-
-											// Custom bar tool
-											// Note the Source tool does not work on inline
-											inlineditor.config.toolbar = [
-											    [\'Templates\',\'NewPage\'],
-											    [\'Save\'],
-											    [\'Maximize\',\'Preview\'],
-											    [\'PasteText\'],
-											    [\'Undo\',\'Redo\',\'-\',\'Find\',\'Replace\',\'-\',\'SelectAll\',\'RemoveFormat\'],
-											    [\'CreateDiv\',\'ShowBlocks\'],
-											    [\'Form\', \'Checkbox\', \'Radio\', \'TextField\', \'Textarea\', \'Select\', \'Button\', \'ImageButton\', \'HiddenField\'],
-											    [\'Bold\',\'Italic\',\'Underline\',\'Strike\',\'Superscript\'],
-											    [\'NumberedList\',\'BulletedList\',\'-\',\'Outdent\',\'Indent\',\'Blockquote\'],
-											    [\'JustifyLeft\',\'JustifyCenter\',\'JustifyRight\',\'JustifyBlock\'],
-											    [\'Link\',\'Unlink\'],
-											    [\'Image\',\'Table\',\'HorizontalRule\'],
-											    [\'Styles\',\'Format\',\'Font\',\'FontSize\'],
-											    [\'TextColor\',\'BGColor\']
-											];
-
-											// Start editor
-											//inlineditor.on(\'instanceReady\', function () {
-											    // ...
-											//});
-
-										}
+										CKEDITOR.inline(idtouse, {
+											// Allow some non-standard markup that we used in the introduction.
+											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+											//extraPlugins: \'sourcedialog\',
+											removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
+											// Show toolbar on startup (optional).
+											// startupFocus: true
+										});
 									})
 
 									isEditingEnabled = true;
-								} else {
+								}
+								else {
 									console.log("Disable inline edit");
-									for(name in CKEDITOR.instances) {
+									for(name in CKEDITOR.instances)
+									{
 									    CKEDITOR.instances[name].destroy(true);
 									}
 									isEditingEnabled = false;
@@ -3403,13 +3375,13 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<span class="websiteselection">';
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) {
 					//$disabled=' disabled="disabled"';
-					//print '<span class="button bordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fas fa-home"></span></span>';
+					//print '<span class="button bordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home"></span></span>';
 					//print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-					print '<a href="#" class="button bordertransp disabled" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fas fa-home valignmiddle btnTitle-icon"></span></a>';
+					print '<a href="#" class="button bordertransp disabled" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
 				} else {
 					//$disabled='';
 					//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.urlencode($website->ref).'&pageid='.((int) $pageid).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fas fa-home valignmiddle btnTitle-icon"></span></a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.urlencode($website->ref).'&pageid='.((int) $pageid).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
 				}
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
@@ -3731,13 +3703,6 @@ if ($action == 'editcss') {
 		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
-
-	$uploadfolder = $conf->website->dir_output.'/'.$websitekey;
-	if (dol_is_file($uploadfolder.'/favicon.png')) {
-		print '<div class="inline-block valignmiddle marginrightonly">';
-		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=website&file='.$websitekey.'/favicon.png">';
-		print '</div>';
-	}
 	print '</tr></td>';
 
 	// CSS file
@@ -4814,7 +4779,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '<td class="tdwebsitesearchresult right nowraponall">';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
-					if (!$user->hasRight('website', 'write')) {
+					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
@@ -4822,7 +4787,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
-					if (!$user->hasRight('website', 'write')) {
+					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}

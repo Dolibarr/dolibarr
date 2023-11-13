@@ -37,76 +37,71 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
-if (isModEnabled('agenda')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if (isModEnabled('stock')) {
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (isModEnabled('banque')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-}
-if (isModEnabled('categorie')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-if (isModEnabled('commande')) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-}
-if (isModEnabled('contrat')) {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
-if (isModEnabled('don')) {
-	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-}
-if (isModEnabled('expedition')) {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-}
-if (isModEnabled('expensereport')) {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+if (isModEnabled("propal")) {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
+if (isModEnabled('commande')) {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+}
+if (isModEnabled('supplier_proposal')) {
+	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+}
+if (isModEnabled("supplier_invoice")) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+}
+if (isModEnabled("supplier_order")) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+}
+if (isModEnabled('contrat')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+}
 if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+}
+if (isModEnabled("expedition")) {
+	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+}
+if (isModEnabled('deplacement')) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+}
+if (isModEnabled('expensereport')) {
+	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+}
+if (isModEnabled('agenda')) {
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+}
+if (isModEnabled('don')) {
+	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
 if (isModEnabled('loan')) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 }
-if (isModEnabled('mrp')) {
-	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-}
-if (isModEnabled('propal')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-}
-if (isModEnabled('salaries')) {
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-}
 if (isModEnabled('stock')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-}
-if (isModEnabled('supplier_invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-}
-if (isModEnabled('supplier_order')) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-}
-if (isModEnabled('supplier_proposal')) {
-	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
 if (isModEnabled('tax')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 }
-if (isModEnabled('stocktransfer')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
+if (isModEnabled("banque")) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
-
-
+if (isModEnabled('salaries')) {
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+}
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
+if (isModEnabled('mrp')) {
+	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -143,9 +138,6 @@ if (isModEnabled('mrp')) {
 if (isModEnabled('eventorganization')) {
 	$langs->load("eventorganization");
 }
-//if (isModEnabled('stocktransfer')) {
-//	$langs->load("stockstransfer");
-//}
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -237,7 +229,7 @@ if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->hasRight('projet', 'all', 'lire')) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -617,11 +609,10 @@ $listofreferent = array(
 	'stock_mouvement'=>array(
 		'name'=>"MouvementStockAssociated",
 		'title'=>"ListMouvementStockProject",
-		'class'=>'StockTransfer',
-		'table'=>'stocktransfer_stocktransfer',
+		'class'=>'MouvementStock',
+		'table'=>'stock_mouvement',
 		'datefieldname'=>'datem',
 		'margin'=>'minus',
-		'project_field'=>'fk_project',
 		'disableamount'=>0,
 		'test'=>isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)
 	),
@@ -868,8 +859,13 @@ foreach ($listofreferent as $key => $value) {
 				} elseif ($tablename == 'stock_mouvement') {
 					$total_ht_by_line = $element->price * abs($element->qty);
 				} elseif ($tablename == 'projet_task') {
-					$tmp = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee);
-					$total_ht_by_line = price2num($tmp['amount'], 'MT');
+					if ($idofelementuser) {
+						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
+						$total_ht_by_line = price2num($tmp['amount'], 'MT');
+					} else {
+						$tmp = $element->getSumOfAmount('', $dates, $datee);
+						$total_ht_by_line = price2num($tmp['amount'], 'MT');
+					}
 				} elseif ($key == 'loan') {
 					if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
 						// Get total loan
@@ -906,11 +902,7 @@ foreach ($listofreferent as $key => $value) {
 					$total_ttc_by_line = $element->price * abs($element->qty);
 				} elseif ($tablename == 'projet_task') {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
-					$reg = array();
-					if (preg_replace('/^(\d+\.)\s\(.*\)/', $defaultvat, $reg)) {
-						$defaultvat = $reg[1];
-					}
-					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ((float) $defaultvat / 100)), 'MT');
+					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				} elseif ($key == 'loan') {
 					$total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
 				} else {
@@ -1049,7 +1041,7 @@ foreach ($listofreferent as $key => $value) {
 		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty)) {
 			$idtofilterthirdparty = empty($object->thirdparty->id) ? 0 : $object->thirdparty->id;
 			if (!empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) {
-				$idtofilterthirdparty .= ',' . getDolGlobalString('PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS');
+				$idtofilterthirdparty .= ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 			}
 		}
 
@@ -1358,7 +1350,7 @@ foreach ($listofreferent as $key => $value) {
 						print " - ".dol_print_date($element->datef, 'dayhour');
 					}
 				} elseif (in_array($tablename, array('projet_task'))) {
-					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee); // $element is a task. $elementuser may be empty
+					$tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee); // $element is a task. $elementuser may be empty
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
 					print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
 					print '</a>';

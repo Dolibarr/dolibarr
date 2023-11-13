@@ -231,7 +231,7 @@ function getCategory($authentication, $id)
 		$fuser->getrights();
 
 		$nbmax = 10;
-		if ($fuser->hasRight('categorie', 'lire')) {
+		if ($fuser->rights->categorie->lire) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);
 			if ($result > 0) {

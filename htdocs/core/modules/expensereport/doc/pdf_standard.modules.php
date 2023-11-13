@@ -75,6 +75,12 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
 	public $posxpiece;
 	public $posxcomment;
 	public $posxtva;
@@ -245,7 +251,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
 

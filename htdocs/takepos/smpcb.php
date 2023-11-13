@@ -37,7 +37,7 @@ if (!defined('NOREQUIREAJAX')) {
 // Load Dolibarr environment
 require '../main.inc.php';
 
-if (!$user->hasRight('takepos', 'run')) {
+if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 

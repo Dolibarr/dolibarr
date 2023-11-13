@@ -69,21 +69,6 @@ class DiscountAbsolute
 	public $multicurrency_amount_tva;	// deprecated
 	public $multicurrency_amount_ttc;	// deprecated
 
-	/**
-	 * @var double
-	 */
-	public $multicurrency_subprice;
-
-	/**
-	 * @var int
-	 */
-	public $fk_invoice_supplier;
-
-	/**
-	 * @var int
-	 */
-	public $fk_invoice_supplier_line;
-
 	// Vat rate
 	public $tva_tx;
 	public $vat_src_code;

@@ -31,7 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // load webhook libraries
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+// for other modules
+//dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array('other'));
@@ -51,7 +52,7 @@ if (empty($mode)) {
 	$mode = 'modulesetup';
 }
 
-$id = GETPOST('id', 'int');
+$id          = GETPOST('id', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -136,9 +137,9 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'target', 'write');
-	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete');
+	$permissiontoread = $user->rights->webhook->target->read;
+	$permissiontoadd = $user->rights->webhook->target->write;
+	$permissiontodelete = $user->rights->webhook->target->delete;
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
@@ -151,7 +152,7 @@ if ($user->socid > 0) accessforbidden();
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, 0, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('webhook')) accessforbidden('Module not enabled');
+if (empty($conf->webhook->enabled)) accessforbidden('Module not enabled');
 if (!$permissiontoread) accessforbidden();
 
 
@@ -637,14 +638,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$selected = -1;
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
-				$selected = 1;
-			}
-		}
-		print $object->getKanbanView('', array('selected' => $selected));
+		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

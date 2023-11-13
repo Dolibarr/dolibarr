@@ -43,7 +43,7 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE hrm/core/tpl/objectline_title.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
 // Title line
 print "<thead>\n";
@@ -52,21 +52,27 @@ print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	print '<th class="linecolnum center">&nbsp;</th>';
+	print '<td class="linecolnum center">&nbsp;</td>';
 }
 
 // Skill type
-print '<th class="linecollabel">'.$langs->trans('SkillType').'</th>';
+print '<td class="linecollabel">'.$langs->trans('SkillType').'</td>';
 
 // Label skill
-print '<th class="linecollabel">'.$langs->trans('Label').'</th>';
+print '<td class="linecollabel">'.$langs->trans('Label').'</td>';
 
-// Comment
-print '<th class="linecolcomment"></th>';
+// Description
+print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 // Note
-print '<th class="linecolrank right" style="width: 80px">'.$form->textwithpicto($langs->trans("Level"), $langs->trans('EmployeeRank')).'</th>';
+print '<td class="linecolrank right" style="width: 80px">'.$form->textwithpicto($langs->trans("Level"), $langs->trans('EmployeeRank')).'</td>';
 
+
+//print '<td class="linecoledit"></td>'; // No width to allow autodim
+
+//print '<td class="linecoldelete" style="width: 10px"></td>';
+
+//print '<td class="linecolmove" style="width: 10px"></td>';
 
 print "</tr>\n";
 print "</thead>\n";

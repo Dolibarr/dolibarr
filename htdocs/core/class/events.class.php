@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2007-2019	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,11 +79,6 @@ class Events // extends CommonObject
 	 * @var string User agent
 	 */
 	public $user_agent;
-
-	/**
-	 * @var string label
-	 */
-	public $label;
 
 	/**
 	 * @var string description

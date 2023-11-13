@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
+/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +58,8 @@ static $tmpstatut2label = array(
 		'1' => 'CloseFiscalYear'
 );
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Fiscalyear($db);
-$hookmanager->initHooks(array('fiscalyearlist'));
+
 
 // Security check
 if ($user->socid > 0) {
@@ -69,6 +68,7 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 }
+
 
 /*
  * Actions
@@ -112,22 +112,15 @@ $sql .= $db->plimit($limit + 1, $offset);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	$param = '';
 
-	$parameters = array('param' => $param);
-	$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if ($reshook < 0) {
-		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	}
+	$i = 0;
 
-	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
-	if (empty($reshook)) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
-	}
+	$addbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
+
 
 	$title = $langs->trans('AccountingPeriods');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'calendar', 0, $newcardbutton, '', $limit, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste centpercent">';
@@ -141,9 +134,6 @@ if ($result) {
 	print '<td class="right">'.$langs->trans("Status").'</td>';
 	print '</tr>';
 
-	// Loop on record
-	// --------------------------------------------------------------------
-	$i = 0;
 	if ($num) {
 		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
@@ -169,7 +159,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print '</table>';
 	print '</div>';

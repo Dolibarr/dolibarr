@@ -131,14 +131,14 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
-	if ($supplier_module_enabled == 1 && $object->fournisseur && $user->hasRight('fournisseur', 'lire')) {
+	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
 		$head[$h][2] = 'supplier';
 		$h++;
 	}
 
-	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
+	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -188,7 +188,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Bank accounts
-	if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
+	if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT)) {
 		$nbBankAccount = 0;
 		$foundonexternalonlinesystem = 0;
 		$langs->load("bills");
@@ -242,28 +242,13 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (
-		((isModEnabled('website') && !empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) || isModEnabled('webportal'))
-		&& $user->hasRight('societe', 'lire')
-	) {
-		$site_filter_list = array();
-		if (isModEnabled('website')) {
-			$site_filter_list[] = 'dolibarr_website';
-		}
-		if (isModEnabled('webportal')) {
-			$site_filter_list[] = 'dolibarr_portal';
-		}
-
+	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && ($user->hasRight('societe', 'lire'))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
-		$sql .= " WHERE fk_soc = ".((int) $object->id);
-		$sql .= " AND entity IN (".getEntity('thirdpartyaccount').")";
-		if (!empty($site_filter_list)) {
-			$sql .= " AND n.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
-		}
+		$sql .= " WHERE fk_soc = ".((int) $object->id).' AND fk_website > 0';
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -279,7 +264,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
-		if ($user->hasRight('partnership', 'read')) {
+		if (!empty($user->rights->partnership->read)) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?socid='.$object->id;
@@ -288,7 +273,6 @@ function societe_prepare_head(Societe $object)
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."partnership as n";
 			$sql .= " WHERE fk_soc = ".((int) $object->id);
-			$sql .= " AND entity IN (".getEntity('partnership').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -403,7 +387,6 @@ function societe_prepare_head(Societe $object)
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 			$sql .= " WHERE fk_soc = ".((int) $object->id);
-			$sql .= " AND entity IN (".getEntity('agenda').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -443,7 +426,7 @@ function societe_prepare_head(Societe $object)
  */
 function societe_prepare_head2($object)
 {
-	global $langs;
+	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
@@ -469,7 +452,7 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $user, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('societe');
@@ -733,7 +716,7 @@ function getFormeJuridiqueLabel($code)
 		return '';
 	}
 
-	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
 	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
@@ -744,7 +727,7 @@ function getFormeJuridiqueLabel($code)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 
-			$label = ($obj->label != '-' ? $obj->label : '');
+			$label = ($obj->libelle != '-' ? $obj->libelle : '');
 
 			return $langs->trans($label);
 		} else {
@@ -826,7 +809,7 @@ function isInEEC($object)
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
-	global $user, $action, $hookmanager, $form, $massactionbutton, $massaction, $arrayofselected, $arrayofmassactions;
+	global $user, $action, $hookmanager;
 
 	$i = -1;
 
@@ -865,10 +848,6 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
 			print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
 			print '<td class="right">'.$langs->trans("Status").'</td>';
-			print '<td class="center">';
-			$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
-			print $selectedfields;
-			print '</td>';
 			print '</tr>';
 
 			if ($num > 0) {
@@ -885,7 +864,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
+					if ($user->rights->projet->lire && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
 						// Ref
@@ -920,18 +899,6 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// Status
 						print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
 
-						// Action column
-						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-							print '<td class="nowrap center">';
-							if ($massactionbutton || $massaction) {
-								$selected = 0;
-								if (in_array($obj->id, $arrayofselected)) {
-									$selected = 1;
-								}
-								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
-							}
-							print '</td>';
-						}
 						print '</tr>';
 					}
 					$i++;
@@ -1705,12 +1672,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
-			&& $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
-		} elseif (is_object($filterobj)) {
-			return 'Bad value for $filterobj';
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -1761,16 +1724,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
-				&& $filterobj->table_element && $filterobj->element) {
-				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+				// Generic case
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj)) {
-				return 'Bad value for $filterobj';
 			}
 		}
 
@@ -2049,7 +2008,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '</td>';
 
 			// Author of event
-			$out .= '<td class="tdoverflowmax125">';
+			$out .= '<td class="tdoverflowmax150">';
+			//$userstatic->id=$histo[$key]['userid'];
+			//$userstatic->login=$histo[$key]['login'];
+			//$out.=$userstatic->getLoginUrl(1);
 			if ($histo[$key]['userid'] > 0) {
 				if (isset($userlinkcache[$histo[$key]['userid']])) {
 					$link = $userlinkcache[$histo[$key]['userid']];
@@ -2077,18 +2039,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 				}
 			}
-			$out .= '<td class="tdoverflowmax125" title="'.$labeltype.'">';
+			$out .= '<td class="tdoverflowmax150" title="'.$labeltype.'">';
 			$out .= $actionstatic->getTypePicto();
-			//if (empty($conf->dol_optimize_smallscreen)) {
-				$out .= $labeltype;
-			//}
+			$out .= $labeltype;
 			$out .= '</td>';
 
 			// Title/Label of event
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
+				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
+				//$actionstatic->libelle=$libelle;
 				$libelle = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
@@ -2133,6 +2094,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 			$out .= "</td>\n";
 
+			// Title of event
+			//$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
+
 			// Linked object
 			$out .= '<td class="nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
@@ -2146,6 +2110,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
 				}
 				$out .= $link;
+			} else {
+				$out .= '&nbsp;';
 			}
 			$out .= '</td>';
 

@@ -32,11 +32,6 @@ class DataPolicyCron
 	 */
 	public $db;
 
-	public $error;
-
-	public $output;
-
-
 	/**
 	 *	Constructor
 	 *

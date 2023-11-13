@@ -259,7 +259,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_creation_id);
+			$userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -314,7 +314,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_modification_id);
+			$userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -563,7 +563,10 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_closing_id)) {
+	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
+		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
+			$object->user_closing = $object->user_cloture;
+		}
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -573,12 +576,20 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		$userstatic = new User($db);
-		$userstatic->fetch($object->user_closing_id);
-		if ($userstatic->id) {
-			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+		if (is_object($object->user_closing)) {
+			if ($object->user_closing->id) {
+				print $object->user_closing->getNomUrl(-1, '', 0, 0, 0);
+			} else {
+				print $langs->trans("Unknown");
+			}
 		} else {
-			print $langs->trans("Unknown");
+			$userstatic = new User($db);
+			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
+			if ($userstatic->id) {
+				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+			} else {
+				print $langs->trans("Unknown");
+			}
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -1273,7 +1284,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
-	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
 	}
@@ -2037,7 +2047,7 @@ function dol_buildlogin($lastname, $firstname)
 	global $conf;
 
 	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
-	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
+	if (!empty($conf->global->MAIN_BUILD_LOGIN_RULE) && $conf->global->MAIN_BUILD_LOGIN_RULE == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? '.' : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2661,7 +2671,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'accounting') {
 		$moduledirforclass = 'accountancy';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
 
@@ -2880,12 +2890,10 @@ function acceptLocalLinktoMedia()
 		}
 
 		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
-		$allowParamName = 'MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK';
-		$allowPrivateNetworkIP = getDolGlobalInt($allowParamName);
-		if (!$allowPrivateNetworkIP && !filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// If ip of public url is a private network IP, we do not allow this.
 			$acceptlocallinktomedia = 0;
-			setEventMessage("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local network ip", 'warnings');
+			// TODO Show a warning
 		}
 
 		if (preg_match('/http:/i', $urlwithouturlroot)) {

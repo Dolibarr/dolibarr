@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2021-2023	Waël Almoman			<info@almoman.com>
+ * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
@@ -191,7 +191,7 @@ dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -242,7 +242,7 @@ if ($urllogo) {
 }
 if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
 	print '<div class="backimagepublicpayment">';
-	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="' . getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT').'">';
+	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
 	print '</div>';
 }
 
@@ -387,10 +387,6 @@ $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
 
 
-// Set $appli for emails title
-$appli = $mysoc->name;
-
-
 // Make complementary actions
 $ispostactionok = 0;
 $postactionmessages = array();
@@ -492,7 +488,7 @@ if ($ispaymentok) {
 				if (!empty($conf->global->MEMBER_MIN_AMOUNT)) {
 					if ($FinalPaymentAmt < $conf->global->MEMBER_MIN_AMOUNT) {
 						$error++;
-						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . getDolGlobalString('MEMBER_MIN_AMOUNT').'). May be a hack to try to pay a different amount ?';
+						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed ('.$conf->global->MEMBER_MIN_AMOUNT.'). May be a hack to try to pay a different amount ?';
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 						dol_syslog("Failed to validate member (amount lower than minimum): ".$errmsg, LOG_ERR, 0, '_payment');
@@ -522,17 +518,9 @@ if ($ispaymentok) {
 				}
 
 				// Subscription informations
-				$datesubscription = $object->datevalid; // By default, the subscription start date is the payment date
+				$datesubscription = $object->datevalid;
 				if ($object->datefin > 0) {
 					$datesubscription = dol_time_plus_duree($object->datefin, 1, 'd');
-				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
-					$datesubscription = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
-				}
-
-				if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
-					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"), dol_print_date($datesubscription, "%m"));
-				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
-					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"));
 				}
 
 				$datesubend = null;
@@ -579,11 +567,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
-				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled("banque")) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled("banque")) {
 					$option = 'bankdirect';
-				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -1018,9 +1006,7 @@ if ($ispaymentok) {
 
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
-									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-								}
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
 									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
@@ -1143,8 +1129,7 @@ if ($ispaymentok) {
 					}
 
 					if ($bankaccountid > 0) {
-						$label = '(DonationPayment)';
-						$result = $paiement->addPaymentToBank($user, 'payment_donation', $label, $bankaccountid, '', '');
+						$result = $paiement->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $bankaccountid, '', '');
 						if ($result < 0) {
 							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
@@ -1334,7 +1319,7 @@ if ($ispaymentok) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
 							} else {
-								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration");
+								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
 
@@ -1678,9 +1663,7 @@ if ($ispaymentok) {
 
 							if ($bankaccountid > 0) {
 								$label = '(CustomerInvoicePayment)';
-								if ($object->type == Facture::TYPE_CREDIT_NOTE) {
-									$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-								}
+								if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 								$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 								if ($result < 0) {
 									$postactionmessages[] = $paiement->error . ' ' . join("<br>\n", $paiement->errors);
@@ -1728,6 +1711,10 @@ if ($ispaymentok) {
 }
 
 
+// Set $appli for emails title
+$appli = $mysoc->name;
+
+
 if ($ispaymentok) {
 	// Get on url call
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
@@ -1772,7 +1759,7 @@ if ($ispaymentok) {
 
 	dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
 
-	// Send an email to the admins
+	// Send an email to admins
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);

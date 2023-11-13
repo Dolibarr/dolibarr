@@ -49,13 +49,13 @@ if ($user->socid) {
 //$hookmanager->initHooks(array('contractcard', 'globalcard'));  -> Conflict with contrat\card.php
 $hookmanager->initHooks(array('contractnote'));
 
+$result = restrictedArea($user, 'contrat', $id);
+
 $object = new Contrat($db);
 $object->fetch($id, $ref);
 
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
-
-$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
@@ -76,10 +76,7 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans("Contract");
-$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
-
-llxHeader('', $title, $help_url);
+llxHeader('', $langs->trans("Contract"), "");
 
 $form = new Form($db);
 

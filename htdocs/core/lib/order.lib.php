@@ -281,7 +281,6 @@ function getCustomerOrderPieChart($socid = 0)
 		}
 		$db->free($resql);
 
-		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$result = '<div class="div-table-responsive-no-min">';
@@ -299,7 +298,10 @@ function getCustomerOrderPieChart($socid = 0)
 			if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
 				$colorseries[$status] = $badgeStatus4;
 			}
-			if ($status == Commande::STATUS_CLOSED) {
+			if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
+				$colorseries[$status] = $badgeStatus6;
+			}
+			if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 				$colorseries[$status] = $badgeStatus6;
 			}
 			if ($status == Commande::STATUS_CANCELED) {

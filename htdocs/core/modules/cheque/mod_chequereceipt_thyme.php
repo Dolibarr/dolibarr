@@ -48,10 +48,9 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *  @return     string      Descriptive text
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $conf, $langs, $db;
 
@@ -74,9 +73,9 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskchequereceipts" value="' . getDolGlobalString('CHEQUERECEIPTS_THYME_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskchequereceipts" value="'.$conf->global->CHEQUERECEIPTS_THYME_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp;<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp;<input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -109,9 +108,9 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string      				Value if KO, <0 if KO
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -127,7 +126,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, empty($object) ? dol_now() : $object->date_bordereau);
+		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $object->date_bordereau);
 
 		return  $numFinal;
 	}

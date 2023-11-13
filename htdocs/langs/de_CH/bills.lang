@@ -60,6 +60,7 @@ ConvertExcessReceivedToReduc=Überschuss in Gutschrift umwandeln
 ConvertExcessPaidToReduc=Überschuss in Rabatt umwandeln
 EnterPaymentReceivedFromCustomer=Geben Sie die vom Kunden erhaltene Zahlung ein
 BillStatus=Rechnung Status
+StatusOfGeneratedInvoices=Status der generierten Rechnungen
 BillStatusPaidBackOrConverted=Rückerstattet oder in Gutschrift umgewandelt
 BillStatusConverted=In Rabatt umgewandelt (in Schlussrechnung anrechenbar)
 BillStatusNotRefunded=Nicht zurückerstattet

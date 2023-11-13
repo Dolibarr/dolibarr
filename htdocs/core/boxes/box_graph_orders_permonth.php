@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show orders per month graph
+ * Class to manage the box to show last orders
  */
 class box_graph_orders_permonth extends ModeleBoxes
 {
-	public $boxcode  = "orderspermonth";
-	public $boximg   = "object_order";
+	public $boxcode = "orderspermonth";
+	public $boximg = "object_order";
 	public $boxlabel = "BoxCustomersOrdersPerMonth";
-	public $depends  = array("commande");
+	public $depends = array("commande");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -99,7 +99,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+		if (empty($user->rights->societe->client->voir) || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 

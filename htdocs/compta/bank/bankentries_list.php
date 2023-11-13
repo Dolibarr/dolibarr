@@ -246,7 +246,7 @@ $rowids = GETPOST('rowid', 'array');
 // Conciliation
 if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha'))
 	&& (GETPOST("num_releve", "alpha") || !empty($rowids))
-	&& $user->hasRight('banque', 'consolidate')
+	&& !empty($user->rights->banque->consolidate)
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
@@ -569,7 +569,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			// If not cash account and can be reconciliate
-			if ($user->hasRight('banque', 'consolidate')) {
+			if ($user->rights->banque->consolidate) {
 				$newparam = $param;
 				$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
 				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliatemanual.'</a>';
@@ -579,7 +579,7 @@ if ($id > 0 || !empty($ref)) {
 
 			if ($allowautomaticconciliation) {
 				// If not cash account and can be reconciliate
-				if ($user->hasRight('banque', 'consolidate')) {
+				if ($user->rights->banque->consolidate) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
 					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
@@ -820,7 +820,7 @@ if ($resql) {
 	}
 
 	// Form to reconcile
-	if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+	if ($user->rights->banque->consolidate && $action == 'reconcile') {
 		print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 		$texttoshow = $langs->trans("InputReceiptNumber").': ';
 		$yyyy = dol_substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1).substr($langs->transnoentitiesnoconv("Year"), 0, 1);
@@ -1080,7 +1080,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	// When action is 'reconcile', we force to have the column num_releve always enabled (otherwise we can't make reconciliation).
 	if ($action == 'reconcile') {
 		$arrayfields['b.num_releve']['checked'] = 1;
@@ -1089,14 +1089,8 @@ if ($resql) {
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
+
 	print '<tr class="liste_titre_filter">';
-	// Actions and select
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre valignmiddle center">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		print $searchpicto;
-		print '</td>';
-	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
@@ -1174,20 +1168,14 @@ if ($resql) {
 	}
 
 	// Actions and select
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre valignmiddle center">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		print $searchpicto;
-		print '</td>';
-	}
+	print '<td class="liste_titre" align="middle">';
+	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+	print $searchpicto;
+	print '</td>';
 	print "</tr>\n";
 
 	// Fields title
 	print '<tr class="liste_titre">';
-	// Actions and select
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
-	}
 	if (!empty($arrayfields['b.rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1198,10 +1186,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '', $sortfield, $sortorder, "center ");
 	}
 	if (!empty($arrayfields['b.datev']['checked'])) {
-		print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, 'align="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
 		print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
@@ -1241,9 +1229,7 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Actions and select
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
-	}
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
 	$balance = 0; // For balance
@@ -1297,7 +1283,7 @@ if ($resql) {
 			$balancecalculated = true;
 
 			// Output a line with start balance
-			if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+			if ($user->rights->banque->consolidate && $action == 'reconcile') {
 				$tmpnbfieldbeforebalance = 0;
 				$tmpnbfieldafterbalance = 0;
 				$balancefieldfound = 0;
@@ -1331,10 +1317,6 @@ if ($resql) {
 				}
 
 				print '<tr class="oddeven trforbreak">';
-				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td></td>';
-				}
 				if ($tmpnbfieldbeforebalance) {
 					print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
 					print '&nbsp;';
@@ -1365,13 +1347,9 @@ if ($resql) {
 							</script>';
 					print '</td>';
 				}
-				print '<td colspan="'.($tmpnbfieldafterbalance).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
 				print '&nbsp;';
 				print '</td>';
-				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td></td>';
-				}
 				print '</tr>';
 			}
 		}
@@ -1410,21 +1388,6 @@ if ($resql) {
 
 		print '<tr class="oddeven" '.$backgroundcolor.'>';
 
-		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
 		// Ref
 		if (!empty($arrayfields['b.rowid']['checked'])) {
 				print '<td class="nowrap left">';
@@ -1442,7 +1405,6 @@ if ($resql) {
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
 			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
-				// Example: $reg[1] = 'CustomerInvoicePayment', 'SupplierInvoicePayment', ... (or on old version: 'WithdrawalPayment', 'BankTransferPayment')
 				$labeltoshow = $langs->trans($reg[1]);
 			} else {
 				if ($objp->label == '(payment_salary)') {
@@ -1647,8 +1609,8 @@ if ($resql) {
 				$companystatic->fetch($companylinked_id);
 				print $companystatic->getNomUrl(1);
 			} elseif ($userlinked_id &&
-					(($type_link == 'payment_salary' && $user->hasRight('salaries', 'read'))
-						|| ($type_link == 'payment_sc' && $user->hasRight('tax', 'charges', 'lire')))) {
+					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
+						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
 				// Get object user from cache or load it
 				if (!empty($conf->cache['user'][$userlinked_id])) {
 					$tmpuser = $conf->cache['user'][$userlinked_id];
@@ -1795,7 +1757,7 @@ if ($resql) {
 			print img_edit();
 			print '</a>';
 		} else {
-			if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
+			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_edit();
 				print '</a>';
@@ -1809,7 +1771,7 @@ if ($resql) {
 					print ' '.img_warning($langs->trans("ReconciliationLate"));
 				}
 			}
-			if ($user->hasRight('banque', 'modifier')) {
+			if ($user->rights->banque->modifier) {
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
@@ -1817,18 +1779,16 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
 			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
 		}
 
 		print "</tr>\n";
@@ -1854,7 +1814,7 @@ if ($resql) {
 				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
-				if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+				if ($user->rights->banque->consolidate && $action == 'reconcile') {
 					print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 				}
 				print '</td>';

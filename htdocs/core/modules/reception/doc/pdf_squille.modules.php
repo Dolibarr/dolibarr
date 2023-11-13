@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2023      Frédéric France          <frederic.france@netlogic.fr>
+/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,29 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_squille extends ModelePdfReception
 {
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * Issuer
+	 * @var Societe object that emits
 	 */
-	public $version = 'dolibarr';
-
-	/**
-	 * @var int posx weight vol
-	 */
-	public $posxweightvol;
-
-	/**
-	 * @var int posx qty ordered
-	 */
-	public $posxqtyordered;
-
-	/**
-	 * @var int posx qty to ship
-	 */
-	public $posxqtytoship;
-
-	/**
-	 * @var int posx totalht
-	 */
-	public $posxtotalht;
+	public $emetteur;
 
 
 	/**
@@ -254,7 +234,7 @@ class pdf_squille extends ModelePdfReception
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (empty($conf->global->MAIN_DISABLE_FPDI) && !empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -638,7 +618,7 @@ class pdf_squille extends ModelePdfReception
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
-	 *	@param  Reception	$object         Object reception
+	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
@@ -850,7 +830,7 @@ class pdf_squille extends ModelePdfReception
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Reception	$object     	Object to show
+	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void

@@ -22,14 +22,9 @@
  *  \brief		Set function handlers for PHP session management in DB.
  */
 
-// This session handler file must be included just after the call of the master.inc.php into main.inc.php
+// The session handler file must be included just after the call of the master.inc.php into main.inc.php
 // The $conf is already defined from conf.php file.
-// To use it set
-// - create table ll_session from the llx_session-disabled.sql file
-// - uncomment the include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php into main.inc.php
-// - in your PHP.ini, set:  session.save_handler = user
-// The session_set_save_handler() at end of this fille will replace default session management.
-
+// To use it set in your PHP.ini:  session.save_handler = user
 
 /**
  * The session open handler called by PHP whenever a session is initialized.

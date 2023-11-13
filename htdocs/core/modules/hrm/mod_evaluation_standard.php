@@ -52,10 +52,9 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	/**
 	 *  Return description of numbering module
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *  @return     string      Text with description
 	 */
-	public function info($langs)
+	public function info()
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);

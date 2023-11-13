@@ -684,19 +684,13 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringNoSpecial()
 	{
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-		$text = "A string with space and special char like ' or ° and more...\n";
-		$after = dol_string_nospecial($text, '_', '', '', 0);
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 0);
 		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
 
-		$text = "A string with space and special char like ' or ° and more...\n";
-		$after = dol_string_nospecial($text, '_', '', '', 1);
+		$text="A string with space and special char like ' or ° and more...\n";
+		$after=dol_string_nospecial($text, '_', '', '', 1);
 		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
-
-		$text = 'Bahnhofstraße';
-		$after = dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($text), ' '), 70, 'right', 'UTF-8', 1));
-		$this->assertEquals("Bahnhofstraße", $after, "testDolStringNoSpecial with german char");
 
 		return true;
 	}
@@ -1081,7 +1075,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testDolPrintPhone
+	 * testDolFormatAddress
 	 *
 	 * @return	void
 	 */
@@ -1123,12 +1117,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		$s=img_picto('title', 'user');
 		print __METHOD__." s=".$s."\n";
-		$this->assertStringContainsStringIgnoringCase('fa-user', $s, 'testImgPicto1');
+		$this->assertContains('fa-user', $s, 'testImgPicto1');
 
 		$s=img_picto('title', 'img.png', 'style="float: right"', 0);
 		print __METHOD__." s=".$s."\n";
-		$this->assertStringContainsStringIgnoringCase('theme', $s, 'testImgPicto2');
-		$this->assertStringContainsStringIgnoringCase('style="float: right"', $s, 'testImgPicto2');
+		$this->assertContains('theme', $s, 'testImgPicto2');
+		$this->assertContains('style="float: right"', $s, 'testImgPicto2');
 
 		$s=img_picto('title', '/fullpath/img.png', '', 1);
 		print __METHOD__." s=".$s."\n";

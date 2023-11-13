@@ -266,7 +266,7 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->hasRight('fournisseur', 'facture', 'lire')) {
+		if ($fuser->rights->fournisseur->facture->lire) {
 			$invoice = new FactureFournisseur($db);
 			$result = $invoice->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {

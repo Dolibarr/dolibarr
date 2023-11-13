@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show proposals per month graph
+ * Class to manage the box to show last propals
  */
 class box_graph_propales_permonth extends ModeleBoxes
 {
-	public $boxcode  = "propalpermonth";
-	public $boximg   = "object_propal";
+	public $boxcode = "propalpermonth";
+	public $boximg = "object_propal";
 	public $boxlabel = "BoxProposalsPerMonth";
-	public $depends  = array("propal");
+	public $depends = array("propal");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -101,7 +101,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+		if (empty($user->rights->societe->client->voir) || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 

@@ -23,12 +23,10 @@
  * Put detailed description here.
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
-
 /**
  * Class ActionsMyModule
  */
-class ActionsMyModule extends CommonHookActions
+class ActionsMyModule
 {
 	/**
 	 * @var DoliDB Database handler.

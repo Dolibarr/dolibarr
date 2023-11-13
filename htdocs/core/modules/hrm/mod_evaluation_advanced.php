@@ -54,12 +54,11 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *  @return     string      Descriptive text
 	 */
-	public function info($langs)
+	public function info()
 	{
-		global $langs, $db;
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -82,7 +81,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskEvaluation" value="'.getDolGlobalString('HRM_EVALUATION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 

@@ -27,7 +27,7 @@
 require_once '../../main.inc.php';
 
 // Enable and test if module Api is enabled
-if (!isModEnabled('api') ) {
+if (empty($conf->global->MAIN_MODULE_API)) {
 	$langs->load("admin");
 	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
 	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
@@ -37,7 +37,7 @@ if (!isModEnabled('api') ) {
 }
 
 // Test if explorer is not disabled
-if (getDolGlobalString('API_EXPLORER_DISABLED')) {
+if (!empty($conf->global->API_EXPLORER_DISABLED)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr API interfaces with module REST disabled");
 	print $langs->trans("WarningAPIExplorerDisabled").'.<br><br>';
@@ -46,11 +46,11 @@ if (getDolGlobalString('API_EXPLORER_DISABLED')) {
 }
 
 // Restrict API to some IPs
-if (getDolGlobalString('API_RESTRICT_ON_IP')) {
+if (!empty($conf->global->API_RESTRICT_ON_IP)) {
 	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
-		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
+		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
 		print 'APIs are not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
 		//session_destroy();

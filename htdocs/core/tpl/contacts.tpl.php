@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2021      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,40 +40,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if (isset($permissiontoadd) && ! isset($permission)) {
-	$permission = $permissiontoadd;
-}
-// TODO Remove this section. We already got $permissiontoadd.
 if ($module == 'propal') {
-	$permission = $user->hasRight('propal', 'creer');
+	$permission = $user->rights->propal->creer;
 } elseif ($module == 'fichinter') {
-	$permission = $user->hasRight('ficheinter', 'creer');
+	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'order_supplier') {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->hasRight('fournisseur', 'commande', 'creer');
+		$permission = $user->rights->fournisseur->commande->creer;
 	} else {
-		$permission = $user->hasRight('supplier_order', 'creer');
+		$permission = $user->rights->supplier_order->creer;
 	}
 } elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
+		$permission = $user->rights->fournisseur->facture->creer;
 	} else {
-		$permission = $user->hasRight('supplier_invoice', 'creer');
+		$permission = $user->rights->supplier_invoice->creer;
 	}
 } elseif ($module == 'project') {
-	$permission = $user->hasRight('projet', 'creer');
+	$permission = $user->rights->projet->creer;
 } elseif ($module == 'action') {
 	$permission = $user->hasRight('agenda', 'myactions', 'create');
 } elseif ($module == 'shipping') {
-	$permission = $user->hasRight('expedition', 'creer');
+	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'reception') {
-	$permission = $user->hasRight('reception', 'creer');
+	$permission = $user->rights->reception->creer;
 } elseif ($module == 'project_task') {
-	$permission = $user->hasRight('projet', 'creer');
-} elseif (!isset($permission) && $user->hasRight($module, 'creer')) {
-	$permission = $user->hasRight($module, 'creer');
-} elseif (!isset($permission) && $user->hasRight($module, 'write')) {
-	$permission = $user->hasRight($module, 'write');
+	$permission = $user->rights->projet->creer;
+} elseif (!isset($permission) && isset($user->rights->$module->creer)) {
+	$permission = $user->rights->$module->creer;
+} elseif (!isset($permission) && isset($user->rights->$module->write)) {
+	$permission = $user->rights->$module->write;
 }
 
 $formcompany = new FormCompany($db);
@@ -291,9 +287,7 @@ print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], 
 print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
-if ($permission) {
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
-}
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
 foreach ($list as $entry) {

@@ -795,7 +795,7 @@ class KnowledgeRecord extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -845,7 +845,7 @@ class KnowledgeRecord extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
+					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -936,7 +936,6 @@ class KnowledgeRecord extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -1002,7 +1001,7 @@ class KnowledgeRecord extends CommonObject
 		if (!empty($conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON)) {
 			$mybool = false;
 
-			$file = getDolGlobalString('KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON') . ".php";
+			$file = $conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON.".php";
 			$classname = $conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON;
 
 			// Include file with class
@@ -1143,9 +1142,7 @@ class KnowledgeRecord extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		if ($selected >= 0) {
-			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'lang') && !empty($this->lang)) {
 			//$return .= '<br><span class="opacitymedium">'.$langs->trans("Language").'</span> : <span class="info-box-label" title="'.$langs->trans("Language_".$this->lang).'">'.$langs->trans("Language_".$this->lang, '', '', '', '', 12).'</span>';
 			$return .= '<br>'.picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow paddingrightonly"');

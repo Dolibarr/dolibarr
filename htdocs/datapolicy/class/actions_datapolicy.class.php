@@ -21,12 +21,11 @@
  * \ingroup datapolicy
  * \brief   Example hook overload.
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
 
 /**
  * Class ActionsDatapolicy
  */
-class ActionsDatapolicy extends CommonHookActions
+class ActionsDatapolicy
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -75,8 +74,8 @@ class ActionsDatapolicy extends CommonHookActions
 	 */
 	public function getNomUrl($parameters, &$object, &$action)
 	{
+		global $db, $langs, $conf, $user;
 		$this->resprints = '';
-
 		return 0;
 	}
 
@@ -91,8 +90,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $user, $langs;
-
+		global $conf, $user, $langs;
 		$langs->load('datapolicy@datapolicy');
 		$error = 0; // Error counter
 
@@ -147,6 +145,7 @@ class ActionsDatapolicy extends CommonHookActions
 			DataPolicy::sendMailDataPolicyCompany($object);
 		}
 
+
 		if (!$error) {
 			$this->results = array('myreturn' => 999);
 			$this->resprints = 'A text to show';
@@ -158,7 +157,7 @@ class ActionsDatapolicy extends CommonHookActions
 	}
 
 	/**
-	 * Overloading the doMassActions function : replacing the parent's function with the one below
+	 * Overloading the doActions function : replacing the parent's function with the one below
 	 *
 	 * @param   array           $parameters     Hook metadatas (context, etc...)
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
@@ -168,6 +167,8 @@ class ActionsDatapolicy extends CommonHookActions
 	 */
 	public function doMassActions($parameters, &$object, &$action, $hookmanager)
 	{
+		global $conf, $user, $langs;
+
 		$error = 0; // Error counter
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
@@ -199,7 +200,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 */
 	public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $langs;
+		global $conf, $user, $langs;
 
 		$error = 0; // Error counter
 
@@ -216,6 +217,34 @@ class ActionsDatapolicy extends CommonHookActions
 		}
 	}
 
+	/**
+	 * Execute action
+	 *
+	 * @param   array   $parameters     Array of parameters
+	 * @param   Object  $object         Object output on PDF
+	 * @param   string  $action         'add', 'update', 'view'
+	 * @return  int                     <0 if KO,
+	 *                                  =0 if OK but we want to process standard actions too,
+	 *                                  >0 if OK and we want to replace standard actions.
+	 */
+	public function beforePDFCreation($parameters, &$object, &$action)
+	{
+		global $conf, $user, $langs;
+		global $hookmanager;
+
+		$outputlangs = $langs;
+
+		$ret = 0;
+		$deltemp = array();
+		dol_syslog(get_class($this).'::executeHooks action='.$action);
+
+		/* print_r($parameters); print_r($object); echo "action: " . $action; */
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
+		}
+
+		return $ret;
+	}
+
 
 	/**
 	 * addMoreActionsButtons
@@ -228,7 +257,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 */
 	public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $langs;
+		global $conf, $user, $langs;
 		$langs->load('datapolicy@datapolicy');
 
 		if (!empty($conf->global->DATAPOLICY_ENABLE_EMAILS)) {
@@ -280,7 +309,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 */
 	public function printCommonFooter($parameters, &$object, &$action, $hookmanager)
 	{
-		global $langs;
+		global $conf, $user, $langs;
 
 		$jsscript = '';
 		if ($parameters['currentcontext'] == 'thirdpartycard') {

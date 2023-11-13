@@ -251,14 +251,11 @@ a.btnTitle.btnTitleSelected {
 	border-radius: 3px;
 	position: relative;
 	text-align: center;
+	/* color: #ffffff;
+	background-color: rgb(<?php print $colortextlink; ?>); */
 	font-size: 12px;
 	text-decoration: none;
 	box-shadow: none;
-}
-/* The buttonplus isgrowing on hover (dont know why). This is to avoid to have the cellegrowing too */
-.btnTitlePlus:hover {
-	max-width: 24px;
-	max-height: 40px;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {

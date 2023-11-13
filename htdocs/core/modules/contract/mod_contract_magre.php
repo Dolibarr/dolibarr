@@ -61,12 +61,11 @@ class mod_contract_magre extends ModelNumRefContracts
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *  @return string      			Descriptive text
+	 *	@return     string      text description
 	 */
-	public function info($langs)
+	public function info()
 	{
-		global $langs, $db;
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -87,7 +86,7 @@ class mod_contract_magre extends ModelNumRefContracts
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcontract" value="'.getDolGlobalString("CONTRACT_MAGRE_MASK").'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -102,7 +101,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -124,7 +123,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
-		global $db;
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

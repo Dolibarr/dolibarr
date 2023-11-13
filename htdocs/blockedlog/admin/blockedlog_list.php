@@ -540,7 +540,6 @@ if (is_array($blocks)) {
 	$nbshown = 0;
 	$MAXFORSHOWLINK = 100;
 	$object_link = '';
-	$object_link_title = '';
 
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
@@ -549,10 +548,8 @@ if (is_array($blocks)) {
 
 			if ($nbshown < $MAXFORSHOWLINK) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
 				$object_link = $block->getObjectLink();
-				$object_link_title = '';
 			} else {
 				$object_link = $block->element.'/'.$block->fk_object;
-				$object_link_title = $langs->trans('LinkHasBeenDisabledForPerformancePurpose');
 			}
 
 			print '<tr class="oddeven">';
@@ -584,7 +581,7 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Link to source object
-			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.' - '.$object_link_title)).'"').'>';
+			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link)).'"').'>';
 			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
 			print $object_link;
 			print '</td>';

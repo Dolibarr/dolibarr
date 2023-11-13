@@ -173,11 +173,11 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -187,7 +187,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print "\n".'<table class="noborder" width=100%>';
 
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
-		$sql .= ', cls.code as opp_status_code, ctc.libelle as type_label';
+		$sql .= ', cls.code as opp_status_code, ctc.libelle';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
@@ -227,7 +227,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
+					if ($user->rights->projet->lire && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
 						// Ref
@@ -236,8 +236,8 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 						print '</td>';
 
 						// Label
-						print '<td>'.dol_escape_htmltag($obj->title).'</td>';
-						print '<td>'.dol_escape_htmltag($obj->type_label).'</td>';
+						print '<td>'.$obj->title.'</td>';
+						print '<td>'.$obj->libelle.'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end

@@ -354,7 +354,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('HRM_EVALUATION_VALIDATE', 0, $object);
+			$text .= $notify->confirmMessage('HRM_EVALUATION_VALIDATE', $object->socid, $object);
 		}
 
 		if (!$error) {
@@ -440,7 +440,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 
-	// Lines when evaluation is in edit mode
+	/*
+	 * Lines
+	 */
 
 	if (!empty($object->table_element_line) && $object->status == Evaluation::STATUS_DRAFT) {
 		// Show object lines
@@ -467,11 +469,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow centpercent">';
+			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		}
 
-		// Lines of evaluated skills
-		// $object is Evaluation
+
 		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
 
 		if (empty($object->lines)) {
@@ -503,8 +504,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print "<br>";
 	}
 
-	// Lines when evaluation is validated
-
+	// list of comparison
 	if ($object->status != Evaluation::STATUS_DRAFT) {
 		// Recovery of skills related to this evaluation
 
@@ -566,10 +566,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$num++;
 			}
 
-			print '<br>';
-
-			print '<div class="div-table-responsive-no-min">';
-			print '<table id="tablelines" class="noborder noshadow centpercent">';
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("TypeSkill") . ' </th>';
@@ -583,7 +581,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$sk = new Skill($db);
 			foreach ($Tab as $t) {
 				$sk->fetch($t->skill_id);
-
 				print '<tr>';
 				print ' <td>' . Skill::typeCodeToLabel($t->skill_type) . '</td>';
 				print ' <td>' . $sk->getNomUrl(1) . '</td>';
@@ -595,7 +592,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			print '</table>';
-			print '</div>';
 
 			?>
 

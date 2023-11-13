@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show invoices per month graph
+ * Class to manage the box to show last invoices
  */
 class box_graph_invoices_permonth extends ModeleBoxes
 {
-	public $boxcode  = "invoicespermonth";
-	public $boximg   = "object_bill";
+	public $boxcode = "invoicespermonth";
+	public $boximg = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerMonth";
-	public $depends  = array("facture");
+	public $depends = array("facture");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -99,7 +99,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+		if (empty($user->rights->societe->client->voir) || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 

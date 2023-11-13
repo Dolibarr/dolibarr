@@ -48,6 +48,7 @@ LineID=Regel ID
 CloseAs=Zet de status op
 Resiliate=Beëindigen
 Hide=Verbergen
+Recenter=Hercentreer
 NewObject=Nieuwe %s
 Model=Doc-sjabloon
 DefaultModel=Standaard doc-sjabloon

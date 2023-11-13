@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('admin', 'cron'));
 
 // Security check
-if (!$user->hasRight('cron', 'read')) {
+if (!$user->rights->cron->read) {
 	accessforbidden();
 }
 
