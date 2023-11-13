@@ -9,6 +9,9 @@ let "counter = 0"
 echo "Copy script into /tmp/github_commits_perversion.sh"
 cp $0 /tmp/github_commits_perversion.sh
 
+echo "Delete /tmp/git"
+rm -fr /tmp/git
+echo "Create and go into /tmp/git"
 mkdir /tmp/git
 cd /tmp/git
 git clone https://github.com/Dolibarr/dolibarr.git
