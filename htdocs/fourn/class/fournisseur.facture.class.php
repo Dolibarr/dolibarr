@@ -1122,7 +1122,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -1152,9 +1152,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
-		}
-		if (isset($this->libelle)) {
-			$this->libelle = trim($this->libelle); // deprecated
 		}
 		if (isset($this->paye)) {
 			$this->paye = trim($this->paye);
@@ -1414,7 +1411,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$rowid = $this->id;
 
@@ -1492,7 +1489,8 @@ class FactureFournisseur extends CommonInvoice
 
 		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+			$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 			// We remove directory
 			if ($conf->fournisseur->facture->dir_output) {
