@@ -5219,7 +5219,7 @@ if ($action == 'create') {
 				}
 				print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
 				print '<td class="center">';
-				
+
 				$paiement = new Paiement($db);
 				$paiement->fetch($objp->rowid);
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0  && !$paiement->isReconciled()) {
