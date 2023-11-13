@@ -1401,7 +1401,7 @@ class Paiement extends CommonObject
 		return parent::fetch_thirdparty($force_thirdparty_id);
 	}
 
-	
+
 	/**
 	 *  Return if payment is reconciled
 	 *
@@ -1413,5 +1413,5 @@ class Paiement extends CommonObject
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro;
 	}
-	
+
 }
