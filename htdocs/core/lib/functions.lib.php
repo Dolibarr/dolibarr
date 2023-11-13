@@ -7642,12 +7642,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
 		$nbextlink = count($reg[0]);
 		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-			$out = 'TooManyLinksIntoHTMLString';
+			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
 		//
-		if (!empty($conf->global->MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
+		if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
 			if ($nbextlink > 0) {
-				$out = 'ExternalLinksNotAllowed';
+				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		}
 
