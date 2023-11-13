@@ -1025,13 +1025,15 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $user->id);
 				}
 
-				if ($ret >= 0 && !$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('COMPANY_CREATE', $user);
-					if ($result < 0) {
-						$error++;
+				if ($ret >= 0) {
+					if (! $notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('COMPANY_CREATE', $user);
+						if ($result < 0) {
+							$error++;
+						}
+						// End call triggers
 					}
-					// End call triggers
 				} else {
 					$error++;
 				}
@@ -5410,16 +5412,14 @@ class Societe extends CommonObject
 
 	/**
 	 *    Merge a company with another one, deleting the given company.
+	 *    The company given in parameter will be removed.
 	 *
 	 *    @param	int     $soc_origin_id		Company to merge the data from
-	 *    @return	int		-1 if error
-	 *
-	 *    @note The company given in parameter will be removed.
-	 *
+	 *    @return	int							-1 if error
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
-		global $langs, $hookmanager, $user;
+		global $langs, $hookmanager, $user, $action;
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
@@ -5522,6 +5522,7 @@ class Societe extends CommonObject
 					'Fichinter' => '/fichinter/class/fichinter.class.php',
 					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'FactureFournisseurRec' => '/fourn/class/fournisseur.facture-rec.class.php',
 					'Reception' => '/reception/class/reception.class.php',
 					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
@@ -5596,5 +5597,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		}
+
+		return -1;
 	}
 }

@@ -127,3 +127,70 @@ function GetLegendSkills()
 </div>';
 	return $legendSkills;
 }
+
+/**
+ * @param  $obj  object  object need to handle
+ * @return string
+ */
+function getRankOrderResults($obj)
+{
+	global $langs;
+	$results = array(
+		'greater' => array(
+			'title' => $langs->trans('MaxlevelGreaterThanShort'),
+			'style' => 'background-color: #c3e6cb; border:5px solid #3097D1; color: #555; font-weight: 700;'
+		),
+		'equal' => array(
+			'title' => $langs->trans('MaxLevelEqualToShort'),
+			'style' => 'background-color: #c3e6cb; color: #555; font-weight: 700;'
+		),
+		'lesser' => array(
+			'title' => $langs->trans('MaxLevelLowerThanShort'),
+			'style' => 'background-color: #bd4147; color: #FFFFFF; font-weight: 700;'
+		)
+	);
+	$key = '';
+	if ($obj->rankorder > $obj->required_rank) {
+		$key = 'greater';
+	} elseif ($obj->rankorder == $obj->required_rank) {
+		$key = 'equal';
+	} elseif ($obj->rankorder < $obj->required_rank) {
+		$key = 'lesser';
+	}
+	return '<span title="'.strtoupper($obj->label).': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . htmlspecialchars($results[$key]['style'], ENT_QUOTES) . '">' . strtoupper(substr($obj->label, 0, 3)) .(strlen($obj->label) > 3 ? '..' : '').'</span>';
+}
+
+/**
+ * Grouped rows with same ref in array
+ * @param   array  $objects   all rows getted by sql
+ * @return array |int
+ */
+function getGroupedEval($objects)
+{
+	if (count($objects) < 0 || !is_array($objects)) {
+		return -1;
+	}
+	// grouped $object by ref
+	$grouped = [];
+	foreach ($objects as $object) {
+		$ref = $object->ref;
+		if (!isset($grouped[$ref])) {
+			$grouped[$ref] = [];
+		}
+		$grouped[$ref][] = $object;
+	}
+	$newArray = [];
+	foreach ($grouped as $refs => $objects) {
+		if (count($objects) > 1) {
+			$newArray[$refs] = $objects;
+		}
+	}
+	$combinedArray = [];
+	foreach ($grouped as $refs => $objects) {
+		if (count($objects) == 1) {
+			$combinedArray[] = $objects[0];
+		}
+	}
+	$resultArray = array_merge($combinedArray, array_values($newArray));
+	return $resultArray;
+}

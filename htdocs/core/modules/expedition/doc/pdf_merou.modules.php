@@ -62,6 +62,10 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	public $type;
 
+	public $destinataire;
+	public $expediteur;
+	public $livreur;
+
 	/**
 	 * Dolibarr version of the loaded document
 	 * @var string

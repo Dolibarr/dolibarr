@@ -662,6 +662,7 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>';
 	print '<span class="nowraponall">';
 	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+	//print '<span class="nopadding userimg"><div class="valignmiddle userphoto inline-block center marginrightonlyshort">'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
 	print '</span>';
 	print '</th>';

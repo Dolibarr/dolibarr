@@ -1884,7 +1884,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 			if ($usemenuhider || empty($leftmenu) || preg_match('/report/', $leftmenu)) {
 				$newmenu->add("/compta/resultat/index.php?leftmenu=report", $langs->trans("MenuReportInOut"), 1, $user->hasRight('compta',  'resultat', 'lire'));
-				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report", $langs->trans("ByCompanies"), 2, $user->hasRight('compta',  'resultat', 'lire'));
+				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report", $langs->trans("ByPredefinedAccountGroups"), 2, $user->hasRight('compta',  'resultat', 'lire'));
 				/* On verra ca avec module compabilite expert
 				 $newmenu->add("/compta/resultat/compteres.php?leftmenu=report","Compte de resultat",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 $newmenu->add("/compta/resultat/bilan.php?leftmenu=report","Bilan",2,$user->hasRight('compta',  'resultat', 'lire'));

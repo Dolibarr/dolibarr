@@ -1441,9 +1441,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 
 		<!--  Show product -->
-		<div class="div5"<?php if (getDolGlobalInt('TAKEPOS_HIDE_CATEGORIES') == 1) {
-			print ' style="width:100%;"';
-						 } ?>>
+		<div class="div5<?php if (getDolGlobalInt('TAKEPOS_HIDE_CATEGORIES') == 1) { print ' centpercent'; } ?>">
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {

@@ -67,6 +67,11 @@ $search_date_endyear = GETPOST('search_date_endyear', 'int');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
+// Define begin binding date
+if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+	$search_date_start = $db->idate($conf->global->ACCOUNTING_DATE_START_BINDING);
+}
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (!getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION') ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -240,10 +245,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_f
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 $sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
-// Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
-}
 // Add search filter like
 if (strlen(trim($search_login))) {
 	$sql .= natural_search("u.login", $search_login);
@@ -291,6 +292,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$offset = 0;
 	}
 }
+//print $sql;
 
 $sql .= $db->plimit($limit + 1, $offset);
 

@@ -403,7 +403,7 @@ class Expedition extends CommonObject
 				// Insert of lines
 				$num = count($this->lines);
 				for ($i = 0; $i < $num; $i++) {
-					if (empty($this->lines[$i]->product_type) || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if (empty($this->lines[$i]->product_type) || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || !empty($conf->global->SHIPMENT_SUPPORTS_SERVICES)) {
 						if (!isset($this->lines[$i]->detail_batch)) {	// no batch management
 							if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
 								$error++;
@@ -784,6 +784,12 @@ class Expedition extends CommonObject
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();

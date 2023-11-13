@@ -787,6 +787,12 @@ class Holiday extends CommonObject
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -1479,10 +1485,10 @@ class Holiday extends CommonObject
 			$statusType = 'status1';
 		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status5';
+			$statusType = 'status9';
 		}
 		if ($status == self::STATUS_REFUSED) {
-			$statusType = 'status5';
+			$statusType = 'status9';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);

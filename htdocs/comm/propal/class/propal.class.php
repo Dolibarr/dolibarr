@@ -2045,6 +2045,12 @@ class Propal extends CommonObject
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'propale/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -4004,17 +4010,17 @@ class Propal extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_project')) {
-			$return .= '<span class="info-box-ref"> | '.$this->fk_project.'</span>';
+		if (!empty($arraydata['projectlink'])) {
+			$return .= '<span class="info-box-ref"> | '.$arraydata['projectlink'].'</span>';
 		}
-		if (property_exists($this, 'author')) {
-			$return .= '<br><span class="info-box-label">'.$this->author.'</span>';
+		if (!empty($arraydata['authorlink'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['authorlink'].'</span>';
 		}
 		if (property_exists($this, 'total_ht')) {
-			$return .='<br><span class="" >'.$langs->trans("AmountHT").' : </span><span class="info-box-label amount">'.price($this->total_ht).'</span>';
+			$return .='<br><span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
