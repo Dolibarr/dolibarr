@@ -426,15 +426,11 @@ if (empty($reshook)) {
 				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
-				/*
-				* Protection against deletion of ref_employee while the field is not present in the user tab
-				*/
+				// Protection against deletion of ref_employee while the field is not present in the user tab
 				if (GETPOSTISSET("ref_employee")) {
 					$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
 				}
-				/*
-				* Protection against deletion of national_registration_number while the field is not present in the user tab
-				*/
+				// Protection against deletion of national_registration_number while the field is not present in the user tab
 				if (GETPOSTISSET("national_registration_number")) {
 					$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
 				}
@@ -596,10 +592,11 @@ if (empty($reshook)) {
 				}
 
 				if (!$error && !count($object->errors)) {
-					if (GETPOST('deletephoto') && $object->oldcopy->photo) {
+					if (!empty($object->oldcopy->photo) && (GETPOST('deletephoto') || ($object->photo != $object->oldcopy->photo))) {
 						$fileimg = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->oldcopy->photo;
-						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'photos/thumbs';
 						dol_delete_file($fileimg);
+
+						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'photos/thumbs';
 						dol_delete_dir_recursive($dirthumbs);
 					}
 
