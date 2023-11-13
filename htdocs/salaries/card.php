@@ -468,6 +468,9 @@ $formfile = new FormFile($db);
 if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$object->ref;
+if ($action == 'create') {
+	$title = $langs->trans("NewSalary");
+}
 $help_url = "";
 llxHeader('', $title, $help_url);
 
