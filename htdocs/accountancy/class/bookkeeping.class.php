@@ -1176,7 +1176,6 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
-		$sql .= " t.label_compte,";
 		if (!empty($option)) {
 			$sql .= " t.subledger_account,";
 			$sql .= " t.subledger_label,";
@@ -1219,13 +1218,19 @@ class BookKeeping extends CommonObject
 		}
 
 		if (!empty($option)) {
+<<<<<<< HEAD
 			$sql .= " AND t.subledger_account IS NOT NULL";
 			$sql .= " AND t.subledger_account <> ''";
 			$sql .= " GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label";
+=======
+			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= ' AND t.subledger_account != ""';
+			$sql .= ' GROUP BY t.numero_compte, t.subledger_account, t.subledger_label';
+>>>>>>> 86bad02b9d36e7ca22294be75467cd59e3753ea2
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' GROUP BY t.numero_compte, t.label_compte';
+			$sql .= ' GROUP BY t.numero_compte';
 			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}

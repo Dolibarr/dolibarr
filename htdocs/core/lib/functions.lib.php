@@ -8262,6 +8262,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__PROJECT_ID__'] = $project->id;
 				$substitutionarray['__PROJECT_REF__'] = $project->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $project->title;
+<<<<<<< HEAD
 			} else {
 				// can substitute variables for project : uses lazy load in "make_substitutions" method
 				$project_id = 0;
@@ -8276,6 +8277,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 					$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 				}
+=======
+>>>>>>> 86bad02b9d36e7ca22294be75467cd59e3753ea2
 			}
 			if (is_object($object) && $object->element == 'project') {
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
