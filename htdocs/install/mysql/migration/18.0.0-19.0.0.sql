@@ -182,3 +182,10 @@ ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facture_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
 ALTER TABLE llx_facture_fourn_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
 
+CREATE TABLE llx_mrp_production_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
