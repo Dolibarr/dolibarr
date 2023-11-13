@@ -10417,16 +10417,26 @@ abstract class CommonObject
 					$element = 'fournisseur/commande';
 					break;
 				case 'invoice_supplier':
+					// Special cases that need to use get_exdir to get real dir of object
+					// In future, all object should use this to define path of documents.
 					$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 					break;
 				case 'shipping':
 					$element = 'expedition/sending';
 					break;
+				case 'task':
+				case 'project_task':
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
+					$project_result = $this->fetch_projet();
+					if ($project_result >= 0) {
+						$element = 'projet/'.dol_sanitizeFileName($object->project->ref).'/';
+					}
 				default:
 					$element = $this->element;
 			}
 
-			// Delete ecm_files extrafields
+			// Delete ecm_files_extrafields with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files_extrafields WHERE fk_object IN (";
 			$sql .= " SELECT rowid FROM ".$this->db->prefix()."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
 			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
@@ -10438,7 +10448,7 @@ abstract class CommonObject
 				return false;
 			}
 
-			// Delete ecm_files
+			// Delete ecm_files with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files";
 			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
 			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here

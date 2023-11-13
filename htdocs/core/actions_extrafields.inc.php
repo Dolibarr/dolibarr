@@ -33,6 +33,7 @@ $param = GETPOST('param', 'alphanohtml');
 $css = GETPOST('css', 'alphanohtml');
 $cssview = GETPOST('cssview', 'alphanohtml');
 $csslist = GETPOST('csslist', 'alphanohtml');
+$confirm = GETPOST('confirm', 'alpha');
 
 if ($type == 'double' && strpos($extrasize, ',') === false) {
 	$extrasize = '24,8';
@@ -411,7 +412,7 @@ if ($action == 'update') {
 }
 
 // Delete attribute
-if ($action == 'delete') {
+if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
 		$attributekey = GETPOST('attrname', 'aZ09');
 
