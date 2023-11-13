@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Compatibility with PHP 8.2
+NEW: Add a confirmation popup when deleting extrafields
 NEW: Close #20930 Use ajax for state loading after country change
 NEW: #23331 Add support for parent projects (#24856)
 NEW: #22531 Expense report - Add two fields into export : Qty & Unit price (excl.) (#26309)
@@ -110,14 +111,8 @@ NEW: Factorize a lot of code for numbering modules
 NEW: filter on from/to period rather than month/year (#26378)
 NEW: FontAwesome - Add possibility to select another version
 NEW: Form for add object's property on moduleBuilder
-NEW: functionality for combined salary invoice and supplier invoice (#26541)
-NEW: functionality for get bon prelevement in ligne order (#26540)
-NEW: functionality for request_transfer (#26078)
-NEW: functionality mmassactions for delete projects
-NEW: function for parsing props and update Write props
-NEW: functionnality by add page for create dictionary
-NEW: functionnality for add badge for each tabs
-NEW: functionnality for edit name of dictionnary and delete it in MB
+NEW: Can generate SEPA files for salaries (#26541)
+NEW: massactions to delete projects
 NEW: Generic doc template for donations (#26338)
 NEW: Get list evaluation with skills details in user fiche (#26510)
 NEW: hidden conf to disable use of dns_get_record (which can become unresponsive) (#26339)
@@ -220,11 +215,14 @@ NEW: Add triggers COMPANY_RIB_XXX already present in companybankaccount.class.ph
 NEW: Add triggers on import success
 NEW: Add trigger when deleting a bank account line
 NEW: subproduct triggers in product class (#25142)
-NEW: ModuleBuilder: functionality add section changeLog to Doc in MB
-NEW: ModuleBuilder: functionality for Add api url to documentation in ModuleBuilder
-NEW: ModuleBuilder: functionality for Checkin comments begin and end before each actions
-NEW: ModuleBuilder: functionality for edit properties in description tab for ModuleBuilder
-NEW: ModuleBuilder: functionality for remove dictionary in ModuleBuilder
+NEW: ModuleBuilder: add section changeLog to Doc in MB
+NEW: ModuleBuilder: Add api url to documentation in ModuleBuilder
+NEW: ModuleBuilder: Checkin comments begin and end before each actions
+NEW: ModuleBuilder: edit properties in description tab for ModuleBuilder
+NEW: ModuleBuilder: remove dictionary in ModuleBuilder
+NEW: ModuleBuilder: add page for create dictionary
+NEW: ModuleBuilder: add badge for each tabs
+NEW: ModuleBuilder: for edit name of dictionnary and delete it in MB
 
 
 WARNING:
