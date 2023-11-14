@@ -2172,7 +2172,7 @@ if ($action == 'create') {
 						'perm' => $user->hasRight('commande', 'creer')
 					);
 				}
-				if (isModEnabled('facture') && $object->status > 0) {
+				if (isModEnabled('facture') && $object->status > 0 && $soc->client ==1) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('Bill'),
@@ -2180,7 +2180,7 @@ if ($action == 'create') {
 						'perm' => $user->hasRight('facture', 'creer')
 					);
 				}
-				if (isModEnabled('supplier_invoice') && $object->status > 0) {
+				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('SupplierInvoice'),
