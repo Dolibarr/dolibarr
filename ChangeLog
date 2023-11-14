@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Compatibility with PHP 8.2
+NEW: Module for Advanced stock transfert is now stable (#26594)
 NEW: Add a confirmation popup when deleting extrafields
 NEW: Close #20930 Use ajax for state loading after country change
 NEW: #23331 Add support for parent projects (#24856)
