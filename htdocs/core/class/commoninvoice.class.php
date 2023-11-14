@@ -683,7 +683,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	Return label of invoice subtype
 	 *
 	 *  @param		string		$table          table of invoice
-	 *	@return     string        				Label of invoice subtype
+	 *	@return     string|int     				Label of invoice subtype or -1 if error
 	 */
 	public function getSubtypeLabel($table = '')
 	{
@@ -702,7 +702,7 @@ abstract class CommonInvoice extends CommonObject
 				}
 
 				if (!empty($subtypeLabel)) {
-					print '  ' . $subtypeLabel;
+					return $subtypeLabel;
 				}
 			} else {
 				dol_print_error($this->db);
@@ -723,13 +723,15 @@ abstract class CommonInvoice extends CommonObject
 				}
 
 				if (!empty($subtypeLabel)) {
-					print '  ' . $subtypeLabel;
+					return $subtypeLabel;
 				}
 			} else {
 				dol_print_error($this->db);
 				return -1;
 			}
 		}
+
+		return '';
 	}
 
 	/**

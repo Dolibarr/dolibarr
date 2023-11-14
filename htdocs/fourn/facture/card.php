@@ -3214,7 +3214,9 @@ if ($action == 'create') {
 			print '<span class="badgeneutral">';
 			print $object->getLibType();
 			print '</span>';
-			print $object->getSubtypeLabel('facture_fourn');
+			if ($object->subtype > 0) {
+				print ' '.$object->getSubtypeLabel('facture_fourn');
+			}
 			if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 				$facreplaced = new FactureFournisseur($db);
 				$facreplaced->fetch($object->fk_facture_source);
