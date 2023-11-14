@@ -1071,7 +1071,7 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
-		} elseif ($type == 'icone') {		
+		} elseif ($type == 'icone') {
 			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
 			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
 			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
