@@ -525,7 +525,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
-		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
+		$pdf->MultiCell(150, 4, $object->thirdparty->name, 0, 'L', 1);
 
 		$LENGTHAMOUNT = 35;
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - $LENGTHAMOUNT, $posy);

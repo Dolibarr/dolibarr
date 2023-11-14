@@ -18,7 +18,7 @@ With
 
 
 
-CKEDITOR (4.6.2):
+CKEDITOR (4.22.1):
 -----------------
 * In ckeditor/ckeditor/contents.css
 Replace:
@@ -26,7 +26,12 @@ Replace:
 With
 	body { ... margin: 5px;
 
-
+* In ckeditor/ckeditor/ckeditor.js
+Replace:
+    d.items&&
+With
+    d&&d.items&&
+    
 
 ESCPOS:
 -------

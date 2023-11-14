@@ -57,6 +57,13 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 	public $position = 30;
 
+	/**
+	 * @var string
+	 */
+	public $code;
+	public $customeraccountancycodecharacternumber;
+	public $supplieraccountancycodecharacternumber;
+
 
 	/**
 	 * 	Constructor

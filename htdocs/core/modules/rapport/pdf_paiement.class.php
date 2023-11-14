@@ -53,6 +53,15 @@ class pdf_paiement extends CommonDocGenerator
 
 	public $doc_type;
 
+	/**
+	 * @var int
+	 */
+	public $year;
+
+	/**
+	 * @var int
+	 */
+	public $month;
 
 	/**
 	 *  Constructor
