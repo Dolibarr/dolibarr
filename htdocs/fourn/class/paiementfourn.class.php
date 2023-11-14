@@ -917,17 +917,4 @@ class PaiementFourn extends Paiement
 
 		return parent::fetch_thirdparty($force_thirdparty_id);
 	}
-
-
-	/**
-	 *  Return if payment is reconciled
-	 *
-	 *  @return     boolean     True if payment is reconciled
-	 */
-	public function isReconciled()
-	{
-		$accountline = new AccountLine($this->db);
-		$accountline->fetch($this->bank_line);
-		return $accountline->rappro;
-	}
 }
