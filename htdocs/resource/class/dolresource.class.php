@@ -24,12 +24,15 @@
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 /**
  *  DAO Resource object
  */
 class Dolresource extends CommonObject
 {
+	use CommonPeople;
+	
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -988,13 +991,5 @@ class Dolresource extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getBannerAddress()
-	{
-		return $this->getFullAddress(1, ', ', getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'));
 	}
 }
