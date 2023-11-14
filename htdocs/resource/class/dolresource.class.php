@@ -177,6 +177,9 @@ class Dolresource extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= $conf->entity.", ";
 		$sql .= " ".(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").",";
+		$sql .= " ".(!isset($this->address) ? 'NULL' : "'".$this->db->escape($this->address)."'").",";
+		$sql .= " ".(!isset($this->zip) ? 'NULL' : "'".$this->db->escape($this->zip)."'").",";
+		$sql .= " ".(!isset($this->town) ? 'NULL' : "'".$this->db->escape($this->town)."'").",";
 		$sql .= " ".(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
 		$sql .= " ".($this->country_id > 0 ? $this->country_id : 'null').",";
 		$sql .= " ".($this->state_id > 0 ? $this->state_id : 'null').",";
