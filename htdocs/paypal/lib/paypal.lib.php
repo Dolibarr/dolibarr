@@ -89,17 +89,17 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 	$solutionType = 'Sole';
 	$landingPage = 'Billing';
 	// For payment with Paypal only
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'paypalonly') {
 		$solutionType = 'Mark';
 		$landingPage = 'Login';
 	}
 	// For payment with Credit card or Paypal
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
 	// For payment with Credit card
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly') {
+	if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'cconly') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
@@ -145,7 +145,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
 		if ($ErrorCode == 10729) {
-			$mesg .= "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
+			$mesg = "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
 		} else {
 			$mesg = $langs->trans('SetExpressCheckoutAPICallFailed')."<br>\n";
 			$mesg .= $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";

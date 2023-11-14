@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +123,19 @@ class AccountancyCategory // extends CommonObject
 	public $lines_display;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var mixed Sum debit credit
 	 */
 	public $sdc;
 
+	/**
+	 * @var array Sum debit credit per month
+	 */
+	public $sdcpermonth;
 
+	/**
+	 * @var array Sum debit credit per account
+	 */
+	public $sdcperaccount;
 
 	/**
 	 *  Constructor
@@ -466,7 +474,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " WHERE (aa.fk_accounting_category <> ".((int) $id)." OR aa.fk_accounting_category IS NULL)";
-		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " GROUP BY aa.account_number, aa.label";
@@ -512,7 +520,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT aa.rowid, aa.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
+		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
@@ -839,7 +847,7 @@ class AccountancyCategory // extends CommonObject
 			exit();
 		}
 
-		$pcgverid = $conf->global->CHARTOFACCOUNTS;
+		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
 		$pcgvercode = dol_getIdFromCode($this->db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 		if (empty($pcgvercode)) {
 			$pcgvercode = $pcgverid;

@@ -39,6 +39,8 @@ $action = GETPOST('action', 'aZ09');
 
 $defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
 
+$visibility = GETPOST('PROJET_VISIBILITY', 'alpha');
+
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -61,6 +63,7 @@ if ($action == 'setPROJECT_ENABLE_PUBLIC') {
 if ($action == 'update') {
 	$public = GETPOST('PROJECT_ENABLE_PUBLIC');
 	$defaultoppstatus = GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int');
+	$res = dolibarr_set_const($db, "PROJET_VISIBILITY", $visibility, 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "PROJECT_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD", $defaultoppstatus, 'chaine', 0, '', $conf->entity);
@@ -140,6 +143,15 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("DefaultOpportunityStatus");
 	print '</td><td class="right">';
 	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
+	print "</td></tr>\n";
+
+
+	// project visibility
+	$arrayofchoices = array('0' => $langs->trans("AssignedContacts"), '1' => $langs->trans("Everyone"));
+	print '<tr class="oddeven drag"><td>';
+	print $langs->trans("Visibility");
+	print '</td><td class="right">';
+	print $form->selectarray('PROJET_VISIBILITY', $arrayofchoices, getDolGlobalInt('PROJET_VISIBILITY'), 0);
 	print "</td></tr>\n";
 
 	print '</table>';

@@ -191,7 +191,7 @@ class Holiday extends CommonObject
 		if (!empty($conf->global->HOLIDAY_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->HOLIDAY_ADDON.".php";
+			$file = getDolGlobalString('HOLIDAY_ADDON') . ".php";
 			$classname = $conf->global->HOLIDAY_ADDON;
 
 			// Include file with class
@@ -787,6 +787,12 @@ class Holiday extends CommonObject
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -1346,14 +1352,18 @@ class Holiday extends CommonObject
 	 *	@param	int			$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	 *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param  int         $notooltip					1=Disable tooltip
+	 *  @param  string  	$morecss                    Add more css on link
 	 *	@return	string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
 	{
-		global $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
-
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
@@ -1363,9 +1373,11 @@ class Holiday extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 
@@ -1373,24 +1385,40 @@ class Holiday extends CommonObject
 		//{
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
 			$url .= '&save_lastsearch_values=1';
 		}
 		//}
-		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
+
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
@@ -1457,10 +1485,10 @@ class Holiday extends CommonObject
 			$statusType = 'status1';
 		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status5';
+			$statusType = 'status9';
 		}
 		if ($status == self::STATUS_REFUSED) {
-			$statusType = 'status5';
+			$statusType = 'status9';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);
@@ -1691,33 +1719,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	Retourne un checked si vrai
-	 *
-	 *  @param	string	$name       name du paramètre de configuration
-	 *  @return string      		retourne checked si > 0
-	 */
-	public function getCheckOption($name)
-	{
-
-		$sql = "SELECT value";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_config";
-		$sql .= " WHERE name = '".$this->db->escape($name)."'";
-
-		$result = $this->db->query($sql);
-
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
-
-			// Si la valeur est 1 on retourne checked
-			if ($obj->value) {
-				return 'checked';
-			}
-		}
-	}
-
-
-	/**
-	 *  Créer les entrées pour chaque utilisateur au moment de la configuration
+	 *  Create entries for each user at setup step
 	 *
 	 *  @param	boolean		$single		Single
 	 *  @param	int			$userid		Id user
@@ -1751,22 +1753,6 @@ class Holiday extends CommonObject
 			}
 		}
 	}
-
-	/**
-	 *  Supprime un utilisateur du module Congés Payés
-	 *
-	 *  @param	int		$user_id        ID de l'utilisateur à supprimer
-	 *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
-	 */
-	public function deleteCPuser($user_id)
-	{
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
-		$sql .= " WHERE fk_user = ".((int) $user_id);
-
-		$this->db->query($sql);
-	}
-
 
 	/**
 	 *  Return balance of holiday for one user
@@ -2319,21 +2305,9 @@ class Holiday extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approval = $this->db->jdate($obj->datea);
 
-				if (!empty($obj->fk_user_creation)) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creation);
-					$this->user_creation = $cuser;
-				}
-				if (!empty($obj->fk_user_valid)) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-				if (!empty($obj->fk_user_modification)) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_creation;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
 
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
@@ -2393,7 +2367,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut > 1";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2435,7 +2409,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->read_all)) {
+		if (!$user->hasRight('expensereport', 'read_all')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2486,19 +2460,25 @@ class Holiday extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.$arraydata['user']->getNomUrl(-1).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.$arraydata['user']->getNomUrl(-1).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_type')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
-			$return .= '<span class="info_box-label maxwidth100">'.$arraydata['labeltype'].'</span>';
+			$return .= '<br>';
+			//$return .= '<span class="opacitymedium">'.$langs->trans("Type").'</span> : ';
+			$return .= '<div class="info_box-label tdoverflowmax100" title="'.dol_escape_htmltag($arraydata['labeltype']).'">'.dol_escape_htmltag($arraydata['labeltype']).'</div>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
-			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';
-			$return .= ' <span class="opacitymedium">'.$langs->trans("To").'</span> ';
-			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
+			$return .= '<span class="info-box-label small">'.dol_print_date($this->date_debut, 'day').'</span>';
+			$return .= ' <span class="opacitymedium small">'.$langs->trans("To").'</span> ';
+			$return .= '<span class="info-box-label small">'.dol_print_date($this->date_fin, 'day').'</span>';
+			if (!empty($arraydata['nbopenedday'])) {
+				$return .= ' ('.$arraydata['nbopenedday'].')';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

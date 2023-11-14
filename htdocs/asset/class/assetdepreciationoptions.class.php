@@ -272,7 +272,7 @@ class AssetDepreciationOptions extends CommonObject
 				$deprecation_options[$mode_key][$field_key] = $field_value;
 
 				// Validation of fields values
-				if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+				if (getDolGlobalInt('MAIN_FEATURE_LEVEL') >= 2 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 					if (!$error && !empty($field_info['validate']) && is_callable(array($this, 'validateField'))) {
 						if (!$this->validateField($mode_info['fields'], $field_key, $value)) {
 							$error++;
@@ -418,7 +418,7 @@ class AssetDepreciationOptions extends CommonObject
 	public function updateDeprecationOptions($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{
 		global $langs, $hookmanager;
-		dol_syslog(__METHOD__ . " user_id={$user->id}, asset_id=$asset_id, asset_model_id=$asset_model_id, notrigger=$notrigger");
+		dol_syslog(__METHOD__ . " user_id=".$user->id.", asset_id=".$asset_id.", asset_model_id=".$asset_model_id.", notrigger=".$notrigger);
 
 		$error = 0;
 		$this->errors = array();

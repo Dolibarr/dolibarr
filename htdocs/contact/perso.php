@@ -50,7 +50,7 @@ $errors = array();
  * Action
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'contact', 'creer')) {
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
@@ -65,7 +65,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -332,7 +332,7 @@ if ($action != 'edit') {
 	if ($user->socid == 0) {
 		print '<div class="tabsAction">';
 
-		if ($user->rights->societe->contact->creer) {
+		if ($user->hasRight('societe', 'contact', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 		}
 

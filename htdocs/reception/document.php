@@ -34,14 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('receptions', 'companies', 'other'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
@@ -79,7 +79,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -155,7 +155,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
 			if (0) {    // Do not change on reception

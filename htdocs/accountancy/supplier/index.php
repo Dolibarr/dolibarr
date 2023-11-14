@@ -45,7 +45,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -73,7 +73,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -82,7 +82,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -91,18 +91,18 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
+if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database
 	$db->begin();
-	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as fd";
+	$sql1 = "UPDATE ".$db->prefix()."facture_fourn_det as fd";
 	$sql1 .= " SET fk_code_ventilation = 0";
 	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN';
 	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM '.MAIN_DB_PREFIX.'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
-	$sql1 .= ' AND fd.fk_facture_fourn IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE entity = '.$conf->entity.')';
-	$sql1 .= ' AND fk_code_ventilation <> 0';
+	$sql1 .= "	FROM ".$db->prefix()."accounting_account as accnt";
+	$sql1 .= "	INNER JOIN ".$db->prefix()."accounting_system as syst";
+	$sql1 .= "	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".getDolGlobalInt('CHARTOFACCOUNTS')." AND accnt.entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fd.fk_facture_fourn IN (SELECT rowid FROM ".$db->prefix()."facture_fourn WHERE entity = ".((int) $conf->entity).")";
+	$sql1 .= " AND fk_code_ventilation <> 0";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
@@ -129,7 +129,7 @@ if ($action == 'validatehistory') {
 	$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype, f.fk_facture_source,";
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " ppe.accountancy_code_buy as code_buy, ppe.accountancy_code_buy_intra as code_buy_intra, ppe.accountancy_code_buy_export as code_buy_export,";
 	} else {
 		$sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export,";
@@ -137,32 +137,32 @@ if ($action == 'validatehistory') {
 	$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export, aa4.rowid as aarowid_thirdparty,";
 	$sql .= " co.code as country_code, co.label as country_label,";
 	$sql .= " s.tva_intra,";
-	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 		$sql .= " spe.accountancy_code_buy as company_code_buy";
 	} else {
 		$sql .= " s.accountancy_code_buy as company_code_buy";
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+	$sql .= " FROM ".$db->prefix()."facture_fourn as f";
+	$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
+	if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+		$sql .= " LEFT JOIN " . $db->prefix() . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 	}
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN ".$db->prefix()."c_country as co ON co.rowid = s.fk_pays ";
+	$sql .= " INNER JOIN ".$db->prefix()."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
+	$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = l.fk_product";
+	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
+		$sql .= " LEFT JOIN " . $db->prefix() . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	}
-	$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "spe";
-	$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_product_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
+	$alias_societe_perentity = !getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED') ? "s" : "spe";
+	$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON " . $alias_product_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
-	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 	}
 	if ($validatemonth && $validateyear) {
@@ -257,7 +257,7 @@ if ($action == 'validatehistory') {
 			}
 
 			if ($suggestedid > 0) {
-				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
+				$sqlupdate = "UPDATE ".$db->prefix()."facture_fourn_det";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
 
@@ -311,10 +311,10 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.img_picto('', 'link', 'class="paddingright fa-color-unset smallpaddingimp"').$langs->trans("ValidateHistory").'</a>';
 
 
-print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
+print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -357,20 +357,20 @@ for ($i = 1; $i <= 12; $i++) {
 	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
-$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
+$sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
+$sql .= "  LEFT JOIN ".$db->prefix()."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+$sql .= "  LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 	$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
 $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.")";
 } else {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.")";
@@ -489,19 +489,19 @@ for ($i = 1; $i <= 12; $i++) {
 	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
-$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
+$sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
+$sql .= "  LEFT JOIN ".$db->prefix()."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+$sql .= "  LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 	$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.")";
 } else {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.", ".FactureFournisseur::TYPE_DEPOSIT.")";
@@ -525,11 +525,11 @@ if ($resql) {
 		}
 		print '</td>';
 
-		print '<td class="left">';
+		print '<td class="tdoverflowmax300"'.(empty($row[1]) ? '' : ' title="'.dol_escape_htmltag($row[1]).'"').'>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
-			print $row[1];
+			print dol_escape_htmltag($row[1]);
 		}
 		print '</td>';
 
@@ -583,18 +583,18 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(ffd.total_ht) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
-	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+	$sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
+	$sql .= "  LEFT JOIN ".$db->prefix()."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
 	$sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
-	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 		$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 	}
 	$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 	$sql .= "  AND ff.fk_statut > 0";
 	$sql .= "  AND ffd.product_type <= 2";
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.")";
 	} else {
 		$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.", ".FactureFournisseur::TYPE_DEPOSIT.")";

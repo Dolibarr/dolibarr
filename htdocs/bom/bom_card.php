@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,7 @@ if ($object->id > 0) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+$result = restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 // Permissions
 $permissionnote = $user->hasRight('bom', 'write'); // Used by the include of actions_setnotes.inc.php
@@ -148,7 +149,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Add line
-	if ($action == 'addline' && $user->rights->bom->write) {
+	if ($action == 'addline' && $user->hasRight('bom', 'write')) {
 		$langs->load('errors');
 		$error = 0;
 		$predef = '';
@@ -170,6 +171,15 @@ if (empty($reshook)) {
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+
+		$fk_default_workstation = 0;
+		if (!empty($idprod) && isModEnabled('workstation')) {
+			$product = new Product($db);
+			$res = $product->fetch($idprod);
+			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+			if (empty($fk_unit)) $fk_unit = $product->fk_unit;
+		}
+
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -206,7 +216,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options);
+			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -226,7 +236,7 @@ if (empty($reshook)) {
 	}
 
 	// Update line
-	if ($action == 'updateline' && $user->rights->bom->write) {
+	if ($action == 'updateline' && $user->hasRight('bom', 'write')) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -257,7 +267,12 @@ if (empty($reshook)) {
 			$bomline = new BOMLine($db);
 			$bomline->fetch($lineid);
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options);
+			$fk_default_workstation = $bomline->fk_default_workstation;
+			if (isModEnabled('workstation') &&  GETPOSTISSET('idworkstations')) {
+				$fk_default_workstation = GETPOSTINT('idworkstations');
+			}
+
+			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -566,7 +581,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line)) {
 		// Products
-		$res = $object->fetchLinesbytypeproduct(0);
+		$res = $object->fetchLinesbytypeproduct(0);		// Load all lines products into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
@@ -615,7 +630,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Services
 		$filtertype = 1;
-		$res = $object->fetchLinesbytypeproduct(1);
+		$res = $object->fetchLinesbytypeproduct(1);		// Load all lines services into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
@@ -718,7 +733,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				// Create MO
 			if (isModEnabled('mrp')) {
-				if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write)) {
+				if ($object->status == $object::STATUS_VALIDATED && $user->hasRight('mrp', 'write')) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&token='.newToken().'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>'."\n";
 				}
 			}

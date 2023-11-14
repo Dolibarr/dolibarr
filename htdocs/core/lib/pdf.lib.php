@@ -78,9 +78,9 @@ function pdf_admin_prepare_head()
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
- *  @param		string		$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
- *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		string			$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
+ *  @return     array								Array('width'=>w,'height'=>h,'unit'=>u);
  */
 function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
@@ -93,7 +93,7 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 	$height = 297;
 	$unit = 'mm';
 
-	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || $conf->global->MAIN_PDF_FORMAT == 'auto') {
+	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || getDolGlobalString('MAIN_PDF_FORMAT') == 'auto') {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat = dol_getDefaultFormat($outputlangs);
 	} else {
@@ -241,7 +241,7 @@ function pdf_getEncryption($pathoffile)
 	$content = file_get_contents($pathoffile);
 
 	//ob_start();
-	@($parser = new \TCPDF_PARSER(ltrim($content)));
+	@($parser = new TCPDF_PARSER(ltrim($content)));
 	list($xref, $data) = $parser->getParsedData();
 	unset($parser);
 	//ob_end_clean();
@@ -536,7 +536,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof6);
 			}
 			if (!empty($conf->global->PDF_ADD_MORE_AFTER_SOURCE_ADDRESS)) {
-				$stringaddress .= ($stringaddress ? "\n" : '').$conf->global->PDF_ADD_MORE_AFTER_SOURCE_ADDRESS;
+				$stringaddress .= ($stringaddress ? "\n" : '') . getDolGlobalString('PDF_ADD_MORE_AFTER_SOURCE_ADDRESS');
 			}
 		}
 
@@ -603,10 +603,12 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			} else {
 				if (is_object($targetcompany)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
 					// Country
 					if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) {
 						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+					} else {
+						$stringaddress .= ($stringaddress ? "\n" : '');
 					}
 
 					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/', $mode)) {
@@ -643,7 +645,12 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 			// Intra VAT
 			if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) {
-				if ($targetcompany->tva_intra) {
+				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
+					$targetcontact->fetch_thirdparty();
+					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
+						$stringaddress .= ($stringaddress ? "\n" : '') . $outputlangs->transnoentities("VATIntraShort") . ': ' . $outputlangs->convToOutputCharset($targetcontact->thirdparty->tva_intra);
+					}
+				} elseif ($targetcompany->tva_intra) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 				}
 			}
@@ -722,7 +729,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 
 	// Add a background image on document only if good setup of const
 	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF) && ($conf->global->MAIN_USE_BACKGROUND_ON_PDF != '-1')) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
-		$filepath = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF;
+		$filepath = $conf->mycompany->dir_output.'/logos/' . getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF');
 		if (file_exists($filepath)) {
 			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
 			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha($conf->global->MAIN_USE_BACKGROUND_ON_PDF_ALPHA); } // Option for change opacity of background
@@ -1144,6 +1151,38 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
 	}
+	// Prof Id 7
+	if (!empty($fromcompany->idprof7) &&  $fromcompany->idprof7) {
+		$field = $outputlangs->transcountrynoentities("ProfId7", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof7);
+	}
+	// Prof Id 8
+	if (!empty($fromcompany->idprof8) &&  $fromcompany->idprof8) {
+		$field = $outputlangs->transcountrynoentities("ProfId8", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof8);
+	}
+	// Prof Id 9
+	if (!empty($fromcompany->idprof9) &&  $fromcompany->idprof9) {
+		$field = $outputlangs->transcountrynoentities("ProfId9", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof9);
+	}
+	// Prof Id 10
+	if (!empty($fromcompany->idprof10) &&  $fromcompany->idprof10) {
+		$field = $outputlangs->transcountrynoentities("ProfId10", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof10);
+	}
 	// IntraCommunautary VAT
 	if (!empty($fromcompany->tva_intra)  && $fromcompany->tva_intra != '') {
 		$line4 .= ($line4 ? " - " : "").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
@@ -1420,6 +1459,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
+	$product_barcode = (!empty($object->lines[$i]->product_barcode) ? $object->lines[$i]->product_barcode : "");
 	$desc = (!empty($object->lines[$i]->desc) ? $object->lines[$i]->desc : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
 	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
 	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
@@ -1494,17 +1534,36 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
 		$prodser->get_sousproduits_arbo();
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
+			$outputlangs->load('mrp');
 			$tmparrayofsubproducts = reset($prodser->sousprods);
+
+			$qtyText = null;
+			if (isset($object->lines[$i]->qty) && !empty($object->lines[$i]->qty)) {
+				$qtyText = $object->lines[$i]->qty;
+			} elseif (isset($object->lines[$i]->qty_shipped) && !empty($object->lines[$i]->qty_shipped)) {
+				$qtyText = $object->lines[$i]->qty;
+			}
+
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
+						(!empty($qtyText) ?
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText:
+							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1]));
 				}
 			} else {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
+						(!empty($qtyText) ?
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText:
+							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1]));
 				}
 			}
 		}
+	}
+
+	if (isModEnabled('barcode') && getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE') && !empty($product_barcode)) {
+		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $outputlangs->trans("BarCode")." ".$product_barcode);
 	}
 
 	// Description long of product line
@@ -1575,16 +1634,16 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				if ($ref_supplier) {
 					$ref_prodserv .= ($prodser->ref ? ' (' : '').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref ? ')' : '');
 				}
-			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1) {
+			} elseif (getDolGlobalInt('PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES') == 1) {
 				$ref_prodserv = $ref_supplier;
-			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2) {
+			} elseif (getDolGlobalInt('PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES') == 2) {
 				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
 			}
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
 
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-				$productCustomerPriceStatic = new Productcustomerprice($db);
+				$productCustomerPriceStatic = new ProductCustomerPrice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -1667,7 +1726,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// Show information for lot
 	if (!empty($dbatch)) {
 		// $object is a shipment.
-		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
+		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have several lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
 
 		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -1736,7 +1795,7 @@ function pdf_getlinenum($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -1769,7 +1828,7 @@ function pdf_getlineref($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -1801,7 +1860,7 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -1833,7 +1892,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduce this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -1900,7 +1959,7 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -1943,7 +2002,7 @@ function pdf_getlineupwithtax($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -1980,7 +2039,7 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 	$reshook = 0;
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2020,7 +2079,7 @@ function pdf_getlineqty_asked($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2060,7 +2119,7 @@ function pdf_getlineqty_shipped($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2100,7 +2159,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2141,7 +2200,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanag
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2186,7 +2245,7 @@ function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2230,7 +2289,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2283,7 +2342,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2339,7 +2398,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 	$result = '';
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager)) {   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) {
 			$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		}
@@ -2482,12 +2541,18 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 				if (! is_object($order)) {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
-					if (!empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
+					if (empty($linkedobjects[$objecttype]['ref_value'])) {
+						$linkedobjects[$objecttype]['ref_value'] = '';
+					} else {
+						$linkedobjects[$objecttype]['ref_value'] .= ' / ';
+					}
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
 					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
-					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+					if (empty($linkedobjects[$objecttype]['ref_value'])) {
+						$linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+					}
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					$linkedobjects[$objecttype]['date_value'] = dol_print_date(empty($elementobject->date_shipping) ? $elementobject->date_delivery : $elementobject->date_shipping, 'day', '', $outputlangs);
 				}
@@ -2545,11 +2610,12 @@ function pdf_getSizeForImage($realpath)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	string							Return total of line excl tax
+ * 	@return	float							Return total of line excl tax
  */
 function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
 {
 	global $conf, $hookmanager;
+
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) {
 		$sign = -1;
@@ -2572,8 +2638,12 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 			$action = '';
 
-			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {
-				return $hookmanager->resPrint; // Note that $action and $object may have been modified by some hooks
+			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {	// Note that $action and $object may have been modified by some hooks
+				if (isset($hookmanager->resArray['linetotalremise'])) {
+					return $hookmanager->resArray['linetotalremise'];
+				} else {
+					return (float) $hookmanager->resPrint;	// For backward compatibility
+				}
 			}
 		}
 
@@ -2581,5 +2651,5 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 			return $sign * (($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
 	}
-	return '';
+	return 0;
 }

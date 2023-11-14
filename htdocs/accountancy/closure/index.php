@@ -25,6 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
@@ -164,10 +165,13 @@ print '<br>';
 
 
 $y = $year_current;
+if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
+	$buttonvalidate = '<a class="butAction" name="button_validate_movements" href="'.$_SERVER["PHP_SELF"].'?action=validate_movements&year='.$year_start.'">'.$langs->trans("ValidateMovements").'</a>';
+} else {
+	$buttonvalidate = '';
+}
 
-$buttonvalidate = '<a class="butAction" name="button_validate_movements" href="'.$_SERVER["PHP_SELF"].'?action=validate_movements&year='.$year_start.'">'.$langs->trans("ValidateMovements").'</a>';
-
-print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 1);
+print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -181,10 +185,9 @@ for ($i = 1; $i <= 12; $i++) {
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
 if (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
-	// TODO Analyse is done by finding record not into a closed period
 	$sql = "SELECT COUNT(b.rowid) as detail,";
 	for ($i = 1; $i <= 12; $i++) {
-		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 		if ($j > 12) {
 			$j -= 12;
 		}
@@ -195,13 +198,16 @@ if (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 	$sql .= " WHERE b.doc_date >= '".$db->idate($search_date_start)."'";
 	$sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
 	$sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
-	// Loop on each closed period
-	$sql .= " AND b.doc_date BETWEEN 0 AND 0";
+	// lines not inside an existing fiscal period
+	$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as af";
+	$sql .= " WHERE b.doc_date >= af.date_start AND (b.doc_date <= af.date_end or af.date_end IS NULL)";
+	$sql .= " AND af.statut = ".((int) Fiscalyear::STATUS_CLOSED);
+	$sql .= ")";
 } else {
 	// Analyse closed record using the unitary flag/date on each record
 	$sql = "SELECT COUNT(b.rowid) as detail,";
 	for ($i = 1; $i <= 12; $i++) {
-		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 		if ($j > 12) {
 			$j -= 12;
 		}

@@ -88,7 +88,7 @@ function resource_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}

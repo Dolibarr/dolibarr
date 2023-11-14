@@ -90,7 +90,7 @@ class DolEditor
 		$this->readonly = $readonly;
 
 		// Check if extended editor is ok. If not we force textarea
-		if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
+		if ((!isModEnabled('fckeditor') && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
 			$this->tool = 'textarea';
 		}
 		if ($okforextendededitor === 'ace') {
@@ -160,7 +160,10 @@ class DolEditor
 
 				$skin = getDolGlobalString('FCKEDITOR_SKIN', 'moono-lisa');		// default with ckeditor 4.6 : moono-lisa
 
-				$pluginstodisable = 'elementspath,save,flash,div,specialchar,anchor';
+				$pluginstodisable = 'elementspath,save,flash,div,anchor';
+				if (!getDolGlobalString('FCKEDITOR_ENABLE_SPECIALCHAR')) {
+					$pluginstodisable .= ',specialchar';
+				}
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}
@@ -169,6 +172,9 @@ class DolEditor
 				}
 				if (empty($conf->global->FCKEDITOR_ENABLE_PDF)) {
 					$pluginstodisable .= ',exportpdf';
+				}
+				if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS)) {
+					$this->uselocalbrowser = 0;	// Can't use browser to navigate into files. Only links with "<img src=data:..." are allowed.
 				}
 				$scaytautostartup = '';
 				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {

@@ -248,7 +248,7 @@ class EvalMath
 
 		$matches = array();
 		if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
-			return $this->trigger(4, "illegal character '{$matches[0]}'", $matches[0]);
+			return $this->trigger(4, "illegal character '".$matches[0]."'", $matches[0]);
 		}
 
 		while (1) { // 1 Infinite Loop ;)

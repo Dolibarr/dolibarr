@@ -92,12 +92,11 @@ function expensereport_prepare_head($object)
  * Returns an array with the tabs for the "Expense report payment" section
  * It loads tabs from modules looking for the entity payment
  *
- * @param	Paiement	$object		Current payment object
- * @return	array					Tabs for the payment section
+ * @param	PaymentExpenseReport	$object		Current payment object
+ * @return	array								Tabs for the payment section
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;

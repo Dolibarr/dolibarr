@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = 出席者を作成/追加するフォ�
 #
 # Object
 #
+OrganizedEvent=主催イベント
 EventOrganizationConfOrBooth= 会議またはブース
 EventOrganizationConfOrBoothes=会議またはブース
 ManageOrganizeEvent = イベントの構成を管理する
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライ�
 OrganizationEvenLabelName=会議またはブースの公開名
 
 NewSuggestionOfBooth=ブース申請
-NewSuggestionOfConference=会議申請
+NewSuggestionOfConference=カンファレンスの開催申し込み
 
 #
 # Vote page
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=このイベントの公開アクションは
 MaxNbOfAttendees=参加者の最大数
 DateStartEvent=イベント開始日
 DateEndEvent=イベント終了日
+ModifyStatus=ステータスの変更
+ConfirmModifyStatus=ステータス変更の確定
+ConfirmModifyStatusQuestion=%s 選択されたレコード(s) を変更してよいか?
+RecordsUpdated = %s 記録が更新済
+RecordUpdated = 記録更新済
+NoRecordUpdated = 更新済レコードなし

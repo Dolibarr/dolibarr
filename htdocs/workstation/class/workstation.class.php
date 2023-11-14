@@ -50,7 +50,7 @@ class Workstation extends CommonObject
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
@@ -99,6 +99,7 @@ class Workstation extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax125', 'showoncombobox'=>'2',),
 		'type' => array('type'=>'varchar(8)', 'label'=>'Type', 'enabled'=>'1', 'position'=>32, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('HUMAN'=>'Human', 'MACHINE'=>'Machine', 'BOTH'=>'HumanMachine'),),
@@ -117,6 +118,7 @@ class Workstation extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
+	public $type;	// HUMAN, MACHINE, ...
 
 	public $date_creation;
 	public $tms;
@@ -155,8 +157,6 @@ class Workstation extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationresource.class.php';
 
 		$this->db = $db;
-
-		$this->fields['ref']['default'] = $this->getNextNumRef();
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -612,17 +612,18 @@ class Workstation extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = dol_buildpath('/workstation/workstation_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -636,8 +637,8 @@ class Workstation extends CommonObject
 				$label = $langs->trans("ShowWorkstation");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= $dataparams.' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -650,7 +651,7 @@ class Workstation extends CommonObject
 
 		if (empty($this->showphoto_on_popup)) {
 			if ($withpicto) {
-				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'mrp'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'mrp'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 			}
 		} else {
 			if ($withpicto) {
@@ -664,7 +665,7 @@ class Workstation extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -751,6 +752,7 @@ class Workstation extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -793,7 +795,7 @@ class Workstation extends CommonObject
 		if (!empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->WORKSTATION_WORKSTATION_ADDON.".php";
+			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
 			$classname = $conf->global->WORKSTATION_WORKSTATION_ADDON;
 
 			// Include file with class
@@ -802,7 +804,9 @@ class Workstation extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/workstation/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				if (file_exists($dir.$file)) {
+					$mybool |= @include_once $dir.$file;
+				}
 			}
 
 			if ($mybool === false) {

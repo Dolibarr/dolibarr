@@ -86,8 +86,8 @@ print dol_get_fiche_head($head, 'compare', '', 1);
 				}
 
 
-				$userl = $(this).closest('ul');
-				listname = $userl.attr('name');
+				var $userl = $(this).closest('ul');
+				var listname = $userl.attr('name');
 
 				var TId = [];
 
@@ -492,7 +492,7 @@ function getSkillForUsers($TUser)
 	$sql.= ' MAX(sr.rankorder) as rankorder';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
-	$sql.= " WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_USER."'";
+	$sql.= " WHERE sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
 	$sql.= ' AND sr.fk_object IN ('.$db->sanitize(implode(',', $TUser)).')';
 	$sql.= " GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill "; // group par competence
 
@@ -505,7 +505,7 @@ function getSkillForUsers($TUser)
 		while ($obj = $db->fetch_object($resql) ) {
 			$sql1 = "SELECT COUNT(rowid) as how_many_max FROM ".MAIN_DB_PREFIX."hrm_skillrank as sr";
 			$sql1.=" WHERE sr.rankorder = ".((int) $obj->rankorder);
-			$sql1.=" AND sr.objecttype = '".Skillrank::SKILLRANK_TYPE_USER."'";
+			$sql1.=" AND sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
 			$sql1.=" AND sr.fk_skill = ".((int) $obj->fk_skill);
 			$sql1.=" AND sr.fk_object IN (".$db->sanitize(implode(',', $TUser)).")";
 			$resql1 = $db->query($sql1);

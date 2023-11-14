@@ -78,7 +78,7 @@ $hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->societe->creer) {
+if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -98,14 +98,14 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->societe->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'deletecontact' && $user->rights->societe->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
 	// Efface un contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
@@ -205,7 +205,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		// additionnal list with adherents of company
-		if (isModEnabled('adherent') && $user->rights->adherent->lire) {
+		if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
@@ -216,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql .= " d.datefin,";
 			$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql .= " t.libelle as type, t.subscription";
+			$sql .= " t.libelle as type_label, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE d.fk_soc = ".((int) $id);
@@ -280,8 +280,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Type
 						$membertypestatic->id = $objp->type_id;
-						$membertypestatic->libelle = $objp->type;
-						$membertypestatic->label = $objp->type;
+						$membertypestatic->libelle = $objp->type_label;	// deprecated
+						$membertypestatic->label = $objp->type_label;
 
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);

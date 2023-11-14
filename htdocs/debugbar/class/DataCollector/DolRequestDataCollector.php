@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\RequestDataCollector;
+use DebugBar\DataCollector\RequestDataCollector;
 
 /**
  * DolRequestDataCollector class

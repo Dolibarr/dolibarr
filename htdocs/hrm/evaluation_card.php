@@ -125,7 +125,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_EVALUATION_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_EVALUATION_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -150,7 +150,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_EVALUATION_SENTBYMAIL';
+	$triggersendname = 'HRM_EVALUATION_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_EVALUATION_TO';
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -354,7 +354,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('HRM_EVALUATION_VALIDATE', $object->socid, $object);
+			$text .= $notify->confirmMessage('HRM_EVALUATION_VALIDATE', 0, $object);
 		}
 
 		if (!$error) {
@@ -440,9 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 
-	/*
-	 * Lines
-	 */
+	// Lines when evaluation is in edit mode
 
 	if (!empty($object->table_element_line) && $object->status == Evaluation::STATUS_DRAFT) {
 		// Show object lines
@@ -469,12 +467,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
 		}
 
-		//if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
-		//}
+		// Lines of evaluated skills
+		// $object is Evaluation
+		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+
+		if (empty($object->lines)) {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.img_warning().' '.$langs->trans("TheJobProfileHasNoSkillsDefinedFixBefore").'</td></tr>';
+		}
 
 		// Form to add new line
 		/*
@@ -501,7 +503,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print "<br>";
 	}
 
-	// list of comparison
+	// Lines when evaluation is validated
+
 	if ($object->status != Evaluation::STATUS_DRAFT) {
 		// Recovery of skills related to this evaluation
 
@@ -563,8 +566,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$num++;
 			}
 
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="noborder centpercent">';
+			print '<br>';
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("TypeSkill") . ' </th>';
@@ -578,6 +583,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$sk = new Skill($db);
 			foreach ($Tab as $t) {
 				$sk->fetch($t->skill_id);
+
 				print '<tr>';
 				print ' <td>' . Skill::typeCodeToLabel($t->skill_type) . '</td>';
 				print ' <td>' . $sk->getNomUrl(1) . '</td>';
@@ -589,6 +595,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			print '</table>';
+			print '</div>';
 
 			?>
 

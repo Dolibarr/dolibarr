@@ -36,3 +36,7 @@ Codemulticurrency=通貨コード
 UpdateRate=レートを変更する
 CancelUpdate=キャンセル
 NoEmptyRate=レートフィールドは空であってはならない
+CurrencyCodeId=通貨ID
+CurrencyCode=通貨コード
+CurrencyUnitPrice=外貨換算単価
+CurrencyPrice=外貨での価格

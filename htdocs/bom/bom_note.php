@@ -67,14 +67,15 @@ $permissionnote = $user->hasRight('bom', 'write'); // Used by the include of act
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

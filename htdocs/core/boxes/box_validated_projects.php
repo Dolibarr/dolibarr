@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/core/boxes/box_validated_projects.php
- *  \ingroup    projet
+ *  \ingroup    project
  *  \brief      Module to show validated projects whose tasks are assigned to the connected person, without any time entered by the connected person
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
@@ -69,7 +69,7 @@ class box_validated_projects extends ModeleBoxes
 
 		$this->hidden = empty($user->rights->projet->lire);
 
-		if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			$this->enabled = 0;
 		}
 	}
@@ -94,7 +94,7 @@ class box_validated_projects extends ModeleBoxes
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 
@@ -103,7 +103,7 @@ class box_validated_projects extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 

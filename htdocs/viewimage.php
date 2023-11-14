@@ -26,6 +26,8 @@
  *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
+define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (!defined('NOREQUIRESOC')) {
@@ -54,6 +56,8 @@ if (!defined('NOREQUIREAJAX')) {
 // Note that only directory logo is free to access without login.
 $needlogin = 1;
 if (isset($_GET["modulepart"])) {
+	// Some value of modulepart can be used to get resources that are public so no login are required.
+
 	// For logo of company
 	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
@@ -62,10 +66,11 @@ if (isset($_GET["modulepart"])) {
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Some value of modulepart can be used to get resources that are public so no login are required.
+	// Medias files
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
+	// User photo when user has made its profile public (for virtual credi card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
@@ -151,11 +156,13 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at
-	// each Dolibarr page access.
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	// Add param cache=abcdef
 	if (empty($dolibarr_nocache)) {
 		header('Cache-Control: max-age=3600, public, must-revalidate');
-		header('Pragma: cache'); // This is to avoid having Pragma: no-cache
+		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + 3600).' GMT');	// This is to avoid to have Expires set by proxy or web server
+		//header('Expires: '.strtotime('+1 hour');
 	} else {
 		header('Cache-Control: no-cache');
 	}

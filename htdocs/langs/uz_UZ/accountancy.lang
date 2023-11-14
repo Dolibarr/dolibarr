@@ -41,6 +41,7 @@ AlreadyInGeneralLedger=Buxgalteriya jurnallari va buxgalteriya kitoblariga o'tka
 NotYetInGeneralLedger=Hali ham jurnallar va daftarlarga o'tkazilmagan
 GroupIsEmptyCheckSetup=Guruh bo'sh, shaxsiylashtirilgan buxgalteriya guruhini sozlashni tekshiring
 DetailByAccount=Hisob bo'yicha tafsilotlarni ko'rsatish
+DetailBy=Detail by
 AccountWithNonZeroValues=Nolga teng bo'lmagan qiymatlar bilan hisob-kitoblar
 ListOfAccounts=Hisob-kitoblar ro'yxati
 CountriesInEEC=EEC tarkibidagi mamlakatlar
@@ -51,14 +52,19 @@ AccountantFiles=Dastlabki hujjatlarni eksport qilish
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Jurnallaringizni eksport qilish uchun %s - %s menyu yozuvidan foydalaning.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
 VueByAccountAccounting=Buxgalteriya hisobi bo'yicha ko'rish
 VueBySubAccountAccounting=Buxgalteriya subkontaji bo'yicha ko'rish
 
-MainAccountForCustomersNotDefined=O'rnatishda aniqlanmagan mijozlar uchun asosiy buxgalteriya hisobi
-MainAccountForSuppliersNotDefined=O'rnatishda aniqlanmagan sotuvchilar uchun asosiy buxgalteriya hisobi
-MainAccountForUsersNotDefined=O'rnatishda aniqlanmagan foydalanuvchilar uchun asosiy buxgalteriya hisobi
-MainAccountForVatPaymentNotDefined=O'rnatishda aniqlanmagan QQSni to'lash uchun asosiy buxgalteriya hisobi
-MainAccountForSubscriptionPaymentNotDefined=O'rnatishda aniqlanmagan obuna to'lovining asosiy buxgalteriya hisobi
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
+MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Buxgalteriya hisobi maydoni
@@ -112,6 +118,7 @@ MenuLoanAccounts=Kredit hisobvaraqlari
 MenuProductsAccounts=Mahsulot hisoblari
 MenuClosureAccounts=Yopish hisoblari
 MenuAccountancyClosure=Yopish
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Harakatlarni tasdiqlang
 ProductsBinding=Mahsulotlar hisoblari
 TransferInAccounting=Buxgalteriya hisobiga o'tkazish
@@ -167,9 +174,9 @@ ACCOUNTANCY_COMBO_FOR_AUX=Yordamchi hisob uchun kombinatsiyalangan ro'yxatni yoq
 ACCOUNTING_DATE_START_BINDING=Buxgalteriyada majburiy va o'tkazishni boshlash uchun sanani aniqlang. Ushbu sana ostida operatsiyalar buxgalteriya hisobiga o'tkazilmaydi.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Yangi jurnal mavjud
@@ -238,6 +245,7 @@ ConfirmDeleteMvt=Bu yil/oy va/yoki ma'lum bir jurnal uchun buxgalteriya hisobida
 ConfirmDeleteMvtPartial=Bu buxgalteriya hisobidan tranzaksiyani o'chiradi (bir xil tranzaksiyaga tegishli barcha qatorlar o'chiriladi)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Xarajatlar hisoboti jurnali
+InventoryJournal=Inventory journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 DescJournalOnlyBindedVisible=Bu buxgalteriya hisobi bilan bog'liq bo'lgan yozuvlar va Jurnallar va Daftarlarga yozilishi mumkin bo'lgan ko'rinishdir.
 VATAccountNotDefined=QQS uchun hisob-kitob aniqlanmagan
@@ -294,7 +302,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Tasdiqlanmagan va qulflanmagan harakatlarning umumiy ko'rinishi
 AllMovementsWereRecordedAsValidated=Barcha harakatlar tasdiqlangan va qulflangan sifatida qayd etilgan
 NotAllMovementsCouldBeRecordedAsValidated=Hamma harakatlarni tasdiqlangan va qulflangan deb yozib bo'lmaydi
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Yozishni, xatlarni va o'chirishni har qanday o'zgartirish yoki o'chirish taqiqlanadi. Jismoniy mashqlar uchun barcha yozuvlar tasdiqlanishi kerak, aks holda yopish mumkin bo'lmaydi
 
 ValidateHistory=Avtomatik bog'lash
@@ -343,12 +351,18 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Sotish bo'yicha buxgalteriyada majburiy va o
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Xaridlar bo'yicha buxgalteriyada majburiy va o'tkazishni o'chirib qo'ying (sotuvchi hisob-kitoblari buxgalteriya hisobida hisobga olinmaydi)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xarajatlar hisobotlari bo'yicha buxgalteriyada majburiy va o'tkazishni o'chirib qo'ying (xarajatlar hisoboti buxgalteriya hisobida hisobga olinmaydi)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Eksport qilingan qatorlarni eksport qilingan deb belgilash <span class="warning"> (chiziqni o‘zgartirish uchun siz butun tranzaksiyani o‘chirib tashlashingiz va uni buxgalteriya hisobiga qayta o‘tkazishingiz kerak) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Sanani tekshirish va qulflash
 ConfirmExportFile=Buxgalteriya eksporti faylini yaratishni tasdiqlashmi?
@@ -380,7 +394,7 @@ ChartofaccountsId=Hisob-kitoblar rejasi
 ## Tools - Init accounting account on product / service
 InitAccountancy=Buxgalteriya hisobi
 InitAccountancyDesc=Ushbu sahifada sotish va sotib olish uchun aniqlangan buxgalteriya hisobi bo'lmagan mahsulotlar va xizmatlar bo'yicha buxgalteriya hisobini boshlash uchun foydalanish mumkin.
-DefaultBindingDesc=Ushbu sahifada oldindan hisob-kitob hisobvarag'i o'rnatilmagan taqdirda, ish haqi, xayriya mablag'lari, soliqlar va QQS bo'yicha operatsiyalar yozuvlarini bog'lash uchun standart hisobni o'rnatish uchun foydalanish mumkin.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=Ushbu sahifadan buxgalteriya hisobini yopish uchun ishlatiladigan parametrlarni o'rnatish uchun foydalanish mumkin.
 Options=Variantlar
 OptionModeProductSell=Sotish rejimi
@@ -432,7 +446,7 @@ ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Ommaviy oʻchirishni tasdiqlash
-ConfirmMassDeleteBookkeepingWritingQuestion=Bu operatsiyani buxgalteriya hisobidan o'chirib tashlaydi (bir xil tranzaksiyaga tegishli barcha qatorlar o'chiriladi) %s tanlangan yozuv(lar)ni o'chirib tashlamoqchimisiz?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=O'rnatishning ba'zi majburiy bosqichlari bajarilmadi, iltimos, ularni to'ldiring
@@ -445,7 +459,7 @@ NoJournalDefined=Hech qanday jurnal aniqlanmagan
 Binded=Chiziqlar bog'langan
 ToBind=Bog'lash uchun chiziqlar
 UseMenuToSetBindindManualy=Chiziqlar hali bog'lanmagan, bog'lanishni qo'lda bajarish uchun <a href="%s"> %s </a> menyusidan foydalaning
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Kechirasiz, bu modul vaziyat hisob-fakturalarining eksperimental xususiyatiga mos kelmaydi
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Kelishuv kodidagi nomuvofiqlik
 AccountancyErrorMismatchBalanceAmount=Balans (%s) 0 ga teng emas
 AccountancyErrorLetteringBookkeeping=Tranzaktsiyalarda xatoliklar yuz berdi: %s
@@ -475,9 +489,9 @@ FECFormatMulticurrencyAmount=Ko'p valyuta miqdori (Montantdevise)
 FECFormatMulticurrencyCode=Ko'p valyuta kodi (Idevise)
 
 DateExport=Sana eksporti
-WarningReportNotReliable=Diqqat, ushbu hisobot daftarga asoslanmagan, shuning uchun daftarda qo'lda o'zgartirilgan bitimni o'z ichiga olmaydi. Agar sizning jurnalizatsiya dolzarb bo'lsa, buxgalteriya hisobi yanada aniqroq bo'ladi.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Xarajatlar bo'yicha hisobot jurnali
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s hisob qaydnomalari

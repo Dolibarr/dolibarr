@@ -49,6 +49,19 @@ class Salary extends CommonObject
 
 	public $tms;
 
+	// /**
+	//  * @var array	List of child tables. To test if we can delete object.
+	//  */
+	protected $childtables = array('payment_salary' => array('name'=>'SalaryPayment', 'fk_element'=>'fk_salary'));
+
+	// /**
+	//  * @var array    List of child tables. To know object to delete on cascade.
+	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	//  */
+	//protected $childtablesoncascade = array('mymodule_myobjectdet');
+
+
 	/**
 	 * @var int User ID
 	 */
@@ -135,8 +148,6 @@ class Salary extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		// Clean parameters
@@ -213,10 +224,8 @@ class Salary extends CommonObject
 	 */
 	public function fetch($id, $user = null)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " s.rowid,";
-
 		$sql .= " s.tms,";
 		$sql .= " s.fk_user,";
 		$sql .= " s.datep,";
@@ -233,7 +242,6 @@ class Salary extends CommonObject
 		$sql .= " s.fk_user_author,";
 		$sql .= " s.fk_user_modif,";
 		$sql .= " s.fk_account";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql .= " WHERE s.rowid = ".((int) $id);
@@ -282,44 +290,12 @@ class Salary extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
+	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
-		$error = 0;
-
-		// Call trigger
-		$result = $this->call_trigger('SALARY_DELETE', $user);
-		if ($result < 0) return -1;
-		// End call triggers
-
-		// Delete extrafields
-		/*if (!$error)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
-			$sql .= " WHERE fk_object = ".((int) $this->id);
-
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->errors[] = $this->db->lasterror();
-				$error++;
-			}
-		}*/
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary";
-		$sql .= " WHERE rowid=".((int) $this->id);
-
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->error = "Error ".$this->db->lasterror();
-			return -1;
-		}
-
-		return 1;
+		return $this->deleteCommon($user, $notrigger);
 	}
 
 
@@ -539,18 +515,18 @@ class Salary extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -564,7 +540,7 @@ class Salary extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -576,7 +552,7 @@ class Salary extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright pictofixedwidth"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.' pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -604,8 +580,8 @@ class Salary extends CommonObject
 		$table = 'payment_salary';
 		$field = 'fk_salary';
 
-		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
+		$sql = "SELECT sum(amount) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
@@ -642,6 +618,7 @@ class Salary extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -659,18 +636,38 @@ class Salary extends CommonObject
 	/**
 	 *    Tag social contribution as payed completely
 	 *
+	 *	  @deprecated
+	 *    @see setPaid()
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					<0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user);
+	}
+
+	/**
+	 *    Tag social contribution as payed completely
+	 *
+	 *    @param    User    $user       Object user making change
+	 *    @return   int					<0 if KO, >0 if OK
+	 */
+	public function setPaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+
+		if ($return) {
+			$this->paye = 1;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -686,16 +683,22 @@ class Salary extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+
+		if ($return) {
+			$this->paye = 0;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 * Return label of current status
 	 *
-	 * @param	int			$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @param	int			$mode       	0=label long, 1=labels short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long, 5=Label short + Picto
 	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 * @return  string						Label
 	 */
@@ -706,7 +709,7 @@ class Salary extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return label of a given status
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
@@ -762,16 +765,24 @@ class Salary extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_user')) {
-			$return .= ' | <span class="info-box-label">'.$this->fk_user.'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'type_payment')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['user']->getNomUrl(1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
+			if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
+				$return .= ' <span class="info-box-label opacitymedium small">';
+				if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
+					$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
+				} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
+					$return .= $langs->trans("PaymentType".$this->type_payment);
+				}
+				$return .= '</span>';
+			}
 		}
 		if (method_exists($this, 'LibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
@@ -780,5 +791,149 @@ class Salary extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+		// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
+	 *  Use the remain to pay excluding all existing open direct debit requests.
+	 *
+	 *	@param      User	$fuser      				User asking the direct debit transfer
+	 *  @param		float	$amount						Amount we request direct debit for
+	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
+	 */
+	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'salaire', $checkduplicateamongall = 0)
+	{
+		// phpcs:enable
+		global $conf;
+
+		$error = 0;
+
+		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+		if ($this->paye == 0) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			$bac = new CompanyBankAccount($this->db);
+			$bac->fetch(0, $this->socid);
+
+			$sql = "SELECT count(rowid) as nb";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
+			if ($type == 'salaire') {
+				$sql .= " WHERE fk_salary = ".((int) $this->id);
+			} else {
+				$sql .= " WHERE fk_facture = ".((int) $this->id);
+			}
+			$sql .= " AND type = 'ban'"; // To exclude record done for some online payments
+			if (empty($checkduplicateamongall)) {
+				$sql .= " AND traite = 0";
+			}
+
+			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb == 0) {	// If no request found yet
+					$now = dol_now();
+
+					$totalpaid = $this->getSommePaiement();
+					// $totalcreditnotes = $this->getSumCreditNotesUsed();
+					// $totaldeposits = $this->getSumDepositsUsed();
+					//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+
+					// We can also use bcadd to avoid pb with floating points
+					// For example print 239.2 - 229.3 - 9.9; does not return 0.
+					//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					// if (empty($amount)) {
+					// 	$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+					// }
+
+					if (is_numeric($amount) && $amount != 0) {
+						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
+						if ($type == 'salaire') {
+							$sql .= 'fk_salary, ';
+						} else {
+							$sql .= 'fk_facture, ';
+						}
+						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
+						$sql .= " VALUES (".((int) $this->id);
+						$sql .= ", ".((float) price2num($amount));
+						$sql .= ", '".$this->db->idate($now)."'";
+						$sql .= ", ".((int) $fuser->id);
+						$sql .= ", '".$this->db->escape($bac->code_banque)."'";
+						$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
+						$sql .= ", '".$this->db->escape($bac->number)."'";
+						$sql .= ", '".$this->db->escape($bac->cle_rib)."'";
+						$sql .= ", '".$this->db->escape($sourcetype)."'";
+						$sql .= ", 'ban'";
+						$sql .= ", ".((int) $conf->entity);
+						$sql .= ")";
+
+						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							$this->error = $this->db->lasterror();
+							dol_syslog(get_class($this).'::demandeprelevement Erreur');
+							$error++;
+						}
+					} else {
+						$this->error = 'WithdrawRequestErrorNilAmount';
+						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
+						$error++;
+					}
+
+					if (!$error) {
+						// Force payment mode of invoice to withdraw
+						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+						if ($payment_mode_id > 0) {
+							$result = $this->setPaymentMethods($payment_mode_id);
+						}
+					}
+
+					if ($error) {
+						return -1;
+					}
+					return 1;
+				} else {
+					$this->error = "A request already exists";
+					dol_syslog(get_class($this).'::demandeprelevement Can t create a request to generate a direct debit, a request already exists.');
+					return 0;
+				}
+			} else {
+				$this->error = $this->db->error();
+				dol_syslog(get_class($this).'::demandeprelevement Error -2');
+				return -2;
+			}
+		} else {
+			$this->error = "Status of invoice does not allow this";
+			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->status, $this->paye, $this->mode_reglement_id");
+			return -3;
+		}
+	}
+
+		// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Remove a direct debit request or a credit transfer request
+	 *
+	 *  @param  User	$fuser      User making delete
+	 *  @param  int		$did        ID of request to delete
+	 *  @return	int					<0 if OK, >0 if KO
+	 */
+	public function demande_prelevement_delete($fuser, $did)
+	{
+		// phpcs:enable
+		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_demande';
+		$sql .= ' WHERE rowid = '.((int) $did);
+		$sql .= ' AND traite = 0';
+		if ($this->db->query($sql)) {
+			return 0;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
+			return -1;
+		}
 	}
 }

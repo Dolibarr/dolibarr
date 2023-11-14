@@ -280,12 +280,12 @@ if ($result) {
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.($value ? htmlspecialchars($value) : '').'">';
 		print '</td>';
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.(empty($obj->note) ? '' : htmlspecialchars($obj->note, 1)).'">';
 		print '</td>';
 
 		// Date last change
@@ -294,7 +294,7 @@ if ($result) {
 		print '</td>';
 
 		// Entity limit to superadmin
-		if (isModEnabled('multicompany') && !$user->entity) {
+		if (isModEnabled('multicompany') && empty($user->entity)) {
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
@@ -304,7 +304,7 @@ if ($result) {
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
 
-		if ($conf->use_javascript_ajax) {
+		if (!empty($conf->use_javascript_ajax)) {
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';

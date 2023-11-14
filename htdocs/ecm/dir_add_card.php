@@ -289,7 +289,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->hasRight('ecm', 'setup'));
 
 	print '</div>';
 }

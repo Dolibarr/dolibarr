@@ -153,43 +153,6 @@ class TimeSpent extends CommonObject
 	public $note;
 	// END MODULEBUILDER PROPERTIES
 
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'timespent_timespentline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_timespent';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'TimeSpentline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('timespent_timespentdet');
-
-	// /**
-	//  * @var TimeSpentLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -269,13 +232,6 @@ class TimeSpent extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) {
-			$object->fetchLines();
-		}
-
-		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
 
 		// Reset some properties
 		unset($object->id);
@@ -359,25 +315,9 @@ class TimeSpent extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		$result = $this->fetchLinesCommon();
-		return $result;
-	}
-
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -587,6 +527,12 @@ class TimeSpent extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'timespent/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'timespent/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -752,17 +698,18 @@ class TimeSpent extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = " data-params='".json_encode($params)."'";
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = dol_buildpath('/timespent/timespent_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($url && $add_save_lastsearch_values) {
@@ -776,7 +723,7 @@ class TimeSpent extends CommonObject
 				$label = $langs->trans("ShowTimeSpent");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -812,7 +759,7 @@ class TimeSpent extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -855,13 +802,19 @@ class TimeSpent extends CommonObject
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $conf, $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
@@ -955,14 +908,8 @@ class TimeSpent extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				if (!empty($obj->fk_user_valid)) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
-				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
-				}
 			}
 
 			$this->db->free($result);
@@ -987,28 +934,6 @@ class TimeSpent extends CommonObject
 	}
 
 	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new TimeSpentLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_timespent = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
-
-	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -1025,7 +950,7 @@ class TimeSpent extends CommonObject
 		if (!empty($conf->global->TIMESPENT_timespent_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->TIMESPENT_timespent_ADDON.".php";
+			$file = getDolGlobalString('TIMESPENT_timespent_ADDON') . ".php";
 			$classname = $conf->global->TIMESPENT_timespent_ADDON;
 
 			// Include file with class
@@ -1100,35 +1025,5 @@ class TimeSpent extends CommonObject
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		//global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 }

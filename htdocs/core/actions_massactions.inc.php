@@ -88,9 +88,10 @@ if (!$error && $massaction == 'confirm_presend') {
 	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
 
 	if (!$error) {
-		$thirdparty = new Societe($db);
-
 		$objecttmp = new $objectclass($db);
+
+		// Define object $thirdparty (Societe or User, Adherent, ConferenceOrBoothAttendee...)
+		$thirdparty = new Societe($db);
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
 		} elseif ($objecttmp->element == 'contact') {
@@ -99,6 +100,8 @@ if (!$error && $massaction == 'confirm_presend') {
 			$thirdparty = new Adherent($db);
 		} elseif ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
+		} elseif ($objecttmp->element == 'conferenceorboothattendee') {
+			$thirdparty = new ConferenceOrBoothAttendee($db);
 		}
 
 		foreach ($toselect as $toselectid) {
@@ -106,21 +109,22 @@ if (!$error && $massaction == 'confirm_presend') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofobjectid[$toselectid] = $toselectid;
-
-				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
+				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
-					$thirdpartyid = $objecttmp->id;
+					$tmpobjectid = $objecttmp->id;
 				} elseif ($objecttmp->element == 'contact') {
-					$thirdpartyid = $objecttmp->id;
+					$tmpobjectid = $objecttmp->id;
 				} elseif ($objecttmp->element == 'expensereport') {
-					$thirdpartyid = $objecttmp->fk_user_author;
+					$tmpobjectid = $objecttmp->fk_user_author;
 				} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
-					$thirdpartyid = $objecttmp->fk_member;
+					$tmpobjectid = $objecttmp->fk_member;
 				} elseif ($objecttmp->element == 'holiday') {
-					$thirdpartyid = $objecttmp->fk_user;
+					$tmpobjectid = $objecttmp->fk_user;
+				} elseif ($objecttmp->element == 'conferenceorboothattendee') {
+					$tmpobjectid = $objecttmp->id;
 				}
-				if (empty($thirdpartyid)) {
-					$thirdpartyid = 0;
+				if (empty($tmpobjectid)) {
+					$tmpobjectid = 0;
 				}
 
 				if ($objectclass == 'Facture') {
@@ -141,8 +145,8 @@ if (!$error && $massaction == 'confirm_presend') {
 					}
 				}
 
-				$listofobjectthirdparties[$thirdpartyid] = $thirdpartyid;
-				$listofobjectref[$thirdpartyid][$toselectid] = $objecttmp;
+				$listofobjectthirdparties[$tmpobjectid] = $tmpobjectid;
+				$listofobjectref[$tmpobjectid][$toselectid] = $objecttmp;
 			}
 		}
 	}
@@ -174,7 +178,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		$massaction = 'presend';
 	}
 
-	// Loop on each recipient/thirdparty
+	// Loop on each recipient (may be a thirdparty but also a user, a conferenceorboothattendee, ...)
 	if (!$error) {
 		foreach ($listofobjectthirdparties as $thirdpartyid) {
 			$result = $thirdparty->fetch($thirdpartyid);
@@ -186,7 +190,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$sendto = '';
 			$sendtocc = '';
 			$sendtobcc = '';
-			$sendtoid = array();
+			//$sendtoid = array();
 
 			// Define $sendto
 			$tmparray = array();
@@ -201,7 +205,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
 					} elseif ($val && method_exists($thirdparty, 'contact_get_property')) {		// Id of contact
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
-						$sendtoid[] = $val;
+						//$sendtoid[] = $val;
 					}
 				}
 			}
@@ -305,6 +309,8 @@ if (!$error && $massaction == 'confirm_presend') {
 						if (count($emails_to_sends) > 0) {
 							$sendto = implode(',', $emails_to_sends);
 						}
+					} elseif ($objectobj->element == 'conferenceorboothattendee') {
+						$sendto = $objectobj->email;
 					} else {
 						$objectobj->fetch_thirdparty();
 						$sendto = $objectobj->thirdparty->email;
@@ -399,7 +405,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				if ($fromtype === 'user') {
 					$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 				} elseif ($fromtype === 'company') {
-					$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+					$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 				} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', $user->email_aliases);
 					$from = trim($tmp[($reg[1] - 1)]);
@@ -423,25 +429,25 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				$sendtobcc = GETPOST('sendtoccc');
 				if ($objectclass == 'Propal') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO')));
 				}
 				if ($objectclass == 'Commande') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO')));
 				}
 				if ($objectclass == 'Facture') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO));
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO')));
 				}
-				if ($objectclass == 'Supplier_Proposal') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
+				if ($objectclass == 'SupplierProposal') {
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO')));
 				}
 				if ($objectclass == 'CommandeFournisseur') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO')));
 				}
 				if ($objectclass == 'FactureFournisseur') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO')));
 				}
 				if ($objectclass == 'Project') {
-					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO));
+					$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO')));
 				}
 
 				// $listofqualifiedobj is array with key = object id and value is instance of qualified objects, for the current thirdparty (but thirdparty property is not loaded yet)
@@ -469,7 +475,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
 					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ', $listofqualifiedref) : $objecttmp->ref);
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
-					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 					$parameters = array('mode'=>'formemail');
 
@@ -530,7 +536,7 @@ if (!$error && $massaction == 'confirm_presend') {
 							$trackid = 'ord';
 						} elseif (get_class($objecttmp) == 'Facture') {
 							$trackid = 'inv';
-						} elseif (get_class($objecttmp) == 'Supplier_Proposal') {
+						} elseif (get_class($objecttmp) == 'SupplierProposal') {
 							$trackid = 'spr';
 						} elseif (get_class($objecttmp) == 'CommandeFournisseur') {
 							$trackid = 'sor';
@@ -548,15 +554,19 @@ if (!$error && $massaction == 'confirm_presend') {
 						$sendcontext = 'standard';
 					}
 
+					// Set tmp user directory (used to convert images embedded as img src=data:image)
+					$vardir = $conf->user->dir_output."/".$user->id;
+					$upload_dir_tmp = $vardir.'/temp'; // TODO Add $keytoavoidconflict in upload_dir path
+
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
+					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
 						$result = $mailfile->sendfile();
-						if ($result) {
-							$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)).'<br>'; // Must not contain "
+						if ($result > 0) {
+							$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($mailfile->addr_from, 2), $mailfile->getValidAddress($mailfile->addr_to, 2)).'<br>'; // Must not contain "
 
 							$error = 0;
 
@@ -571,7 +581,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 								if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 								if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
-								if ($objectclass == 'Supplier_Proposal') $actiontypecode='AC_SUP_PRO';
+								if ($objectclass == 'SupplierProposal') $actiontypecode='AC_SUP_PRO';
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
@@ -752,7 +762,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 	}
 	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\']+\.pdf$'; // To include PDF generated from ODX files
+		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
 	}
 	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
 
@@ -1037,7 +1047,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	$TMsg = array();
-	foreach ($toselect as $toselectid) {
+
+	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
+	$unique_arr = array_unique($toselect);
+	foreach ($unique_arr as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status
@@ -1729,8 +1742,8 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 
 		$defaultref = '';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
-			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . '.php';
+		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
+			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 			$modTask = new $obj;
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}

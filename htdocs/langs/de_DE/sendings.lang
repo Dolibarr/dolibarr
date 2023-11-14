@@ -48,7 +48,7 @@ DateDeliveryPlanned=Geplanter Liefertermin
 RefDeliveryReceipt=Lieferschein-Nr.
 StatusReceipt=Der Status des Lieferschein
 DateReceived=Datum der Zustellung
-ClassifyReception=Als erhalten markieren
+ClassifyReception=Als 'erhalten' markieren
 SendShippingByEMail=Versand per E-Mail
 SendShippingRef=Versand der Lieferung %s
 ActionsOnShipping=Hinweis zur Lieferung
@@ -74,3 +74,8 @@ SumOfProductWeights=Summe der Produktgewichte
 # warehouse details
 DetailWarehouseNumber= Warenlagerdetails
 DetailWarehouseFormat= W: %s (Menge: %d) 
+
+ShipmentDistribution=Lieferung für den Versand 
+
+ErrorTooManyCombinationBatchcode=Kein Versand für Position %s, da zu viele Kombinationen aus Lager, Produkt und Chargencode gefunden wurden (%s).
+ErrorNoCombinationBatchcode=Kein Versand für Position %s, da keine Kombination aus Lager, Produkt und Chargencode gefunden wurde.

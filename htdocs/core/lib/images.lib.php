@@ -23,12 +23,34 @@
  */
 
 // Define size of logo small and mini
+// TODO Remove this and call getDefaultImageSizes() instead
 $maxwidthsmall = 480;
 $maxheightsmall = 270; // Near 16/9eme
 $maxwidthmini = 128;
 $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
+/**
+ *      Return default values for image sizes
+ *
+ *      @return array		Array of default values
+ */
+function getDefaultImageSizes()
+{
+	$maxwidthsmall = 480;
+	$maxheightsmall = 270; // Near 16/9eme
+	$maxwidthmini = 128;
+	$maxheightmini = 72; // 16/9eme
+	$quality = 80;
+
+	return array(
+		'maxwidthsmall' => $maxwidthsmall,
+		'maxheightsmall' => $maxheightsmall,
+		'maxwidthmini' => $maxwidthmini,
+		'maxheightmini' => $maxheightmini,
+		'quality' => $quality
+	);
+}
 
 /**
  *      Return if a filename is file name of a supported image format
@@ -599,7 +621,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	// Before PHP8, img was a resource, With PHP8, it is a GdImage
-	if (!is_resource($img) && !($img instanceof \GdImage)) {
+	if (!is_resource($img) && class_exists('GdImage') && !($img instanceof GdImage)) {
 		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
 		return 0;
 	}

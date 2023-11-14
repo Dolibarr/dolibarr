@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ if (!defined('NOIPCHECK')) {
 }
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
 
@@ -69,6 +73,8 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 $emailcompany = GETPOST("emailcompany");
 $note_public = GETPOST('note_public', "restricthtml");
+$firstname = GETPOST('firstname');
+$lastname = GETPOST('lastname');
 
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
@@ -105,6 +111,7 @@ if ($type == 'global') {
 	} else {
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
 		$sql .= " WHERE fk_project = ".((int) $project->id);
+		$sql .= " AND status IN (0, 1)";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -120,7 +127,7 @@ if ($type == 'global') {
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
 // We check if the securekey collected is OK
 if ($securekeytocompare != $securekeyreceived) {
@@ -190,7 +197,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE)) {
 		print '<div class="backimagepubliceventorganizationsubscription">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE.'">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE').'">';
 		print '</div>';
 	}
 
@@ -281,6 +288,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
 			$confattendee->note_public = $note_public;
+			$confattendee->firstname = $firstname;
+			$confattendee->lastname = $lastname;
 
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
@@ -327,7 +336,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 		// If the registration has already been paid for this attendee
 		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'master');
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'master');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorded", $email);
@@ -550,8 +559,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// Add link between invoice and the attendee registration
 				/*if (!$error) {
-					$facture->add_object_linked($confattendee->element, $confattendee->id);
-				}*/
+				 $facture->add_object_linked($confattendee->element, $confattendee->id);
+				 }*/
 			}
 
 			if (!$error) {
@@ -594,7 +603,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode($sourcetouse).'&ref='.urlencode($reftouse);
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-						$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
 					} else {
 						$redirection .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 					}
@@ -624,7 +633,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			// Get email content from template
 			$arraydefaultmessage = null;
 
-			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+			$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 			}
@@ -655,7 +664,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			Header("Location: ".$redirection);
@@ -678,22 +687,25 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewRegistration"));
 
-print '<br>';
-print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
-
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext justify">';
 
+// Sub banner
+print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
+print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center');
 // Welcome message
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
-
 // Title
-print '<span class="eventlabel">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
+print '</div>';
+
+// Help text
+print '<div class="justify subscriptionformhelptext">';
+
 if ($project->date_start_event || $project->date_end_event) {
-	print '<br><span class="fa fa-calendar pictofixedwidth"></span>';
+	print '<br><span class="fa fa-calendar pictofixedwidth opacitymedium"></span>';
 }
 if ($project->date_start_event) {
 	$format = 'day';
@@ -718,29 +730,34 @@ if ($project->date_start_event || $project->date_end_event) {
 	print '<br>';
 }
 if ($project->location) {
-	print '<span class="fa fa-map-marked-alt pictofixedwidth"></span>'.dol_escape_htmltag($project->location).'<br>';
+	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
 }
+if ($project->note_public) {
+	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
+}
+
+print '</div>';
+
 
 $maxattendees = 0;
 if ($conference->id > 0) {
 	/* date of project is not  date of event so commented
-	print $langs->trans("Date").': ';
-	print dol_print_date($conference->datep);
-	if ($conference->date_end) {
-		print ' - ';
-		print dol_print_date($conference->datef);
-	}*/
+	 print $langs->trans("Date").': ';
+	 print dol_print_date($conference->datep);
+	 if ($conference->date_end) {
+	 print ' - ';
+	 print dol_print_date($conference->datef);
+	 }*/
 } else {
 	/* date of project is not  date of event so commented
-	print $langs->trans("Date").': ';
-	print dol_print_date($project->date_start);
-	if ($project->date_end) {
-		print ' - ';
-		print dol_print_date($project->date_end);
-	}*/
+	 print $langs->trans("Date").': ';
+	 print dol_print_date($project->date_start);
+	 if ($project->date_end) {
+	 print ' - ';
+	 print dol_print_date($project->date_end);
+	 }*/
 	$maxattendees = $project->max_attendees;	// Max attendeed for the project/event
 }
-print '</div>';
 
 if ($maxattendees && $currentnbofattendees >= $maxattendees) {
 	print '<br>';
@@ -783,6 +800,14 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		</script>';
 
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
+
+		// Firstname
+		print '<tr><td><span class="fieldrequired">' . $langs->trans("Firstname") . '</span></td><td>';
+		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required></td></tr>' . "\n";
+
+		// Lastname
+		print '<tr><td><span class="fieldrequired">' . $langs->trans("Lastname") . '</span></td><td>';
+		print '<input type="text" name="lastname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($lastname) . '" required></td></tr>' . "\n";
 
 		// Email
 		print '<tr><td><span class="fieldrequired">' . $langs->trans("EmailAttendee") . '</span></td><td>';
@@ -882,11 +907,14 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print "</form>\n";
 
 		print "<br>";
-		print '</div></div>';
 	}
 } else {
+	print '<br><br>';
 	print $langs->trans("ConferenceIsNotConfirmed");
+	print '<br><br>';
 }
+
+print '</div></div>';
 
 llxFooterVierge();
 

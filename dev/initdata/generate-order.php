@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
  * Parametre
  */
 
-define(GEN_NUMBER_COMMANDE, 10);
+define('GEN_NUMBER_COMMANDE', $argv[1] ?? 10);
 $year = 2016;
 $dates = array (mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),

@@ -135,11 +135,11 @@ if (isModEnabled('facture')) {
 if (isModEnabled('supplier_proposal')) {
 	$langs->load("supplier_proposal"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'supplier_proposal', 'test'=>isModEnabled('supplier_proposal'), 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
-	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order_supplier', 'test'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")), 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+if (isModEnabled("supplier_order")) {
+	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order_supplier', 'test'=>isModEnabled("supplier_order"), 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
 }
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
-	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice_supplier', 'test'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
+if (isModEnabled("supplier_invoice")) {
+	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice_supplier', 'test'=>isModEnabled("supplier_invoice"), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 }
 if (isModEnabled('tax')) {
 	$langs->load("compta"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'tax', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
@@ -239,7 +239,7 @@ $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)
 $formfile = new FormFile($db);
 $param = '&section='.urlencode($section);
 $textifempty = ($section ? $langs->trans("NoFileFound") : $langs->trans("ECMSelectASection"));
-$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
+$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->hasRight('ecm', 'upload'), 1, $textifempty);
 
 
 print '</td></tr>';

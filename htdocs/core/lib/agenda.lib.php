@@ -70,17 +70,17 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	}
 	print '<input type="hidden" name="search_showbirthday" value="'.((int) $showbirthday).'">';
 
-	if ($canedit) {
-		print '<div class="divsearchfield">';
-		// Type
-		$multiselect = 0;
-		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
-		}
-		print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
-		print '</div>';
+	print '<div class="divsearchfield">';
+	// Type
+	$multiselect = 0;
+	if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	}
+	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print '</div>';
 
+	if ($canedit) {
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
@@ -112,7 +112,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</div>';
 	}
 
-	if (isModEnabled('projet') && !empty($user->rights->projet->lire)) {
+	if (isModEnabled('projet') && $user->hasRight('projet', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
@@ -162,12 +162,12 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -278,12 +278,12 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -434,7 +434,7 @@ function actions_prepare_head($object)
 	// Tab to link resources
 	if (isModEnabled('resource')) {
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-		$resource = new DolResource($db);
+		$resource = new Dolresource($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
 		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);

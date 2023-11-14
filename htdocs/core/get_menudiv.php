@@ -122,7 +122,7 @@ print '
     }
 
 	ul li.lilevel2 {
-		padding-left: 42px;
+		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
 	}
 
     a.alilevel0, span.spanlilevel0 {
@@ -134,7 +134,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position-x: 10px;';
 }
 	print '
-        background-position-y: 16px;
+        background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
     }
@@ -225,7 +225,7 @@ $(document).ready(function(){
 
         $(this).find("li ul").slideToggle(200);
 
-        target = $(this);
+        var target = $(this);
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);

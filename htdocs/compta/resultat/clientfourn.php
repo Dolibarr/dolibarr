@@ -74,11 +74,11 @@ $year = GETPOST('year', 'int');		// this is used for navigation previous/next. I
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), "%Y");
 	$month_current = dol_print_date(dol_now(), "%m");
-	$year_start = $year_current - ($nbofyear - 1);
+	$year_start = $year_current;
 } else {
 	$year_current = $year;
 	$month_current = dol_print_date(dol_now(), "%m");
-	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
+	$year_start = $year;
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
@@ -88,14 +88,17 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q") ? GETPOST("q", 'int') : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
-		$year_end = $year_start + $nbofyear - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
+		$year_end = $year_start;
 		$month_start = GETPOST("month") ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
-			$month_end = $month_start - 1;
+			if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
+				$month_end = $month_start - 1;
+				$year_end = $year_start + 1;
+			}
 			if ($month_end < 1) {
 				$month_end = 12;
 			}
@@ -282,8 +285,8 @@ if ($modecompta == 'BOOKKEEPING') {
 	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
 	$predefinedgroupwhere .= ")";
 
-	$charofaccountstring = $conf->global->CHARTOFACCOUNTS;
-	$charofaccountstring = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
+	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 	$sql = "SELECT -1 as socid, aa.pcg_type, SUM(f.credit - f.debit) as amount";
 	if ($showaccountdetail == 'no') {
@@ -1275,7 +1278,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
 
-	if ($conf->tax->enabled && ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')) {
+	if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')) {
 		if ($modecompta == 'CREANCES-DETTES') {
 			// VAT to pay
 			$amount = 0;

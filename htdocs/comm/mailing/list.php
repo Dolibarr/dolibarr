@@ -87,7 +87,7 @@ $permissiontoadd = $user->hasRight('mailing', 'creer');
 $permissiontodelete = $user->hasRight('mailing', 'delete');
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -208,7 +208,7 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
@@ -271,7 +271,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -316,7 +316,7 @@ print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton = '';
-if ($user->rights->mailing->creer) {
+if ($user->hasRight('mailing', 'creer')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
 }
 

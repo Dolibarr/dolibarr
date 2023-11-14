@@ -317,6 +317,7 @@ if ($mode == 'config' && $user->admin) {
 	print '<th>'.$langs->trans("Parameters").'</th>';
 	print '<th></th>';
 	print "</tr>\n";
+
 	$ret = $printer->listprinters();
 	$nbofprinters = count($printer->listprinters);
 

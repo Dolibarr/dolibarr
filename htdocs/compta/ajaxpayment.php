@@ -38,6 +38,8 @@ require '../main.inc.php';
 
 $langs->load('compta');
 
+// No permission check. This is just a formatting data service.
+
 
 /*
  * View

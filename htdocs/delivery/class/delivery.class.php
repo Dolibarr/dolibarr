@@ -205,7 +205,7 @@ class Delivery extends CommonObject
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if (!isModEnabled('expedition_bon')) {
+				if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
 					$commande->fetch_lines();
@@ -233,8 +233,7 @@ class Delivery extends CommonObject
 						$error++;
 					}
 
-					if (!isModEnabled('expedition_bon')) {
-						// TODO standardize status uniformiser les statuts
+					if (!getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (!$ret) {
 							$error++;
@@ -343,14 +342,14 @@ class Delivery extends CommonObject
 				$this->ref_customer         = $obj->ref_customer;
 				$this->socid                = $obj->fk_soc;
 				$this->statut               = $obj->fk_statut;
+				$this->status               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
-				$this->user_valid_id        = $obj->fk_user_valid;
+				$this->user_validation_id   = $obj->fk_user_valid;
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->note                 = $obj->note_private; //TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->origin               = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
@@ -405,8 +404,8 @@ class Delivery extends CommonObject
 
 		$error = 0;
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery', 'creer'))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
@@ -475,6 +474,12 @@ class Delivery extends CommonObject
 							// Now we rename also files into index
 							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
 							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+							$resql = $this->db->query($sql);
+							if (!$resql) {
+								$error++; $this->error = $this->db->lasterror();
+							}
+							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
+							$sql .= " WHERE filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 							$resql = $this->db->query($sql);
 							if (!$resql) {
 								$error++; $this->error = $this->db->lasterror();
@@ -775,10 +780,11 @@ class Delivery extends CommonObject
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/delivery/card.php?id='.$this->id;
 
@@ -786,7 +792,7 @@ class Delivery extends CommonObject
 		//{
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -794,7 +800,9 @@ class Delivery extends CommonObject
 		}
 		//}
 
-		$linkstart = '<a href="'.$url.'"'.$dataparams.' title="'.dol_escape_htmltag($label, 1).'" class="'.$classfortooltip.'">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
 		if ($withpicto) {
@@ -849,17 +857,16 @@ class Delivery extends CommonObject
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
-				$line->description		= $obj->description;
-				$line->fk_product = $obj->fk_product;
-				$line->qty_asked = $obj->qty_asked;
-				$line->qty_shipped		= $obj->qty_shipped;
+				$line->description	= $obj->description;
+				$line->fk_product 	= $obj->fk_product;
+				$line->qty_asked 	= $obj->qty_asked;
+				$line->qty_shipped	= $obj->qty_shipped;
 
-				$line->ref = $obj->product_ref; // deprecated
-				$line->libelle = $obj->product_label; // deprecated
 				$line->product_label	= $obj->product_label; // Product label
-				$line->product_ref = $obj->product_ref; // Product ref
+				$line->product_ref 		= $obj->product_ref; // Product ref
 				$line->product_desc		= $obj->product_desc; // Product description
 				$line->product_type		= $obj->fk_product_type;
+
 				$line->fk_origin_line = $obj->fk_origin_line;
 
 				$line->price = $obj->subprice;
@@ -896,10 +903,10 @@ class Delivery extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une expedition
+	 *  Return the label of the status
 	 *
-	 *  @param	int			$mode		Mode
-	 *  @return string      			Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -908,11 +915,11 @@ class Delivery extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string					Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode)
 	{
@@ -984,7 +991,7 @@ class Delivery extends CommonObject
 
 		$i = 0;
 		$line = new DeliveryLine($this->db);
-		$line->fk_product     = $prodids[0];
+		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
 		$line->ref            = 'REFPROD';
@@ -1070,7 +1077,7 @@ class Delivery extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		if ($user->rights->expedition->creer) {
+		if ($user->hasRight('expedition', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);

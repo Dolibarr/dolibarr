@@ -293,8 +293,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -579,7 +577,15 @@ class StockTransferLine extends CommonObjectLine
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -723,8 +729,12 @@ class StockTransferLine extends CommonObjectLine
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -757,7 +767,7 @@ class StockTransferLine extends CommonObjectLine
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -867,28 +877,6 @@ class StockTransferLine extends CommonObjectLine
 	}
 
 	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new StockTransferLineLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_stocktransferline = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
-
-	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -905,7 +893,7 @@ class StockTransferLine extends CommonObjectLine
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON;
 
 			// Include file with class
@@ -966,8 +954,8 @@ class StockTransferLine extends CommonObjectLine
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_stocktransferline';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCKTRANSFERLINE_ADDON_PDF)) {
 				$modele = $conf->global->STOCKTRANSFERLINE_ADDON_PDF;
 			}
@@ -991,8 +979,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function doScheduledJob()
 	{
-		global $conf, $langs;
-
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		$error = 0;
@@ -1010,29 +996,5 @@ class StockTransferLine extends CommonObjectLine
 		$this->db->commit();
 
 		return $error;
-	}
-}
-
-/**
- * Class StockTransferLineLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class StockTransferLineLine
-{
-	// To complete with content of an object StockTransferLineLine
-	// We should have a field rowid, fk_stocktransferline and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
 	}
 }

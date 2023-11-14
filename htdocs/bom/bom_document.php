@@ -83,7 +83,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 $permissiontoadd = $user->hasRight('bom', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 

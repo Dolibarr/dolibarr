@@ -21,11 +21,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
@@ -311,7 +329,7 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->facture->lire) {
+		if ($fuser->hasRight('facture', 'lire')) {
 			$invoice = new Facture($db);
 			$result = $invoice->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
@@ -347,8 +365,8 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
 						'thirdparty_id' => $invoice->socid,
-						'fk_user_author' => $invoice->user_author ? $invoice->user_author : '',
-						'fk_user_valid' => $invoice->user_valid ? $invoice->user_valid : '',
+						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
+						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
 						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
 						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
@@ -472,8 +490,8 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 						'id' => $invoice->id,
 						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
-						'fk_user_author' => $invoice->user_author ? $invoice->user_author : '',
-						'fk_user_valid' => $invoice->user_valid ? $invoice->user_valid : '',
+						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
+						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
 						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
 						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
@@ -667,7 +685,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire) {
+		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
 			$result = $order->fetch($id_order, $ref_order, $ref_ext_order);
 			if ($result > 0) {

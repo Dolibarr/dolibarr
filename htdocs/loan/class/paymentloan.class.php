@@ -453,10 +453,10 @@ class PaymentLoan extends CommonObject
 	}
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -635,7 +635,7 @@ class PaymentLoan extends CommonObject
 		$url = DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id;
 
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {

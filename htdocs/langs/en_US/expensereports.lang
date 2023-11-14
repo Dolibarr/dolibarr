@@ -164,3 +164,4 @@ TaxUndefinedForThisCategory = Taxe undefined for this category
 ErrorRecordNotFound=Record not found
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
 ErrorBadValueForParameter=Error bad value for parameter %s
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Error only draft status can be deleted in mass action

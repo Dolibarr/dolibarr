@@ -38,7 +38,7 @@ $langs->load("categories");
 
 // Security check
 $socid = (int) GETPOST('socid', 'int');
-if (!$user->rights->categorie->lire) {
+if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
 
@@ -97,7 +97,7 @@ $error = 0;
  */
 
 // Add action
-if ($action == 'add' && $user->rights->categorie->creer) {
+if ($action == 'add' && $user->hasRight('categorie', 'creer')) {
 	// Action add a category
 	if ($cancel) {
 		if ($urlfrom) {
@@ -167,7 +167,7 @@ if ($action == 'add' && $user->rights->categorie->creer) {
 }
 
 // Confirm action
-if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer) {
+if (($action == 'add' || $action == 'confirmed') && $user->hasRight('categorie', 'creer')) {
 	// Action confirmation of creation category
 	if ($action == 'confirmed') {
 		if ($urlfrom) {
@@ -213,7 +213,7 @@ $help_url = 'EN:Module_Categories|FR:Module_Catégories|DE:Modul_Kategorien';
 
 llxHeader("", $langs->trans("Categories"), $help_url);
 
-if ($user->rights->categorie->creer) {
+if ($user->hasRight('categorie', 'creer')) {
 	// Create or add
 	if ($action == 'create' || GETPOST("addcat") == 'addcat') {
 		dol_set_focus('#label');

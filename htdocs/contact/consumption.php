@@ -175,10 +175,10 @@ if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 
 if ($object->thirdparty->fournisseur) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 
@@ -377,12 +377,12 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element)."&id=".urlencode($id);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
+		$param .= '&limit='.((int) $limit);
 	}
 	if ($sprod_fulldescr) {
 		$param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);

@@ -77,7 +77,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		}
 	}
 
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
+	if (isModEnabled('memcached') && class_exists('Memcached')) {
 		// Using a memcached server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
@@ -98,7 +98,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (isModEnabled('memcached') && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using a memcache server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
@@ -148,7 +148,7 @@ function dol_getcache($memoryid)
 	}
 
 	// Using a memcached server
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
+	if (isModEnabled('memcached') && class_exists('Memcached')) {
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
@@ -173,7 +173,7 @@ function dol_getcache($memoryid)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (isModEnabled('memcached') && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();

@@ -61,8 +61,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Return an array with myobject informations
 	 *
-	 * @param 	int 	$id ID of myobject
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id				ID of myobject
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET myobjects/{id}
 	 *
@@ -93,18 +93,19 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Get a list of myobjects
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /myobjects/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -129,7 +130,7 @@ class MyModuleApi extends DolibarrApi
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
@@ -182,7 +183,7 @@ class MyModuleApi extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new MyObject($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}

@@ -137,7 +137,7 @@ CountryLV=ลัตเวีย
 CountryLB=ประเทศเลบานอน
 CountryLS=เลโซโท
 CountryLR=ประเทศไลบีเรีย
-CountryLY=เกี่ยวกับลิบยา
+CountryLY=Libya
 CountryLI=Liechtenstein
 CountryLT=Lithuania
 CountryLU=ลักเซมเบิร์ก
@@ -247,6 +247,7 @@ CountryJE=นิวเจอร์ซีย์
 CountryME=มอนเตเนโก
 CountryBL=เซนต์บาร์เธเล
 CountryMF=เซนต์มาร์ติน
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=นาง

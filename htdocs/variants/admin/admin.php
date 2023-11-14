@@ -73,7 +73,7 @@ print '<th class="right" width="60">'.$langs->trans("Value").'</th>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
-print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", $conf->global->PRODUIT_ATTRIBUTES_HIDECHILD, 1).'</td></tr>';
+print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD'), 1).'</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {

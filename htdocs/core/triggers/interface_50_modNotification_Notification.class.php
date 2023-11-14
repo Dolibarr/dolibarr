@@ -66,8 +66,24 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $hookmanager;
+
 		if (empty($conf->notification) || !isModEnabled('notification')) {
 			return 0; // Module not active, we do nothing
+		}
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('notification'));
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				$this->listofmanagedevents = array_merge($this->listofmanagedevents, $hookmanager->resArray['arrayofnotifsupported']);
+			}
 		}
 
 		// If the trigger code is not managed by the Notification module
@@ -82,7 +98,6 @@ class InterfaceNotification extends DolibarrTriggers
 
 		return 1;
 	}
-
 
 	/**
 	 * Return list of events managed by notification module
@@ -135,17 +150,17 @@ class InterfaceNotification extends DolibarrTriggers
 					$element = $obj->elementtype;
 
 					// Exclude events if related module is disabled
-					if ($element == 'order_supplier' && ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))) {
+					if ($element == 'order_supplier' && !isModEnabled('supplier_order')) {
 						$qualified = 0;
-					} elseif ($element == 'invoice_supplier' && ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_invoice'))) {
+					} elseif ($element == 'invoice_supplier' && !isModEnabled('supplier_invoice')) {
 						$qualified = 0;
-					} elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) {
+					} elseif ($element == 'withdraw' && !isModEnabled('prelevement')) {
 						$qualified = 0;
-					} elseif ($element == 'shipping' && empty($conf->expedition->enabled)) {
+					} elseif ($element == 'shipping' && !isModEnabled('expedition')) {
 						$qualified = 0;
-					} elseif ($element == 'member' && empty($conf->adherent->enabled)) {
+					} elseif ($element == 'member' && !isModEnabled('adherent')) {
 						$qualified = 0;
-					} elseif (($element == 'expense_report' || $element == 'expensereport') && empty($conf->expensereport->enabled)) {
+					} elseif (($element == 'expense_report' || $element == 'expensereport') && !isModEnabled('expensereport')) {
 						$qualified = 0;
 					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expense_report', 'expensereport')) && empty($conf->$element->enabled)) {
 						$qualified = 0;

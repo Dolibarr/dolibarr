@@ -212,7 +212,7 @@ class FormResource
 					print '<option value="'.$id.'"';
 				}
 				// Si selected est text, on compare avec code, sinon avec id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
+				if (!empty($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
 					print ' selected';
 				} elseif ($selected == $id) {
 					print ' selected';

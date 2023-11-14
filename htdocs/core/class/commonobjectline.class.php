@@ -105,7 +105,15 @@ abstract class CommonObjectLine extends CommonObject
 	public $remise_percent;
 	public $info_bits;
 	public $special_code;
+	public $subprice;
+	public $tva_tx;
 
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 
 	/**

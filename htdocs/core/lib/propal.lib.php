@@ -42,16 +42,19 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && isModEnabled('expedition_bon') && $user->rights->expedition->lire)
-		|| (isModEnabled("expedition") && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
+	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
+		|| (isModEnabled("expedition") && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))))) {
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if (isModEnabled('expedition_bon')) {
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 			$text = $langs->trans("Shipment");
 		}
-		if (isModEnabled('delivery_note')) {
-			$text .= '/'.$langs->trans("Receivings");
+		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+			$text .= '/';
+		}
+		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+			$text .= $langs->trans("Receivings");
 		}
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
@@ -108,7 +111,7 @@ function propal_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -211,7 +214,7 @@ function getCustomerProposalPieChart($socid = 0)
 
 	$result= '';
 
-	if (!isModEnabled('propal') || empty($user->rights->propal->lire)) {
+	if (!isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 		return '';
 	}
 
@@ -222,7 +225,7 @@ function getCustomerProposalPieChart($socid = 0)
 	$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
@@ -230,7 +233,7 @@ function getCustomerProposalPieChart($socid = 0)
 	if ($user->socid) {
 		$sql .= ' AND p.fk_soc = '.((int) $user->socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
@@ -257,6 +260,7 @@ function getCustomerProposalPieChart($socid = 0)
 		}
 		$db->free($resql);
 
+		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$result = '<div class="div-table-responsive-no-min">';

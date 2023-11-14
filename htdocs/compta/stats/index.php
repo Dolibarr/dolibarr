@@ -241,7 +241,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
-	$pcgverid = $conf->global->CHARTOFACCOUNTS;
+	$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
 	$pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 	if (empty($pcgvercode)) {
 		$pcgvercode = $pcgverid;

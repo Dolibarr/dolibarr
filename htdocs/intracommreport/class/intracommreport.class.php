@@ -176,7 +176,7 @@ class IntracommReport extends CommonObject
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
-		$declaration->addChild('declarationTypeCode', $conf->global->{'INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)});
+		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
 		/********************************************************************/

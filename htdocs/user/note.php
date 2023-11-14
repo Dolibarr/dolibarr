@@ -33,6 +33,10 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'usernote'; // To manage different context of search
 
+if (!isset($id) || empty($id)) {
+	accessforbidden();
+}
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'members', 'bills', 'users'));
 

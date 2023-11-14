@@ -227,7 +227,7 @@ print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</
 
 $moduledir = 'stocktransfer';
 $myTmpObjects = array();
-$myTmpObjects[$moduledir]=array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+$myTmpObjects[$moduledir]=array('includerefgeneration'=>1, 'includedocgeneration'=>1, 'class'=>'StockTransfer');
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey == 'MyObject') continue;
@@ -272,7 +272,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -294,7 +294,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$nameofclass = $myTmpObjectArray['class'];
+								$mytmpinstance = new $nameofclass($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info

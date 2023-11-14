@@ -749,29 +749,32 @@ class AdherentType extends CommonObject
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params='.json_encode($params);
-			// $label = $langs->trans('Loading');
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
-
-		$label = implode($this->getTooltipContentArray($params));
 
 		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'"'.$dataparams.' class="'.$classfortooltip.'">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
+
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="'.(($withpicto != 2) ? 'paddingright' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
@@ -838,13 +841,13 @@ class AdherentType extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS_TYPES."=".$info[$conf->global->LDAP_KEY_MEMBERS_TYPES].",".$conf->global->LDAP_MEMBER_TYPE_DN;
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]."," . getDolGlobalString('LDAP_MEMBER_TYPE_DN');
 		}
 		if ($mode == 1) {
 			$dn = $conf->global->LDAP_MEMBER_TYPE_DN;
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS_TYPES."=".$info[$conf->global->LDAP_KEY_MEMBERS_TYPES];
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')];
 		}
 		return $dn;
 	}
@@ -872,13 +875,13 @@ class AdherentType extends CommonObject
 		}
 
 		// Champs
-		if ($this->label && !empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
+		if ($this->label && getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')) {
+			$info[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')] = $this->label;
 		}
-		if ($this->note_public && !empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_public, 0, 'UTF-8', 1);
+		if ($this->note_public && getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')) {
+			$info[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_public, 0, 'UTF-8', 1);
 		}
-		if (!empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS)) {
+		if (getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')) {
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$member = new Adherent($this->db);
@@ -886,7 +889,7 @@ class AdherentType extends CommonObject
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}
-			$info[$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
+			$info[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
 		return $info;
 	}
@@ -993,7 +996,7 @@ class AdherentType extends CommonObject
 	{
 		global $langs, $user;
 
-		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		//$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -1001,10 +1004,12 @@ class AdherentType extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if ($user->rights->adherent->configurer) {
-			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$this->ref.'">'.img_edit().'</a></span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+
+		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+
+		if ($user->hasRight('adherent', 'configurer')) {
+			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}

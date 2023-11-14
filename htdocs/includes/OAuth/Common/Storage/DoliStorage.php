@@ -223,8 +223,10 @@ class DoliStorage implements TokenStorageInterface
 		//if (is_array($tokens) && array_key_exists($service, $tokens)) {
 		//    unset($tokens[$service]);
 
+		$servicepluskeyforprovider = $service.($this->keyforprovider ? '-'.$this->keyforprovider : '');
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE service = '".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."'";
+		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 		$resql = $this->db->query($sql);
 		//}
@@ -238,8 +240,16 @@ class DoliStorage implements TokenStorageInterface
 	 */
 	public function clearAllTokens()
 	{
-		// TODO
-		$this->conf->remove($this->key);
+		// TODO Remove token using a loop on each $service
+		/*
+		$servicepluskeyforprovider = $service;
+		if (!empty($this->keyforprovider)) {
+			// We clean the keyforprovider after the - to be sure it is not present
+			$servicepluskeyforprovider = preg_replace('/\-'.preg_quote($this->keyforprovider, '/').'$/', '', $servicepluskeyforprovider);
+			// Now we add the keyforprovider
+			$servicepluskeyforprovider .= '-'.$this->keyforprovider;
+		}
+		*/
 
 		// allow chaining
 		return $this;
@@ -276,9 +286,10 @@ class DoliStorage implements TokenStorageInterface
 
 		//$newstate = preg_replace('/\-.*$/', '', $state);
 		$newstate = $state;
+		$servicepluskeyforprovider = $service.($this->keyforprovider ? '-'.$this->keyforprovider : '');
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE service = '".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."'";
+		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 		$resql = $this->db->query($sql);
 		if (! $resql) {
@@ -294,7 +305,7 @@ class DoliStorage implements TokenStorageInterface
 		} else {
 			// insert (should not happen)
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, state, entity)";
-			$sql.= " VALUES ('".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).")";
+			$sql.= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 		}
 
@@ -310,8 +321,10 @@ class DoliStorage implements TokenStorageInterface
 		// get state from db
 		dol_syslog("hasAuthorizationState service=".$service);
 
+		$servicepluskeyforprovider = $service.($this->keyforprovider ? '-'.$this->keyforprovider : '');
+
 		$sql = "SELECT state FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE service = '".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."'";
+		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 
 		$resql = $this->db->query($sql);
@@ -334,7 +347,6 @@ class DoliStorage implements TokenStorageInterface
 	{
 		// TODO
 		// get previously saved tokens
-		//$states = $this->conf->get($this->stateKey);
 
 		if (is_array($this->states) && array_key_exists($service, $this->states)) {
 			unset($this->states[$service]);
@@ -353,7 +365,6 @@ class DoliStorage implements TokenStorageInterface
 	public function clearAllAuthorizationStates()
 	{
 		// TODO
-		//$this->conf->remove($this->stateKey);
 
 		// allow chaining
 		return $this;

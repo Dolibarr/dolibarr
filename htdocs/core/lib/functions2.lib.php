@@ -113,8 +113,8 @@ function dolGetModulesDirs($subdir = '')
 /**
  *  Try to guess default paper format according to language into $langs
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
- *	@return		string							Default paper format code
+ *	@param		Translate|null	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@return		string								Default paper format code
  */
 function dol_getDefaultFormat(Translate $outputlangs = null)
 {
@@ -259,7 +259,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
+			$userstatic->fetch($object->user_creation_id);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -314,7 +314,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
+			$userstatic->fetch($object->user_modification_id);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -563,10 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
-		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
-			$object->user_closing = $object->user_cloture;
-		}
+	if (!empty($object->user_closing_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -576,20 +573,12 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_closing)) {
-			if ($object->user_closing->id) {
-				print $object->user_closing->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+		$userstatic = new User($db);
+		$userstatic->fetch($object->user_closing_id);
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $langs->trans("Unknown");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -1280,10 +1269,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
+	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
 	}
@@ -1346,7 +1336,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1408,7 +1398,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike)."'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -1936,14 +1926,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
+	$resql_models = $db->query($sql);
+	if ($resql_models) {
+		$num = $db->num_rows($resql_models);
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
-			$obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql_models);
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -2047,7 +2037,7 @@ function dol_buildlogin($lastname, $firstname)
 	global $conf;
 
 	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
-	if (!empty($conf->global->MAIN_BUILD_LOGIN_RULE) && $conf->global->MAIN_BUILD_LOGIN_RULE == 'f.lastname') {	// f.lastname
+	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? '.' : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2376,6 +2366,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
 		return $totalnb;
 	}
+	return -1;
 }
 
 
@@ -2668,7 +2659,9 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
+	} elseif ($moduleobject == 'accounting') {
+		$moduledirforclass = 'accountancy';
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
 
@@ -2887,10 +2880,12 @@ function acceptLocalLinktoMedia()
 		}
 
 		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+		$allowParamName = 'MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK';
+		$allowPrivateNetworkIP = getDolGlobalInt($allowParamName);
+		if (!$allowPrivateNetworkIP && !filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// If ip of public url is a private network IP, we do not allow this.
 			$acceptlocallinktomedia = 0;
-			// TODO Show a warning
+			//dol_syslog("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local URL into WYSIWYG html content");
 		}
 
 		if (preg_match('/http:/i', $urlwithouturlroot)) {
@@ -2906,4 +2901,43 @@ function acceptLocalLinktoMedia()
 
 	//return 1;
 	return $acceptlocallinktomedia;
+}
+
+
+/**
+ * Remove first and last parenthesis but only if first is the opening and last the closing of the same group
+ *
+ * @param 	string	$string		String to sanitize
+ * @return 	string				String without global parenthesis
+ */
+function removeGlobalParenthesis($string)
+{
+	$string = trim($string);
+
+	// If string does not start and end with parenthesis, we return $string as is.
+	if (! preg_match('/^\(.*\)$/', $string)) {
+		return $string;
+	}
+
+	$nbofchars = dol_strlen($string);
+	$i = 0; $g = 0;
+	$countparenthesis = 0;
+	while ($i < $nbofchars) {
+		$char = dol_substr($string, $i, 1);
+		if ($char == '(') {
+			$countparenthesis++;
+		} elseif ($char == ')') {
+			$countparenthesis--;
+			if ($countparenthesis <= 0) {	// We reach the end of an independent group of parenthesis
+				$g++;
+			}
+		}
+		$i++;
+	}
+
+	if ($g <= 1) {
+		return preg_replace('/^\(/', '', preg_replace('/\)$/', '', $string));
+	}
+
+	return $string;
 }

@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'deplacement', $id, '');
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
 if ($userid > 0) {
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous) && !in_array($userid, $childids)) {
+	if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous') && !in_array($userid, $childids)) {
 		accessforbidden();
 		exit;
 	}
@@ -89,7 +89,7 @@ dol_mkdir($dir);
 $useridtofilter = $userid; // Filter from parameters
 if (empty($useridtofilter)) {
 	$useridtofilter = $childids;
-	if (!empty($user->rights->deplacement->readall) || !empty($user->rights->deplacement->lire_tous)) {
+	if ($user->hasRight('deplacement', 'readall') || $user->hasRight('deplacement', 'lire_tous')) {
 		$useridtofilter = 0;
 	}
 }
@@ -164,7 +164,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -242,14 +242,13 @@ print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter = '';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print $form->select_company($socid, 'socid', $filter, 1, 1, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
+print $form->select_company($socid, 'socid', '', 1, 1, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include = '';
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
 	$include = 'hierarchy';
 }
 print img_picto('', 'user', 'class="pictofixedwidth"');

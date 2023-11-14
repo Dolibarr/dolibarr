@@ -67,57 +67,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe object that emits
-	 */
-	public $emetteur;
 
 
 	/**
@@ -175,8 +128,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$this->posxqty = 132;
 			$this->posxunit = 147;
 		} else {
-			$this->posxtva = 110;
-			$this->posxup = 126;
+			$this->posxtva = 106;
+			$this->posxup = 122;
 			$this->posxqty = 145;
 			$this->posxunit = 162;
 		}
@@ -336,7 +289,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -609,10 +562,18 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// retrieve global local tax
 					if ($localtax1_type && $localtax1ligne != 0) {
-						$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+						} else {
+							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						}
 					}
 					if ($localtax2_type && $localtax2ligne != 0) {
-						$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+						} else {
+							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						}
 					}
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
@@ -752,6 +713,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -771,9 +733,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		global $conf, $mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
+		$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+
 		// If France, show VAT mention if not applicable
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
@@ -784,12 +748,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Show payments conditions
 		if (!empty($object->cond_reglement_code) || $object->cond_reglement_id) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
@@ -800,12 +764,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Show payment mode
 		if (!empty($object->mode_reglement_code)) {
-			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentMode").':';
 			$pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
 			$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 			$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
@@ -894,7 +858,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
 
 			// Total LocalTax1
-			if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION == 'localtax1on' && $object->total_localtax1 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on' && $object->total_localtax1 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code), 0, 'L', 1);
@@ -903,7 +867,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 
 			// Total LocalTax2
-			if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION == 'localtax2on' && $object->total_localtax2 > 0) {
+			if (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on' && $object->total_localtax2 > 0) {
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code), 0, 'L', 1);
@@ -1158,6 +1122,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
+		$w = 100;
+
 		$posx = $this->page_largeur - $this->marge_droite - 100;
 		$posy = $this->marge_haute;
 
@@ -1181,12 +1147,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				} else {
 					$pdf->SetTextColor(200, 0, 0);
 					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
+					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 				}
 			} else {
 				$text = $this->emetteur->name;
-				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
+				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
 			}
 		}
 
@@ -1194,7 +1160,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref);
-		$pdf->MultiCell(100, 3, $title, '', 'R');
+		$pdf->MultiCell($w, 3, $title, '', 'R');
 		$posy += 1;
 
 		if ($object->ref_supplier) {
@@ -1202,7 +1168,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".$outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefSupplier")." : ".$outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
 			$posy += 1;
 		}
 
@@ -1226,7 +1192,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 
@@ -1234,12 +1200,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
 		} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1257,7 +1223,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 		// Get contact
@@ -1269,7 +1235,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -1287,11 +1253,18 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
-			// Add internal contact of proposal if defined
+			// Add internal contact of object if defined
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);

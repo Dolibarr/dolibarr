@@ -325,7 +325,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $user->rights->expensereport->creer) {
+	if (($action == 'update' || $action == 'updateFromRefuse') && $user->rights->expensereport->creer) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -1559,7 +1559,7 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-			print '<table class="border" style="width:100%;">';
+			print '<table class="border centpercent">';
 
 			print '<tr>';
 			print '<td>'.$langs->trans("User").'</td>';
@@ -2031,6 +2031,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder centpercent">';
@@ -2049,7 +2050,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td class="center linecoldescription">'.$langs->trans('Description').'</td>';
+				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
 				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
@@ -2075,7 +2076,7 @@ if ($action == 'create') {
 				foreach ($object->lines as &$line) {
 					$numline = $i + 1;
 
-					if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int')) {
+					if ($action != 'editline' || $line->id != GETPOST('rowid', 'int')) {
 						print '<tr class="oddeven linetr" data-id="'.$line->id.'">';
 
 						// Num
@@ -2088,7 +2089,7 @@ if ($action == 'create') {
 
 						// Project
 						if (isModEnabled('project')) {
-							print '<td class="center dateproject">';
+							print '<td class="lineproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
 								$projecttmp->ref = $line->projet_ref;
@@ -2245,7 +2246,7 @@ if ($action == 'create') {
 						print '</tr>';
 					}
 
-					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
+					if ($action == 'editline' && $line->id == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
 						if (isModEnabled('project')) {
@@ -2336,7 +2337,7 @@ if ($action == 'create') {
 
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 							print '<td class="fk_c_exp_tax_cat">';
-							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->id, 'date' => $line->date);
 							print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 							print '</td>';
 						}
@@ -2483,7 +2484,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td class="right expensereportcreatedescription">'.$langs->trans('Description').'</td>';
+				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
 				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
 				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
@@ -2562,7 +2563,7 @@ if ($action == 'create') {
 				}
 
 				print '<td class="center inputbuttons">';
-				print $form->buttonsSaveCancel("Add", '', '', 1);
+				print $form->buttonsSaveCancel("Add", '', '', 1, 'reposition');
 				print '</td>';
 
 				print '</tr>';
@@ -2592,42 +2593,52 @@ if ($action == 'create') {
 			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 				print '
 
-                /* unit price coéf calculation */
+                /* unit price coef calculation */
                 jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
+					console.log("We change a parameter");
 
                     let type_fee = jQuery("#fk_c_type_fees").find(":selected").val();
                     let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
                     let tva = jQuery("#vatrate").find(":selected").val();
                     let qty = jQuery(".input_qty").val();
 
-
-
-					let path = "'.dol_buildpath("/expensereport/ajax/ajaxik.php", 1) .'";
+					let path = "'.DOL_DOCUMENT_ROOT.'/expensereport/ajax/ajaxik.php";
 					path += "?fk_c_exp_tax_cat="+tax_cat;
-					path +="&fk_expense="+'.$object->id.';
+					path += "&fk_expense="+'.((int) $object->id).';
                     path += "&vatrate="+tva;
                     path += "&qty="+qty;
 
                     if (type_fee == 4) { // frais_kilométriques
-
                         if (tax_cat == "" || parseInt(tax_cat) <= 0){
                             return ;
                         }
 
 						jQuery.ajax({
-							url: path
-							,async:false
-							,dataType:"json"
-							,success:function(response) {
-                                if (response.response_status == "success"){
-                                jQuery("#value_unit_ht").val(response.data);
-                                jQuery("#value_unit_ht").trigger("change");
-                                jQuery("#value_unit").val("");
-                                } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ){
+							url: path,
+							async: true,
+							dataType: "json",
+							success: function(response) {
+								if (response.response_status == "success"){';
+
+				if (!empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY)) {
+					print '
+									jQuery("#value_unit").val(parseFloat(response.data) * (100 + parseFloat(tva)) / 100);
+									jQuery("#value_unit").trigger("change");
+				                    ';
+				} else {
+					print '
+									jQuery("#value_unit_ht").val(response.data);
+									jQuery("#value_unit_ht").trigger("change");
+									jQuery("#value_unit").val("");
+									';
+				}
+
+				print '
+                                } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ) {
+									console.log("We get an error result");
                                     $.jnotify(response.errorMessage, "error", {timeout: 0, type: "error"},{ remove: function (){} } );
                                 }
-							},
-
+							}
 						});
                     }
 
@@ -2767,8 +2778,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED) {
-		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
+	if (($user->rights->expensereport->to_paid || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}

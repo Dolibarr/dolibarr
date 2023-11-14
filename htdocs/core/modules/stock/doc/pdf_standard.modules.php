@@ -38,44 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_standard extends ModelePDFStock
 {
-	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
-	 * @var string model description (short text)
-	 */
-	public $description;
-
-	/**
-	 * @var string document type
-	 */
-	public $type;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $wref;
 	public $posxdesc;
 	public $posxlabel;
@@ -117,7 +79,6 @@ class pdf_standard extends ModelePDFStock
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
-		$this->option_codestockservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
@@ -238,7 +199,7 @@ class pdf_standard extends ModelePDFStock
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (empty($conf->global->MAIN_DISABLE_FPDI) && !empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -797,7 +758,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 
-		// Parent entrepot
+		// Parent warehouse
 		$e = new Entrepot($this->db);
 		$hasparent = (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0);
 

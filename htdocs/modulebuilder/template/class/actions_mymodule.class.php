@@ -23,10 +23,12 @@
  * Put detailed description here.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
 /**
  * Class ActionsMyModule
  */
-class ActionsMyModule
+class ActionsMyModule extends CommonHookActions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -296,7 +298,7 @@ class ActionsMyModule
 		global $user;
 
 		if ($parameters['features'] == 'myobject') {
-			if ($user->rights->mymodule->myobject->read) {
+			if ($user->hasRight('mymodule', 'myobject', 'read')) {
 				$this->results['result'] = 1;
 				return 1;
 			} else {
@@ -327,11 +329,11 @@ class ActionsMyModule
 			return 0;
 		}
 		if ($parameters['mode'] == 'remove') {
-			// utilisé si on veut faire disparaitre des onglets.
+			// used to make some tabs removed
 			return 0;
 		} elseif ($parameters['mode'] == 'add') {
 			$langs->load('mymodule@mymodule');
-			// utilisé si on veut ajouter des onglets.
+			// used when we want to add some tabs
 			$counter = count($parameters['head']);
 			$element = $parameters['object']->element;
 			$id = $parameters['object']->id;
@@ -356,6 +358,9 @@ class ActionsMyModule
 				// en V14 et + $parameters['head'] est modifiable par référence
 				return 0;
 			}
+		} else {
+			// Bad value for $parameters['mode']
+			return -1;
 		}
 	}
 

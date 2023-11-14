@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=E-Mail-Adresse durch manuelle Eingabe hinzufüge
 MailingModuleDescDolibarrUsers=Benutzer mit E-Mail-Adresse
 MailingModuleDescThirdPartiesByCategories=Geschäftspartner
 SendingFromWebInterfaceIsNotAllowed=Versand vom Webinterface ist nicht erlaubt
-EmailCollectorFilterDesc=Alle Filter müssen übereinstimmen, damit eine E-Mail erfasst wird
+EmailCollectorFilterDesc=Alle Filter müssen übereinstimmen, damit eine E-Mail erfasst wird. <br>Sie können das Zeichen "!" vor dem Wert der Suchzeichenfolge verwenden, wenn Sie einen negativen Test benötigen
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Zeile %s in der Datei
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Standardwert für Feld '%s' beim Anlegen eines neu
 DefaultStatusEmptyMandatory=Leer aber erforderlich
 WarningLimitSendByDay=WARNUNG: Die Konfiguration oder der Vertrag Ihrer Instanz begrenzt Ihre Anzahl von E-Mails pro Tag auf <b> %s </b>. Der Versuch mehr zu senden kann dazu führen, dass Ihre Instanz langsamer wird oder ausgesetzt wird. Bitte wenden Sie sich an Ihren Support, wenn Sie ein höheres Kontingent benötigen.
 NoMoreRecipientToSendTo=Kein weiteren Empfänger, an die die E-Mail gesendet werden kann
+EmailOptedOut=Der Inhaber der E-Mail-Adresse hat darum gebeten, ihn nicht mehr über diese Adresse zu kontaktieren
+EvenUnsubscribe=Auch als Opt-Out markierte E-Mail-Adressen hinzufügen
+EvenUnsubscribeDesc=Schließen Sie auch E-Mail-Adressen mit Opt-out-Status ein, wenn Sie E-Mail-Empfänger auswählen. Nützlich zum Beispiel für obligatorische Service-E-Mails.
+XEmailsDoneYActionsDone=%s E-Mails vorqualifiziert, %s E-Mails erfolgreich verarbeitet (für %s Aufzeichnung(en)/Aktion(en) durchgeführt)

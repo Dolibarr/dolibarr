@@ -277,11 +277,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$reg = array();
 			$fromtype = GETPOST('fromtype', 'alpha');
 			if ($fromtype === 'robot') {
-				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")).' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
+				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
 			} elseif ($fromtype === 'user') {
 				$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 			} elseif ($fromtype === 'company') {
-				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
 				$from = trim($tmp[($reg[1] - 1)]);
@@ -295,6 +295,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+				}
+			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+				$sql = 'SELECT rowid, email_from FROM '.MAIN_DB_PREFIX.'c_email_templates';
+				$sql .= ' WHERE rowid = '.(int) $reg[1];
+				$resql = $db->query($sql);
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$from = $obj->email_from;
 				}
 			} else {
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
@@ -314,7 +322,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// Autocomplete the $sendtobcc
 			// $autocopy can be MAIN_MAIL_AUTOCOPY_PROPOSAL_TO, MAIN_MAIL_AUTOCOPY_ORDER_TO, MAIN_MAIL_AUTOCOPY_INVOICE_TO, MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO...
 			if (!empty($autocopy)) {
-				$sendtobcc .= (empty($conf->global->$autocopy) ? '' : (($sendtobcc ? ", " : "").$conf->global->$autocopy));
+				$sendtobcc .= (empty($conf->global->$autocopy) ? '' : (($sendtobcc ? ", " : "") . getDolGlobalString($autocopy)));
 			}
 
 			$deliveryreceipt = GETPOST('deliveryreceipt');
@@ -346,7 +354,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 			$substitutionarray['__EMAIL__'] = $sendto;
-			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 
 			$parameters = array('mode'=>'formemail');
 			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
@@ -370,7 +378,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$action = 'presend';
 			} else {
 				$result = $mailfile->sendfile();
-				if ($result) {
+				if ($result >= 0) {
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
 						if (empty($actiontypecode)) {

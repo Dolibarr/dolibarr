@@ -105,7 +105,7 @@ class MailmanSpip
 	 */
 	public function connectSpip()
 	{
-		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalString('ADHERENT_SPIP_PORT'));
+		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalInt('ADHERENT_SPIP_PORT'));
 
 		if ($resource->ok) {
 			return $resource;
@@ -287,8 +287,8 @@ class MailmanSpip
 	 *  Subscribe an email to all mailing-lists
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array	$listes    	To force mailing-list (string separated with ,)
-	 *  @return	int		  			<0 if KO, >=0 if OK
+	 *  @param	array		$listes    	To force mailing-list (string separated with ,)
+	 *  @return	int		  				<0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
 	{
@@ -306,7 +306,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if ($conf->adherent->enabled) {	// Synchro for members
+		if (isModEnabled('adherent')) {	// Synchro for members
 			if (!empty($conf->global->ADHERENT_MAILMAN_URL)) {
 				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
 					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
@@ -347,6 +347,8 @@ class MailmanSpip
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -374,7 +376,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if ($conf->adherent->enabled) {	// Synchro for members
+		if (isModEnabled('adherent')) {	// Synchro for members
 			if (!empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL)) {
 				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
 					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
@@ -415,5 +417,7 @@ class MailmanSpip
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 }

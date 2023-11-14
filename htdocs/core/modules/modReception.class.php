@@ -16,11 +16,12 @@
  */
 
 /**
- *	\defgroup   reception     Module reception
- *	\brief      Module pour gerer les réceptions de produits
- *	\file       htdocs/core/modules/modReception.class.php
- *	\ingroup    reception
- *	\brief      Description and activation file for the module Reception
+ *  \defgroup   reception     Module Reception
+ *  \brief      Module to manage receptions of products
+ *
+ *  \file       htdocs/core/modules/modReception.class.php
+ *  \ingroup    reception
+ *  \brief      Description and activation file for the module Reception
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -226,7 +227,7 @@ class modReception extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'reception as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'reception_extrafields as extra ON c.rowid = extra.fk_object,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
@@ -242,7 +243,7 @@ class modReception extends DolibarrModules
 		}
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_reception AND ed.fk_commandefourndet = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('reception').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 	}
@@ -282,8 +283,10 @@ class modReception extends DolibarrModules
 		$sql = array();
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'reception' AND entity = ".((int) $conf->entity),
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','reception',".((int) $conf->entity).")",
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'reception' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','reception',".((int) $conf->entity).")",
+			//"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name IN ('STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE') AND entity = ".((int) $conf->entity),
+			//"INSERT INTO ".MAIN_DB_PREFIX."const (name, value, entity) VALUES ('STOCK_CALCULATE_ON_RECEPTION_CLOSE', 1, ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

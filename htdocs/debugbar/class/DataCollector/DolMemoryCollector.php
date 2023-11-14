@@ -21,7 +21,7 @@
  *	\ingroup    debugbar
  */
 
-use \DebugBar\DataCollector\MemoryCollector;
+use DebugBar\DataCollector\MemoryCollector;
 
 /**
  * DolMemoryCollector class

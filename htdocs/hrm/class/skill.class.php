@@ -114,8 +114,8 @@ class Skill extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'required_level' => array('type'=>'integer', 'label'=>'requiredLevel', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0,),
 		'date_validite' => array('type'=>'integer', 'label'=>'date_validite', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>0,),
 		'temps_theorique' => array('type'=>'double(24,8)', 'label'=>'temps_theorique', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>0,),
@@ -401,7 +401,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array         <0 if KO, array of skill level found
+	 * @return array|int         <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -417,6 +417,7 @@ class Skill extends CommonObject
 			$this->error = $skilldet->error;
 			return $this->lines;
 		}
+		return [];
 	}
 
 
@@ -552,7 +553,7 @@ class Skill extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -607,7 +608,7 @@ class Skill extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILL_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILL_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -623,6 +624,12 @@ class Skill extends CommonObject
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'skill/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skill/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -776,13 +783,14 @@ class Skill extends CommonObject
 		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
+		$label .= '<br><b>'.$langs->trans('Description').':</b> '.dol_htmlentitiesbr(dolGetFirstLineOfText($this->description, 10), 1);
 
 		$url = dol_buildpath('/hrm/skill_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -832,7 +840,7 @@ class Skill extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -886,6 +894,10 @@ class Skill extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
+		if (empty($status)) {
+			$status = 0;
+		}
+
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
@@ -923,6 +935,7 @@ class Skill extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -991,7 +1004,7 @@ class Skill extends CommonObject
 		if (!empty($conf->global->hrm_SKILL_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILL_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILL_ADDON;
 
 			// Include file with class
@@ -1133,8 +1146,10 @@ class Skill extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'skill_type')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';
 			$return .= ' : <span class="info-box-label ">'.$this->fields['skill_type']['arrayofkeyval'][$this->skill_type].'</span>';

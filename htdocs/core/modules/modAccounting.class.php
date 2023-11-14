@@ -57,7 +57,7 @@ class modAccounting extends DolibarrModules
 		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array('/accounting/temp');
+		$this->dirs = array('/accounting/temp', '/accounting/export');
 
 		// Config pages
 		$this->config_page_url = array('accounting.php?mainmenu=accountancy&leftmenu=accountancy_admin');
@@ -122,18 +122,6 @@ class modAccounting extends DolibarrModules
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
 				"",
-				"", 0, 'current', 0
-		);
-		$this->const[9] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
-				"yesno",
-				"1",
-				"", 0, 'current', 0
-		);
-		$this->const[10] = array(
-				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
-				"yesno",
-				"1",
 				"", 0, 'current', 0
 		);
 		$this->const[11] = array(

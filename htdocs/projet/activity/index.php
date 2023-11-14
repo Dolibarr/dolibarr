@@ -48,7 +48,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'projet', $projectid);
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -79,7 +79,7 @@ llxHeader("", $title);
 
 // Title for combo list see all projects
 $titleall = $langs->trans("AllAllowedProjects");
-if (!empty($user->rights->projet->all->lire) && !$socid) {
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllProjects");
 } else {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
@@ -97,7 +97,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyTasksDesc");
 } else {
-	if ($user->rights->projet->all->lire && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("TasksDesc");
 	} else {
 		$tooltiphelp = $langs->trans("TasksPublicDesc");
@@ -231,7 +231,7 @@ if ($db->type != 'pgsql')
 	$sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
-	$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+	$sql.= " , ".MAIN_DB_PREFIX."element_time as tt";
 	$sql.= " WHERE t.fk_projet = p.rowid";
 	$sql.= " AND p.entity = ".((int) $conf->entity);
 	$sql.= " AND tt.fk_task = t.rowid";
@@ -422,7 +422,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	if ($mine || empty($user->rights->projet->all->lire)) {
+	if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	}
 	if ($mine) {     // this may duplicate record if we are contact twice

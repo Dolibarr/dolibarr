@@ -24,15 +24,45 @@
  *	\ingroup    banque
  *	\brief      File to build payment reports
  */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	Classe permettant de generer les rapports de paiement
+ *	Class to manage reporting of payments
  */
-class pdf_paiement
+class pdf_paiement extends CommonDocGenerator
 {
+	public $tab_top;
+
+	public $line_height;
+
+	public $line_per_page;
+
+	public $tab_height;
+
+	public $posxdate;
+
+	public $posxpaymenttype;
+	public $posxinvoice;
+	public $posxbankaccount;
+	public $posxinvoiceamount;
+	public $posxpaymentamount;
+
+	public $doc_type;
+
+	/**
+	 * @var int
+	 */
+	public $year;
+
+	/**
+	 * @var int
+	 */
+	public $month;
+
 	/**
 	 *  Constructor
 	 *
@@ -145,9 +175,9 @@ class pdf_paiement
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
+		$parameters = array('file'=>$file, 'object'=>$this, 'outputlangs'=>$outputlangs);
 		global $action;
-		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $this, $action); // Note that $action and $this may have been modified by some hooks
 
 		$pdf = pdf_getInstance($this->format);
 		$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
@@ -196,7 +226,7 @@ class pdf_paiement
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
@@ -205,7 +235,7 @@ class pdf_paiement
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
@@ -234,7 +264,7 @@ class pdf_paiement
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
@@ -243,7 +273,7 @@ class pdf_paiement
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
@@ -335,7 +365,7 @@ class pdf_paiement
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+		$parameters = array('file'=>$file, 'object'=>$this, 'outputlangs'=>$outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {

@@ -36,11 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_ban extends ModeleBankAccountDoc
 {
 	/**
-	 * @var Societe Issuer
-	 */
-	public $emetteur;
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'development';
@@ -52,7 +47,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
@@ -388,6 +383,6 @@ class pdf_ban extends ModeleBankAccountDoc
 		global $conf;
 
 		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		//return pdf_pagefoot($pdf,$outputlangs,'BANK_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return 1;
 	}
 }
