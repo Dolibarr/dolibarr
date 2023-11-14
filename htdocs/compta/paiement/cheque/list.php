@@ -128,6 +128,8 @@ if (empty($reshook)) {
 		$search_date_endday = '';
 		$search_date_endmonth = '';
 		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 	}
 }
 
