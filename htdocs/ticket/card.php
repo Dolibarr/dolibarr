@@ -173,22 +173,34 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			$object->ref = GETPOST("ref", 'alphanohtml');
-			$object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
-			$object->subject = GETPOST("subject", 'alphanohtml');
-			$object->message = GETPOST("message", 'restricthtml');
+			$getRef = GETPOST("ref", 'alphanohtml');
+			$test = new Ticket($db);
+			if ($test->fetch('', $getRef) > 0) {
+				$object->ref = $object->getDefaultRef();
+				$object->track_id = null;
+				setEventMessage($langs->trans('TicketRefAlreadyUsed', $getRef, $object->ref));
+			}
+			else {
+				$object->ref = $getRef;
+			}
 
-			$object->type_code = GETPOST("type_code", 'alpha');
-			$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
-			$object->category_code = GETPOST("category_code", 'alpha');
-			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
-			$object->severity_code = GETPOST("severity_code", 'alpha');
-			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
-			$object->email_from = $user->email;
-			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
-			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
+			$object->fk_soc 					= $object->socid = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
+			$object->subject 					= GETPOST("subject", 'alphanohtml');
+			$object->message 					= GETPOST("message", 'restricthtml');
 
-			$object->fk_project = $projectid;
+			$object->type_code 					= GETPOST("type_code", 'alpha');
+			$object->type_label 				= $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
+			$object->category_code 				= GETPOST("category_code", 'alpha');
+			$object->category_label 			= $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
+			$object->severity_code 				= GETPOST("severity_code", 'alpha');
+			$object->severity_label 			= $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
+			$object->fk_user_create 			= $user->id;
+			$object->email_from 				= $user->email;
+			$object->origin_email 				= null;
+			$notifyTiers 						= GETPOST("notify_tiers_at_create", 'alpha');
+			$object->notify_tiers_at_create 	= empty($notifyTiers) ? 0 : 1;
+
+			$object->fk_project 				= $projectid;
 
 			// File transfer
 			$object->copyFilesForTicket();
@@ -894,8 +906,8 @@ if ($action == 'create' || $action == 'presend') {
 				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
 			}
 			if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && !empty($object->socid)) {
-				$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc">'.
-				img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+				$morehtmlref .= ' ( <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc">'.
+				$langs->trans("TicketHistory").'</a> )';
 			}
 		}
 
@@ -913,7 +925,7 @@ if ($action == 'create' || $action == 'presend') {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1, 1, 0, 0, '', 1, 0, 'maxwidth500');
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {

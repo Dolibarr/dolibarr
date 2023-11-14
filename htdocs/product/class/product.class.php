@@ -249,6 +249,11 @@ class Product extends CommonObject
 	public $duration_unit;
 
 	/**
+	 * Service Workstation
+	 */
+	public $fk_default_workstation;
+
+	/**
 	 * Status indicates whether the product is on sale '1' or not '0'
 	 *
 	 * @var int
@@ -268,6 +273,13 @@ class Product extends CommonObject
 	 * @var int
 	 */
 	public $finished;
+
+	/**
+	 * fk_default_bom indicates the default bom
+	 *
+	 * @var int
+	 */
+	public $fk_default_bom;
 
 	/**
 	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
@@ -355,6 +367,8 @@ class Product extends CommonObject
 	public $stats_facture = array();
 	public $stats_commande_fournisseur = array();
 	public $stats_reception = array();
+	public $stats_mo = array();
+	public $stats_bom = array();
 	public $stats_mrptoconsume = array();
 	public $stats_mrptoproduce = array();
 
@@ -440,6 +454,12 @@ class Product extends CommonObject
 	 */
 	public $is_object_used;
 
+	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var boolean
+	 */
+	public $stockable_product = 1;
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -491,6 +511,7 @@ class Product extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		'stockable_product'	=>array('type'=>'integer', 'label'=>'stockable_product', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>502),
 	);
 
 	/**
@@ -510,6 +531,12 @@ class Product extends CommonObject
 	 */
 	const TYPE_STOCKKIT = 3;
 
+	/**
+	 * Stockable product
+	 */
+	const NOT_MANAGED_IN_STOCK = 0;
+	const DISABLED_STOCK = 0;
+	const ENABLED_STOCK = 1;
 
 	/**
 	 *  Constructor
@@ -602,6 +629,9 @@ class Product extends CommonObject
 		}
 		if (empty($this->status_buy)) {
 			$this->status_buy = 0;
+		}
+		if (empty($this->stockable_product)) {
+			$this->stockable_product = 0;
 		}
 
 		$price_ht = 0;
@@ -725,6 +755,7 @@ class Product extends CommonObject
 					$sql .= ", sell_or_eat_by_mandatory";
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
+					$sql .= ", stockable_product";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($now)."'";
 					$sql .= ", ".$conf->entity;
@@ -753,7 +784,8 @@ class Product extends CommonObject
 					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
 					$sql .= ", ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : ((int) $this->sell_or_eat_by_mandatory));
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
-					$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
+					$sql .= ", ".((int) $this->stockable_product);
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -1014,7 +1046,11 @@ class Product extends CommonObject
 			$this->state_id = 0;
 		}
 
-		// Barcode value
+		if (empty($this->stockable_product)) {
+			$this->stockable_product = 0;
+		}
+
+			// Barcode value
 		$this->barcode = trim($this->barcode);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -1119,6 +1155,7 @@ class Product extends CommonObject
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
 			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
+			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
 			$sql .= ", weight = ".($this->weight != '' ? "'".$this->db->escape($this->weight)."'" : 'null');
@@ -1134,6 +1171,7 @@ class Product extends CommonObject
 			$sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
 			$sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
 			$sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
+			$sql .= ", fk_default_workstation = ".($this->fk_default_workstation > 0 ? ((int) $this->fk_default_workstation) : 'null');
 			$sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (float) $this->seuil_stock_alerte : 'null');
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
 			$sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
@@ -1158,6 +1196,7 @@ class Product extends CommonObject
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
+			$sql .= ", stockable_product = ".(int) $this->stockable_product;
 
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -2299,9 +2338,9 @@ class Product extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
-		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
-		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
+		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom,";
 		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
@@ -2332,7 +2371,7 @@ class Product extends CommonObject
 			$sql .= " p.pmp,";
 		}
 		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
-		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
 		} else {
@@ -2360,7 +2399,7 @@ class Product extends CommonObject
 		if ($separatedStock) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 			$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
-			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
 			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -2428,6 +2467,7 @@ class Product extends CommonObject
 				$this->localtax2_type                = $obj->localtax2_type;
 
 				$this->finished                        = $obj->finished;
+				$this->fk_default_bom = $obj->fk_default_bom;
 				$this->duration                        = $obj->duration;
 				$this->duration_value                = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit = substr($obj->duration, -1);
@@ -2443,12 +2483,12 @@ class Product extends CommonObject
 				$this->height = $obj->height;
 				$this->height_units = $obj->height_units;
 
-				$this->surface = $obj->surface;
-				$this->surface_units = $obj->surface_units;
-				$this->volume = $obj->volume;
-				$this->volume_units                    = $obj->volume_units;
-				$this->barcode = $obj->barcode;
-				$this->barcode_type                    = $obj->fk_barcode_type;
+				$this->surface							= $obj->surface;
+				$this->surface_units					= $obj->surface_units;
+				$this->volume							= $obj->volume;
+				$this->volume_units						= $obj->volume_units;
+				$this->barcode							= $obj->barcode;
+				$this->barcode_type						= $obj->fk_barcode_type;
 
 				$this->accountancy_code_buy				= $obj->accountancy_code_buy;
 				$this->accountancy_code_buy_intra		= $obj->accountancy_code_buy_intra;
@@ -2457,22 +2497,25 @@ class Product extends CommonObject
 				$this->accountancy_code_sell_intra		= $obj->accountancy_code_sell_intra;
 				$this->accountancy_code_sell_export		= $obj->accountancy_code_sell_export;
 
-				$this->fk_default_warehouse            = $obj->fk_default_warehouse;
-				$this->seuil_stock_alerte            = $obj->seuil_stock_alerte;
-				$this->desiredstock                    = $obj->desiredstock;
-				$this->stock_reel                    = $obj->stock;
-				$this->pmp = $obj->pmp;
+				$this->fk_default_warehouse				= $obj->fk_default_warehouse;
+				$this->fk_default_workstation 			= $obj->fk_default_workstation;
+				$this->seuil_stock_alerte				= $obj->seuil_stock_alerte;
+				$this->desiredstock						= $obj->desiredstock;
+				$this->stock_reel						= $obj->stock;
+				$this->stockable_product				= $obj->stockable_product;
+				$this->pmp								= $obj->pmp;
 
-				$this->date_creation                = $obj->datec;
-				$this->date_modification            = $obj->tms;
-				$this->import_key                    = $obj->import_key;
-				$this->entity                        = $obj->entity;
+				$this->date_creation					= $obj->datec;
+				$this->date_modification				= $obj->tms;
+				$this->import_key						= $obj->import_key;
+				$this->entity							= $obj->entity;
 
-				$this->ref_ext                        = $obj->ref_ext;
-				$this->fk_price_expression            = $obj->fk_price_expression;
-				$this->fk_unit                        = $obj->fk_unit;
-				$this->price_autogen = $obj->price_autogen;
-				$this->model_pdf = $obj->model_pdf;
+				$this->ref_ext							= $obj->ref_ext;
+				$this->fk_price_expression				= $obj->fk_price_expression;
+				$this->fk_unit							= $obj->fk_unit;
+				$this->price_autogen					= $obj->price_autogen;
+
+				$this->model_pdf						= $obj->model_pdf;
 
 				$this->db->free($resql);
 
@@ -2702,10 +2745,10 @@ class Product extends CommonObject
 
 			$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 			$sql .= " SUM(mp.qty) as qty";
-			$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mrp_production as mp ON mp.fk_mo=c.rowid";
+			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
+			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
 			if (empty($user->rights->societe->client->voir) && !$socid) {
-				$sql .= "INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
+				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
 			$sql .= " c.entity IN (".getEntity('mo').")";
@@ -2751,7 +2794,7 @@ class Product extends CommonObject
 	public function load_stats_bom($socid = 0)
 	{
 		// phpcs:enable
-		global $user, $hookmanager;
+		global $user, $hookmanager, $action;
 
 		$error = 0;
 
@@ -2762,8 +2805,8 @@ class Product extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT b.rowid) as nb_toproduce,";
 		$sql .= " SUM(b.qty) as qty_toproduce";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
+		$sql .= " FROM ".$this->db->prefix()."bom_bom as b";
+		$sql .= " INNER JOIN ".$this->db->prefix()."bom_bomline as bl ON bl.fk_bom=b.rowid";
 		$sql .= " WHERE ";
 		$sql .= " b.entity IN (".getEntity('bom').")";
 		$sql .= " AND b.fk_product =".((int) $this->id);
@@ -2781,8 +2824,8 @@ class Product extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT bl.rowid) as nb_toconsume,";
 		$sql .= " SUM(bl.qty) as qty_toconsume";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
+		$sql .= " FROM ".$this->db->prefix()."bom_bom as b";
+		$sql .= " INNER JOIN ".$this->db->prefix()."bom_bomline as bl ON bl.fk_bom=b.rowid";
 		$sql .= " WHERE ";
 		$sql .= " b.entity IN (".getEntity('bom').")";
 		$sql .= " AND bl.fk_product =".((int) $this->id);
@@ -2999,10 +3042,10 @@ class Product extends CommonObject
 			// If stock decrease is on invoice validation, the theorical stock continue to
 			// count the orders to ship in theorical stock when some are already removed b invoice validation.
 			// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation.
-			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL) && $forVirtualStock) {
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
 					$adeduire = 0;
-					$sql = "SELECT sum(fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet fd ";
+					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet fd ";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."facture f ON fd.fk_facture = f.rowid ";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element el ON el.fk_target = f.rowid and el.targettype = 'facture' and sourcetype = 'commande'";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."commande c ON el.fk_source = c.rowid ";
@@ -3015,6 +3058,9 @@ class Product extends CommonObject
 							$obj = $this->db->fetch_object($resql);
 							$adeduire += $obj->count;
 						}
+					} else {
+						$this->error = $this->db->error();
+						return -1;
 					}
 
 					$this->stats_commande['qty'] -= $adeduire;
@@ -3233,23 +3279,24 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats production pour le produit/service
 	 *
-	 * @param  int    $socid           Id societe pour filtrer sur une societe
-	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param  int    	$socid           Id societe pour filtrer sur une societe
+	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
+	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param	int		$dateofvirtualstock	Date of virtual stock
 	 * @return integer                 Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
-	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
+	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT m.fk_soc) as nb_customers, COUNT(DISTINCT m.rowid) as nb,";
 		$sql .= " COUNT(mp.rowid) as nb_rows, SUM(mp.qty) as qty, role";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_production as mp";
-		$sql .= ", ".MAIN_DB_PREFIX."mrp_mo as m";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = m.fk_soc";
+		$sql .= " FROM ".$this->db->prefix()."mrp_production as mp";
+		$sql .= ", ".$this->db->prefix()."mrp_mo as m";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = m.fk_soc";
 		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE m.rowid = mp.fk_mo";
 		$sql .= " AND m.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mrp').")";
@@ -3262,6 +3309,9 @@ class Product extends CommonObject
 		}
 		if ($filtrestatut <> '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
+		}
+		if (!empty($dateofvirtualstock)) {
+			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
 		$sql .= " GROUP BY role";
 

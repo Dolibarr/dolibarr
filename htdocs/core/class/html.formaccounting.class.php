@@ -270,12 +270,16 @@ class FormAccounting extends Form
 				}
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
+
+					$titletoshowhtml = ($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).($obj->range_account ? ' <span class="opacitymedium">('.$obj->range_account.')</span>' : '');
+					$titletoshow = ($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).($obj->range_account ? ' ('.$obj->range_account.')' : '');
+
 					$out .= '<option value="'.$obj->rowid.'"';
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 1, 0, 0, array('span'))).'"';
 					$out .= '>';
-					$titletoshow = dol_string_nohtmltag(($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).' ('.$obj->range_account.')');
 					$out .= dol_escape_htmltag($titletoshow);
 					$out .= '</option>';
 					$i++;
@@ -291,7 +295,7 @@ class FormAccounting extends Form
 
 		$out .= ajax_combobox($htmlname, array());
 
-		print $out;
+		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -445,6 +449,7 @@ class FormAccounting extends Form
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
+		global $conf;
 
 		$aux_account = array();
 

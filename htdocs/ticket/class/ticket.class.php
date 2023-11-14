@@ -546,7 +546,7 @@ class Ticket extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_print_error('', get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -1699,6 +1699,9 @@ class Ticket extends CommonObject
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
 		}
+		if (empty($user->id) || $user->id == 0) {
+			$actioncomm->email_from = $_SESSION['email_customer'];
+		}
 		$actioncomm->socid = $this->socid;
 		$actioncomm->label = $this->subject;
 		$actioncomm->note_private = $this->message;
@@ -1751,11 +1754,11 @@ class Ticket extends CommonObject
 
 		// Cache already loaded
 
-		$sql = "SELECT id as rowid, fk_user_author, datec, label, note as message, code";
+		$sql = "SELECT id as rowid, fk_user_author, email_from, datec, datep, label, note as message, code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 		$sql .= " WHERE fk_element = ".(int) $this->id;
 		$sql .= " AND elementtype = 'ticket'";
-		$sql .= " ORDER BY datec DESC";
+		$sql .= " ORDER BY datep DESC";
 
 		dol_syslog(get_class($this)."::load_cache_actions_ticket sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1766,7 +1769,11 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
 				$this->cache_msgs_ticket[$i]['fk_user_author'] = $obj->fk_user_author;
+				if ($obj->code == 'TICKET_MSG' && empty($obj->fk_user_author)) {
+					$this->cache_msgs_ticket[$i]['fk_contact_author'] = $obj->email_from;
+				}
 				$this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
+				$this->cache_msgs_ticket[$i]['datep'] = $this->db->jdate($obj->datep);
 				$this->cache_msgs_ticket[$i]['subject'] = $obj->label;
 				$this->cache_msgs_ticket[$i]['message'] = $obj->message;
 				$this->cache_msgs_ticket[$i]['private'] = ($obj->code == 'TICKET_MSG_PRIVATE' ? 1 : 0);
@@ -2546,7 +2553,8 @@ class Ticket extends CommonObject
 
 
 	/**
-	 * Add new message on a ticket (private/public area). Can also send it be email if GETPOST('send_email', 'int') is set.
+	 * Add new message on a ticket (private/public area).
+	 * Can also send it by email if GETPOST('send_email', 'int') is set.
 	 *
 	 * @param   User    $user       User for action
 	 * @param   string  $action     Action string
@@ -2614,8 +2622,13 @@ class Ticket extends CommonObject
 					 * Send emails to assigned users (public area notification)
 					 */
 					if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED)) {
+						// Retrieve internal contact datas
+						$internal_contacts = $object->getInfosTicketExternalContact(1);
+
 						$assigned_user_dont_have_email = '';
+
 						$sendto = array();
+
 						if ($this->fk_user_assign > 0) {
 							$assigned_user = new User($this->db);
 							$assigned_user->fetch($this->fk_user_assign);
@@ -2625,16 +2638,20 @@ class Ticket extends CommonObject
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
 						}
-						if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ALSO_CONTRIBUTOR)) {
-							$contactList = $object->liste_contact(-1, 'internal', 0, 'CONTRIBUTOR');
-							if (is_array($contactList)) {
-								foreach ($contactList as $contactArray) {
-									if (!empty($contactArray['email'])) {
-										$sendto[] = dolGetFirstLastname($contactArray['firstname'], $contactArray['lastname']) . " <" . $contactArray['email'] . ">";
-									}
+
+						foreach($internal_contacts as $key => $info_sendto) {
+							//Avoid duplicate notifications
+							if ($info_sendto['id'] == $user->id) {
+								continue;
+							}
+
+							if ($info_sendto['email'] != '') {
+								if (!empty($info_sendto['email'])) {
+									$sendto[$info_sendto['email']] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 								}
 							}
 						}
+
 						if (empty($sendto)) {
 							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
 								$sendto[$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;

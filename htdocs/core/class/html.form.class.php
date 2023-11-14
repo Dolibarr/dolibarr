@@ -236,7 +236,7 @@ class Form
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
 				}
-				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata)) {
+				if (preg_match('/^(string|safehtmlstring|email|url)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
 				} elseif (preg_match('/^(numeric|amount)/', $typeofdata)) {
@@ -307,6 +307,8 @@ class Form
 			} else {
 				if (preg_match('/^(email)/', $typeofdata)) {
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
+				} elseif (preg_match('/^url/', $typeofdata)) {
+					$ret .= dol_print_url($value, '_blank', 32, 1);
 				} elseif (preg_match('/^(amount|numeric)/', $typeofdata)) {
 					$ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
@@ -2360,6 +2362,74 @@ class Form
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
+	 *
+	 * @param int $selected Preselected BOM id
+	 * @param string $htmlname Name of HTML select field (must be unique in page).
+	 * @param int $limit Limit on number of returned lines
+	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
+	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
+	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string $morecss Add more css on select
+	 * @param string $nooutput No print, return the output into a string
+	 * @param int $forcecombo Force to use combo box
+	 * @param array $TProducts Add filter on a defined product
+	 * @return        void|string
+	 */
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
+	{
+		// phpcs:enable
+		global $conf, $user, $langs, $db;
+
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
+		$error = 0;
+		$out = '';
+
+		if (!$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$events = array();
+			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
+		}
+
+		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
+
+		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'bom_bom as b';
+		$sql .= ' WHERE b.entity IN (' . getEntity('bom') . ')';
+		if (!empty($status)) $sql .= ' AND status = ' . (int) $status;
+		if (!empty($type)) $sql .= ' AND bomtype = ' . (int) $type;
+		if (!empty($TProducts)) $sql .= ' AND fk_product IN (' . $this->db->sanitize(implode(',', $TProducts)) . ')';
+		if (!empty($limit)) $sql .= ' LIMIT ' . (int) $limit;
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($showempty) {
+				$out .= '<option value="-1"';
+				if (empty($selected)) $out .= ' selected';
+				$out .= '>&nbsp;</option>';
+			}
+			while ($obj = $db->fetch_object($resql)) {
+				$product = new Product($db);
+				$res = $product->fetch($obj->fk_product);
+				$out .= '<option value="' . $obj->rowid . '"';
+				if ($obj->rowid == $selected) $out .= 'selected';
+				$out .= '>' . $obj->ref . ' - ' . $product->label . ' - ' . $obj->label . '</option>';
+			}
+		} else {
+			$error++;
+			dol_print_error($db);
+		}
+		$out .= '</select>';
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of products for a customer.
 	 *  Called by select_produits.
@@ -3127,6 +3197,9 @@ class Form
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
+		if (empty($alsoproductwithnosupplierprice) && !empty($conf->global->PRODUCT_DONOTSHOW_PRODUCTWITHNOSUPPLIERPRICE)) {
+			$sql .= " AND pfp.rowid IS NOT NULL";
+		}
 		if ($statut != -1) {
 			$sql .= " AND p.tobuy = ".((int) $statut);
 		}
@@ -4616,7 +4689,7 @@ class Form
 	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
 	 *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @param	string					$morecss			More CSS
-	 *    @return	string
+	 *    @return	string|array
 	 *    @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -9166,6 +9239,68 @@ class Form
 
 		if ($addjscombo) {
 			$retstring .= ajax_combobox('select_'.$prefix.'model_mail');
+		}
+
+		return $retstring;
+	}
+
+	/**
+	 * Output the buttons to submit a creation/edit form
+	 *
+	 * @param string $save_label Alternative label for save button
+	 * @param string $cancel_label Alternative label for cancel button
+	 * @param array $morebuttons Add additional buttons between save and cancel
+	 * @param bool $withoutdiv Option to remove enclosing centered div
+	 * @param string $morecss More CSS
+	 * @param string $dol_openinpopup If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
+	 * @return    string                        Html code with the buttons
+	 */
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '', $dol_openinpopup = '')
+	{
+		global $langs;
+
+		$buttons = array();
+
+		$save = array(
+			'name' => 'save',
+			'label_key' => $save_label,
+		);
+
+		if ($save_label == 'Create' || $save_label == 'Add') {
+			$save['name'] = 'add';
+		} elseif ($save_label == 'Modify') {
+			$save['name'] = 'edit';
+		}
+
+		$cancel = array(
+			'name' => 'cancel',
+			'label_key' => 'Cancel',
+		);
+
+		!empty($save_label) ? $buttons[] = $save : '';
+
+		if (!empty($morebuttons)) {
+			$buttons[] = $morebuttons;
+		}
+
+		!empty($cancel_label) ? $buttons[] = $cancel : '';
+
+		$retstring = $withoutdiv ? '' : '<div class="center">';
+
+		foreach ($buttons as $button) {
+			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
+			$retstring .= '<input type="submit" class="button button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->trans($button['label_key'])) . '">';
+		}
+		$retstring .= $withoutdiv ? '' : '</div>';
+
+		if ($dol_openinpopup) {
+			$retstring .= '<!-- buttons are shown into a $dol_openinpopup=' . $dol_openinpopup . ' context, so we enable the close of dialog on cancel -->' . "\n";
+			$retstring .= '<script nonce="' . getNonce() . '">';
+			$retstring .= 'jQuery(".button-cancel").click(function(e) {
+				e.preventDefault(); console.log(\'We click on cancel in iframe popup ' . $dol_openinpopup . '\');
+				window.parent.jQuery(\'#idfordialog' . $dol_openinpopup . '\').dialog(\'close\');
+				 });';
+			$retstring .= '</script>';
 		}
 
 		return $retstring;

@@ -250,6 +250,8 @@ if ($reshook == 0) {
 
 $id = 25;
 
+$acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
+
 
 /*
  * Actions
@@ -743,7 +745,7 @@ if ($action == 'view') {
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
 			}
-			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
+			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_4, '90%');
 			print $doleditor->Create(1);
 		}
 		print '</td>';
@@ -973,7 +975,7 @@ if ($resql) {
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						print '</td>';

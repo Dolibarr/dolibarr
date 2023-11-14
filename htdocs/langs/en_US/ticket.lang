@@ -137,6 +137,7 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketMessageMailSignatureText = Ticket signature on mail
 TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
 TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.

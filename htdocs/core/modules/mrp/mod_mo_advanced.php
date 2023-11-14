@@ -55,7 +55,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -80,9 +80,9 @@ class mod_mo_advanced extends ModeleNumRefMos
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMo" value="'.$conf->global->MRP_MO_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMo" value="'.getDolGlobalString('MRP_MO_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -129,7 +129,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->MRP_MO_ADVANCED_MASK;
+		$mask = getDolGlobalString('MRP_MO_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

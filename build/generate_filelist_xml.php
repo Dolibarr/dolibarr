@@ -55,9 +55,10 @@ if (empty($argv[1])) {
 
 
 $i=0;
+$result = array();
 while ($i < $argc) {
-	if (! empty($argv[$i])) {
-		parse_str($argv[$i]);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
+	if (!empty($argv[$i])) {
+		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
 	}
 	if (preg_match('/includeconstant=/', $argv[$i])) {
 		$tmp=explode(':', $includeconstant, 3);			// $includeconstant has been set with previous parse_str()

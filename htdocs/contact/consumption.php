@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+$optioncss = GETPOST('optioncss', 'aZ09');
+
 // Security check
 $id = GETPOST('id', 'int');
 
@@ -369,7 +371,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element)."&id=".urlencode($id);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}

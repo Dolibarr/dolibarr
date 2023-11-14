@@ -578,6 +578,12 @@ $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
+
+// Add fields from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) {
@@ -1659,6 +1665,11 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Fields from hook
+		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
+		print $hookmanager->resPrint;
 
 		// Action edit/delete
 		print '<td class="nowraponall" align="center">';

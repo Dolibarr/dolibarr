@@ -108,7 +108,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty,";
 // Modification - Situation invoice - Begin
-$sql .= " f.total_ht AS invoice_total_ht, f.total_tva AS invoice_total_tva, f.localtax1 AS invoice_total_localtax1, f.localtax2 AS invoice_total_localtax2, f.total_ttc AS invoice_total_ttc,";
+$sql .= " f.total_ht AS invoice_total_ht, f.total_tva AS invoice_total_tva, f.localtax1 AS invoice_total_localtax1, f.localtax2 AS invoice_total_localtax2, f.total_ttc AS invoice_total_ttc,f.situation_final,";
 // Modification - Situation invoice - End
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
@@ -129,6 +129,9 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 } else {
 	$sql .= " p.accountancy_code_sell";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -140,6 +143,9 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
@@ -165,6 +171,9 @@ if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY f.datef, f.ref";
 //print $sql; exit;
 
@@ -266,7 +275,7 @@ if ($result) {
 		}
 
 		$total_ttc = $obj->total_ttc * $situation_ratio;
-		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0 && (empty($conf->global->INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION) || !empty($obj->situation_final))) {
 			$retained_warranty = (double)price2num($total_ttc * $obj->retained_warranty / 100, 'MT');
 			$tabwarranty[$obj->rowid][$compta_soc] += $retained_warranty;
 			$total_ttc -= $retained_warranty;
@@ -299,6 +308,14 @@ foreach ($tab_list as $tab_property => $total_property) {
 	foreach ($tabfac as $invoice_id => $invoice_info) {
 		// Fix HT
 		$total_amount = 0;
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $tab_property == 'tabttc') {
+			foreach ($tabwarranty[$invoice_id] as $compta_prod => $amount) {
+				// Fix precision
+				$amount = price2num($amount, 'MT');
+				$total_amount += $amount;
+				$tabwarranty[$invoice_id][$compta_prod] = $amount;
+			}
+		}
 		foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
 			// Fix precision
 			$amount = price2num($amount, 'MT');
@@ -402,7 +419,7 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Warranty
-		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 			if (!$errorforline) {
 				foreach ($tabwarranty[$key] as $k => $mt) {
 					$bookkeeping = new BookKeeping($db);
@@ -734,7 +751,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		}
 
 		// Warranty
-		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				//if ($mt) {
 				print '"'.$key.'"'.$sep;
@@ -979,7 +996,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty -->";

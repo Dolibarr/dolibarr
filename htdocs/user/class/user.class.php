@@ -662,6 +662,142 @@ class User extends CommonObject
 	}
 
 	/**
+	 *  Return if a user has a permission.
+	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
+	 *  It replaces old syntax: if ($user->rights->module->level1)
+	 *
+	 * 	@param	int		$module			Module of permission to check
+	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
+	 *  @param  string	$permlevel2		Permission level2
+	 *  @return int						1 if user has permission, 0 if not.
+	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 */
+	public function hasRight($module, $permlevel1, $permlevel2 = '')
+	{
+		global $conf;
+		// For compatibility with bad naming permissions on module
+		$moduletomoduletouse = array(
+			'compta' => 'comptabilite',
+			'contract' => 'contrat',
+			'member' => 'adherent',
+			'mo' => 'mrp',
+			'order' => 'commande',
+			'produit' => 'product',
+			'project' => 'projet',
+			'propale' => 'propal',
+			'shipping' => 'expedition',
+			'task' => 'task@projet',
+			'fichinter' => 'ficheinter',
+			'inventory' => 'stock',
+			'invoice' => 'facture',
+			'invoice_supplier' => 'fournisseur',
+			'order_supplier' => 'fournisseur',
+			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
+			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'facturerec' => 'facture',
+			'margins' => 'margin',
+		);
+
+		if (!empty($moduletomoduletouse[$module])) {
+			$module = $moduletomoduletouse[$module];
+		}
+
+		$moduleRightsMapping = array(
+			'product' => 'produit',	// We must check $user->rights->produit...
+			'margin' => 'margins',
+			'comptabilite' => 'compta'
+		);
+
+		$rightsPath = $module;
+		if (!empty($moduleRightsMapping[$rightsPath])) {
+			$rightsPath = $moduleRightsMapping[$rightsPath];
+		}
+
+		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
+		$tmp = explode('@', $rightsPath, 2);
+		if (!empty($tmp[1])) {
+			if (strpos($module, '@') !== false) {
+				$module = $tmp[1];
+			}
+			$rightsPath = $tmp[1];
+			$permlevel2 = $permlevel1;
+			$permlevel1 = $tmp[0];
+		}
+
+		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
+		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
+		//var_dump($module);
+		//var_dump($rightsPath);
+		//var_dump($this->rights->$rightsPath);
+		//var_dump($conf->modules);
+		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
+		if (!isModEnabled($module)) {
+			return 0;
+		}
+
+		// For compatibility with bad naming permissions on permlevel1
+		if ($permlevel1 == 'propale') {
+			$permlevel1 = 'propal';
+		}
+		if ($permlevel1 == 'member') {
+			$permlevel1 = 'adherent';
+		}
+		if ($permlevel1 == 'recruitmentcandidature') {
+			$permlevel1 = 'recruitmentjobposition';
+		}
+
+		//var_dump($this->rights);
+		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
+		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
+			return 0;
+		}
+
+		if ($permlevel2) {
+			if (!empty($this->rights->$rightsPath->$permlevel1)) {
+				if (!empty($this->rights->$rightsPath->$permlevel1->$permlevel2)) {
+					return $this->rights->$rightsPath->$permlevel1->$permlevel2;
+				}
+				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
+				// instead of "read", "write", "delete"
+				if ($permlevel2 == 'read' && !empty($this->rights->$rightsPath->$permlevel1->lire)) {
+					return $this->rights->$rightsPath->$permlevel1->lire;
+				}
+				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
+					return $this->rights->$rightsPath->$permlevel1->creer;
+				}
+				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
+					return $this->rights->$rightsPath->$permlevel1->create;
+				}
+				if ($permlevel2 == 'delete' && !empty($this->rights->$rightsPath->$permlevel1->supprimer)) {
+					return $this->rights->$rightsPath->$permlevel1->supprimer;
+				}
+			}
+		} else {
+			if (!empty($this->rights->$rightsPath->$permlevel1)) {
+				return $this->rights->$rightsPath->$permlevel1;
+			}
+			// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
+			// instead of "read", "write", "delete"
+			if ($permlevel1 == 'read' && !empty($this->rights->$rightsPath->lire)) {
+				return $this->rights->$rightsPath->lire;
+			}
+			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->creer)) {
+				return $this->rights->$rightsPath->creer;
+			}
+			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->create)) {
+				return $this->rights->$rightsPath->create;
+			}
+			if ($permlevel1 == 'delete' && !empty($this->rights->$rightsPath->supprimer)) {
+				return $this->rights->$rightsPath->supprimer;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions

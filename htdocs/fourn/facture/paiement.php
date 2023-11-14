@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,6 +251,8 @@ if (empty($reshook)) {
 		$error = 0;
 
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$multicurrency_code = array();
+		$multicurrency_tx = array();
 
 		// Clean parameters amount if payment is for a credit note
 		foreach ($amounts as $key => $value) {	// How payment is dispatched
@@ -259,6 +262,8 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
@@ -268,6 +273,8 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 		}
 
 		//var_dump($amounts);
@@ -287,10 +294,13 @@ if (empty($reshook)) {
 			$paiement->datepaye     = $datepaye;
 			$paiement->amounts      = $amounts; // Array of amounts
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
+			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
+			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
 			$paiement->paiementid   = GETPOST('paiementid', 'int');
 
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
+			$paiement->fk_account   = GETPOST('accountid', 'int');
 			$paiement->num_payment = $paiement->num_payment;
 			$paiement->note_private = $paiement->note_private;
 

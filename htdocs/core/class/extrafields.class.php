@@ -2086,6 +2086,12 @@ class ExtraFields
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {
 					$enabled = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1));
 				}
+
+				$visibility = 1;
+				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
+					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1));
+				}
+
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
@@ -2099,6 +2105,11 @@ class ExtraFields
 						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
 					)
 				) {
+					continue;
+				}
+				$visibility_abs = abs($visibility);
+				// not modify if extra field is not in update form (0 : never, 2 or -2 : list only, 5 or - 5 : list and view only)
+				if (empty($visibility_abs) || $visibility_abs == 2 || $visibility_abs == 5) {
 					continue;
 				}
 				if (empty($perms)) {
@@ -2115,7 +2126,10 @@ class ExtraFields
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 						$nofillrequired++;
-						$error_field_required[] = $langs->transnoentitiesnoconv($value);
+						if (!empty($this->attributes[$object->table_element]['langfile'][$key])) {
+							$langs->load($this->attributes[$object->table_element]['langfile'][$key]);
+						}
+						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
 
@@ -2244,6 +2258,11 @@ class ExtraFields
 						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
+				} elseif (in_array($key_type, array('html'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						continue; // Value was not provided, we should not set it.
+					}
+					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.

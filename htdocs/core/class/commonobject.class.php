@@ -559,6 +559,22 @@ abstract class CommonObject
 	}
 
 	/**
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->error = $object->error;
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
+		}
+	}
+
+	/**
 	 * Method to output saved errors
 	 *
 	 * @return	string		String with errors
@@ -1170,22 +1186,34 @@ abstract class CommonObject
 		// phpcs:enable
 		global $user;
 
+		$error = 0;
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-		$sql .= " WHERE rowid = ".((int) $rowid);
-
-		dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
-		if ($this->db->query($sql)) {
-			if (!$notrigger) {
-				$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+		if (!$error && empty($notrigger)) {
+			// Call trigger
+			$this->context['contact_id'] = ((int) $rowid);
+			$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
+		}
 
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
+
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
+			$sql .= " WHERE rowid = ".((int) $rowid);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -3518,9 +3546,21 @@ abstract class CommonObject
 					//var_dump($obj->total_ht.' '.$obj->total_tva.' '.$obj->total_localtax1.' '.$obj->total_localtax2.' =? '.$obj->total_ttc);
 					//var_dump($diff_when_using_price_ht.' '.$diff_on_current_total);
 
-					if ($diff_when_using_price_ht && $diff_on_current_total) {
-						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
-						dol_syslog('We found unconsistent data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+					if ($diff_on_current_total) {
+						// This should not happen, we should always have in table: total_ttc = total_ht + total_vat + total_localtax1 + total_localtax2
+						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
+						dol_syslog('We found unconsistent data into detailed line (diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (ht=".$obj->total_ht." vat=".$obj->total_tva." tax1=".$obj->total_localtax1." tax2=".$obj->total_localtax2." ttc=".$obj->total_ttc."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+						$resqlfix = $this->db->query($sqlfix);
+						if (!$resqlfix) {
+							dol_print_error($this->db, 'Failed to update line');
+						}
+						$obj->total_tva = $tmpcal[1];
+						$obj->total_ttc = $tmpcal[2];
+					} elseif ($diff_when_using_price_ht && $roundingadjust == '0') {
+						// After calculation from HT, total is consistent but we have found a difference between VAT part in calculation and into database and
+						// we ask to force the use of rounding on line (like done on calculation) so we force update of line
+						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num((float) $tmpcal[1]).", total_ttc = ".price2num((float) $tmpcal[2])." WHERE rowid = ".((int) $obj->rowid);
+						dol_syslog('We found a line with different rounding data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 						$resqlfix = $this->db->query($sqlfix);
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
@@ -6394,6 +6434,11 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'link':
+					if ($this->array_options["options_".$key] === '') {
+						$this->array_options["options_".$key] = null;
+					}
+					break;
 				/*
 				case 'link':
 					$param_list = array_keys($attributeParam['options']);
@@ -7937,6 +7982,35 @@ abstract class CommonObject
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+				}
+				//$this->errors = $db->lasterror();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 * This function is meant to be called from replaceProduct with the appropriate tables
+	 * Column name fk_product MUST be used to identify products
+	 *
+	 * @param  DoliDB 	   $dbs			  Database handler
+	 * @param  int 		   $origin_id     Old product id (the product to delete)
+	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
+	 * @param  string[]    $tables        Tables that need to be changed
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
+	 * @return bool						  True if success, False if error
+	 */
+	public static function commonReplaceProduct(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	{
+		foreach ($tables as $table) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
+
+			if (!$dbs->query($sql)) {
+				if ($ignoreerrors) {
+					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;

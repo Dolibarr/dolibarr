@@ -242,7 +242,7 @@ $num = 0;
 
 $title = $langs->trans('StockAtDate');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if ($fk_warehouse > 0) {
@@ -466,12 +466,13 @@ if ($mode == 'future') {
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 }
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
+print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 print "</tr>\n";
 
@@ -562,8 +563,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) {
-				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+			if (price2num($stock * $objp->pmp, 'MT')) {
+				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
@@ -590,13 +591,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td class="right">'.($currentstock ? $currentstock : '<span class="opacitymedium">0</span>').'</td>';
 		}
 
-		// Action
-		print '<td class="right"></td>';
-
 		// Fields from hook
 		$parameters = array('objp'=>$objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
+		// Action
+		print '<td class="right"></td>';
 
 		print '</tr>';
 	}

@@ -317,6 +317,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
 		$sql .= " a.fk_contact,";
+		$sql .= " a.email_from as msg_from,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
@@ -516,6 +517,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 						'userfirstname'=>$obj->user_firstname,
 						'userlastname'=>$obj->user_lastname,
 						'userphoto'=>$obj->user_photo,
+						'msg_from'=>$obj->msg_from,
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
@@ -579,6 +581,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$userstatic = new User($db);
 		$contactstatic = new Contact($db);
 		$userGetNomUrlCache = array();
+		$contactGetNomUrlCache = array();
 
 		$out .= '<div class="filters-container" >';
 		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -744,6 +747,17 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 					$userGetNomUrlCache[$histo[$key]['userid']] = $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
 				}
 				$out .= $userGetNomUrlCache[$histo[$key]['userid']];
+			}
+			else if (!empty($histo[$key]['msg_from']) && $actionstatic->code == 'TICKET_MSG') {
+				if (!isset($contactGetNomUrlCache[$histo[$key]['msg_from']])) {
+					if ($contactstatic->fetch(0,null,'',$histo[$key]['msg_from']) > 0) {
+						$contactGetNomUrlCache[$histo[$key]['msg_from']] = $contactstatic->getNomUrl(-1, '', 16);
+					}
+					else {
+						$contactGetNomUrlCache[$histo[$key]['msg_from']] = $histo[$key]['msg_from'];
+					}
+				}
+				$out .= $contactGetNomUrlCache[$histo[$key]['msg_from']];
 			}
 			$out .= '</span>';
 

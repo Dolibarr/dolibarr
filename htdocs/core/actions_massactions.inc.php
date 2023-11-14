@@ -526,8 +526,8 @@ if (!$error && $massaction == 'confirm_presend') {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
 						$result = $mailfile->sendfile();
-						if ($result) {
-							$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)).'<br>'; // Must not contain "
+						if ($result > 0) {
+							$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($mailfile->addr_from, 2), $mailfile->getValidAddress($mailfile->addr_to, 2)).'<br>'; // Must not contain "
 
 							$error = 0;
 
@@ -1057,7 +1057,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 	}
 	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\']+\.pdf$'; // To include PDF generated from ODX files
+		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
 	}
 	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
 
@@ -1333,7 +1333,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
-	foreach ($toselect as $toselectid) {
+	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
+	$unique_arr = array_unique($toselect);
+	foreach ($unique_arr as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			// Refuse deletion for some objects/status

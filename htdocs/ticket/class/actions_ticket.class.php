@@ -293,7 +293,7 @@ class ActionsTicket
 					//print '<tr>';
 					print '<tr class="oddeven">';
 					print '<td><strong>';
-					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datec'], 'dayhour');
+					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
 					if ($show_user) {
 						print '<td>';
@@ -302,6 +302,14 @@ class ActionsTicket
 							$res = $userstat->fetch($arraymsgs['fk_user_author']);
 							if ($res) {
 								print $userstat->getNomUrl(0);
+							}
+						} else if (isset($arraymsgs['fk_contact_author'])) {
+							$contactstat = new Contact($this->db);
+							$res = $contactstat->fetch(0, null, '', $arraymsgs['fk_contact_author']);
+							if ($res) {
+								print $contactstat->getNomUrl(0, 'nolink');
+							} else {
+								print $arraymsgs['fk_contact_author'];
 							}
 						} else {
 							print $langs->trans('Customer');

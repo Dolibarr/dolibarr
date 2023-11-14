@@ -28,6 +28,8 @@ ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it 
 ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
 ErrorBadThirdPartyName=Bad value for third-party name
 ErrorProdIdIsMandatory=The %s is mandatory
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
+ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
@@ -277,6 +279,7 @@ ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product variants
 ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
 ErrorAjaxRequestFailed=Request failed
+ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
 
 # Warnings
@@ -312,4 +315,4 @@ WarningCreateSubAccounts=Warning, you can't create directly a sub account, you m
 WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
-
+WarningCorrectedInvoiceNotFound=Corrected invoice not found

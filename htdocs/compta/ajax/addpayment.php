@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Open-Dsi <support@open-dsi.fr>
+ * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,6 +176,8 @@ if (!$error) {
 	if ($socid > 0) {
 		$thirdparty->fetch($socid);
 	}
+	$multicurrency_code = array();
+	$multicurrency_tx = array();
 
 	// Clean parameters amount if payment is for a credit note
 	foreach ($amounts as $key => $value) {    // How payment is dispatched
@@ -184,15 +187,21 @@ if (!$error) {
 			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = -abs($newvalue);
 		}
+		$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+		$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 	}
 
 	foreach ($multicurrency_amounts as $key => $value) {    // How payment is dispatched
 		$tmpinvoice = new Facture($db);
 		$tmpinvoice->fetch($key);
+		$paiement->multicurrency_code = $tmpinvoice->multicurrency_code;
+		$paiement->multicurrency_tx = $tmpinvoice->multicurrency_tx;	// TODO le taux de change peut être différent de celui de la facture => à saisir ou confirmer sur la page de sasie du règlement
 		if ($tmpinvoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$newvalue = price2num($value, 'MT');
 			$multicurrency_amounts[$key] = -abs($newvalue);
 		}
+		$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
+		$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
 	}
 
 	// Creation of payment line
@@ -200,9 +209,12 @@ if (!$error) {
 	$paiement->datepaye = $datepaye;
 	$paiement->amounts = $amounts;   // Array with all payments dispatching with invoice id
 	$paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
+	$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
+	$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
 	$paiement->paiementid = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 	$paiement->num_payment = $paymentnum;
 	$paiement->note_private = GETPOST('comment', 'alpha');
+	$paiement->fk_account   = GETPOST('accountid', 'int');
 
 	if (!$error) {
 		// Create payment and update this->multicurrency_amounts if this->amounts filled or

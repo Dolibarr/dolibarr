@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -70,6 +71,9 @@ if (!empty($conf->accounting->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+if (isModEnabled('bom')) {
+	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
@@ -348,6 +352,7 @@ if (empty($reshook)) {
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
+			$object->fk_default_workstation	 = GETPOST('fk_default_workstation', 'int');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -370,12 +375,22 @@ if (empty($reshook)) {
 				$object->finished = null;
 			}
 
+			$fk_default_bom = GETPOST('fk_default_bom', 'int');
+			if ($fk_default_bom >= 0) {
+				$object->fk_default_bom = $fk_default_bom;
+			} else {
+				$object->fk_default_bom = null;
+			}
+
 			$units = GETPOST('units', 'int');
 			if ($units > 0) {
 				$object->fk_unit = $units;
 			} else {
 				$object->fk_unit = null;
 			}
+
+			// managed_in_stock
+			$object->stockable_product = ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) ? 1 : 0;
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -494,6 +509,7 @@ if (empty($reshook)) {
 				$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
@@ -523,6 +539,9 @@ if (empty($reshook)) {
 				} else {
 					$object->finished = null;
 				}
+
+				// managed_in_stock
+				$object->stockable_product   = GETPOSTISSET('stockable_product');
 
 				$units = GETPOST('units', 'int');
 				if ($units > 0) {
@@ -1216,7 +1235,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
+			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 			print '</a>';
 			print '</td>';
@@ -1239,6 +1258,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 				print '<input name="desiredstock" type="hidden" value="0">';
 			}
+		}
+
+		if ($type == $object::TYPE_SERVICE && isModEnabled("workstation")) {
+			// Default workstation
+			print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+			print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+			print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+			print '</td></tr>';
 		}
 
 		// Duration
@@ -1772,7 +1799,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses($object->fk_default_warehouse, 'fk_default_warehouse', 'warehouseopen', 1);
-				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
+				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 				/*
 				print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
@@ -1783,7 +1811,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
 				print '</td></tr>';
 				*/
+
+				print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
+				$checked = $object->stockable_product == 1 ? "checked" : "";
+				print '<td><input type="checkbox" id="stockable_product" name="stockable_product" '. $checked . ' /></td></tr>';
 			}
+
+			if ($object->isService() && $conf->workstation->enabled) {
+				// Default workstation
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print '</td></tr>';
+			}
+
 			/*
 			else
 			{
@@ -1797,6 +1838,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 				print '</td></tr>';
+
+				if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
+					$checked = $object->stockable_product == 1 ? "checked" : "";
+					print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked . ' /></td></tr>';
+				}
 			} else {
 				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
 					// Nature
@@ -1804,7 +1851,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $formproduct->selectProductNature('finished', $object->finished);
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && isModEnabled('bom')) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				$bomkey = "Bom:bom/class/bom.class.php:0:(t.status=1) AND (t.fk_product=".((int) $object->id).')';
+				print $form->selectForForms($bomkey, 'fk_default_bom', (GETPOSTISSET('fk_default_bom') ? GETPOST('fk_default_bom') : $object->fk_default_bom), 1);
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -2253,6 +2309,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 			}
 
+			// Workstation
+			if ($object->isService() && isModEnabled('workstation')) {
+				$workstation = new Workstation($db);
+				$res = $workstation->fetch($object->fk_default_workstation);
+
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
+				print '</td>';
+			} 
+
+			// View stockable_product
+			if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && !empty($conf->stock->enabled)) {
+				print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
+				print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
+			}
+
 			// Parent product.
 			if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
 				$combination = new ProductCombination($db);
@@ -2293,7 +2365,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $object->getLibFinished();
 					print '</td></tr>';
 				}
+			}
 
+			if (!$object->isService() && isModEnabled('bom') && $object->finished) {
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
+				if ($object->fk_default_bom) {
+					$bom_static = new BOM($db);
+					$bom_static->fetch($object->fk_default_bom);
+					print $bom_static->getNomUrl(1);
+				}
+				print '</td></tr>';
+			}
+
+			if (!$object->isService()) {
 				// Brut Weight
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';

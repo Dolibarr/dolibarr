@@ -205,7 +205,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : null), (GETPOST('update_prices', 'aZ') ? true : false));
+				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : null), (GETPOST('update_prices', 'aZ') ? true : false), (GETPOST('update_desc', 'aZ') ? true : false));
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit();
@@ -763,6 +763,9 @@ if (empty($reshook)) {
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'PropaleLigne';
+			} elseif ($fromElement == 'facture') {
+				dol_include_once('/compta/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'FactureLigne';
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
@@ -926,7 +929,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		$propal_qty_requirement = (!empty($conf->global->PROPAL_ENABLE_NEGATIVE_QTY) ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
+		if (!$error && $propal_qty_requirement && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$price_min = 0;
@@ -946,8 +950,25 @@ if (empty($reshook)) {
 
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
+				// Force VAT if a rate is defined on state dictionary
+				$state_id = $object->thirdparty->state_id;
+
+				$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_departements as d";
+				$sql .= " ,".MAIN_DB_PREFIX."c_tva as t";
+				$sql .= " WHERE d.fk_tva = t.rowid";
+				$sql .= " AND d.rowid = ".((int) $state_id);
+
+				$resql = $db->query($sql);
+				if ($resql) {
+					if ($db->num_rows($resql)) {
+						$objvat = $db->fetch_object($resql);
+					}
+				}
+
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				$tva_code = isset($objvat->vat_default_code) ? '('.$objvat->vat_default_code.')' : '';
+				$tva_tx = isset($objvat->vat_default_rate) ? $objvat->vat_default_rate.$tva_code : get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
@@ -1813,7 +1834,27 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+	$parameters = array();
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		$parameters['objectsrc'] =  $objectsrc;
+	}
+	$parameters['socid'] = $socid;
+
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
+	print $hookmanager->resPrint;
+	if (empty($reshook)) {
+		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_PROPAL) && !empty($soc->id)) {
+			// copy from thirdparty
+			$tpExtrafields = new Extrafields($db);
+			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
+			if ($soc->fetch_optionals() > 0) {
+				$object->array_options = array_merge($object->array_options, $soc->array_options);
+			}
+		}
+
+		print $object->showOptionals($extrafields, 'create', $parameters);
+	}
 
 	// Lines from source
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
@@ -1943,9 +1984,8 @@ if ($action == 'create') {
 	/*
 	 * Show object in view mode
 	 */
-
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+	$object->fetch_thirdparty();
+	$soc = $object->thirdparty;
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
@@ -1960,6 +2000,7 @@ if ($action == 'create') {
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')),
 			array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans('PuttingPricesUpToDate'), 'value' => (!empty($conf->global->PROPOSAL_CLONE_UPDATE_PRICES) ? 1 : 0)),
+			array('type' => 'checkbox', 'name' => 'update_desc', 'label' => $langs->trans('PuttingDescUpToDate'), 'value' => (!empty($conf->global->PROPOSAL_CLONE_UPDATE_DESC) ? 1 : 0)),
 		);
 		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->delivery_date)) {
 			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
@@ -2167,9 +2208,9 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
+	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1, 'customer');
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $soc->id > 0) {
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$soc->id.'&search_societe='.urlencode($soc->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -2825,7 +2866,7 @@ if ($action == 'create') {
 
 		$compatibleImportElementsList = false;
 		if ($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT) {
-			$compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
+			$compatibleImportElementsList = array('commande', 'propal', 'facture'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 

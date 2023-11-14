@@ -85,8 +85,7 @@ if ($id > 0 || !empty($ref)) {
 	$canread = 0;
 	if (!empty($user->rights->salaries->readall)) {
 		$canread = 1;
-	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	} elseif (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {

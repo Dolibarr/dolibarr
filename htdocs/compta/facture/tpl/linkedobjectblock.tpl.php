@@ -66,6 +66,9 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			echo $langs->trans("CustomerInvoice");
 			break;
 	}
+	if (!empty($showImportButton) && !empty($conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)) {
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+	}
 	print '</td>';
 	print '<td class="linkedcol-name nowraponall">'.$objectlink->getNomUrl(1).'</td>';
 	print '<td class="linkedcol-ref left">'.$objectlink->ref_client.'</td>';

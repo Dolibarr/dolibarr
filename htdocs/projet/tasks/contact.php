@@ -406,7 +406,7 @@ if ($id > 0 || !empty($ref)) {
 			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
+			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'position');
 			print '</td>';
 			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
@@ -431,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';
-				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'rowid');
+				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'position');
 				print '</td>';
 				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" name="addsourceexternal" value="'.$langs->trans("Add").'"';
 				if (!$nbofcontacts) {

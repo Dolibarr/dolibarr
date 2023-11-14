@@ -57,7 +57,7 @@ class modAccounting extends DolibarrModules
 		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array('/accounting/temp');
+		$this->dirs = array('/accounting/temp', '/accounting/export');
 
 		// Config pages
 		$this->config_page_url = array('accounting.php?mainmenu=accountancy&leftmenu=accountancy_admin');

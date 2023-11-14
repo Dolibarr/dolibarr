@@ -28,6 +28,8 @@ ErrorCashAccountAcceptsOnlyCashMoney=Ce compte bancaire est de type caisse et n'
 ErrorFromToAccountsMustDiffers=Les comptes source et destination doivent être différents.
 ErrorBadThirdPartyName=Nom de tiers incorrect
 ErrorProdIdIsMandatory=Le %s est obligatoire
+ErrorAccountancyCodeCustomerIsMandatory=Le code comptable du client %s est obligatoire
+ErrorAccountancyCodeSupplierIsMandatory=Le code comptable du fournisseur %s est obligatoire
 ErrorBadCustomerCodeSyntax=La syntaxe du code client est incorrecte
 ErrorBadBarCodeSyntax=Mauvaise syntaxe pour le code barre. Peut être que vous avez défini un mauvais type de code-barres ou que vous avez défini un masque de code à barres pour la numérotation qui ne correspond pas à la valeur scannée.
 ErrorCustomerCodeRequired=Code client obligatoire
@@ -274,6 +276,7 @@ ErrorIsNotADraft=%s n'est pas au statut brouillon
 ErrorAttributeIsUsedIntoProduct=Cet attribut est utilisé dans une ou plusieurs variantes de produits
 ErrorAttributeValueIsUsedIntoProduct=Cette valeur d'attribut est utilisée dans une ou plusieurs variantes de produits
 ErrorAjaxRequestFailed=La requête a échoué
+ErrorFailedToWriteInTempDirectory=Impossible d'écrire dans le répertoire temporaire
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -308,6 +311,7 @@ WarningCreateSubAccounts=Attention, vous ne pouvez pas créer directement un com
 WarningAvailableOnlyForHTTPSServers=Disponible uniquement si une connexion sécurisée HTTPS est utilisée
 WarningModuleXDisabledSoYouMayMissEventHere=Le module %s n’a pas été activé. Par conséquent, il se peut que vous manquiez beaucoup d’événements ici.
 WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonctionnalités de paiement en ligne ne fonctionnent pas correctement. Utilisez plutôt 'Lax'.
+WarningCorrectedInvoiceNotFound=Pas de correction de facture
 
 # Validate
 RequireValidValue = Valeur non valide
