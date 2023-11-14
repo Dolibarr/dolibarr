@@ -1598,18 +1598,26 @@ function dol_escape_json($stringtoescape)
 }
 
 /**
- *  Returns text escaped for inclusion into a php string, build with double quotes "
+ *  Returns text escaped for inclusion into a php string, build with double quotes " or '
  *
  *  @param      string		$stringtoescape		String to escape
+ *  @param		string		$stringforquotes	2=String for doublequotes, 1=String for simple quotes
  *  @return     string     		 				Escaped string for json content.
  */
-function dol_escape_php($stringtoescape)
+function dol_escape_php($stringtoescape, $stringforquotes = 2)
 {
 	if (is_null($stringtoescape)) {
 		return '';
 	}
 
-	return str_replace('"', "'", $stringtoescape);
+	if ($stringforquotes == 2) {
+		return str_replace('"', "'", $stringtoescape);
+	}
+	if ($stringforquotes == 1) {
+		return str_replace("'", "\'", str_replace('"', "'", $stringtoescape));
+	}
+
+	return 'Bad parameter for stringforquotes in dol_escape_php';
 }
 
 /**
@@ -2241,6 +2249,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= "\n".'<div id="dragDropAreaTabBar" class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).'">'."\n";
 	}
 	if (!empty($dragdropfile)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$out .= dragAndDropFileUpload("dragDropAreaTabBar");
 	}
 	$parameters = array('tabname' => $active, 'out' => $out);
@@ -4305,6 +4314,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
 	$path = 'theme/'.$theme;
+	if (empty($picto)) {
+		$picto = 'generic';
+	}
+
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath) {
 		// Clean parameters
@@ -4318,7 +4331,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
-		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
 
@@ -5413,7 +5426,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
-		define("MAIN_CORE_ERROR", 1);
+		if (!defined("MAIN_CORE_ERROR")) {
+			define("MAIN_CORE_ERROR", 1);
+		}
 	}
 
 	dol_syslog("Error ".$syslog, LOG_ERR);
@@ -5859,7 +5874,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (select limit, arrows $betweenarrows and $afterarrows but not $beforearrows)
+ *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (hide limit section, html in $betweenarrows and $afterarrows but not $beforearrows)
  *	@return	void
  */
 function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
@@ -7620,19 +7635,20 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
-		// '<img' to avoid <img src="http...">
+		// '<img' to avoid <img src="http...">,  we can only accept "<img src="data:..."
 		// 'url(' to avoid inline style like background: url(http...
 		// '<link' to avoid <link href="http...">
 		$reg = array();
-		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
-		$nbextlink = count($reg[0]);
-		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-			$out = 'TooManyLinksIntoHTMLString';
+		$tmpout = preg_replace('/<img src="data:/mi', '<__IMG_SRC_DATA__ src="data:', $out);
+		preg_match_all('/(<img|url\(|<link)/i', $tmpout, $reg);
+		$nblinks = count($reg[0]);
+		if ($nblinks > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
 		//
-		if (!empty($conf->global->MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
-			if ($nbextlink > 0) {
-				$out = 'ExternalLinksNotAllowed';
+		if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
+			if ($nblinks > 0) {
+				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		}
 
@@ -8237,18 +8253,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ATTENDEE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
-			if (is_object($object->project)) {
-				$substitutionarray['__PROJECT_ID__'] = (is_object($object->project) ? $object->project->id : '');
-				$substitutionarray['__PROJECT_REF__'] = (is_object($object->project) ? $object->project->ref : '');
-				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->project) ? $object->project->title : '');
-			}
-			if (is_object($object->projet)) {	// Deprecated, for backward compatibility
-				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet) ? $object->projet->id : '');
-				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
-				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
-			}
 			if (is_object($object) && $object->element == 'project') {
+				$substitutionarray['__PROJECT_ID__'] = $object->id;
+				$substitutionarray['__PROJECT_REF__'] = $object->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
+			} elseif (is_object($object)) {
+				$project = null;
+				if (!empty($object->project)) {
+					$project = $object->project;
+				} elseif (!empty($object->projet)) { // Deprecated, for backward compatibility
+					$project = $object->projet;
+				}
+				if (!is_null($project) && is_object($project)) {
+					$substitutionarray['__PROJECT_ID__'] = $project->id;
+					$substitutionarray['__PROJECT_REF__'] = $project->ref;
+					$substitutionarray['__PROJECT_NAME__'] = $project->title;
+				} else {
+					// can substitute variables for project : uses lazy load in "make_substitutions" method
+					$project_id = 0;
+					if (!empty($object->fk_project) && $object->fk_project > 0) {
+						$project_id = $object->fk_project;
+					} elseif (!empty($object->fk_projet) && $object->fk_projet > 0) {
+						$project_id = $object->fk_project;
+					}
+					if ($project_id > 0) {
+						// path:class:method:id
+						$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					}
+				}
 			}
 
 			if (is_object($object) && $object->element == 'shipping') {
@@ -8525,6 +8559,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
+			'__NEXT_MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp5['month'])),
+			'__NEXT_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp5['month'])),
 			'__NEXT_YEAR__' => (string) ($tmp['year'] + 1),
 		));
 	}
@@ -8562,7 +8599,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  */
 function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
-	global $conf, $langs;
+	global $conf, $db, $langs;
 
 	if (!is_array($substitutionarray)) {
 		return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
@@ -8680,6 +8717,53 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	$valuetouseforsubstitution = $tmpobj->$method($id, '__XXX__');
 	And make the replacement of "__XXX__@lazyload" with $valuetouseforsubstitution
 	*/
+	$memory_object_list = array();
+	foreach ($substitutionarray as $key => $value) {
+		$lazy_load_arr = array();
+		if (preg_match('/(__[A-Z\_]+__)@lazyload$/', $key, $lazy_load_arr)) {
+			if (isset($lazy_load_arr[1]) && !empty($lazy_load_arr[1])) {
+				$key_to_substitute = $lazy_load_arr[1];
+				if (preg_match('/' . preg_quote($key_to_substitute, '/') . '/', $text)) {
+					$param_arr = explode(':', $value);
+					// path:class:method:id
+					if (count($param_arr) == 4) {
+						$path = $param_arr[0];
+						$class = $param_arr[1];
+						$method = $param_arr[2];
+						$id = (int) $param_arr[3];
+
+						// load class file and init object list in memory
+						if (!isset($memory_object_list[$class])) {
+							if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
+								require_once DOL_DOCUMENT_ROOT . $path;
+								if (class_exists($class)) {
+									$memory_object_list[$class] = array(
+										'list' => array(),
+									);
+								}
+							}
+						}
+
+						// fetch object and set substitution
+						if (isset($memory_object_list[$class]) && isset($memory_object_list[$class]['list'])) {
+							if (method_exists($class, $method)) {
+								if (!isset($memory_object_list[$class]['list'][$id])) {
+									$tmpobj = new $class($db);
+									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
+									$memory_object_list[$class]['list'][$id] = $tmpobj;
+								} else {
+									$tmpobj = $memory_object_list[$class]['list'][$id];
+									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
+								}
+
+								$text = str_replace("$key_to_substitute", "$valuetouseforsubstitution", $text); // We must keep the " to work when value is 123.5 for example
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	return $text;
 }
@@ -9609,7 +9693,8 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
-	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
+	// return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
+	return '<span class="flag-sprite '.strtolower($flagImage).'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
 }
 
 /**
@@ -9883,6 +9968,21 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
+				$newtab = array();
+				$postab = $h;
+				// detect if position set in $values[1] ie : +(2)mytab@mymodule (first tab is 0, second is one, ...)
+				$str = $values[1];
+				$posstart = strpos($str, '(');
+				if ($posstart > 0) {
+					$posend = strpos($str, ')');
+					if ($posstart > 0) {
+						$res1 = substr($str, $posstart + 1, $posend - $posstart -1);
+						if (is_numeric($res1)) {
+							$postab = (int) $res1;
+							$values[1] = '+' . substr($str, $posend + 1);
+						}
+					}
+				}
 				if (count($values) == 6) {
 					// new declaration with permissions:
 					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
@@ -9932,9 +10032,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							}
 						}
 
-						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
-						$head[$h][1] = $label;
-						$head[$h][2] = str_replace('+', '', $values[1]);
+						$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
+						$newtab[1] = $label;
+						$newtab[2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
 				} elseif (count($values) == 5) {       // case deprecated
@@ -9965,11 +10065,13 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$label = $langs->trans($values[2]);
 					}
 
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
-					$head[$h][1] = $label;
-					$head[$h][2] = str_replace('+', '', $values[1]);
+					$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
+					$newtab[1] = $label;
+					$newtab[2] = str_replace('+', '', $values[1]);
 					$h++;
 				}
+				// set tab at its position
+				$head = array_merge(array_slice($head, 0, $postab), array($newtab), array_slice($head, $postab));
 			} elseif ($mode == 'remove' && preg_match('/^\-/', $values[1])) {
 				if ($values[0] != $type) {
 					continue;
@@ -11374,8 +11476,10 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button
 	if (is_array($url)) {
+		$out = '';
+
 		if (count($url) > 1) {
-			$out = '<div class="dropdown inline-block dropdown-holder">';
+			$out .= '<div class="dropdown inline-block dropdown-holder">';
 			$out .= '<a style="margin-right: auto;" class="dropdown-toggle classfortooltip butAction'.($userRight ? '' : 'Refused').'" title="'.dol_escape_htmltag($label).'" data-toggle="dropdown">'.($text ? $text : $label).'</a>';
 			$out .= '<div class="dropdown-content">';
 			foreach ($url as $subbutton) {

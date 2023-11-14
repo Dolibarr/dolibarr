@@ -33,6 +33,7 @@ $param = GETPOST('param', 'alphanohtml');
 $css = GETPOST('css', 'alphanohtml');
 $cssview = GETPOST('cssview', 'alphanohtml');
 $csslist = GETPOST('csslist', 'alphanohtml');
+$confirm = GETPOST('confirm', 'alpha');
 
 if ($type == 'double' && strpos($extrasize, ',') === false) {
 	$extrasize = '24,8';
@@ -47,6 +48,18 @@ if ($type == 'select') {
 	$extrasize = '';
 }
 
+$listofreservedwords = array(
+	'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASENSITIVE', 'BEFORE', 'BETWEEN', 'BINARY', 'BLOB', 'BOTH', 'CALL', 'CASCADE', 'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER',
+	'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DOUBLE', 'DROP', 'DUAL',
+	'EACH', 'ELSE', 'ELSEIF', 'ENCLOSED', 'ESCAPED', 'EXISTS', 'EXPLAIN', 'FALSE', 'FETCH', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FORCE', 'FOREIGN', 'FULLTEXT', 'GRANT', 'GROUP', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND',
+	'IGNORE', 'IGNORE_SERVER_IDS', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INTEGER', 'INTERVAL', 'INTO', 'ITERATE',
+	'KEYS', 'KEYWORD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINES', 'LOCALTIME', 'LOCALTIMESTAMP', 'LONGBLOB', 'LONGTEXT', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NUMERIC',
+	'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE',
+	'PARTITION', 'POSITION', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'READS', 'READ_WRITE', 'REAL', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REQUIRE', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE',
+	'SCHEMAS', 'SECOND_MICROSECOND', 'SENSITIVE', 'SEPARATOR', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SSL', 'STARTING', 'STRAIGHT_JOIN',
+	'TABLE', 'TERMINATED', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TRAILING', 'TRIGGER', 'UNDO', 'UNIQUE', 'UNSIGNED', 'UPDATE', 'USAGE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARYING',
+	'WHEN', 'WHERE', 'WHILE', 'WRITE', 'XOR', 'YEAR_MONTH', 'ZEROFILL'
+);
 
 // Add attribute
 if ($action == 'add') {
@@ -140,7 +153,7 @@ if ($action == 'add') {
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'int', 'integer', 'float', 'double', 'real', 'position'))) {
+			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords)) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
@@ -314,7 +327,7 @@ if ($action == 'update') {
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'integer', 'float', 'double', 'position')) && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
@@ -399,7 +412,7 @@ if ($action == 'update') {
 }
 
 // Delete attribute
-if ($action == 'delete') {
+if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
 		$attributekey = GETPOST('attrname', 'aZ09');
 

@@ -451,7 +451,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 			$this->note_public = trim($this->note_public);
 			$this->note_private = trim($this->note_private);
-			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->titre));
+			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->title));
 
 			$this->array_options = $_facrec->array_options;
 
@@ -1025,7 +1025,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn, f.fk_remise_except';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
-		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
+		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.barcode as product_barcode, p.description as product_desc';
 		$sql .= ', f.fk_code_ventilation, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
@@ -1054,6 +1054,7 @@ class FactureFournisseur extends CommonInvoice
 					$line->ref_supplier		= $obj->ref_supplier;
 					$line->libelle			= $obj->label;
 					$line->label  			= $obj->label;
+					$line->product_barcode  = $obj->product_barcode;
 					$line->product_desc		= $obj->product_desc;
 					$line->subprice         = $obj->pu_ht;
 					$line->pu_ht            = $obj->pu_ht;
@@ -1121,7 +1122,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -1151,9 +1152,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
-		}
-		if (isset($this->libelle)) {
-			$this->libelle = trim($this->libelle); // deprecated
 		}
 		if (isset($this->paye)) {
 			$this->paye = trim($this->paye);
@@ -1413,7 +1411,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$rowid = $this->id;
 
@@ -1491,7 +1489,8 @@ class FactureFournisseur extends CommonInvoice
 
 		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+			$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 			// We remove directory
 			if ($conf->fournisseur->facture->dir_output) {
@@ -1892,6 +1891,12 @@ class FactureFournisseur extends CommonInvoice
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'fournisseur/facture/".get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
@@ -3344,7 +3349,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$alreadypaid = (empty($arraydata['alreadypaid']) ? 0 : $arraydata['alreadypaid']);
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

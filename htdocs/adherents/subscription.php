@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2023		Waël Almoman			<info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $typeid = GETPOST('typeid', 'int');
 $cancel = GETPOST('cancel');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -80,9 +81,6 @@ $adht = new AdherentType($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
-
-$defaultdelay = 1;
-$defaultdelayunit = 'y';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
@@ -213,6 +211,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
+	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+	$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
@@ -475,6 +475,9 @@ if (! ($object->id > 0)) {
 */
 
 $adht->fetch($object->typeid);
+
+$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 
 $head = member_prepare_head($object);
 
@@ -958,8 +961,6 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print '<table class="border centpercent">'."\n";
 	print '<tbody>';
 
-	$now = dol_now();
-
 	// Date payment
 	if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
 		$paymentdate = dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
@@ -975,10 +976,16 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$datefrom) {
 		$datefrom = $object->datevalid;
-		if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
+		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
+			$datefrom = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
+		} elseif ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > $now) {
 			$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
-		} else {
-			$datefrom = dol_get_first_day($currentyear);
+		}
+
+		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
+			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
+		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
+			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"));
 		}
 	}
 	print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
@@ -990,9 +997,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$dateto) {
 		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$dateto = dol_get_last_day($currentyear, $currentmonth);
+			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$dateto = dol_get_last_day($currentyear);
+			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"));
 		} else {
 			$dateto = -1; // By default, no date is suggested
 		}

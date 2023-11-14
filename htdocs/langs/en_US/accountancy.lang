@@ -169,8 +169,8 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns

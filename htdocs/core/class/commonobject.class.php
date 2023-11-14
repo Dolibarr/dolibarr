@@ -3913,7 +3913,7 @@ abstract class CommonObject
 	 *	@param  string		$clause				'OR' or 'AND' clause used when both source id and target id are provided
 	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
-	 *  @param	int|string	$loadalsoobjects	Load also array this->linkedObjects. Use 0 to increase performances, Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
+	 *  @param	int|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
 	 *	@return int								<0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
@@ -6162,7 +6162,7 @@ abstract class CommonObject
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
 						if (!empty($extrafields->attributes[$this->table_element]['type'][$key]) && $extrafields->attributes[$this->table_element]['type'][$key] == 'password') {
-							if (preg_match('/^dolcrypt:/', $value)) {
+							if (!empty($value) && preg_match('/^dolcrypt:/', $value)) {
 								$this->array_options["options_".$key] = dolDecrypt($value);
 							}
 						}
@@ -7033,6 +7033,7 @@ abstract class CommonObject
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
+		//var_dump($type); var_dump($param['options']);
 
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
@@ -7194,7 +7195,27 @@ abstract class CommonObject
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
+				$InfoFieldList = explode(":", $param_list[0], 5);
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0; $parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos+1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+					//var_dump($InfoFieldList);
+				}
 				$parentName = '';
 				$parentField = '';
 
@@ -7250,12 +7271,14 @@ abstract class CommonObject
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
 
-						//We have to join on extrafield table
+						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2];
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
@@ -8504,7 +8527,7 @@ abstract class CommonObject
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int', 'boolean'))) {
-							if ($action == 'create') {
+							if ($action == 'create' || $mode == 'create') {
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
 						}
@@ -9584,14 +9607,15 @@ abstract class CommonObject
 
 
 	/**
-	 * Load object in memory from the database
+	 * Load object in memory from the database. This does not load line. This is done by parent fetch() that call fetchCommon
 	 *
 	 * @param	int    	$id				Id object
 	 * @param	string 	$ref			Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchCommon($id, $ref = null, $morewhere = '')
+	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
 		if (empty($id) && empty($ref) && empty($morewhere)) {
 			return -1;
@@ -9628,7 +9652,14 @@ abstract class CommonObject
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
+				if (empty($noextrafields)) {
+					$result = $this->fetch_optionals();
+					if ($result < 0) {
+						$this->error = $this->db->lasterror();
+						$this->errors[] = $this->error;
+						return -4;
+					}
+				}
 
 				return $this->id;
 			} else {
@@ -9645,9 +9676,10 @@ abstract class CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLinesCommon($morewhere = '')
+	public function fetchLinesCommon($morewhere = '', $noextrafields = 0)
 	{
 		$objectlineclassname = get_class($this).'Line';
 		if (!class_exists($objectlineclassname)) {
@@ -9676,6 +9708,12 @@ abstract class CommonObject
 				if ($obj) {
 					$newline = new $objectlineclassname($this->db);
 					$newline->setVarsFromFetchObj($obj);
+
+					// Note: extrafields load of line not yet supported
+					/*
+					if (empty($noextrafields)) {
+						// Load extrafields of line
+					}*/
 
 					$this->lines[] = $newline;
 				}
@@ -9839,9 +9877,8 @@ abstract class CommonObject
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
 					$TMoreSQL = array();
-					$more_sql = $deleteFromObject[3];
-					if (!empty($more_sql)) {
-						$TMoreSQL['customsql'] = $more_sql;
+					if (!empty($deleteFromObject[3])) {
+						$TMoreSQL['customsql'] = $deleteFromObject[3];
 					}
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
@@ -10380,16 +10417,26 @@ abstract class CommonObject
 					$element = 'fournisseur/commande';
 					break;
 				case 'invoice_supplier':
+					// Special cases that need to use get_exdir to get real dir of object
+					// In future, all object should use this to define path of documents.
 					$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 					break;
 				case 'shipping':
 					$element = 'expedition/sending';
 					break;
+				case 'task':
+				case 'project_task':
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
+					$project_result = $this->fetch_projet();
+					if ($project_result >= 0) {
+						$element = 'projet/'.dol_sanitizeFileName($object->project->ref).'/';
+					}
 				default:
 					$element = $this->element;
 			}
 
-			// Delete ecm_files extrafields
+			// Delete ecm_files_extrafields with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files_extrafields WHERE fk_object IN (";
 			$sql .= " SELECT rowid FROM ".$this->db->prefix()."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
 			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
@@ -10401,7 +10448,7 @@ abstract class CommonObject
 				return false;
 			}
 
-			// Delete ecm_files
+			// Delete ecm_files with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files";
 			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
 			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here

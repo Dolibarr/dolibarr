@@ -63,6 +63,26 @@ class Tva extends CommonObject
 	public $num_payment;
 
 	/**
+	 * @var DateTime
+	 */
+	public $datec;
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_type;
+
+	/**
+	 * @var int
+	 */
+	public $paye;
+
+	/**
+	 * @var int
+	 */
+	public $rappro;
+
+	/**
 	 * @var integer|string totalpaid
 	 */
 	public $totalpaid;

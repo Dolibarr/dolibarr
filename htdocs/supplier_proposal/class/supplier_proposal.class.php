@@ -1442,6 +1442,12 @@ class SupplierProposal extends CommonObject
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
 					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'supplier_proposal/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
@@ -1533,6 +1539,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_percent($user, $remise)
 	{
 		// phpcs:enable
@@ -1555,7 +1562,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1615,7 +1622,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
-		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
+		$sql .= " date_cloture = NULL, fk_user_cloture = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
@@ -2023,7 +2030,8 @@ class SupplierProposal extends CommonObject
 
 					if (!$error) {
 						// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-						$this->deleteEcmFiles();
+						$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+						$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
@@ -2893,6 +2901,12 @@ class SupplierProposalLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $product_label;
+
+	/**
+	 * Custom label
+	 * @var string
+	 */
+	public $label;
 
 	/**
 	 * Product description

@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@ dol_include_once('/partnership/class/partnership.class.php');
 
 
 /**
- * \file    partnership/class/api_partnership.class.php
+ * \file    partnership/class/api_partnerships.class.php
  * \ingroup partnership
  * \brief   File for API management of partnership.
  */
@@ -34,7 +33,7 @@ dol_include_once('/partnership/class/partnership.class.php');
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class PartnershipApi extends DolibarrApi
+class Partnerships extends DolibarrApi
 {
 	/**
 	 * @var Partnership $partnership {@type Partnership}

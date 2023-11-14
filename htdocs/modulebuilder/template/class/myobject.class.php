@@ -401,15 +401,17 @@ class MyObject extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return 	int     				<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
+			$this->fetchLines($noextrafields);
 		}
 		return $result;
 	}
@@ -417,13 +419,14 @@ class MyObject extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines()
+	public function fetchLines($noextrafields = 0)
 	{
 		$this->lines = array();
 
-		$result = $this->fetchLinesCommon();
+		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
 
@@ -435,7 +438,7 @@ class MyObject extends CommonObject
 	 * @param  string      $sortfield    Sort field
 	 * @param  int         $limit        limit
 	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  array       $filter       Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
@@ -460,16 +463,40 @@ class MyObject extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;	// For this case, $value never come from a user input but is a hard coded value in code
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($value))."%'";
+				$columnName = preg_replace('/^t\./', '', $key);
+				if ($key === 'customsql') {
+					// Never use 'customsql' with a value from user input since it is injected as is. The value must be hard coded.
+					$sqlwhere[] = $value;
+					continue;
+				} elseif (isset($this->fields[$columnName])) {
+					$type = $this->fields[$columnName]['type'];
+					if (preg_match('/^integer/', $type)) {
+						if (is_int($value)) {
+							// single value
+							$sqlwhere[] = $key . " = " . intval($value);
+						} elseif (is_array($value)) {
+							if (empty($value)) continue;
+							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
+						}
+						continue;
+					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $key . " = '" . $this->db->idate($value) . "'";
+						continue;
+					}
+				}
+
+				// when the $key doesn't fall into the previously handled categories, we do as if the column were a varchar/text
+				if (is_array($value) && count($value)) {
+					$value = implode(',', array_map(function ($v) {
+						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
+					}, $value));
+					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
+				} elseif (is_scalar($value)) {
+					if (strpos($value, '%') === false) {
+						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
+					} else {
+						$sqlwhere[] = $key . " LIKE '%" . $this->db->escapeforlike($this->db->escape($value)) . "%'";
+					}
 				}
 			}
 		}
@@ -633,6 +660,12 @@ class MyObject extends CommonObject
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();

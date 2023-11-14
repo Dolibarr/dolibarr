@@ -455,7 +455,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_CLOSED) {
 				$contratline->date_end_real = $now;
 				$contratline->date_cloture = $now;	// For backward compatibility
-				$contratline->fk_user_cloture = $user->id;
+				$contratline->user_closing_id = $user->id;
 				$contratline->statut = ContratLigne::STATUS_CLOSED;
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
 				if ($result < 0) {
@@ -552,6 +552,12 @@ class Contrat extends CommonObject
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'contract/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
@@ -660,15 +666,17 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *    Load a contract from database
+	 *  Load a contract from database
 	 *
-	 *    @param	int		$id     		Id of contract to load
-	 *    @param	string	$ref			Ref
-	 *    @param	string	$ref_customer	Customer ref
-	 *    @param	string	$ref_supplier	Supplier ref
-	 *    @return   int     				<0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
+	 *  @param	int		$id     		Id of contract to load
+	 *  @param	string	$ref			Ref
+	 *  @param	string	$ref_customer	Customer ref
+	 *  @param	string	$ref_supplier	Supplier ref
+	 *  @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 *  @param	int		$nolines		0=Default to load lines, 1=No lines
+	 *  @return int     				<0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
 	 */
-	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
+	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '', $noextrafields = 0, $nolines = 0)
 	{
 		$sql = "SELECT rowid, statut as status, ref, fk_soc as thirdpartyid,";
 		$sql .= " ref_supplier, ref_customer,";
@@ -740,16 +748,23 @@ class Contrat extends CommonObject
 
 					// Retrieve all extrafields
 					// fetch optionals attributes and labels
-					$result = $this->fetch_optionals();
-
-					// Lines
-					if ($result >= 0 && !empty($this->table_element_line)) {
-						$result = $this->fetch_lines();
+					if (empty($noextrafields)) {
+						$result = $this->fetch_optionals();
+						if ($result < 0) {
+							$this->error = $this->db->lasterror();
+							return -4;
+						}
 					}
 
-					if ($result < 0) {
-						$this->error = $this->db->lasterror();
-						return -3;
+					// Lines
+					if (empty($nolines)) {
+						if ($result >= 0 && !empty($this->table_element_line)) {
+							$result = $this->fetch_lines();
+							if ($result < 0) {
+								$this->error = $this->db->lasterror();
+								return -3;
+							}
+						}
 					}
 
 					return $this->id;
@@ -775,11 +790,12 @@ class Contrat extends CommonObject
 	 *  Load lines array into this->lines.
 	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
-	 *	@param		int				$only_services			0=Default, 1=Force only services (depending on setup, we may also have physical products in a contract)
-	 *	@param		int				$loadalsotranslation	0=Default, 1=Load also translations of product descriptions
-	 *  @return 	array|int  						Return array of contract lines
+	 *	@param		int				$only_services			0=Default for all, 1=Force only services (depending on setup, we may also have physical products in a contract)
+	 *	@param		int				$loadalsotranslation	0=Default to not load translations, 1=Load also translations of product descriptions
+	 *  @param		int				$noextrafields			0=Default to load extrafields, 1=Do not load the extrafields of lines
+	 *  @return 	array|int  								Return array of contract lines
 	 */
-	public function fetch_lines($only_services = 0, $loadalsotranslation = 0)
+	public function fetch_lines($only_services = 0, $loadalsotranslation = 0, $noextrafields = 0)
 	{
 		// phpcs:enable
 		$this->nbofservices = 0;
@@ -895,7 +911,9 @@ class Contrat extends CommonObject
 
 				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
-				$line->fetch_optionals();
+				if (empty($noextrafields)) {
+					$line->fetch_optionals();
+				}
 
 				// multilangs
 				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
@@ -2752,7 +2770,7 @@ class Contrat extends CommonObject
 					// Load contract
 					$object = new Contrat($this->db);
 					$object->fetch($obj->rowid);		// fetch also lines
-					$object->fetch_thirdparty();
+					//$object->fetch_thirdparty();
 
 					if ($object->id <= 0) {
 						$error++;
@@ -2768,13 +2786,16 @@ class Contrat extends CommonObject
 					$duration_unit = preg_replace('/\d/', '', $obj->duration);
 					//var_dump($expirationdate.' '.$enddatetoscan);
 
-					// Test if there is pending invoice
+					// Load linked ->linkedObjects (objects linked)
+					// @TODO Comment this line and then make the search if there is n open invoice(s) by doing a dedicated SQL COUNT request to fill $contractcanceled.
 					$object->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
 
-					if (is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
-						usort($object->linkedObjects['facture'], "cmp");
+					// Test if there is at least 1 open invoice
+					if (isset($object->linkedObjects['facture']) && is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
+						// Sort array of linked invoices by ascending date
+						usort($object->linkedObjects['facture'], array('Contrat', 'contractCmpDate'));
+						//dol_sort_array($object->linkedObjects['facture'], 'date');
 
-						//dol_sort_array($contract->linkedObjects['facture'], 'date');
 						$someinvoicenotpaid=0;
 						foreach ($object->linkedObjects['facture'] as $idinvoice => $invoice) {
 							if ($invoice->statut == Facture::STATUS_DRAFT) continue;	// Draft invoice are not invoice not paid
@@ -2785,7 +2806,7 @@ class Contrat extends CommonObject
 						}
 						if ($someinvoicenotpaid) {
 							$this->output .= 'Contract '.$object->ref.' is qualified for renewal but there is '.$someinvoicenotpaid.' invoice(s) unpayed so we cancel renewal'."\n";
-							$contractignored[$object->id]=$object->ref;
+							$contractignored[$object->id] = $object->ref;
 							continue;
 						}
 					}
@@ -2827,7 +2848,7 @@ class Contrat extends CommonObject
 								$actioncomm->datep        = $now;
 								$actioncomm->datef        = $now;
 								$actioncomm->percentage   = -1;   // Not applicable
-								$actioncomm->socid        = $object->thirdparty->id;
+								$actioncomm->socid        = $object->socid;
 								$actioncomm->authorid     = $user->id;   // User saving action
 								$actioncomm->userownerid  = $user->id;	// Owner of action
 								$actioncomm->fk_element   = $object->id;
@@ -2865,6 +2886,21 @@ class Contrat extends CommonObject
 		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.join(',', $contractlineprocessed) : '');
 
 		return ($error ? 1: 0);
+	}
+
+	/**
+	 * Used to sort lines by date
+	 *
+	 * @param	Object	$a		1st element to test
+	 * @param	Object	$b		2nd element to test
+	 * @return int
+	 */
+	static public function contractCmpDate($a, $b)
+	{
+		if ($a->date == $b->date) {
+			return strcmp((string) $a->id, (string) $b->id);
+		}
+		return ($a->date < $b->date) ? -1 : 1;
 	}
 
 	/**
@@ -3772,7 +3808,7 @@ class ContratLigne extends CommonObjectLine
 		// Update object
 		$this->date_cloture = $date_end_real;
 		$this->date_end_real = $date_end_real;
-		$this->fk_user_cloture = $user->id;
+		$this->user_closing_id = $user->id;
 		$this->commentaire = $comment;
 
 		$error = 0;

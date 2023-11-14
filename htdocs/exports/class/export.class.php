@@ -36,6 +36,16 @@ class Export
 	public $db;
 
 	/**
+	 * @var int
+	 */
+	public $id;
+
+	public $array_export_icon;
+
+	public $array_export_perms;
+
+
+	/**
 	 * @var string Last error message
 	 */
 	public $error;

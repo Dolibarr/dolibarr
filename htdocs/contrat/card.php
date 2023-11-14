@@ -777,7 +777,7 @@ if (empty($reshook)) {
 			$objectline->date_start_real = $date_start_real_update;
 			$objectline->date_end = $date_end_update;
 			$objectline->date_end_real = $date_end_real_update;
-			$objectline->fk_user_cloture = $user->id;
+			$objectline->user_closing_id = $user->id;
 			//$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
 			$objectline->rang = $objectline->rang;
