@@ -223,7 +223,7 @@ NEW: ModuleBuilder: remove dictionary in ModuleBuilder
 NEW: ModuleBuilder: add page for create dictionary
 NEW: ModuleBuilder: add badge for each tabs
 NEW: ModuleBuilder: for edit name of dictionnary and delete it in MB
-
+NEW: add barcode function to check if EAN13 is valid (
 
 WARNING:
 --------
