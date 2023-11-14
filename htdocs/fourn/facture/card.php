@@ -2228,7 +2228,7 @@ if ($action == 'create') {
 		$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGene", $langs->transnoentitiesnoconv("MenuFinancial"), $langs->transnoentitiesnoconv("SupplierBills"), $langs->transnoentitiesnoconv("ListOfTemplates"));
 		if (empty($conf->global->INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE)) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
-	}
+		}
 		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
 	}
 
