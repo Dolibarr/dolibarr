@@ -1296,7 +1296,9 @@ if ($action == 'create') {
 		// Invoice subtype
 		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
-			print $object->getSubtypeLabel('facture_rec');
+			if ($object->subtype > 0) {
+				print $object->getSubtypeLabel('facture_rec');
+			}
 			print "</td></tr>";
 		}
 
