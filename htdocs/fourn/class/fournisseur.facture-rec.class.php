@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +195,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
+		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		'ref_supplier' =>array('type'=>'varchar(180)', 'label'=>'RefSupplier', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>20),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>30),
@@ -299,6 +301,7 @@ class FactureFournisseurRec extends CommonInvoice
 		if ($result > 0) {
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_rec (';
 			$sql .= 'titre';
+			$sql .= ", subtype";
 			$sql .= ', ref_supplier';
 			$sql .= ', entity';
 			$sql .= ', fk_soc';
@@ -329,6 +332,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
 			$sql .= "'".$this->db->escape($this->title)."'";
+			$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -498,6 +502,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
@@ -572,7 +577,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.rowid, f.titre as title, f.ref_supplier, f.entity, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.titre as title, f.subtype, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
 		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
@@ -608,6 +613,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->title;
 				$this->title                    = $obj->title;
+				$this->subtype				    = $obj->subtype;
 				$this->ref                      = $obj->$keyforref;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -1329,6 +1335,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$new_fac_fourn->type = self::TYPE_STANDARD;
+					$new_fac_fourn->subtype = $facturerec->subtype;
 					$new_fac_fourn->statut = self::STATUS_DRAFT;	// deprecated
 					$new_fac_fourn->status = self::STATUS_DRAFT;
 					$new_fac_fourn->date = empty($facturerec->date_when) ? $now : $facturerec->date_when; // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
