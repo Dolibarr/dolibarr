@@ -5874,7 +5874,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (select limit, arrows $betweenarrows and $afterarrows but not $beforearrows)
+ *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (hide limit section, html in $betweenarrows and $afterarrows but not $beforearrows)
  *	@return	void
  */
 function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
@@ -7635,19 +7635,20 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
-		// '<img' to avoid <img src="http...">
+		// '<img' to avoid <img src="http...">,  we can only accept "<img src="data:..."
 		// 'url(' to avoid inline style like background: url(http...
 		// '<link' to avoid <link href="http...">
 		$reg = array();
-		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
-		$nbextlink = count($reg[0]);
-		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-			$out = 'TooManyLinksIntoHTMLString';
+		$tmpout = preg_replace('/<img src="data:/mi', '<__IMG_SRC_DATA__ src="data:', $out);
+		preg_match_all('/(<img|url\(|<link)/i', $tmpout, $reg);
+		$nblinks = count($reg[0]);
+		if ($nblinks > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
 		//
-		if (!empty($conf->global->MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
-			if ($nbextlink > 0) {
-				$out = 'ExternalLinksNotAllowed';
+		if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
+			if ($nblinks > 0) {
+				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		}
 
@@ -8252,18 +8253,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ATTENDEE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
-			if (is_object($object->project)) {
-				$substitutionarray['__PROJECT_ID__'] = (is_object($object->project) ? $object->project->id : '');
-				$substitutionarray['__PROJECT_REF__'] = (is_object($object->project) ? $object->project->ref : '');
-				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->project) ? $object->project->title : '');
-			}
-			if (is_object($object->projet)) {	// Deprecated, for backward compatibility
-				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet) ? $object->projet->id : '');
-				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
-				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
-			}
 			if (is_object($object) && $object->element == 'project') {
+				$substitutionarray['__PROJECT_ID__'] = $object->id;
+				$substitutionarray['__PROJECT_REF__'] = $object->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
+			} elseif (is_object($object)) {
+				$project = null;
+				if (!empty($object->project)) {
+					$project = $object->project;
+				} elseif (!empty($object->projet)) { // Deprecated, for backward compatibility
+					$project = $object->projet;
+				}
+				if (!is_null($project) && is_object($project)) {
+					$substitutionarray['__PROJECT_ID__'] = $project->id;
+					$substitutionarray['__PROJECT_REF__'] = $project->ref;
+					$substitutionarray['__PROJECT_NAME__'] = $project->title;
+				} else {
+					// can substitute variables for project : uses lazy load in "make_substitutions" method
+					$project_id = 0;
+					if (!empty($object->fk_project) && $object->fk_project > 0) {
+						$project_id = $object->fk_project;
+					} elseif (!empty($object->fk_projet) && $object->fk_projet > 0) {
+						$project_id = $object->fk_project;
+					}
+					if ($project_id > 0) {
+						// path:class:method:id
+						$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					}
+				}
 			}
 
 			if (is_object($object) && $object->element == 'shipping') {
@@ -8580,7 +8599,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  */
 function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
-	global $conf, $langs;
+	global $conf, $db, $langs;
 
 	if (!is_array($substitutionarray)) {
 		return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
@@ -8698,6 +8717,53 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	$valuetouseforsubstitution = $tmpobj->$method($id, '__XXX__');
 	And make the replacement of "__XXX__@lazyload" with $valuetouseforsubstitution
 	*/
+	$memory_object_list = array();
+	foreach ($substitutionarray as $key => $value) {
+		$lazy_load_arr = array();
+		if (preg_match('/(__[A-Z\_]+__)@lazyload$/', $key, $lazy_load_arr)) {
+			if (isset($lazy_load_arr[1]) && !empty($lazy_load_arr[1])) {
+				$key_to_substitute = $lazy_load_arr[1];
+				if (preg_match('/' . preg_quote($key_to_substitute, '/') . '/', $text)) {
+					$param_arr = explode(':', $value);
+					// path:class:method:id
+					if (count($param_arr) == 4) {
+						$path = $param_arr[0];
+						$class = $param_arr[1];
+						$method = $param_arr[2];
+						$id = (int) $param_arr[3];
+
+						// load class file and init object list in memory
+						if (!isset($memory_object_list[$class])) {
+							if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
+								require_once DOL_DOCUMENT_ROOT . $path;
+								if (class_exists($class)) {
+									$memory_object_list[$class] = array(
+										'list' => array(),
+									);
+								}
+							}
+						}
+
+						// fetch object and set substitution
+						if (isset($memory_object_list[$class]) && isset($memory_object_list[$class]['list'])) {
+							if (method_exists($class, $method)) {
+								if (!isset($memory_object_list[$class]['list'][$id])) {
+									$tmpobj = new $class($db);
+									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute);
+									$memory_object_list[$class]['list'][$id] = $tmpobj;
+								} else {
+									$tmpobj = $memory_object_list[$class]['list'][$id];
+									$valuetouseforsubstitution = $tmpobj->$method($id, $key_to_substitute, true);
+								}
+
+								$text = str_replace("$key_to_substitute", "$valuetouseforsubstitution", $text); // We must keep the " to work when value is 123.5 for example
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	return $text;
 }

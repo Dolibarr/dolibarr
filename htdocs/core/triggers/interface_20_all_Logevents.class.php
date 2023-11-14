@@ -100,6 +100,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		if (empty($conf->entity)) {
+			global $entity;
 			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
 		}
 

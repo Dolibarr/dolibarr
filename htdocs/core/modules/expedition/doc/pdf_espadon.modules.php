@@ -62,6 +62,10 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	public $type;
 
+	public $posxweightvol;
+	public $posxqtytoship;
+	public $posxqtyordered;
+
 	/**
 	 * Dolibarr version of the loaded document
 	 * @var string

@@ -1073,6 +1073,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 	}
 
+	// Stripe connect
 	if (isModEnabled('stripe') && !empty($conf->stripeconnect->enabled) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$stripesupplieracc = $stripe->getStripeAccount($service, $object->id); // Get Stripe OAuth connect account (no network access here)
 
@@ -1740,11 +1741,19 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Edit/Delete
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
-				if (empty($rib->stripe_card_ref)) {
-					// Add link to create BAN on Stripe
-					print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe&token='.newToken().'">';
-					print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
-					print '</a>';
+				if (isModEnabled('stripe')) {
+					if (empty($rib->stripe_card_ref)) {
+						if ($object->client) {
+							// Add link to create BAN on Stripe
+							print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe&token='.newToken().'">';
+							print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
+							print '</a>';
+						} else {
+							print '<span class="opacitymedium marginrightonly marginleftonly">';
+							print img_picto($langs->trans("ThirdPartyMustBeACustomerToCreateBANOnStripe"), 'stripe');
+							print '</span>';
+						}
+					}
 				}
 
 				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';

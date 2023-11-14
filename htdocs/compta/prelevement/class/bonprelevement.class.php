@@ -2725,33 +2725,36 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 * check if is bon prelevement for salary invoice
-	 * @return  int  1 if OK, O if K0
+	 * Check if is bon prelevement for salary invoice
+	 *
+	 * @return  int  	1 if OK, O if K0
 	 */
 	public function checkIfSalaryBonPrelevement()
 	{
-
 		if (!empty($this->id)) {
 			$id = $this->id;
 		} else {
 			return 0;
 		}
 		if ($id) {
-			$sql = "SELECT * FROM ".MAIN_DB_PREFIX."prelevement_lignes";
-			$sql .= " WHERE fk_prelevement_bons=".((int) $id);
+			$sql = "SELECT COUNT(*) AS nb FROM ".MAIN_DB_PREFIX."prelevement_lignes";
+			$sql .= " WHERE fk_prelevement_bons = ".((int) $id);
 			$sql .= " AND fk_soc = 0";
 			$sql .= " AND fk_user IS NOT NULL";
 
+			$num = 0;
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$num = $this->db->num_rows($resql);
+				$obj = $this->db->fetch_object($resql);
+				$num = $obj->nb;
 			}
 			if ($num > 0) {
 				return 1;
 			}
 		} else {
 			dol_print_error($this->db);
-			return 0;
 		}
+
+		return 0;
 	}
 }

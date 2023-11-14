@@ -309,7 +309,7 @@ class FichinterRec extends Fichinter
 
 				$this->id = $rowid;
 				$this->title				= $obj->title;
-				$this->ref = $obj->title;
+				$this->ref                  = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
 				$this->duration = $obj->duree;

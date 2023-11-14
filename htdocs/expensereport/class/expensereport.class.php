@@ -1208,6 +1208,7 @@ class ExpenseReport extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (!$res) {
 				$error++;
 			}
@@ -2697,7 +2698,7 @@ class ExpenseReport extends CommonObject
 		//Clean
 		$qty = price2num($qty);
 
-		$sql  = " SELECT r.range_ik, t.ikoffset as offset, t.coef";
+		$sql  = " SELECT r.range_ik, t.ikoffset as ikoffset, t.coef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp_tax_range r ON r.rowid = t.fk_range";
 		$sql .= " WHERE t.fk_c_exp_tax_cat = ".(int) $fk_cat;
@@ -2741,12 +2742,12 @@ class ExpenseReport extends CommonObject
 					if ($i < ($num - 1)) {
 						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
 							$coef = $ranges[$i]->coef;
-							$offset = $ranges[$i]->offset;
+							$offset = $ranges[$i]->ikoffset;
 						}
 					} else {
 						if ($qty > $ranges[$i]->range_ik) {
 							$coef = $ranges[$i]->coef;
-							$offset = $ranges[$i]->offset;
+							$offset = $ranges[$i]->ikoffset;
 						}
 					}
 				}
