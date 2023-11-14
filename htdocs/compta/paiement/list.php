@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
@@ -381,7 +381,6 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 print '<tr class="liste_titre_filter">';
 
 // Filters: Lines (placeholder)
-print '<tr class="liste_titre_filter">';
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 	print '<td class="liste_titre">';
 	print '</td>';

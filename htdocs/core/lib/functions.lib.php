@@ -5874,7 +5874,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (select limit, arrows $betweenarrows and $afterarrows but not $beforearrows)
+ *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (hide limit section, html in $betweenarrows and $afterarrows but not $beforearrows)
  *	@return	void
  */
 function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
@@ -7635,19 +7635,20 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
-		// '<img' to avoid <img src="http...">
+		// '<img' to avoid <img src="http...">,  we can only accept "<img src="data:..."
 		// 'url(' to avoid inline style like background: url(http...
 		// '<link' to avoid <link href="http...">
 		$reg = array();
-		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
-		$nbextlink = count($reg[0]);
-		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-			$out = 'TooManyLinksIntoHTMLString';
+		$tmpout = preg_replace('/<img src="data:/mi', '<__IMG_SRC_DATA__ src="data:', $out);
+		preg_match_all('/(<img|url\(|<link)/i', $tmpout, $reg);
+		$nblinks = count($reg[0]);
+		if ($nblinks > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
 		//
-		if (!empty($conf->global->MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
-			if ($nbextlink > 0) {
-				$out = 'ExternalLinksNotAllowed';
+		if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
+			if ($nblinks > 0) {
+				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		}
 
@@ -8252,33 +8253,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ATTENDEE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
-			$project = null;
-			if (is_object($object->project)) {
-				$project = $object->project;
-			} elseif (is_object($object->projet)) { // Deprecated, for backward compatibility
-				$project = $object->projet;
-			}
-			if ($project) {
-				$substitutionarray['__PROJECT_ID__'] = $project->id;
-				$substitutionarray['__PROJECT_REF__'] = $project->ref;
-				$substitutionarray['__PROJECT_NAME__'] = $project->title;
-			} else {
-				// can substitute variables for project : uses lazy load in "make_substitutions" method
-				$project_id = 0;
-				if ($object->fk_project > 0) {
-					$project_id = $object->fk_project;
-				} elseif ($object->fk_projet > 0) {
-					$project_id = $object->fk_project;
-				}
-				if ($project_id > 0) {
-					// path:class:method:id
-					$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-					$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-					$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
-				}
-			}
 			if (is_object($object) && $object->element == 'project') {
+				$substitutionarray['__PROJECT_ID__'] = $object->id;
+				$substitutionarray['__PROJECT_REF__'] = $object->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
+			} elseif (is_object($object)) {
+				$project = null;
+				if (!empty($object->project)) {
+					$project = $object->project;
+				} elseif (!empty($object->projet)) { // Deprecated, for backward compatibility
+					$project = $object->projet;
+				}
+				if (!is_null($project) && is_object($project)) {
+					$substitutionarray['__PROJECT_ID__'] = $project->id;
+					$substitutionarray['__PROJECT_REF__'] = $project->ref;
+					$substitutionarray['__PROJECT_NAME__'] = $project->title;
+				} else {
+					// can substitute variables for project : uses lazy load in "make_substitutions" method
+					$project_id = 0;
+					if (!empty($object->fk_project) && $object->fk_project > 0) {
+						$project_id = $object->fk_project;
+					} elseif (!empty($object->fk_projet) && $object->fk_projet > 0) {
+						$project_id = $object->fk_project;
+					}
+					if ($project_id > 0) {
+						// path:class:method:id
+						$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+						$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					}
+				}
 			}
 
 			if (is_object($object) && $object->element == 'shipping') {

@@ -3160,6 +3160,7 @@ class Propal extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (!$res) {
 				$error++;
 			}
@@ -3182,7 +3183,7 @@ class Propal extends CommonObject
 					}
 				}
 				if (file_exists($dir)) {
-					$res = @dol_delete_dir_recursive($dir);
+					$res = @dol_delete_dir_recursive($dir);		// delete files physically + into ecm tables
 					if (!$res) {
 						$this->error = 'ErrorFailToDeleteDir';
 						$this->errors[] = $this->error;

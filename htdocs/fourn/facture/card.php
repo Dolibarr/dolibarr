@@ -733,8 +733,11 @@ if (empty($reshook)) {
 			$paiementfourn = new PaiementFourn($db);
 			$result = $paiementfourn->fetch(GETPOST('paiement_id'));
 			if ($result > 0) {
-				$result = $paiementfourn->delete(); // If fetch ok and found
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+				$result = $paiementfourn->delete();
+				if ($result > 0) {
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					exit;
+				}
 			}
 			if ($result < 0) {
 				setEventMessages($paiementfourn->error, $paiementfourn->errors, 'errors');
@@ -3210,8 +3213,10 @@ if ($action == 'create') {
 			print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 			print '<span class="badgeneutral">';
 			print $object->getLibType();
-			print $object->getSubtypeLabel('facture_fourn');
 			print '</span>';
+			if ($object->subtype > 0) {
+				print ' '.$object->getSubtypeLabel('facture_fourn');
+			}
 			if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 				$facreplaced = new FactureFournisseur($db);
 				$facreplaced->fetch($object->fk_facture_source);

@@ -280,7 +280,7 @@ function getDefaultDatesForTransfer()
 	$pastmonthyear = 0;
 
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
-	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
+	$periodbydefaultontransfer = getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0);
 	if ($periodbydefaultontransfer == 2) {	// fiscal year
 		$sql = "SELECT date_start, date_end FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
 		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";

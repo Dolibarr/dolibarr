@@ -179,3 +179,15 @@ ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
 -- VMYSQL4.1 UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline' AND mk.fk_unit IS NULL;
 -- VMYSQL4.1 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
 
+ALTER TABLE llx_facture_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
+ALTER TABLE llx_facture_fourn_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
+
+CREATE TABLE llx_mrp_production_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_production_extrafields ADD INDEX idx_mrp_production_fk_object(fk_object);

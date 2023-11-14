@@ -2425,3 +2425,7 @@ PasswordFieldEncrypted=%s new record have this field been encrypted
 ExtrafieldsDeleted=Extrafields %s has been deleted
 LargeModern=Large - Modern
 SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
+DeleteExtrafield=Delete extrafield
+ConfirmDeleteExtrafield=Confirm delete %s extrafield ? All data is going to be lost
+ExtraFieldsSupplierInvoicesRec=Complementary attributes (templates invoices)
+ExtraFieldsSupplierInvoicesLinesRec=Complementary attributes (invoice lines)

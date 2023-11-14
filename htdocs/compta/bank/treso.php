@@ -172,7 +172,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$error = 0;
 	$tab_sqlobjOrder = array();
 	$tab_sqlobj = array();
-	$nbtotalofrecords = '';
+	$nbtotalofrecords = 0;
 
 	foreach ($sqls as $sql) {
 		$resql = $db->query($sql);
