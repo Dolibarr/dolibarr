@@ -235,7 +235,7 @@ class Contact extends CommonObject
 	/**
 	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
 	 * @var int
-	 * @deprecated Has been replaced by a search into ll_xmailing_unsubscribe
+	 * @deprecated Has been replaced by a search into llx_mailing_unsubscribe
 	 */
 	public $no_email;
 
