@@ -69,7 +69,7 @@ $pagenext = $page + 1;
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->productbatch->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('product_lotlist'));
+$hookmanager->initHooks(array('productlotlist'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

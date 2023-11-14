@@ -106,7 +106,7 @@ $object = new Expedition($db);
 $form = new Form($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('shipmentlist'));
+$hookmanager->initHooks(array('expeditionlist'));
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels

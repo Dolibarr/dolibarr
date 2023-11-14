@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
- * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2023 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *

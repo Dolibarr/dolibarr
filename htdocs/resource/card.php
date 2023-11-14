@@ -69,7 +69,7 @@ $permissiontodelete = $user->rights->resource->delete;
  * Actions
  */
 
-$hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
+$hookmanager->initHooks(array('resource', 'resourcecard', 'globalcard'));
 $parameters = array('resource_id'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
