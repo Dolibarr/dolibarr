@@ -687,51 +687,29 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getSubtypeLabel($table = '')
 	{
+		$subtypeLabel = '';
 		if ($table === 'facture' || $table === 'facture_fourn') {
 			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
 			$sql .= " WHERE f.ref = '".$this->db->escape($this->ref)."'";
 
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				$subtypeLabel = '';
-
-				while ($obj = $this->db->fetch_object($resql)) {
-					$subtypeLabel = $obj->label;
-				}
-
-				if (!empty($subtypeLabel)) {
-					return $subtypeLabel;
-				}
-			} else {
-				dol_print_error($this->db);
-				return -1;
-			}
 		} elseif ($table === 'facture_rec' || $table === 'facture_fourn_rec') {
 			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
 			$sql .= " WHERE f.titre = '".$this->db->escape($this->titre)."'";
-
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				$subtypeLabel = '';
-
-				while ($obj = $this->db->fetch_object($resql)) {
-					$subtypeLabel = $obj->label;
-				}
-
-				if (!empty($subtypeLabel)) {
-					return $subtypeLabel;
-				}
-			} else {
-				dol_print_error($this->db);
-				return -1;
-			}
 		}
 
-		return '';
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$subtypeLabel = $obj->label;
+			}
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		return $subtypeLabel;
 	}
 
 	/**
