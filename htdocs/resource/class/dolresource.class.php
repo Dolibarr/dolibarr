@@ -995,6 +995,6 @@ class Dolresource extends CommonObject
 	 */
 	public function getBannerAddress()
 	{
-		return $this->getFullAddress(1, ', ');
+		return $this->getFullAddress(1, ', ', getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT'));
 	}
 }
