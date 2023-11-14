@@ -75,6 +75,18 @@ class ExpenseReport extends CommonObject
 	public $date_fin;
 
 	/**
+	 * @var int|string
+	 */
+	public $date_approbation;
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_user;
+
+	public $user_approve_id;
+
+	/**
 	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
@@ -2823,6 +2835,11 @@ class ExpenseReportLine extends CommonObjectLine
 	public $qty;
 	public $value_unit;
 	public $date;
+
+	/**
+	 * @var int|string
+	 */
+	public $dates;
 
 	/**
 	 * @var int ID

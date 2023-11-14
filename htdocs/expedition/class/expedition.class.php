@@ -151,6 +151,23 @@ class Expedition extends CommonObject
 	// A denormalized value
 	public $trueSize;
 
+	public $livraison_id;
+
+	/**
+	 * @var double
+	 */
+	public $multicurrency_subprice;
+
+	public $size_units;
+
+	public $sizeH;
+
+	public $sizeS;
+
+	public $sizeW;
+
+	public $weight;
+
 	/**
 	 * @var integer|string Date delivery planed
 	 */
