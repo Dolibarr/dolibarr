@@ -323,7 +323,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		}
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		header('Location: '.((empty($backtopage)) ? $_SERVER["PHP_SELF"].'?id='.$object->id : $backtopage));
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
