@@ -719,52 +719,50 @@ if ($id > 0 || $ref) {
 						}
 					}
 					$currencies = json_encode($currencies);
+					print "<!-- javascript to autocalculate the minimum price -->
+					<script type='text/javascript'>
+						function update_price_from_multicurrency() {
+							console.log('update_price_from_multicurrency');
+							var multicurrency_price = price2numjs($('input[name=\"multicurrency_price\"]').val());
+							var multicurrency_tx = price2numjs($('input[name=\"multicurrency_tx\"]').val());
+							if (multicurrency_tx != 0) {
+								$('input[name=\"price\"]').val(multicurrency_price / multicurrency_tx);
+								$('input[name=\"disabled_price\"]').val(multicurrency_price / multicurrency_tx);
+							} else {
+								$('input[name=\"price\"]').val('');
+								$('input[name=\"disabled_price\"]').val('');
+							}
+						}
 
-					print <<<END
-	<!-- javascript to autocalculate the minimum price -->
-    <script type="text/javascript">
-        function update_price_from_multicurrency() {
-			console.log("update_price_from_multicurrency");
-            var multicurrency_price = price2numjs($('input[name="multicurrency_price"]').val());
-            var multicurrency_tx = price2numjs($('input[name="multicurrency_tx"]').val());
-			if (multicurrency_tx != 0) {
-            	$('input[name="price"]').val(multicurrency_price / multicurrency_tx);
-            	$('input[name="disabled_price"]').val(multicurrency_price / multicurrency_tx);
-			} else {
-            	$('input[name="price"]').val('');
-            	$('input[name="disabled_price"]').val('');
-			}
-        }
+						jQuery(document).ready(function () {
+							$('input[name=\"disabled_price\"]').prop('disabled', true);
+							$('select[name=\"disabled_price_base_type\"]').prop('disabled', true);
+							update_price_from_multicurrency();
 
-        jQuery(document).ready(function () {
-            $('input[name="disabled_price"]').prop('disabled', true);
-            $('select[name="disabled_price_base_type"]').prop('disabled', true);
-            update_price_from_multicurrency();
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').keyup(function () {
+								update_price_from_multicurrency();
+							});
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').change(function () {
+								update_price_from_multicurrency();
+							});
+							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').on('paste', function () {
+								update_price_from_multicurrency();
+							});
 
-            $('input[name="multicurrency_price"], input[name="multicurrency_tx"]').keyup(function () {
-                update_price_from_multicurrency();
-            });
-			$('input[name="multicurrency_price"], input[name="multicurrency_tx"]').change(function () {
-                update_price_from_multicurrency();
-            });
-			$('input[name="multicurrency_price"], input[name="multicurrency_tx"]').on('paste', function () {
-                update_price_from_multicurrency();
-            });
+							$('select[name=\"multicurrency_price_base_type\"]').change(function () {
+								$('input[name=\"price_base_type\"]').val($(this).val());
+								$('select[name=\"disabled_price_base_type\"]').val($(this).val());
+							});
 
-            $('select[name="multicurrency_price_base_type"]').change(function () {
-                $('input[name="price_base_type"]').val($(this).val());
-                $('select[name="disabled_price_base_type"]').val($(this).val());
-            });
+							var currencies_array = $currencies;
+							$('select[name=\"multicurrency_code\"]').change(function () {
+								console.log(\"We change the currency\");
+								$('input[name=\"multicurrency_tx\"]').val(currencies_array[$(this).val()]);
+								update_price_from_multicurrency();
+							});
+						});
+					</script>";
 
-            var currencies_array = $currencies;
-            $('select[name="multicurrency_code"]').change(function () {
-				console.log("We change the currency");
-                $('input[name="multicurrency_tx"]').val(currencies_array[$(this).val()]);
-                update_price_from_multicurrency();
-            });
-        });
-    </script>
-END;
 				} else {
 					// Price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
