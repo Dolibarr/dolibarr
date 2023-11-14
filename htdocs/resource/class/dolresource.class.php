@@ -120,7 +120,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User    $user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 if KO: <0, if OK: Id of created object
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -240,7 +240,7 @@ class Dolresource extends CommonObject
 	 *
 	 *    @param    int		$id     Id of object
 	 *    @param	string	$ref	Ref of object
-	 *    @return   int         	<0 if KO, >0 if OK
+	 *    @return   int         	if KO: <0 , if OK: >0
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -308,7 +308,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 if KO: <0 , if OK: >0
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -425,7 +425,7 @@ class Dolresource extends CommonObject
 	 *    Load data of resource links in memory from database
 	 *
 	 *    @param      int	$id         Id of link element_resources
-	 *    @return     int         		<0 if KO, >0 if OK
+	 *    @return     int         		if KO: <0, if OK: >0
 	 */
 	public function fetch_element_resource($id)
 	{
@@ -479,7 +479,7 @@ class Dolresource extends CommonObject
 	 *
 	 *    @param	int		$rowid			Id of resource line to delete
 	 *    @param	int		$notrigger		Disable all triggers
-	 *    @return   int						>0 if OK, <0 if KO
+	 *    @return   int						if OK: >0, if KO: <0
 	 */
 	public function delete($rowid, $notrigger = 0)
 	{
@@ -559,7 +559,7 @@ class Dolresource extends CommonObject
 	 *  @param	int			$limit		  	limit page
 	 *  @param	int			$offset    	  	page
 	 *  @param	array		$filter    	  	filter output
-	 *  @return int          				<0 if KO, Number of lines loaded if OK
+	 *  @return int          				if KO: <0, if OK number of lines loaded
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
@@ -648,7 +648,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 if KO: <0, if OK: >0
 	 */
 	public function update_element_resource($user = null, $notrigger = 0)
 	{
@@ -728,7 +728,7 @@ class Dolresource extends CommonObject
 	 * @param string    $element        Element
 	 * @param int       $element_id     Id
 	 * @param string    $resource_type  Type
-	 * @return array                    Aray of resources
+	 * @return array                    Array of resources
 	 */
 	public function getElementResources($element, $element_id, $resource_type = '')
 	{
@@ -790,7 +790,7 @@ class Dolresource extends CommonObject
 	/**
 	 *      Load in cache resource type code (setup in dictionary)
 	 *
-	 *      @return     int             Number of lines loaded, 0 if already loaded, <0 if KO
+	 *      @return     int             Number of lines loaded, if already loaded: 0, if KO: <0
 	 */
 	public function load_cache_code_type_resource()
 	{
@@ -965,7 +965,7 @@ class Dolresource extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         if KO: <0, if OK: >0
 	 */
 	public function load_state_board()
 	{
@@ -995,6 +995,6 @@ class Dolresource extends CommonObject
 	 */
 	public function getBannerAddress()
 	{
-		return $this->getFullAddress(1,', ');
+		return $this->getFullAddress(1, ', ');
 	}
 }
