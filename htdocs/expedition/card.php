@@ -1755,7 +1755,8 @@ if ($action == 'create') {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+
+		$object->fetch_origin(); // Load property $object->origin_object (old $object->commande, $object->propal, ...)
 	}
 
 	$soc = new Societe($db);
@@ -1768,7 +1769,7 @@ if ($action == 'create') {
 
 	$formconfirm = '';
 
-	// Confirm deleteion
+	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
 		if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
