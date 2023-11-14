@@ -157,11 +157,6 @@ $sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE bc.fk_bank_account = ba.rowid";
 $sql .= " AND bc.entity = ".((int) $conf->entity);
 
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-
 // Search criteria
 if ($search_ref) {
 	$sql .= natural_search("bc.ref", $search_ref);
