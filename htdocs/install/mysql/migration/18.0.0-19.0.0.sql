@@ -191,3 +191,7 @@ CREATE TABLE llx_mrp_production_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_mrp_production_extrafields ADD INDEX idx_mrp_production_fk_object(fk_object);
+
+ALTER TABLE llx_salary ADD COLUM ref_ext varchar(255);
+ALTER TABLE llx_salary ADD COLUM note_public text;
+
