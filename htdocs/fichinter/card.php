@@ -457,7 +457,7 @@ if (empty($reshook)) {
 					$result = $object->create($user);
 					if ($result > 0) {
 						$id = $result; // Force raffraichissement sur fiche venant d'etre cree
-						
+
 						// Category association
 						$categories = GETPOST('categories', 'array');
 						$object->setCategories($categories);
@@ -743,7 +743,7 @@ if (empty($reshook)) {
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 
 		$url = 'card.php?id='.$object->id;
-		header("Location: ".$url);	
+		header("Location: ".$url);
 		exit();
 	}
 
