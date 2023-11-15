@@ -1103,6 +1103,36 @@ class Job extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+	/**
+	 * function for get required skills associate to job object
+	 * @param int  $id  Id of object
+	 * @return array|int     list of ids skillranks
+	 */
+	public function getSkillRankForJob($id)
+	{
+		if (empty($id)) {
+			return -1;
+		}
+		$skillranks = array();
+		$sql = "SELECT rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."hrm_skillrank";
+		$sql .= " WHERE fk_object = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$skillranks[] = $obj;
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $skillranks;
+	}
 }
 
 
