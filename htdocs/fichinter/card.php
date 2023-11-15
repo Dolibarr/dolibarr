@@ -1353,7 +1353,7 @@ if ($action == 'create') {
 			print $form->showCategories($object->id, Categorie::TYPE_FICHINTER, 1);
 			print "</td></tr>";
 		}
-
+	}
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
