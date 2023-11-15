@@ -423,7 +423,7 @@ $paramsCat = '';
 foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
 	$paramsCat .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
 }
-	
+
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, $paramsCat, 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 
