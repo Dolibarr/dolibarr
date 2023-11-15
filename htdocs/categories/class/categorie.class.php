@@ -252,7 +252,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
-     * @see Categorie::TYPE_FICHINTER
+	 * @see Categorie::TYPE_FICHINTER
 	 */
 	public $type;
 
