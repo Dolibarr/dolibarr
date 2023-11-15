@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 class Dolresource extends CommonObject
 {
 	use CommonPeople;
-	
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -131,38 +130,12 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-
-		if (isset($this->ref)) {
-			$this->ref = trim($this->ref);
+		$parameters_to_clean = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
+		foreach ($parameters_to_clean as $parameter) {
+			if (isset($parameter)) {
+				$parameters_to_clean[$parameter] = trim($parameter);
+			}
 		}
-		if (isset($this->address)) {
-			$this->address = trim($this->address);
-		}
-		if (isset($this->zip)) {
-			$this->zip = trim($this->zip);
-		}
-		if (isset($this->town)) {
-			$this->town = trim($this->town);
-		}
-		if (isset($this->description)) {
-			$this->description = trim($this->description);
-		}
-		if (!is_numeric($this->country_id)) {
-			$this->country_id = 0;
-		}
-		if (!is_numeric($this->state_id)) {
-			$this->state_id = 0;
-		}
-		if (isset($this->fk_code_type_resource)) {
-			$this->fk_code_type_resource = trim($this->fk_code_type_resource);
-		}
-		if (isset($this->note_public)) {
-			$this->note_public = trim($this->note_public);
-		}
-		if (isset($this->note_private)) {
-			$this->note_private = trim($this->note_private);
-		}
-
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
