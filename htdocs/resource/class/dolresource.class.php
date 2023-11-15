@@ -130,10 +130,10 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$parameters_to_clean = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
-		foreach ($parameters_to_clean as $parameter) {
+		$new_resource_parameters = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
+		foreach ($new_resource_parameters as $key => $parameter) {
 			if (isset($parameter)) {
-				$parameters_to_clean[$parameter] = trim($parameter);
+				$new_resource_parameters[$key] = trim($parameter);
 			}
 		}
 
@@ -152,16 +152,10 @@ class Dolresource extends CommonObject
 		$sql .= "note_private";
 		$sql .= ") VALUES (";
 		$sql .= $conf->entity.", ";
-		$sql .= " ".(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").",";
-		$sql .= " ".(!isset($this->address) ? 'NULL' : "'".$this->db->escape($this->address)."'").",";
-		$sql .= " ".(!isset($this->zip) ? 'NULL' : "'".$this->db->escape($this->zip)."'").",";
-		$sql .= " ".(!isset($this->town) ? 'NULL' : "'".$this->db->escape($this->town)."'").",";
-		$sql .= " ".(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
-		$sql .= " ".($this->country_id > 0 ? $this->country_id : 'null').",";
-		$sql .= " ".($this->state_id > 0 ? $this->state_id : 'null').",";
-		$sql .= " ".(!isset($this->fk_code_type_resource) ? 'NULL' : "'".$this->db->escape($this->fk_code_type_resource)."'").",";
-		$sql .= " ".(!isset($this->note_public) ? 'NULL' : "'".$this->db->escape($this->note_public)."'").",";
-		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'");
+		foreach ($new_resource_parameters as $parameter) {
+			$sql .= " " . ((isset($parameter) && $parameter > 0) ? "'" . $this->db->escape($parameter) . "'" : 'NULL') . ",";
+		}
+		$sql = rtrim($sql, ",");
 		$sql .= ")";
 
 		$this->db->begin();
