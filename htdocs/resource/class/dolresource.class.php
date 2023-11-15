@@ -131,7 +131,6 @@ class Dolresource extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs, $hookmanager;
 		$error = 0;
 
 		// Clean parameters
@@ -156,7 +155,7 @@ class Dolresource extends CommonObject
 		$sql .= "note_public,";
 		$sql .= "note_private";
 		$sql .= ") VALUES (";
-		$sql .= $conf->entity.", ";
+		$sql .= getEntity('resource') . ", ";
 		foreach ($new_resource_parameters as $parameter) {
 			$sql .= " " . ((isset($parameter) && $parameter > 0) ? "'" . $this->db->escape($parameter) . "'" : 'NULL') . ",";
 		}
