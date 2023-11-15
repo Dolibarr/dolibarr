@@ -153,10 +153,12 @@ function addDispatchLine(index, type, mode)
  */
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
 	if (qtyOrdered <= 1) {
-		window.alert("Quantity can't be split");
+        let errormsg = "<?php echo $langs->trans('QtyCantBeSplit') ?>";
+        $.jnotify(errormsg, "error", true);
 		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
-		window.alert("No remain qty to dispatch");
+        let errormsg = "<?php echo $langs->trans('NoRemainQtyToDispatch') ?>";
+        $.jnotify(errormsg, "error", true);
 		return -1;
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
