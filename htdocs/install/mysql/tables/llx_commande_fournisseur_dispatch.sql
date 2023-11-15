@@ -14,21 +14,23 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- This table is just an history table to track all receiving done for a 
+-- This table is just an history table to track all receiption to do or done for a 
 -- particular supplier order. A movement with same information is also done
 -- into stock_movement so this table may be useless.
 -- 
 -- Detail of each lines of a reception (qty, batch and into which warehouse must be
 -- received or has been receveived a purchase order line).
--- This table should have been named llx_receptiondet_batch
+--
+-- This table should be renamed into llx_receptiondet_batch
 -- ===================================================================
 
 create table llx_commande_fournisseur_dispatch
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_product     integer,
-  fk_commande    integer,
-  fk_commandefourndet integer,
+  fk_commande    integer,                       -- should be renamed into fk_element
+  fk_commandefourndet integer,                  -- should be renamed into fk_elementdet
+  element_type   varchar(50) DEFAULT 'supplier_order' NOT NULL,   -- Type of source ('supplier_order', ...)
   fk_projet  	 integer  DEFAULT NULL,
   fk_reception 	 integer  DEFAULT NULL,
   qty            float,             			-- qty to move

@@ -343,8 +343,6 @@ class Categorie extends CommonObject
 	 */
 	public function fetch($id, $label = '', $type = null, $ref_ext = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) {
 			$this->error = "No category to search for";
@@ -389,8 +387,6 @@ class Categorie extends CommonObject
 				$this->date_modification = $this->db->jdate($res['tms']);
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
-				$this->user_creation = (int) $res['fk_user_creat'];
-				$this->user_modification = (int) $res['fk_user_modif'];
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -594,14 +590,18 @@ class Categorie extends CommonObject
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 				if ($result < 0) {
-					$error++; $this->db->rollback(); return -1;
+					$error++;
 				}
 				// End call triggers
 			}
 
-			$this->db->commit();
-
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
 		} else {
 			$this->db->rollback();
 			dol_print_error($this->db);

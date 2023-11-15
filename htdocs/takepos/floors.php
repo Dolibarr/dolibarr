@@ -55,7 +55,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -119,7 +119,7 @@ if ($action == "add") {
 $head = '';
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $arrayofcss = array('/takepos/css/pos.css.php?a=xxx');
 

@@ -259,7 +259,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
+			$userstatic->fetch($object->user_creation_id);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -314,7 +314,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
+			$userstatic->fetch($object->user_modification_id);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -563,10 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
-		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
-			$object->user_closing = $object->user_cloture;
-		}
+	if (!empty($object->user_closing_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -576,20 +573,12 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_closing)) {
-			if ($object->user_closing->id) {
-				print $object->user_closing->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+		$userstatic = new User($db);
+		$userstatic->fetch($object->user_closing_id);
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans("Unknown");
-			}
+			print $langs->trans("Unknown");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -2672,7 +2661,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'accounting') {
 		$moduledirforclass = 'accountancy';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
 
@@ -2891,10 +2880,12 @@ function acceptLocalLinktoMedia()
 		}
 
 		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+		$allowParamName = 'MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK';
+		$allowPrivateNetworkIP = getDolGlobalInt($allowParamName);
+		if (!$allowPrivateNetworkIP && !filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// If ip of public url is a private network IP, we do not allow this.
 			$acceptlocallinktomedia = 0;
-			// TODO Show a warning
+			//dol_syslog("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local URL into WYSIWYG html content");
 		}
 
 		if (preg_match('/http:/i', $urlwithouturlroot)) {

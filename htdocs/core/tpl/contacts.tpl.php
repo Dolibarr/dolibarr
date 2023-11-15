@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-// TODO Set $permission from the $permissiontoadd var defined on calling page
+if (isset($permissiontoadd) && ! isset($permission)) {
+	$permission = $permissiontoadd;
+}
+// TODO Remove this section. We already got $permissiontoadd.
 if ($module == 'propal') {
 	$permission = $user->hasRight('propal', 'creer');
 } elseif ($module == 'fichinter') {
@@ -67,9 +70,9 @@ if ($module == 'propal') {
 	$permission = $user->hasRight('reception', 'creer');
 } elseif ($module == 'project_task') {
 	$permission = $user->hasRight('projet', 'creer');
-} elseif (!isset($permission) && isset($user->rights->$module->creer)) {
+} elseif (!isset($permission) && $user->hasRight($module, 'creer')) {
 	$permission = $user->hasRight($module, 'creer');
-} elseif (!isset($permission) && isset($user->rights->$module->write)) {
+} elseif (!isset($permission) && $user->hasRight($module, 'write')) {
 	$permission = $user->hasRight($module, 'write');
 }
 
@@ -288,7 +291,9 @@ print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], 
 print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
-print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
+if ($permission) {
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>";
 
 foreach ($list as $entry) {

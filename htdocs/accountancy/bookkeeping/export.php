@@ -134,7 +134,7 @@ $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (!getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION') ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -206,7 +206,7 @@ $arrayfields = array(
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
-if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
 }
 
@@ -464,7 +464,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+			if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
 				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'warnings');
@@ -562,7 +562,7 @@ if (count($filter) > 0) {
 	}
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
-if (empty($conf->global->ACCOUNTING_REEXPORT)) {	// Reexport not enabled (default mode)
+if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {	// Reexport not enabled (default mode)
 	$sql .= " AND t.date_export IS NULL";
 }
 if (count($sqlwhere) > 0) {
@@ -576,7 +576,7 @@ if (count($sqlwhere) > 0) {
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
 	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
 	// Replace this with the query($sql) and loop on each line to export them.
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (!getDolGlobalString('ACCOUNTING_REEXPORT') ? 0 : 1));
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -728,7 +728,7 @@ if ($action == 'export_file') {
 
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
-		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
+		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
 		$form_question['notexportlettering'] = array(
 			'name' => 'notexportlettering',
 			'type' => 'checkbox',
@@ -740,19 +740,19 @@ if ($action == 'export_file') {
 	}
 
 	// If 1 or not set, we check by default.
-	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE));
+	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE'));
 	$form_question['notifiedexportdate'] = array(
 		'name' => 'notifiedexportdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
+		'value' => (getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'false' : 'true'),
 	);
 
 	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
-		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
+		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE'));
 		$form_question['notifiedvalidationdate'] = array(
 			'name' => 'notifiedvalidationdate',
 			'type' => 'checkbox',
@@ -817,7 +817,7 @@ if ($reshook < 0) {
 $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Button re-export
-	if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+	if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
 		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'">'.img_picto($langs->trans("ClickToShowAlreadyExportedLines"), 'switch_off', 'class="small size15x valignmiddle"');
 		$newcardbutton .= '<span class="valignmiddle marginrightonly paddingleft">'.$langs->trans("ClickToShowAlreadyExportedLines").'</span>';
 		$newcardbutton .= '</a>';
@@ -835,7 +835,7 @@ if (empty($reshook)) {
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Not display message when all the list of docs are included
-if (empty($conf->global->ACCOUNTING_REEXPORT)) {
+if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
 	print info_admin($langs->trans("WarningDataDisappearsWhenDataIsExported"), 0, 0, 0, 'hideonsmartphone info');
 }
 
@@ -924,7 +924,7 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	print '<td class="liste_titre">';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 		print '<div class="nowrap">';
 		//print $langs->trans('From').' ';
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');

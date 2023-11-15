@@ -26,91 +26,6 @@ div.mainmenu.menu::before {
 	content: "\f0c9";
 }
 
-
-div.mainmenu.home::before{
-	content: "\f015";
-}
-
-div.mainmenu.billing::before {
-	content: "\f51e";
-}
-
-div.mainmenu.accountancy::before {
-	/* content: "\f53d"; */
-	content: "\f688";
-	font-size: 1.2em;
-}
-
-div.mainmenu.agenda::before {
-	content: "\f073";
-}
-
-div.mainmenu.bank::before {
-	content: "\f19c";
-}
-
-div.mainmenu.cashdesk::before {
-	content: "\f788";
-}
-
-
-div.mainmenu.takepos::before {
-	content: "\f788";
-}
-
-div.mainmenu.companies::before {
-	content: "\f1ad";
-}
-
-div.mainmenu.commercial::before {
-	content: "\f0f2";
-}
-
-div.mainmenu.ecm::before {
-	content: "\f07c";
-}
-
-div.mainmenu.externalsite::before {
-	content: "\f360";
-}
-
-div.mainmenu.ftp::before {
-	content: "\f362";
-}
-
-div.mainmenu.hrm::before {
-	content: "\f508";
-}
-
-div.mainmenu.members::before {
-	content: "\f007";
-}
-
-div.mainmenu.products::before {
-	content: "\f1b2";
-}
-
-div.mainmenu.mrp::before {
-	content: "\f1b3";
-}
-
-div.mainmenu.project::before {
-	content: "\f542";
-}
-
-div.mainmenu.ticket::before {
-	content: "\f3ff";
-}
-
-div.mainmenu.tools::before {
-	content: "\f0ad";
-}
-
-div.mainmenu.website::before {
-	content: "\f57d";
-}
-
-
 div.mainmenu.generic1::before {
 	content: "\f249";
 }
@@ -178,6 +93,12 @@ div.mainmenu.generic4::before {
 	height: 25%;
 	border-bottom: solid 60px currentColor;
 	margin-left: 30px;
+}
+
+.tmenu span.fas, .tmenu span.far {
+	color: unset !important;
+	line-height: 28px;
+	text-align: center;
 }
 
 .menu_titre .em092 {

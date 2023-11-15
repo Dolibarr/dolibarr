@@ -271,7 +271,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn = $object->_load_ldap_dn($info);
 
 					// Get a gid number for objectclass PosixGroup if none was provided
-					if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+					if (empty($info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')]) && in_array('posixGroup', $info['objectclass'])) {
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 

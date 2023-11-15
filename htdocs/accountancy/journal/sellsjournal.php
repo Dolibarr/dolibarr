@@ -665,7 +665,12 @@ if ($action == 'writebookkeeping' && !$error) {
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = $label_account;
 
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref;
+						$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : join(', ', $def_tva[$key][$k]));
+						$bookkeeping->label_operation .= ' - '.$langs->trans("Taxes").' '.$tmpvatrate.' %';
+						$bookkeeping->label_operation .= ($numtax ? ' - Localtax '.$numtax : '');
+
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -1226,6 +1231,7 @@ if (empty($action) || $action == 'view') {
 				$arrayofvat = $tablocaltax2;
 			}
 
+			// $key is id of invoice
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
@@ -1244,7 +1250,12 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+					print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref;
+					// $def_tva is array[invoiceid][accountancy_code_sell_of_vat_rate_found][vatrate]=vatrate
+					//var_dump($arrayofvat[$key]); var_dump($key); var_dump($k);
+					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : join(', ', $def_tva[$key][$k]));
+					print ' - '.$langs->trans("Taxes").' '.$tmpvatrate.' %';
+					print ($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";

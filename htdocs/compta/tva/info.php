@@ -47,7 +47,7 @@ $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
  * Actions
  */
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer) {
+if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
 	if ($result < 0) {
@@ -74,8 +74,8 @@ print dol_get_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'paymen
 
 $morehtmlref = '<div class="refidno">';
 // Label of social contribution
-$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', 0, 1);
+$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', null, null, '', 1);
 $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';

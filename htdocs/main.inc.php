@@ -898,7 +898,7 @@ if (!defined('NOLOGIN')) {
 				//top_httphead();
 				return 'ERROR_NOT_LOGGED';
 			} else {
-				if ($_SERVER["HTTP_USER_AGENT"] == 'securitytest') {
+				if (!empty($_SERVER["HTTP_USER_AGENT"]) && $_SERVER["HTTP_USER_AGENT"] == 'securitytest') {
 					http_response_code(401); // It makes easier to understand if session was broken during security tests
 				}
 				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));	// This include http headers
@@ -1663,7 +1663,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$ext = 'layout='.$conf->browser->layout.'&amp;version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&amp;version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
 
@@ -2906,8 +2906,8 @@ function top_menu_search()
 	$html = '';
 
 	$usedbyinclude = 1;
-	$arrayresult = null;
-	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This set $arrayresult
+	$arrayresult = array();
+	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This sets $arrayresult
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers

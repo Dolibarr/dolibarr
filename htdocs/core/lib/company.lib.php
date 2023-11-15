@@ -131,14 +131,14 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
-	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if ($supplier_module_enabled == 1 && $object->fournisseur && $user->hasRight('fournisseur', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
 		$head[$h][2] = 'supplier';
 		$h++;
 	}
 
-	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -279,7 +279,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
-		if (!empty($user->rights->partnership->read)) {
+		if ($user->hasRight('partnership', 'read')) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?socid='.$object->id;
@@ -857,6 +857,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			$num = $db->num_rows($result);
 
 			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="center">';
+				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				print $selectedfields;
+				print '</td>';
+			}
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print '<td>'.$langs->trans("Name").'</td>';
 			print '<td class="center">'.$langs->trans("DateStart").'</td>';
@@ -865,10 +871,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
 			print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
 			print '<td class="right">'.$langs->trans("Status").'</td>';
-			print '<td class="center">';
-			$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
-			print $selectedfields;
-			print '</td>';
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="center">';
+				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				print $selectedfields;
+				print '</td>';
+			}
 			print '</tr>';
 
 			if ($num > 0) {
@@ -885,9 +893,20 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->rights->projet->lire && $userAccess > 0) {
+					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center actioncolumn">';
+							if ($massactionbutton || $massaction) {
+								$selected = 0;
+								if (in_array($obj->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+						}
 						// Ref
 						print '<td class="nowraponall">';
 						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
@@ -922,7 +941,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 						// Action column
 						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-							print '<td class="nowrap center">';
+							print '<td class="nowrap center actioncolumn">';
 							if ($massactionbutton || $massaction) {
 								$selected = 0;
 								if (in_array($obj->id, $arrayofselected)) {

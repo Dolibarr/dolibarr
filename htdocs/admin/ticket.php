@@ -646,7 +646,7 @@ print '<td colspan="2">'.$langs->trans("Email").'</td>';
 print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
+if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print '<tr>';
 	print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
 	print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
@@ -667,7 +667,7 @@ print '</tr>';
 // Email for notification of TICKET_CREATE
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
+print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';

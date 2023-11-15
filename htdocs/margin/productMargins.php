@@ -82,7 +82,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
-if (empty($user->rights->margins->liretous)) {
+if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
 

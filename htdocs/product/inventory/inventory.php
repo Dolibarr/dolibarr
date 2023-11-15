@@ -139,7 +139,7 @@ if (empty($reshook)) {
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && !empty($user->rights->stock->mouvement->creer) && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $user->hasRight('stock', 'mouvement', 'creer') && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -1168,6 +1168,7 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 			}
+			print '<td>';
 			if ($obj->fk_movement > 0) {
 				$stockmovment = new MouvementStock($db);
 				$stockmovment->fetch($obj->fk_movement);

@@ -144,7 +144,7 @@ if ($nolinesbefore) {
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
-			if (empty($user->rights->margins->creer)) {
+			if (!$user->hasRight('margins', 'creer')) {
 				$colspan++;
 			} else {
 				print '<td class="margininfos linecolmargin1 right">';
@@ -503,7 +503,7 @@ if ($nolinesbefore) {
 		print '<td></td>';
 	}
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
+		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++;
 			?>
 			<td class="nobottom margininfos linecolmargin right">
@@ -596,18 +596,18 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 
 	if (!$date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
-			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
-			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 	}
 	if (!$date_end) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
-			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
-			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 	}
 	print '</script>';
@@ -617,7 +617,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 
 
 print "<script>\n";
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
@@ -911,7 +911,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			<?php
 		}
 
-		if (!empty($usemargins) && $user->rights->margins->creer) {
+		if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			$langs->load('stocks');
 			?>
 

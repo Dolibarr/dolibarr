@@ -142,7 +142,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_POSITION_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_POSITION_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
@@ -167,7 +167,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_POSITION_SENTBYMAIL';
+	$triggersendname = 'HRM_POSITION_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_POSITION_TO';
 	$trackid = 'position' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';

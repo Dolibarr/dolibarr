@@ -28,7 +28,10 @@
  */
 function mrpAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('mrp_mo');
 
 	$langs->load("mrp");
 
@@ -42,6 +45,10 @@ function mrpAdminPrepareHead()
 
 	$head[$h][0] = dol_buildpath("/admin/mrp_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['mrp_mo']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'mrp_extrafields';
 	$h++;
 

@@ -172,7 +172,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
 			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
-			print '</td><td>'.($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]).'</td></tr>';
+			print '</td><td>'.(getDolGlobalString($key) == '' ? $langs->trans('None') : $valTab[getDolGlobalString($key)]).'</td></tr>';
 		}
 	}
 

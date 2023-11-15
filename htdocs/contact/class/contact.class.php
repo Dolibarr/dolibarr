@@ -122,7 +122,7 @@ class Contact extends CommonObject
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
 		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
-		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
+		'fk_prospectcontactlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
 		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
@@ -284,7 +284,7 @@ class Contact extends CommonObject
 	public $priv;
 
 	/**
-	 * @var date
+	 * @var int|string Date
 	 */
 	public $birthday;
 
@@ -372,9 +372,10 @@ class Contact extends CommonObject
 			$this->fields['fk_soc']['searchall'] = 0;
 		}
 
+		// If THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES not set, there is no prospect level on contact level, only on thirdparty
 		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
 			$this->fields['fk_stcommcontact']['enabled'] = 0;
-			$this->fields['fk_prospectlevel']['enabled'] = 0;
+			$this->fields['fk_prospectcontactlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled
@@ -416,7 +417,7 @@ class Contact extends CommonObject
 
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -754,11 +755,11 @@ class Contact extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
+			$dn = getDolGlobalString('LDAP_KEY_CONTACTS') . "=".$info[getDolGlobalString('LDAP_KEY_CONTACTS')]."," . getDolGlobalString('LDAP_CONTACT_DN');
 		} elseif ($mode == 1) {
 			$dn = $conf->global->LDAP_CONTACT_DN;
 		} elseif ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+			$dn = getDolGlobalString('LDAP_KEY_CONTACTS') . "=".$info[getDolGlobalString('LDAP_KEY_CONTACTS')];
 		}
 		return $dn;
 	}
@@ -785,13 +786,13 @@ class Contact extends CommonObject
 
 		// Fields
 		if ($this->fullname && !empty($conf->global->LDAP_CONTACT_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->fullname;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME')] = $this->fullname;
 		}
 		if ($this->lastname && !empty($conf->global->LDAP_CONTACT_FIELD_NAME)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->lastname;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_NAME')] = $this->lastname;
 		}
 		if ($this->firstname && !empty($conf->global->LDAP_CONTACT_FIELD_FIRSTNAME)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME')] = $this->firstname;
 		}
 
 		if ($this->poste) {
@@ -801,7 +802,7 @@ class Contact extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->name;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COMPANY')] = $soc->name;
 			if ($soc->client == 1) {
 				$info["businessCategory"] = "Customers";
 			}
@@ -813,34 +814,34 @@ class Contact extends CommonObject
 			}
 		}
 		if ($this->address && !empty($conf->global->LDAP_CONTACT_FIELD_ADDRESS)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $this->address;
 		}
 		if ($this->zip && !empty($conf->global->LDAP_CONTACT_FIELD_ZIP)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->zip;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $this->zip;
 		}
 		if ($this->town && !empty($conf->global->LDAP_CONTACT_FIELD_TOWN)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->town;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $this->town;
 		}
 		if ($this->country_code && !empty($conf->global->LDAP_CONTACT_FIELD_COUNTRY)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->country_code;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $this->country_code;
 		}
 		if ($this->phone_pro && !empty($conf->global->LDAP_CONTACT_FIELD_PHONE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')] = $this->phone_pro;
 		}
 		if ($this->phone_perso && !empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE')] = $this->phone_perso;
 		}
 		if ($this->phone_mobile && !empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE')] = $this->phone_mobile;
 		}
 		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FAX')] = $this->fax;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_private, 2);
 		}
 		if ($this->email && !empty($conf->global->LDAP_CONTACT_FIELD_MAIL)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
+			$info[getDolGlobalString('LDAP_CONTACT_FIELD_MAIL')] = $this->email;
 		}
 
 		if (getDolGlobalString('LDAP_SERVER_TYPE') == 'egroupware') {
@@ -1347,18 +1348,8 @@ class Contact extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -2180,8 +2171,9 @@ class Contact extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
 			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}

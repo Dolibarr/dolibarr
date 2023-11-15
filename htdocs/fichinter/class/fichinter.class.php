@@ -212,7 +212,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -479,7 +479,7 @@ class Fichinter extends CommonObject
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->entity = $obj->entity;
 
-				$this->user_creation = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
@@ -622,6 +622,12 @@ class Fichinter extends CommonObject
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
 					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
@@ -726,12 +732,10 @@ class Fichinter extends CommonObject
 	 */
 	public function getAmount()
 	{
-		global $db;
-
 		$amount = 0;
 
-		$this->author = new User($db);
-		$this->author->fetch($this->user_creation);
+		$this->author = new User($this->db);
+		$this->author->fetch($this->user_creation_id);
 
 		$thm = $this->author->thm;
 
@@ -953,8 +957,8 @@ class Fichinter extends CommonObject
 		if (!empty($conf->global->FICHEINTER_ADDON)) {
 			$mybool = false;
 
-			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
-			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
+			$file = "mod_" . getDolGlobalString('FICHEINTER_ADDON').".php";
+			$classname = "mod_" . getDolGlobalString('FICHEINTER_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1017,20 +1021,9 @@ class Fichinter extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-				if ($obj->fk_user_modification) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modification);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modification;
 			}
 			$this->db->free($resql);
 		} else {
@@ -1123,7 +1116,8 @@ class Fichinter extends CommonObject
 
 		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+			$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
@@ -1169,7 +1163,7 @@ class Fichinter extends CommonObject
 	public function set_date_delivery($user, $date_delivery)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1199,7 +1193,7 @@ class Fichinter extends CommonObject
 	public function set_description($user, $description)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".$user->id;
@@ -1230,7 +1224,7 @@ class Fichinter extends CommonObject
 	public function set_contrat($user, $contractid)
 	{
 		// phpcs:enable
-		if ($user->rights->ficheinter->creer) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1294,9 +1288,10 @@ class Fichinter extends CommonObject
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = 0;
+		$this->user_validation_id = 0;
 		$this->date_creation      = '';
 		$this->date_validation    = '';
+
 		$this->ref_client         = '';
 
 		// Create clone
@@ -1501,7 +1496,7 @@ class Fichinter extends CommonObject
 	public function setRefClient($user, $ref_client, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->ficheinter->creer)) {
+		if ($user->hasRight('ficheinter', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -1567,7 +1562,9 @@ class Fichinter extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';

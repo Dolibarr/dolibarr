@@ -3,11 +3,11 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Eric Seigne	    <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2018		Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,9 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+$error = 0;
+$errorforinvoice = array();
+
 
 /*
  * Actions
@@ -123,7 +126,7 @@ if ($date_start && $date_end) {
 	$sql .= " AND er.date_debut >= '".$db->idate($date_start)."' AND er.date_debut <= '".$db->idate($date_end)."'";
 }
 // Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
 	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
 // Already in bookkeeping or not
@@ -153,8 +156,8 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$account_salary = (!empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT)) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
-	$account_vat = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
+	$account_salary = (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
+	$account_vat = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT')) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
 
 	$i = 0;
 	while ($i < $num) {
@@ -213,8 +216,27 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Load all unbound lines
+$sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
+$sql .= " WHERE erd.fk_code_ventilation <= 0";
+$sql .= " AND erd.total_ttc <> 0";
+$sql .= " AND fk_expensereport IN (".$db->sanitize(join(",", array_keys($taber))).")";
+$sql .= " GROUP BY fk_expensereport";
+$resql = $db->query($sql);
+
+$num = $db->num_rows($resql);
+$i = 0;
+while ($i < $num) {
+	$obj = $db->fetch_object($resql);
+	if ($obj->nb > 0) {
+		$errorforinvoice[$obj->fk_expensereport] = 'somelinesarenotbound';
+	}
+	$i++;
+}
+
 // Bookkeeping Write
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && !$error) {
 	$now = dol_now();
 	$error = 0;
 
@@ -228,6 +250,13 @@ if ($action == 'writebookkeeping') {
 		$totaldebit = 0;
 
 		$db->begin();
+
+		// Error if some lines are not binded/ready to be journalized
+		if (!empty($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
+			$error++;
+			$errorforline++;
+			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+		}
 
 		// Thirdparty
 		if (!$errorforline) {
@@ -265,10 +294,12 @@ if ($action == 'writebookkeeping') {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						} else {
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key] = 'other';
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
@@ -314,10 +345,12 @@ if ($action == 'writebookkeeping') {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							} else {
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -376,10 +409,12 @@ if ($action == 'writebookkeeping') {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							} else {
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key] = 'other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -388,10 +423,11 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
-		// Protection against a bug on line before
-		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
+		// Protection against a bug on lines before
+		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))) {
 			$error++;
 			$errorforline++;
+			$errorforinvoice[$key] = 'amountsnotbalanced';
 			setEventMessages('We tried to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
 		}
 
@@ -445,7 +481,7 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 // Export
-if ($action == 'exportcsv') {		// ISO and not UTF8 !
+if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
@@ -529,7 +565,7 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Button to write into Ledger
-	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
 		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
@@ -538,10 +574,10 @@ if (empty($action) || $action == 'view') {
 	}
 	print '<div class="tabsAction tabsActionNoBottom centerimp">';
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
-	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	if (!getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
 		if ($in_bookkeeping == 'notyet') {
@@ -586,7 +622,7 @@ if (empty($action) || $action == 'view') {
 	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
-	$r = '';
+	$i = 0;
 
 	$expensereportstatic = new ExpenseReport($db);
 	$expensereportlinestatic = new ExpenseReportLine($db);
@@ -597,6 +633,27 @@ if (empty($action) || $action == 'view') {
 		$expensereportlinestatic->comments = html_entity_decode(dol_trunc($val["comments"], 32));
 
 		$date = dol_print_date($val["date"], 'day');
+
+		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+			print '<tr class="oddeven">';
+			print "<!-- Some lines are not bound -->";
+			print "<td>".$date."</td>";
+			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
+			// Account
+			print "<td>";
+			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $val['ref']).'</span>';
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			print '</td>';
+			print "<td>";
+			print "</td>";
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
+			print "</tr>";
+
+			$i++;
+		}
 
 		// Fees
 		foreach ($tabht[$key] as $k => $mt) {

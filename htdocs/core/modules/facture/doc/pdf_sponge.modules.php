@@ -354,7 +354,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$logodir = $conf->mycompany->multidir_output[$object->entity];
 					}
-					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -1468,8 +1468,10 @@ class pdf_sponge extends ModelePDFFactures
 		$percent = 0;
 		$i = 0;
 		foreach ($object->lines as $line) {
-			$percent += $line->situation_percent;
-			$i++;
+			if ($line->product_type != 9) {
+				$percent += $line->situation_percent;
+				$i++;
+			}
 		}
 
 		if (!empty($i)) {

@@ -542,7 +542,7 @@ class EvaluationLine extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EVALUATIONLINE_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_EVALUATIONLINE_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -562,6 +562,12 @@ class EvaluationLine extends CommonObjectLine
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'evaluationline/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'evaluationline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -849,6 +855,7 @@ class EvaluationLine extends CommonObjectLine
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -917,7 +924,7 @@ class EvaluationLine extends CommonObjectLine
 		if (!empty($conf->global->hrm_EVALUATIONLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_EVALUATIONLINE_ADDON.".php";
+			$file = getDolGlobalString('hrm_EVALUATIONLINE_ADDON') . ".php";
 			$classname = $conf->global->hrm_EVALUATIONLINE_ADDON;
 
 			// Include file with class

@@ -276,10 +276,10 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if (!empty($search_fk_warehouse)) {
-	$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
+	$sql .= " SUM(p.pmp * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
 } else {
-	$sql .= " SUM(p.pmp * p.stock) as estimatedvalue, SUM(p.price * p.stock) as sellvalue";
+	$sql .= " SUM(p.pmp * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -325,7 +325,7 @@ if ($sortfield == 'stock' && !empty($search_fk_warehouse)) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
@@ -588,8 +588,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		// Product label
-		print '<td>'.$objp->label;
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+		print '<td>';
+		print dol_escape_htmltag($objp->label);
 		print '</td>';
 
 		if ($mode == 'future') {
@@ -611,12 +611,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($stock * $objp->pmp, 'MT')) {
-				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
+			$estimatedvalue = $stock * $objp->pmp;
+			if (price2num($estimatedvalue, 'MT')) {
+				print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
-			$totalbuyingprice += $stock * $objp->pmp;
+			$totalbuyingprice += $estimatedvalue;
 			print '</td>';
 
 			// Selling value

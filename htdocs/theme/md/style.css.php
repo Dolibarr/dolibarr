@@ -104,7 +104,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $path = ''; // This value may be used in future for external module to overwrite theme
 $theme = 'md'; // Value of theme
 if (!empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
-	$path = '/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES'); $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
 }
 
 // Define image path files and other constants
@@ -192,7 +192,7 @@ $butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 $textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE1) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE2) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE2) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
-$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '300%' : '155%') : (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '300%' : '155%');
+$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%') : (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%');
 
 // Hover color
 $colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_HOVER));
@@ -306,6 +306,8 @@ print 'nbtopmenuentries='.$nbtopmenuentries."\n";
 print '*/'."\n";
 
 ?>
+/* <style type="text/css" > */
+
 
 /* ============================================================================== */
 /* Default styles                                                                 */
@@ -352,7 +354,7 @@ print '*/'."\n";
 	--refidnocolor:#444;
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
-	--amountpaymentcomplete:#008800;
+	--amountpaymentcomplete:#008855;
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
@@ -493,8 +495,9 @@ th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.list
 	text-overflow: ellipsis;
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
+	padding-top: 1px;
+	vertical-align: middle;
 	padding-bottom: 1px;
-	vertical-align: bottom;
 }
 
 /*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -927,7 +930,7 @@ form {
 	margin:0px;
 }
 form#addproduct {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 div.float, span.floatleft
 {
@@ -1300,6 +1303,7 @@ span.fa.fa-plus-circle.paddingleft {
 	padding-bottom: 2px;
 }
 
+.size12x { font-size: 1.2em !important; }
 .size15x { font-size: 1.5em !important; }
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
@@ -1318,6 +1322,7 @@ span.fa.fa-plus-circle.paddingleft {
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/flags-sprite.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -1546,6 +1551,12 @@ select.flat.selectlimit {
 }
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
+}
+.marginrightonly {
+	margin-<?php echo $right; ?>: 10px !important;
+}
+.marginrightonlyshort {
+	margin-<?php echo $right; ?>: 4px !important;
 }
 .margintoponly {
 	margin-top: 10px !important;
@@ -1912,7 +1923,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ min-width: 250px; width: 25%; }
+.titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -2981,36 +2992,44 @@ div.mainmenu.menu {
 		}
 		//print "XXX".$val;
 
-		// Search img file in module dir
 		$found = 0; $url = '';
-		foreach ($conf->file->dol_document_root as $dirroot) {
-			if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-				$found = 1;
-				break;
+		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+		$iconformodule = getDolGlobalString($constformoduleicon);
+		if ($iconformodule) {
+			if (preg_match('/^fa\-/', $iconformodule)) {
+				// This is a fa icon
+			} else {
+				$url = 	dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+			}
+			$found = 1;
+		} else {
+			// Search img file in module dir
+			foreach ($conf->file->dol_document_root as $dirroot) {
+				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+					$found = 1;
+					break;
+				}
 			}
 		}
-		// Img file not found
+
+		// Output entry for menu icon in CSS
 		if (!$found) {
-			if (!defined('DISABLE_FONT_AWSOME')) {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-				print 'div.mainmenu.'.$val.'::before {
-	                    content: "\f249";
-	                }'."\n";
-			} else {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-				print "div.mainmenu.".$val." {\n";
-				print "	background-image: url(".$url.");\n";
-				print "}\n";
-			}
+			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+			print 'div.mainmenu.'.$val.' span::before {'."\n";
+			print 'content: "\f249";'."\n";
+			print '}'."\n";
 			$generic++;
 		} else {
-			print "div.mainmenu.".$val." {\n";
-			print "	background-image: url(".$url.");\n";
-			print " filter: saturate(0);\n";
-			print "}\n";
+			if ($url) {
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print " background-position-y: 3px;\n";
+				print " filter: saturate(0);\n";
+				print "}\n";
+			} else {
+				print '/* icon for module '.$val.' is a fa icon */'."\n";
+			}
 		}
 	}
 	// End of part to add more div class css
@@ -5026,7 +5045,15 @@ table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 
-div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
+div.backgreypublicpayment {
+	background-color: #f0f0f0;
+	padding: 20px;
+	border-bottom: 1px solid #ddd;
+	text-align: center;
+	position: sticky;
+	top: 0;
+	z-index: 1005;
+}
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
@@ -7933,4 +7960,3 @@ if (is_object($db)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
-

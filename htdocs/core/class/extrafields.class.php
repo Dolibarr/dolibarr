@@ -87,6 +87,7 @@ class ExtraFields
 		'mail'=>'ExtrafieldMail',
 		'url'=>'ExtrafieldUrl',
 		'ip'=>'ExtrafieldIP',
+		'icon'=>'Icon',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -225,7 +226,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip') {
+			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -579,7 +580,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip') {
+			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -1070,6 +1071,26 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'icon') {
+			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
+			$out.= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+			$out.='<script>';
+			$options="{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
+			$options.="iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+			$options.="iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+			// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
+			// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
+			$options.="footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+			$options.="search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
+			$options.="popover: '<div class=\"iconpicker-popover popover\">";
+			$options.="   <div class=\"arrow\" ></div>";
+			$options.="   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+			$options.="   <div class=\"popover-content \" ></div>";
+			$options.="</div>'}}";
+			$out.="$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
+			$out.='</script>';
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1652,6 +1673,8 @@ class ExtraFields
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'ip') {
 			$value = dol_print_ip($value, 0);
+		} elseif ($type == 'icon') {
+			$value = '<span class="'.$value.'"></span>';
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
@@ -1948,11 +1971,11 @@ class ExtraFields
 
 		$cssstring = '';
 
-		if (in_array($type, array('date', 'datetime', 'datetimegmt'))) {
+		if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
 			$cssstring = "center";
 		} elseif (in_array($type, array('int', 'price', 'double'))) {
 			$cssstring = "right";
-		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip'))) {
+		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
 			$cssstring = "center";
 		}
 
@@ -2252,16 +2275,16 @@ class ExtraFields
 				if (in_array($key_type, array('date'))) {
 					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
-					if (GETPOSTISSET($dateparamname_start . 'year') || GETPOSTISSET($dateparamname_end . 'year')) {
+					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
-						if (GETPOSTISSET($dateparamname_start . 'year')) {
+						if (GETPOST($dateparamname_start . 'year')) {
 							$value_key['start'] = dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'));
 						}
-						if (GETPOSTISSET($dateparamname_start . 'year')) {
+						if (GETPOST($dateparamname_start . 'year')) {
 							$value_key['end'] = dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'));
 						}
-					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
 					} else {
@@ -2270,7 +2293,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('datetime', 'datetimegmt'))) {
 					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
-					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
+					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
 						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') !='-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
 						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') !='-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
@@ -2286,7 +2309,7 @@ class ExtraFields
 								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
 							);
 						}
-					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
 							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'gmt');
@@ -2307,7 +2330,7 @@ class ExtraFields
 						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
@@ -2315,7 +2338,7 @@ class ExtraFields
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
@@ -2325,19 +2348,19 @@ class ExtraFields
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('boolean'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
 						$value_key = '';
 					} else {
 						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('html'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
 				} else {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);

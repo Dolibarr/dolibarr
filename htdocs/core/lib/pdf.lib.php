@@ -536,7 +536,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof6);
 			}
 			if (!empty($conf->global->PDF_ADD_MORE_AFTER_SOURCE_ADDRESS)) {
-				$stringaddress .= ($stringaddress ? "\n" : '').$conf->global->PDF_ADD_MORE_AFTER_SOURCE_ADDRESS;
+				$stringaddress .= ($stringaddress ? "\n" : '') . getDolGlobalString('PDF_ADD_MORE_AFTER_SOURCE_ADDRESS');
 			}
 		}
 
@@ -645,7 +645,12 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 			// Intra VAT
 			if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) {
-				if ($targetcompany->tva_intra) {
+				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
+					$targetcontact->fetch_thirdparty();
+					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
+						$stringaddress .= ($stringaddress ? "\n" : '') . $outputlangs->transnoentities("VATIntraShort") . ': ' . $outputlangs->convToOutputCharset($targetcontact->thirdparty->tva_intra);
+					}
+				} elseif ($targetcompany->tva_intra) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 				}
 			}
@@ -724,7 +729,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 
 	// Add a background image on document only if good setup of const
 	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF) && ($conf->global->MAIN_USE_BACKGROUND_ON_PDF != '-1')) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
-		$filepath = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF;
+		$filepath = $conf->mycompany->dir_output.'/logos/' . getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF');
 		if (file_exists($filepath)) {
 			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
 			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) { $pdf->SetAlpha($conf->global->MAIN_USE_BACKGROUND_ON_PDF_ALPHA); } // Option for change opacity of background
@@ -1146,6 +1151,38 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
 	}
+	// Prof Id 7
+	if (!empty($fromcompany->idprof7) &&  $fromcompany->idprof7) {
+		$field = $outputlangs->transcountrynoentities("ProfId7", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof7);
+	}
+	// Prof Id 8
+	if (!empty($fromcompany->idprof8) &&  $fromcompany->idprof8) {
+		$field = $outputlangs->transcountrynoentities("ProfId8", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof8);
+	}
+	// Prof Id 9
+	if (!empty($fromcompany->idprof9) &&  $fromcompany->idprof9) {
+		$field = $outputlangs->transcountrynoentities("ProfId9", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof9);
+	}
+	// Prof Id 10
+	if (!empty($fromcompany->idprof10) &&  $fromcompany->idprof10) {
+		$field = $outputlangs->transcountrynoentities("ProfId10", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof10);
+	}
 	// IntraCommunautary VAT
 	if (!empty($fromcompany->tva_intra)  && $fromcompany->tva_intra != '') {
 		$line4 .= ($line4 ? " - " : "").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
@@ -1422,6 +1459,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
+	$product_barcode = (!empty($object->lines[$i]->product_barcode) ? $object->lines[$i]->product_barcode : "");
 	$desc = (!empty($object->lines[$i]->desc) ? $object->lines[$i]->desc : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
 	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
 	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
@@ -1496,17 +1534,36 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
 		$prodser->get_sousproduits_arbo();
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
+			$outputlangs->load('mrp');
 			$tmparrayofsubproducts = reset($prodser->sousprods);
+
+			$qtyText = null;
+			if (isset($object->lines[$i]->qty) && !empty($object->lines[$i]->qty)) {
+				$qtyText = $object->lines[$i]->qty;
+			} elseif (isset($object->lines[$i]->qty_shipped) && !empty($object->lines[$i]->qty_shipped)) {
+				$qtyText = $object->lines[$i]->qty;
+			}
+
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
+						(!empty($qtyText) ?
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText:
+							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1]));
 				}
 			} else {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
+					$libelleproduitservice = dol_concatdesc(dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
+						(!empty($qtyText) ?
+							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1]*$qtyText:
+							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1]));
 				}
 			}
 		}
+	}
+
+	if (isModEnabled('barcode') && getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE') && !empty($product_barcode)) {
+		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $outputlangs->trans("BarCode")." ".$product_barcode);
 	}
 
 	// Description long of product line
