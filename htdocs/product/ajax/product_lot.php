@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2023 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023   Lionel Vessiller     	<lvessiller@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 $action = GETPOST('action', 'aZ09');
 $productId = GETPOST('product_id', 'int');
 $batch = GETPOST('batch', 'alphanohtml');
+
+// Security check
+restrictedArea($user, 'produit|service', $productId, 'product&product');
+
 
 /*
  * View
