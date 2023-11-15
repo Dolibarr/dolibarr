@@ -1349,7 +1349,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 			if ($showclassifyform) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
 				$formfichinter = new FormIntervention($db);
-		
+
 				print '<br>';
 				print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
