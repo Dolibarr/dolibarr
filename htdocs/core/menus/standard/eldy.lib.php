@@ -1439,13 +1439,11 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter',  'lire'), '', '', '', 203);
 			}
 			$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter',  'lire'));
-			
 			// Categories
 			if (isModEnabled('categorie')) {
 				$langs->load("categories");
 				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=14", $langs->trans("Categories"), 1, $user->hasRight('categorie',  'lire'), '', $mainmenu, 'cat');
 			}
-
 		}
 	}
 }
