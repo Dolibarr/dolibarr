@@ -10450,7 +10450,7 @@ abstract class CommonObject
 
 					$project_result = $this->fetch_projet();
 					if ($project_result >= 0) {
-						$element = 'projet/'.dol_sanitizeFileName($object->project->ref).'/';
+						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}
 				default:
 					$element = $this->element;
