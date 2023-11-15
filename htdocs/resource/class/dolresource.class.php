@@ -35,17 +35,17 @@ class Dolresource extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'dolresource';
+	public $element;
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'resource';
+	public $table_element;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'resource';
+	public $picto;
 
 	/**
 	 * @var string address variables
@@ -89,7 +89,7 @@ class Dolresource extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_user_create;
-	public $tms = '';
+	public $tms;
 
 	/**
 	 * Used by fetch_element_resource() to return an object
@@ -99,7 +99,7 @@ class Dolresource extends CommonObject
 	/**
 	 * @var array	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
 	 */
-	public $cache_code_type_resource = array();
+	public $cache_code_type_resource;
 
 	/**
 	 * @var Dolresource Clone of object before changing it
@@ -115,6 +115,11 @@ class Dolresource extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+		$this->element = 'dolresource';
+		$this->table_element = 'resource';
+		$this->picto = 'resource';
+		$this->tms = '';
+		$this->cache_code_type_resource = array();
 	}
 
 	/**
