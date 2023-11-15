@@ -673,9 +673,12 @@ if ($resql) {
 		// Accounting account
 		if ($arrayfields['account']['checked']) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$accountingaccount->fetch('', $obj->accountancy_code, 1);
-
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			$result = $accountingaccount->fetch('', $obj->accountancy_code, 1);
+			if ($result > 0) {
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			} else {
+				print '<td></td>';
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

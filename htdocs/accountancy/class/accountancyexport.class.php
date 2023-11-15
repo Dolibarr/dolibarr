@@ -579,7 +579,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2023/01/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2023/09/16 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
@@ -599,10 +599,17 @@ class AccountancyExport
 		foreach ($TData as $data) {
 			// Clean some data
 			$data->doc_ref = dol_string_unaccent($data->doc_ref);
+
+			$data->label_operation = str_replace(array("\t", "\n", "\r"), " ", $data->label_operation);
+			$data->label_operation = str_replace(array("- ", "…", "..."), "", $data->label_operation);
 			$data->label_operation = dol_string_unaccent($data->label_operation);
+
 			$data->numero_compte = dol_string_unaccent($data->numero_compte);
 			$data->label_compte = dol_string_unaccent($data->label_compte);
 			$data->subledger_account = dol_string_unaccent($data->subledger_account);
+
+			$data->subledger_label = dol_string_unaccent($data->subledger_label);
+			$data->subledger_label = str_replace(array("- ", "…", "..."), "", $data->subledger_label);
 			$data->subledger_label = dol_string_unaccent($data->subledger_label);
 
 			$code_compta = $data->numero_compte;
@@ -618,11 +625,11 @@ class AccountancyExport
 				$Tab['lib_compte'] = str_pad(self::trunc($data->subledger_label, 30), 30);
 
 				if ($data->doc_type == 'customer_invoice') {
-					$Tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc($data->subledger_label, 6), 6));
+					$Tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc($data->subledger_label, 6), 7));
 					$Tab['filler'] = str_repeat(' ', 52);
 					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
 				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc($data->subledger_label, 6), 6));
+					$Tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc($data->subledger_label, 6), 7));
 					$Tab['filler'] = str_repeat(' ', 52);
 					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
 				} else {
@@ -1027,13 +1034,13 @@ class AccountancyExport
 				print $date_document . $separator;
 
 				// FEC:CompteNum
-				print $line->numero_compte . $separator;
+				print length_accountg($line->numero_compte) . $separator;
 
 				// FEC:CompteLib
 				print dol_string_unaccent($line->label_compte) . $separator;
 
 				// FEC:CompAuxNum
-				print $line->subledger_account . $separator;
+				print length_accounta($line->subledger_account) . $separator;
 
 				// FEC:CompAuxLib
 				print dol_string_unaccent($line->subledger_label) . $separator;

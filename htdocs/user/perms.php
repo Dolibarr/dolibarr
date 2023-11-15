@@ -222,23 +222,8 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and entity is entity of the group
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
-$sql .= " WHERE 1 = 1";
-// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
-if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-	} else {
-		//$sql .= " AND r.entity = ".((int) $conf->entity);
-	}
-} else {
-	$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-	// The entity on the table usergroup_user should be useless and should never be used because it is alreay into gr and r.
-	// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-	// other entities, so we are forced to add a filter here
-	$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-	//$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
-}
-// End of strange business rule
+$sql .= " WHERE gr.entity = ".((int) $entity);
+$sql .= " AND gu.entity =".((int) $entity);
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
