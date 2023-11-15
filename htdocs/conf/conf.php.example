@@ -37,7 +37,7 @@ $dolibarr_main_url_root='';
 // $dolibarr_main_document_root='/var/www/dolibarr/htdocs';
 // $dolibarr_main_document_root='C:/My web sites/dolibarr/htdocs';
 //
-$dolibarr_main_document_root='';
+$dolibarr_main_document_root=realpath(__DIR__.'/..'); 
 
 
 // dolibarr_main_url_root_alt
@@ -76,7 +76,7 @@ $dolibarr_main_document_root='';
 // $dolibarr_main_data_root='/var/www/dolibarr/documents';
 // $dolibarr_main_data_root='E:/My web sites/dolibarr/documents';
 //
-$dolibarr_main_data_root='';
+$dolibarr_main_data_root=realpath(__DIR__.'/../../documents');
 
 
 // dolibarr_main_db_host
