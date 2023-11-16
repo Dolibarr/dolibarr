@@ -8,7 +8,9 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Compatibility with PHP 8.2
+NEW: Module for Advanced stock transfert is now stable (#26594)
 NEW: Add a confirmation popup when deleting extrafields
+NEW: Add type 'icon' type for extrafields
 NEW: Close #20930 Use ajax for state loading after country change
 NEW: #23331 Add support for parent projects (#24856)
 NEW: #22531 Expense report - Add two fields into export : Qty & Unit price (excl.) (#26309)
@@ -101,7 +103,6 @@ NEW: Date d'entree en stock sur les exped au moment de la création
 NEW: Date field for shipment export (#25574)
 NEW: Date format dayhoursec is using year on 2 char on smartphones
 NEW: Default customer, category and product when enable TakePOS (#25031)
-NEW: Disable not used PHP streams
 NEW: do not add default value in list
 NEW: drop down for action button show a simple button if only 1 action
 NEW: Enhance github_commits_perversion to get more stats on git commits
@@ -172,6 +173,7 @@ NEW: When an user unset the batch management of products, transformation of each
 
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
+SEC: Disable not used PHP streams
 
 
 For developers or integrators:
