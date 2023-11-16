@@ -123,11 +123,12 @@ class Dolresource extends CommonObject
 	}
 
 	/**
-	 *  Create object into database
+	 *  Create object in database
 	 *
-	 *  @param	User    $user        User that creates
-	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 if KO: <0, if OK: Id of created object
+	 * @param	User	$user		User that creates
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int					if KO: <0, if OK: Id of created object
+
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -163,8 +164,11 @@ class Dolresource extends CommonObject
 		$sql .= ")";
 
 		$this->db->begin();
-
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		try {
+			dol_syslog(get_class($this) . "::create", LOG_DEBUG);
+		} catch (Exception $exception) {
+			error_log('dol_syslog error: ' . $exception->getMessage());
+		}
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
@@ -198,7 +202,11 @@ class Dolresource extends CommonObject
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				try {
+					dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
+				} catch (Exception $exception) {
+					error_log('dol_syslog error: ' . $exception->getMessage());
+				}
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
