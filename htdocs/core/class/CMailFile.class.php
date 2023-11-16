@@ -963,7 +963,7 @@ class CMailFile
 					} catch (Exception $e) {
 						// Return an error if token not found
 						$this->error = $e->getMessage();
-						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error=1".$this->error, LOG_ERR);
 					}
 				}
 
@@ -1153,6 +1153,7 @@ class CMailFile
 
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
+					var_dump('toto');
 					if (!empty($failedRecipients)) {
 						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
 					}
@@ -1194,7 +1195,7 @@ class CMailFile
 		}
 
 		error_reporting($errorlevel); // Reactive niveau erreur origine
-
+		var_dump($res);
 		return $res;
 	}
 
