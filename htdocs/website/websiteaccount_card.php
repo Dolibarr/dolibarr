@@ -157,6 +157,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print dol_get_fiche_head();
 
