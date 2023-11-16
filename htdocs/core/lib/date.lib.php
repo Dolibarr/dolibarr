@@ -763,6 +763,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$sql = "SELECT code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
 		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
+		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
 		if ($resql) {
