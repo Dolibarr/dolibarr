@@ -114,6 +114,12 @@ class StockTransferLine extends CommonObjectLine
 	public $fk_stocktransfer;
 	public $fk_product;
 	public $batch;
+
+	/**
+	 * @var double pmp
+	 */
+	public $pmp;
+
 	// END MODULEBUILDER PROPERTIES
 
 
