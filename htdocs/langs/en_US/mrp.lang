@@ -123,3 +123,5 @@ Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
 QtyTot=Qty Total
+QtyCantBeSplit= Quantity cannot be split
+NoRemainQtyToDispatch=No quantity remaining to divide
