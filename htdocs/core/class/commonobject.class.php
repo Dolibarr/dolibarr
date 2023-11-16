@@ -261,6 +261,21 @@ abstract class CommonObject
 	public $origin_id;
 
 	/**
+	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
+	 */
+	public $origin_object;
+
+	// TODO Remove this. Has been replaced with ->origin_object.
+	// This is set by fetch_origin() from this->origin and this->origin_id
+	/** @deprecated */
+	public $expedition;
+	/** @deprecated */
+	public $livraison;
+	/** @deprecated */
+	public $commandeFournisseur;
+
+
+	/**
 	 * @var string 		The object's reference
 	 */
 	public $ref;
@@ -1870,7 +1885,9 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Read linked origin object
+	 *	Read linked origin object.
+	 *	Set ->origin_object
+	 *	Set also ->expedition or ->livraison or ->commandFournisseur (deprecated)
 	 *
 	 *	@return		void
 	 */
@@ -1883,15 +1900,18 @@ abstract class CommonObject
 		if ($this->origin == 'delivery') {
 			$this->origin = 'livraison';
 		}
-		if ($this->origin == 'order_supplier') {
+		if ($this->origin == 'order_supplier' || $this->origin == 'supplier_order') {
 			$this->origin = 'commandeFournisseur';
 		}
 
 		$origin = $this->origin;
 
 		$classname = ucfirst($origin);
-		$this->$origin = new $classname($this->db);
-		$this->$origin->fetch($this->origin_id);
+		$this->origin_object = new $classname($this->db);
+		$this->origin_object->fetch($this->origin_id);
+
+		// TODO Remove this line
+		$this->$origin = $this->origin_object;
 	}
 
 	/**
@@ -7033,6 +7053,7 @@ abstract class CommonObject
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
+		//var_dump($type); var_dump($param['options']);
 
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
@@ -7194,7 +7215,27 @@ abstract class CommonObject
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
-				$InfoFieldList = explode(":", $param_list[0]);
+				$InfoFieldList = explode(":", $param_list[0], 5);
+				if (! empty($InfoFieldList[4])) {
+					$pos = 0; $parenthesisopen = 0;
+					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+						if (substr($InfoFieldList[4], $pos, 1) == '(') {
+							$parenthesisopen++;
+						}
+						if (substr($InfoFieldList[4], $pos, 1) == ')') {
+							$parenthesisopen--;
+						}
+						$pos++;
+					}
+					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+					$tmpafter = substr($InfoFieldList[4], $pos+1);
+					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+					$InfoFieldList[4] = $tmpbefore;
+					if ($tmpafter !== '') {
+						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+					}
+					//var_dump($InfoFieldList);
+				}
 				$parentName = '';
 				$parentField = '';
 
@@ -7250,12 +7291,14 @@ abstract class CommonObject
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
 
-						//We have to join on extrafield table
+						// We have to join on extrafield table
+						$errstr = '';
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2];
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
@@ -8504,7 +8547,7 @@ abstract class CommonObject
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int', 'boolean'))) {
-							if ($action == 'create') {
+							if ($action == 'create' || $mode == 'create') {
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
 						}
@@ -10394,16 +10437,26 @@ abstract class CommonObject
 					$element = 'fournisseur/commande';
 					break;
 				case 'invoice_supplier':
+					// Special cases that need to use get_exdir to get real dir of object
+					// In future, all object should use this to define path of documents.
 					$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 					break;
 				case 'shipping':
 					$element = 'expedition/sending';
 					break;
+				case 'task':
+				case 'project_task':
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
+					$project_result = $this->fetch_projet();
+					if ($project_result >= 0) {
+						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
+					}
 				default:
 					$element = $this->element;
 			}
 
-			// Delete ecm_files extrafields
+			// Delete ecm_files_extrafields with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files_extrafields WHERE fk_object IN (";
 			$sql .= " SELECT rowid FROM ".$this->db->prefix()."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
 			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here
@@ -10415,7 +10468,7 @@ abstract class CommonObject
 				return false;
 			}
 
-			// Delete ecm_files
+			// Delete ecm_files with mode 0 (using name)
 			$sql = "DELETE FROM ".$this->db->prefix()."ecm_files";
 			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
 			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity); // No need of getEntity here

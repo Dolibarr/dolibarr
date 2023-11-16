@@ -101,6 +101,34 @@ abstract class CommonInvoice extends CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
+	 * @var int
+	 */
+	public $stripechargedone;
+
+	/**
+	 * @var int
+	 */
+	public $stripechargeerror;
+
+	/**
+	 * Payment description
+	 * @var string
+	 */
+	public $description;
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see $ref_customer
+	 */
+	public $ref_client;
+
+	/**
+	 * @var int Situation cycle reference number
+	 */
+	public $situation_cycle_ref;
+
+	/**
 	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
 	 * ! Closing when no payment: replaced, abandoned
 	 * @var string Close code
@@ -655,32 +683,34 @@ abstract class CommonInvoice extends CommonObject
 	 *	Return label of invoice subtype
 	 *
 	 *  @param		string		$table          table of invoice
-	 *	@return     string        				Label of invoice subtype
+	 *	@return     string|int     				Label of invoice subtype or -1 if error
 	 */
 	public function getSubtypeLabel($table = '')
 	{
+		$subtypeLabel = '';
 		if ($table === 'facture' || $table === 'facture_fourn') {
 			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
 			$sql .= " WHERE f.ref = '".$this->db->escape($this->ref)."'";
-
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				$subtypeLabel = '';
-
-				while ($obj = $this->db->fetch_object($resql)) {
-					$subtypeLabel = $obj->label;
-				}
-
-				if (!empty($subtypeLabel)) {
-					print '  ' . $subtypeLabel;
-				}
-			} else {
-				dol_print_error($this->db);
-				return -1;
-			}
+		} elseif ($table === 'facture_rec' || $table === 'facture_fourn_rec') {
+			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql .= " WHERE f.titre = '".$this->db->escape($this->titre)."'";
+		} else {
+			return -1;
 		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$subtypeLabel = $obj->label;
+			}
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		return $subtypeLabel;
 	}
 
 	/**

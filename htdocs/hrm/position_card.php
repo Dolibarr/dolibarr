@@ -193,6 +193,7 @@ function displayPositionCard(&$object)
 	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $action, $permissiontoadd, $permissiontodelete;
 
 	$id = $object->id;
+	$ref = $object->ref;
 
 	/*
 	 * View

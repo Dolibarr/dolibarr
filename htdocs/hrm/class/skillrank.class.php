@@ -234,9 +234,10 @@ class SkillRank extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
+	 * @param   int     $fk_object  id of Job object (if new job object)
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, $fromid, $fk_object = 0)
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -261,6 +262,10 @@ class SkillRank extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
+		if (!empty($fk_object) && $fk_object > 0) {
+			unset($object->fk_object);
+		}
+
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -277,6 +282,11 @@ class SkillRank extends CommonObject
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
+		}
+		if (!empty($fk_object) && $fk_object > 0) {
+			if (property_exists($object, 'fk_object')) {
+				$object->fk_object = ($fk_object = 0 ? $this->fk_object : $fk_object);
+			}
 		}
 		// ...
 		// Clear extrafields that are unique

@@ -144,7 +144,10 @@ if (isModEnabled('supplier_invoice')) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 
-	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sqlForSalary .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sqlForSalary .= " AND s.entity IN (".getEntity('salary').")";
+
 	$resql = $db->query($sql);
 
 	if ($resql) {
@@ -168,23 +171,19 @@ if (isModEnabled('supplier_invoice')) {
 				$invoicestatic->date = $db->jdate($obj->datef);
 				$invoicestatic->date_echeance = $db->jdate($obj->date_lim_reglement);
 				$invoicestatic->total_ttc = $obj->total_ttc;
-				$alreadypayed = $invoicestatic->getSommePaiement();
 
+				$alreadypayed = $invoicestatic->getSommePaiement();
 
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
 				$thirdpartystatic->email = $obj->email;
 				$thirdpartystatic->tva_intra = $obj->tva_intra;
-				$thirdpartystatic->siren = $obj->idprof1;
-				$thirdpartystatic->siret = $obj->idprof2;
-				$thirdpartystatic->ape = $obj->idprof3;
 				$thirdpartystatic->idprof1 = $obj->idprof1;
 				$thirdpartystatic->idprof2 = $obj->idprof2;
 				$thirdpartystatic->idprof3 = $obj->idprof3;
 				$thirdpartystatic->idprof4 = $obj->idprof4;
 				$thirdpartystatic->idprof5 = $obj->idprof5;
 				$thirdpartystatic->idprof6 = $obj->idprof6;
-
 
 
 				print '<tr class="oddeven"><td class="nowraponall">';
@@ -233,8 +232,11 @@ if (isModEnabled('salaries')) {
 		if ($numRow) {
 			while ($j < $numRow && $j<10) {
 				$objSalary = $db->fetch_object($resql2);
+
 				$user->fetch($objSalary->fk_user);
+
 				$salary->fetch($objSalary->fk_salary);
+
 				$alreadypayedS = $salary->getSommePaiement();
 
 				print '<tr class="oddeven"><td class="nowraponall">';
@@ -242,14 +244,14 @@ if (isModEnabled('salaries')) {
 				print '</td>';
 
 				print '<td class="tdoverflowmax150">';
-				print $user->getNomUrl(1);
+				print $user->getNomUrl(-1);
 				print '</td>';
 
 				print '<td class="right">';
 				print '<span class="amount">'.price($objSalary->amount).'</span>';
 				print '</td>';
 
-				print '<td class="right">';
+				print '<td class="right" title="'.$langs->trans("DateRequest").'">';
 				print dol_print_date($db->jdate($objSalary->date_demande), 'day');
 				print '</td>';
 

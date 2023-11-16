@@ -86,6 +86,21 @@ class PaymentExpenseReport extends CommonObject
 	public $type_code;
 	public $type_label;
 
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
+	 * @var string
+	 */
+	public $label;
+
 
 	/**
 	 *	Constructor

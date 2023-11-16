@@ -2131,8 +2131,12 @@ if ($num > 0) {
 
 			// Invoice Subtype
 			if (!empty($arrayfields['f.subtype']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax300" title="'.$facturestatic->getSubtypeLabel().'">';
-				print $facturestatic->getSubtypeLabel('facture');
+				$labeltoshow = '';
+				if ($facturestatic->subtype > 0) {
+					$labeltoshow = $facturestatic->getSubtypeLabel('facture');
+				}
+				print '<td class="nowraponall tdoverflowmax300" title="'.$labeltoshow.'">';
+				print $labeltoshow;
 				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;

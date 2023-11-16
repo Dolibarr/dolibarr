@@ -1559,7 +1559,7 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-			print '<table class="border" style="width:100%;">';
+			print '<table class="border centpercent">';
 
 			print '<tr>';
 			print '<td>'.$langs->trans("User").'</td>';

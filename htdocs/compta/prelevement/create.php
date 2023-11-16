@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
@@ -31,6 +31,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -41,18 +42,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
-$type = GETPOST('type', 'aZ09');
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
+
+$type = GETPOST('type', 'aZ09');
+$sourcetype = GETPOST('sourcetype', 'aZ09');
 $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
 $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-$sourcetype = GETPOST('sourcetype', 'alpha');
+
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
@@ -69,9 +70,16 @@ if ($user->socid) {
 }
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+
+	$permissiontoread = $user->hasRight('paymentbybanktransfer', 'read');
+	$permissiontocreate = $user->hasRight('paymentbybanktransfer', 'create');
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+
+	$permissiontoread = $user->hasRight('prelevement', 'bons', 'lire');
+	$permissiontocreate = $user->hasRight('prelevement', 'bons', 'creer');
 }
+
 
 $error = 0;
 $option = "";
@@ -94,14 +102,15 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Change customer bank information to withdraw
+	/*
 	if ($action == 'modify') {
 		for ($i = 1; $i < 9; $i++) {
 			dolibarr_set_const($db, GETPOST("nom".$i), GETPOST("value".$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	if ($action == 'create') {
+	*/
+	if ($action == 'create' && $permissiontocreate) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
-		$sourcetype = GETPOST('sourcetype', 'alpha');
 		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
 
 		if ($id_bankaccount != getDolGlobalInt($default_account)) {
@@ -129,21 +138,41 @@ if (empty($reshook)) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0, $sourcetype);
 			if ($result < 0) {
-				setEventMessages($bprev->error, $bprev->errors, 'errors');
-			} elseif ($result == 0) {
-				if ($type != 'bank-transfer') {
-					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+				$mesg = '';
+
+				if ($bprev->error || !empty($bprev->errors)) {
+					setEventMessages($bprev->error, $bprev->errors, 'errors');
+				} else {
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorsOnXLines", count($bprev->invoice_in_error)), null, 'warnings');
 				}
-				if ($type == 'bank-transfer' && $sourcetype != 'salary') {
-					$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSuppliers", $format);
+
+				if (!empty($bprev->invoice_in_error)) {
+					foreach ($bprev->invoice_in_error as $key => $val) {
+						$mesg .= '<span class="warning">'.$val."</span><br>\n";
+					}
 				}
-				if ($type == 'bank-transfer' && $sourcetype == 'salary') {
-					$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
+			} elseif ($result == 0 || !empty($bprev->invoice_in_error)) {
+				$mesg = '';
+
+				if ($result == 0) {
+					if ($type != 'bank-transfer') {
+						$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+					}
+					if ($type == 'bank-transfer' && $sourcetype != 'salary') {
+						$mesg = $langs->trans("NoInvoiceCouldBeWithdrawedSupplier", $format);
+					}
+					if ($type == 'bank-transfer' && $sourcetype == 'salary') {
+						$mesg = $langs->trans("NoSalariesCouldBeWithdrawed", $format);
+					}
+					setEventMessages($mesg, null, 'errors');
 				}
-				setEventMessages($mesg, null, 'errors');
-				$mesg .= '<br>'."\n";
-				foreach ($bprev->invoice_in_error as $key => $val) {
-					$mesg .= '<span class="warning">'.$val."</span><br>\n";
+
+				if (!empty($bprev->invoice_in_error)) {
+					$mesg .= '<br>'."\n";
+					foreach ($bprev->invoice_in_error as $key => $val) {
+						$mesg .= '<span class="warning">'.$val."</span><br>\n";
+					}
 				}
 			} else {
 				if ($type != 'bank-transfer') {
@@ -161,6 +190,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
+
 	$objectclass = "BonPrelevement";
 	if ($type == 'bank-transfer') {
 		$uploaddir = $conf->paymentbybanktransfer->dir_output;
@@ -220,7 +250,7 @@ if ($type) {
 }
 
 
-if (!GETPOSTISSET('sourcetype')) {
+if ($sourcetype != 'salary') {
 	$nb = $bprev->nbOfInvoiceToPay($type);
 	$pricetowithdraw = $bprev->SommeAPrelever($type);
 } else {
@@ -254,21 +284,14 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-if ($mesg) {
-	print $mesg;
-}
-
 print '<div class="tabsAction">'."\n";
-if (!GETPOSTISSET('sourcetype')) {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
-} else {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?action=create&type='.$type.'&sourcetype='.$sourcetype.'" method="POST">';
-}
+
+print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+print '<input type="hidden" name="action" value="create">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
-if (GETPOSTISSET('sourcetype')) {
-	print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
-}
+print '<input type="hidden" name="sourcetype" value="'.$sourcetype.'">';
+
 if ($nb) {
 	if ($pricetowithdraw) {
 		$title = $langs->trans('BankToReceiveWithdraw').': ';
@@ -355,47 +378,65 @@ if ($nb) {
 print "</form>\n";
 
 print "</div>\n";
-print '</form>';
+
+// Show errors or warnings
+if ($mesg) {
+	print $mesg;
+	print '<br>';
+}
+
 print '<br>';
 
 
 /*
  * Invoices waiting for withdraw
  */
-if (!GETPOSTISSET('sourcetype')) {
+if ($sourcetype != 'salary') {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
 	if ($type == 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 	} else {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 	}
 	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
-	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	}
-	//$sql .= " AND pfd.amount > 0";
+	//$sql .= " AND pd.amount > 0";
 	$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pd.traite = 0";
+	$sql .= " AND pd.ext_payment_id IS NULL";
 	if ($type == 'bank-transfer') {
-		$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+		$sql .= " AND pd.fk_facture_fourn = f.rowid";
 	} else {
-		$sql .= " AND pfd.fk_facture = f.rowid";
+		$sql .= " AND pd.fk_facture = f.rowid";
 	}
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } else {
-	$sql = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ";
-	$sql .= MAIN_DB_PREFIX."prelevement_demande as pd";
-	$sql .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sql = "SELECT s.ref, s.rowid, s.amount, CONCAT(u.lastname, ' ', u.firstname) as name, u.rowid as uid,";
+	$sql .= " pd.rowid as request_row_id, pd.date_demande, pd.amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."salary as s,";
+	$sql .= " ".MAIN_DB_PREFIX."user as u,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sql .= " WHERE s.fk_user = u.rowid";
+	$sql .= " AND s.entity IN (".getEntity('salary').")";
+	/*if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+		$sql .= " AND s.fk_statut = ".Facture::STATUS_VALIDATED;
+	}*/
+	$sql .= " AND s.amount > 0";
+	$sql .= " AND pd.traite = 0";
+	$sql .= " AND pd.ext_payment_id IS NULL";
+	$sql .= " AND s.rowid = pd.fk_salary AND s.paye = ".Salary::STATUS_UNPAID;
+	$sql .= " AND pd.traite = 0";
 }
 
 $nbtotalofrecords = '';
@@ -479,9 +520,19 @@ if ($resql) {
 	} else {
 		print '<td>'.$langs->trans("Employee").'</td>';
 	}
+	// BAN
 	print '<td>'.$langs->trans("RIB").'</td>';
-	print ($sourcetype != 'salary'? '<td>'.$langs->trans("RUM").'</td>' : '');
-	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+	// RUM
+	if (empty($type) || $type == 'direc-debit') {
+		print '<td>'.$langs->trans("RUM").'</td>';
+	}
+	print '<td class="right">';
+	if ($sourcetype == 'salary') {
+		print $langs->trans("Amount");
+	} else {
+		print $langs->trans("AmountTTC");
+	}
+	print '</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -510,9 +561,10 @@ if ($resql) {
 				$invoicestatic->ref_supplier = $obj->ref_supplier;
 			} else {
 				$bac = new UserBankAccount($db);
-				$bac->fetch(0, '', $obj->fk_user);
+				$bac->fetch(0, '', $obj->uid);
+
 				$salary = new Salary($db);
-				$salary->fetch($obj->fk_salary);
+				$salary->fetch($obj->rowid);
 			}
 			print '<tr class="oddeven">';
 
@@ -552,11 +604,12 @@ if ($resql) {
 				print '</td>';
 			} else {
 				print '<td class="tdoverflowmax100">';
-				$user->fetch($obj->fk_user);
-				print $user->getNomUrl(1);
+				$user->fetch($obj->uid);
+				print $user->getNomUrl(-1);
 				print '</td>';
 			}
-			// RIB
+
+			// BAN
 			print '<td>';
 			if ($bac->id > 0) {
 				if (!empty($bac->iban) || !empty($bac->bic)) {
@@ -573,7 +626,7 @@ if ($resql) {
 			print '</td>';
 
 			// RUM
-			if ($sourcetype != 'salary') {
+			if (empty($type) || $type == 'direct-debit') {
 				print '<td>';
 				$rumtoshow = $thirdpartystatic->display_rib('rum');
 				if ($rumtoshow) {
@@ -589,6 +642,7 @@ if ($resql) {
 				}
 				print '</td>';
 			}
+
 			// Amount
 			print '<td class="right amount">';
 			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);

@@ -122,6 +122,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
+	$typeobject = '';
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
 
@@ -129,11 +130,10 @@ if ($id > 0 || !empty($ref)) {
 		$typeobject = $object->origin;
 	}
 
-	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
-		$origin_id = $object->$typeobject->id;
-		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+	// Set $origin_id and $objectsrc
+	if (($origin == 'order_supplier' || $origin == 'supplier_order') && is_object($object->origin_object) && isModEnabled("supplier_order")) {
+		$origin_id = $object->origin_object->id;
+		$objectsrc = $object->origin_object;
 	}
 }
 

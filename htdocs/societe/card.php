@@ -1208,572 +1208,578 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		print dol_get_fiche_head(null, 'card', '', 0, '');
 
-		print '<table class="border centpercent">';
+		// Call Hook tabContentCreateThirdparty
+		$parameters = array();
+		// Note that $action and $object may be modified by hook
+		$reshook = $hookmanager->executeHooks('tabContentCreateThirdparty', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<table class="border centpercent">';
 
-		// Name, firstname
-		print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">';
-		if ($object->particulier || $private) {
-			print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
-		} else {
-			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
-		}
-		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
+			// Name, firstname
+			print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">';
+			if ($object->particulier || $private) {
+				print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
+			} else {
+				print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
+			}
+			print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
 
-		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
-		// This implementation of the feature to search already existing company has been disabled. It must be implemented by keeping the "input text" and we must call the search ajax societe/ajax/ajaxcompanies.php
-		// on a keydown of the input. We should show data about a duplicate found if we found less than 5 answers into a div under the input.
-		/*
-		print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
-		print "\n".'<script type="text/javascript">';
-		print '$(document).ready(function () {
-			$("#name").select2({
-				ajax: {
-				  url: "' . DOL_URL_ROOT . '/core/ajax/ajaxcompanies.php",
-				  dataType: "json",
-				  delay: 250,
-				  data: function (params) {
-						return {
-							newcompany: params.term // search term
-						}
-				  },
-				  processResults: function (data, params) {
-					  return {
-						results: data
-					  }
-				  },
-				  cache: true
-				},
+			print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
+			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
+			// This implementation of the feature to search already existing company has been disabled. It must be implemented by keeping the "input text" and we must call the search ajax societe/ajax/ajaxcompanies.php
+			// on a keydown of the input. We should show data about a duplicate found if we found less than 5 answers into a div under the input.
+			/*
+			print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
+				$("#name").select2({
+					ajax: {
+					  url: "' . DOL_URL_ROOT . '/core/ajax/ajaxcompanies.php",
+					  dataType: "json",
+					  delay: 250,
+					  data: function (params) {
+							return {
+								newcompany: params.term // search term
+							}
+					  },
+					  processResults: function (data, params) {
+						  return {
+							results: data
+						  }
+					  },
+					  cache: true
+					},
 
-				placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
-				allowClear: true,
-				minimumInputLength: 3,
-				language: select2arrayoflanguage,
-				containerCssClass: ":all:",
-				selectionCssClass: ":all:",
-				tags: true,
-				templateResult: formatCustomer,
-				templateSelection: formatCustomerSelection
+					placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: select2arrayoflanguage,
+					containerCssClass: ":all:",
+					selectionCssClass: ":all:",
+					tags: true,
+					templateResult: formatCustomer,
+					templateSelection: formatCustomerSelection
+				});
+
+				function formatCustomer (Customer) {
+					if(Customer.label === undefined) {
+						return Customer.text;
+					}
+
+					if(Customer.logo !== null ) {
+						logo = \'<img src="\';
+						logo += \'' . DOL_URL_ROOT . '/viewimage.php?modulepart=societe&amp;entity=1&amp;file=\' + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace(".", "_mini.") + "&amp;cache=0";
+						logo += \'" /></div>\';
+					} else {
+						logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
+					}
+
+					var $container = $("<div class=\'select2-result-repository clearfix\'>" +
+						 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
+						  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
+							"<div class=\'select2-result-repository__title\'></div>" +
+							"<div class=\'select2-result-repository__name_alias\'></div>" +
+							"<div class=\'select2-result-repository__code_client\'></div>" +
+							"<div class=\'select2-result-repository__code_fournisseur\'></div>" +
+							"<div class=\'select2-result-repository__companies_info\'>" +
+							  "<div class=\'select2-result-repository__email\'><i class=\'fa fa-at\'></i> </div>" +
+							  "<div class=\'select2-result-repository__address\'><i class=\'fa fa-flag\'></i> </div>" +
+							  "<div class=\'select2-result-repository__zip\'><i class=\'fa fa-circle-o\'></i> </div>" +
+							  "<div class=\'select2-result-repository__country\'><i class=\'fa fa-globe-americas\'></i> </div>" +
+							  "<div class=\'select2-result-repository__departement\'><i class=\'fa fa-circle-o\'></i> </div>" +
+							  "<div class=\'select2-result-repository__town\'><i class=\'fa fa-circle-o\'></i> </div>" +
+							  "<div class=\'select2-result-repository__siren\'><i class=\'fa fa-circle-o\'></i> </div>" +
+							  "<div class=\'select2-result-repository__datec\'><i class=\'fa fa-calendar\'></i> </div>" +
+							"</div>" +
+						  "</div>" +
+						"</div>"
+					);
+
+					$container.find(".select2-result-repository__title").text(Customer.label);
+					$container.find(".select2-result-repository__name_alias").text(Customer.name_alias ? Customer.name_alias : "");
+					$container.find(".select2-result-repository__code_client").text(Customer.code_client ? Customer.code_client  : "");
+					$container.find(".select2-result-repository__code_fournisseur").text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : "");
+					$container.find(".select2-result-repository__email").append("' . $langs->trans('EMail') . ': " + (Customer.email !== null ? Customer.email : ""));
+					$container.find(".select2-result-repository__address").append("' . $langs->trans('Address') . ': " + (Customer.address !== null ? Customer.address : ""));
+					$container.find(".select2-result-repository__country").append("' . $langs->trans('Country') . ': " + (Customer.country !== null ? Customer.country : ""));
+					$container.find(".select2-result-repository__departement").append("' . $langs->trans('Region-State') . ': " + (Customer.departement !== null ? Customer.departement : ""));
+					$container.find(".select2-result-repository__zip").append("' . $langs->trans('Zip') . ': " + (Customer.zip !== null ? Customer.zip : ""));
+					$container.find(".select2-result-repository__town").append("' . $langs->trans('Town') . ': " + (Customer.town !== null ? Customer.town : ""));
+					$container.find(".select2-result-repository__siren").append("' . $langs->trans('Siren') . ': " + (Customer.siren !== null ? Customer.siren : ""));
+					$container.find(".select2-result-repository__datec").append("' . $langs->trans('Created') . ': " + (Customer.datec !== null ? Customer.datec : ""));
+
+					return $container;
+				}
+
+				function formatCustomerSelection (selection) {
+					return selection.label || selection.text;
+				}
 			});
-
-			function formatCustomer (Customer) {
-				if(Customer.label === undefined) {
-					return Customer.text;
-				}
-
-				if(Customer.logo !== null ) {
-					logo = \'<img src="\';
-					logo += \'' . DOL_URL_ROOT . '/viewimage.php?modulepart=societe&amp;entity=1&amp;file=\' + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace(".", "_mini.") + "&amp;cache=0";
-					logo += \'" /></div>\';
-				} else {
-					logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
-				}
-
-				var $container = $("<div class=\'select2-result-repository clearfix\'>" +
-					 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
-					  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
-						"<div class=\'select2-result-repository__title\'></div>" +
-						"<div class=\'select2-result-repository__name_alias\'></div>" +
-						"<div class=\'select2-result-repository__code_client\'></div>" +
-						"<div class=\'select2-result-repository__code_fournisseur\'></div>" +
-						"<div class=\'select2-result-repository__companies_info\'>" +
-						  "<div class=\'select2-result-repository__email\'><i class=\'fa fa-at\'></i> </div>" +
-						  "<div class=\'select2-result-repository__address\'><i class=\'fa fa-flag\'></i> </div>" +
-						  "<div class=\'select2-result-repository__zip\'><i class=\'fa fa-circle-o\'></i> </div>" +
-						  "<div class=\'select2-result-repository__country\'><i class=\'fa fa-globe-americas\'></i> </div>" +
-						  "<div class=\'select2-result-repository__departement\'><i class=\'fa fa-circle-o\'></i> </div>" +
-						  "<div class=\'select2-result-repository__town\'><i class=\'fa fa-circle-o\'></i> </div>" +
-						  "<div class=\'select2-result-repository__siren\'><i class=\'fa fa-circle-o\'></i> </div>" +
-						  "<div class=\'select2-result-repository__datec\'><i class=\'fa fa-calendar\'></i> </div>" +
-						"</div>" +
-					  "</div>" +
-					"</div>"
-				);
-
-				$container.find(".select2-result-repository__title").text(Customer.label);
-				$container.find(".select2-result-repository__name_alias").text(Customer.name_alias ? Customer.name_alias : "");
-				$container.find(".select2-result-repository__code_client").text(Customer.code_client ? Customer.code_client  : "");
-				$container.find(".select2-result-repository__code_fournisseur").text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : "");
-				$container.find(".select2-result-repository__email").append("' . $langs->trans('EMail') . ': " + (Customer.email !== null ? Customer.email : ""));
-				$container.find(".select2-result-repository__address").append("' . $langs->trans('Address') . ': " + (Customer.address !== null ? Customer.address : ""));
-				$container.find(".select2-result-repository__country").append("' . $langs->trans('Country') . ': " + (Customer.country !== null ? Customer.country : ""));
-				$container.find(".select2-result-repository__departement").append("' . $langs->trans('Region-State') . ': " + (Customer.departement !== null ? Customer.departement : ""));
-				$container.find(".select2-result-repository__zip").append("' . $langs->trans('Zip') . ': " + (Customer.zip !== null ? Customer.zip : ""));
-				$container.find(".select2-result-repository__town").append("' . $langs->trans('Town') . ': " + (Customer.town !== null ? Customer.town : ""));
-				$container.find(".select2-result-repository__siren").append("' . $langs->trans('Siren') . ': " + (Customer.siren !== null ? Customer.siren : ""));
-				$container.find(".select2-result-repository__datec").append("' . $langs->trans('Created') . ': " + (Customer.datec !== null ? Customer.datec : ""));
-
-				return $container;
-			}
-
-			function formatCustomerSelection (selection) {
-				return selection.label || selection.text;
-			}
-		});
-		</script>
-		';
-		*/
-		print '</td>';
-		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
-		}
-		print '</tr>';
-
-		// If javascript on, we show option individual
-		if ($conf->use_javascript_ajax) {
-			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				// Firstname
-				print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
-				print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.dol_escape_htmltag($object->firstname).'"></td>';
-				print '</tr>';
-
-				// Title
-				print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-				print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
-				print '</tr>';
-			}
-		}
-
-		// Alias names (commercial, trademark or alias names)
-		print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-		print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
-
-		// Prospect/Customer
-		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
-		print '<td class="maxwidthonsmartphone">';
-		$selected = (GETPOSTISSET('client') ?GETPOST('client', 'int') : $object->client);
-		print $formcompany->selectProspectCustomerType($selected);
-		print '</td>';
-
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-
-		print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
-		print '<table class="nobordernopadding"><tr><td>';
-		$tmpcode = $object->code_client;
-		if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
-			$tmpcode = $modCodeClient->getNextValue($object, 0);
-		}
-		print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
-		print '</td><td>';
-		$s = $modCodeClient->getToolTip($langs, $object, 0);
-		print $form->textwithpicto('', $s, 1);
-		print '</td></tr></table>';
-		print '</td></tr>';
-
-		if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
-			|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
-			// Supplier
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
-			$default = -1;
-			if (!empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) {
-				$default = 1;
-			}
-			print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ? GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0), 1);
+			</script>
+			';
+			*/
 			print '</td>';
+			if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+				print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
+			}
+			print '</tr>';
 
+			// If javascript on, we show option individual
+			if ($conf->use_javascript_ajax) {
+				if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+					// Firstname
+					print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
+					print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.dol_escape_htmltag($object->firstname).'"></td>';
+					print '</tr>';
+
+					// Title
+					print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+					print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
+					print '</tr>';
+				}
+			}
+
+			// Alias names (commercial, trademark or alias names)
+			print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
+
+			// Prospect/Customer
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
+			print '<td class="maxwidthonsmartphone">';
+			$selected = (GETPOSTISSET('client') ?GETPOST('client', 'int') : $object->client);
+			print $formcompany->selectProspectCustomerType($selected);
+			print '</td>';
 
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 
-			print '<td>';
-			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-				print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
+			print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
+			print '<table class="nobordernopadding"><tr><td>';
+			$tmpcode = $object->code_client;
+			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
+				$tmpcode = $modCodeClient->getNextValue($object, 0);
 			}
+			print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 			print '</td><td>';
-			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-				print '<table class="nobordernopadding"><tr><td>';
-				$tmpcode = $object->code_fournisseur;
-				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
-					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+			$s = $modCodeClient->getToolTip($langs, $object, 0);
+			print $form->textwithpicto('', $s, 1);
+			print '</td></tr></table>';
+			print '</td></tr>';
+
+			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
+				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
+				// Supplier
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
+				$default = -1;
+				if (!empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) {
+					$default = 1;
 				}
-				print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
+				print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ? GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0), 1);
+				print '</td>';
+
+
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+
+				print '<td>';
+				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+					print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
+				}
 				print '</td><td>';
-				$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
-				print $form->textwithpicto('', $s, 1);
-				print '</td></tr></table>';
+				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+					print '<table class="nobordernopadding"><tr><td>';
+					$tmpcode = $object->code_fournisseur;
+					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+					}
+					print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
+					print '</td><td>';
+					$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+					print $form->textwithpicto('', $s, 1);
+					print '</td></tr></table>';
+				}
+				print '</td></tr>';
 			}
+
+			// Status
+			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
+			print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
-		}
 
-		// Status
-		print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
-		print '</td></tr>';
+			// Barcode
+			if (isModEnabled('barcode')) {
+				print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
+				print '<td colspan="3">';
+				print img_picto('', 'barcode', 'class="pictofixedwidth"');
+				print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+				print '</td></tr>';
+			}
 
-		// Barcode
-		if (isModEnabled('barcode')) {
-			print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
+			// Address
+			print '<tr><td class="tdtop">';
+			print $form->editfieldkey('Address', 'address', '', $object, 0);
+			print '</td>';
 			print '<td colspan="3">';
-			print img_picto('', 'barcode', 'class="pictofixedwidth"');
-			print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+			print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
+			print dol_escape_htmltag($object->address, 0, 1);
+			print '</textarea>';
+			print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 			print '</td></tr>';
-		}
 
-		// Address
-		print '<tr><td class="tdtop">';
-		print $form->editfieldkey('Address', 'address', '', $object, 0);
-		print '</td>';
-		print '<td colspan="3">';
-		print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-		print dol_escape_htmltag($object->address, 0, 1);
-		print '</textarea>';
-		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
-		print '</td></tr>';
+			// Zip / Town
+			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
+			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
+			print '</td>';
+			if ($conf->browser->layout == 'phone') {
+				print '</tr><tr>';
+			}
+			print '<td class="tdtop">'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+			print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth150 quatrevingtpercent');
+			print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
+			print '</td></tr>';
 
-		// Zip / Town
-		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-		print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
-		print '</td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td class="tdtop">'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-		print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth150 quatrevingtpercent');
-		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
-		print '</td></tr>';
+			// Country
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
+			if ($user->admin) {
+				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
+			print '</td></tr>';
 
-		// Country
-		print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-		print img_picto('', 'country', 'class="pictofixedwidth"');
-		print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		print '</td></tr>';
+			// State
+			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+				if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
+					print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				} else {
+					print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				}
 
-		// State
-		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-			} else {
-				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+				if ($object->country_id) {
+					print img_picto('', 'state', 'class="pictofixedwidth"');
+					print $formcompany->select_state($object->state_id, $object->country_code);
+				} else {
+					print $countrynotdefined;
+				}
+				print '</td></tr>';
 			}
 
+			// Phone / Fax
+			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+			if ($conf->browser->layout == 'phone') {
+				print '</tr><tr>';
+			}
+			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+
+			// Email / Web
+			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
+			print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td>';
+			if (isModEnabled('mailing') && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+				print '<td class="individualline noemail">'.$form->editfieldkey($langs->trans('No_Email') .' ('.$langs->trans('Contact').')', 'contact_no_email', '', $object, 0).'</td>';
+				print '<td class="individualline" '.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.$form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($object->no_email) ? 0 : 1)), 1, false, 1).'</td>';
+			}
+			print '</tr>';
+			print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
+			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
+
+			// Unsubscribe
+			if (isModEnabled('mailing')) {
+				if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
+					print "\n".'<script type="text/javascript">'."\n";
+					print '$(document).ready(function () {
+								$("#email").keyup(function() {
+									if ($(this).val()!="") {
+										$(".noemail").addClass("fieldrequired");
+									} else {
+										$(".noemail").removeClass("fieldrequired");
+									}
+								});
+							})'."\n";
+					print '</script>'."\n";
+				}
+				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
+					$result = $object->getNoEmail();
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+				print '<tr>';
+				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
+				print '</td>';
+				print '</tr>';
+			}
+
+			// Social networks
+			if (isModEnabled('socialnetworks')) {
+				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
+			}
+
+			// Prof ids
+			$i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
+			while ($i <= 6) {
+				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
+				if ($idprof != '-')	{
+					$key = 'idprof'.$i;
+
+					if (($j % $NBCOLS) == 0) {
+						print '<tr>';
+					}
+
+					$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
+					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
+
+					print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
+					print '</td>';
+					if (($j % $NBCOLS) == ($NBCOLS - 1)) {
+						print '</tr>';
+					}
+					$j++;
+				}
+				$i++;
+			}
+			if ($NBCOLS > 1 && ($j % 2 == 1)) {
+				print '<td colspan="2"></td></tr>';
+			}
+
+			// Vat is used
+			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
+			print '<td>';
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"': 'checked="checked"') . ' value="1">'; // Assujeti par defaut en creation
+			print '</td>';
+			if ($conf->browser->layout == 'phone') {
+				print '</tr><tr>';
+			}
+			print '<td class="nowrap">'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
+			print '<td class="nowrap">';
+			$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
+
+			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
+				$s .= ' ';
+
+				if (!empty($conf->use_javascript_ajax))	{
+					$widthpopup = 600;
+					if (!empty($conf->dol_use_jmobile)) {
+						$widthpopup = 350;
+					}
+					$heightpopup = 400;
+					print "\n";
+					print '<script type="text/javascript">';
+					print "function CheckVAT(a) {\n";
+					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					} else {
+						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+					}
+					print "}\n";
+					print '</script>';
+					print "\n";
+					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+				} else {
+					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+				}
+			}
+			print $s;
+			print '</td>';
+			print '</tr>';
+
+			// VAT reverse charge by default
+			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
+				print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+				print '</td></tr>';
+			}
+
+			// Local Taxes
+			//TODO: Place into a function to control showing by country or study better option
+			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
+				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '</td>';
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+				print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '</td></tr>';
+			} elseif ($mysoc->localtax1_assuj == "1") {
+				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
+				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
+				print '</td></tr>';
+			} elseif ($mysoc->localtax2_assuj == "1") {
+				print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
+				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
+				print '</td></tr>';
+			}
+
+			// Type - Workforce/Staff
+			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>'."\n";
+			$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+			if ($user->admin) {
+				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
+			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+				print '</td>';
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+				print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+				if ($user->admin) {
+					print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				}
+			} else {
+				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
+			}
+			print '</td></tr>';
+
+			// Legal Form
+			print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
 			if ($object->country_id) {
-				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state($object->state_id, $object->country_code);
+				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
 			} else {
 				print $countrynotdefined;
 			}
 			print '</td></tr>';
-		}
 
-		// Phone / Fax
-		print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
-
-		// Email / Web
-		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
-		print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td>';
-		if (isModEnabled('mailing') && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td class="individualline noemail">'.$form->editfieldkey($langs->trans('No_Email') .' ('.$langs->trans('Contact').')', 'contact_no_email', '', $object, 0).'</td>';
-			print '<td class="individualline" '.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.$form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($object->no_email) ? 0 : 1)), 1, false, 1).'</td>';
-		}
-		print '</tr>';
-		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
-
-		// Unsubscribe
-		if (isModEnabled('mailing')) {
-			if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
-				print "\n".'<script type="text/javascript">'."\n";
-				print '$(document).ready(function () {
-							$("#email").keyup(function() {
-								if ($(this).val()!="") {
-									$(".noemail").addClass("fieldrequired");
-								} else {
-									$(".noemail").removeClass("fieldrequired");
-								}
-							});
-						})'."\n";
-				print '</script>'."\n";
-			}
-			if (!GETPOSTISSET("no_email") && !empty($object->email)) {
-				$result = $object->getNoEmail();
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
-			}
-			print '<tr>';
-			print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-			print '<td>';
-			print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
-			print '</td>';
-			print '</tr>';
-		}
-
-		// Social networks
-		if (isModEnabled('socialnetworks')) {
-			$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
-		}
-
-		// Prof ids
-		$i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-		while ($i <= 6) {
-			$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-			if ($idprof != '-')	{
-				$key = 'idprof'.$i;
-
-				if (($j % $NBCOLS) == 0) {
-					print '<tr>';
-				}
-
-				$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-				print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (empty($conf->global->$idprof_mandatory) ? 0 : 1)).'</td><td>';
-
-				print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
-				print '</td>';
-				if (($j % $NBCOLS) == ($NBCOLS - 1)) {
-					print '</tr>';
-				}
-				$j++;
-			}
-			$i++;
-		}
-		if ($NBCOLS > 1 && ($j % 2 == 1)) {
-			print '<td colspan="2"></td></tr>';
-		}
-
-		// Vat is used
-		print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
-		print '<td>';
-		print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"': 'checked="checked"') . ' value="1">'; // Assujeti par defaut en creation
-		print '</td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td class="nowrap">'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
-		print '<td class="nowrap">';
-		$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
-
-		if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
-			$s .= ' ';
-
-			if (!empty($conf->use_javascript_ajax))	{
-				$widthpopup = 600;
-				if (!empty($conf->dol_use_jmobile)) {
-					$widthpopup = 350;
-				}
-				$heightpopup = 400;
-				print "\n";
-				print '<script type="text/javascript">';
-				print "function CheckVAT(a) {\n";
-				if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
-					print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
-				} else {
-					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
-				}
-				print "}\n";
-				print '</script>';
-				print "\n";
-				$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+			// Capital
+			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
+			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
+			if (isModEnabled("multicurrency")) {
+				print '<span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
 			} else {
-				$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+				print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 			}
-		}
-		print $s;
-		print '</td>';
-		print '</tr>';
-
-		// VAT reverse charge by default
-		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
-			print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
-			print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
-			print '</td></tr>';
-		}
-
-		// Local Taxes
-		//TODO: Place into a function to control showing by country or study better option
-		if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
-			print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-			print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
-			print '</td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+				print '</td>';
+				print '</tr>';
 			}
-			print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-			print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
-			print '</td></tr>';
-		} elseif ($mysoc->localtax1_assuj == "1") {
-			print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-			print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
-			print '</td></tr>';
-		} elseif ($mysoc->localtax2_assuj == "1") {
-			print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
-			print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? 'checked="checked"' : '') . ' value="1">';
-			print '</td></tr>';
-		}
 
-		// Type - Workforce/Staff
-		print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>'."\n";
-		$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-		print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
-		if ($user->admin) {
-			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
-			print '</td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
+			// Incoterms
+			if (isModEnabled('incoterm')) {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+				print '</td></tr>';
 			}
-			print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
-			print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-			if ($user->admin) {
-				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+			// Categories
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+				$langs->load('categories');
+
+				// Customer
+				print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print "</td></tr>";
+
+				if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+					print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print "</td></tr>";
+				}
+
+				// Supplier
+				if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+					print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print "</td></tr>";
+				}
 			}
-		} else {
-			print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
-		}
-		print '</td></tr>';
 
-		// Legal Form
-		print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
-		print '<td colspan="3" class="maxwidthonsmartphone">';
-		if ($object->country_id) {
-			print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
-		} else {
-			print $countrynotdefined;
-		}
-		print '</td></tr>';
+			// Multicurrency
+			if (isModEnabled("multicurrency")) {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'currency', 'class="pictofixedwidth"');
+				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1, '', false, 'maxwidth150 widthcentpercentminusx');
+				print '</td></tr>';
+			}
 
-		// Capital
-		print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-		print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
-		if (isModEnabled("multicurrency")) {
-			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
-		} else {
-			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-		}
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+			// Other attributes
+			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+			// Parent company
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+				print '<tr>';
+				print '<td>'.$langs->trans('ParentCompany').'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'company', 'class="paddingrightonly"');
+				print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+				print '</td></tr>';
+			}
+
+			// Assign a sale representative
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
+			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
+			$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir) ? array($user->id) : array())));
+			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print '</td></tr>';
+
+			// Add logo
+			print '<tr class="hideonsmartphone">';
+			print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
+			print '<td colspan="3">';
+			print '<input class="flat" type="file" name="photo" id="photoinput" />';
 			print '</td>';
 			print '</tr>';
-		}
 
-		// Incoterms
-		if (isModEnabled('incoterm')) {
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
-			print '</td></tr>';
-		}
+			print '</table>'."\n";
 
-		// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
-			$langs->load('categories');
+			// Accountancy codes
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				print '<table class="border centpercent">';
 
-			// Customer
-			print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-			print "</td></tr>";
+				if (isModEnabled('accounting')) {
+					// Accountancy_code_sell
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+					print '<td>';
+					$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
+					print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
+					print '</td></tr>';
 
-			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
+					// Accountancy_code_buy
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+					print '<td>';
+					$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+					print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
+					print '</td></tr>';
+				} else { // For external software
+					// Accountancy_code_sell
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
+					print '</td></tr>';
+
+					// Accountancy_code_buy
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_buy" value="'.$object->accountancy_code_buy.'">';
+					print '</td></tr>';
+				}
+
+				print '</table>';
 			}
-
-			// Supplier
-			if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-				print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
-			}
-		}
-
-		// Multicurrency
-		if (isModEnabled("multicurrency")) {
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1, '', false, 'maxwidth150 widthcentpercentminusx');
-			print '</td></tr>';
-		}
-
-		// Other attributes
-		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
-		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
-			print '<tr>';
-			print '<td>'.$langs->trans('ParentCompany').'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print img_picto('', 'company', 'class="paddingrightonly"');
-			print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
-			print '</td></tr>';
-		}
-
-		// Assign a sale representative
-		print '<tr>';
-		print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
-		print '<td colspan="3" class="maxwidthonsmartphone">';
-		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
-		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
-		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir) ? array($user->id) : array())));
-		print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-		print '</td></tr>';
-
-		// Add logo
-		print '<tr class="hideonsmartphone">';
-		print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
-		print '<td colspan="3">';
-		print '<input class="flat" type="file" name="photo" id="photoinput" />';
-		print '</td>';
-		print '</tr>';
-
-		print '</table>'."\n";
-
-		// Accountancy codes
-		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-			print '<table class="border centpercent">';
-
-			if (isModEnabled('accounting')) {
-				// Accountancy_code_sell
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
-				print '<td>';
-				$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
-				print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
-				print '</td></tr>';
-
-				// Accountancy_code_buy
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-				print '<td>';
-				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
-				print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
-				print '</td></tr>';
-			} else { // For external software
-				// Accountancy_code_sell
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
-				print '</td></tr>';
-
-				// Accountancy_code_buy
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_buy" value="'.$object->accountancy_code_buy.'">';
-				print '</td></tr>';
-			}
-
-			print '</table>';
 		}
 
 		print dol_get_fiche_end();
@@ -2026,532 +2032,538 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 			print '<div class="fichecenter2">';
-			print '<table class="border centpercent">';
+			// Call Hook tabContentEditThirdparty
+			$parameters = array();
+			// Note that $action and $object may be modified by hook
+			$reshook = $hookmanager->executeHooks('tabContentEditThirdparty', $parameters, $object, $action);
+			if (empty($reshook)) {
+				print '<table class="border centpercent">';
 
-			// Ref/ID
-			if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
-				print $object->ref;
+				// Ref/ID
+				if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
+					print $object->ref;
+					print '</td></tr>';
+				}
+
+				// Name
+				print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0, 'string', '', 1).'</td>';
+				print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
+				print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
 				print '</td></tr>';
-			}
 
-			// Name
-			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0, 'string', '', 1).'</td>';
-			print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
-			print '</td></tr>';
+				// Alias names (commercial, trademark or alias names)
+				print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+				print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
-			// Alias names (commercial, trademark or alias names)
-			print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
-
-			// Prefix
-			if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-				print '<tr><td>'.$form->editfieldkey('Prefix', 'prefix', '', $object, 0).'</td><td colspan="3">';
-				// It does not change the prefix mode using the auto numbering prefix
-				if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm) {
-					print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
-					print $object->prefix_comm;
-				} else {
-					print '<input type="text" size="5" maxlength="5" name="prefix_comm" id="prefix" value="'.dol_escape_htmltag($object->prefix_comm).'">';
+				// Prefix
+				if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+					print '<tr><td>'.$form->editfieldkey('Prefix', 'prefix', '', $object, 0).'</td><td colspan="3">';
+					// It does not change the prefix mode using the auto numbering prefix
+					if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm) {
+						print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
+						print $object->prefix_comm;
+					} else {
+						print '<input type="text" size="5" maxlength="5" name="prefix_comm" id="prefix" value="'.dol_escape_htmltag($object->prefix_comm).'">';
+					}
+					print '</td>';
 				}
-				print '</td>';
-			}
 
-			// Prospect/Customer
-			print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
-			print '<td class="maxwidthonsmartphone">';
-			print $formcompany->selectProspectCustomerType($object->client);
-			print '</td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
-
-			print '<table class="nobordernopadding"><tr><td>';
-			if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto) {
-				$tmpcode = $object->code_client;
-				if (empty($tmpcode) && !empty($object->oldcopy->code_client)) {
-					$tmpcode = $object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-				}
-				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
-					$tmpcode = $modCodeClient->getNextValue($object, 0);
-				}
-				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
-			} elseif ($object->codeclient_modifiable()) {
-				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="24">';
-			} else {
-				print $object->code_client;
-				print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
-			}
-			print '</td><td>';
-			$s = $modCodeClient->getToolTip($langs, $object, 0);
-			print $form->textwithpicto('', $s, 1);
-			print '</td></tr></table>';
-
-			print '</td></tr>';
-
-			// Supplier
-			if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire')))
-				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
-				print '<tr>';
-				print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
+				// Prospect/Customer
+				print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
-				print $form->selectyesno("fournisseur", $object->fournisseur, 1, false, 0, 1);
+				print $formcompany->selectProspectCustomerType($object->client);
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
-				print '<td>';
-				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-					print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
-				}
-				print '</td>';
-				print '<td>';
+				print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
+
 				print '<table class="nobordernopadding"><tr><td>';
-				if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) {
-					$tmpcode = $object->code_fournisseur;
-					if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) {
-						$tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+				if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto) {
+					$tmpcode = $object->code_client;
+					if (empty($tmpcode) && !empty($object->oldcopy->code_client)) {
+						$tmpcode = $object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
 					}
-					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
-						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+					if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
+						$tmpcode = $modCodeClient->getNextValue($object, 0);
 					}
-					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
-				} elseif ($object->codefournisseur_modifiable()) {
-					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="24">';
+					print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
+				} elseif ($object->codeclient_modifiable()) {
+					print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="24">';
 				} else {
-					print $object->code_fournisseur;
-					print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
+					print $object->code_client;
+					print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
 				}
 				print '</td><td>';
-				$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+				$s = $modCodeClient->getToolTip($langs, $object, 0);
 				print $form->textwithpicto('', $s, 1);
 				print '</td></tr></table>';
+
 				print '</td></tr>';
-			}
 
-			// Barcode
-			if (isModEnabled('barcode')) {
-				print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-				print '<td colspan="3">';
-				print img_picto('', 'barcode');
-				print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
-				print '</td></tr>';
-			}
-
-			// Status
-			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
-			print '</td></tr>';
-
-			// Address
-			print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-			print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-			print dol_escape_htmltag($object->address, 0, 1);
-			print '</textarea>';
-			print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
-			print '</td></tr>';
-
-			// Zip / Town
-			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
-			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
-			print '</td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
-			print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
-			print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
-			print '</td></tr>';
-
-			// Country
-			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
-			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
-			if ($user->admin) {
-				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			}
-			print '</td></tr>';
-
-			// State
-			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
-					print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3">';
-				} else {
-					print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
-				}
-
-				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state($object->state_id, $object->country_code);
-				print '</td></tr>';
-			}
-
-			// Phone / Fax
-			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
-			print '</tr>';
-
-			// Web
-			print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
-
-			// EMail
-			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-			print '<td colspan="3">';
-			print img_picto('', 'object_email', 'class="pictofixedwidth"');
-			print '<input type="text" name="email" id="email" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'">';
-			print '</td></tr>';
-
-			// Unsubscribe
-			if (isModEnabled('mailing')) {
-				if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
-					print "\n".'<script type="text/javascript">'."\n";
-
-					print '
-					jQuery(document).ready(function () {
-						function init_check_no_email(input) {
-							if (input.val()!="") {
-								$(".noemail").addClass("fieldrequired");
-							} else {
-								$(".noemail").removeClass("fieldrequired");
-							}
-						}
-						$("#email").keyup(function() {
-							init_check_no_email($(this));
-						});
-						init_check_no_email($("#email"));
-					})'."\n";
-					print '</script>'."\n";
-				}
-				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
-					$result = $object->getNoEmail();
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
-				}
-				print '<tr>';
-				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>';
-				$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
-				print '</td>';
-				print '</tr>';
-			}
-
-			// Social network
-			if (isModEnabled('socialnetworks')) {
-				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
-			}
-
-			// Prof ids
-			$i = 1;
-			$j = 0;
-			$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-			while ($i <= 6) {
-				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
-					$key = 'idprof'.$i;
-
-					if (($j % $NBCOLS) == 0) {
-						print '<tr>';
-					}
-
-					$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-					print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', !(empty($conf->global->$idprof_mandatory) || !$object->isACompany())).'</td><td>';
-					print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
+				// Supplier
+				if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire')))
+					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
+					print '<tr>';
+					print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
+					print '<td class="maxwidthonsmartphone">';
+					print $form->selectyesno("fournisseur", $object->fournisseur, 1, false, 0, 1);
 					print '</td>';
-					if (($j % $NBCOLS) == ($NBCOLS - 1)) {
-						print '</tr>';
+					if ($conf->browser->layout == 'phone') {
+						print '</tr><tr>';
 					}
-					$j++;
-				}
-				$i++;
-			}
-			if ($NBCOLS > 0 && $j % 2 == 1) {
-				print '<td colspan="2"></td></tr>';
-			}
-
-			// VAT is used
-			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . ($object->tva_assuj ? 'checked="checked"': '') . ' value="1">';
-			print '</td></tr>';
-
-			// Local Taxes
-			//TODO: Place into a function to control showing by country or study better option
-			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
-				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td>';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
-				if (!isOnlyOneLocalTax(1)) {
-					print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
-					$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-					print '</span>';
-				}
-				print '</td>';
-				print '</tr><tr>';
-				print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1"></td></tr>';
-				if (!isOnlyOneLocalTax(2)) {
-					print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
-					$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-					print '</span>';
-				}
-				print '</td></tr>';
-			} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1") {
-				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td colspan="3">';
-				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
-				if (!isOnlyOneLocalTax(1)) {
-					print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
-					$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-					print '</span>';
-				}
-				print '</td></tr>';
-			} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1") {
-				print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td colspan="3">';
-				print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1">';
-				if (!isOnlyOneLocalTax(2)) {
-					print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
-					$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-					print '</span>';
-				}
-				print '</td></tr>';
-			}
-
-			// VAT reverse charge by default
-			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
-				print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
-				print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
-				print '</td></tr>';
-			}
-
-			// VAT Code
-			print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
-			print '<td colspan="3">';
-			$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
-
-			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
-				$s .= ' &nbsp; ';
-
-				if ($conf->use_javascript_ajax) {
-					$widthpopup = 600;
-					if (!empty($conf->dol_use_jmobile)) {
-						$widthpopup = 350;
+					print '<td>';
+					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+						print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
 					}
-					$heightpopup = 400;
-					print "\n";
-					print '<script type="text/javascript">';
-					print "function CheckVAT(a) {\n";
-					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
-						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+					print '</td>';
+					print '<td>';
+					print '<table class="nobordernopadding"><tr><td>';
+					if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) {
+						$tmpcode = $object->code_fournisseur;
+						if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) {
+							$tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+						}
+						if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+							$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+						}
+						print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
+					} elseif ($object->codefournisseur_modifiable()) {
+						print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="24">';
 					} else {
-						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+						print $object->code_fournisseur;
+						print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
 					}
-					print "}\n";
-					print '</script>';
-					print "\n";
-					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-				} else {
-					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+					print '</td><td>';
+					$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+					print $form->textwithpicto('', $s, 1);
+					print '</td></tr></table>';
+					print '</td></tr>';
 				}
-			}
-			print $s;
-			print '</td>';
-			print '</tr>';
 
-			// Type - Workforce/Staff
-			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>';
-			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
-			if ($user->admin) {
-				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			}
-			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+				// Barcode
+				if (isModEnabled('barcode')) {
+					print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
+					print '<td colspan="3">';
+					print img_picto('', 'barcode');
+					print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+					print '</td></tr>';
+				}
+
+				// Status
+				print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
+				print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+				print '</td></tr>';
+
+				// Address
+				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+				print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+				print dol_escape_htmltag($object->address, 0, 1);
+				print '</textarea>';
+				print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+				print '</td></tr>';
+
+				// Zip / Town
+				print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
+				print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
-				print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
-				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+				print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
+				print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+				print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
+				print '</td></tr>';
+
+				// Country
+				print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
+				print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+				print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
-			} else {
-				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
-			}
-			print '</td></tr>';
+				print '</td></tr>';
 
-			// Juridical type
-			print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td><td class="maxwidthonsmartphone" colspan="3">';
-			print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
-			print '</td></tr>';
+				// State
+				if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+					if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
+						print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					} else {
+						print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					}
 
-			// Capital
-			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-			print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
-			if (isModEnabled("multicurrency")) {
-				print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
-			} else {
-				print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-			}
+					print img_picto('', 'state', 'class="pictofixedwidth"');
+					print $formcompany->select_state($object->state_id, $object->country_code);
+					print '</td></tr>';
+				}
 
-			// Default language
-			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, null, '1', 0, 0, 'maxwidth300 widthcentpercentminusx');
+				// Phone / Fax
+				print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+				print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
+				print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
+				print '</tr>';
+
+				// Web
+				print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
+				print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
+
+				// EMail
+				print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+				print '<td colspan="3">';
+				print img_picto('', 'object_email', 'class="pictofixedwidth"');
+				print '<input type="text" name="email" id="email" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'">';
+				print '</td></tr>';
+
+				// Unsubscribe
+				if (isModEnabled('mailing')) {
+					if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
+						print "\n".'<script type="text/javascript">'."\n";
+
+						print '
+						jQuery(document).ready(function () {
+							function init_check_no_email(input) {
+								if (input.val()!="") {
+									$(".noemail").addClass("fieldrequired");
+								} else {
+									$(".noemail").removeClass("fieldrequired");
+								}
+							}
+							$("#email").keyup(function() {
+								init_check_no_email($(this));
+							});
+							init_check_no_email($("#email"));
+						})'."\n";
+						print '</script>'."\n";
+					}
+					if (!GETPOSTISSET("no_email") && !empty($object->email)) {
+						$result = $object->getNoEmail();
+						if ($result < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
+					print '<tr>';
+					print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+					print '<td>';
+					$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
+					print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
+					print '</td>';
+					print '</tr>';
+				}
+
+				// Social network
+				if (isModEnabled('socialnetworks')) {
+					$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
+				}
+
+				// Prof ids
+				$i = 1;
+				$j = 0;
+				$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
+				while ($i <= 6) {
+					$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
+					if ($idprof != '-') {
+						$key = 'idprof'.$i;
+
+						if (($j % $NBCOLS) == 0) {
+							print '<tr>';
+						}
+
+						$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
+						print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', !(empty($conf->global->$idprof_mandatory) || !$object->isACompany())).'</td><td>';
+						print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
+						print '</td>';
+						if (($j % $NBCOLS) == ($NBCOLS - 1)) {
+							print '</tr>';
+						}
+						$j++;
+					}
+					$i++;
+				}
+				if ($NBCOLS > 0 && $j % 2 == 1) {
+					print '<td colspan="2"></td></tr>';
+				}
+
+				// VAT is used
+				print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
+				print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . ($object->tva_assuj ? 'checked="checked"': '') . ' value="1">';
+				print '</td></tr>';
+
+				// Local Taxes
+				//TODO: Place into a function to control showing by country or study better option
+				if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
+					print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td>';
+					print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
+					if (!isOnlyOneLocalTax(1)) {
+						print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
+						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
+						print '</span>';
+					}
+					print '</td>';
+					print '</tr><tr>';
+					print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
+					print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1"></td></tr>';
+					if (!isOnlyOneLocalTax(2)) {
+						print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
+						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
+						print '</span>';
+					}
+					print '</td></tr>';
+				} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1") {
+					print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td colspan="3">';
+					print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . ($object->localtax1_assuj ? 'checked="checked"' : '') . ' value="1">';
+					if (!isOnlyOneLocalTax(1)) {
+						print '<span class="cblt1">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
+						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
+						print '</span>';
+					}
+					print '</td></tr>';
+				} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1") {
+					print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td colspan="3">';
+					print '<input id="localtax2assuj_value" name="localtax2assuj_value" type="checkbox" ' . ($object->localtax2_assuj ? 'checked="checked"' : '') . ' value="1">';
+					if (!isOnlyOneLocalTax(2)) {
+						print '<span class="cblt2">     '.$langs->transcountry("Type", $mysoc->country_code).': ';
+						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
+						print '</span>';
+					}
+					print '</td></tr>';
+				}
+
+				// VAT reverse charge by default
+				if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+					print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
+					print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+					print '</td></tr>';
+				}
+
+				// VAT Code
+				print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
+				print '<td colspan="3">';
+				$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
+
+				if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
+					$s .= ' &nbsp; ';
+
+					if ($conf->use_javascript_ajax) {
+						$widthpopup = 600;
+						if (!empty($conf->dol_use_jmobile)) {
+							$widthpopup = 350;
+						}
+						$heightpopup = 400;
+						print "\n";
+						print '<script type="text/javascript">';
+						print "function CheckVAT(a) {\n";
+						if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+							print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+						} else {
+							print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+						}
+						print "}\n";
+						print '</script>';
+						print "\n";
+						$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+						$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+					} else {
+						$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+					}
+				}
+				print $s;
 				print '</td>';
 				print '</tr>';
-			}
 
-			// Incoterms
-			if (isModEnabled('incoterm')) {
-				print '<tr>';
-					print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
-				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
-				print '</td></tr>';
-			}
-
-			// Categories
-			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
-				// Customer
-				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
-				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
-				$arrayselected = array();
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
+				// Type - Workforce/Staff
+				print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>';
+				print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+				if ($user->admin) {
+					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
+				if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+					print '</td>';
+					if ($conf->browser->layout == 'phone') {
+						print '</tr><tr>';
+					}
+					print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+					print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+					if ($user->admin) {
+						print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+					}
+				} else {
+					print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
+				}
+				print '</td></tr>';
 
-				// Supplier
-				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-					print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
+				// Juridical type
+				print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td><td class="maxwidthonsmartphone" colspan="3">';
+				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
+				print '</td></tr>';
+
+				// Capital
+				print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
+				print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
+				print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
+				if (isModEnabled("multicurrency")) {
+					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+				} else {
+					print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+				}
+
+				// Default language
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+					print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, null, '1', 0, 0, 'maxwidth300 widthcentpercentminusx');
+					print '</td>';
+					print '</tr>';
+				}
+
+				// Incoterms
+				if (isModEnabled('incoterm')) {
+					print '<tr>';
+						print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
+					print '<td colspan="3" class="maxwidthonsmartphone">';
+					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+					print '</td></tr>';
+				}
+
+				// Categories
+				if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+					// Customer
+					print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
 					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
 					$arrayselected = array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
+
+					// Supplier
+					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+						print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
+						print '<td colspan="3">';
+						$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+						$c = new Categorie($db);
+						$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+						$arrayselected = array();
+						foreach ($cats as $cat) {
+							$arrayselected[] = $cat->id;
+						}
+						print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+						print "</td></tr>";
+					}
 				}
-			}
 
-			// Multicurrency
-			if (isModEnabled("multicurrency")) {
-				print '<tr>';
-				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
-				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'currency', 'class="pictofixedwidth"');
-				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1, '', false, 'maxwidth150 widthcentpercentminusx');
-				print '</td></tr>';
-			}
+				// Multicurrency
+				if (isModEnabled("multicurrency")) {
+					print '<tr>';
+					print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+					print '<td colspan="3" class="maxwidthonsmartphone">';
+					print img_picto('', 'currency', 'class="pictofixedwidth"');
+					print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1, '', false, 'maxwidth150 widthcentpercentminusx');
+					print '</td></tr>';
+				}
 
-			// Other attributes
-			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+				// Other attributes
+				$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-			// Parent company
-			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
-				print '<tr>';
-				print '<td>'.$langs->trans('ParentCompany').'</td>';
-				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'company', 'class="pictofixedwidth"');
-				print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
-				print '</td></tr>';
-			}
+				// Parent company
+				if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+					print '<tr>';
+					print '<td>'.$langs->trans('ParentCompany').'</td>';
+					print '<td colspan="3" class="maxwidthonsmartphone">';
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+					print '</td></tr>';
+				}
 
-			// Webservices url/key
-			if (!empty($conf->syncsupplierwebservices->enabled)) {
-				print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
-				print '<td><input type="text" name="webservices_url" id="webservices_url" size="32" value="'.$object->webservices_url.'"></td>';
-				print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
-				print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
-			}
+				// Webservices url/key
+				if (!empty($conf->syncsupplierwebservices->enabled)) {
+					print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
+					print '<td><input type="text" name="webservices_url" id="webservices_url" size="32" value="'.$object->webservices_url.'"></td>';
+					print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
+					print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
+				}
 
-			// Logo
-			print '<tr class="hideonsmartphone">';
-			print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
-			print '<td colspan="3">';
-			if ($object->logo) {
-				print $form->showphoto('societe', $object);
-			}
-			$caneditfield = 1;
-			if ($caneditfield) {
+				// Logo
+				print '<tr class="hideonsmartphone">';
+				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
+				print '<td colspan="3">';
 				if ($object->logo) {
-					print "<br>\n";
+					print $form->showphoto('societe', $object);
 				}
-				print '<table class="nobordernopadding">';
-				if ($object->logo) {
-					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br><br></td></tr>';
+				$caneditfield = 1;
+				if ($caneditfield) {
+					if ($object->logo) {
+						print "<br>\n";
+					}
+					print '<table class="nobordernopadding">';
+					if ($object->logo) {
+						print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br><br></td></tr>';
+					}
+					//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+					print '<tr><td>';
+					$maxfilesizearray = getMaxFileSizeArray();
+					$maxmin = $maxfilesizearray['maxmin'];
+					if ($maxmin > 0) {
+						print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+					}
+					print '<input type="file" class="flat" name="photo" id="photoinput">';
+					print '</td></tr>';
+					print '</table>';
 				}
-				//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-				print '<tr><td>';
-				$maxfilesizearray = getMaxFileSizeArray();
-				$maxmin = $maxfilesizearray['maxmin'];
-				if ($maxmin > 0) {
-					print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				print '</td>';
+				print '</tr>';
+
+				// Assign sale representative
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+				$arrayselected = GETPOST('commercial', 'array');
+				if (empty($arrayselected)) {
+					$arrayselected = $object->getSalesRepresentatives($user, 1);
 				}
-				print '<input type="file" class="flat" name="photo" id="photoinput">';
+				print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
 				print '</td></tr>';
+
 				print '</table>';
-			}
-			print '</td>';
-			print '</tr>';
 
-			// Assign sale representative
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
-			$arrayselected = GETPOST('commercial', 'array');
-			if (empty($arrayselected)) {
-				$arrayselected = $object->getSalesRepresentatives($user, 1);
-			}
-			print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
-			print '</td></tr>';
+				if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+					print '<br>';
+					print '<table class="border centpercent">';
 
-			print '</table>';
+					if (isModEnabled('accounting')) {
+						// Accountancy_code_sell
+						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<td>';
+						print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
+						print '</td></tr>';
 
-			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				print '<br>';
-				print '<table class="border centpercent">';
+						// Accountancy_code_buy
+						print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+						print '<td>';
+						print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
+						print '</td></tr>';
+					} else { // For external software
+						// Accountancy_code_sell
+						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
+						print '</td></tr>';
 
-				if (isModEnabled('accounting')) {
-					// Accountancy_code_sell
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
-					print '<td>';
-					print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
-					print '</td></tr>';
-
-					// Accountancy_code_buy
-					print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-					print '<td>';
-					print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
-					print '</td></tr>';
-				} else { // For external software
-					// Accountancy_code_sell
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
-					print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
-					print '</td></tr>';
-
-					// Accountancy_code_buy
-					print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-					print '<td><input name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
-					print '</td></tr>';
+						// Accountancy_code_buy
+						print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+						print '<td><input name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
+						print '</td></tr>';
+					}
+					print '</table>';
 				}
-				print '</table>';
 			}
 
 			print '</div>';
@@ -2615,467 +2627,472 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
+		// Call Hook tabContentViewThirdparty
+		$parameters = array();
+		// Note that $action and $object may be modified by hook
+		$reshook = $hookmanager->executeHooks('tabContentViewThirdparty', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 
-		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border tableforfield centpercent">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
+			// Type Prospect/Customer/Supplier
+			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print $object->getTypeUrl(1);
+			print '</td></tr>';
 
-		// Type Prospect/Customer/Supplier
-		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
-		print $object->getTypeUrl(1);
-		print '</td></tr>';
-
-		// Prefix
-		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.dol_escape_htmltag($object->prefix_comm).'</td>';
-			print '</tr>';
-		}
-
-		// Customer code
-		if ($object->client) {
-			print '<tr><td>';
-			print $langs->trans('CustomerCode');
-			print '</td>';
-			print '<td>';
-			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
-			$tmpcheck = $object->check_codeclient();
-			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
-			}
-			print '</td>';
-			print '</tr>';
-		}
-
-		// Supplier code
-		if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-			print '<tr><td>';
-			print $langs->trans('SupplierCode').'</td><td>';
-			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
-			$tmpcheck = $object->check_codefournisseur();
-			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
-			}
-			print '</td>';
-			print '</tr>';
-		}
-
-		// Barcode
-		if (isModEnabled('barcode')) {
-			print '<tr><td>';
-			print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
-			print '</td>';
-			print '</tr>';
-		}
-
-		// Prof ids
-		$i = 1; $j = 0;
-		while ($i <= 6) {
-			$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-			if ($idprof != '-') {
-				//if (($j % 2) == 0) print '<tr>';
-				print '<tr>';
-				print '<td>'.$idprof.'</td><td>';
-				$key = 'idprof'.$i;
-				print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
-				if ($object->$key) {
-					if ($object->id_prof_check($i, $object) > 0) {
-						if (!empty($object->id_prof_url($i, $object))) {
-							print ' &nbsp; '.$object->id_prof_url($i, $object);
-						}
-					} else {
-						print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
-					}
-				}
-				print '</td>';
-				//if (($j % 2) == 1) print '</tr>';
+			// Prefix
+			if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+				print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.dol_escape_htmltag($object->prefix_comm).'</td>';
 				print '</tr>';
-				$j++;
 			}
-			$i++;
-		}
-		//if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
-
-		// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.
-		// We don't need them into customer profile.
-		// Except for spain and localtax where localtax depends on buyer and not seller
-
-		if ($object->fournisseur) {
-			// VAT is used
-			print '<tr><td>';
-			print $form->textwithpicto($langs->trans('VATIsUsed'), $langs->trans('VATIsUsedWhenSelling'));
-			print '</td><td>';
-			print yn($object->tva_assuj);
-			print '</td>';
-			print '</tr>';
-
-			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
-				// VAT reverse charge by default
+			// Customer code
+			if ($object->client) {
 				print '<tr><td>';
-				print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
-				print '</td><td>';
-				print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
+				print $langs->trans('CustomerCode');
+				print '</td>';
+				print '<td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+				$tmpcheck = $object->check_codeclient();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+				}
 				print '</td>';
 				print '</tr>';
 			}
-		}
 
-		// Local Taxes
-		if ($object->fournisseur || $mysoc->country_code == 'ES') {
-			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
-				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-				print yn($object->localtax1_assuj);
-				print '</td></tr><tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-				print yn($object->localtax2_assuj);
-				print '</td></tr>';
-
-				if ($object->localtax1_assuj == "1" && (!isOnlyOneLocalTax(1))) {
-					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
-					print '<input type="hidden" name="action" value="set_localtax1">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
-					if ($action == 'editRE') {
-						print '<td class="left">';
-						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
-					} else {
-						print '<td>'.$object->localtax1_value.'</td>';
-					}
-					print '</tr></form>';
-				}
-				if ($object->localtax2_assuj == "1" && (!isOnlyOneLocalTax(2))) {
-					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
-					print '<input type="hidden" name="action" value="set_localtax2">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
-					if ($action == 'editIRPF') {
-						print '<td class="left">';
-						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
-					} else {
-						print '<td>'.$object->localtax2_value.'</td>';
-					}
-					print '</tr></form>';
-				}
-			} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1") {
-				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-				print yn($object->localtax1_assuj);
-				print '</td></tr>';
-				if ($object->localtax1_assuj == "1" && (!isOnlyOneLocalTax(1))) {
-					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
-					print '<input type="hidden" name="action" value="set_localtax1">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
-					if ($action == 'editRE') {
-						print '<td class="left">';
-						$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
-						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
-					} else {
-						print '<td>'.$object->localtax1_value.'</td>';
-					}
-					print '</tr></form>';
-				}
-			} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1") {
-				print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-				print yn($object->localtax2_assuj);
-				print '</td></tr>';
-				if ($object->localtax2_assuj == "1" && (!isOnlyOneLocalTax(2))) {
-					print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
-					print '<input type="hidden" name="action" value="set_localtax2">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
-					if ($action == 'editIRPF') {
-						print '<td class="left">';
-						$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
-						print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
-					} else {
-						print '<td>'.$object->localtax2_value.'</td>';
-					}
-					print '</tr></form>';
-				}
-			}
-		}
-
-		// Sale tax code (VAT code)
-		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
-		if ($object->tva_intra) {
-			$s = '';
-			$s .= dol_print_profids($object->tva_intra, 'VAT', $object->country_code, 1);
-			$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
-
-			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
-				$s .= ' &nbsp; ';
-
-				if ($conf->use_javascript_ajax) {
-					$widthpopup = 600;
-					if (!empty($conf->dol_use_jmobile)) {
-						$widthpopup = 350;
-					}
-					$heightpopup = 400;
-					print "\n";
-					print '<script type="text/javascript">';
-					print "function CheckVAT(a) {\n";
-					if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
-						print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
-					} else {
-						print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
-					}
-					print "}\n";
-					print '</script>';
-					print "\n";
-					$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-					$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-				} else {
-					$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
-				}
-			}
-			print $s;
-		} else {
-			print '&nbsp;';
-		}
-		print '</td></tr>';
-
-		// Warehouse
-		if (isModEnabled('stock') && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
-			$langs->load('stocks');
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
-			print '<tr class="nowrap">';
-			print '<td>';
-			print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->hasRight('societe', 'creer'));
-			print '</td><td>';
-			if ($action == 'editwarehouse') {
-				$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
-			} else {
-				if ($object->fk_warehouse > 0) {
-					print img_picto('', 'stock', 'class="paddingrightonly"');
-				}
-				$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
-			}
-			print '</td>';
-			print '</tr>';
-		}
-
-		print '</table>';
-		print '</div>';
-
-		print '<div class="fichehalfright">';
-
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
-
-		// Tags / categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
-			// Customer
-			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
-				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
-				print '<td>';
-				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
-				print "</td></tr>";
-			}
-
-			// Supplier
+			// Supplier code
 			if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-				print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
-				print '<td>';
-				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
-				print "</td></tr>";
-			}
-		}
-
-
-		// Third-Party Type
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
-		if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
-		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
-		print '</td></tr>';
-
-		// Workforce/Staff
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
-			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
-		}
-
-		// Legal
-		print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
-
-		// Capital
-		print '<tr><td>'.$langs->trans('Capital').'</td><td>';
-		if ($object->capital) {
-			if (isModEnabled("multicurrency") && !empty($object->multicurrency_code)) {
-				print price($object->capital, '', $langs, 0, -1, -1, $object->multicurrency_code);
-			} else {
-				print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
-			}
-		} else {
-			print '&nbsp;';
-		}
-		print '</td></tr>';
-
-		// Unsubscribe opt-out
-		if (isModEnabled('mailing')) {
-			$result = $object->getNoEmail();
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
-			print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
-			if ($object->email) {
-				print yn($object->no_email);
-			} else {
-				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+				print '<tr><td>';
+				print $langs->trans('SupplierCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+				$tmpcheck = $object->check_codefournisseur();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
 			}
 
-			$langs->load("mails");
-			print ' &nbsp; <span class="badge badge-secondary" title="'.dol_escape_htmltag($langs->trans("NbOfEMailingsSend")).'">'.$object->getNbOfEMailings().'</span>';
-
-			print '</td></tr>';
-		}
-
-		// Default language
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
-			//$s=picto_from_langcode($object->default_lang);
-			//print ($s?$s.' ':'');
-			$langs->load("languages");
-			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
-			print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
-			print $labellang;
-			print '</td></tr>';
-		}
-
-		// Incoterms
-		if (isModEnabled('incoterm')) {
-			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
-			if ($action != 'editincoterm' && $user->hasRight('societe', 'creer')) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit('', 1).'</a></td>';
+			// Barcode
+			if (isModEnabled('barcode')) {
+				print '<tr><td>';
+				print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
+				print '</td>';
+				print '</tr>';
 			}
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($action != 'editincoterm') {
-				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-			} else {
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
-			}
-			print '</td></tr>';
-		}
 
-		// Multicurrency
-		if (isModEnabled("multicurrency")) {
+			// Prof ids
+			$i = 1; $j = 0;
+			while ($i <= 6) {
+				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
+				if ($idprof != '-') {
+					//if (($j % 2) == 0) print '<tr>';
+					print '<tr>';
+					print '<td>'.$idprof.'</td><td>';
+					$key = 'idprof'.$i;
+					print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
+					if ($object->$key) {
+						if ($object->id_prof_check($i, $object) > 0) {
+							if (!empty($object->id_prof_url($i, $object))) {
+								print ' &nbsp; '.$object->id_prof_url($i, $object);
+							}
+						} else {
+							print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
+						}
+					}
+					print '</td>';
+					//if (($j % 2) == 1) print '</tr>';
+					print '</tr>';
+					$j++;
+				}
+				$i++;
+			}
+			//if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
+
+
+			// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.
+			// We don't need them into customer profile.
+			// Except for spain and localtax where localtax depends on buyer and not seller
+
+			if ($object->fournisseur) {
+				// VAT is used
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('VATIsUsed'), $langs->trans('VATIsUsedWhenSelling'));
+				print '</td><td>';
+				print yn($object->tva_assuj);
+				print '</td>';
+				print '</tr>';
+
+				if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+					// VAT reverse charge by default
+					print '<tr><td>';
+					print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+					print '</td><td>';
+					print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
+					print '</td>';
+					print '</tr>';
+				}
+			}
+
+			// Local Taxes
+			if ($object->fournisseur || $mysoc->country_code == 'ES') {
+				if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
+					print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
+					print yn($object->localtax1_assuj);
+					print '</td></tr><tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
+					print yn($object->localtax2_assuj);
+					print '</td></tr>';
+
+					if ($object->localtax1_assuj == "1" && (!isOnlyOneLocalTax(1))) {
+						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
+						print '<input type="hidden" name="action" value="set_localtax1">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+						if ($action == 'editRE') {
+							print '<td class="left">';
+							$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
+							print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+						} else {
+							print '<td>'.$object->localtax1_value.'</td>';
+						}
+						print '</tr></form>';
+					}
+					if ($object->localtax2_assuj == "1" && (!isOnlyOneLocalTax(2))) {
+						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
+						print '<input type="hidden" name="action" value="set_localtax2">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+						if ($action == 'editIRPF') {
+							print '<td class="left">';
+							$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
+							print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+						} else {
+							print '<td>'.$object->localtax2_value.'</td>';
+						}
+						print '</tr></form>';
+					}
+				} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1") {
+					print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
+					print yn($object->localtax1_assuj);
+					print '</td></tr>';
+					if ($object->localtax1_assuj == "1" && (!isOnlyOneLocalTax(1))) {
+						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
+						print '<input type="hidden" name="action" value="set_localtax1">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+						if ($action == 'editRE') {
+							print '<td class="left">';
+							$formcompany->select_localtax(1, $object->localtax1_value, "lt1");
+							print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+						} else {
+							print '<td>'.$object->localtax1_value.'</td>';
+						}
+						print '</tr></form>';
+					}
+				} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1") {
+					print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
+					print yn($object->localtax2_assuj);
+					print '</td></tr>';
+					if ($object->localtax2_assuj == "1" && (!isOnlyOneLocalTax(2))) {
+						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
+						print '<input type="hidden" name="action" value="set_localtax2">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+						if ($action == 'editIRPF') {
+							print '<td class="left">';
+							$formcompany->select_localtax(2, $object->localtax2_value, "lt2");
+							print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+						} else {
+							print '<td>'.$object->localtax2_value.'</td>';
+						}
+						print '</tr></form>';
+					}
+				}
+			}
+
+			// Sale tax code (VAT code)
 			print '<tr>';
-			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
-			print '<td>';
-			print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code, 1) : '';
-			print '</td></tr>';
-		}
+			print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
+			if ($object->tva_intra) {
+				$s = '';
+				$s .= dol_print_profids($object->tva_intra, 'VAT', $object->country_code, 1);
+				$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
-		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-			// Accountancy sell code
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancySellCode");
-			print '</td><td colspan="2">';
-			if (isModEnabled('accounting')) {
-				if (!empty($object->accountancy_code_sell)) {
-					$accountingaccount = new AccountingAccount($db);
-					$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+				if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
+					$s .= ' &nbsp; ';
 
-					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+					if ($conf->use_javascript_ajax) {
+						$widthpopup = 600;
+						if (!empty($conf->dol_use_jmobile)) {
+							$widthpopup = 350;
+						}
+						$heightpopup = 400;
+						print "\n";
+						print '<script type="text/javascript">';
+						print "function CheckVAT(a) {\n";
+						if ($mysoc->country_code == 'GR' && $object->country_code == 'GR' && !empty($u)) {
+							print "GRVAT(a,'{$u}','{$p}','{$myafm}');\n";
+						} else {
+							print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
+						}
+						print "}\n";
+						print '</script>';
+						print "\n";
+						$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
+						$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+					} else {
+						$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+					}
 				}
+				print $s;
 			} else {
-				print $object->accountancy_code_sell;
+				print '&nbsp;';
 			}
 			print '</td></tr>';
 
-			// Accountancy buy code
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancyBuyCode");
-			print '</td><td colspan="2">';
-			if (isModEnabled('accounting')) {
-				if (!empty($object->accountancy_code_buy)) {
-					$accountingaccount2 = new AccountingAccount($db);
-					$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);
-
-					print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+			// Warehouse
+			if (isModEnabled('stock') && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+				$langs->load('stocks');
+				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+				$formproduct = new FormProduct($db);
+				print '<tr class="nowrap">';
+				print '<td>';
+				print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->hasRight('societe', 'creer'));
+				print '</td><td>';
+				if ($action == 'editwarehouse') {
+					$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+				} else {
+					if ($object->fk_warehouse > 0) {
+						print img_picto('', 'stock', 'class="paddingrightonly"');
+					}
+					$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
 				}
-			} else {
-				print $object->accountancy_code_buy;
+				print '</td>';
+				print '</tr>';
 			}
-			print '</td></tr>';
-		}
 
-		// Other attributes
-		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+			print '</table>';
+			print '</div>';
 
-		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+			print '<div class="fichehalfright">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border tableforfield centpercent">';
+
+			// Tags / categories
+			if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+				// Customer
+				if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
+					print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
+					print '<td>';
+					print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
+					print "</td></tr>";
+				}
+
+				// Supplier
+				if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
+					print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
+					print '<td>';
+					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
+					print "</td></tr>";
+				}
+			}
+
+
+			// Third-Party Type
 			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
-			if ($action != 'editparentcompany' && $user->hasRight('societe', 'creer')) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
+			if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td>';
-			$html_name = ($action == 'editparentcompany') ? 'parent_id' : 'none';
-			$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, $html_name, '', 1, 0, 0, null, 0, array($object->id));
+			$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
+			$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
 			print '</td></tr>';
-		}
 
-		// Sales representative
-		include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
+			// Workforce/Staff
+			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+				print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
+			}
 
-		// Module Adherent
-		if (isModEnabled('adherent')) {
-			$langs->load("members");
-			print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
-			print '<td>';
-			$adh = new Adherent($db);
-			$result = $adh->fetch('', '', $object->id);
-			if ($result > 0) {
-				$adh->ref = $adh->getFullName($langs);
-				print $adh->getNomUrl(-1);
+			// Legal
+			print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+
+			// Capital
+			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
+			if ($object->capital) {
+				if (isModEnabled("multicurrency") && !empty($object->multicurrency_code)) {
+					print price($object->capital, '', $langs, 0, -1, -1, $object->multicurrency_code);
+				} else {
+					print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
+				}
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+				print '&nbsp;';
 			}
-			print "</td></tr>\n";
-		}
+			print '</td></tr>';
 
-		// Link user (you must create a contact to get a user)
-		/*
-		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
-		if ($object->user_id) {
-			$dolibarr_user = new User($db);
-			$result = $dolibarr_user->fetch($object->user_id);
-			print $dolibarr_user->getLoginUrl(-1);
-		} else {
-			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
-			if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
-				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+			// Unsubscribe opt-out
+			if (isModEnabled('mailing')) {
+				$result = $object->getNoEmail();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+				print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
+				if ($object->email) {
+					print yn($object->no_email);
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+				}
+
+				$langs->load("mails");
+				print ' &nbsp; <span class="badge badge-secondary" title="'.dol_escape_htmltag($langs->trans("NbOfEMailingsSend")).'">'.$object->getNbOfEMailings().'</span>';
+
+				print '</td></tr>';
 			}
+
+			// Default language
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+				//$s=picto_from_langcode($object->default_lang);
+				//print ($s?$s.' ':'');
+				$langs->load("languages");
+				$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+				print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+				print $labellang;
+				print '</td></tr>';
+			}
+
+			// Incoterms
+			if (isModEnabled('incoterm')) {
+				print '<tr><td>';
+				print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
+				if ($action != 'editincoterm' && $user->hasRight('societe', 'creer')) {
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit('', 1).'</a></td>';
+				}
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				if ($action != 'editincoterm') {
+					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+				} else {
+					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
+				}
+				print '</td></tr>';
+			}
+
+			// Multicurrency
+			if (isModEnabled("multicurrency")) {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+				print '<td>';
+				print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code, 1) : '';
+				print '</td></tr>';
+			}
+
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				// Accountancy sell code
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancySellCode");
+				print '</td><td colspan="2">';
+				if (isModEnabled('accounting')) {
+					if (!empty($object->accountancy_code_sell)) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+
+						print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+					}
+				} else {
+					print $object->accountancy_code_sell;
+				}
+				print '</td></tr>';
+
+				// Accountancy buy code
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancyBuyCode");
+				print '</td><td colspan="2">';
+				if (isModEnabled('accounting')) {
+					if (!empty($object->accountancy_code_buy)) {
+						$accountingaccount2 = new AccountingAccount($db);
+						$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);
+
+						print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+					}
+				} else {
+					print $object->accountancy_code_buy;
+				}
+				print '</td></tr>';
+			}
+
+			// Other attributes
+			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+			// Parent company
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+				print '<tr><td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
+				if ($action != 'editparentcompany' && $user->hasRight('societe', 'creer')) {
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+				}
+				print '</tr></table>';
+				print '</td><td>';
+				$html_name = ($action == 'editparentcompany') ? 'parent_id' : 'none';
+				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, $html_name, '', 1, 0, 0, null, 0, array($object->id));
+				print '</td></tr>';
+			}
+
+			// Sales representative
+			include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
+
+			// Module Adherent
+			if (isModEnabled('adherent')) {
+				$langs->load("members");
+				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
+				print '<td>';
+				$adh = new Adherent($db);
+				$result = $adh->fetch('', '', $object->id);
+				if ($result > 0) {
+					$adh->ref = $adh->getFullName($langs);
+					print $adh->getNomUrl(-1);
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+				}
+				print "</td></tr>\n";
+			}
+
+			// Link user (you must create a contact to get a user)
+			/*
+			print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+			if ($object->user_id) {
+				$dolibarr_user = new User($db);
+				$result = $dolibarr_user->fetch($object->user_id);
+				print $dolibarr_user->getLoginUrl(-1);
+			} else {
+				//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
+				if (!$object->user_id && $user->hasRight('user', 'user', 'creer')) {
+					print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+				}
+			}
+			print '</td></tr>';
+			*/
+
+			// Webservices url/key
+			if (!empty($conf->syncsupplierwebservices->enabled)) {
+				print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td>';
+				print '<td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
+			}
+
+			print '</table>';
+			print '</div>';
+
+			print '</div>';
+			print '<div class="clearboth"></div>';
 		}
-		print '</td></tr>';
-		*/
-
-		// Webservices url/key
-		if (!empty($conf->syncsupplierwebservices->enabled)) {
-			print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td>';
-			print '<td class="nowrap">'.$langs->trans('WebServiceKey').'</td><td>'.$object->webservices_key.'</td></tr>';
-		}
-
-		print '</table>';
-		print '</div>';
-
-		print '</div>';
-		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 

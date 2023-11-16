@@ -1025,13 +1025,15 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $user->id);
 				}
 
-				if ($ret >= 0 && !$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('COMPANY_CREATE', $user);
-					if ($result < 0) {
-						$error++;
+				if ($ret >= 0) {
+					if (! $notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('COMPANY_CREATE', $user);
+						if ($result < 0) {
+							$error++;
+						}
+						// End call triggers
 					}
-					// End call triggers
 				} else {
 					$error++;
 				}
@@ -5410,12 +5412,10 @@ class Societe extends CommonObject
 
 	/**
 	 *    Merge a company with another one, deleting the given company.
+	 *    The company given in parameter will be removed.
 	 *
 	 *    @param	int     $soc_origin_id		Company to merge the data from
-	 *    @return	int		-1 if error
-	 *
-	 *    @note The company given in parameter will be removed.
-	 *
+	 *    @return	int							-1 if error
 	 */
 	public function mergeCompany($soc_origin_id)
 	{
@@ -5597,5 +5597,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		}
+
+		return -1;
 	}
 }

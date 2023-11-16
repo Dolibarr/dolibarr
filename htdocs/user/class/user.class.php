@@ -637,7 +637,7 @@ class User extends CommonObject
 	/**
 	 *  Load const values from database table user_param and set it into user->conf->XXX
 	 *
-	 *  @return int						> 0 if OK, < 0 if KO
+	 *  @return int						>= 0 if OK, < 0 if KO
 	 */
 	public function loadPersonalConf()
 	{
@@ -661,8 +661,11 @@ class User extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+
+			return $num;
 		} else {
 			$this->error = $this->db->lasterror();
+
 			return -2;
 		}
 	}
@@ -2822,6 +2825,7 @@ class User extends CommonObject
 			$datas['administrator'] = '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
 		}
 		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$langs->load("companies");
 			$datas['accountancycode'] = '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
 		}
 		$company = '';

@@ -525,7 +525,7 @@ if ($id > 0 || $ref) {
 				$userSalary->fetch($obj->fk_user);
 			}
 			print '<td>';
-			print (!$salaryBonPl  ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(1));
+			print (!$salaryBonPl  ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
 			print "</td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";

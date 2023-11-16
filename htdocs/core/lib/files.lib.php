@@ -1037,7 +1037,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->filepath = $rel_dir;
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
-					$ecmfile->fullpath_orig = $srcfile;
+					$ecmfile->fullpath_orig = basename($srcfile);
 					$ecmfile->gen_or_uploaded = 'uploaded';
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
@@ -2882,7 +2882,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
 		$original_file = '';
 	} elseif ($modulepart == 'iconmailing' && !empty($conf->mailing->dir_temp)) {
-		// Wrapping pour les icones de background des mailings
+		// Wrapping for icon of background of mailings
 		$accessallowed = 1;
 		$original_file = $conf->mailing->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {
