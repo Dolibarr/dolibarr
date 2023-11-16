@@ -166,6 +166,11 @@ class Task extends CommonObjectLine
 	public $thirdparty_name;
 	public $thirdparty_email;
 
+	// store parent ref and position
+	public $task_parent_ref;
+	public $task_parent_position;
+
+
 
 	/**
 	 * @var float budget_amount
