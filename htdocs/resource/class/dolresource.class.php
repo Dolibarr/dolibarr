@@ -134,10 +134,10 @@ class Dolresource extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$new_resource_parameters = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
-		foreach ($new_resource_parameters as $key => $parameter) {
-			if (isset($parameter)) {
-				$new_resource_parameters[$key] = trim($parameter);
+		$new_resource_values = [$this->ref, $this->address, $this->zip, $this->town, $this->description, $this->country_id, $this->state_id, $this->fk_code_type_resource, $this->note_public, $this->note_private];
+		foreach ($new_resource_values as $key => $value) {
+			if (isset($value)) {
+				$new_resource_values[$key] = trim($value);
 			}
 		}
 
@@ -156,8 +156,8 @@ class Dolresource extends CommonObject
 		$sql .= "note_private";
 		$sql .= ") VALUES (";
 		$sql .= getEntity('resource') . ", ";
-		foreach ($new_resource_parameters as $parameter) {
-			$sql .= " " . ((isset($parameter) && $parameter > 0) ? "'" . $this->db->escape($parameter) . "'" : 'NULL') . ",";
+		foreach ($new_resource_values as $value) {
+			$sql .= " " . ((isset($value) && $value > 0) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
 		$sql = rtrim($sql, ",");
 		$sql .= ")";
