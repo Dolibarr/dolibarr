@@ -32,4 +32,4 @@ jobs:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
       - name: Run PHPSTAN
-        run: phpstan analyse --error-format=checkstyle . | cs2pr --graceful-warnings
+        run: phpstan analyse --error-format=checkstyle --xdebug . | cs2pr --graceful-warnings
