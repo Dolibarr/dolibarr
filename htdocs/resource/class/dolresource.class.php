@@ -392,16 +392,14 @@ class Dolresource extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load data of resource links into memory from database
 	 *
 	 * @param	int	$id		Id of link element_resources
 	 * @return	int			if KO: <0, if OK: >0
 	 */
-	public function fetch_element_resource($id)
+	public function fetchElementResource($id)
 	{
-		// phpcs:enable
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.resource_id,";
@@ -522,7 +520,6 @@ class Dolresource extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load resource objects into $this->lines
 	 *
@@ -535,7 +532,6 @@ class Dolresource extends CommonObject
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
-		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
@@ -614,7 +610,6 @@ class Dolresource extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Update element resource in database
 	 *
@@ -622,9 +617,8 @@ class Dolresource extends CommonObject
 	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int					if KO: <0, if OK: >0
 	 */
-	public function update_element_resource($user = null, $notrigger = 0)
+	public function updateElementResource($user = null, $notrigger = 0)
 	{
-		// phpcs:enable
 		global $conf, $langs;
 		$error = 0;
 
@@ -757,16 +751,13 @@ class Dolresource extends CommonObject
 		return $i;
 	}
 
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load in cache resource type code (setup in dictionary)
 	 *
 	 * @return		int		Number of lines loaded, if already loaded: 0, if KO: <0
 	 */
-	public function load_cache_code_type_resource()
+	public function loadCacheCodeTypeResource()
 	{
-		// phpcs:enable
 		global $langs;
 
 		if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) {
@@ -916,10 +907,9 @@ class Dolresource extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->getLibStatusLabel($this->status, $mode);
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get status
 	 *
@@ -927,21 +917,18 @@ class Dolresource extends CommonObject
 	 * @param	int		$mode 		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 * @return	string 				Label of status
 	 */
-	public static function LibStatut($status, $mode = 0)
+	public static function getLibStatusLabel($status, $mode = 0)
 	{
-		// phpcs:enable
 		return '';
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load dashboard indicators this->nb de tableau de bord
 	 *
 	 * @return	int		if KO: <0, if OK: >0
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		$this->nb = array();
 
 		$sql = "SELECT count(r.rowid) as nb";
