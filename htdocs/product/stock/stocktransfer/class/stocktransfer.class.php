@@ -168,6 +168,14 @@ class StockTransfer extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+
+		/**
+	 * @var StockTransferLine[] stock transfer line
+	 */
+	public $lines;
+
+	public $fk_warehouse_source;
+	public $fk_warehouse_destination;
 	// END MODULEBUILDER PROPERTIES
 
 
