@@ -1272,6 +1272,7 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetTextColor(0, 0, 0);
 
+		$resteapayer = 0;
 		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
 		if (!empty($object->paye)) $resteapayer=0;
@@ -1287,8 +1288,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle, 0, $outputlangs), 0, 'R', 0);
 
 			/*
-			if ($object->close_code == 'discount_vat')
-			{
+			if ($object->close_code == 'discount_vat') {
 				$index++;
 				$pdf->SetFillColor(255,255,255);
 

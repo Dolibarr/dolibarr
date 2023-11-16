@@ -261,6 +261,21 @@ abstract class CommonObject
 	public $origin_id;
 
 	/**
+	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
+	 */
+	public $origin_object;
+
+	// TODO Remove this. Has been replaced with ->origin_object.
+	// This is set by fetch_origin() from this->origin and this->origin_id
+	/** @deprecated */
+	public $expedition;
+	/** @deprecated */
+	public $livraison;
+	/** @deprecated */
+	public $commandeFournisseur;
+
+
+	/**
 	 * @var string 		The object's reference
 	 */
 	public $ref;
@@ -1870,7 +1885,9 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Read linked origin object
+	 *	Read linked origin object.
+	 *	Set ->origin_object
+	 *	Set also ->expedition or ->livraison or ->commandFournisseur (deprecated)
 	 *
 	 *	@return		void
 	 */
@@ -1883,15 +1900,18 @@ abstract class CommonObject
 		if ($this->origin == 'delivery') {
 			$this->origin = 'livraison';
 		}
-		if ($this->origin == 'order_supplier') {
+		if ($this->origin == 'order_supplier' || $this->origin == 'supplier_order') {
 			$this->origin = 'commandeFournisseur';
 		}
 
 		$origin = $this->origin;
 
 		$classname = ucfirst($origin);
-		$this->$origin = new $classname($this->db);
-		$this->$origin->fetch($this->origin_id);
+		$this->origin_object = new $classname($this->db);
+		$this->origin_object->fetch($this->origin_id);
+
+		// TODO Remove this line
+		$this->$origin = $this->origin_object;
 	}
 
 	/**
@@ -10430,7 +10450,7 @@ abstract class CommonObject
 
 					$project_result = $this->fetch_projet();
 					if ($project_result >= 0) {
-						$element = 'projet/'.dol_sanitizeFileName($object->project->ref).'/';
+						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}
 				default:
 					$element = $this->element;

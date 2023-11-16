@@ -4542,7 +4542,9 @@ if ($action == 'create') {
 		// Type
 		print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
 		print $object->getLibType(2);
-		print $object->getSubtypeLabel('facture');
+		if ($object->subtype > 0) {
+			print ' '.$object->getSubtypeLabel('facture');
+		}
 		if ($object->module_source) {
 			print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.dol_escape_htmltag(ucfirst($object->module_source)).' - '.$langs->trans("Terminal").' '.dol_escape_htmltag($object->pos_source).')</span>';
 		}

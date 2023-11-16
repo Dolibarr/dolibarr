@@ -3213,8 +3213,10 @@ if ($action == 'create') {
 			print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 			print '<span class="badgeneutral">';
 			print $object->getLibType();
-			print $object->getSubtypeLabel('facture_fourn');
 			print '</span>';
+			if ($object->subtype > 0) {
+				print ' '.$object->getSubtypeLabel('facture_fourn');
+			}
 			if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 				$facreplaced = new FactureFournisseur($db);
 				$facreplaced->fetch($object->fk_facture_source);

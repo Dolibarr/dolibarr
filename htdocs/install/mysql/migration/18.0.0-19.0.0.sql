@@ -182,3 +182,19 @@ ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
 ALTER TABLE llx_facture_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
 ALTER TABLE llx_facture_fourn_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
 
+CREATE TABLE llx_mrp_production_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_production_extrafields ADD INDEX idx_mrp_production_fk_object(fk_object);
+
+ALTER TABLE llx_salary ADD COLUMN ref_ext varchar(255);
+ALTER TABLE llx_salary ADD COLUMN note_public text;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN element_type varchar(50) DEFAULT 'supplier_order' NOT NULL;
+
+ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX idx_expensereport_fk_refuse(fk_user_refuse);
