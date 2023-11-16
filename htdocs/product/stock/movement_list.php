@@ -597,13 +597,11 @@ if ($action == 'confirm_reverse') {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$idAlreadyReverse = '';
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			$object->fetch($obj->rowid);
 			$reverse = $object->reverseMouvement();
 			if ($reverse < 0) {
-				$idAlreadyReverse = $obj->rowid;
 				$hasError = true;
 			} else {
 				$hasSuccess = true;
