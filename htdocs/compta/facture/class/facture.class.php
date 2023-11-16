@@ -1563,6 +1563,8 @@ class Facture extends CommonInvoice
 			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
 		}
 
+		$this->db->begin();
+
 		$ret = $this->create($user);
 
 		if ($ret > 0) {
@@ -1578,11 +1580,14 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
+				$this->db->commit();
 				return 1;
 			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}

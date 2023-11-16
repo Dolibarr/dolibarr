@@ -64,6 +64,7 @@ if (!empty($conf->paypal->enabled)) {
 global $dolibarr_main_instance_unique_id;
 
 // Use browser-defined language
+$langs = new Translate('', $conf);
 $langs->setDefaultLang('auto');
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
 

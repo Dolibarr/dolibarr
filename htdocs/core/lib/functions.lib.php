@@ -7190,15 +7190,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = $object->lastname;
 			}
 
+			$project = null;
 			if (is_object($object->project)) {
-				$substitutionarray['__PROJECT_ID__'] = (is_object($object->project) ? $object->project->id : '');
-				$substitutionarray['__PROJECT_REF__'] = (is_object($object->project) ? $object->project->ref : '');
-				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->project) ? $object->project->title : '');
+				$project = $object->project;
+			} elseif (is_object($object->projet)) { // Deprecated, for backward compatibility
+				$project = $object->projet;
 			}
-			if (is_object($object->projet)) {	// Deprecated, for backward compatibility
-				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet) ? $object->projet->id : '');
-				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
-				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
+			if ($project) {
+				$substitutionarray['__PROJECT_ID__'] = $project->id;
+				$substitutionarray['__PROJECT_REF__'] = $project->ref;
+				$substitutionarray['__PROJECT_NAME__'] = $project->title;
 			}
 			if (is_object($object) && $object->element == 'project') {
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
@@ -7331,8 +7332,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'action') {
 				$substitutionarray['__EVENT_LABEL__'] = $object->label;
+				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action".$object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, '%A %d %b %Y');
 				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, '%H:%M:%S');
+				$substitutionarray['__EVENT_DATE_SHORT__'] = dol_print_date($object->datep, 'day', 0, $outputlangs);
+				$substitutionarray['__EVENT_TIME_SHORT__'] = dol_print_date($object->datep, 'hour', 0, $outputlangs);
 			}
 		}
 	}
@@ -7355,7 +7359,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
-
+		if ($object->element =='facture') {
+			if (is_object($object)) {
+				$totalpaye			= $object->getSommePaiement();
+				$totalcreditnotes	= $object->getSumCreditNotesUsed();
+				$totaldeposits		= $object->getSumDepositsUsed();
+				$resteapayer		= price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+			}
+			$substitutionarray['__FACDATE__']			= is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '') : '';
+			$substitutionarray['__FACDATELIMREG__']		= is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '') : '';
+			$substitutionarray['__FACTOTALTTC_2D__']	= is_object($object) ? number_format($object->total_ttc, 2, ',', ' ') : '';
+			$substitutionarray['__FACTOTALHT_2D__']		= is_object($object) ? number_format($object->total_ht, 2, ',', ' ') : '';
+			$substitutionarray['__FACTOTALHT_2DC__']	= is_object($object) ? price($object->total_ht, 0, $outputlangs, 1, 2, 2, 'auto') : '';
+			$substitutionarray['__FACTOTALTTC_2DC__']	= is_object($object) ? price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto') : '';
+			$substitutionarray['__FACREST_2D__']		= is_object($object) ? number_format($resteapayer, 2, ',', ' ') : '';
+			$substitutionarray['__FACREST_2DC__']		= is_object($object) ? price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto') : '';
+			$substitutionarray['__SIT_NUM__']			= is_object($object) ? (isset($object->situation_counter) ? $object->situation_counter : '') : '';
+        }
 		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
@@ -10118,113 +10138,195 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 /**
  * Get an array with properties of an element.
- * Called by fetchObjectByElement.
  *
- * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task' or 'object@mymodule'...
- * @return  array					(module, classpath, element, subelement, classfile, classname)
+ * @param   string 	$element_type 	Element type (Value of $object->element). Example:
+ * 									'action', 'facture', 'project', 'project_task' or
+ * 									'myobject@mymodule' or
+ * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
+ * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
+ * @see fetchObjectByElement()
  */
 function getElementProperties($element_type)
 {
+	global $conf;
+
 	$regs = array();
 
-	$classfile = $classname = $classpath = '';
+	$classfile = $classname = $classpath = $subdir = $dir_output = '';
 
-	// Parse element/subelement (ex: project_task)
+	// Parse element/subelement
 	$module = $element_type;
 	$element = $element_type;
 	$subelement = $element_type;
 
-	// If we ask an resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
+	// If we ask a resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
 		$element = $subelement = $regs[1];
 		$module = $regs[2];
 	}
 
-	//print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
+	// If we ask a resource for a string with an element and a subelement
+	// Example 'project_task'
+	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule
 		$module = $element = $regs[1];
 		$subelement = $regs[2];
 	}
 
-	// For compat
+	// For compat and To work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
-	}
-
-	// To work with non standard path
-	if ($element_type == 'facture' || $element_type == 'invoice') {
+	} elseif ($element_type == 'cronjob') {
+		$classpath = 'cron/class';
+		$module = 'cron';
+	} elseif ($element_type == 'adherent_type') {
+		$classpath = 'adherents/class';
+		$classfile = 'adherent_type';
+		$module = 'adherent';
+		$subelement = 'adherent_type';
+		$classname = 'AdherentType';
+	} elseif ($element_type == 'bank_account') {
+		$classpath = 'compta/bank/class';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$classfile = 'account';
+		$classname = 'Account';
+	} elseif ($element_type == 'category') {
+		$classpath = 'categories/class';
+		$module = 'categorie';
+		$subelement = 'categorie';
+	} elseif ($element_type == 'contact') {
+		$classpath = 'contact/class';
+		$classfile = 'contact';
+		$module = 'societe';
+		$subelement = 'contact';
+	} elseif ($element_type == 'stock') {
+		$classpath = 'product/stock/class';
+		$classfile = 'entrepot';
+		$classname = 'Entrepot';
+	} elseif ($element_type == 'project') {
+		$classpath = 'projet/class';
+		$module = 'projet';
+	} elseif ($element_type == 'project_task') {
+		$classpath = 'projet/class';
+		$module = 'projet';
+		$subelement = 'task';
+	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$subelement = 'facture';
-	}
-	if ($element_type == 'commande' || $element_type == 'order') {
+	} elseif ($element_type == 'commande' || $element_type == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
-	}
-	if ($element_type == 'propal') {
+	} elseif ($element_type == 'propal') {
 		$classpath = 'comm/propal/class';
-	}
-	if ($element_type == 'supplier_proposal') {
+	} elseif ($element_type == 'shipping') {
+		$classpath = 'expedition/class';
+		$classfile = 'expedition';
+		$classname = 'Expedition';
+		$module = 'expedition';
+	} elseif ($element_type == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
-	}
-	if ($element_type == 'shipping') {
+		$module = 'supplier_proposal';
+		$element = 'supplierproposal';
+		$classfile = 'supplier_proposal';
+		$subelement = 'supplierproposal';
+	} elseif ($element_type == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
 		$module = 'expedition_bon';
-	}
-	if ($element_type == 'delivery') {
+	} elseif ($element_type == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
 		$module = 'delivery_note';
-	}
-	if ($element_type == 'contract') {
+	} elseif ($element_type == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
-	}
-	if ($element_type == 'member') {
+	} elseif ($element_type == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$module = 'mailing';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
+		$subelement = '';
+	} elseif ($element_type == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
-	}
-	if ($element_type == 'cabinetmed_cons') {
+	} elseif ($element_type == 'usergroup') {
+		$classpath = 'user/class';
+		$module = 'user';
+	} elseif ($element_type == 'mo') {
+		$classpath = 'mrp/class';
+		$classfile = 'mo';
+		$classname = 'Mo';
+		$module = 'mrp';
+		$subelement = '';
+	} elseif ($element_type == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
-	}
-	if ($element_type == 'fichinter') {
+	} elseif ($element_type == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
-	}
-	if ($element_type == 'dolresource' || $element_type == 'resource') {
+	} elseif ($element_type == 'dolresource' || $element_type == 'resource') {
 		$classpath = 'resource/class';
 		$module = 'resource';
 		$subelement = 'dolresource';
-	}
-	if ($element_type == 'propaldet') {
+	} elseif ($element_type == 'propaldet') {
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
 		$subelement = 'propaleligne';
-	}
-	if ($element_type == 'order_supplier') {
+	} elseif ($element_type == 'opensurvey_sondage') {
+		$classpath = 'opensurvey/class';
+		$module = 'opensurvey';
+		$subelement = 'opensurveysondage';
+	} elseif ($element_type == 'order_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-		$subelement = 'commandefournisseur';
 		$classfile = 'fournisseur.commande';
-	}
-	if ($element_type == 'invoice_supplier') {
+		$element = 'order_supplier';
+		$subelement = '';
+		$classname = 'CommandeFournisseur';
+	} elseif ($element_type == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-		$subelement = 'facturefournisseur';
 		$classfile = 'fournisseur.facture';
-	}
-	if ($element_type == "service") {
+		$element = 'invoice_supplier';
+		$subelement = '';
+		$classname = 'FactureFournisseur';
+	} elseif ($element_type == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
+	} elseif ($element_type == 'salary') {
+		$classpath = 'salaries/class';
+		$module = 'salaries';
+	} elseif ($element_type == 'productlot') {
+		$module = 'productbatch';
+		$classpath = 'product/stock/class';
+		$classfile = 'productlot';
+		$classname = 'Productlot';
+		$element = 'productlot';
+		$subelement = '';
+	} elseif ($element_type == 'websitepage') {
+		$classpath = 'website/class';
+		$classfile = 'websitepage';
+		$classname = 'Websitepage';
+		$module = 'website';
+		$subelement = 'websitepage';
+	} elseif ($element_type == 'fiscalyear') {
+		$classpath = 'core/class';
+		$module = 'accounting';
+		$subelement = 'fiscalyear';
+	} elseif ($element_type == 'chargesociales') {
+		$classpath = 'compta/sociales/class';
+		$module = 'tax';
+	} elseif ($element_type == 'tva') {
+		$classpath = 'compta/tva/class';
+		$module = 'tax';
+		$subdir = '/vat';
 	}
 
 	if (empty($classfile)) {
@@ -10237,13 +10339,35 @@ function getElementProperties($element_type)
 		$classpath = $module.'/class';
 	}
 
+	//print 'getElementProperties subdir='.$subdir;
+
+	// Set dir_output
+	if ($module && isset($conf->$module)) {	// The generic case
+		if (!empty($conf->$module->multidir_output[$conf->entity])) {
+			$dir_output = $conf->$module->multidir_output[$conf->entity];
+		} elseif (!empty($conf->$module->output[$conf->entity])) {
+			$dir_output = $conf->$module->output[$conf->entity];
+		} elseif (!empty($conf->$module->dir_output)) {
+			$dir_output = $conf->$module->dir_output;
+		}
+	}
+
+	// Overwrite value for special cases
+	if ($element == 'order_supplier') {
+		$dir_output = $conf->fournisseur->commande->dir_output;
+	} elseif ($element == 'invoice_supplier') {
+		$dir_output = $conf->fournisseur->facture->dir_output;
+	}
+	$dir_output .= $subdir;
+
 	$element_properties = array(
 		'module' => $module,
-		'classpath' => $classpath,
 		'element' => $element,
 		'subelement' => $subelement,
+		'classpath' => $classpath,
 		'classfile' => $classfile,
-		'classname' => $classname
+		'classname' => $classname,
+		'dir_output' => $dir_output
 	);
 	return $element_properties;
 }

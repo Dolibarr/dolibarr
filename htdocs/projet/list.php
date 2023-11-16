@@ -386,8 +386,12 @@ if ($search_sale > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 }
 if ($search_project_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ecp ON ecp.element_id = p.rowid";
 }
+
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
@@ -454,7 +458,7 @@ if ($search_sale > 0) {
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.fk_socpeople = ".((int) $search_project_user);
 }
 if ($search_opp_amount != '') {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -678,6 +682,11 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
