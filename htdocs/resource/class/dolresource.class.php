@@ -110,9 +110,9 @@ class Dolresource extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param DoliDb $db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDb $db)
 	{
 		$this->db = $db;
 		$this->element = 'dolresource';
@@ -123,7 +123,7 @@ class Dolresource extends CommonObject
 	}
 
 	/**
-	 *  Create object in database
+	 * Create object in database
 	 *
 	 * @param	User	$user		User that creates
 	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
@@ -208,11 +208,11 @@ class Dolresource extends CommonObject
 	}
 
 	/**
-	 *    Load object in memory from database
+	 * Load object into memory from database
 	 *
-	 *    @param    int		$id     Id of object
-	 *    @param	string	$ref	Ref of object
-	 *    @return   int         	if KO: <0 , if OK: >0
+	 * @param	int		$id		Id of object
+	 * @param	string	$ref	Ref of object
+	 * @return	int				if KO: <0 , if OK: >0
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -276,11 +276,11 @@ class Dolresource extends CommonObject
 
 
 	/**
-	 *  Update object into database
+	 * Update object in database
 	 *
-	 *  @param	User	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 if KO: <0 , if OK: >0
+	 * @param	User	$user		User that modifies
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int					if KO: <0 , if OK: >0
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -394,10 +394,10 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Load data of resource links in memory from database
+	 * Load data of resource links into memory from database
 	 *
-	 *    @param      int	$id         Id of link element_resources
-	 *    @return     int         		if KO: <0, if OK: >0
+	 * @param	int	$id		Id of link element_resources
+	 * @return	int			if KO: <0, if OK: >0
 	 */
 	public function fetch_element_resource($id)
 	{
@@ -447,11 +447,11 @@ class Dolresource extends CommonObject
 	}
 
 	/**
-	 *    Delete a resource object
+	 * Delete a resource object
 	 *
-	 *    @param	int		$rowid			Id of resource line to delete
-	 *    @param	int		$notrigger		Disable all triggers
-	 *    @return   int						if OK: >0, if KO: <0
+	 * @param	int		$rowid			Id of resource line to delete
+	 * @param	int		$notrigger		Disable all triggers
+	 * @return	int						if OK: >0, if KO: <0
 	 */
 	public function delete($rowid, $notrigger = 0)
 	{
@@ -524,14 +524,14 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load resource objects into $this->lines
+	 * Load resource objects into $this->lines
 	 *
-	 *  @param	string		$sortorder    	sort order
-	 *  @param	string		$sortfield    	sort field
-	 *  @param	int			$limit		  	limit page
-	 *  @param	int			$offset    	  	page
-	 *  @param	array		$filter    	  	filter output
-	 *  @return int          				if KO: <0, if OK number of lines loaded
+	 * @param	string		$sortorder		sort order
+	 * @param	string		$sortfield		sort field
+	 * @param	int			$limit			limit page
+	 * @param	int			$offset			page
+	 * @param	array		$filter			filter output
+	 * @return	int							if KO: <0, if OK number of lines loaded
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
@@ -616,11 +616,11 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Update element resource into database
+	 * Update element resource in database
 	 *
-	 *  @param	User	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 if KO: <0, if OK: >0
+	 * @param	User	$user		User that modifies
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int					if KO: <0, if OK: >0
 	 */
 	public function update_element_resource($user = null, $notrigger = 0)
 	{
@@ -697,10 +697,10 @@ class Dolresource extends CommonObject
 	/**
 	 * Return an array with resources linked to the element
 	 *
-	 * @param string    $element        Element
-	 * @param int       $element_id     Id
-	 * @param string    $resource_type  Type
-	 * @return array                    Array of resources
+	 * @param string	$element		Element
+	 * @param int		$element_id		Id
+	 * @param string	$resource_type	Type
+	 * @return array					Array of resources
 	 */
 	public function getElementResources($element, $element_id, $resource_type = '')
 	{
@@ -742,9 +742,9 @@ class Dolresource extends CommonObject
 	/**
 	 *  Return an int number of resources linked to the element
 	 *
-	 *  @param		string	$element		Element type
-	 *  @param		int		$element_id		Element id
-	 *  @return     int						Nb of resources loaded
+	 * @param		string	$element		Element type
+	 * @param		int		$element_id		Element id
+	 * @return		int						Nb of resources loaded
 	 */
 	public function fetchElementResources($element, $element_id)
 	{
@@ -760,9 +760,9 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Load in cache resource type code (setup in dictionary)
+	 * Load in cache resource type code (setup in dictionary)
 	 *
-	 *      @return     int             Number of lines loaded, if already loaded: 0, if KO: <0
+	 * @return		int		Number of lines loaded, if already loaded: 0, if KO: <0
 	 */
 	public function load_cache_code_type_resource()
 	{
@@ -801,9 +801,9 @@ class Dolresource extends CommonObject
 	/**
 	 * getTooltipContentArray
 	 *
-	 * @param array $params ex option, infologin
-	 * @since v18
-	 * @return array
+	 * @param	array	$params		ex option, infologin
+	 * @since	v18
+	 * @return	array
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -826,15 +826,15 @@ class Dolresource extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 * Return clickable link of object (with optional picto)
 	 *
-	 *	@param      int		$withpicto					Add picto into link
-	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 *	@param      string	$get_params    				Parametres added to url
-	 *	@param		int  	$notooltip					1=Disable tooltip
-	 *  @param  	string  $morecss                    Add more css on link
-	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return     string          					String with URL
+	 * @param	int		$withpicto					Add picto into link
+	 * @param	string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+	 * @param	string	$get_params					Parametres added to url
+	 * @param	int		$notooltip					1=Disable tooltip
+	 * @param	string	$morecss					Add more css on link
+	 * @param	int		$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -909,10 +909,10 @@ class Dolresource extends CommonObject
 
 
 	/**
-	 *  Return the label of the status
+	 * Get status label
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 * @param	int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return	string				Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -921,11 +921,11 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return the status
+	 * Get status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
-	 *  @return string 			       	Label of status
+	 * @param	int		$status		Id status
+	 * @param	int		$mode 		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
+	 * @return	string 				Label of status
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
@@ -935,9 +935,9 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 * Load dashboard indicators this->nb de tableau de bord
 	 *
-	 *      @return     int         if KO: <0, if OK: >0
+	 * @return	int		if KO: <0, if OK: >0
 	 */
 	public function load_state_board()
 	{
