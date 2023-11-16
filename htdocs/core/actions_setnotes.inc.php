@@ -81,7 +81,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 		if (empty($object->id)) {
 			$object->fetch($id); // Fetch may not be already done
 		}
-		$result = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5), '_private');
+		$result = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1), '_private');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

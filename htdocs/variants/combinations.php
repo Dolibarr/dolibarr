@@ -689,7 +689,7 @@ if (!empty($id) || !empty($ref)) {
 			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1)) {
 				?>
 				<tr>
-					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
+					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Attributes') ?></label></td>
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
@@ -698,7 +698,7 @@ if (!empty($id) || !empty($ref)) {
 						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
 						//print 'rr'.$result1.' '.$result2;
 						if ($result1 > 0 && $result2 > 0) {
-							print $prodattr->label.' - '.$prodattr_val->value.'<br>';
+							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
 						}
 					}
@@ -910,7 +910,7 @@ if (!empty($id) || !empty($ref)) {
 				}
 				?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
-				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
+				<td class="liste_titre"><?php echo $langs->trans('Attributes') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
 				<?php if ($object->isProduct()) {
 					print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>';
