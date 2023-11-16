@@ -147,6 +147,7 @@ class CompanyPaymentMode extends CommonObject
 	public $number;
 	public $cle_rib;
 	public $bic;
+	public $intermediary_bic;
 
 	/**
 	 * @var string iban

@@ -203,7 +203,7 @@ if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
 $sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
-$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.intermediary_bic, ba.currency_code, ba.clos,";
 $sql .= " pay.code as payment_code";
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -262,7 +262,7 @@ if ($search_date_limit_end) {
 if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.intermediary_bic, ba.currency_code, ba.clos, pay.code";
 if (isModEnabled('project')) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
